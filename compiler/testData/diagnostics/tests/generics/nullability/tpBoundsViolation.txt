@@ -1,0 +1,11 @@
+package
+
+internal final class A</*0*/ F> {
+    public constructor A</*0*/ F>()
+    internal final fun </*0*/ Z : F, /*1*/ W : Z?> bar(/*0*/ x: F, /*1*/ y: F?, /*2*/ z: Z, /*3*/ w: W): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun </*0*/ E : F> foo1(/*0*/ x: E): kotlin.Unit
+    internal final fun </*0*/ E : F?> foo2(/*0*/ x: E): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

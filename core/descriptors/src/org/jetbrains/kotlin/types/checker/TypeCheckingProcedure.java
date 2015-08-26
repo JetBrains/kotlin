@@ -195,17 +195,22 @@ public class TypeCheckingProcedure {
         if (subtype.isError() || supertype.isError()) {
             return true;
         }
+
         if (!supertype.isMarkedNullable() && subtype.isMarkedNullable()) {
             return false;
         }
-        subtype = TypeUtils.makeNotNullable(subtype);
-        supertype = TypeUtils.makeNotNullable(supertype);
+
         if (KotlinBuiltIns.isNothingOrNullableNothing(subtype)) {
             return true;
         }
+
         @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype, constraints);
         if (closestSupertype == null) {
             return constraints.noCorrespondingSupertype(subtype, supertype); // if this returns true, there still isn't any supertype to continue with
+        }
+
+        if (!supertype.isMarkedNullable() && closestSupertype.isMarkedNullable()) {
+            return false;
         }
 
         return checkSubtypeForTheSameConstructor(closestSupertype, supertype);

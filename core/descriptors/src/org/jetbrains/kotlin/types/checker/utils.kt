@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import java.util.*
@@ -40,14 +41,18 @@ public fun findCorrespondingSupertype(
 
         if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertypeConstructor)) {
             var substituted = currentSubtype
+            var isAnyMarkedNullable = currentSubtype.isMarkedNullable
+
             var currentPathNode = lastPathNode.previous
 
             while (currentPathNode != null) {
                 substituted = TypeSubstitutor.create(currentPathNode.type).safeSubstitute(substituted, Variance.INVARIANT)
+                isAnyMarkedNullable = isAnyMarkedNullable || currentPathNode.type.isMarkedNullable
+
                 currentPathNode = currentPathNode.previous
             }
 
-            return substituted
+            return TypeUtils.makeNullableAsSpecified(substituted, isAnyMarkedNullable)
         }
 
         for (immediateSupertype in constructor.getSupertypes()) {

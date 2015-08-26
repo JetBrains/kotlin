@@ -6137,9 +6137,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/nullability"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("declarationsBoundsViolation.kt")
+                public void testDeclarationsBoundsViolation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/declarationsBoundsViolation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expressionsBoundsViolation.kt")
+                public void testExpressionsBoundsViolation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/expressionsBoundsViolation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("nullToGeneric.kt")
                 public void testNullToGeneric() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/nullToGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tpBoundsViolation.kt")
+                public void testTpBoundsViolation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpBoundsViolation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("useAsValueArgument.kt")
+                public void testUseAsValueArgument() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/useAsValueArgument.kt");
                     doTest(fileName);
                 }
             }
