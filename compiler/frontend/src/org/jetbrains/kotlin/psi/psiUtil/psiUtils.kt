@@ -266,7 +266,7 @@ public fun PsiElement.getElementTextWithContext(): String {
     assert(isValid) { "Invalid element $this" }
 
     if (this is PsiFile) {
-        return getContainingFile().getText()
+        return containingFile.getText()
     }
 
     // Find parent for element among file children
@@ -278,9 +278,10 @@ public fun PsiElement.getElementTextWithContext(): String {
 
     val inFileParentOffset = elementContextOffset - startContextOffset
 
+
     return StringBuilder(topLevelElement.getText())
             .insert(inFileParentOffset, "<caret>")
-            .insert(0, "File name: ${getContainingFile().getName()}\n")
+            .insert(0, "File name: ${containingFile.getName()} Physical: ${containingFile.isPhysical}\n")
             .toString()
 }
 
