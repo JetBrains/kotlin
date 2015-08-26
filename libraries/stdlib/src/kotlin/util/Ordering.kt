@@ -316,3 +316,14 @@ public fun <T: Comparable<T>> nullsLast(): Comparator<T?> {
         }
     }
 }
+
+/** Returns a comparator that imposes the reverse ordering of this comparator. */
+public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
+    is ReversedComparator -> this.comparator
+    else -> ReversedComparator(this)
+}
+
+
+private class ReversedComparator<T>(public val comparator: Comparator<T>): Comparator<T> {
+    override fun compare(a: T, b: T): Int = comparator.compare(b, a)
+}

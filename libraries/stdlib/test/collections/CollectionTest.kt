@@ -589,7 +589,12 @@ class CollectionTest {
     }
 
     test fun sortedWith() {
-        expect(listOf("BAD", "dad", "cat")) { listOf("cat", "dad", "BAD").sortedWith(compareBy { it.toUpperCase().reverse() }) }
+        val comparator = compareBy<String> { it.toUpperCase().reverse() }
+        val data = listOf("cat", "dad", "BAD")
+
+        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator) }
+        expect(listOf("cat", "dad", "BAD")) { data.sortedWith(comparator.reversed()) }
+        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator.reversed().reversed()) }
     }
 
     test fun decomposeFirst() {
