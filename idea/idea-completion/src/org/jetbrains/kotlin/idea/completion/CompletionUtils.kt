@@ -23,13 +23,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.findLabelAndCall
@@ -40,8 +39,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -291,39 +288,6 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
         }
     }
     return result
-}
-
-fun LookupElementFactory.createBackingFieldLookupElement(
-        property: PropertyDescriptor,
-        useReceiverTypes: Boolean,
-        inDescriptor: DeclarationDescriptor,
-        resolutionFacade: ResolutionFacade
-): LookupElement? {
-    val insideAccessor = inDescriptor is PropertyAccessorDescriptor && inDescriptor.getCorrespondingProperty() == property
-    if (!insideAccessor) {
-        val container = property.getContainingDeclaration()
-        if (container !is ClassDescriptor || !DescriptorUtils.isAncestor(container, inDescriptor, false)) return null // backing field not accessible
-    }
-
-    val declaration = (DescriptorToSourceUtils.descriptorToDeclaration(property) as? JetProperty) ?: return null
-
-    val accessors = declaration.getAccessors()
-    if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
-
-    val bindingContext = resolutionFacade.analyze(declaration)
-    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
-
-    val lookupElement = createLookupElement(property, useReceiverTypes)
-    return object : LookupElementDecorator<LookupElement>(lookupElement) {
-        override fun getLookupString() = "$" + super.getLookupString()
-        override fun getAllLookupStrings() = setOf(getLookupString())
-
-        override fun renderElement(presentation: LookupElementPresentation) {
-            super.renderElement(presentation)
-            presentation.setItemText("$" + presentation.getItemText())
-            presentation.setIcon(PlatformIcons.FIELD_ICON) //TODO: special icon
-        }
-    }.assignPriority(ItemPriority.BACKING_FIELD)
 }
 
 fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElement? {

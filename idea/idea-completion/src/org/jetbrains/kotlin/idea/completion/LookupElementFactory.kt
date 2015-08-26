@@ -36,8 +36,11 @@ import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
@@ -91,7 +94,7 @@ public class LookupElementFactory(
         }
 
         if (descriptor is PropertyDescriptor && inDescriptor != null) {
-            var backingFieldElement = createBackingFieldLookupElement(descriptor, useReceiverTypes, inDescriptor, resolutionFacade)
+            var backingFieldElement = createBackingFieldLookupElement(descriptor, useReceiverTypes)
             if (backingFieldElement != null) {
                 if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
                     backingFieldElement = backingFieldElement.withBracesSurrounding()
@@ -139,6 +142,35 @@ public class LookupElementFactory(
         }
 
         return lookupElement
+    }
+
+    private fun createBackingFieldLookupElement(property: PropertyDescriptor, useReceiverTypes: Boolean): LookupElement? {
+        if (inDescriptor == null) return null
+        val insideAccessor = inDescriptor is PropertyAccessorDescriptor && inDescriptor.getCorrespondingProperty() == property
+        if (!insideAccessor) {
+            val container = property.getContainingDeclaration()
+            if (container !is ClassDescriptor || !DescriptorUtils.isAncestor(container, inDescriptor, false)) return null // backing field not accessible
+        }
+
+        val declaration = (DescriptorToSourceUtils.descriptorToDeclaration(property) as? JetProperty) ?: return null
+
+        val accessors = declaration.getAccessors()
+        if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
+
+        val bindingContext = resolutionFacade.analyze(declaration)
+        if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
+
+        val lookupElement = createLookupElement(property, useReceiverTypes)
+        return object : LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun getLookupString() = "$" + super.getLookupString()
+            override fun getAllLookupStrings() = setOf(getLookupString())
+
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setItemText("$" + presentation.getItemText())
+                presentation.setIcon(PlatformIcons.FIELD_ICON) //TODO: special icon
+            }
+        }.assignPriority(ItemPriority.BACKING_FIELD)
     }
 
     public fun createLookupElement(
