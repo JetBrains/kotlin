@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 public class OverrideImplementTest : AbstractOverrideImplementTest() {
@@ -227,5 +226,9 @@ public class OverrideImplementTest : AbstractOverrideImplementTest() {
 
     public fun testGenericSuperClass() {
         doOverrideFileTest("size")
+    }
+
+    public fun testDuplicatedAnyMembersBug() {
+        doMultiOverrideFileTest()
     }
 }

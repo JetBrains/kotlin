@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import java.util.*
 
@@ -29,14 +30,19 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                 val overridden = member.overriddenDescriptors
                 if (overridden.any { it.modality == Modality.FINAL || it.visibility.normalize() == Visibilities.PRIVATE }) continue
 
-                val realSuperToImmediates = LinkedHashMap<CallableMemberDescriptor, MutableCollection<CallableMemberDescriptor>>()
+                class Data(
+                        val realSuper: CallableMemberDescriptor,
+                        val immediateSupers: MutableList<CallableMemberDescriptor> = SmartList()
+                )
+
+                val byOriginalRealSupers = LinkedHashMap<CallableMemberDescriptor, Data>()
                 for (immediateSuper in overridden) {
                     for (realSuper in toRealSupers(immediateSuper)) {
-                        realSuperToImmediates.getOrPut(realSuper) { ArrayList(1) }.add(immediateSuper)
+                        byOriginalRealSupers.getOrPut(realSuper.original) { Data(realSuper) }.immediateSupers.add(immediateSuper)
                     }
                 }
 
-                val realSupers = realSuperToImmediates.keySet()
+                val realSupers = byOriginalRealSupers.values().map { it.realSuper }
                 val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
                 val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
                     nonAbstractRealSupers
@@ -46,7 +52,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                 }
 
                 for (realSuper in realSupersToUse) {
-                    val immediateSupers = realSuperToImmediates[realSuper]!!
+                    val immediateSupers = byOriginalRealSupers[realSuper.original]!!.immediateSupers
                     assert(immediateSupers.isNotEmpty())
 
                     val immediateSuperToUse = if (immediateSupers.size() == 1) {
@@ -76,7 +82,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
         }
         val overridden = immediateSuper.overriddenDescriptors
         assert(overridden.isNotEmpty())
-        return overridden.flatMap { toRealSupers(it) }.toSet()
+        return overridden.flatMap { toRealSupers(it) }.distinctBy { it.original }
     }
 
     override fun getChooserTitle() = "Override Members"
