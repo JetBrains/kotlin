@@ -447,8 +447,11 @@
     <debugger.extraSteppingFilter implementation="org.jetbrains.kotlin.idea.ExtraSteppingFilter"/>
     <xdebugger.settings implementation="org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings"/>
     <xdebugger.breakpointType implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType"/>
+    <xdebugger.breakpointType implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType" order="first"/>
     <debugger.syntheticProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinSyntheticTypeComponentProvider"/>
-    <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinBreakpointHandlerFactory"/>
+    <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointHandlerFactory"/>
+    <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointHandlerFactory"/>
+    <debugger.jvmSteppingCommandProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingCommandProvider"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler"/>

@@ -82,8 +82,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 import java.lang.annotation.Retention
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 import javax.swing.Icon
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
@@ -278,6 +277,18 @@ public class SelectionAwareScopeHighlighter(val editor: Editor) {
         highlighters.forEach { it.dispose() }
         highlighters.clear()
     }
+}
+
+fun PsiFile.getLineStartOffset(line: Int): Int? {
+    val doc = this.let { file -> PsiDocumentManager.getInstance(getProject()).getDocument(file) }
+    if (doc != null) {
+        val startOffset = doc.getLineStartOffset(line)
+        val element = findElementAt(startOffset) ?: return startOffset
+
+        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+    }
+
+    return null
 }
 
 fun PsiElement.getLineCount(): Int {

@@ -299,6 +299,27 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StepOver extends AbstractKotlinSteppingTest {
+        public void testAllFilesPresentInStepOver() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("stepOverInlinedLambda.kt")
+        public void testStepOverInlinedLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlinedLambda.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stepOverInlinedLambdaStdlib.kt")
+        public void testStepOverInlinedLambdaStdlib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlinedLambdaStdlib.kt");
+            doStepOverTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/filters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

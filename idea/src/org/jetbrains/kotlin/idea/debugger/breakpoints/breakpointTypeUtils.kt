@@ -16,34 +16,30 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
+import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
-    if (psiFile == null || psiFile.getVirtualFile().getFileType() != JetFileType.INSTANCE) {
+    if (psiFile == null || psiFile.virtualFile.fileType != JetFileType.INSTANCE) {
         return false
     }
 
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
 
-    var canPutAt = false
+    var result: Class<*>? = null
     XDebuggerUtil.getInstance().iterateLine(project, document, line, fun (el: PsiElement): Boolean {
         // avoid comments
         if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, javaClass<PsiComment>(), false) != null) {
@@ -51,13 +47,13 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
         }
 
         var element = el
-        var parent = element.getParent()
+        var parent = element.parent
         while (parent != null) {
-            val offset = parent.getTextOffset()
+            val offset = parent.textOffset
             if (offset >= 0 && document.getLineNumber(offset) != line) break
 
             element = parent
-            parent = element.getParent()
+            parent = element.parent
         }
 
         if (element is JetProperty || element is JetParameter) {
@@ -67,15 +63,21 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
             }
             if (descriptor is PropertyDescriptor) {
-                canPutAt = true
+                result = KotlinFieldBreakpointType::class.java
+            }
+            else {
+                result = KotlinLineBreakpointType::class.java
             }
             return false
+        }
+        else {
+            result = KotlinLineBreakpointType::class.java
         }
 
         return true
     })
 
-    return canPutAt
+    return result == breakpointTypeClass
 }
 
 
