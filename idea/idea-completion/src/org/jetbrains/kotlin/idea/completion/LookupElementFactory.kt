@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -49,20 +50,6 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
-
-public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
-    override val psiElement: PsiElement? get() = null
-
-    override val descriptor: DeclarationDescriptor? get() = null
-
-    override val name: Name get() = fqName.shortName()
-
-    override val importableFqName: FqName get() = fqName
-
-    override val isDeprecated: Boolean get() = false
-
-    override fun getIcon(flags: Int) = PlatformIcons.PACKAGE_ICON
-}
 
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
