@@ -1,0 +1,27 @@
+@kotlin.jvm.internal.KotlinClass A {
+    field $kotlinClass: kotlin.reflect.KClass
+    @AnnProp @AnnField field p: int
+    @AnnField field x: int
+    field y: int
+    method <clinit>(): void
+    @AnnProp2 method p$annotations(): void
+    @AnnGetter method getP(): int
+    @AnnSetter method setP(@AnnParam p0: int): void
+    @AnnProp2 method x$annotations(): void
+    method getX(): int
+    @AnnGetter method getY(): int
+    @AnnSetter method setY(p0: int): void
+    method <init>(@AnnParam p0: int, @AnnParam p1: int): void
+}
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnField
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnGetter
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnParam
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnProp
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnProp2
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnSetter

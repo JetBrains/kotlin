@@ -208,6 +208,10 @@ fun main(args: Array<String>) {
             model("codegen/bytecodeText")
         }
 
+        testClass(javaClass<AbstractBytecodeListingTest>()) {
+            model("codegen/bytecodeListing")
+        }
+
         testClass(javaClass<AbstractTopLevelMembersInvocationTest>()) {
             model("codegen/topLevelMemberInvocation", extension = null, recursive = false)
         }

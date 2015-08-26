@@ -1,0 +1,29 @@
+@kotlin.jvm.internal.KotlinClass A {
+    field $kotlinClass: kotlin.reflect.KClass
+    @AnnField @AnnFieldProperty @AnnParameterField field a: int
+    @AnnField @AnnFieldProperty @AnnParameterField field x: int
+    method <clinit>(): void
+    @AnnProperty @AnnParameterProperty @AnnPropertySetter @AnnTypeGetter @AnnTypeField method a$annotations(): void
+    @AnnGetterSetter method getA(): int
+    @AnnProperty @AnnPropertySetter @AnnTypeGetter @AnnTypeField method x$annotations(): void
+    @AnnGetterSetter method getX(): int
+    method <init>(@AnnParameterProperty p0: int): void
+}
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnFieldProperty
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnGetterSetter
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterField
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterProperty
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnProperty
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnPropertySetter
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeField
+
+@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeGetter
