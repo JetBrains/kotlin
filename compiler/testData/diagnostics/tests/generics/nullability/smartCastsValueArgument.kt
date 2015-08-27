@@ -14,6 +14,7 @@ fun <T : CharSequence?> foo(x: T) {
         y2 = <!TYPE_MISMATCH!>x<!>
 
         <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(x)
+        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
     }
@@ -39,6 +40,7 @@ fun <T : CharSequence?> foo(x: T) {
     if (1 == 1) {
         val y = x!!
         <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(x)
+        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
 

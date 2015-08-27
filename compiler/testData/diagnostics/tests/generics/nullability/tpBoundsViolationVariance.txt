@@ -1,0 +1,36 @@
+package
+
+internal final class A</*0*/ F> {
+    public constructor A</*0*/ F>()
+    internal final fun </*0*/ Z : F, /*1*/ W : Z?> bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun </*0*/ E : A.In<F>> fooIn1(/*0*/ x: E): E
+    internal final fun </*0*/ E : A.In<F?>> fooIn2(/*0*/ x: E): E
+    internal final fun </*0*/ E : A.Inv<F>> fooInv1(/*0*/ x: E): E
+    internal final fun </*0*/ E : A.Inv<F?>> fooInv2(/*0*/ x: E): E
+    internal final fun </*0*/ E : A.Out<F>> fooOut1(/*0*/ x: E): E
+    internal final fun </*0*/ E : A.Out<F?>> fooOut2(/*0*/ x: E): E
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final class In</*0*/ in Q> {
+        public constructor In</*0*/ in Q>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Inv</*0*/ Q> {
+        public constructor Inv</*0*/ Q>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Out</*0*/ out Q> {
+        public constructor Out</*0*/ out Q>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

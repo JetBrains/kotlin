@@ -6149,9 +6149,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionalBound.kt")
+                public void testFunctionalBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/functionalBound.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("nullToGeneric.kt")
                 public void testNullToGeneric() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/nullToGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCastRefinedClass.kt")
+                public void testSmartCastRefinedClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/smartCastRefinedClass.kt");
                     doTest(fileName);
                 }
 
@@ -6176,6 +6188,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("tpBoundsViolation.kt")
                 public void testTpBoundsViolation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpBoundsViolation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tpBoundsViolationVariance.kt")
+                public void testTpBoundsViolationVariance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpBoundsViolationVariance.kt");
                     doTest(fileName);
                 }
 
