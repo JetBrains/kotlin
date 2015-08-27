@@ -379,7 +379,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull VirtualFile virtualFile,
             @Nullable final JetClassOrObject decompiledClassOrObject
     ) {
-        final PsiJavaFileStubImpl javaFileStub = getOrCreateJavaFileStub(virtualFile);
+        final PsiJavaFileStubImpl javaFileStub = getOrCreateJavaFileStub(decompiledKotlinFile, virtualFile);
         if (javaFileStub == null) {
             return null;
         }
@@ -423,15 +423,17 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Nullable
-    private static PsiJavaFileStubImpl getOrCreateJavaFileStub(@NotNull VirtualFile virtualFile) {
-        CachedJavaStub cachedJavaStub = virtualFile.getUserData(cachedJavaStubKey);
+    private static PsiJavaFileStubImpl getOrCreateJavaFileStub(
+            @NotNull JetFile decompiledKotlinFile,
+            @NotNull VirtualFile virtualFile) {
+        CachedJavaStub cachedJavaStub = decompiledKotlinFile.getUserData(cachedJavaStubKey);
         long fileModificationStamp = virtualFile.getModificationStamp();
         if (cachedJavaStub != null && cachedJavaStub.modificationStamp == fileModificationStamp) {
             return cachedJavaStub.javaFileStub;
         }
         PsiJavaFileStubImpl stub = (PsiJavaFileStubImpl) createStub(virtualFile);
         if (stub != null) {
-            virtualFile.putUserData(cachedJavaStubKey, new CachedJavaStub(fileModificationStamp, stub));
+            decompiledKotlinFile.putUserData(cachedJavaStubKey, new CachedJavaStub(fileModificationStamp, stub));
         }
         return stub;
     }
