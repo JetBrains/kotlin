@@ -34,7 +34,7 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
                 val needTypeArguments = needTypeArguments(descriptor)
                 val parameters = descriptor.valueParameters
                 when (parameters.size()) {
-                    0 -> KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = false)
+                    0 -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false)
 
                     1 -> {
                         val parameterType = parameters.single().getType()
@@ -42,13 +42,13 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
                             val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                             if (parameterCount <= 1) {
                                 // otherwise additional item with lambda template is to be added
-                                return KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                return KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
                             }
                         }
-                        KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true)
+                        KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
                     }
 
-                    else -> KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true)
+                    else -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
                 }
             }
 

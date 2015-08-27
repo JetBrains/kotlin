@@ -115,7 +115,7 @@ class LookupElementFactory(
 
     private fun createFunctionCallElementWithExplicitLambdaParameters(descriptor: FunctionDescriptor, parameterType: JetType, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
+        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
         val lambdaInfo = GenerateLambdaInfo(parameterType, true)
 
         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
@@ -129,7 +129,7 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
@@ -143,7 +143,7 @@ class LookupElementFactory(
     private fun createFunctionCallElementWithArgument(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
-        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
+        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
         lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
 
         if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
@@ -172,7 +172,7 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler(needTypeArguments = needTypeArguments, needValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+            KotlinFunctionInsertHandler(inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
         }
     }
 

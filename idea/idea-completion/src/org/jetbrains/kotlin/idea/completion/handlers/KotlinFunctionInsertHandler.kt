@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.types.JetType
 class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
 class KotlinFunctionInsertHandler(
-        val needTypeArguments: Boolean,
-        val needValueArguments: Boolean,
+        val inputTypeArguments: Boolean,
+        val inputValueArguments: Boolean,
         val argumentText: String = "",
         val lambdaInfo: GenerateLambdaInfo? = null
 ) : KotlinCallableInsertHandler() {
@@ -100,7 +100,7 @@ class KotlinFunctionInsertHandler(
         val openingBracket = if (insertLambda) '{' else '('
         val closingBracket = if (insertLambda) '}' else ')'
 
-        var insertTypeArguments = needTypeArguments && (completionChar == '\n' || completionChar == '\r')
+        var insertTypeArguments = inputTypeArguments && (completionChar == '\n' || completionChar == '\r')
 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
             val offset1 = chars.skipSpaces(offset)
@@ -160,6 +160,11 @@ class KotlinFunctionInsertHandler(
             closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
         }
 
+        if (insertLambda && lambdaInfo!!.explicitParameters) {
+            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo!!.lambdaType)
+            return
+        }
+
         document.insertString(openingBracketOffset + 1, argumentText)
         if (closeBracketOffset != null) {
             closeBracketOffset += argumentText.length()
@@ -168,24 +173,20 @@ class KotlinFunctionInsertHandler(
         if (!insertTypeArguments) {
             if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
                 editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
-                AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
+                if (!insertLambda) {
+                    AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
+                }
             }
             else {
                 editor.caretModel.moveToOffset(closeBracketOffset + 1)
             }
-        }
-
-        PsiDocumentManager.getInstance(project).commitDocument(document)
-
-        if (insertLambda && lambdaInfo!!.explicitParameters) {
-            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo!!.lambdaType)
         }
     }
 
     private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
         if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
-        return needValueArguments
+        return inputValueArguments || lambdaInfo != null
     }
 
     private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
