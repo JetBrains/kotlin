@@ -342,7 +342,8 @@ public class DescriptorResolver {
 
         if (modifierList != null) {
             if (valueParameter.hasValOrVar()) {
-                AnnotationSplitter annotationSplitter = new AnnotationSplitter(allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
+                AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
+                        storageManager, allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
                 valueParameterAnnotations = annotationSplitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER);
             }
             else {
@@ -702,7 +703,7 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull LexicalScope scope,
             @NotNull JetProperty property,
-            @NotNull BindingTrace trace,
+            @NotNull final BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         JetModifierList modifierList = property.getModifierList();
@@ -714,15 +715,16 @@ public class DescriptorResolver {
                             ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
                             : Modality.FINAL;
 
-        JetPropertyAccessor propertyGetter = property.getGetter();
-
-        boolean hasBackingField = modality != Modality.ABSTRACT
-                                  && property.hasDelegateExpressionOrInitializer()
-                                  && (propertyGetter == null || !propertyGetter.hasBody());
+        final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper();
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace);
-        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(allAnnotations,
-                /*parameter =*/ false, /*hasBackingField =*/ hasBackingField, /*isMutable =*/ isVar);
+        AnnotationSplitter annotationSplitter =
+                new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
+            @Override
+            public Set<AnnotationUseSiteTarget> invoke() {
+                return AnnotationSplitter.getTargetSet(false, trace.getBindingContext(), wrapper);
+            }
+        });
 
         Annotations propertyAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
                 annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
@@ -738,6 +740,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(property)
         );
+        wrapper.setProperty(propertyDescriptor);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         LexicalScope scopeWithTypeParameters;
@@ -1087,9 +1090,15 @@ public class DescriptorResolver {
             }
         }
 
+        final AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper();
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
-        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(allAnnotations,
-                /*parameter =*/ true, /*hasBackingField =*/ true, /*isMutable =*/ isMutable);
+        AnnotationSplitter annotationSplitter =
+                new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
+                    @Override
+                    public Set<AnnotationUseSiteTarget> invoke() {
+                        return AnnotationSplitter.getTargetSet(true, trace.getBindingContext(), propertyWrapper);
+                    }
+                });
 
         Annotations propertyAnnotations = new CompositeAnnotations(
                 annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
@@ -1105,6 +1114,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(parameter)
         );
+        propertyWrapper.setProperty(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
                                    getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 

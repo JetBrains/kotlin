@@ -16,20 +16,71 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.storage.StorageManager
 import kotlin.platform.platformStatic
 
-public class AnnotationSplitter(original: Annotations, applicableTargets: Set<AnnotationUseSiteTarget>) {
-    private val annotations: Map<AnnotationUseSiteTarget, List<AnnotationWithTarget>>
-    public val otherAnnotations: Annotations
+/*
+    This class lazily splits Annotations into several different Annotations according to declaration site target priority on property.
+    Basically you pass an original Annotations and a list of targets applicable for your declaration.
 
-    init {
+    Example: Annotations = [@property:P1, @field:F1, F2, P2, T],
+             F2, P2, T are annotations with declaration site targets 'field', 'property' and 'type', respectively.
+
+    Annotations will be split as:
+             FIELD -> [F1, F2], (even if F2 is applicable to PROPERTY because of target priority)
+             PROPERTY -> [P1, P2],
+             other -> [T].
+ */
+
+public class AnnotationSplitter(
+        storageManager: StorageManager,
+        allAnnotations: Annotations,
+        applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
+) {
+    public companion object {
+        private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_SETTER, PROPERTY_GETTER)
+
+        @platformStatic
+        public fun create(
+                storageManager: StorageManager,
+                annotations: Annotations,
+                targets: Set<AnnotationUseSiteTarget>
+        ): AnnotationSplitter {
+            return AnnotationSplitter(storageManager, annotations, { targets })
+        }
+
+        @platformStatic
+        public fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
+            val property = wrapper.property
+            assert(property != null)
+            val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, property] ?: false
+            return getTargetSet(parameter, property!!.isVar, hasBackingField)
+        }
+
+        @platformStatic
+        public fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
+            return hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
+                if (parameter) add(CONSTRUCTOR_PARAMETER)
+                if (hasBackingField) add(FIELD)
+                if (isVar) add(PROPERTY_SETTER)
+            }
+        }
+    }
+
+    public class PropertyWrapper(public var property: PropertyDescriptor? = null)
+
+    private val splitAnnotations = storageManager.createLazyValue {
         val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationWithTarget>>()
         val other = arrayListOf<AnnotationWithTarget>()
+        val applicableTargets = applicableTargetsLazy()
 
-        outer@ for (annotationWithTarget in original.getAllAnnotations()) {
+        outer@ for (annotationWithTarget in allAnnotations.getAllAnnotations()) {
             val useSiteTarget = annotationWithTarget.target
             if (useSiteTarget != null) {
                 if (useSiteTarget in applicableTargets)
@@ -45,9 +96,8 @@ public class AnnotationSplitter(original: Annotations, applicableTargets: Set<An
 
                 val declarationSiteTargetForCurrentTarget = KotlinTarget.USE_SITE_MAPPING[target] ?: continue
                 val applicableTargetsForAnnotation = AnnotationChecker.applicableTargetSet(annotationWithTarget.annotation)
-                val applicable = applicableTargetsForAnnotation.any { it == declarationSiteTargetForCurrentTarget }
 
-                if (applicable) {
+                if (declarationSiteTargetForCurrentTarget in applicableTargetsForAnnotation) {
                     map.getOrPut(target, { arrayListOf() }).add(annotationWithTarget)
                     continue@outer
                 }
@@ -55,31 +105,34 @@ public class AnnotationSplitter(original: Annotations, applicableTargets: Set<An
 
             other.add(annotationWithTarget)
         }
-        annotations = map
-        otherAnnotations = AnnotationsImpl.create(other)
+        map to AnnotationsImpl.create(other)
     }
 
-    public fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations {
-        val annotations = annotations[target] ?: return Annotations.EMPTY
-        return AnnotationsImpl.create(annotations)
-    }
+    public fun getOtherAnnotations(): Annotations = LazySplitAnnotations(null)
+
+    public fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(target)
 
     public fun getAnnotationsForTargets(vararg targets: AnnotationUseSiteTarget): Annotations {
         return CompositeAnnotations(targets.map { getAnnotationsForTarget(it) })
     }
 
-    public companion object {
-        private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_SETTER, PROPERTY_GETTER)
+    private inner class LazySplitAnnotations(target: AnnotationUseSiteTarget?) : Annotations {
+        private val annotations: Annotations by lazy {
+            val splitAnnotations = this@AnnotationSplitter.splitAnnotations()
 
-        platformStatic
-        public fun create(original: Annotations, parameter: Boolean, hasBackingField: Boolean, isMutable: Boolean): AnnotationSplitter {
-            return AnnotationSplitter(original, with(hashSetOf(PROPERTY, PROPERTY_GETTER)) {
-                if (parameter) add(CONSTRUCTOR_PARAMETER)
-                if (hasBackingField) add(FIELD)
-                if (isMutable) add(PROPERTY_SETTER)
-                this
-            })
+            if (target != null)
+                AnnotationsImpl.create(splitAnnotations.first[target] ?: emptyList())
+            else
+                splitAnnotations.second
         }
+
+        override fun isEmpty() = annotations.isEmpty()
+        override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
+        override fun getUseSiteTargetedAnnotations() = annotations.getUseSiteTargetedAnnotations()
+        override fun getAllAnnotations() = annotations.getAllAnnotations()
+        override fun findExternalAnnotation(fqName: FqName) = annotations.findExternalAnnotation(fqName)
+        override fun iterator() = annotations.iterator()
+        override fun toString() = annotations.toString()
     }
 
 }
