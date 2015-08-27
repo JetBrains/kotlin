@@ -1,6 +1,7 @@
 package
 
 internal fun classMutableField(): kotlin.Int
+internal fun closureInLocalClass(): kotlin.Unit
 internal fun withLocalClass(): kotlin.Int
 
 public final class A {

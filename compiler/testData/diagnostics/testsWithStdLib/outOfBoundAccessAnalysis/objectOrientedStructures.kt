@@ -96,3 +96,50 @@ fun classMutableField(): Int {
     b.array = IntArray(3)
     return r1 + b.array[a.c] + b.array[b.c]
 }
+
+fun closureInLocalClass() {
+    val arr = arrayOf(1)
+    var c = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>0<!>
+    class B () {
+        init {
+            c = 100
+        }
+        public constructor(<!UNUSED_PARAMETER!>arg<!>: Int) : this() {
+            c = 0
+        }
+        var a: Int
+            get() {
+                c = 0
+                return 1
+            }
+            set(value) { a = value }
+
+        fun boo() {
+            c = 0
+        }
+    }
+    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm because `init` is a part of closureInLocalClass pseudocode for some reason and `c` = 100 here
+
+    c = 100
+    val b = B(3)
+    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+
+    b.a
+    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+
+    b.a = 3
+    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+
+    b.boo()
+    arr[c]                  // this is processed correctly, no alarm, `c` is undefined
+
+    c = 100
+    val obj = object : Comparable<Int> {
+        override fun compareTo(other: Int): Int {
+            c = 0
+            return 0
+        }
+    }
+    obj.compareTo(3)
+    arr[c]                  // this is also processed correctrly, `c` is undefined
+}
