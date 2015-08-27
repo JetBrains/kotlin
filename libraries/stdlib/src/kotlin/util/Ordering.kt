@@ -73,7 +73,7 @@ public inline fun <T> compareValuesBy(a: T, b: T, selector: (T) -> Comparable<*>
  * The function is applied to the given values [a] and [b] and return objects of type K which are then being
  * compared with the given [comparator].
  */
-public inline fun <T, K> compareValuesBy(a: T, b: T, comparator: Comparator<K>, selector: (T) -> K): Int {
+public inline fun <T, K> compareValuesBy(a: T, b: T, comparator: Comparator<in K>, selector: (T) -> K): Int {
     return comparator.compare(selector(a), selector(b))
 }
 
@@ -129,7 +129,7 @@ inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) se
  * Creates a comparator using the [selector] function to transform values being compared and then applying
  * the specified [comparator] to compare transformed values.
  */
-inline public fun <T, K> compareBy(comparator: Comparator<K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
+inline public fun <T, K> compareBy(comparator: Comparator<in K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, comparator, selector)
     }
@@ -150,7 +150,7 @@ inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_
  *
  * Note that an order of [comparator] is reversed by this wrapper.
  */
-inline public fun <T, K> compareByDescending(comparator: Comparator<K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
+inline public fun <T, K> compareByDescending(comparator: Comparator<in K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(b, a, comparator, selector)
     }
@@ -173,7 +173,7 @@ inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL
  * Creates a comparator comparing values after the primary comparator defined them equal. It uses
  * the [selector] function to transform values and then compares them with the given [comparator].
  */
-inline public fun <T, K> Comparator<T>.thenBy(comparator: Comparator<K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
+inline public fun <T, K> Comparator<T>.thenBy(comparator: Comparator<in K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenBy.compare(a, b)
@@ -199,7 +199,7 @@ inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.
  * Creates a descending comparator comparing values after the primary comparator defined them equal. It uses
  * the [selector] function to transform values and then compares them with the given [comparator].
  */
-inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
+inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<in K>, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenByDescending.compare(a, b)
@@ -234,7 +234,7 @@ inline public fun <T> Comparator<T>.thenComparator(inlineOptions(InlineOption.ON
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.then(comparator: Comparator<T>): Comparator<T> {
+public fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@then.compare(a, b)
@@ -247,7 +247,7 @@ public fun <T> Comparator<T>.then(comparator: Comparator<T>): Comparator<T> {
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.thenDescending(comparator: Comparator<T>): Comparator<T> {
+public fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenDescending.compare(a, b)
@@ -261,7 +261,7 @@ public fun <T> Comparator<T>.thenDescending(comparator: Comparator<T>): Comparat
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value less than any other value.
  */
-public fun <T: Any> nullsFirst(comparator: Comparator<T>): Comparator<T?> {
+public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
             if (a === b) return 0
@@ -291,7 +291,7 @@ public fun <T: Comparable<T>> nullsFirst(): Comparator<T?> {
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value greater than any other value.
  */
-public fun <T: Any> nullsLast(comparator: Comparator<T>): Comparator<T?> {
+public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
             if (a === b) return 0
