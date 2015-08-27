@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -118,32 +117,11 @@ public class SmartCastManager {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
     ) {
-        DataFlowValue dataFlowValue = getDataFlowValueExcludingReceiver(bindingContext, containingDeclarationOrModule, receiverToCast);
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
+                receiverToCast, bindingContext, containingDeclarationOrModule
+        );
 
-        if (dataFlowValue != null) {
-            return dataFlowInfo.getPossibleTypes(dataFlowValue);
-        }
-
-        return Collections.emptyList();
-    }
-
-    @Nullable
-    public static DataFlowValue getDataFlowValueExcludingReceiver(
-            @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor containingDeclarationOrModule,
-            @NotNull ReceiverValue receiverToCast
-    ) {
-        if (receiverToCast instanceof ThisReceiver) {
-            ThisReceiver receiver = (ThisReceiver) receiverToCast;
-            assert receiver.exists();
-            return DataFlowValueFactory.createDataFlowValue(receiver);
-        }
-        else if (receiverToCast instanceof ExpressionReceiver) {
-            return DataFlowValueFactory.createDataFlowValue(
-                    receiverToCast, bindingContext, containingDeclarationOrModule
-            );
-        }
-        return null;
+        return dataFlowInfo.getPossibleTypes(dataFlowValue);
     }
 
     public boolean isSubTypeBySmartCastIgnoringNullability(
@@ -226,10 +204,10 @@ public class SmartCastManager {
     ) {
         if (!TypeUtils.isNullableType(receiver.getType())) return true;
 
-        DataFlowValue dataFlowValue = getDataFlowValueExcludingReceiver(
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
+                receiver,
                 context.trace.getBindingContext(),
-                context.scope.getContainingDeclaration(),
-                receiver
+                context.scope.getContainingDeclaration()
         );
 
         if (dataFlowValue == null) return false;
