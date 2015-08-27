@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
@@ -219,30 +216,8 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, c.expectedType)) {
-                smartCastManager.recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), false);
-                return possibleType;
-            }
-        }
-
-        // For cases like:
-        // fun bar(x: Any) {}
-        // fun <T : Any?> foo(x: T) {
-        //      if (x != null) {
-        //          bar(x) // Should be allowed with smart cast
-        //      }
-        // }
-        //
-        // It doesn't handled by upper code with getPossibleTypes because smart cast of T after `x != null` is still has same type T.
-        // But at the same time we're sure that `x` can't be null and just check for such cases manually
-        if (!c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
-                && JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, TypeUtils.makeNullable(c.expectedType))) {
-            smartCastManager.recordCastOrError(expression, expressionType, c.trace, dataFlowValue.isPredictable(), false);
-            return expressionType;
-        }
-
-        return null;
+        SmartCastResult result = smartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
+        return result != null ? result.getResultType() : null;
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
