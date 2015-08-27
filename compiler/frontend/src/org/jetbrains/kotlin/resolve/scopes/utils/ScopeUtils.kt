@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.FileScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
@@ -109,6 +106,8 @@ public fun LexicalScope.getClassifier(name: Name, location: LookupLocation): Cla
     return null
 }
 
+public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
+
 public fun LexicalScope.asJetScope(): JetScope {
     if (this is JetScope) return this
     if (this is MemberScopeToFileScopeAdapter) return this.memberScope
@@ -126,7 +125,8 @@ public fun JetScope.asLexicalScope(): LexicalScope
             memberScopeAsFileScope()
         }
 
-private class LexicalToJetScopeAdapter(val lexicalScope: LexicalScope): JetScope {
+private class LexicalToJetScopeAdapter(lexicalScope: LexicalScope): JetScope {
+    val lexicalScope = lexicalScope.takeSnapshot()
 
     override fun getClassifier(name: Name, location: LookupLocation) = lexicalScope.getClassifier(name, location)
 

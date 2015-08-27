@@ -20,18 +20,20 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
 public class LexicalChainedScope(
-        override val parent: LexicalScope,
+        parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         private val debugName: String,
         vararg memberScopes: JetScope // todo JetScope -> MemberScope
 ): LexicalScope {
+    override val parent = parent.takeSnapshot()
     private val scopeChain = memberScopes.clone()
 
     override fun getDeclaredDescriptors() = getFromAllScopes(scopeChain) { it.getAllDescriptors() }

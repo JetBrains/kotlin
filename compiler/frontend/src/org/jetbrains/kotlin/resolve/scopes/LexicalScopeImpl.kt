@@ -20,10 +20,11 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.Printer
 
 public class LexicalScopeImpl jvmOverloads constructor(
-        override val parent: LexicalScope,
+        parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
@@ -31,6 +32,7 @@ public class LexicalScopeImpl jvmOverloads constructor(
         redeclarationHandler: RedeclarationHandler = RedeclarationHandler.DO_NOTHING,
         initialize: LexicalScopeImpl.InitializeHandler.() -> Unit = {}
 ): LexicalScope, WritableScopeStorage {
+    override val parent = parent.takeSnapshot()
     override val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
     override val redeclarationHandler: RedeclarationHandler
         get() = RedeclarationHandler.DO_NOTHING

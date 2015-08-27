@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
@@ -57,7 +58,7 @@ public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !
 public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlowInfo(expression: JetExpression?) {
     if (expression == null) return
 
-    val scopeToRecord = if (scope is LexicalWritableScope) scope.takeSnapshot() else scope
+    val scopeToRecord = scope.takeSnapshot()
     trace.record(BindingContext.RESOLUTION_SCOPE, expression, scopeToRecord.asJetScope())
     trace.record(BindingContext.LEXICAL_SCOPE, expression, scopeToRecord)
 

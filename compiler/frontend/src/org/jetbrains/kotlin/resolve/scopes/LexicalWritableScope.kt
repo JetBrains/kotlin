@@ -20,16 +20,18 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.Printer
 
 class LexicalWritableScope(
-        override val parent: LexicalScope,
+        parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         override val redeclarationHandler: RedeclarationHandler,
         private val debugName: String
 ) : LexicalScope, WritableScopeStorage {
+    override val parent = parent.takeSnapshot()
     override val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
 
     override var functionsByName: MutableMap<Name, WritableScopeStorage.IntList>? = null
