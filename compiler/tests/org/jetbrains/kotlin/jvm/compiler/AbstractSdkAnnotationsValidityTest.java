@@ -79,8 +79,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 ModuleDescriptor module = LazyResolveTestUtil.resolve(
-                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList(),
-                        new JvmPackageMappingProvider(commonEnvironment)
+                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList(), commonEnvironment
                 );
 
                 AlternativeSignatureErrorFindingVisitor visitor =

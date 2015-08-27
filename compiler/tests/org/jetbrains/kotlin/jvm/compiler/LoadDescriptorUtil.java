@@ -104,7 +104,7 @@ public final class LoadDescriptorUtil {
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptor module = LazyResolveTestUtil
-                .resolve(environment.getProject(), trace, Collections.<JetFile>emptyList(), new JvmPackageMappingProvider(environment));
+                .resolve(environment.getProject(), trace, Collections.<JetFile>emptyList(), environment);
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         return Pair.create(packageView, trace.getBindingContext());

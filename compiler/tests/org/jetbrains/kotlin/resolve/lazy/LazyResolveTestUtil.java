@@ -42,13 +42,13 @@ public class LazyResolveTestUtil {
     }
 
     @NotNull
-    public static ModuleDescriptor resolveProject(@NotNull Project project) {
-        return resolve(project, Collections.<JetFile>emptyList());
+    public static ModuleDescriptor resolveProject(@NotNull Project project, @NotNull KotlinCoreEnvironment environment) {
+        return resolve(project, Collections.<JetFile>emptyList(), environment);
     }
 
     @NotNull
-    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles) {
-        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles, PackageMappingProvider.EMPTY);
+    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles, @NotNull KotlinCoreEnvironment environment) {
+        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles, environment);
     }
 
     @NotNull
@@ -56,13 +56,13 @@ public class LazyResolveTestUtil {
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull List<JetFile> sourceFiles,
-            @NotNull PackageMappingProvider packageMappingProvider
+            @NotNull KotlinCoreEnvironment environment
     ) {
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test");
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
-                packageMappingProvider
+                new JvmPackageMappingProvider(environment)
         );
 
         return moduleContext.getModule();

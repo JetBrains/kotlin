@@ -56,9 +56,9 @@ import java.util.*
 
     @TestOnly
     public @jvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
-            getDefaultPartFqNameForFilePath(facadeClassFqName.parent(), file.name)
+            getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
-    private @jvmStatic fun getDefaultPartFqNameForFilePath(packageFqName: FqName, fileName: String): FqName {
+    public @jvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
         val partClassName = getPartClassName(FileUtil.getNameWithoutExtension(fileName))
         return packageFqName.child(Name.identifier(partClassName))
     }
@@ -73,7 +73,8 @@ import java.util.*
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
     public @jvmStatic fun getPackagePartFqName(file: JetFile): FqName =
-            getDefaultPartFqNameForFilePath(file.packageFqName, file.name)
+            getPackagePartFqName(file.packageFqName, file.name)
+
 
     public @jvmStatic fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
         val implClassName = callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))

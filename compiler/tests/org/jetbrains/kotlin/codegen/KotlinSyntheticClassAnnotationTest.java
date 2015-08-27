@@ -48,14 +48,6 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
-    public void testPackagePart() {
-        doTestKotlinSyntheticClass(
-                "fun foo() = 42",
-                KotlinPackage.capitalize(DEFAULT_TEST_FILE_NAME),
-                PACKAGE_PART
-        );
-    }
-
     public void testTraitImpl() {
         doTestKotlinSyntheticClass(
                 "trait A { fun foo() = 42 }",

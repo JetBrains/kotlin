@@ -505,7 +505,7 @@ public class JetTestUtils {
                 }
             }
         }
-        LazyResolveTestUtil.resolve(environment.getProject(), jetFiles);
+        LazyResolveTestUtil.resolve(environment.getProject(), jetFiles, environment);
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
