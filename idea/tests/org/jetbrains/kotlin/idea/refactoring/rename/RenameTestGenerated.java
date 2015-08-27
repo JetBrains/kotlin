@@ -101,6 +101,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("companionObjectWithNameMatchingClass/companionObject.test")
+    public void testCompanionObjectWithNameMatchingClass_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObjectWithNameMatchingClass/companionObject.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameArgumentsWhenParameterRenamed/parameter.test")
     public void testRenameArgumentsWhenParameterRenamed_Parameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameArgumentsWhenParameterRenamed/parameter.test");

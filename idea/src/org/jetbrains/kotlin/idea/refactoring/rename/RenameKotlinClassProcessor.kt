@@ -18,14 +18,20 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetConstructor
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -48,6 +54,21 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
                 allRenames.put(file, newName + "." + virtualFile.extension)
             }
         }
+    }
+
+    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+        if (element is JetObjectDeclaration && element.isCompanion()) {
+            return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
+        }
+        return super.findReferences(element)
+    }
+
+    private fun PsiReference.isCompanionObjectClassReference(): Boolean {
+        if (this !is JetSimpleNameReference) {
+            return false
+        }
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
     private fun getJetClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): JetClassOrObject? = when (element) {
