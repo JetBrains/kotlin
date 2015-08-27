@@ -47,5 +47,5 @@ public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = tr
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
-target(AnnotationTarget.PROPERTY)
+target(AnnotationTarget.FIELD)
 public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class publicField

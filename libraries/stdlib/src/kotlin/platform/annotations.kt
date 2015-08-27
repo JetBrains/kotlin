@@ -22,6 +22,6 @@ target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 deprecated("Use kotlin.jvm.jvmName instead", ReplaceWith("kotlin.jvm.jvmName"))
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformName(public val name: String)
 
-target(FUNCTION, PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+target(FUNCTION, FIELD, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
 deprecated("Use kotlin.jvm.jvmStatic instead", ReplaceWith("kotlin.jvm.jvmStatic"))
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformStatic
