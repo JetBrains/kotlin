@@ -336,7 +336,7 @@
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
-                               implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJetClassProcessor"
+                               implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
                                order="first"/>
     <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinFunctionProcessor"
                                id="KotlinFunction"

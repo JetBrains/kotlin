@@ -14,80 +14,68 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.rename;
+package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinLightClass;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
-import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetConstructor;
-import org.jetbrains.kotlin.psi.JetFile;
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetConstructor
 
-import java.util.Map;
-
-public class RenameJetClassProcessor extends RenameKotlinPsiProcessor {
-    @Override
-    public boolean canProcessElement(@NotNull PsiElement element) {
-        return element instanceof JetClassOrObject || element instanceof KotlinLightClass || element instanceof JetConstructor;
+public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
+    override fun canProcessElement(element: PsiElement): Boolean {
+        return element is JetClassOrObject || element is KotlinLightClass || element is JetConstructor<*>
     }
 
-    @Nullable
-    @Override
-    public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
-        return getJetClassOrObject(element, true, editor);
+    override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
+        return getJetClassOrObject(element, true, editor)
     }
 
-    @Override
-    public void prepareRenaming(PsiElement element, String newName, Map<PsiElement, String> allRenames) {
-        JetClassOrObject classOrObject = getJetClassOrObject(element, false, null);
+    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>) {
+        val classOrObject = getJetClassOrObject(element, false, null) ?: return
 
-        if (classOrObject != null) {
-            JetFile file = classOrObject.getContainingJetFile();
+        val file = classOrObject.getContainingJetFile()
 
-            VirtualFile virtualFile = file.getVirtualFile();
-            if (virtualFile != null) {
-                String nameWithoutExtensions = virtualFile.getNameWithoutExtension();
-                if (nameWithoutExtensions.equals(classOrObject.getName())) {
-                    allRenames.put(file, newName + "." + virtualFile.getExtension());
-                }
+        val virtualFile = file.virtualFile
+        if (virtualFile != null) {
+            val nameWithoutExtensions = virtualFile.nameWithoutExtension
+            if (nameWithoutExtensions == classOrObject.name) {
+                allRenames.put(file, newName + "." + virtualFile.extension)
             }
         }
     }
 
-    @Nullable
-    private static JetClassOrObject getJetClassOrObject(@Nullable PsiElement element, boolean showErrors, @Nullable Editor editor) {
-        if (element instanceof KotlinLightClass) {
-            if (element instanceof KotlinLightClassForExplicitDeclaration) {
-                return ((KotlinLightClassForExplicitDeclaration) element).getOrigin();
+    private fun getJetClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): JetClassOrObject? = when (element) {
+        is KotlinLightClass ->
+            if (element is KotlinLightClassForExplicitDeclaration) {
+                element.getOrigin()
             }
-            else if (element instanceof KotlinLightClassForPackage) {
+            else if (element is KotlinLightClassForPackage) {
                 if (showErrors) {
                     CommonRefactoringUtil.showErrorHint(
-                            element.getProject(), editor,
+                            element.project, editor,
                             JetBundle.message("rename.kotlin.package.class.error"),
                             RefactoringBundle.message("rename.title"),
-                            null);
+                            null)
                 }
 
                 // Cancel rename
-                return null;
+                null
             }
             else {
-                assert false : "Should not be suggested to rename element of type " + element.getClass() + " " + element;
+                assert(false) { "Should not be suggested to rename element of type " + element.javaClass + " " + element }
+                null
             }
-        }
-        else if (element instanceof JetConstructor) {
-            return ((JetConstructor) element).getContainingClassOrObject();
-        }
 
-        return (JetClassOrObject) element;
+        is JetConstructor<*> ->
+            element.getContainingClassOrObject()
+
+        else ->
+            element as? JetClassOrObject
     }
 }
