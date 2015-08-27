@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -554,8 +555,8 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static String getJvmName(@NotNull Annotated descriptor) {
-        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(descriptor);
+    public static String getJvmName(@NotNull Annotations annotations) {
+        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(annotations);
         if (jvmNameAnnotation == null) return null;
 
         Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
@@ -567,12 +568,23 @@ public class DescriptorUtils {
         return ((StringValue) name).getValue();
     }
 
-    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated descriptor) {
-        AnnotationDescriptor jvmNameAnnotation = descriptor.getAnnotations().findAnnotation(JVM_NAME);
+    @Nullable
+    public static String getJvmName(@NotNull Annotated annotated) {
+        return getJvmName(annotated.getAnnotations());
+    }
+
+    @Nullable
+    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotations annotations) {
+        AnnotationDescriptor jvmNameAnnotation = annotations.findAnnotation(JVM_NAME);
         if (jvmNameAnnotation == null) {
-            jvmNameAnnotation = descriptor.getAnnotations().findAnnotation(PLATFORM_NAME);
+            jvmNameAnnotation = annotations.findAnnotation(PLATFORM_NAME);
         }
         return jvmNameAnnotation;
+    }
+
+    @Nullable
+    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
+        return getJvmNameAnnotation(annotated.getAnnotations());
     }
 
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {

@@ -41,7 +41,7 @@ public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = tr
  * for more information.
  * @property name the name of the element.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmName(public val name: String)
 
 /**
