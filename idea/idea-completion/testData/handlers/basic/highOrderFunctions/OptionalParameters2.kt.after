@@ -5,5 +5,5 @@ fun test(param: () -> Unit) {
 }
 
 // ELEMENT: xfoo
-// TAIL_TEXT: " { String, Int -> ... } (p: (String, Int) -> Unit) (<root>)"
+// TAIL_TEXT: " { String, Int -> ... } (..., p: (String, Int) -> Unit) (<root>)"
 

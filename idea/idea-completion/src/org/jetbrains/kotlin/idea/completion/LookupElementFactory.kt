@@ -129,7 +129,17 @@ class LookupElementFactory(
         val lambdaPresentation = lambdaPresentation(if (explicitLambdaParameters) parameterType else null)
 
         // render only the last parameter because all other should be optional and will be omitted
-        val parameterPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderValueParameters(listOf(descriptor.valueParameters.last()), descriptor.hasSynthesizedParameterNames())
+        var parametersRenderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES
+        if (descriptor.valueParameters.size() > 1) {
+            parametersRenderer = parametersRenderer.withOptions {
+                valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by DescriptorRenderer.ValueParametersHandler.DEFAULT {
+                    override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
+                        builder.append("..., ")
+                    }
+                }
+            }
+        }
+        val parametersPresentation = parametersRenderer.renderValueParameters(listOf(descriptor.valueParameters.last()), descriptor.hasSynthesizedParameterNames())
 
         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
@@ -137,7 +147,7 @@ class LookupElementFactory(
 
                 presentation.clearTail()
                 presentation.appendTailText(" $lambdaPresentation ", false)
-                presentation.appendTailText(parameterPresentation, true)
+                presentation.appendTailText(parametersPresentation, true)
                 basicFactory.appendContainerAndReceiverInformation(descriptor) { presentation.appendTailText(it, true) }
             }
 
