@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
@@ -89,10 +90,13 @@ public fun LexicalScope.getDescriptorsFiltered(
 @deprecated("Use getOwnProperties instead")
 public fun LexicalScope.getLocalVariable(name: Name): VariableDescriptor? {
     processForMeAndParent {
-        if (it is MemberScopeToFileScopeAdapter) { // todo remove hack
+        if (it is LazyFileScope) {
+            return it.getLocalVariable(name) // todo: remove hack for repl interpreter
+        }
+        else if (it is MemberScopeToFileScopeAdapter) { // todo remove hack
             return it.memberScope.getLocalVariable(name)
         }
-        else if (it !is FileScope) { // todo check this
+        else if (it !is FileScope && it !is LexicalChainedScope) { // todo check this
             it.getDeclaredVariables(name, NoLookupLocation.UNSORTED).singleOrNull()?.let { return it }
         }
     }
