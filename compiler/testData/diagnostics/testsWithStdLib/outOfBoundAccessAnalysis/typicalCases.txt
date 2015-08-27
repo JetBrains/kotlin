@@ -1,6 +1,7 @@
 package
 
 internal fun append(): kotlin.IntArray
+internal fun closures(): kotlin.Unit
 internal fun informationLost(/*0*/ u: kotlin.Int): kotlin.Unit
 internal fun listAppend(): kotlin.Unit
 internal fun listAppend2(/*0*/ resetNeeded: kotlin.Boolean, /*1*/ notTwo: kotlin.Boolean, /*2*/ appendLineEnd: kotlin.Boolean): kotlin.Unit

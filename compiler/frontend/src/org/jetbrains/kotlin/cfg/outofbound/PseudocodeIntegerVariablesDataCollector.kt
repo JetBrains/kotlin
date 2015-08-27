@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.NondeterministicJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.UnconditionalJumpInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
@@ -39,12 +41,13 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.HashMap
 import java.util.HashSet
 
@@ -55,6 +58,7 @@ import java.util.HashSet
 public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
     private val loopsInfo: LoopsInfo = createLoopsInfoMap()
+    private val localDeclarationsInfo: LocalDeclarationsInfo = createLocalDeclarationsMap()
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -147,6 +151,54 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             extractBackEdgeInfoIfAny(instruction)
         }
         return LoopsInfo(updatedVariablesMap, backEdgesSet)
+    }
+
+    private data class LocalDeclarationsInfo (
+            // local funtions declared using `fun`
+            val localFunctions: HashMap<JetElement, HashSet<VariableDescriptor>>,
+            // local variables storing lambda expressions
+            val lambdaVariables: HashMap<VariableDescriptor, HashSet<VariableDescriptor>>,
+            // lambda expressions not stored anywhere (used to handle the situations, like `{ a = 1 }()`)
+            val freeLambdas: HashMap<PsiElement, HashSet<VariableDescriptor>>
+    )
+
+    private fun createLocalDeclarationsMap(): LocalDeclarationsInfo {
+        val localFunctions = HashMap<JetElement, HashSet<VariableDescriptor>>()
+        val freeLambdas = HashMap<PsiElement, HashSet<VariableDescriptor>>()
+        val lambdaVariables = HashMap<VariableDescriptor, HashSet<VariableDescriptor>>()
+        fun findAllUpdatedVariables(body: Pseudocode, isTop: Boolean): HashSet<VariableDescriptor> {
+            val variablesUpdatedInBody = HashSet<VariableDescriptor>()
+            body.instructionsIncludingDeadCode.forEach {
+                if (!isTop) {
+                    val updatedVariableDescriptor = extractTargetDescriptorIfUpdateInstruction(it)
+                    if (updatedVariableDescriptor != null) {
+                        variablesUpdatedInBody.add(updatedVariableDescriptor)
+                    }
+                }
+                if (it is LocalFunctionDeclarationInstruction) {
+                    val variablesUpdatedInLocalDeclaration = findAllUpdatedVariables(it.body, isTop = false)
+                    if (it.element is JetNamedFunction) {
+                        localFunctions[it.element] = variablesUpdatedInLocalDeclaration
+                    }
+                    else if (it.element is JetFunctionLiteral) {
+                        freeLambdas[it.element.parent] = variablesUpdatedInLocalDeclaration
+                    }
+                    if (!isTop) {
+                        variablesUpdatedInBody.addAll(variablesUpdatedInLocalDeclaration)
+                    }
+                }
+                else if (it is WriteValueInstruction && it.rValue.element is JetFunctionLiteralExpression) {
+                    val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext)
+                                             ?: throw IllegalStateException("Cannot extract descriptor for lambda holding variable")
+                    val updatedVariables = freeLambdas.remove(it.rValue.element)
+                                           ?: throw IllegalStateException("No info about updated variables while lambda assignment")
+                    lambdaVariables[variableDescriptor] = updatedVariables
+                }
+            }
+            return variablesUpdatedInBody
+        }
+        findAllUpdatedVariables(pseudocode, isTop = true)
+        return LocalDeclarationsInfo(localFunctions, lambdaVariables, freeLambdas)
     }
 
     private fun extractTargetDescriptorIfUpdateInstruction(instruction: Instruction): VariableDescriptor? =
@@ -825,16 +877,59 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             else null
 
+    private fun processArbitraryCall(instruction: CallInstruction, valuesData: ValuesData.Defined) {
+        processCallAsCollectionsConsumerIfNeeded(instruction, valuesData)
+        processVariablesCapturedInClosureIfAny(instruction, valuesData)
+    }
+
     // Checks all arguments of called function (or constructor call) and if the argument is known collection
     // variable, the size of this collection is set undefined (we do not know how the size of the collection can
     // change inside called function)
-    private fun processArbitraryCall(instruction: CallInstruction, valuesData: ValuesData.Defined) {
+    private fun processCallAsCollectionsConsumerIfNeeded(instruction: CallInstruction, valuesData: ValuesData.Defined) {
         instruction.inputValues.indices.forEach {
             val variableDescriptor = tryExtractInputValueDescriptor(instruction, it)
             variableDescriptor?.let {
                 if (valuesData.collectionsToSizes.contains(it)) {
                     valuesData.collectionsToSizes[it] = IntegerVariableValues.Undefined
                 }
+            }
+        }
+    }
+
+    // If instruction is locally declared function (or lambda) call, all variables captured in closure by this function
+    // and updated inside it will be set undefined
+    private fun processVariablesCapturedInClosureIfAny(instruction: CallInstruction, valuesData: ValuesData.Defined) {
+        val resolvedCall = instruction.resolvedCall
+        val capturedAndUpdatedVariables =
+            if (resolvedCall.candidateDescriptor.source != SourceElement.NO_SOURCE) {
+                // local function call
+                val calledFunctionPsiElement = resolvedCall.candidateDescriptor.source.getPsi()
+                calledFunctionPsiElement?.let { localDeclarationsInfo.localFunctions[it] }
+            }
+            else if (instruction.inputValues.size() > 0){
+                val firstArgumentSourceInstruction = instruction.inputValues[0].createdAt
+                if (firstArgumentSourceInstruction == null) null
+                else if (resolvedCall is VariableAsFunctionResolvedCall) {
+                    // call of variable holding lambda
+                    val calledVariableDescriptor =
+                            PseudocodeUtil.extractVariableDescriptorIfAny(firstArgumentSourceInstruction, false, bindingContext)
+                    calledVariableDescriptor?.let { localDeclarationsInfo.lambdaVariables[it] }
+                }
+                else if (firstArgumentSourceInstruction.element is JetFunctionLiteralExpression)
+                    // call of lambda not stored in variable (for ex, `{ a = 100 }()`)
+                    localDeclarationsInfo.freeLambdas[firstArgumentSourceInstruction.element]
+                else null
+            }
+            else null
+        capturedAndUpdatedVariables?.forEach {
+            if (valuesData.intVarsToValues.contains(it)) {
+                valuesData.intVarsToValues[it] = IntegerVariableValues.Undefined
+            }
+            else if (valuesData.boolVarsToValues.contains(it)) {
+                valuesData.boolVarsToValues[it] = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
+            }
+            else if (valuesData.collectionsToSizes.contains(it)) {
+                valuesData.collectionsToSizes[it] = IntegerVariableValues.Undefined
             }
         }
     }

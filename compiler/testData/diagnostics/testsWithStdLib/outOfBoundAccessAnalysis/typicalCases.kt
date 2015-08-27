@@ -75,3 +75,39 @@ fun processingInLoop() {
         println(arr[i])             // no alarm due to `break` above
     }
 }
+
+fun closures() {
+    val arr = arrayOf(1, 2)
+    var a = 100
+    <!OUT_OF_BOUND_ACCESS!>arr[a]<!>
+    { a = 999 }()
+    arr[a]              // no false alarm, `a` is undefined after lambda call
+
+    a = 100
+    fun updatesA1() { a = 999 }
+    <!OUT_OF_BOUND_ACCESS!>arr[a]<!>
+    updatesA1()
+    arr[a]              // no false alarm, `a` is undefined after call
+
+    a = 100
+    val updatesA2: () -> Unit = { a = 999 }
+    <!OUT_OF_BOUND_ACCESS!>arr[a]<!>
+    updatesA2()
+    arr[a]              // no false alarm
+
+    a = 100
+    val updatesA3 = {
+        val arr2 = arrayOf(1)
+        var c = 100
+        fun updatesA4() {
+            a = 999
+            c = 999
+        }
+        <!OUT_OF_BOUND_ACCESS!>arr2[c]<!>
+        updatesA4()
+        arr2[c]         // no false alarm
+    }
+    <!OUT_OF_BOUND_ACCESS!>arr[a]<!>
+    updatesA3()
+    arr[a]              // no false alarm
+}
