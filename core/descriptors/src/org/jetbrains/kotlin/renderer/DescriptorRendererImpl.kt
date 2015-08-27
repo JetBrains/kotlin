@@ -339,18 +339,22 @@ internal class DescriptorRendererImpl(
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
+        var hasTargetedAnnotations = false
 
         val annotationsBuilder = StringBuilder {
             for ((annotation, target) in annotated.getAnnotations().getAllAnnotations()) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
                 if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
+                    if (target != null && !hasTargetedAnnotations) {
+                        hasTargetedAnnotations = true
+                    }
                     append(renderAnnotation(annotation, target)).append(" ")
                 }
             }
         }
 
-        if (!needBrackets) {
+        if (!needBrackets || hasTargetedAnnotations) {
             builder.append(annotationsBuilder)
         }
         else if (annotationsBuilder.length() > 0) {
