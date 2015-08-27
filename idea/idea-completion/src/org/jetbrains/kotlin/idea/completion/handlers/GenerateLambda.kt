@@ -64,7 +64,8 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
     }
 }
 
-fun buildLambdaPresentation(lambdaType: JetType): String {
+fun lambdaPresentation(lambdaType: JetType?): String {
+    if (lambdaType == null) return "{...}"
     val parameterTypes = functionParameterTypes(lambdaType)
     val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
     return "{ $parametersPresentation -> ... }"

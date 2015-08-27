@@ -191,7 +191,7 @@ class BasicLookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
-            appendContainerAndReceiverInformation(descriptor) { tail, grayed -> element = element.appendTailText(tail, grayed) }
+            appendContainerAndReceiverInformation(descriptor) { element = element.appendTailText(it, true) }
         }
 
         if (descriptor is PropertyDescriptor) {
@@ -215,13 +215,13 @@ class BasicLookupElementFactory(
         return element.withIconFromLookupObject()
     }
 
-    public fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String, Boolean) -> Unit) {
+    public fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String) -> Unit) {
         val extensionReceiver = descriptor.original.extensionReceiverParameter
         when {
             descriptor is SyntheticJavaPropertyDescriptor -> {
                 var from = descriptor.getMethod.getName().asString() + "()"
                 descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
-                appendTailText(" (from $from)", true)
+                appendTailText(" (from $from)")
             }
 
         // no need to show them as extensions
@@ -230,7 +230,7 @@ class BasicLookupElementFactory(
 
             extensionReceiver != null -> {
                 val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
-                appendTailText(" for $receiverPresentation", true)
+                appendTailText(" for $receiverPresentation")
 
                 val container = descriptor.getContainingDeclaration()
                 val containerPresentation = if (container is ClassDescriptor)
@@ -240,7 +240,7 @@ class BasicLookupElementFactory(
                 else
                     null
                 if (containerPresentation != null) {
-                    appendTailText(" in $containerPresentation", true)
+                    appendTailText(" in $containerPresentation")
                 }
             }
 
@@ -249,7 +249,7 @@ class BasicLookupElementFactory(
                 if (container is PackageFragmentDescriptor) {
                     // we show container only for global functions and properties
                     //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
-                    appendTailText(" (${container.fqName})", true)
+                    appendTailText(" (${container.fqName})")
                 }
             }
         }

@@ -28,15 +28,17 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.buildLambdaPresentation
+import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -92,44 +94,55 @@ class LookupElementFactory(
     }
 
     private fun MutableCollection<LookupElement>.addSpecialFunctionCallElements(descriptor: FunctionDescriptor, useReceiverTypes: Boolean) {
-        val singleParameter = descriptor.valueParameters.singleOrNull() ?: return
-        val parameterType = singleParameter.type
+        // check that all parameters except for the last one are optional
+        val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
+        if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
+        val parameterType = lastParameter.type
         if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+            val isSingleParameter = descriptor.valueParameters.size() == 1
+
             val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-            if (functionParameterCount > 1) {
-                add(createFunctionCallElementWithExplicitLambdaParameters(descriptor, parameterType, useReceiverTypes))
+            // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
+            if (!isSingleParameter || functionParameterCount > 1) {
+                add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))
             }
 
-            //TODO: also ::function? at least for local functions
-            //TODO: order for them
-            val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
-            for (variable in functionTypeContextVariables) {
-                val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(fuzzyParameterType)
-                if (substitutor != null) {
-                    val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
-                    add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.asString(), useReceiverTypes))
+            if (isSingleParameter) {
+                //TODO: also ::function? at least for local functions
+                //TODO: order for them
+                val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
+                for (variable in functionTypeContextVariables) {
+                    val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(fuzzyParameterType)
+                    if (substitutor != null) {
+                        val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
+                        add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.asString(), useReceiverTypes))
+                    }
                 }
             }
         }
     }
 
-    private fun createFunctionCallElementWithExplicitLambdaParameters(descriptor: FunctionDescriptor, parameterType: JetType, useReceiverTypes: Boolean): LookupElement {
+    private fun createFunctionCallElementWithLambda(descriptor: FunctionDescriptor, parameterType: JetType, explicitLambdaParameters: Boolean, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
-        val lambdaInfo = GenerateLambdaInfo(parameterType, true)
+        val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
+        val lambdaInfo = GenerateLambdaInfo(parameterType, explicitLambdaParameters)
+        val lambdaPresentation = lambdaPresentation(if (explicitLambdaParameters) parameterType else null)
+
+        // render only the last parameter because all other should be optional and will be omitted
+        val parameterPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderValueParameters(listOf(descriptor.valueParameters.last()), descriptor.hasSynthesizedParameterNames())
 
         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
 
-                val tails = presentation.getTailFragments()
                 presentation.clearTail()
-                presentation.appendTailText(" " + buildLambdaPresentation(parameterType) + " ", false)
-                tails.forEach { presentation.appendTailText(it.text, true) }
+                presentation.appendTailText(" $lambdaPresentation ", false)
+                presentation.appendTailText(parameterPresentation, true)
+                basicFactory.appendContainerAndReceiverInformation(descriptor) { presentation.appendTailText(it, true) }
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler(inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
@@ -168,7 +181,7 @@ class LookupElementFactory(
 
             presentation.clearTail()
             presentation.appendTailText("($argumentText)", false)
-            basicFactory.appendContainerAndReceiverInformation(descriptor) { tail, grayed -> presentation.appendTailText(tail, grayed) }
+            basicFactory.appendContainerAndReceiverInformation(descriptor) { presentation.appendTailText(it, true) }
         }
 
         override fun handleInsert(context: InsertionContext) {

@@ -548,7 +548,7 @@ internal class DescriptorRendererImpl(
 
         renderName(function, builder)
 
-        renderValueParameters(function, builder)
+        renderValueParameters(function.valueParameters, function.hasSynthesizedParameterNames(), builder)
 
         renderReceiverAfterName(function, builder)
 
@@ -594,7 +594,7 @@ internal class DescriptorRendererImpl(
             renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false)
         }
 
-        renderValueParameters(constructor, builder)
+        renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)
 
         if (secondaryConstructorsAsPrimary) {
             renderWhereSuffix(constructor.getTypeParameters(), builder)
@@ -618,25 +618,26 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String {
-        return StringBuilder { renderValueParameters(functionDescriptor, this) }.toString()
+    override fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String {
+        return StringBuilder { renderValueParameters(parameters, synthesizedParameterNames, this) }.toString()
     }
 
-    private fun renderValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
-        val includeNames = shouldRenderParameterNames(function)
-        valueParametersHandler.appendBeforeValueParameters(function, builder)
-        for (parameter in function.getValueParameters()) {
-            valueParametersHandler.appendBeforeValueParameter(parameter, builder)
+    private fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean, builder: StringBuilder) {
+        val includeNames = shouldRenderParameterNames(synthesizedParameterNames)
+        val parameterCount = parameters.size()
+        valueParametersHandler.appendBeforeValueParameters(parameterCount, builder)
+        for ((index, parameter) in parameters.withIndex()) {
+            valueParametersHandler.appendBeforeValueParameter(parameter, index, parameterCount, builder)
             renderValueParameter(parameter, includeNames, builder, false)
-            valueParametersHandler.appendAfterValueParameter(parameter, builder)
+            valueParametersHandler.appendAfterValueParameter(parameter, index, parameterCount, builder)
         }
-        valueParametersHandler.appendAfterValueParameters(function, builder)
+        valueParametersHandler.appendAfterValueParameters(parameterCount, builder)
     }
 
-    private fun shouldRenderParameterNames(function: FunctionDescriptor): Boolean {
+    private fun shouldRenderParameterNames(synthesizedParameterNames: Boolean): Boolean {
         when (parameterNameRenderingPolicy) {
             ParameterNameRenderingPolicy.ALL -> return true
-            ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !function.hasSynthesizedParameterNames()
+            ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !synthesizedParameterNames
             ParameterNameRenderingPolicy.NONE -> return false
         }
     }
@@ -752,7 +753,7 @@ internal class DescriptorRendererImpl(
                 renderAnnotations(primaryConstructor, builder, true)
                 renderVisibility(primaryConstructor.getVisibility(), builder)
                 builder.append("constructor")
-                renderValueParameters(primaryConstructor, builder)
+                renderValueParameters(primaryConstructor.valueParameters, primaryConstructor.hasSynthesizedParameterNames(), builder)
             }
         }
 

@@ -47,34 +47,36 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     override fun render(declarationDescriptor: DeclarationDescriptor): String
 
+    public fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
+
     public fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
+            = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
     public fun renderName(name: Name): String
 
     public fun renderFqName(fqName: FqNameBase): String
 
     public interface ValueParametersHandler {
-        public fun appendBeforeValueParameters(function: FunctionDescriptor, builder: StringBuilder)
-        public fun appendAfterValueParameters(function: FunctionDescriptor, builder: StringBuilder)
+        public fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)
+        public fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder)
 
-        public fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder)
-        public fun appendAfterValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder)
+        public fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
+        public fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
 
         public object DEFAULT : ValueParametersHandler {
-            override fun appendBeforeValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
+            override fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder) {
                 builder.append("(")
             }
 
-            override fun appendAfterValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
+            override fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder) {
                 builder.append(")")
             }
 
-            override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder) {
+            override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
             }
 
-            override fun appendAfterValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder) {
-                val function = parameter.getContainingDeclaration() as FunctionDescriptor
-                if (parameter.getIndex() != function.getValueParameters().size() - 1) {
+            override fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
+                if (parameterIndex != parameterCount - 1) {
                     builder.append(", ")
                 }
             }

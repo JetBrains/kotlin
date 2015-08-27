@@ -1364,6 +1364,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/HigherOrderFunction2.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("OptionalParameters.kt")
+            public void testOptionalParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/OptionalParameters.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/lambdaSignature")

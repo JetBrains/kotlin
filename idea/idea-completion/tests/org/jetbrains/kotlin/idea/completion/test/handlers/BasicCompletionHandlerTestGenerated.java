@@ -274,6 +274,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("OptionalParameters1.kt")
+        public void testOptionalParameters1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/OptionalParameters1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OptionalParameters2.kt")
+        public void testOptionalParameters2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/OptionalParameters2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ParameterTypeIsDerivedFromFunction.kt")
         public void testParameterTypeIsDerivedFromFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ParameterTypeIsDerivedFromFunction.kt");

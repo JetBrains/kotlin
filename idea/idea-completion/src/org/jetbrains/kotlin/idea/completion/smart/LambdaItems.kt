@@ -22,10 +22,10 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.fuzzyType
-import org.jetbrains.kotlin.idea.completion.handlers.buildLambdaPresentation
 import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
+import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
-import java.util.ArrayList
+import java.util.*
 
 object LambdaItems {
     public fun collect(functionExpectedInfos: Collection<ExpectedInfo>): Collection<LookupElement> {
@@ -47,7 +47,7 @@ object LambdaItems {
         val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() }
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
-            val lookupElement = LookupElementBuilder.create("{...}")
+            val lookupElement = LookupElementBuilder.create(lambdaPresentation(null))
                     .withInsertHandler(ArtificialElementInsertHandler("{ ", " }", false))
                     .suppressAutoInsertion()
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA_NO_PARAMS)
@@ -57,7 +57,7 @@ object LambdaItems {
 
         if (singleSignatureLength != 0) {
             for (functionType in distinctTypes) {
-                val lookupString = buildLambdaPresentation(functionType)
+                val lookupString = lambdaPresentation(functionType)
                 val lookupElement = LookupElementBuilder.create(lookupString)
                         .withInsertHandler({ context, lookupElement ->
                                                val offset = context.getStartOffset()
