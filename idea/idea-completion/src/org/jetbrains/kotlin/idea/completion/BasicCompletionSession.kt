@@ -158,6 +158,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         val owner = list.parent
         return when (owner) {
             is JetCatchClause, is JetPropertyAccessor, is JetFunctionLiteral -> false
+            is JetNamedFunction -> owner.nameIdentifier != null
             is JetPrimaryConstructor -> !owner.getContainingClassOrObject().isAnnotation()
             else -> true
         }
