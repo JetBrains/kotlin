@@ -89,15 +89,15 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
-    @TestMetadata("defaultObject/defaultObject.test")
-    public void testDefaultObject_DefaultObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObject/defaultObject.test");
+    @TestMetadata("companionObject/companionObject.test")
+    public void testCompanionObject_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObject/companionObject.test");
         doTest(fileName);
     }
 
-    @TestMetadata("defaultObjectWithDefaultName/defaultObject.test")
-    public void testDefaultObjectWithDefaultName_DefaultObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObjectWithDefaultName/defaultObject.test");
+    @TestMetadata("companionObjectWithDefaultName/companionObject.test")
+    public void testCompanionObjectWithDefaultName_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObjectWithDefaultName/companionObject.test");
         doTest(fileName);
     }
 
