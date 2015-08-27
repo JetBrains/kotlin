@@ -32,9 +32,15 @@ import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
@@ -107,12 +113,31 @@ public final class DecompiledNavigationUtils {
     }
 
     //TODO: navigate to inner classes
+    //TODO: should we construct proper SourceElement's for decompiled parts / facades?
     @Nullable
     private static ClassId getContainerClassId(@NotNull DeclarationDescriptor referencedDescriptor) {
+        DeserializedCallableMemberDescriptor deserializedCallableContainer =
+                DescriptorUtils.getParentOfType(referencedDescriptor, DeserializedCallableMemberDescriptor.class, true);
+        if (deserializedCallableContainer != null) {
+            return getContainerClassId(deserializedCallableContainer);
+        }
+
         ClassOrPackageFragmentDescriptor
                 containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
         if (containerDescriptor instanceof PackageFragmentDescriptor) {
-            return getPackageClassId(((PackageFragmentDescriptor) containerDescriptor).getFqName());
+            FqName packageFQN = ((PackageFragmentDescriptor) containerDescriptor).getFqName();
+
+            if (referencedDescriptor instanceof DeserializedCallableMemberDescriptor) {
+                DeserializedCallableMemberDescriptor deserializedDescriptor = (DeserializedCallableMemberDescriptor) referencedDescriptor;
+                ProtoBuf.Callable proto = deserializedDescriptor.getProto();
+                NameResolver nameResolver = deserializedDescriptor.getNameResolver();
+                if (proto.hasExtension(JvmProtoBuf.implClassName)) {
+                    Name implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName));
+                    return new ClassId(packageFQN, implClassName);
+                }
+            }
+
+            return getPackageClassId(packageFQN);
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             if (containerDescriptor.getContainingDeclaration() instanceof ClassDescriptor
