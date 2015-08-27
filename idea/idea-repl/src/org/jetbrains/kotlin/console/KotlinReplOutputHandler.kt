@@ -53,10 +53,11 @@ public class KotlinReplOutputHandler(
         val output = dBuilder.parse(strToSource(text))
         val root = output.firstChild as Element
         val outputType = root.getAttribute("type")
-        val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS).trim()
+        val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
 
         when (outputType) {
-            "INITIAL_PROMPT"  -> super.notifyTextAvailable("$content\n", key)
+            "INITIAL_PROMPT"  -> outputHighlighter.printInitialPrompt(content)
+            "HELP_PROMPT"     -> outputHighlighter.printHelp(content)
             "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
             "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
             "REPL_INCOMPLETE" -> outputHighlighter.changeIndicatorOnIncomplete()

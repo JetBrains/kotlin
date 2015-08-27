@@ -17,12 +17,18 @@
 package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.icons.AllIcons
+import org.jetbrains.kotlin.idea.JetIcons
 import javax.swing.Icon
 
 public object ReplIcons {
     public val HISTORY_INDICATOR: Icon = AllIcons.General.MessageHistory
-    public val EDITOR_INDICATOR: Icon = AllIcons.Debugger.CommandLine
+    public val EDITOR_INDICATOR: Icon = JetIcons.LAUNCH
     public val INCOMPLETE_INDICATOR: Icon = AllIcons.Nodes.Desktop
+    public val COMMAND_MARKER: Icon = AllIcons.General.Run
+
+    // command result icons
+    public val SYSTEM_HELP: Icon = AllIcons.Actions.Menu_help
     public val RESULT: Icon = AllIcons.Vcs.Equal
-    public val ERROR: Icon = AllIcons.General.Error
+    public val COMPILER_ERROR: Icon = AllIcons.General.Error
+    public val RUNTIME_EXCEPTION: Icon = AllIcons.General.BalloonWarning
 }

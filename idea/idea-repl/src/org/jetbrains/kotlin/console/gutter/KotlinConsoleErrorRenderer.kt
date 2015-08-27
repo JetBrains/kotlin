@@ -32,7 +32,7 @@ public class KotlinConsoleErrorRenderer(private val messages: List<SeverityDetai
         return "<html>${htmlTooltips.join("<hr size=1 noshade>")}</html>"
     }
 
-    override fun getIcon() = ReplIcons.ERROR
+    override fun getIcon() = ReplIcons.COMPILER_ERROR
     override fun hashCode() = System.identityHashCode(this)
     override fun equals(other: Any?) = this === other
 }

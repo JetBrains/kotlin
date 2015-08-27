@@ -27,6 +27,12 @@ public object ReplColors {
     public val HISTORY_GUTTER_COLOR: JBColor = JBColor(Gray.xF2, Gray.x41)
     public val EDITOR_GUTTER_COLOR: JBColor = JBColor(Gray.xCF, Gray.x31)
     public val PLACEHOLDER_COLOR: JBColor = JBColor.LIGHT_GRAY
+
+    public val INITIAL_PROMPT_CONTENT_TYPE: ConsoleViewContentType =
+            ConsoleViewContentType(
+                    "KOTLIN_CONSOLE_INITIAL_PROMPT",
+                    TextAttributes() apply { fontType = Font.BOLD }
+            )
     public val USER_OUTPUT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_USER_OUTPUT",

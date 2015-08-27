@@ -218,11 +218,12 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            replWriter.println("Available commands:");
-            replWriter.println(":help                   show this help");
-            replWriter.println(":quit                   exit the interpreter");
-            replWriter.println(":dump bytecode          dump classes to terminal");
-            replWriter.println(":load <file>            load script from specified file");
+            replWriter.printlnHelp("Available commands:\n" +
+                                   ":help                   show this help\n" +
+                                   ":quit                   exit the interpreter\n" +
+                                   ":dump bytecode          dump classes to terminal\n" +
+                                   ":load <file>            load script from specified file"
+            );
             return true;
         }
         else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
@@ -239,8 +240,9 @@ public class ReplFromTerminal {
             return true;
         }
         else {
-            replWriter.println("Unknown command");
-            replWriter.println("Type :help for help");
+            replWriter.printlnHelp("Unknown command\n" +
+                                   "Type :help for help"
+            );
             return true;
         }
     }

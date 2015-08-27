@@ -25,6 +25,7 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
 
     private enum class EscapeType {
         INITIAL_PROMPT,
+        HELP_PROMPT,
         USER_OUTPUT,
         REPL_RESULT,
         REPL_INCOMPLETE,
@@ -57,6 +58,7 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
     }
 
     fun printlnInit(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
+    fun printlnHelp(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
     fun printlnResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
     fun printlnIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
     fun printlnCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)

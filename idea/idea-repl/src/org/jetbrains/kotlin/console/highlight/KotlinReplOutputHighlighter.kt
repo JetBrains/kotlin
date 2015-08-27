@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.console.highlight
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.command.WriteCommandAction
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.console.gutter.KotlinConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
+import javax.swing.Icon
 
 enum class ReplOutputType {
     USER_OUTPUT,
@@ -48,24 +50,42 @@ public class KotlinReplOutputHighlighter(
         private val historyManager: KotlinConsoleHistoryManager
 ) {
     private val project = runner.project
-    private val consoleView = runner.consoleView
+    private val consoleView = runner.consoleView as LanguageConsoleImpl
     private val historyEditor = consoleView.historyViewer
     private val historyDocument = historyEditor.document
     private val historyMarkup = historyEditor.markupModel
 
     private fun resetConsoleEditorIndicator() = runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.EDITOR_INDICATOR)
 
-    private fun insertText(text: String): Pair<Int, Int> {
+    private fun textOffsets(text: String): Pair<Int, Int> {
+        consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
         val oldLen = historyDocument.textLength
         val newLen = oldLen + text.length()
 
-        historyDocument.insertString(oldLen, text)
-        EditorUtil.scrollToTheEnd(historyEditor)
-
-        return oldLen to newLen
+        return Pair(oldLen, newLen)
     }
 
-    fun printUserOutput(command: String) {
+    private fun printOutput(output: String, contentType: ConsoleViewContentType, icon: Icon) {
+        val (startOffset, endOffset) = textOffsets(output)
+
+        consoleView.print(output, contentType)
+        consoleView.flushDeferredText()
+
+        historyMarkup.addRangeHighlighter(
+                startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
+        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(icon) }
+    }
+
+    fun printInitialPrompt(command: String) = consoleView.print(command, ReplColors.INITIAL_PROMPT_CONTENT_TYPE)
+
+    fun printHelp(help: String) = WriteCommandAction.runWriteCommandAction(project) {
+        resetConsoleEditorIndicator()
+        historyManager.lastCommandType = ReplOutputType.USER_OUTPUT
+
+        printOutput(help, ConsoleViewContentType.SYSTEM_OUTPUT, ReplIcons.SYSTEM_HELP)
+    }
+
+    fun printUserOutput(command: String) = WriteCommandAction.runWriteCommandAction(project) {
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.USER_OUTPUT
         consoleView.print(command, ReplColors.USER_OUTPUT_CONTENT_TYPE)
@@ -75,15 +95,21 @@ public class KotlinReplOutputHighlighter(
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.RESULT
 
-        val (startOffset, endOffset) = insertText(result)
-
-        val highlighter = historyMarkup.addRangeHighlighter(startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE)
-        highlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(ReplIcons.RESULT)
+        printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)
     }
 
-    fun changeIndicatorOnIncomplete() {
+    fun changeIndicatorOnIncomplete() = WriteCommandAction.runWriteCommandAction(project) {
         historyManager.lastCommandType = ReplOutputType.INCOMPLETE
         runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.INCOMPLETE_INDICATOR)
+
+        // remove line breaks after incomplete part
+        val historyText = historyDocument.text
+        val historyLength = historyText.length()
+        val trimmedHistoryText = historyText.trim()
+        val whitespaceCharsToDelete = historyLength - trimmedHistoryText.length()
+
+        historyDocument.deleteString(historyLength - whitespaceCharsToDelete, historyLength)
+        EditorUtil.scrollToTheEnd(historyEditor)
     }
 
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
@@ -91,6 +117,11 @@ public class KotlinReplOutputHighlighter(
         historyManager.lastCommandType = ReplOutputType.ERROR
 
         val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength
+        val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
+        val historyCommandRunIndicator = historyMarkup.allHighlighters filter {
+            historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
+        } first { true }
+
         val highlighterAndMessagesByLine = compilerMessages.filter {
             it.severity == Severity.ERROR || it.severity == Severity.WARNING
         }.groupBy { message ->
@@ -110,14 +141,18 @@ public class KotlinReplOutputHighlighter(
         }
 
         for ((highlighter, messages) in highlighterAndMessagesByLine) {
-            highlighter.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
+            if (historyDocument.getLineNumber(highlighter.startOffset) == lastCommandStartLine)
+                historyCommandRunIndicator.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
+            else
+                highlighter.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
         }
     }
 
-    fun printRuntimeError(errorText: String) {
+    fun printRuntimeError(errorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.ERROR
-        consoleView.print("\t$errorText", ConsoleViewContentType.ERROR_OUTPUT)
+
+        printOutput(errorText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
     }
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {

@@ -16,60 +16,58 @@
 
 package org.jetbrains.kotlin.console.highlight
 
-import com.intellij.execution.impl.ConsoleViewUtil
+import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
-import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
+import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 
 public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) {
-    fun addAndHighlightNewCommand(command: String) {
-        val historyEditor = runner.consoleView.historyViewer
+    private val consoleView: LanguageConsoleImpl by lazy { runner.consoleView as LanguageConsoleImpl }
 
-        addLineBreakIfNeeded(historyEditor)
+    fun printNewCommandInHistory(trimmedCommandText: String, lastCommandType: ReplOutputType) {
+        val historyEditor = consoleView.historyViewer
 
-        val historyDocument = historyEditor.document
-        val oldHistoryLength = historyDocument.textLength
-        historyDocument.insertString(oldHistoryLength, command)
+        addLineBreakIfNeeded(historyEditor, lastCommandType)
+
+        val consoleEditor = consoleView.consoleEditor
+        val consoleDocument = consoleEditor.document
+        consoleDocument.setText(trimmedCommandText)
+
+        val startOffset = historyEditor.document.textLength
+        val endOffset = startOffset + trimmedCommandText.length()
+
+        LanguageConsoleImpl.printWithHighlighting(consoleView, consoleEditor, TextRange(0, consoleDocument.textLength))
+        consoleView.flushDeferredText()
         EditorUtil.scrollToTheEnd(historyEditor)
+        consoleDocument.setText("")
 
-        val inputEditor = runner.consoleView.consoleEditor
-        val lexerHighlighter = inputEditor.highlighter as? LexerEditorHighlighter ?: return
-        val syntaxHighlighter = lexerHighlighter.syntaxHighlighter ?: return
-
-        val lexer = syntaxHighlighter.highlightingLexer
-        lexer.start(command, 0, command.length(), 0)
-
-        val historyMarkupModel = historyEditor.markupModel
-
-        while (true) {
-            val tokenType = lexer.tokenType ?: break
-            val tokenStartOffset = oldHistoryLength + lexer.tokenStart
-            val tokenEndOffset = oldHistoryLength + lexer.tokenEnd
-
-            val contentType = ConsoleViewUtil.getContentTypeForToken(tokenType, syntaxHighlighter)
-            historyMarkupModel.addRangeHighlighter(
-                    tokenStartOffset, tokenEndOffset, HighlighterLayer.LAST,
-                    contentType.attributes, HighlighterTargetArea.EXACT_RANGE
-            )
-
-            lexer.advance()
+        historyEditor.markupModel let {
+            it.addRangeHighlighter(startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE)
+        } apply {
+            gutterIconRenderer = KotlinConsoleIndicatorRenderer(ReplIcons.COMMAND_MARKER)
         }
     }
 
-    private fun addLineBreakIfNeeded(historyEditor: EditorEx) {
+    private fun addLineBreakIfNeeded(historyEditor: EditorEx, lastCommandType: ReplOutputType) {
         val historyDocument = historyEditor.document
         val historyText = historyDocument.text
+        val textLength = historyText.length()
 
         if (!historyText.endsWith('\n')) {
-            val textLength = historyText.length()
             historyDocument.insertString(textLength, "\n")
 
             if (textLength == 0) // this will work first time after 'Clear all' action
                 runner.addGutterIndicator(historyEditor, ReplIcons.HISTORY_INDICATOR)
+            else if (lastCommandType != ReplOutputType.INCOMPLETE)
+                historyDocument.insertString(textLength + 1, "\n")
+
+        } else if (!historyText.endsWith("\n\n")) {
+            historyDocument.insertString(textLength, "\n")
         }
     }
 }

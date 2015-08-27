@@ -36,11 +36,8 @@ public class KotlinConsoleExecutor(
         val inputText = document.text.trim()
 
         if (inputText.isNotEmpty()) {
-            val command = "$inputText\n"
-            document.setText("")
-
-            historyHighlighter.addAndHighlightNewCommand(command)
-            submitCommand(command)
+            historyHighlighter.printNewCommandInHistory(inputText, historyManager.lastCommandType)
+            submitCommand("$inputText\n")
         }
     }
 
@@ -57,6 +54,7 @@ public class KotlinConsoleExecutor(
                              StringUtil.replace(command.trim(), SOURCE_CHARS, XML_REPLACEMENTS)
                      )}" +
                      "</input>"
+
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
         processInputOS.flush()

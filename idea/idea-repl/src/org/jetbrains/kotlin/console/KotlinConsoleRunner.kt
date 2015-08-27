@@ -148,6 +148,7 @@ public class KotlinConsoleRunner(
         configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
 
         historyEditor.settings.isUseSoftWraps = true
+        historyEditor.settings.additionalLinesCount = 0
 
         consoleEditor.settings.isCaretRowShown = true
         consoleEditor.settings.additionalLinesCount = 2
