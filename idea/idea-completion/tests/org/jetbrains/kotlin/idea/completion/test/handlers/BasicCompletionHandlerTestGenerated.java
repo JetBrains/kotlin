@@ -481,6 +481,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("ReplaceByTab1.kt")
+        public void testReplaceByTab1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/ReplaceByTab1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReplaceByTab2.kt")
+        public void testReplaceByTab2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/ReplaceByTab2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/Simple.kt");

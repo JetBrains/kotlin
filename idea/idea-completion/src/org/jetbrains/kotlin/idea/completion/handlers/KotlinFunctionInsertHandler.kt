@@ -100,7 +100,7 @@ class KotlinFunctionInsertHandler(
         val openingBracket = if (insertLambda) '{' else '('
         val closingBracket = if (insertLambda) '}' else ')'
 
-        var insertTypeArguments = inputTypeArguments && (completionChar == '\n' || completionChar == '\r')
+        var insertTypeArguments = inputTypeArguments && (completionChar == '\n' || completionChar == '\r' || completionChar == Lookup.REPLACE_SELECT_CHAR)
 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
             val offset1 = chars.skipSpaces(offset)
