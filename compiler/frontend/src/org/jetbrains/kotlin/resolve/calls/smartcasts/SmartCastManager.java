@@ -153,31 +153,7 @@ public class SmartCastManager {
         return intersection;
     }
 
-    // Returns false when we need smart cast but cannot do it, otherwise true
-    public boolean recordSmartCastIfNecessary(
-            @NotNull ReceiverValue receiver,
-            @NotNull JetType receiverParameterType,
-            @NotNull ResolutionContext context,
-            boolean safeAccess
-    ) {
-        if (!(receiver instanceof ExpressionReceiver)) return true;
-
-        receiverParameterType = safeAccess ? TypeUtils.makeNullable(receiverParameterType) : receiverParameterType;
-        if (ArgumentTypeResolver.isSubtypeOfForArgumentType(receiver.getType(), receiverParameterType)) {
-            return true;
-        }
-
-        Collection<JetType> smartCastTypesExcludingReceiver = getSmartCastVariantsExcludingReceiver(context, receiver);
-        JetType smartCastSubType = getSmartCastSubType(receiverParameterType, smartCastTypesExcludingReceiver);
-        if (smartCastSubType == null) return true;
-
-        JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
-
-        return recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isPredictable(), true);
-    }
-
-    public boolean recordCastOrError(
+    private static void recordCastOrError(
             @NotNull JetExpression expression,
             @NotNull JetType type,
             @NotNull BindingTrace trace,
@@ -195,7 +171,6 @@ public class SmartCastManager {
         else {
             trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.getText()));
         }
-        return canBeCast;
     }
 
     @Nullable
@@ -245,47 +220,6 @@ public class SmartCastManager {
             return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, recordExpressionType);
         }
 
-        return null;
-    }
-
-    public boolean recordSmartCastToNotNullIfPossible(
-            @NotNull ReceiverValue receiver,
-            @NotNull ResolutionContext context
-    ) {
-        if (!TypeUtils.isNullableType(receiver.getType())) return true;
-
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                receiver,
-                context.trace.getBindingContext(),
-                context.scope.getContainingDeclaration()
-        );
-
-        if (dataFlowValue == null) return false;
-
-        if (!context.dataFlowInfo.getNullability(dataFlowValue).canBeNull()) {
-            JetExpression receiverExpression = getReceiverExpression(receiver);
-
-            // report smart cast only on predictable expressions that were not reported before
-            if (receiverExpression != null
-                && dataFlowValue.isPredictable()
-                && context.trace.getBindingContext().get(SMARTCAST, receiverExpression) == null) {
-                recordCastOrError(
-                        receiverExpression, receiver.getType(), context.trace,
-                        /* canBeCast = */ true, /* recordExpressionType = */ false
-                );
-            }
-
-            return true;
-        }
-
-        return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
-    }
-
-    @Nullable
-    private static JetExpression getReceiverExpression(@NotNull ReceiverValue value) {
-        if (value instanceof ExpressionReceiver) {
-            return ((ExpressionReceiver) value).getExpression();
-        }
         return null;
     }
 }
