@@ -33,11 +33,13 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetProperty
@@ -56,35 +58,32 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
         val namedUnwrappedElement = element?.namedUnwrappedElement
-        if (namedUnwrappedElement is JetParameter) {
-            return namedUnwrappedElement
-        }
 
-        val jetProperty = namedUnwrappedElement as? JetProperty
-        if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+        val callableDeclaration = namedUnwrappedElement as? JetCallableDeclaration
+        if (callableDeclaration == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
 
-        val deepestSuperProperty = findDeepestOverriddenProperty(jetProperty)
-        if (deepestSuperProperty == null || deepestSuperProperty == jetProperty) {
-            return jetProperty
+        val deepestSuperDeclaration = findDeepestOverriddenDeclaration(callableDeclaration)
+        if (deepestSuperDeclaration == null || deepestSuperDeclaration == callableDeclaration) {
+            return callableDeclaration
         }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            return deepestSuperProperty
+            return deepestSuperDeclaration
         }
 
         val containsText: String? =
-                deepestSuperProperty.getFqName()?.parent()?.asString() ?:
-                (deepestSuperProperty.getParent() as? JetClassOrObject)?.getName()
+                deepestSuperDeclaration.getFqName()?.parent()?.asString() ?:
+                (deepestSuperDeclaration.getParent() as? JetClassOrObject)?.getName()
 
         val result = Messages.showYesNoCancelDialog(
-                deepestSuperProperty.getProject(),
+                deepestSuperDeclaration.getProject(),
                 if (containsText != null) "Do you want to rename base property from \n$containsText" else "Do you want to rename base property",
                 "Rename warning",
                 Messages.getQuestionIcon())
 
         return when (result) {
-            Messages.YES -> deepestSuperProperty
-            Messages.NO -> jetProperty
+            Messages.YES -> deepestSuperDeclaration
+            Messages.NO -> callableDeclaration
             else -> /* Cancel rename */ null
         }
     }
@@ -177,10 +176,14 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         }
     }
 
-    private fun findDeepestOverriddenProperty(jetProperty: JetProperty): JetProperty? {
-        if (jetProperty.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
-            val bindingContext = jetProperty.analyze()
-            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, jetProperty]
+    private fun findDeepestOverriddenDeclaration(declaration: JetCallableDeclaration): JetCallableDeclaration? {
+        if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
+            val bindingContext = declaration.analyze()
+            var descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            if (descriptor is ValueParameterDescriptor) {
+                descriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+                    ?: return declaration
+            }
 
             if (descriptor != null) {
                 assert(descriptor is PropertyDescriptor, "Property descriptor is expected")
@@ -191,7 +194,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                 val deepest = supers.first()
                 if (deepest != descriptor) {
                     val superPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(deepest)
-                    return superPsiElement as? JetProperty
+                    return superPsiElement as? JetCallableDeclaration
                 }
             }
         }

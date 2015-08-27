@@ -151,6 +151,12 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             return null
         }
 
+        private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: JetParameter) {
+            val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
+            searchNamedElement(queryParameters, propertyMethods.getter)
+            searchNamedElement(queryParameters, propertyMethods.setter)
+        }
+
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
             when (element) {
                 is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
@@ -167,17 +173,18 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         searchNamedElement(queryParameters, staticFromCompanionObject)
                     }
                 }
+
                 is JetProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    searchNamedElement(queryParameters, propertyMethods.getGetter())
-                    searchNamedElement(queryParameters, propertyMethods.getSetter())
+                    searchNamedElement(queryParameters, propertyMethods.getter)
+                    searchNamedElement(queryParameters, propertyMethods.setter)
+                    searchNamedElement(queryParameters, propertyMethods.backingField)
                 }
+
                 is JetParameter -> {
-                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    searchNamedElement(queryParameters, propertyMethods.getGetter())
-                    searchNamedElement(queryParameters, propertyMethods.getSetter())
-                    searchNamedElement(queryParameters, propertyMethods.getBackingField())
+                    searchPropertyMethods(queryParameters, element)
                 }
+
                 is KotlinLightMethod -> {
                     val declaration = element.getOrigin()
                     if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
@@ -193,6 +200,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         }
                     }
                 }
+
                 is KotlinLightParameter -> {
                     val origin = element.getOrigin() ?: return
                     val componentFunctionDescriptor = origin.dataClassComponentFunction()
@@ -206,9 +214,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         }
                     }
 
-                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(origin) }
-                    searchNamedElement(queryParameters, propertyMethods.getGetter())
-                    searchNamedElement(queryParameters, propertyMethods.getSetter())
+                    searchPropertyMethods(queryParameters, origin)
                 }
             }
         }
