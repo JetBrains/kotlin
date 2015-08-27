@@ -118,8 +118,7 @@ public class DataFlowValueFactory {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
             JetType type = receiverValue.getType();
-            boolean nullable = type.isMarkedNullable() || TypeUtils.hasNullableSuperType(type);
-            return new DataFlowValue(receiverValue, type, nullable, false, Nullability.NOT_NULL);
+            return new DataFlowValue(receiverValue, type, true, false, getImmanentNullability(type));
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
             return createDataFlowValue((ThisReceiver) receiverValue);
