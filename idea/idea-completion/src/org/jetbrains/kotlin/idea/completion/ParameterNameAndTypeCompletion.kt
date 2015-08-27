@@ -30,11 +30,11 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.NameUtil
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetExpression
@@ -44,8 +44,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.JetType
-import java.util.HashSet
-import java.util.LinkedHashMap
+import java.util.*
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
@@ -81,7 +80,7 @@ class ParameterNameAndTypeCompletion(
 
             for (classifier in classifiers) {
                 if (visibilityFilter(classifier)) {
-                    addSuggestionsForClassifier(classifier, userPrefixes[i], prefixMatcher)
+                    addSuggestionsForClassifier(classifier, userPrefixes[i], prefixMatcher, notImported = false)
                 }
             }
 
@@ -93,8 +92,8 @@ class ParameterNameAndTypeCompletion(
         for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
             AllClassesCompletion(parameters, indicesHelper, prefixMatcher.toClassifierNamePrefixMatcher(), { !it.isSingleton() })
                     .collect(
-                            { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher) },
-                            { addSuggestionsForJavaClass(it, userPrefixes[i], prefixMatcher) }
+                            { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher, notImported = true) },
+                            { addSuggestionsForJavaClass(it, userPrefixes[i], prefixMatcher, notImported = true) }
                     )
 
             collector.flushToResultSet()
@@ -130,15 +129,15 @@ class ParameterNameAndTypeCompletion(
         }
     }
 
-    private fun addSuggestionsForClassifier(classifier: DeclarationDescriptor, userPrefix: String, prefixMatcher: PrefixMatcher) {
-        addSuggestions(classifier.getName().asString(), userPrefix, prefixMatcher, DescriptorType(classifier as ClassifierDescriptor))
+    private fun addSuggestionsForClassifier(classifier: DeclarationDescriptor, userPrefix: String, prefixMatcher: PrefixMatcher, notImported: Boolean) {
+        addSuggestions(classifier.getName().asString(), userPrefix, prefixMatcher, DescriptorType(classifier as ClassifierDescriptor), notImported)
     }
 
-    private fun addSuggestionsForJavaClass(psiClass: PsiClass, userPrefix: String, prefixMatcher: PrefixMatcher) {
-        addSuggestions(psiClass.getName()!!, userPrefix, prefixMatcher, JavaClassType(psiClass))
+    private fun addSuggestionsForJavaClass(psiClass: PsiClass, userPrefix: String, prefixMatcher: PrefixMatcher, notImported: Boolean) {
+        addSuggestions(psiClass.getName()!!, userPrefix, prefixMatcher, JavaClassType(psiClass), notImported)
     }
 
-    private fun addSuggestions(className: String, userPrefix: String, prefixMatcher: PrefixMatcher, type: Type) {
+    private fun addSuggestions(className: String, userPrefix: String, prefixMatcher: PrefixMatcher, type: Type, notImported: Boolean) {
         ProgressManager.checkCanceled()
         if (suggestionsByTypesAdded.contains(type)) return // don't add suggestions for the same with longer user prefix
 
@@ -148,7 +147,7 @@ class ParameterNameAndTypeCompletion(
                 val lookupElement = MyLookupElement.create(userPrefix, name, type, lookupElementFactory)
                 if (lookupElement != null) {
                     lookupElement.putUserData(PRIORITY_KEY, userPrefix.length()) // suggestions with longer user prefix get smaller priority
-                    collector.addElement(lookupElement, prefixMatcher)
+                    collector.addElement(lookupElement, prefixMatcher, notImported)
                     suggestionsByTypesAdded.add(type)
                 }
             }
