@@ -191,41 +191,7 @@ class BasicLookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
-            val extensionReceiver = descriptor.original.extensionReceiverParameter
-            when {
-                descriptor is SyntheticJavaPropertyDescriptor -> {
-                    var from = descriptor.getMethod.getName().asString() + "()"
-                    descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
-                    element = element.appendTailText(" (from $from)", true)
-                }
-
-            // no need to show them as extensions
-                descriptor is SamAdapterExtensionFunctionDescriptor -> {}
-
-                extensionReceiver != null -> {
-                    val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
-                    element = element.appendTailText(" for $receiverPresentation", true)
-
-                    val container = descriptor.getContainingDeclaration()
-                    val containerPresentation = if (container is ClassDescriptor)
-                        DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
-                    else if (container is PackageFragmentDescriptor)
-                        container.fqName.toString()
-                    else
-                        null
-                    if (containerPresentation != null) {
-                        element = element.appendTailText(" in $containerPresentation", true)
-                    }
-                }
-
-                else -> {
-                    val container = descriptor.getContainingDeclaration()
-                    if (container is PackageFragmentDescriptor) { // we show container only for global functions and properties
-                        //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
-                        element = element.appendTailText(" (${container.fqName})", true)
-                    }
-                }
-            }
+            appendContainerAndReceiverInformation(descriptor) { tail, grayed -> element = element.appendTailText(tail, grayed) }
         }
 
         if (descriptor is PropertyDescriptor) {
@@ -247,6 +213,46 @@ class BasicLookupElementFactory(
         }
 
         return element.withIconFromLookupObject()
+    }
+
+    public fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String, Boolean) -> Unit) {
+        val extensionReceiver = descriptor.original.extensionReceiverParameter
+        when {
+            descriptor is SyntheticJavaPropertyDescriptor -> {
+                var from = descriptor.getMethod.getName().asString() + "()"
+                descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
+                appendTailText(" (from $from)", true)
+            }
+
+        // no need to show them as extensions
+            descriptor is SamAdapterExtensionFunctionDescriptor -> {
+            }
+
+            extensionReceiver != null -> {
+                val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
+                appendTailText(" for $receiverPresentation", true)
+
+                val container = descriptor.getContainingDeclaration()
+                val containerPresentation = if (container is ClassDescriptor)
+                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
+                else if (container is PackageFragmentDescriptor)
+                    container.fqName.toString()
+                else
+                    null
+                if (containerPresentation != null) {
+                    appendTailText(" in $containerPresentation", true)
+                }
+            }
+
+            else -> {
+                val container = descriptor.getContainingDeclaration()
+                if (container is PackageFragmentDescriptor) {
+                    // we show container only for global functions and properties
+                    //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
+                    appendTailText(" (${container.fqName})", true)
+                }
+            }
+        }
     }
 
     private fun LookupElement.withIconFromLookupObject(): LookupElement {

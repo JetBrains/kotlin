@@ -202,6 +202,24 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/highOrderFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ContextVariable.kt")
+        public void testContextVariable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ContextVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ContextVariableDot.kt")
+        public void testContextVariableDot() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ContextVariableDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ContextVariableTypeArgsNeeded.kt")
+        public void testContextVariableTypeArgsNeeded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ContextVariableTypeArgsNeeded.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ForceParenthesisForTabChar.kt")
         public void testForceParenthesisForTabChar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ForceParenthesisForTabChar.kt");

@@ -140,14 +140,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
 
-    private val factoryContext = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
-        LookupElementFactory.Context.STRING_TEMPLATE_AFTER_DOLLAR
-    else if (receiversData?.callType == CallType.INFIX)
-        LookupElementFactory.Context.INFIX_CALL
-    else
-        LookupElementFactory.Context.NORMAL
-
     protected val lookupElementFactory: LookupElementFactory = run {
+        val contextType = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
+            LookupElementFactory.ContextType.STRING_TEMPLATE_AFTER_DOLLAR
+        else if (receiversData?.callType == CallType.INFIX)
+            LookupElementFactory.ContextType.INFIX_CALL
+        else
+            LookupElementFactory.ContextType.NORMAL
+
         var receiverTypes = emptyList<JetType>()
         if (receiversData != null) {
             val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
@@ -168,7 +168,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             }
         }
 
-        LookupElementFactory(resolutionFacade, receiverTypes, factoryContext, inDescriptor, InsertHandlerProvider { expectedInfos })
+        val contextVariablesProvider = {
+            nameExpression?.let {
+                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, explicitReceiverData = null)
+                        .map { it as VariableDescriptor }
+            } ?: emptyList()
+        }
+
+        LookupElementFactory(resolutionFacade, receiverTypes, contextType, inDescriptor, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes

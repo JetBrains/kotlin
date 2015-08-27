@@ -1,7 +1,7 @@
 fun foo(p: (String, Char) -> Unit){}
 
 fun test() {
-    fo<caret>
+    foo<caret>
 }
 
 // EXIST: { lookupString:"foo", itemText: "foo", tailText: "(p: (String, Char) -> Unit) (<root>)", typeText:"Unit" }

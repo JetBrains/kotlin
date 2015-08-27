@@ -35,13 +35,20 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.JetType
 
-data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
+class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
 class KotlinFunctionInsertHandler(
         val needTypeArguments: Boolean,
         val needValueArguments: Boolean,
+        val argumentText: String = "",
         val lambdaInfo: GenerateLambdaInfo? = null
 ) : KotlinCallableInsertHandler() {
+
+    init {
+        if (lambdaInfo != null) {
+            assert(argumentText == "")
+        }
+    }
 
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
@@ -66,7 +73,7 @@ class KotlinFunctionInsertHandler(
                 context.getEditor().getCaretModel().moveToOffset(tailOffset + 1)
             }
 
-            else -> addBrackets(context, element)
+            else -> addArguments(context, element)
         }
     }
 
@@ -76,7 +83,7 @@ class KotlinFunctionInsertHandler(
         return parent is JetSimpleNameExpression && grandParent is JetBinaryExpression && parent == grandParent.getOperationReference()
     }
 
-    private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
+    private fun addArguments(context : InsertionContext, offsetElement : PsiElement) {
         val completionChar = context.getCompletionChar()
         if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
@@ -151,6 +158,11 @@ class KotlinFunctionInsertHandler(
 
             openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
             closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
+        }
+
+        document.insertString(openingBracketOffset + 1, argumentText)
+        if (closeBracketOffset != null) {
+            closeBracketOffset += argumentText.length()
         }
 
         if (!insertTypeArguments) {

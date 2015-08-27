@@ -1,0 +1,9 @@
+fun String.xfoo(p: () -> Unit){}
+
+fun X.test() {
+    val local: () -> Unit = { }
+    "a".xfoo(local)<caret>
+}
+
+// ELEMENT: xfoo
+// TAIL_TEXT: "(local) for String in <root>"

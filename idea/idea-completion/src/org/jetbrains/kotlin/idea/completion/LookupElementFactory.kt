@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.buildLambdaPresentation
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -45,13 +47,18 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>,
-        private val context: LookupElementFactory.Context,
+        private val contextType: LookupElementFactory.ContextType,
         private val inDescriptor: DeclarationDescriptor?,
-        public val insertHandlerProvider: InsertHandlerProvider
+        public val insertHandlerProvider: InsertHandlerProvider,
+        contextVariablesProvider: () -> Collection<VariableDescriptor>
 ) {
     private val basicFactory = BasicLookupElementFactory(resolutionFacade.project, insertHandlerProvider)
 
-    public enum class Context {
+    private val functionTypeContextVariables by lazy {
+        contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
+    }
+
+    public enum class ContextType {
         NORMAL,
         STRING_TEMPLATE_AFTER_DOLLAR,
         INFIX_CALL
@@ -61,20 +68,20 @@ class LookupElementFactory(
         val result = SmartList<LookupElement>()
 
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
+        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (context != Context.INFIX_CALL && descriptor is FunctionDescriptor) {
+        if (contextType != ContextType.INFIX_CALL && descriptor is FunctionDescriptor) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
         }
 
         if (descriptor is PropertyDescriptor && inDescriptor != null) {
             var backingFieldElement = createBackingFieldLookupElement(descriptor, useReceiverTypes)
             if (backingFieldElement != null) {
-                if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
+                if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
                     backingFieldElement = backingFieldElement.withBracesSurrounding()
                 }
                 result.add(backingFieldElement)
@@ -91,6 +98,17 @@ class LookupElementFactory(
             val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
             if (functionParameterCount > 1) {
                 add(createFunctionCallElementWithExplicitLambdaParameters(descriptor, parameterType, useReceiverTypes))
+            }
+
+            //TODO: also ::function? at least for local functions
+            //TODO: order for them
+            val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
+            for (variable in functionTypeContextVariables) {
+                val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(fuzzyParameterType)
+                if (substitutor != null) {
+                    val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
+                    add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.asString(), useReceiverTypes))
+                }
             }
         }
     }
@@ -115,11 +133,47 @@ class LookupElementFactory(
             }
         }
 
-        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
+        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
 
         return lookupElement
+    }
+
+    private fun createFunctionCallElementWithArgument(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
+        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
+
+        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
+        lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
+
+        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
+            lookupElement = lookupElement.withBracesSurrounding()
+        }
+
+        return lookupElement
+    }
+
+    private inner class FunctionCallWithArgumentLookupElement(
+            originalLookupElement: LookupElement,
+            private val descriptor: FunctionDescriptor,
+            private val argumentText: String,
+            private val needTypeArguments: Boolean
+    ) : LookupElementDecorator<LookupElement>(originalLookupElement) {
+
+        override fun equals(other: Any?) = other is FunctionCallWithArgumentLookupElement && delegate == other.delegate && argumentText == other.argumentText
+        override fun hashCode() = delegate.hashCode() * 17 + argumentText.hashCode()
+
+        override fun renderElement(presentation: LookupElementPresentation) {
+            super.renderElement(presentation)
+
+            presentation.clearTail()
+            presentation.appendTailText("($argumentText)", false)
+            basicFactory.appendContainerAndReceiverInformation(descriptor) { tail, grayed -> presentation.appendTailText(tail, grayed) }
+        }
+
+        override fun handleInsert(context: InsertionContext) {
+            KotlinFunctionInsertHandler(needTypeArguments = needTypeArguments, needValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+        }
     }
 
     private fun createBackingFieldLookupElement(property: PropertyDescriptor, useReceiverTypes: Boolean): LookupElement? {

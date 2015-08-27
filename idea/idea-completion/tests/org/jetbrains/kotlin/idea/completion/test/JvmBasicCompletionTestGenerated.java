@@ -217,18 +217,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("HigherOrderFunction1.kt")
-        public void testHigherOrderFunction1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/HigherOrderFunction1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("HigherOrderFunction2.kt")
-        public void testHigherOrderFunction2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/HigherOrderFunction2.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ImportedEnumMembers.kt")
         public void testImportedEnumMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImportedEnumMembers.kt");
@@ -1323,6 +1311,57 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("WhenByEnum.kt")
             public void testWhenByEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/WhenByEnum.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class HighOrderFunctions extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInHighOrderFunctions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/highOrderFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ContextVariables1.kt")
+            public void testContextVariables1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariables1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ContextVariables2.kt")
+            public void testContextVariables2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariables2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ContextVariablesFilter.kt")
+            public void testContextVariablesFilter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariablesFilter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ContextVariablesMap.kt")
+            public void testContextVariablesMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariablesMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ContextVariablesShadowing.kt")
+            public void testContextVariablesShadowing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariablesShadowing.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("HigherOrderFunction1.kt")
+            public void testHigherOrderFunction1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/HigherOrderFunction1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("HigherOrderFunction2.kt")
+            public void testHigherOrderFunction2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/HigherOrderFunction2.kt");
                 doTest(fileName);
             }
         }
