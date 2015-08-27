@@ -102,7 +102,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 getAnnotations(),
                 getName(),
                 kind,
-                SourceElement.NO_SOURCE
+                original != null ? original.getSource() : SourceElement.NO_SOURCE
         );
         result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;

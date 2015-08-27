@@ -317,6 +317,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ReferenceToSam.kt")
+    public void testReferenceToSam() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ReferenceToSam.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ResolveClass.kt")
     public void testResolveClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ResolveClass.kt");
