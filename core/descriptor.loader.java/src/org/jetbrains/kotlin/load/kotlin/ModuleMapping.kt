@@ -40,13 +40,13 @@ public class ModuleMapping(val moduleMapping: String) {
     }
 }
 
-public class PackageFacades(val internalName: String) {
+public class PackageFacades(val packageInternalName: String) {
 
     val parts = linkedSetOf<String>()
 
     fun serialize(out: Writer) {
         for (i in parts) {
-            out.write("$internalName->$i\n")
+            out.write("$packageInternalName->$i\n")
         }
     }
 
@@ -55,7 +55,7 @@ public class PackageFacades(val internalName: String) {
             return false;
         }
 
-        if (other.internalName != internalName) {
+        if (other.packageInternalName != packageInternalName) {
             return false;
         }
 
@@ -73,6 +73,6 @@ public class PackageFacades(val internalName: String) {
     }
 
     override fun hashCode(): Int {
-        return internalName.hashCode() / 3 + parts.size() / 3+ (parts.firstOrNull()?.hashCode() ?: 0) /3
+        return packageInternalName.hashCode() / 3 + parts.size() / 3 + (parts.firstOrNull()?.hashCode() ?: 0) / 3
     }
 }

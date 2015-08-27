@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
@@ -127,7 +127,7 @@ public class ReplInterpreter {
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(project),
                 scopeProvider,
-                new JvmPackageMappingProvider(environment)
+                new JvmPackageFacadeProvider(environment)
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY,

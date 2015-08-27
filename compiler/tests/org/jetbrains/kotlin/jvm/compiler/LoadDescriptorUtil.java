@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -141,7 +141,7 @@ public final class LoadDescriptorUtil {
                 }
             });
             AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                    jetCoreEnvironment.getProject(), jetFiles, new JvmPackageMappingProvider(jetCoreEnvironment));
+                    jetCoreEnvironment.getProject(), jetFiles, new JvmPackageFacadeProvider(jetCoreEnvironment));
             return new JetFilesAndAnalysisResult(jetFiles, result);
         }
 

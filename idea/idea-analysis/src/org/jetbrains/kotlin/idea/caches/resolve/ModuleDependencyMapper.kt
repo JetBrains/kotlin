@@ -64,7 +64,7 @@ fun createModuleResolverProvider(
         val resolverForProject = analyzerFacade.setupResolverForProject(
                 globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
                 jvmPlatformParameters, IdeaEnvironment, delegateResolver,
-                { (m, c) -> IDEPackageMappingProvider(c.moduleContentScope) }
+                { (m, c) -> IDEPackageFacadeProvider(c.moduleContentScope) }
         )
         return resolverForProject
     }

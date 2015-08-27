@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -155,7 +155,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         loadFiles(ArrayUtil.toStringArray(ktFilePaths));
         classFileFactory =
                 GenerationUtils.compileManyFilesGetGenerationStateForTest(myEnvironment.getProject(), myFiles.getPsiFiles(),
-                                                                          new JvmPackageMappingProvider(myEnvironment)).getFactory();
+                                                                          new JvmPackageFacadeProvider(myEnvironment)).getFactory();
         File kotlinOut = JetTestUtils.tmpDir(toString());
         OutputUtilsPackage.writeAllTo(classFileFactory, kotlinOut);
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.lazy
+package org.jetbrains.kotlin.descriptors
 
-interface PackageMappingProvider {
+interface PackageFacadeProvider {
 
-    fun findPackageMembers(packageName: String): List<String>
+    fun findPackageFacades(packageInternalName: String): List<String>
 
     companion object {
-        val EMPTY = object : PackageMappingProvider {
-            override fun findPackageMembers(packageName: String): List<String> {
+        val EMPTY = object : PackageFacadeProvider {
+            override fun findPackageFacades(packageInternalName: String): List<String> {
                 return emptyList()
             }
         }

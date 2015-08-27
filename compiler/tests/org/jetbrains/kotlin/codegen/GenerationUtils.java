@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
+import org.jetbrains.kotlin.descriptors.PackageFacadeProvider;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
 import java.util.Collections;
@@ -48,20 +48,21 @@ public class GenerationUtils {
             @NotNull KotlinCoreEnvironment environment
     ) {
         AnalysisResult analysisResult =
-                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackageMappingProvider(environment));
+                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackageFacadeProvider(environment));
         return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
-        return compileManyFilesGetGenerationStateForTest(project, files, PackageMappingProvider.EMPTY);
+        return compileManyFilesGetGenerationStateForTest(project, files, PackageFacadeProvider.EMPTY);
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files,
-            @NotNull PackageMappingProvider packageMappingProvider) {
+            @NotNull PackageFacadeProvider packageFacadeProvider
+    ) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, packageMappingProvider);
+                project, files, packageFacadeProvider);
         return compileFilesGetGenerationState(project, analysisResult, files);
     }
 

@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
-import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
+import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
 import org.jetbrains.kotlin.load.kotlin.PackageFacades
 
-public class IDEPackageMappingProvider(val scope: GlobalSearchScope) : PackageMappingProvider {
+public class IDEPackageFacadeProvider(val scope: GlobalSearchScope) : PackageFacadeProvider {
 
-    override fun findPackageMembers(packageName: String): List<String> {
-        val values: MutableList<PackageFacades> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageName, scope)
+    override fun findPackageFacades(packageInternalName: String): List<String> {
+        val values: MutableList<PackageFacades> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageInternalName, scope)
         return values.flatMap { it.parts }.distinct()
     }
 }

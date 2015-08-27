@@ -246,6 +246,7 @@ public class JvmCodegenUtil {
                DescriptorUtils.isAnnotationClass(descriptor);
     }
 
+    @NotNull
     public static String getModuleName(ModuleDescriptor module) {
         return KotlinPackage.removeSurrounding(module.getName().asString(), "<", ">");
     }
