@@ -34,14 +34,11 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
 import java.util.HashMap
 
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind.PROPERTY_SYNTHETIC_FUNCTION
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind.PROPERTY_FIELD
-
-public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
+public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
         storageManager: StorageManager,
         private val kotlinClassFinder: KotlinClassFinder,
         private val errorReporter: ErrorReporter
-) : AnnotationAndConstantLoader<A, C> {
+) : AnnotationAndConstantLoader<A, C, T> {
     private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage<A, C>> {
         kotlinClass ->
         loadAnnotationsAndInitializers(kotlinClass)
@@ -96,19 +93,38 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
-    ): List<A> {
+    ): List<T> {
+        if (kind == AnnotatedCallableKind.PROPERTY) {
+            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
+            val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
+
+            val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
+                findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, sig, false)
+            } ?: listOf()
+
+            val fieldAnnotations = fieldSignature?.let { sig ->
+                findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, sig)
+            } ?: listOf()
+
+            return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
+        }
         val signature = getCallableSignature(proto, nameResolver, kind) ?: return listOf()
-        return findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature)
+        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature))
     }
+
+    protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>
+
+    protected abstract fun transformAnnotations(annotations: List<A>): List<T>
 
     private fun findClassAndLoadMemberAnnotations(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
-            signature: MemberSignature
+            signature: MemberSignature,
+            seekForStaticFieldInOuter: Boolean = true
     ): List<A> {
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind, seekForStaticFieldInOuter)
         if (kotlinClass == null) {
             errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.getFqName(nameResolver)}", null)
             return listOf()
@@ -176,7 +192,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
-            annotatedCallableKind: AnnotatedCallableKind
+            annotatedCallableKind: AnnotatedCallableKind,
+            seekForStaticFieldInOuter: Boolean = true
     ): KotlinJvmBinaryClass? {
         val packageFqName = container.packageFqName
         if (packageFqName != null) {
@@ -186,13 +203,11 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val classKind = Flags.CLASS_KIND[classProto.getFlags()]
         val classId = nameResolver.getClassId(classProto.getFqName())
 
-        if (classKind == ProtoBuf.Class.Kind.CLASS_OBJECT && isStaticFieldInOuter(proto)
-                && annotatedCallableKind != AnnotatedCallableKind.PROPERTY_SYNTHETIC_FUNCTION) {
+        if (classKind == ProtoBuf.Class.Kind.CLASS_OBJECT && isStaticFieldInOuter(proto) && seekForStaticFieldInOuter) {
             // Backing fields of properties of a companion object are generated in the outer class
             return kotlinClassFinder.findKotlinClass(classId.getOuterClassId())
         }
-        else if (classKind == ProtoBuf.Class.Kind.TRAIT &&
-                 (annotatedCallableKind == PROPERTY_SYNTHETIC_FUNCTION || annotatedCallableKind == PROPERTY_FIELD)) {
+        else if (classKind == ProtoBuf.Class.Kind.TRAIT && (annotatedCallableKind == AnnotatedCallableKind.PROPERTY)) {
             if (proto.hasExtension(implClassName)) {
                 val parentPackageFqName = classId.getPackageFqName()
                 val tImplName = nameResolver.getName(proto.getExtension(implClassName))
@@ -276,50 +291,54 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return Storage(memberAnnotations, propertyConstants)
     }
 
-    private class Storage<A, C>(
-            public val memberAnnotations: Map<MemberSignature, List<A>>,
-            public val propertyConstants: Map<MemberSignature, C>
-    )
-}
-
-private fun getCallableSignature(
-        proto: ProtoBuf.Callable,
-        nameResolver: NameResolver,
-        kind: AnnotatedCallableKind
-): MemberSignature? {
-    val deserializer = SignatureDeserializer(nameResolver)
-
-    fun getPropertySignature(handleField: Boolean = false, handleSynthetic: Boolean = false): MemberSignature? {
+    private fun getPropertySignature(
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            field: Boolean = false,
+            synthetic: Boolean = false
+    ): MemberSignature? {
         if (!proto.hasExtension(propertySignature)) return null
 
         val propertySignature = proto.getExtension(propertySignature)
+        val deserializer = SignatureDeserializer(nameResolver)
 
-        if (handleField && propertySignature.hasField()) {
-            val field = propertySignature.getField()
-            val type = deserializer.typeDescriptor(field.getType())
-            val name = nameResolver.getName(field.getName())
+        if (field && propertySignature.hasField()) {
+            val field = propertySignature.field
+            val type = deserializer.typeDescriptor(field.type)
+            val name = nameResolver.getName(field.name)
             return MemberSignature.fromFieldNameAndDesc(name, type)
         }
-        else if (handleSynthetic && propertySignature.hasSyntheticMethod()) {
-            return deserializer.methodSignature(propertySignature.getSyntheticMethod())
+        else if (synthetic && propertySignature.hasSyntheticMethod()) {
+            return deserializer.methodSignature(propertySignature.syntheticMethod)
         }
 
         return null
     }
 
-    when (kind) {
-        AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension(methodSignature)) {
-            return deserializer.methodSignature(proto.getExtension(methodSignature))
+    private fun getCallableSignature(
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): MemberSignature? {
+        val deserializer = SignatureDeserializer(nameResolver)
+
+        when (kind) {
+            AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension(methodSignature)) {
+                return deserializer.methodSignature(proto.getExtension(methodSignature))
+            }
+            AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension(propertySignature)) {
+                return deserializer.methodSignature(proto.getExtension(propertySignature).getGetter())
+            }
+            AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension(propertySignature)) {
+                return deserializer.methodSignature(proto.getExtension(propertySignature).getSetter())
+            }
+            AnnotatedCallableKind.PROPERTY -> return getPropertySignature(proto, nameResolver, true, true)
         }
-        AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension(propertySignature)) {
-            return deserializer.methodSignature(proto.getExtension(propertySignature).getGetter())
-        }
-        AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension(propertySignature)) {
-            return deserializer.methodSignature(proto.getExtension(propertySignature).getSetter())
-        }
-        AnnotatedCallableKind.PROPERTY -> return getPropertySignature(true, true)
-        AnnotatedCallableKind.PROPERTY_FIELD -> return getPropertySignature(handleField = true)
-        AnnotatedCallableKind.PROPERTY_SYNTHETIC_FUNCTION -> return getPropertySignature(handleSynthetic = true)
+        return null
     }
-    return null
+
+    private class Storage<A, C>(
+            public val memberAnnotations: Map<MemberSignature, List<A>>,
+            public val propertyConstants: Map<MemberSignature, C>
+    )
 }

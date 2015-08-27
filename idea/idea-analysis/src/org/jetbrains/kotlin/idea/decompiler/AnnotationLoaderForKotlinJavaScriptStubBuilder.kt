@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.types.JetType
 
-public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndConstantLoader<ClassId, Unit> {
+public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
 
     override fun loadClassAnnotations(
             classProto: ProtoBuf.Class, nameResolver: NameResolver
@@ -37,9 +38,8 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
-    ): List<ClassId> {
-        if (kind == AnnotatedCallableKind.PROPERTY_FIELD) return emptyList()
-        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map { nameResolver.getClassId(it.getId()) }
+    ): List<ClassIdWithTarget> {
+        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map { ClassIdWithTarget(nameResolver.getClassId(it.id), null) }
     }
 
     override fun loadValueParameterAnnotations(

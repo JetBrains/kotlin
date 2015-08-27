@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
-public interface AnnotationAndConstantLoader<A, C> {
+public interface AnnotationAndConstantLoader<A, C, T> {
     @NotNull
     List<A> loadClassAnnotations(
             @NotNull ProtoBuf.Class classProto,
@@ -31,7 +31,7 @@ public interface AnnotationAndConstantLoader<A, C> {
     );
 
     @NotNull
-    List<A> loadCallableAnnotations(
+    List<T> loadCallableAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,

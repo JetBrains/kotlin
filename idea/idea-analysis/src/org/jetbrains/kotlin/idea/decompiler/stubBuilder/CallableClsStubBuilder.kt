@@ -102,23 +102,9 @@ private class CallableClsStubBuilder(
 
         val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, callableProto.getFlags(), relevantModifiers)
 
-        fun createAnnotationStubs(kind: AnnotatedCallableKind) {
-            val annotationIds = c.components.annotationLoader.loadCallableAnnotations(protoContainer, callableProto, c.nameResolver, kind)
-            val target = if (kind == AnnotatedCallableKind.PROPERTY_FIELD) AnnotationUseSiteTarget.FIELD else null
-            createAnnotationStubs(annotationIds,
-                                  modifierListStubImpl,
-                                  needWrappingAnnotationEntries = isPrimaryConstructor,
-                                  target = target)
-        }
-
         val kind = callableProto.annotatedCallableKind
-        if (kind == AnnotatedCallableKind.PROPERTY) {
-            createAnnotationStubs(AnnotatedCallableKind.PROPERTY_SYNTHETIC_FUNCTION)
-            createAnnotationStubs(AnnotatedCallableKind.PROPERTY_FIELD)
-        }
-        else {
-            createAnnotationStubs(kind)
-        }
+        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(protoContainer, callableProto, c.nameResolver, kind)
+        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl, needWrappingAnnotationEntries = isPrimaryConstructor)
     }
 
     private fun doCreateCallableStub(): StubElement<out PsiElement> {

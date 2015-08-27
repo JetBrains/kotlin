@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.types.JetType
 
 class KotlinJavascriptAnnotationAndConstantLoader(
         module: ModuleDescriptor
-) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>> {
+) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
     private val deserializer = AnnotationDeserializer(module)
 
     override fun loadClassAnnotations(
@@ -41,10 +42,9 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
-    ): List<AnnotationDescriptor> {
-        if (kind == AnnotatedCallableKind.PROPERTY_FIELD) return emptyList()
+    ): List<AnnotationWithTarget> {
         val annotations = proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
+        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, nameResolver), null) }
     }
 
     override fun loadValueParameterAnnotations(

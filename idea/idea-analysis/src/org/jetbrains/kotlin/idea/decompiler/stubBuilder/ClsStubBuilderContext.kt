@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -31,9 +32,11 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
+
 class ClsStubBuilderComponents(
         val classDataFinder: ClassDataFinder,
-        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>
+        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>
 ) {
     fun createContext(
             nameResolver: NameResolver,
@@ -92,7 +95,7 @@ private fun ClsStubBuilderContext.child(nameResolver: NameResolver): ClsStubBuil
 class AnnotationLoaderForStubBuilder(
         kotlinClassFinder: KotlinClassFinder,
         errorReporter: ErrorReporter
-) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(
+) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(
         LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
 
     override fun loadClassAnnotations(
@@ -116,4 +119,11 @@ class AnnotationLoaderForStubBuilder(
         result.add(annotationClassId)
         return null
     }
+
+    override fun loadPropertyAnnotations(propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>): List<ClassIdWithTarget> {
+        return propertyAnnotations.map { ClassIdWithTarget(it, null) } +
+               fieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+    }
+
+    override fun transformAnnotations(annotations: List<ClassId>) = annotations.map { ClassIdWithTarget(it, null) }
 }

@@ -192,8 +192,12 @@ public class DescriptorSerializer {
             hasConstant = !(compileTimeConstant == null || compileTimeConstant instanceof NullValue);
         }
 
+        boolean hasAnnotations = (descriptor instanceof PropertyDescriptor)
+                                 ? !descriptor.getAnnotations().getAllAnnotations().isEmpty()
+                                 : hasAnnotations(descriptor);
+
         builder.setFlags(Flags.getCallableFlags(
-                hasAnnotations(descriptor),
+                hasAnnotations,
                 descriptor.getVisibility(),
                 descriptor.getModality(),
                 descriptor.getKind(),
