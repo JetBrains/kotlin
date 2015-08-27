@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.psi.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override
     public boolean execute(@NotNull DefinitionsScopedSearch.SearchParameters queryParameters, @NotNull Processor<PsiElement> consumer) {
@@ -83,8 +86,9 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         });
 
         if (psiMethod != null) {
-            ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod, scope), consumer);
+            MethodImplementationsSearch.processImplementations(psiMethod, consumer, scope);
         }
+
         return true;
     }
 
@@ -114,7 +118,9 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
 
     public static boolean processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         for (PsiMethod method : accessors) {
-            PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method, scope);
+            List<PsiMethod> implementations = new ArrayList<PsiMethod>();
+            MethodImplementationsSearch.getOverridingMethods(method, implementations, scope);
+
             for (PsiMethod implementation : implementations) {
                 PsiElement mirrorElement = implementation instanceof KotlinLightMethod
                                            ? ((KotlinLightMethod) implementation).getOrigin() : null;
