@@ -1,3 +1,7 @@
+import pack.oldFun1
+import pack.oldFun2 // should not be removed for non-deprecated overload used
+import pack.oldFun3
+
 trait Foo {
 }
 
@@ -16,6 +20,8 @@ fun foo() {
     }
 
     oldFun1(oldFun2(10))
+
+    oldFun2()
 }
 
 fun unnecessarySafeCall(x: String) {

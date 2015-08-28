@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -299,9 +300,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val importsToCheck = ArrayList<FqName>()
             for (import in dropCandidates) {
-                val importedReference = import.getImportedReference() ?: continue
-                val refExpr = (importedReference as JetDotQualifiedExpression).getSelectorExpression() as JetSimpleNameExpression
-                val targets = refExpr.resolveTargets()
+                if (import.importedReference == null) continue
+                val targets = import.targetDescriptors()
                 if (targets.any { it is PackageViewDescriptor }) continue // do not drop import of package
                 val classDescriptor = targets.filterIsInstance<ClassDescriptor>().firstOrNull()
                 importsToCheck.addIfNotNull(classDescriptor?.importableFqName)

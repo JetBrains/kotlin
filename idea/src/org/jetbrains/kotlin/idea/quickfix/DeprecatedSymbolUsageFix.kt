@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
@@ -72,5 +73,9 @@ public class DeprecatedSymbolUsageFix(
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 
+        public fun isImportToBeRemoved(import: JetImportDirective): Boolean {
+            return !import.isAllUnder
+                   && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.replaceWithPattern(it, import.project) != null }
+        }
     }
 }

@@ -1,3 +1,6 @@
+import pack.bar
+import pack.oldFun2 // should not be removed for non-deprecated overload used
+
 interface Foo {
 }
 
@@ -16,6 +19,8 @@ fun foo() {
     }
 
     bar(bar(10 + 2) + 1)
+
+    oldFun2()
 }
 
 fun unnecessarySafeCall(x: String) {

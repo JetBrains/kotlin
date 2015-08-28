@@ -41,15 +41,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.DocumentUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import java.util.*
 
 class UnusedImportInspection : AbstractKotlinInspection() {
@@ -104,8 +101,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
             }
 
             if (!isUsed) {
-                val nameExpression = directive.importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression
-                if (nameExpression == null || nameExpression.getReferenceTargets(nameExpression.analyze()).isEmpty()) continue // do not highlight unresolved imports as unused
+                if (directive.targetDescriptors().isEmpty()) continue // do not highlight unresolved imports as unused
 
                 val fixes = arrayListOf<LocalQuickFix>()
                 fixes.add(OptimizeImportsQuickFix(file))

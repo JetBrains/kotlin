@@ -29,16 +29,17 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.highlighter.JetPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
+import org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFix
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import kotlin.properties.Delegates
 
 public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
     // required to simplify the inspection registration in tests
@@ -61,6 +62,14 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         }
 
         val problems = arrayListOf<ProblemData>()
+
+        val importsToRemove = file.importDirectives.filter { DeprecatedSymbolUsageFix.isImportToBeRemoved(it) }
+        for (import in importsToRemove) {
+            val removeImportFix = RemoveImportFix(import)
+            val problemDescriptor = createProblemDescriptor(import, removeImportFix.text, listOf(removeImportFix), file, manager)
+            problems.add(ProblemData(problemDescriptor, import))
+        }
+
         file.forEachDescendantOfType<PsiElement> { element ->
             for (diagnostic in diagnostics.forElement(element)) {
                 if (diagnostic.isCleanup()) {
@@ -111,10 +120,23 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     }
 
     private fun Diagnostic.toProblemDescriptor(fixes: Collection<CleanupFix>, file: JetFile, manager: InspectionManager): ProblemDescriptor {
-        return manager.createProblemDescriptor(getPsiElement(),
-                                                DefaultErrorMessages.render(this),
-                                                false,
-                                                fixes.map { Wrapper(it, file) }.toTypedArray(),
-                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        return createProblemDescriptor(psiElement, DefaultErrorMessages.render(this), fixes, file, manager)
+    }
+
+    private fun createProblemDescriptor(element: PsiElement, message: String, fixes: Collection<CleanupFix>, file: JetFile, manager: InspectionManager): ProblemDescriptor {
+        return manager.createProblemDescriptor(element,
+                                               message,
+                                               false,
+                                               fixes.map { Wrapper(it, file) }.toTypedArray(),
+                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+    }
+
+    private class RemoveImportFix(import: JetImportDirective) : JetIntentionAction<JetImportDirective>(import), CleanupFix {
+        override fun getFamilyName() = "Remove deprecated symbol import"
+        override fun getText() = familyName
+
+        override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+            element.delete()
+        }
     }
 }
