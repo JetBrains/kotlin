@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.util
+package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
-import kotlin.platform.platformStatic
 
 /*
     This class lazily splits Annotations into several different Annotations according to declaration site target priority on property.
@@ -46,7 +44,7 @@ public class AnnotationSplitter(
     public companion object {
         private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_SETTER, PROPERTY_GETTER)
 
-        @platformStatic
+        @jvmStatic
         public fun create(
                 storageManager: StorageManager,
                 annotations: Annotations,
@@ -55,7 +53,7 @@ public class AnnotationSplitter(
             return AnnotationSplitter(storageManager, annotations, { targets })
         }
 
-        @platformStatic
+        @jvmStatic
         public fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
             val property = wrapper.property
             assert(property != null)
@@ -63,7 +61,7 @@ public class AnnotationSplitter(
             return getTargetSet(parameter, property!!.isVar, hasBackingField)
         }
 
-        @platformStatic
+        @jvmStatic
         public fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
             return hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
                 if (parameter) add(CONSTRUCTOR_PARAMETER)

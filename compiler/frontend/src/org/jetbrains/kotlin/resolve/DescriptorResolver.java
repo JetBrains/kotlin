@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.util.AnnotationSplitter;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 
 import java.util.*;
 
