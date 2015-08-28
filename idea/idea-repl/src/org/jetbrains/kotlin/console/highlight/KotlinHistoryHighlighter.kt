@@ -45,6 +45,7 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
         consoleView.flushDeferredText()
         EditorUtil.scrollToTheEnd(historyEditor)
         consoleDocument.setText("")
+        addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
         historyEditor.markupModel let {
             it.addRangeHighlighter(startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE)
@@ -68,6 +69,17 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
 
         } else if (!historyText.endsWith("\n\n")) {
             historyDocument.insertString(textLength, "\n")
+        }
+    }
+
+    private fun addFoldingRegion(historyEditor: EditorEx, startOffset: Int, endOffset: Int, command: String) {
+        val cmdLines = command.lines()
+        val linesCount = cmdLines.size()
+        if (linesCount < 2) return
+
+        val foldingModel =  historyEditor.foldingModel
+        foldingModel.runBatchFoldingOperation {
+            foldingModel.addFoldRegion(startOffset, endOffset, "${cmdLines[0]} ...")
         }
     }
 }
