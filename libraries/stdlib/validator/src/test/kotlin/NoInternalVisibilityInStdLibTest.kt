@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -173,7 +175,10 @@ class NoInternalVisibilityInStdLibTest {
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
             if (descriptor.visibility == Visibilities.INTERNAL) {
-                sink.reportInternalVisibility(descriptor)
+                val psi = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+                if (psi !is JetModifierListOwner || psi.modifierList?.hasModifier(JetTokens.INTERNAL_KEYWORD) != true) {
+                    sink.reportInternalVisibility(descriptor)
+                }
             }
         }
         when (descriptor) {
