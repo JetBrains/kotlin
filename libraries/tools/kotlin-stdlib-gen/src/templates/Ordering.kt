@@ -58,16 +58,10 @@ fun ordering(): List<GenericFunction> {
         body(ArraysOfObjectsSubtype) {
             """
             if (isEmpty()) return this
-            val result = this.copyOf() as Array<T>
-            var i1 = 0
-            var i2 = lastIndex
-            while (i1 < i2) {
-                val tmp = result[i1]
-                result[i1] = result[i2]
-                result[i2] = tmp
-                i1 += 1
-                i2 -= 1
-            }
+            val result = arrayOfNulls(this, size()) as Array<T>
+            val lastIndex = lastIndex
+            for (i in 0..lastIndex)
+                result[lastIndex - i] = this[i]
             return result as A
             """
         }

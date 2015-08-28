@@ -996,10 +996,100 @@ public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (C
 }
 
 /**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun ByteArray.slice(indices: IntRange): List<Byte> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun CharArray.slice(indices: IntRange): List<Char> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun DoubleArray.slice(indices: IntRange): List<Double> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun FloatArray.slice(indices: IntRange): List<Float> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun IntArray.slice(indices: IntRange): List<Int> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun LongArray.slice(indices: IntRange): List<Long> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun ShortArray.slice(indices: IntRange): List<Short> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.end + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun <T> List<T>.slice(indices: IntRange): List<T> {
+    if (indices.isEmpty()) return listOf()
+    return this.subList(indices.start, indices.end + 1).toList()
+}
+
+/**
+ * Returns a string containing characters at indices at the specified [indices].
+ */
+public fun String.slice(indices: IntRange): String {
+    if (indices.isEmpty()) return ""
+    return substring(indices)
+}
+
+/**
  * Returns a list containing elements at specified [indices].
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
-    val list = ArrayList<T>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1010,7 +1100,9 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
  * Returns a list containing elements at specified [indices].
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
-    val list = ArrayList<Boolean>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Boolean>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1021,7 +1113,9 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
  * Returns a list containing elements at specified [indices].
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
-    val list = ArrayList<Byte>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Byte>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1032,7 +1126,9 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
  * Returns a list containing elements at specified [indices].
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
-    val list = ArrayList<Char>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Char>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1043,7 +1139,9 @@ public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
  * Returns a list containing elements at specified [indices].
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
-    val list = ArrayList<Double>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Double>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1054,7 +1152,9 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
  * Returns a list containing elements at specified [indices].
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
-    val list = ArrayList<Float>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Float>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1065,7 +1165,9 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
  * Returns a list containing elements at specified [indices].
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
-    val list = ArrayList<Int>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Int>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1076,7 +1178,9 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
  * Returns a list containing elements at specified [indices].
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
-    val list = ArrayList<Long>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Long>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1087,7 +1191,9 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
  * Returns a list containing elements at specified [indices].
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
-    val list = ArrayList<Short>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<Short>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1098,7 +1204,9 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
  * Returns a list containing elements at specified [indices].
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
-    val list = ArrayList<T>(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return listOf()
+    val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
     }
@@ -1109,11 +1217,194 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
  * Returns a string containing characters at specified [indices].
  */
 public fun String.slice(indices: Iterable<Int>): String {
-    val result = StringBuilder(indices.collectionSizeOrDefault(10))
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return ""
+    val result = StringBuilder(size)
     for (i in indices) {
         result.append(get(i))
     }
     return result.toString()
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun <T, A: Array<out T>> A.sliceArray(indices: Collection<Int>): A {
+    if (indices.isEmpty()) return arrayOfNulls(this, 0) as A
+    val result = arrayOfNulls(this, indices.size()) as Array<T>
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result as A
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
+    val result = BooleanArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
+    val result = ByteArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
+    val result = CharArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
+    val result = DoubleArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
+    val result = FloatArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
+    val result = IntArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
+    val result = LongArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
+    val result = ShortArray(indices.size())
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun <T, A: Array<out T>> A.sliceArray(indices: IntRange): A {
+    if (indices.isEmpty()) return copyOf(0) as A
+    return copyOfRange(indices.start, indices.end + 1) as A
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
+    if (indices.isEmpty()) return BooleanArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
+    if (indices.isEmpty()) return ByteArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun CharArray.sliceArray(indices: IntRange): CharArray {
+    if (indices.isEmpty()) return CharArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
+    if (indices.isEmpty()) return DoubleArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
+    if (indices.isEmpty()) return FloatArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun IntArray.sliceArray(indices: IntRange): IntArray {
+    if (indices.isEmpty()) return IntArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun LongArray.sliceArray(indices: IntRange): LongArray {
+    if (indices.isEmpty()) return LongArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
+    if (indices.isEmpty()) return ShortArray(0)
+    return copyOfRange(indices.start, indices.end + 1)
 }
 
 /**
