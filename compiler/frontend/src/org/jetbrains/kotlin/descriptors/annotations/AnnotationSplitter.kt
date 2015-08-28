@@ -36,29 +36,20 @@ import org.jetbrains.kotlin.storage.StorageManager
              other -> [T].
  */
 
-public class AnnotationSplitter(
-        storageManager: StorageManager,
-        allAnnotations: Annotations,
-        applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
-) {
+public class AnnotationSplitter(allAnnotations: Annotations, applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>) {
     public companion object {
         private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_SETTER, PROPERTY_GETTER)
 
         @jvmStatic
-        public fun create(
-                storageManager: StorageManager,
-                annotations: Annotations,
-                targets: Set<AnnotationUseSiteTarget>
-        ): AnnotationSplitter {
-            return AnnotationSplitter(storageManager, annotations, { targets })
+        public fun create(annotations: Annotations, targets: Set<AnnotationUseSiteTarget>): AnnotationSplitter {
+            return AnnotationSplitter(annotations, { targets })
         }
 
         @jvmStatic
         public fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
-            val property = wrapper.property
-            assert(property != null)
+            val property = wrapper.property!!
             val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, property] ?: false
-            return getTargetSet(parameter, property!!.isVar, hasBackingField)
+            return getTargetSet(parameter, property.isVar, hasBackingField)
         }
 
         @jvmStatic
@@ -73,7 +64,7 @@ public class AnnotationSplitter(
 
     public class PropertyWrapper(public var property: PropertyDescriptor? = null)
 
-    private val splitAnnotations = storageManager.createLazyValue {
+    private val splitAnnotations by lazy {
         val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationWithTarget>>()
         val other = arrayListOf<AnnotationWithTarget>()
         val applicableTargets = applicableTargetsLazy()
@@ -116,7 +107,7 @@ public class AnnotationSplitter(
 
     private inner class LazySplitAnnotations(target: AnnotationUseSiteTarget?) : Annotations {
         private val annotations: Annotations by lazy {
-            val splitAnnotations = this@AnnotationSplitter.splitAnnotations()
+            val splitAnnotations = this@AnnotationSplitter.splitAnnotations
 
             if (target != null)
                 AnnotationsImpl.create(splitAnnotations.first[target] ?: emptyList())
