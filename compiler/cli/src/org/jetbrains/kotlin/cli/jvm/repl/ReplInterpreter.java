@@ -271,8 +271,13 @@ public class ReplInterpreter {
         AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder);
 
         if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
-            previousIncompleteLines.add(line);
-            return LineResult.incomplete();
+            if (ideMode) {
+                return LineResult.compileError(errorHolder.getRenderedDiagnostics());
+            }
+            else {
+                previousIncompleteLines.add(line);
+                return LineResult.incomplete();
+            }
         }
 
         previousIncompleteLines.clear();

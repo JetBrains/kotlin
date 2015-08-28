@@ -20,7 +20,6 @@ import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
-import org.jetbrains.kotlin.console.highlight.ReplOutputType
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 
@@ -34,16 +33,11 @@ public class KotlinConsoleHistoryManager(private val runner: KotlinConsoleRunner
     private var prevCaretOffset = -1
     private var unfinishedCommand = ""
 
-    var lastCommandType = ReplOutputType.USER_OUTPUT
-
     val lastCommandLength: Int
         get() = history.last().length()
 
     public fun updateHistory(command: String) {
-        if (lastCommandType == ReplOutputType.INCOMPLETE)
-            history[history.lastIndex] = "${history.last()}$command"
-        else
-            history.add(command)
+        history.add(command)
 
         // reset history positions
         historyPos = history.size()

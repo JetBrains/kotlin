@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.console.gutter.ReplIcons
 public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) {
     private val consoleView: LanguageConsoleImpl by lazy { runner.consoleView as LanguageConsoleImpl }
 
-    fun printNewCommandInHistory(trimmedCommandText: String, lastCommandType: ReplOutputType) {
+    fun printNewCommandInHistory(trimmedCommandText: String) {
         val historyEditor = consoleView.historyViewer
 
-        addLineBreakIfNeeded(historyEditor, lastCommandType)
+        addLineBreakIfNeeded(historyEditor)
 
         val consoleEditor = consoleView.consoleEditor
         val consoleDocument = consoleEditor.document
@@ -53,7 +53,7 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
         }
     }
 
-    private fun addLineBreakIfNeeded(historyEditor: EditorEx, lastCommandType: ReplOutputType) {
+    private fun addLineBreakIfNeeded(historyEditor: EditorEx) {
         val historyDocument = historyEditor.document
         val historyText = historyDocument.text
         val textLength = historyText.length()
@@ -63,7 +63,7 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
 
             if (textLength == 0) // this will work first time after 'Clear all' action
                 runner.addGutterIndicator(historyEditor, ReplIcons.HISTORY_INDICATOR)
-            else if (lastCommandType != ReplOutputType.INCOMPLETE)
+            else
                 historyDocument.insertString(textLength + 1, "\n")
 
         } else if (!historyText.endsWith("\n\n")) {

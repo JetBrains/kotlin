@@ -24,7 +24,6 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -38,13 +37,6 @@ import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
 import javax.swing.Icon
 
-enum class ReplOutputType {
-    USER_OUTPUT,
-    RESULT,
-    INCOMPLETE,
-    ERROR
-}
-
 public class KotlinReplOutputHighlighter(
         private val runner: KotlinConsoleRunner,
         private val historyManager: KotlinConsoleHistoryManager,
@@ -56,8 +48,6 @@ public class KotlinReplOutputHighlighter(
     private val historyEditor = consoleView.historyViewer
     private val historyDocument = historyEditor.document
     private val historyMarkup = historyEditor.markupModel
-
-    private fun resetConsoleEditorIndicator() = runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.EDITOR_INDICATOR)
 
     private fun textOffsets(text: String): Pair<Int, Int> {
         consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
@@ -106,43 +96,18 @@ public class KotlinReplOutputHighlighter(
     fun printInitialPrompt(command: String) = consoleView.print(command, ReplColors.INITIAL_PROMPT_CONTENT_TYPE)
 
     fun printHelp(help: String) = WriteCommandAction.runWriteCommandAction(project) {
-        resetConsoleEditorIndicator()
-        historyManager.lastCommandType = ReplOutputType.USER_OUTPUT
-
         printOutput(help, ConsoleViewContentType.SYSTEM_OUTPUT, ReplIcons.SYSTEM_HELP)
     }
 
     fun printUserOutput(command: String) = WriteCommandAction.runWriteCommandAction(project) {
-        resetConsoleEditorIndicator()
-        historyManager.lastCommandType = ReplOutputType.USER_OUTPUT
         consoleView.print(command, ReplColors.USER_OUTPUT_CONTENT_TYPE)
     }
 
     fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(project) {
-        resetConsoleEditorIndicator()
-        historyManager.lastCommandType = ReplOutputType.RESULT
-
         printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)
     }
 
-    fun changeIndicatorOnIncomplete() = WriteCommandAction.runWriteCommandAction(project) {
-        historyManager.lastCommandType = ReplOutputType.INCOMPLETE
-        runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.INCOMPLETE_INDICATOR)
-
-        // remove line breaks after incomplete part
-        val historyText = historyDocument.text
-        val historyLength = historyText.length()
-        val trimmedHistoryText = historyText.trimEnd()
-        val whitespaceCharsToDelete = historyLength - trimmedHistoryText.length()
-
-        historyDocument.deleteString(historyLength - whitespaceCharsToDelete, historyLength)
-        EditorUtil.scrollToTheEnd(historyEditor)
-    }
-
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
-        resetConsoleEditorIndicator()
-        historyManager.lastCommandType = ReplOutputType.ERROR
-
         val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
         val historyCommandRunIndicator = historyMarkup.allHighlighters filter {
@@ -176,9 +141,6 @@ public class KotlinReplOutputHighlighter(
     }
 
     fun printRuntimeError(errorText: String) = WriteCommandAction.runWriteCommandAction(project) {
-        resetConsoleEditorIndicator()
-        historyManager.lastCommandType = ReplOutputType.ERROR
-
         printOutput(errorText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
     }
 

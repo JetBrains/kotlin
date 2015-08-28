@@ -61,7 +61,7 @@ public class KotlinReplOutputHandler(
             "HELP_PROMPT"     -> outputHighlighter.printHelp(content)
             "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
             "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
-            "REPL_INCOMPLETE" -> outputHighlighter.changeIndicatorOnIncomplete()
+            "REPL_INCOMPLETE",
             "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
             "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError(content)
             "INNER_ERROR"     -> logError(javaClass, content)

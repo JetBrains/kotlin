@@ -23,7 +23,6 @@ import com.intellij.execution.process.*
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.*
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.JetLanguage
 import java.awt.Color
 import java.awt.Font
-import java.util.concurrent.ConcurrentHashMap
 import javax.swing.Icon
 import kotlin.properties.Delegates
 
@@ -53,7 +51,6 @@ public class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    private val editorToIndicator = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
     private var disposableDescriptor: RunContentDescriptor by Delegates.notNull()
 
@@ -152,6 +149,7 @@ public class KotlinConsoleRunner(
 
         historyEditor.settings.isUseSoftWraps = true
         historyEditor.settings.additionalLinesCount = 0
+        historyEditor.scrollPane.horizontalScrollBar.isEnabled = true
 
         consoleEditor.settings.isCaretRowShown = true
         consoleEditor.settings.additionalLinesCount = 2
@@ -165,12 +163,6 @@ public class KotlinConsoleRunner(
         )
 
         indicatorHighlighter.gutterIconRenderer = indicator
-        editorToIndicator[editor] = indicatorHighlighter
-    }
-
-    fun changeEditorIndicatorIcon(editor: EditorEx, newIcon: Icon) {
-        val oldHighlighter = editorToIndicator[editor] ?: return
-        WriteCommandAction.runWriteCommandAction(project) { oldHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIcon) }
     }
 
     // this method shouldn't be called in normal usage; it is for test purpose only

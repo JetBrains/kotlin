@@ -36,7 +36,7 @@ public class KotlinConsoleExecutor(
         val inputText = document.text.trim()
 
         if (inputText.isNotEmpty()) {
-            historyHighlighter.printNewCommandInHistory(inputText, historyManager.lastCommandType)
+            historyHighlighter.printNewCommandInHistory(inputText)
             submitCommand("$inputText\n")
         }
     }
