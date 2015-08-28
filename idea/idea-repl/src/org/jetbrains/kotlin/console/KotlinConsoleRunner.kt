@@ -30,7 +30,6 @@ import com.intellij.openapi.editor.markup.*
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.Consumer
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
@@ -46,19 +45,20 @@ import javax.swing.Icon
 import kotlin.properties.Delegates
 
 public class KotlinConsoleRunner(
+        val module: Module,
         private val cmdLine: GeneralCommandLine,
-        private val module: Module,
-        private val previousCompilationFailed: Boolean,
         private val testMode: Boolean,
+        private val previousCompilationFailed: Boolean,
         myProject: Project,
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
     private val editorToIndicator = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
-    val executor = KotlinConsoleExecutor(this, historyManager)
-
     private var disposableDescriptor: RunContentDescriptor by Delegates.notNull()
+
+    val executor = KotlinConsoleExecutor(this, historyManager)
+    var compilerHelper: KotlinConsoleCompilerHelper by Delegates.notNull()
 
     override fun createProcess() = cmdLine.createProcess()
 
@@ -81,7 +81,9 @@ public class KotlinConsoleRunner(
     }
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
-        val processHandler = KotlinReplOutputHandler(KotlinReplOutputHighlighter(this, historyManager), process, cmdLine.commandLineString)
+        val processHandler = KotlinReplOutputHandler(
+                KotlinReplOutputHighlighter(this, historyManager, testMode, previousCompilationFailed), process, cmdLine.commandLineString
+        )
         val consoleFile = consoleView.virtualFile
         val keeper = KotlinConsoleKeeper.getInstance(project)
 
@@ -104,9 +106,10 @@ public class KotlinConsoleRunner(
                                     contentDescriptor: RunContentDescriptor
     ): List<AnAction> {
         disposableDescriptor = contentDescriptor
+        compilerHelper = KotlinConsoleCompilerHelper(project, module, defaultExecutor, contentDescriptor)
 
         val actionList = arrayListOf<AnAction>(
-                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, previousCompilationFailed, testMode),
+                BuildAndRestartConsoleAction(this),
                 createConsoleExecAction(consoleExecuteActionHandler),
                 createCloseAction(defaultExecutor, contentDescriptor)
         )

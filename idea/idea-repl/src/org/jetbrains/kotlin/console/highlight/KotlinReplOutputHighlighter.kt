@@ -47,7 +47,9 @@ enum class ReplOutputType {
 
 public class KotlinReplOutputHighlighter(
         private val runner: KotlinConsoleRunner,
-        private val historyManager: KotlinConsoleHistoryManager
+        private val historyManager: KotlinConsoleHistoryManager,
+        private val testMode: Boolean,
+        private val previousCompilationFailed: Boolean
 ) {
     private val project = runner.project
     private val consoleView = runner.consoleView as LanguageConsoleImpl
@@ -65,15 +67,40 @@ public class KotlinReplOutputHighlighter(
         return Pair(oldLen, newLen)
     }
 
-    private fun printOutput(output: String, contentType: ConsoleViewContentType, icon: Icon) {
+    private fun printOutput(output: String, contentType: ConsoleViewContentType, icon: Icon? = null) {
         val (startOffset, endOffset) = textOffsets(output)
 
         consoleView.print(output, contentType)
         consoleView.flushDeferredText()
 
+        if (icon == null) return
+
         historyMarkup.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
         ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(icon) }
+    }
+
+    private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {
+        printOutput("\n", ConsoleViewContentType.NORMAL_OUTPUT)
+
+        printOutput(message, ReplColors.WARNING_INFO_CONTENT_TYPE, ReplIcons.BUILD_WARNING_INDICATOR)
+
+        if (isAddHyperlink) {
+            consoleView.printHyperlink("Build module '${runner.module.name}' and restart") {
+                runner.compilerHelper.compileModule()
+            }
+        }
+
+        printOutput("\n\n", ConsoleViewContentType.NORMAL_OUTPUT)
+    }
+
+    fun printBuildInfoWarningIfNeeded() {
+        if (testMode) return
+        if (previousCompilationFailed) return printWarningMessage("There were compilation errors in module ${runner.module.name}", false)
+        if (runner.compilerHelper.moduleIsUpToDate()) return
+
+        val compilerWarningMessage = "You’re running the REPL with outdated classes: "
+        printWarningMessage(compilerWarningMessage, true)
     }
 
     fun printInitialPrompt(command: String) = consoleView.print(command, ReplColors.INITIAL_PROMPT_CONTENT_TYPE)
@@ -105,7 +132,7 @@ public class KotlinReplOutputHighlighter(
         // remove line breaks after incomplete part
         val historyText = historyDocument.text
         val historyLength = historyText.length()
-        val trimmedHistoryText = historyText.trim()
+        val trimmedHistoryText = historyText.trimEnd()
         val whitespaceCharsToDelete = historyLength - trimmedHistoryText.length()
 
         historyDocument.deleteString(historyLength - whitespaceCharsToDelete, historyLength)

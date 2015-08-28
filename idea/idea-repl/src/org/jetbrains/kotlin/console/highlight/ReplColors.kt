@@ -28,6 +28,11 @@ public object ReplColors {
     public val EDITOR_GUTTER_COLOR: JBColor = JBColor(Gray.xCF, Gray.x31)
     public val PLACEHOLDER_COLOR: JBColor = JBColor.LIGHT_GRAY
 
+    public val WARNING_INFO_CONTENT_TYPE: ConsoleViewContentType =
+            ConsoleViewContentType(
+                    "KOTLIN_CONSOLE_WARNING_INFO",
+                    TextAttributes() apply { fontType = Font.ITALIC; foregroundColor = JBColor.RED }
+            )
     public val INITIAL_PROMPT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_INITIAL_PROMPT",

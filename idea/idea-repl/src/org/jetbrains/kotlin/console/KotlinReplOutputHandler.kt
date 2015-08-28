@@ -42,6 +42,7 @@ public class KotlinReplOutputHandler(
         commandLine: String
 ) : OSProcessHandler(process, commandLine) {
 
+    private var isBuildInfoChecked = false
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 
     override fun isSilentlyDestroyOnClose() = true
@@ -56,7 +57,7 @@ public class KotlinReplOutputHandler(
         val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
 
         when (outputType) {
-            "INITIAL_PROMPT"  -> outputHighlighter.printInitialPrompt(content)
+            "INITIAL_PROMPT"  -> buildWarningIfNeededBeforeInit(content)
             "HELP_PROMPT"     -> outputHighlighter.printHelp(content)
             "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
             "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
@@ -65,6 +66,14 @@ public class KotlinReplOutputHandler(
             "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError(content)
             "INNER_ERROR"     -> logError(javaClass, content)
         }
+    }
+
+    private fun buildWarningIfNeededBeforeInit(content: String) {
+        if (!isBuildInfoChecked) {
+            outputHighlighter.printBuildInfoWarningIfNeeded()
+            isBuildInfoChecked = true
+        }
+        outputHighlighter.printInitialPrompt(content)
     }
 
     private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.JetIcons
 import javax.swing.Icon
 
 public object ReplIcons {
+    public val BUILD_WARNING_INDICATOR: Icon = AllIcons.General.Information
     public val HISTORY_INDICATOR: Icon = AllIcons.General.MessageHistory
     public val EDITOR_INDICATOR: Icon = JetIcons.LAUNCH
     public val INCOMPLETE_INDICATOR: Icon = AllIcons.Nodes.Desktop
