@@ -575,6 +575,10 @@ public interface FloatingPointConstants</*0*/ T> {
 public interface Function</*0*/ out R> {
 }
 
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.BINARY) public final class HiddenDeclaration : kotlin.Annotation {
+    /*primary*/ public constructor HiddenDeclaration()
+}
+
 public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
     enum entry LOCAL_CONTINUE_AND_BREAK
 

@@ -610,6 +610,8 @@ public class CallResolver {
     ) {
         final List<CallCandidateResolutionContext<D>> candidateResolutionContexts = ContainerUtil.newArrayList();
         for (final ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
+            if (DescriptorUtilPackage.isAnnotatedAsHidden(resolutionCandidate.getDescriptor())) continue;
+
             candidatePerfCounter.time(new Function0<Unit>() {
                 @Override
                 public Unit invoke() {

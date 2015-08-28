@@ -11676,6 +11676,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("HiddenDeclarations.kt")
+            public void testHiddenDeclarations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("incompleteConstructorInvocation.kt")
             public void testIncompleteConstructorInvocation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/incompleteConstructorInvocation.kt");

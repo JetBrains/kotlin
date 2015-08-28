@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -57,11 +58,12 @@ public class KotlinIndicesHelper(
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
     private val project = resolutionFacade.project
 
-    private val descriptorFilter =
-            if (applyExcludeSettings)
-                { d -> visibilityFilter(d) && !isExcludedFromAutoImport(d) }
-            else
-                visibilityFilter
+    private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
+        if (it.isAnnotatedAsHidden()) return@filter false
+        if (!visibilityFilter(it)) return@filter false
+        if (applyExcludeSettings && isExcludedFromAutoImport(it)) return@filter false
+        true
+    }
 
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val declarations = HashSet<JetNamedDeclaration>()

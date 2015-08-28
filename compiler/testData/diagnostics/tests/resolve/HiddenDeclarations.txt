@@ -1,0 +1,62 @@
+package
+
+package test {
+    kotlin.HiddenDeclaration() internal var topLevelProperty: kotlin.Int
+    kotlin.HiddenDeclaration() internal val kotlin.String.topLevelExtensionProperty: kotlin.Int
+    kotlin.HiddenDeclaration() internal fun topLevelFun(): kotlin.Unit
+    kotlin.HiddenDeclaration() internal fun kotlin.String.topLevelExtensionFun(): kotlin.Unit
+
+    internal open class A {
+        public constructor A(/*0*/ p: kotlin.Int)
+        kotlin.HiddenDeclaration() public constructor A(/*0*/ s: kotlin.String)
+        kotlin.HiddenDeclaration() internal final val memberProperty: kotlin.Int = 1
+        kotlin.HiddenDeclaration() internal final val kotlin.String.memberExtensionProperty: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        kotlin.HiddenDeclaration() internal open fun memberFun(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        kotlin.HiddenDeclaration() internal final fun kotlin.String.memberExtensionFun(): kotlin.Unit
+    }
+
+    internal final class B : test.A {
+        public constructor B()
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ val memberProperty: kotlin.Int
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ val kotlin.String.memberExtensionProperty: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal open override /*1*/ fun memberFun(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ fun kotlin.String.memberExtensionFun(): kotlin.Unit
+    }
+
+    internal final class C : test.A {
+        public constructor C()
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ val memberProperty: kotlin.Int
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ val kotlin.String.memberExtensionProperty: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        kotlin.HiddenDeclaration() internal open override /*1*/ /*fake_override*/ fun memberFun(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        kotlin.HiddenDeclaration() internal final override /*1*/ /*fake_override*/ fun kotlin.String.memberExtensionFun(): kotlin.Unit
+    }
+
+    internal interface I {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        kotlin.HiddenDeclaration() internal abstract fun foo1(): kotlin.Unit
+        kotlin.HiddenDeclaration() internal abstract fun foo2(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class X : test.I {
+        public constructor X()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal open override /*1*/ fun foo1(): kotlin.Unit
+        kotlin.HiddenDeclaration() internal abstract override /*1*/ /*fake_override*/ fun foo2(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

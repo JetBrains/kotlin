@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -75,7 +76,7 @@ public class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
                 = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, nameFilter, explicitReceiverData, useRuntimeReceiverType)
-                .filter(visibilityFilter)
+                .filter { !it.isAnnotatedAsHidden() && visibilityFilter(it) }
 
         variants = ShadowedDeclarationsFilter(context, resolutionFacade, expression, explicitReceiverData).filter(variants)
 

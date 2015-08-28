@@ -77,3 +77,10 @@ public annotation(retention = SOURCE) class suppress(vararg val names: String)
  */
 target(FUNCTION)
 public annotation(retention = SOURCE) class tailRecursive
+
+/**
+ * TODO
+ */
+target(FUNCTION, PROPERTY, CONSTRUCTOR)
+annotation(retention = BINARY, mustBeDocumented = true)
+public class HiddenDeclaration
