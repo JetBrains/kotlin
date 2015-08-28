@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Set;
@@ -67,7 +66,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
         if (extendsBound != null) {
             JetType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
-                    this, extendsBound, UtilsPackage.asJetScope(getContainingDeclaration().getScopeForClassHeaderResolution()), c.getTrace());
+                    this, extendsBound, getContainingDeclaration().getScopeForClassHeaderResolution(), c.getTrace());
             upperBounds.add(boundType);
         }
 
@@ -104,7 +103,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
         return c.getTypeResolver()
-                    .resolveType(UtilsPackage.asJetScope(getContainingDeclaration().getScopeForClassHeaderResolution()), boundTypeReference,
+                    .resolveType(getContainingDeclaration().getScopeForClassHeaderResolution(), boundTypeReference,
                                  c.getTrace(), false);
     }
 

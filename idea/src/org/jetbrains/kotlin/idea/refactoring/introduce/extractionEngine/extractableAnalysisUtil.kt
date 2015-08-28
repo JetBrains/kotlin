@@ -72,10 +72,11 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -142,7 +143,7 @@ private fun List<Instruction>.getExitPoints(): List<Instruction> =
 
 private fun List<Instruction>.getResultTypeAndExpressions(
         bindingContext: BindingContext,
-        targetScope: JetScope?,
+        targetScope: LexicalScope?,
         options: ExtractionOptions
 ): Pair<JetType, List<JetExpression>> {
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): JetExpression? {
@@ -239,7 +240,7 @@ private fun ExtractionData.analyzeControlFlow(
         bindingContext: BindingContext,
         modifiedVarDescriptors: Map<VariableDescriptor, List<JetExpression>>,
         options: ExtractionOptions,
-        targetScope: JetScope?,
+        targetScope: LexicalScope?,
         parameters: Set<Parameter>
 ): Pair<ControlFlow, ErrorMessage?> {
     val exitPoints = localInstructions.getExitPoints()
@@ -444,7 +445,7 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
             .filterNotNull()
 }
 
-private fun JetType.isExtractable(targetScope: JetScope?): Boolean {
+private fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
     return collectReferencedTypes(true).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
@@ -459,7 +460,7 @@ private fun JetType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>,
         options: ExtractionOptions,
-        targetScope: JetScope?,
+        targetScope: LexicalScope?,
         processTypeArguments: Boolean = true
 ): Boolean {
     return collectReferencedTypes(processTypeArguments).fold(true) { extractable, typeToCheck ->
@@ -495,7 +496,7 @@ private class MutableParameter(
         override val argumentText: String,
         override val originalDescriptor: DeclarationDescriptor,
         override val receiverCandidate: Boolean,
-        private val targetScope: JetScope?
+        private val targetScope: LexicalScope?
 ): Parameter {
     // All modifications happen in the same thread
     private var writable: Boolean = true
@@ -585,7 +586,7 @@ private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
-        targetScope: JetScope?,
+        targetScope: LexicalScope?,
         modifiedVarDescriptors: Set<VariableDescriptor>
 ): ParametersInfo {
     val info = ParametersInfo()
@@ -652,7 +653,7 @@ private fun ExtractionData.inferParametersInfo(
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
                     && originalDeclaration is JetNamedFunction && originalDeclaration.isLocal()
-                    && (targetScope == null || originalDescriptor !in targetScope.getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
+                    && (targetScope == null || originalDescriptor !in targetScope.asJetScope().getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 

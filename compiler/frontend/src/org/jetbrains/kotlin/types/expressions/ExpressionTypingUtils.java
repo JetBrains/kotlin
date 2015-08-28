@@ -29,12 +29,8 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
-import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -47,7 +43,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
-import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 
 public class ExpressionTypingUtils {
 
@@ -106,9 +101,9 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
-        WritableScopeImpl scope = new WritableScopeImpl(
-                context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
+    public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
+        LexicalWritableScope scope = new LexicalWritableScope(
+                context.scope, context.scope.getOwnerDescriptor(), false, null, new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return scope;
     }

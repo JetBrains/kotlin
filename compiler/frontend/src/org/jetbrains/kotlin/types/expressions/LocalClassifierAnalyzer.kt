@@ -42,8 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationPr
 import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -58,7 +57,7 @@ public class LocalClassifierAnalyzer(
         private val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
-            scope: WritableScope?,
+            scope: LexicalWritableScope?,
             context: ExpressionTypingContext,
             containingDeclaration: DeclarationDescriptor,
             classOrObject: JetClassOrObject
@@ -92,7 +91,7 @@ public class LocalClassifierAnalyzer(
 }
 
 class LocalClassDescriptorHolder(
-        val writableScope: WritableScope?,
+        val writableScope: LexicalWritableScope?,
         val myClass: JetClassOrObject,
         val containingDeclaration: DeclarationDescriptor,
         val storageManager: StorageManager,
@@ -147,7 +146,7 @@ class LocalClassDescriptorHolder(
 
     fun getResolutionScopeForClass(classOrObject: JetClassOrObject): LexicalScope {
         assert (isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
-        return expressionTypingContext.scope.memberScopeAsFileScope()
+        return expressionTypingContext.scope
     }
 }
 

@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 public class TypeResolutionContext {
-    public final JetScope scope;
+    public final LexicalScope scope;
     public final BindingTrace trace;
     public final boolean checkBounds;
     public final boolean allowBareTypes;
     public final boolean forceResolveLazyTypes;
 
-    public TypeResolutionContext(@NotNull JetScope scope, @NotNull BindingTrace trace, boolean checkBounds, boolean allowBareTypes) {
+    public TypeResolutionContext(@NotNull LexicalScope scope, @NotNull BindingTrace trace, boolean checkBounds, boolean allowBareTypes) {
         this(scope, trace, checkBounds, allowBareTypes, allowBareTypes);
     }
 
     private TypeResolutionContext(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
             boolean checkBounds,
             boolean allowBareTypes,

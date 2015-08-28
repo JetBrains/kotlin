@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asLexicalScope;
 
 public class JetTypeCheckerTest extends JetLiteFixture {
 
@@ -550,14 +551,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
-        JetType type = expressionTypingServices.getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
+        JetType type = expressionTypingServices.getType(asLexicalScope(scopeWithImports), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
-        JetType type = expressionTypingServices.safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
+        JetType type = expressionTypingServices.safeGetType(asLexicalScope(scopeWithImports), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
@@ -590,7 +591,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
         JetType type = expressionTypingServices.getType(
-                addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
+                asLexicalScope(addImports(scope)), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
@@ -637,6 +638,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return typeResolver.resolveType(scope, JetPsiFactory(getProject()).createType(typeStr), JetTestUtils.DUMMY_TRACE, true);
+        return typeResolver.resolveType(asLexicalScope(scope), JetPsiFactory(getProject()).createType(typeStr), JetTestUtils.DUMMY_TRACE, true);
     }
 }

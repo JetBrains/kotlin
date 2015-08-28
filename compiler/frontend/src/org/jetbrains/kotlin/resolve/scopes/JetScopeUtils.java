@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.resolve.scopes;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -53,25 +53,21 @@ public final class JetScopeUtils {
         );
     }
 
-    public static JetScope makeScopeForPropertyAccessor(
+    public static LexicalScope makeScopeForPropertyAccessor(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope parentScope,
+            @NotNull LexicalScope parentScope,
             @NotNull BindingTrace trace
     ) {
-        JetScope propertyDeclarationInnerScope =
+        LexicalScope propertyDeclarationInnerScope =
                 getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
                                                  propertyDescriptor.getTypeParameters(),
                                                  propertyDescriptor.getExtensionReceiverParameter(), trace);
-        WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, parentScope.getContainingDeclaration(),
-                                                            new TraceBasedRedeclarationHandler(trace), "Accessor Scope");
-        accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        return accessorScope;
+        return new LexicalScopeImpl(propertyDeclarationInnerScope, parentScope.getOwnerDescriptor(), false, null, "Accessor Scope");
     }
 
-    public static JetScope getPropertyDeclarationInnerScope(
+    public static LexicalScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
+            @NotNull LexicalScope outerScope,
             @NotNull RedeclarationHandler redeclarationHandler
     ) {
         return getPropertyDeclarationInnerScope(propertyDescriptor,
@@ -82,9 +78,9 @@ public final class JetScopeUtils {
                                                 true);
     }
 
-    public static JetScope getPropertyDeclarationInnerScope(
+    public static LexicalScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
+            @NotNull LexicalScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             BindingTrace trace
@@ -92,9 +88,9 @@ public final class JetScopeUtils {
         return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, true);
     }
 
-    public static JetScope getPropertyDeclarationInnerScopeForInitializer(
+    public static LexicalScope getPropertyDeclarationInnerScopeForInitializer(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
+            @NotNull LexicalScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             BindingTrace trace
@@ -102,9 +98,9 @@ public final class JetScopeUtils {
         return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, false);
     }
 
-    private static JetScope getPropertyDeclarationInnerScope(
+    private static LexicalScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
+            @NotNull LexicalScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             BindingTrace trace,
@@ -116,24 +112,26 @@ public final class JetScopeUtils {
     }
 
     @NotNull
-    private static JetScope getPropertyDeclarationInnerScope(
+    private static LexicalScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull LexicalScope outerScope,
+            @NotNull final List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             @NotNull RedeclarationHandler redeclarationHandler,
             boolean addLabelForProperty
     ) {
-        WritableScopeImpl result = new WritableScopeImpl(
-                outerScope, propertyDescriptor, redeclarationHandler,
+        return new LexicalScopeImpl(
+                outerScope, propertyDescriptor, addLabelForProperty, receiver,
                 "Property declaration inner scope",
-                receiver,
-                addLabelForProperty ? propertyDescriptor : null);
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-            result.addClassifierDescriptor(typeParameterDescriptor);
-        }
-        result.changeLockLevel(WritableScope.LockLevel.READING);
-        return result;
+                redeclarationHandler, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+            @Override
+            public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                    handler.addClassifierDescriptor(typeParameterDescriptor);
+                }
+                return Unit.INSTANCE$;
+            }
+        });
     }
 
     @TestOnly

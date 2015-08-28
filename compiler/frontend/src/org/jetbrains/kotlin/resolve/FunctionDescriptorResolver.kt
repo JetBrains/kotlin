@@ -28,14 +28,17 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.ModifiersChecker.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral
+import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers
+import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DeferredType
@@ -45,7 +48,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import java.util.ArrayList
+import java.util.*
 
 class FunctionDescriptorResolver(
         private val typeResolver: TypeResolver,
@@ -58,7 +61,7 @@ class FunctionDescriptorResolver(
 ) {
     public fun resolveFunctionDescriptor(
             containingDescriptor: DeclarationDescriptor,
-            scope: JetScope,
+            scope: LexicalScope,
             function: JetNamedFunction,
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo
@@ -72,7 +75,7 @@ class FunctionDescriptorResolver(
 
     public fun resolveFunctionExpressionDescriptor(
             containingDescriptor: DeclarationDescriptor,
-            scope: JetScope,
+            scope: LexicalScope,
             function: JetNamedFunction,
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo,
@@ -83,7 +86,7 @@ class FunctionDescriptorResolver(
     private fun resolveFunctionDescriptor(
             functionConstructor: (DeclarationDescriptor, Annotations, Name, CallableMemberDescriptor.Kind, SourceElement) -> SimpleFunctionDescriptorImpl,
             containingDescriptor: DeclarationDescriptor,
-            scope: JetScope,
+            scope: LexicalScope,
             function: JetNamedFunction,
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo,
@@ -103,7 +106,7 @@ class FunctionDescriptorResolver(
     }
 
     private fun initializeFunctionReturnTypeBasedOnFunctionBody(
-            scope: JetScope,
+            scope: LexicalScope,
             function: JetNamedFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             trace: BindingTrace,
@@ -130,17 +133,14 @@ class FunctionDescriptorResolver(
 
     fun initializeFunctionDescriptorAndExplicitReturnType(
             containingDescriptor: DeclarationDescriptor,
-            scope: JetScope,
+            scope: LexicalScope,
             function: JetFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             trace: BindingTrace,
             expectedFunctionType: JetType
     ) {
-        val innerScope = WritableScopeImpl(scope,
-                                           functionDescriptor,
-                                           TraceBasedRedeclarationHandler(trace),
-                                           "Function descriptor header scope",
-                                           labeledDeclaration = functionDescriptor)
+        val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
+                                              TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace)
@@ -181,7 +181,7 @@ class FunctionDescriptorResolver(
     private fun createValueParameterDescriptors(
             function: JetFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
-            innerScope: WritableScopeImpl,
+            innerScope: LexicalWritableScope,
             trace: BindingTrace,
             expectedFunctionType: JetType
     ): List<ValueParameterDescriptor> {
@@ -218,7 +218,7 @@ class FunctionDescriptorResolver(
             if (functionTypeExpected()) KotlinBuiltIns.getValueParameters(owner, this) else null
 
     public fun resolvePrimaryConstructorDescriptor(
-            scope: JetScope,
+            scope: LexicalScope,
             classDescriptor: ClassDescriptor,
             classElement: JetClassOrObject,
             trace: BindingTrace
@@ -237,7 +237,7 @@ class FunctionDescriptorResolver(
     }
 
     public fun resolveSecondaryConstructorDescriptor(
-            scope: JetScope,
+            scope: LexicalScope,
             classDescriptor: ClassDescriptor,
             constructor: JetSecondaryConstructor,
             trace: BindingTrace
@@ -255,7 +255,7 @@ class FunctionDescriptorResolver(
     }
 
     private fun createConstructorDescriptor(
-            scope: JetScope,
+            scope: LexicalScope,
             classDescriptor: ClassDescriptor,
             isPrimary: Boolean,
             modifierList: JetModifierList?,
@@ -271,9 +271,10 @@ class FunctionDescriptorResolver(
                 declarationToTrace.toSourceElement()
         )
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
-        val parameterScope = WritableScopeImpl(
+        val parameterScope = LexicalWritableScope(
                 scope,
                 constructorDescriptor,
+                false, null,
                 TraceBasedRedeclarationHandler(trace),
                 "Scope with value parameters of a constructor"
         )
@@ -294,7 +295,7 @@ class FunctionDescriptorResolver(
 
     private fun resolveValueParameters(
             functionDescriptor: FunctionDescriptor,
-            parameterScope: WritableScope,
+            parameterScope: LexicalWritableScope,
             valueParameters: List<JetParameter>,
             trace: BindingTrace,
             expectedValueParameters: List<ValueParameterDescriptor>?

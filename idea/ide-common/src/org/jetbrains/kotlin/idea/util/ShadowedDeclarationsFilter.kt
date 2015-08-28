@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.TypeUtils
@@ -164,11 +164,12 @@ public class ShadowedDeclarationsFilter(
             override fun getCallType() = Call.CallType.DEFAULT
         }
 
-        var resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return descriptors
+        var resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, context] ?: return descriptors
 
         if (descriptorsToImport.isNotEmpty()) {
-            resolutionScope = ChainedScope(resolutionScope.getContainingDeclaration(), "Scope with explicitly imported descriptors",
-                                           ExplicitImportsScope(descriptorsToImport), resolutionScope)
+            resolutionScope = LexicalChainedScope(resolutionScope, resolutionScope.ownerDescriptor, false, null,
+                                                  "Scope with explicitly imported descriptors",
+                                                  ExplicitImportsScope(descriptorsToImport))
         }
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(context)

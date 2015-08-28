@@ -22,20 +22,19 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.Variance
-import java.util.HashMap
+import java.util.*
 
 public class HeuristicSignatures(
         private val moduleDescriptor: ModuleDescriptor,
@@ -77,18 +76,13 @@ public class HeuristicSignatures(
 
     private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): JetType {
         val typeRef = JetPsiFactory(project).createType(text)
-        val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT)
-        val typeParametersScope = TypeParametersScope(typeParameters)
-        val scope = ChainedScope(moduleDescriptor, "Root packages + type parameters", typeParametersScope, rootPackagesScope)
+        val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsFileScope()
+        val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, "Root packages + type parameters") {
+                        typeParameters.forEach { addClassifierDescriptor(it) }
+                    }
         val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
         assert(!type.isError()) { "No type resolved from '$text'" }
         return type
-    }
-
-    private class TypeParametersScope(params: Collection<TypeParameterDescriptor>) : JetScope by JetScope.Empty {
-        private val paramsByName = params.map { it.getName() to it }.toMap()
-
-        override fun getClassifier(name: Name, location: LookupLocation) = paramsByName[name]
     }
 
     companion object {

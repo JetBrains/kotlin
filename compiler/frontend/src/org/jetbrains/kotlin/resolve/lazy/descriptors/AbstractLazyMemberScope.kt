@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -81,7 +80,7 @@ protected constructor(
 
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {
-            val resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration).asJetScope()
+            val resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration)
             result.add(c.functionDescriptorResolver.resolveFunctionDescriptor(
                     thisDescriptor,
                     resolutionScope,
@@ -109,7 +108,7 @@ protected constructor(
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
         for (propertyDeclaration in declarations) {
-            val resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration).asJetScope()
+            val resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration)
             val propertyDescriptor = c.descriptorResolver.resolvePropertyDescriptor(
                     thisDescriptor,
                     resolutionScope,

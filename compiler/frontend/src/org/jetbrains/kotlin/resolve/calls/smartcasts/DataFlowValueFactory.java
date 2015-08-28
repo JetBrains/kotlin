@@ -54,7 +54,7 @@ public class DataFlowValueFactory {
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(expression, type, resolutionContext.trace.getBindingContext(),
-                                   resolutionContext.scope.getContainingDeclaration());
+                                   resolutionContext.scope.getOwnerDescriptor());
     }
 
     @NotNull
@@ -106,7 +106,7 @@ public class DataFlowValueFactory {
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(receiverValue, resolutionContext.trace.getBindingContext(),
-                                   resolutionContext.scope.getContainingDeclaration());
+                                   resolutionContext.scope.getOwnerDescriptor());
     }
 
     @NotNull

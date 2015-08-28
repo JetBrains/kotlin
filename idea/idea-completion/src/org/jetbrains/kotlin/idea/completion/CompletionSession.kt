@@ -97,7 +97,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
-    protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).getContainingDeclaration()
+    protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
     private val kotlinIdentifierStartPattern: ElementPattern<Char>
     private val kotlinIdentifierPartPattern: ElementPattern<Char>

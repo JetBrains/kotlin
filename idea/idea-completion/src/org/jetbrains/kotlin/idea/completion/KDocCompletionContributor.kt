@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {

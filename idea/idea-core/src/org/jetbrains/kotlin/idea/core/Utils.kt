@@ -27,8 +27,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import java.util.*
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
@@ -80,17 +81,18 @@ public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetP
     return expressionFactory.createExpression(psiFactory)
 }
 
-public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): JetScope {
+public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
     for (parent in parentsWithSelf) {
         if (parent is JetExpression) {
-            val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent] ?:
+                        bindingContext[BindingContext.RESOLUTION_SCOPE, parent]?.asLexicalScope() // todo remove this hack
             if (scope != null) return scope
         }
 
         if (parent is JetClassBody) {
             val classDescriptor = bindingContext[BindingContext.CLASS, parent.getParent()] as? ClassDescriptorWithResolutionScopes
             if (classDescriptor != null) {
-                return classDescriptor.getScopeForMemberDeclarationResolution().asJetScope()
+                return classDescriptor.getScopeForMemberDeclarationResolution()
             }
         }
 

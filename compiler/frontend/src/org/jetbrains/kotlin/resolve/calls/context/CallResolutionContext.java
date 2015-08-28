@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.JetType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
@@ -38,7 +38,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
 
     protected CallResolutionContext(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,

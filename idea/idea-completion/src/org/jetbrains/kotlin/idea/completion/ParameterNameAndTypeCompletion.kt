@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
 

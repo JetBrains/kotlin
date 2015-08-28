@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -69,7 +70,7 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetType safeGetType(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -82,7 +83,7 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetTypeInfo getTypeInfo(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -102,7 +103,7 @@ public class ExpressionTypingServices {
 
     @Nullable
     public JetType getType(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -114,7 +115,7 @@ public class ExpressionTypingServices {
     /////////////////////////////////////////////////////////
 
     public void checkFunctionReturnType(
-            @NotNull JetScope functionInnerScope,
+            @NotNull LexicalScope functionInnerScope,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -160,7 +161,7 @@ public class ExpressionTypingServices {
         List<JetExpression> block = ResolvePackage.filterStatements(statementFilter, expression);
 
         // SCRIPT: get code descriptor for script declaration
-        DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
+        DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         if (containingDescriptor instanceof ScriptDescriptor) {
             if (!(expression.getParent() instanceof JetScript)) {
                 // top level script declarations should have ScriptDescriptor parent
@@ -168,8 +169,8 @@ public class ExpressionTypingServices {
                 containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
             }
         }
-        WritableScope scope = new WritableScopeImpl(
-                context.scope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
+                                                              new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         JetTypeInfo r;
@@ -184,7 +185,7 @@ public class ExpressionTypingServices {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
-            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);
+            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, UtilsPackage.asJetScope(scope));
         }
 
         return r;
@@ -193,14 +194,14 @@ public class ExpressionTypingServices {
     @NotNull
     public JetType getBodyExpressionType(
             @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope,
+            @NotNull LexicalScope outerScope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor
     ) {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
+        LexicalScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
@@ -222,7 +223,7 @@ public class ExpressionTypingServices {
      * at the nearest jump point from the block beginning.
      */
     /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
-            @NotNull WritableScope scope,
+            @NotNull LexicalWritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context

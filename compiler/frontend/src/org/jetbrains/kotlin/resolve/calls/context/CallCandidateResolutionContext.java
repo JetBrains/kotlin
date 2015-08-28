@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -45,7 +45,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -98,7 +98,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     @Override
     protected CallCandidateResolutionContext<D> create(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,

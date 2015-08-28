@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.NEED_SYNTHETIC_ACCESSOR;
 
@@ -43,9 +44,9 @@ public class NeedSyntheticChecker implements CallChecker {
     //Necessary synthetic accessors in outer classes generated via old logic: CodegenContext.getAccessor
     //Generation of accessors in nested classes (to invoke from outer,
     //      e.g.: from class to companion object) controlled via NEED_SYNTHETIC_ACCESSOR slice
-    private boolean needSyntheticAccessor(JetScope invokationScope, CallableDescriptor targetDescriptor) {
+    private boolean needSyntheticAccessor(LexicalScope invokationScope, CallableDescriptor targetDescriptor) {
         return targetDescriptor instanceof CallableMemberDescriptor &&
                Visibilities.isPrivate(targetDescriptor.getVisibility()) &&
-               targetDescriptor.getContainingDeclaration() != invokationScope.getContainingDeclaration().getContainingDeclaration();
+               targetDescriptor.getContainingDeclaration() != invokationScope.getOwnerDescriptor().getContainingDeclaration();
     }
 }

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public class ResolveElementCache(
@@ -407,15 +406,15 @@ public class ResolveElementCache(
                                                     classOrObject,
                                                     descriptor,
                                                     descriptor.getUnsubstitutedPrimaryConstructor(),
-                                                    descriptor.getScopeForClassHeaderResolution().asJetScope(),
-                                                    descriptor.getScopeForMemberDeclarationResolution().asJetScope())
+                                                    descriptor.getScopeForClassHeaderResolution(),
+                                                    descriptor.getScopeForMemberDeclarationResolution())
 
         return trace
     }
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(jetProperty)
-        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty).asJetScope()
+        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(jetProperty) as PropertyDescriptor
@@ -448,7 +447,7 @@ public class ResolveElementCache(
     private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: JetNamedFunction, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(namedFunction)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction).asJetScope()
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction)
         val functionDescriptor = resolveSession.resolveToDescriptor(namedFunction) as FunctionDescriptor
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
@@ -461,7 +460,7 @@ public class ResolveElementCache(
     private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(constructor)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor).asJetScope()
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor)
         val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
@@ -473,7 +472,7 @@ public class ResolveElementCache(
 
     private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile): BindingTrace {
         val trace = createDelegatingTrace(klass)
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass).asJetScope()
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass)
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()

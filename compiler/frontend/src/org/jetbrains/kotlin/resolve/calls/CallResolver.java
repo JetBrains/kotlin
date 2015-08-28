@@ -44,9 +44,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -255,7 +256,7 @@ public class CallResolver {
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -326,14 +327,14 @@ public class CallResolver {
             return checkArgumentTypesAndFail(context);
         }
         Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(context.scope, constructors, context.call);
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(UtilsPackage.asJetScope(context.scope), constructors, context.call);
 
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
     @Nullable
     public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
-            @NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace, @NotNull LexicalScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull JetConstructorDelegationCall call, @NotNull CallChecker callChecker
     ) {

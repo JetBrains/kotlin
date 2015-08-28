@@ -55,7 +55,7 @@ public class SmartCastManager {
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
     ) {
-        return getSmartCastVariants(receiverToCast, context.trace.getBindingContext(), context.scope.getContainingDeclaration(), context.dataFlowInfo);
+        return getSmartCastVariants(receiverToCast, context.trace.getBindingContext(), context.scope.getOwnerDescriptor(), context.dataFlowInfo);
     }
 
     @NotNull
@@ -102,7 +102,7 @@ public class SmartCastManager {
             @NotNull ReceiverValue receiverToCast
     ) {
         return getSmartCastVariantsExcludingReceiver(context.trace.getBindingContext(),
-                                                     context.scope.getContainingDeclaration(),
+                                                     context.scope.getOwnerDescriptor(),
                                                      context.dataFlowInfo,
                                                      receiverToCast);
     }

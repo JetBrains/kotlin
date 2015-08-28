@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.codegen.SamCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.utils.getFileScope
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -114,7 +113,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val context = parentCall.analyze(BodyResolveMode.PARTIAL)
 
             val calleeExpression = parentCall.calleeExpression ?: return false
-            val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return false
+            val scope = context[BindingContext.LEXICAL_SCOPE, calleeExpression] ?: return false
 
             val originalCall = parentCall.getResolvedCall(context) ?: return false
 
@@ -178,7 +177,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             }
 
             // SAM adapters for member functions
-            val resolutionScope = functionCall.getResolutionScope(bindingContext, functionCall.getResolutionFacade())
+            val resolutionScope = functionCall.getResolutionScope(bindingContext, functionCall.getResolutionFacade()).getFileScope()
             val syntheticExtensions = resolutionScope.getSyntheticExtensionFunctions(
                     containingClass.defaultType.singletonList(),
                     functionResolvedCall.resultingDescriptor.name,

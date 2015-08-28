@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
@@ -39,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -265,7 +267,7 @@ public class ArgumentTypeResolver {
     @Nullable
     public JetType getShapeTypeOfFunctionLiteral(
             @NotNull JetFunction function,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
             boolean expectedTypeIsUnknown
     ) {
@@ -294,7 +296,7 @@ public class ArgumentTypeResolver {
     @Nullable
     public JetType resolveTypeRefWithDefault(
             @Nullable JetTypeReference returnTypeRef,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
             @Nullable JetType defaultValue
     ) {

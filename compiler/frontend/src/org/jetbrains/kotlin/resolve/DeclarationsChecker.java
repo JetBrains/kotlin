@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.SubstitutionUtils;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -81,7 +80,7 @@ public class DeclarationsChecker {
                 JetClass jetClass = (JetClass) classOrObject;
                 checkClass(bodiesResolveContext, jetClass, classDescriptor);
                 descriptorResolver.checkNamesInConstraints(
-                        jetClass, classDescriptor, UtilsPackage.asJetScope(classDescriptor.getScopeForClassHeaderResolution()), trace);
+                        jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
                 checkObject((JetObjectDeclaration) classOrObject, classDescriptor);

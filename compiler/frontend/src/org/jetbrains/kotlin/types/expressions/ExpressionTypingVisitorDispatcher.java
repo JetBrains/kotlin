@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
@@ -65,7 +65,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
         public ForBlock(
                 @NotNull ExpressionTypingComponents components,
                 @NotNull AnnotationChecker annotationChecker,
-                @NotNull WritableScope writableScope
+                @NotNull LexicalWritableScope writableScope
         ) {
             super(components, annotationChecker);
             this.visitorForBlock = new ExpressionTypingVisitorForStatements(

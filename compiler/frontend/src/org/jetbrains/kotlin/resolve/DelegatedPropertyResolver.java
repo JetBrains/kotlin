@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DeferredType;
@@ -81,7 +81,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
         resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, true);
         ResolvedCall<FunctionDescriptor> resolvedCall =
@@ -94,7 +94,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
         JetType returnType = getDelegatedPropertyGetMethodReturnType(
                 propertyDescriptor, delegateExpression, delegateType, trace, scope);
@@ -114,7 +114,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
         resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, false);
     }
@@ -136,7 +136,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
@@ -174,7 +174,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             boolean isGet
     ) {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
@@ -226,7 +226,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             boolean isGet,
             boolean isComplete
     ) {
@@ -287,8 +287,8 @@ public class DelegatedPropertyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope propertyDeclarationInnerScope,
-            @NotNull JetScope accessorScope,
+            @NotNull LexicalScope propertyDeclarationInnerScope,
+            @NotNull LexicalScope accessorScope,
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
@@ -315,7 +315,7 @@ public class DelegatedPropertyResolver {
             @NotNull JetProperty property,
             @NotNull final PropertyDescriptor propertyDescriptor,
             @NotNull final JetExpression delegateExpression,
-            @NotNull final JetScope accessorScope,
+            @NotNull final LexicalScope accessorScope,
             @NotNull final BindingTrace trace
     ) {
         final JetType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;

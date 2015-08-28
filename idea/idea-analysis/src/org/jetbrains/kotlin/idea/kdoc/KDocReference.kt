@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
@@ -84,7 +86,7 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
         if (result.size() != 1) return listOf()
-        val scope = getResolutionScope(resolutionFacade, result.first())
+        val scope = getResolutionScope(resolutionFacade, result.first()).asJetScope()
         result = scope.getDescriptors().filter { it.getName().asString() == nameComponent }
     }
 
@@ -94,7 +96,7 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
 private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
                                 name: String,
                                 resolutionFacade: ResolutionFacade): List<DeclarationDescriptor> {
-    val scope = getResolutionScope(resolutionFacade, fromDescriptor)
+    val scope = getResolutionScope(resolutionFacade, fromDescriptor).asJetScope()
     return scope.getDescriptors().filter {
         it.getName().asString() == name && it.getContainingDeclaration() == fromDescriptor
     }
@@ -129,30 +131,28 @@ private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): JetScop
     return descriptor.getContainingDeclaration().getPackage(descriptor.fqName).memberScope
 }
 
-private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor): JetScope {
-    val redeclarationHandler = RedeclarationHandler.DO_NOTHING
+private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescriptor): LexicalScope {
 
-    val headerScope = WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Class ${descriptor.getName()} header scope",
-                                        descriptor.thisAsReceiverParameter)
-    for (typeParameter in descriptor.getTypeConstructor().getParameters()) {
-        headerScope.addClassifierDescriptor(typeParameter)
+    val headerScope = LexicalScopeImpl(outerScope, descriptor, false, descriptor.thisAsReceiverParameter,
+                                       "Class ${descriptor.getName()} header scope") {
+        for (typeParameter in descriptor.getTypeConstructor().getParameters()) {
+            addClassifierDescriptor(typeParameter)
+        }
+        for (constructor in descriptor.getConstructors()) {
+            addFunctionDescriptor(constructor)
+        }
     }
-    for (constructor in descriptor.getConstructors()) {
-        headerScope.addFunctionDescriptor(constructor)
-    }
-    headerScope.changeLockLevel(WritableScope.LockLevel.READING)
-
-    val classScope = ChainedScope(descriptor, "Class ${descriptor.getName()} scope", descriptor.getDefaultType().getMemberScope(), headerScope)
-    return classScope
+    return LexicalChainedScope(headerScope, descriptor, false, null,
+                               "Class ${descriptor.getName()} scope", descriptor.getDefaultType().getMemberScope())
 }
 
-public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): JetScope {
+public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
-            getPackageInnerScope(descriptor)
+            getPackageInnerScope(descriptor).memberScopeAsFileScope()
 
         is PackageViewDescriptor ->
-            descriptor.memberScope
+            descriptor.memberScope.memberScopeAsFileScope()
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)
@@ -173,7 +173,7 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
     }
 }
 
-private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): JetScope {
+private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): LexicalScope {
     val parent = descriptor.getContainingDeclaration()
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? JetFile

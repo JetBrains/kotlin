@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -83,7 +85,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
-        val property = findSyntheticProperty(function, resolutionScope) ?: return null
+        val property = findSyntheticProperty(function, resolutionScope.asJetScope()) ?: return null
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
@@ -98,7 +100,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             val newExpression = applyTo(callExpressionCopy, property.name)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
-                    resolutionScope,
+                    resolutionScope.asJetScope(),
                     contextExpression = callExpression,
                     trace = bindingTrace,
                     dataFlowInfo = dataFlowInfo,
@@ -115,7 +117,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             property: SyntheticJavaPropertyDescriptor,
             bindingContext: BindingContext,
-            resolutionScope: JetScope,
+            resolutionScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
             expectedType: JetType,
             facade: ResolutionFacade

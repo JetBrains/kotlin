@@ -30,7 +30,7 @@ public class InlineCheckerWrapper : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext) return
 
-        var parentDescriptor: DeclarationDescriptor? = context.scope.getContainingDeclaration()
+        var parentDescriptor: DeclarationDescriptor? = context.scope.ownerDescriptor
 
         while (parentDescriptor != null) {
             if (InlineUtil.isInline(parentDescriptor)) {

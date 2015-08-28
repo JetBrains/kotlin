@@ -55,8 +55,9 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.*;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -76,6 +77,7 @@ import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPEN
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
+import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -426,7 +428,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
         }
         if (superTypeQualifier != null) {
-            context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
+            context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, asJetScope(context.scope));
         }
         return result;
     }
@@ -452,7 +454,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             ReceiverParameterDescriptor result = null;
-            List<ReceiverParameterDescriptor> receivers = context.scope.getImplicitReceiversHierarchy();
+            List<ReceiverParameterDescriptor> receivers = UtilsPackage.getImplicitReceiversHierarchy(context.scope);
             if (onlyClassReceivers) {
                 for (ReceiverParameterDescriptor receiver : receivers) {
                     if (isDeclaredInClass(receiver)) {
@@ -660,7 +662,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         traceAdapter.addHandler(CLASS, handler);
         components.localClassifierAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
                                                                 context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
-                                                                context.scope.getContainingDeclaration(),
+                                                                context.scope.getOwnerDescriptor(),
                                                                 expression.getObjectDeclaration());
         temporaryTrace.commit();
         DataFlowInfo resultFlowInfo = context.dataFlowInfo;
@@ -1115,11 +1117,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context.replaceExpectedType(booleanType), facade);
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
-        WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
+        LexicalWritableScope leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
         // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
         boolean isAnd = operationType == JetTokens.ANDAND;
         DataFlowInfo flowInfoLeft = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
-        WritableScopeImpl rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
+        LexicalWritableScope rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
 
         ExpressionTypingContext contextForRightExpr =
                 context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope).replaceExpectedType(booleanType);
@@ -1382,8 +1384,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        components.annotationResolver.resolveAnnotationsWithArguments(
-                context.scope, expression.getAnnotationEntries(), context.trace);
+        components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace);
 
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) {

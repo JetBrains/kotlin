@@ -47,7 +47,7 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
             val resolutionFacade = callExpression.getResolutionFacade()
             val context = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
             val calleeExpression = callExpression.getCalleeExpression() ?: return false
-            val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
+            val scope = context[BindingContext.LEXICAL_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
             val originalCall = callExpression.getResolvedCall(context) ?: return false
             val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
 

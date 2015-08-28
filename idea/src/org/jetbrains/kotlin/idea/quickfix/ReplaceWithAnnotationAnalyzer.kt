@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSuppor
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
@@ -91,7 +92,8 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
-        val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
+        val scope = LexicalChainedScope(symbolScope, symbolDescriptor, false, null, "ReplaceWith resolution scope",
+                            ExplicitImportsScope(explicitlyImportedSymbols))
 
         var bindingContext = analyzeInContext(expression, symbolDescriptor, scope, resolutionFacade)
 
@@ -135,7 +137,7 @@ object ReplaceWithAnnotationAnalyzer {
                     else
                         resolvedCall.getDispatchReceiver()
                     if (receiver is ThisReceiver) {
-                        val receiverExpression = receiver.asExpression(symbolScope, psiFactory)
+                        val receiverExpression = receiver.asExpression(symbolScope.asJetScope(), psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
                         }
@@ -159,7 +161,7 @@ object ReplaceWithAnnotationAnalyzer {
     private fun analyzeInContext(
             expression: JetExpression,
             symbolDescriptor: CallableDescriptor,
-            scope: ChainedScope,
+            scope: LexicalScope,
             resolutionFacade: ResolutionFacade
     ): BindingContext {
         val traceContext = BindingTraceContext()
@@ -168,7 +170,7 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor): LexicalScope {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.getContainingDeclaration()
@@ -176,15 +178,15 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor ->
-                descriptor.memberScope
+                descriptor.memberScope.memberScopeAsFileScope()
 
             is ClassDescriptorWithResolutionScopes ->
-                descriptor.getScopeForMemberDeclarationResolution().asJetScope()
+                descriptor.getScopeForMemberDeclarationResolution()
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.getContainingDeclaration())
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope.memberScopeAsFileScope() })
-                        .scopeForMemberDeclarationResolution().asJetScope()
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope })
+                        .scopeForMemberDeclarationResolution()
             }
 
             is FunctionDescriptor ->
@@ -197,7 +199,7 @@ object ReplaceWithAnnotationAnalyzer {
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
-                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!
+                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!.asLexicalScope()
             }
 
             //TODO?

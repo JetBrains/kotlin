@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.Collections
 import java.util.HashSet
@@ -79,7 +80,7 @@ public class NewDeclarationNameValidator(
         if (visibleDeclarationsContext != null) {
             val bindingContext = visibleDeclarationsContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             val resolutionScope = visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
-            if (resolutionScope.hasConflict(identifier)) return false
+            if (resolutionScope.asJetScope().hasConflict(identifier)) return false
         }
 
         return checkDeclarationsIn.none {

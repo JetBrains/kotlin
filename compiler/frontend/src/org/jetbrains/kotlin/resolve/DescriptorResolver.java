@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -57,6 +54,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class DescriptorResolver {
@@ -89,7 +87,7 @@ public class DescriptorResolver {
     }
 
     public List<JetType> resolveSupertypes(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetClassOrObject jetClass,
             BindingTrace trace
@@ -153,7 +151,7 @@ public class DescriptorResolver {
     }
 
     public Collection<JetType> resolveDelegationSpecifiers(
-            JetScope extensibleScope,
+            LexicalScope extensibleScope,
             List<JetDelegationSpecifier> delegationSpecifiers,
             @NotNull TypeResolver resolver,
             BindingTrace trace,
@@ -322,7 +320,7 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            JetScope scope, FunctionDescriptor owner, JetParameter valueParameter, int index, JetType type, BindingTrace trace
+            LexicalScope scope, FunctionDescriptor owner, JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
@@ -357,7 +355,7 @@ public class DescriptorResolver {
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
             DeclarationDescriptor containingDescriptor,
-            WritableScope extensibleScope,
+            LexicalWritableScope extensibleScope,
             List<JetTypeParameter> typeParameters,
             BindingTrace trace
     ) {
@@ -371,7 +369,7 @@ public class DescriptorResolver {
 
     private TypeParameterDescriptorImpl resolveTypeParameterForCallableDescriptor(
             DeclarationDescriptor containingDescriptor,
-            WritableScope extensibleScope,
+            LexicalWritableScope extensibleScope,
             JetTypeParameter typeParameter,
             int index,
             BindingTrace trace
@@ -426,7 +424,7 @@ public class DescriptorResolver {
     public JetType resolveTypeParameterExtendsBound(
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
             @NotNull JetTypeReference extendsBound,
-            JetScope scope,
+            LexicalScope scope,
             BindingTrace trace
     ) {
         JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
@@ -440,7 +438,7 @@ public class DescriptorResolver {
     public void resolveGenericBounds(
             @NotNull JetTypeParameterListOwner declaration,
             @NotNull DeclarationDescriptor descriptor,
-            JetScope scope,
+            LexicalScope scope,
             List<TypeParameterDescriptorImpl> parameters,
             BindingTrace trace
     ) {
@@ -513,7 +511,7 @@ public class DescriptorResolver {
     public void checkNamesInConstraints(
             @NotNull JetTypeParameterListOwner declaration,
             @NotNull DeclarationDescriptor descriptor,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull BindingTrace trace
     ) {
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
@@ -522,7 +520,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = scope.getClassifier(name, NoLookupLocation.UNSORTED);
+            ClassifierDescriptor classifier = asJetScope(scope).getClassifier(name, NoLookupLocation.UNSORTED);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {
@@ -556,7 +554,7 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetParameter parameter,
             BindingTrace trace
     ) {
@@ -564,7 +562,7 @@ public class DescriptorResolver {
         return resolveLocalVariableDescriptor(parameter, type, trace, scope);
     }
 
-    private JetType resolveParameterType(JetScope scope, JetParameter parameter, BindingTrace trace) {
+    private JetType resolveParameterType(LexicalScope scope, JetParameter parameter, BindingTrace trace) {
         JetTypeReference typeReference = parameter.getTypeReference();
         JetType type;
         if (typeReference != null) {
@@ -584,10 +582,10 @@ public class DescriptorResolver {
             @NotNull JetParameter parameter,
             @NotNull JetType type,
             BindingTrace trace,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
-                scope.getContainingDeclaration(),
+                scope.getOwnerDescriptor(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, parameter.getModifierList(), trace),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
@@ -602,12 +600,12 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(
-            JetScope scope,
+            LexicalScope scope,
             JetVariableDeclaration variable,
             DataFlowInfo dataFlowInfo,
             BindingTrace trace
     ) {
-        DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = scope.getOwnerDescriptor();
         VariableDescriptor result;
         JetType type;
         // SCRIPT: Create property descriptors
@@ -660,13 +658,13 @@ public class DescriptorResolver {
 
     @NotNull
     public LocalVariableDescriptor resolveLocalVariableDescriptorWithType(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetVariableDeclaration variable,
             @Nullable JetType type,
             @NotNull BindingTrace trace
     ) {
         LocalVariableDescriptor variableDescriptor = new LocalVariableDescriptor(
-                scope.getContainingDeclaration(),
+                scope.getOwnerDescriptor(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, variable.getModifierList(), trace),
                 JetPsiUtil.safeName(variable.getName()),
                 type,
@@ -680,7 +678,7 @@ public class DescriptorResolver {
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetProperty property,
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
@@ -705,7 +703,7 @@ public class DescriptorResolver {
         );
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
-        JetScope scopeWithTypeParameters;
+        LexicalScope scopeWithTypeParameters;
         JetType receiverType = null;
 
         {
@@ -715,8 +713,8 @@ public class DescriptorResolver {
                 typeParameterDescriptors = Collections.emptyList();
             }
             else {
-                WritableScope writableScope = new WritableScopeImpl(
-                        scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace),
+                LexicalWritableScope writableScope = new LexicalWritableScope(
+                        scope, containingDeclaration, false, null, new TraceBasedRedeclarationHandler(trace),
                         "Scope with type parameters of a property");
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(propertyDescriptor, writableScope, typeParameters,
                                                                                       trace);
@@ -736,8 +734,8 @@ public class DescriptorResolver {
 
         ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? null : receiverDescriptor;
 
-        JetScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
-                                                                                implicitInitializerReceiver, trace);
+        LexicalScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
+                                                                                    implicitInitializerReceiver, trace);
 
         JetType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
 
@@ -772,7 +770,7 @@ public class DescriptorResolver {
     @NotNull
     private JetType getVariableType(
             @NotNull final VariableDescriptorWithInitializerImpl variableDescriptor,
-            @NotNull final JetScope scope,
+            @NotNull final LexicalScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             boolean notLocal,
@@ -834,7 +832,7 @@ public class DescriptorResolver {
 
     private void setConstantForVariableIfNeeded(
             @NotNull VariableDescriptorWithInitializerImpl variableDescriptor,
-            @NotNull final JetScope scope,
+            @NotNull final LexicalScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             @NotNull final JetType variableType,
@@ -861,12 +859,12 @@ public class DescriptorResolver {
     private JetType resolveDelegatedPropertyType(
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetExpression delegateExpression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, trace);
+        LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, trace);
 
         JetType type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, propertyDescriptor, scope, accessorScope, trace, dataFlowInfo);
@@ -912,7 +910,7 @@ public class DescriptorResolver {
 
     @NotNull
     private JetType resolveInitializerType(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetExpression initializer,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
@@ -922,7 +920,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             BindingTrace trace
@@ -989,7 +987,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             BindingTrace trace
@@ -1029,7 +1027,7 @@ public class DescriptorResolver {
     public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ValueParameterDescriptor valueParameter,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetParameter parameter, BindingTrace trace
     ) {
         JetType type = resolveParameterType(scope, parameter, trace);
@@ -1124,7 +1122,7 @@ public class DescriptorResolver {
     }
 
     public static boolean checkHasOuterClassInstance(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
             @NotNull PsiElement reportErrorsOn,
             @NotNull ClassDescriptor target
@@ -1158,8 +1156,8 @@ public class DescriptorResolver {
     }
 
     @Nullable
-    public static ClassDescriptor getContainingClass(@NotNull JetScope scope) {
-        return getParentOfType(scope.getContainingDeclaration(), ClassDescriptor.class, false);
+    public static ClassDescriptor getContainingClass(@NotNull LexicalScope scope) {
+        return getParentOfType(scope.getOwnerDescriptor(), ClassDescriptor.class, false);
     }
 
     public static void resolvePackageHeader(

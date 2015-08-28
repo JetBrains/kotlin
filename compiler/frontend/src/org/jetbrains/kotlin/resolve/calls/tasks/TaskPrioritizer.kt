@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -77,7 +78,7 @@ public class TaskPrioritizer(
     ): List<ResolutionTask<D, F>> {
         val explicitReceiver = context.call.getExplicitReceiver()
         val result = ResolutionTaskHolder<D, F>(storageManager, context, PriorityProviderImpl<D>(context), tracing)
-        val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope, callableDescriptorCollectors)
+        val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope.asJetScope(), callableDescriptorCollectors)
 
         if (explicitReceiver is QualifierReceiver) {
             val qualifierReceiver: QualifierReceiver = explicitReceiver
@@ -445,7 +446,7 @@ public class TaskPrioritizer(
             val candidateDescriptor = candidate.getDescriptor()
             if (ErrorUtils.isError(candidateDescriptor)) return true
             val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), context.trace.getBindingContext())
-            return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.getContainingDeclaration())
+            return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.ownerDescriptor)
         }
 
         private fun isSynthesized(candidate: ResolutionCandidate<D>): Boolean {

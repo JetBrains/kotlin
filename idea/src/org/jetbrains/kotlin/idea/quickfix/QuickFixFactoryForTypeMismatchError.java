@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
@@ -104,7 +104,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             JetExpression initializer = property.getInitializer();
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
                 (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
-                JetScope scope = CorePackage.getResolutionScope(property, context, ResolvePackage.getResolutionFacade(property));
+                LexicalScope scope = CorePackage.getResolutionScope(property, context, ResolvePackage.getResolutionFacade(property));
                 JetType typeToInsert = UtilPackage.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
             }
@@ -118,7 +118,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                ? BindingContextUtilPackage.getTargetFunction((JetReturnExpression) expressionParent, context)
                                : PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
         if (function instanceof JetFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
-            JetScope scope = CorePackage.getResolutionScope(function, context, ResolvePackage.getResolutionFacade(function));
+            LexicalScope scope = CorePackage.getResolutionScope(function, context, ResolvePackage.getResolutionFacade(function));
             JetType typeToInsert = UtilPackage.approximateWithResolvableType(expressionType, scope, false);
             actions.add(new ChangeFunctionReturnTypeFix((JetFunction) function, typeToInsert));
         }
@@ -159,7 +159,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                             : context.getType(valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     JetCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, JetCallableDeclaration.class, true);
-                    JetScope scope = callable != null ? CorePackage.getResolutionScope(callable, context, ResolvePackage.getResolutionFacade(callable)) : null;
+                    LexicalScope scope = callable != null ? CorePackage.getResolutionScope(callable, context, ResolvePackage.getResolutionFacade(callable)) : null;
                     JetType typeToInsert = UtilPackage.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));
                 }

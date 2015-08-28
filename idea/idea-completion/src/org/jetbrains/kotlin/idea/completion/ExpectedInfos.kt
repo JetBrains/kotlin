@@ -234,7 +234,7 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, call.calleeExpression] ?: return emptyList() //TODO: discuss it
+        val resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, call.calleeExpression] ?: return emptyList() //TODO: discuss it
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
@@ -257,7 +257,7 @@ class ExpectedInfos(
             if (descriptor.valueParameters.isEmpty()) continue
 
             val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
-            if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
+            if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.ownerDescriptor)) continue
 
             var argumentToParameter = call.mapArgumentsToParameters(descriptor)
             var parameter = argumentToParameter[argument] ?: continue

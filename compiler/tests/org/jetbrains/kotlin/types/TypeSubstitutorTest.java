@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
@@ -142,7 +143,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         JetTypeReference jetTypeReference = JetPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        JetType type = container.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
+        JetType type = container.getTypeResolver().resolveType(UtilsPackage.asLexicalScope(scope), jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

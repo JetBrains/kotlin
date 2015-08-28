@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -50,7 +51,7 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
 
     val typeParametersInSourceClassContext by lazy {
         sourceClassDescriptor.typeConstructor.parameters + sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
-                .getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
+                .getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filterIsInstance<TypeParameterDescriptor>()
     }
 

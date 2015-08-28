@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
@@ -170,8 +169,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     ) {
                         @NotNull
                         @Override
-                        public JetScope getScope() {
-                            return UtilsPackage.asJetScope(getOuterScope());
+                        public LexicalScope getScope() {
+                            return getOuterScope();
                         }
                     },
                     modifierList.getAnnotationEntries()
@@ -195,8 +194,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     ) {
                         @NotNull
                         @Override
-                        public JetScope getScope() {
-                            return UtilsPackage.asJetScope(getScopeForMemberDeclarationResolution());
+                        public LexicalScope getScope() {
+                            return getScopeForMemberDeclarationResolution();
                         }
                     },
                     jetDanglingAnnotations
@@ -510,7 +509,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         }
 
                         List<JetType> allSupertypes = c.getDescriptorResolver()
-                                .resolveSupertypes(UtilsPackage.asJetScope(getScopeForClassHeaderResolution()), LazyClassDescriptor.this, classOrObject,
+                                .resolveSupertypes(getScopeForClassHeaderResolution(), LazyClassDescriptor.this, classOrObject,
                                                    c.getTrace());
 
                         return new Supertypes(Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE)));
