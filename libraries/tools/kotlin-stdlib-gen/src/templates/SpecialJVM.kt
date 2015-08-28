@@ -51,22 +51,26 @@ fun specialJVM(): List<GenericFunction> {
 
 
     templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOfRange")"""}
         body {
             "return Arrays.copyOfRange(this, fromIndex, toIndex)"
+        }
+        body(ArraysOfObjectsSubtype) {
+            "return Arrays.copyOfRange(this, fromIndex, toIndex) as A"
         }
     }
 
     templates add f("copyOf()") {
-        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
         body {
             "return Arrays.copyOf(this, size())"
+        }
+        body(ArraysOfObjectsSubtype) {
+            "return Arrays.copyOf(this, size()) as A"
         }
     }
 

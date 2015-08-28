@@ -203,8 +203,8 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
 /**
  * Returns new array which is a copy of the original array.
  */
-public fun <T> Array<out T>.copyOf(): Array<out T> {
-    return Arrays.copyOf(this, size())
+public fun <T, A: Array<out T>> A.copyOf(): A {
+    return Arrays.copyOf(this, size()) as A
 }
 
 /**
@@ -260,14 +260,6 @@ public fun LongArray.copyOf(): LongArray {
  * Returns new array which is a copy of the original array.
  */
 public fun ShortArray.copyOf(): ShortArray {
-    return Arrays.copyOf(this, size())
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-platformName("mutableCopyOf")
-public fun <T> Array<T>.copyOf(): Array<T> {
     return Arrays.copyOf(this, size())
 }
 
@@ -345,8 +337,8 @@ public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<out T> {
-    return Arrays.copyOfRange(this, fromIndex, toIndex)
+public fun <T, A: Array<out T>> A.copyOfRange(fromIndex: Int, toIndex: Int): A {
+    return Arrays.copyOfRange(this, fromIndex, toIndex) as A
 }
 
 /**
@@ -402,14 +394,6 @@ public fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
  * Returns new array which is a copy of range of original array.
  */
 public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    return Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-platformName("mutableCopyOfRange")
-public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
