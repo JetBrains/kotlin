@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.idea.console
 
-import com.intellij.execution.impl.ConsoleViewImpl
+import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.testFramework.PlatformTestCase
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.junit.FixMethodOrder
@@ -41,29 +42,45 @@ public class KotlinReplTest : PlatformTestCase() {
         super.tearDown()
     }
 
-    private fun checkHistoryUpdate(maxIterations: Int = 20, sleepTime: Long = 1000, predicate: (String) -> Boolean): String {
-        val consoleView = consoleRunner.consoleView as ConsoleViewImpl
-        var docHistory: String = ""
+    private fun checkHistoryUpdate(maxIterations: Int = 20, sleepTime: Long = 500, stopPredicate: (String) -> Boolean): String {
+        val consoleView = consoleRunner.consoleView as LanguageConsoleImpl
 
         for (i in 1..maxIterations) {
-            docHistory = consoleRunner.consoleView.historyViewer.document.text.trim()
+            UIUtil.dispatchAllInvocationEvents()
+            consoleView.flushDeferredText()
 
-            if (predicate(docHistory)) break
+            val historyText = consoleView.historyViewer.document.text
+            if (stopPredicate(historyText)) return historyText
 
             Thread.sleep(sleepTime)
-            consoleView.flushDeferredText()
         }
 
-        return docHistory
+        return "<empty text>"
     }
 
-    @Test fun testOnRunPossibility() {
+    private fun testSimpleCommand(command: String, expectedOutput: String) {
+        consoleRunner.consoleView.editorDocument.setText(command)
+        consoleRunner.executor.executeCommand()
+
+        val endsWithTwo = { x: String -> x.trim().endsWith(expectedOutput) }
+
+        val historyText = checkHistoryUpdate { endsWithTwo(it) }
+
+        assertTrue(endsWithTwo(historyText), "'$expectedOutput' should be printed but document text is:\n$historyText")
+    }
+
+    @Test fun testRunPossibility() {
         val allOk = { x: String -> x.contains(":help for help") }
         val hasErrors = { x: String -> x.contains("Process finished with exit code 1") || x.contains("Exception in") || x.contains("Error") }
+
         val historyText = checkHistoryUpdate { hasErrors(it) || allOk(it) }
 
         assertFalse(hasErrors(historyText), "Cannot run kotlin repl")
         assertTrue(allOk(historyText), "Successful run should contain text: ':help for help'")
         assertFalse(consoleRunner.processHandler.isProcessTerminated, "Process accidentally terminated")
     }
+
+    @Test fun testOnePlusOne() = testSimpleCommand("1 + 1", "2")
+    @Test fun testPrintlnText() = "Hello, console world!" let { testSimpleCommand("println(\"$it\")", it) }
+    @Test fun testDivisionByZeroException() = testSimpleCommand("1 / 0", "java.lang.ArithmeticException: / by zero")
 }
