@@ -115,6 +115,16 @@ public val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
             .toList()
 
 /**
+ * Returns static properties declared in this class.
+ * Only properties representing static fields of Java classes are considered static.
+ */
+public val KClass<*>.staticProperties: Collection<KProperty0<*>>
+    get() = (this as KClassImpl)
+            .getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = false)
+            .filterIsInstance<KProperty0<*>>()
+            .toList()
+
+/**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
 public val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>

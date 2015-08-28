@@ -149,7 +149,8 @@ object RuntimeTypeMapper {
         }
     }
 
-    fun mapPropertySignature(property: PropertyDescriptor): JvmPropertySignature {
+    fun mapPropertySignature(possiblyOverriddenProperty: PropertyDescriptor): JvmPropertySignature {
+        val property = DescriptorUtils.unwrapFakeOverride(possiblyOverriddenProperty)
         if (property is DeserializedPropertyDescriptor) {
             val proto = property.proto
             if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
