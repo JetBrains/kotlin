@@ -886,6 +886,13 @@ public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
+ * Sorts array or range in array inplace.
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.sort(this, fromIndex, toIndex, comparator)
+}
+
+/**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun BooleanArray.toTypedArray(): Array<Boolean> {

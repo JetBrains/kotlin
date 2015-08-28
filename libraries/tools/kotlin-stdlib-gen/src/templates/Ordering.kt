@@ -51,6 +51,38 @@ fun ordering(): List<GenericFunction> {
         exclude(Sequences)
     }
 
+    templates add f("reversedArray()") {
+        doc { "Returns an array with elements of this array in reversed order." }
+        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        returns("SELF")
+        body(ArraysOfObjectsSubtype) {
+            """
+            if (isEmpty()) return this
+            val result = this.copyOf() as Array<T>
+            var i1 = 0
+            var i2 = lastIndex
+            while (i1 < i2) {
+                val tmp = result[i1]
+                result[i1] = result[i2]
+                result[i2] = tmp
+                i1 += 1
+                i2 -= 1
+            }
+            return result as A
+            """
+        }
+        body(ArraysOfPrimitives) {
+            """
+            if (isEmpty()) return this
+            val result = SELF(size())
+            val lastIndex = lastIndex
+            for (i in 0..lastIndex)
+                result[lastIndex - i] = this[i]
+            return result
+            """
+        }
+    }
+
     templates add f("sorted()") {
         exclude(Strings)
         exclude(PrimitiveType.Boolean)
@@ -83,6 +115,22 @@ fun ordering(): List<GenericFunction> {
                     return sortedList.iterator()
                 }
             }
+            """
+        }
+    }
+
+    templates add f("sortedArray()") {
+        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        exclude(PrimitiveType.Boolean)
+        doc {
+            "Returns an array with all elements of this array sorted according to their natural sort order."
+        }
+        typeParam("T : Comparable<T>")
+        returns("SELF")
+        body() {
+            """
+            if (isEmpty()) return this
+            return this.copyOf().apply { sort() } as SELF
             """
         }
     }
@@ -120,6 +168,31 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
+    templates add f("sortedArrayDescending()") {
+        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        exclude(PrimitiveType.Boolean)
+        doc {
+            "Returns an array with all elements of this array sorted descending according to their natural sort order."
+        }
+        typeParam("T : Comparable<T>")
+        returns("SELF")
+        body(ArraysOfObjectsSubtype) {
+            """
+            if (isEmpty()) return this
+            // TODO: Use reverseOrder<T>()
+            return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) } as SELF
+            """
+
+        }
+        body() {
+            """
+            if (isEmpty()) return this
+            // TODO: Use in-place reverse
+            return this.copyOf().apply { sort() }.reversedArray() as SELF
+            """
+        }
+    }
+
     templates add f("sortedWith(comparator: Comparator<in T>)") {
         exclude(Strings)
         returns("List<T>")
@@ -149,6 +222,20 @@ fun ordering(): List<GenericFunction> {
                     return sortedList.iterator()
                 }
             }
+            """
+        }
+    }
+
+    templates add f("sortedArrayWith(comparator: Comparator<in T>)") {
+        only(ArraysOfObjectsSubtype)
+        doc {
+            "Returns an array with all elements of this array sorted according the specified [comparator]."
+        }
+        returns("SELF")
+        body() {
+            """
+            if (isEmpty()) return this
+            return this.copyOf().apply { sortWith(comparator) } as SELF
             """
         }
     }

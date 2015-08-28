@@ -140,6 +140,14 @@ fun specialJS(): List<GenericFunction> {
         body { "return noImpl" }
     }
 
+    templates add f("sortWith(comparator: Comparator<in T>)") {
+        only(ArraysOfObjects)
+        exclude(PrimitiveType.Boolean)
+        returns("Unit")
+        doc { "Sorts the array inplace according to the order specified by the given [comparator] object." }
+        body { "sort { a, b -> comparator.compare(a, b) }" }
+    }
+
     templates add f("sort()") {
         only(ArraysOfPrimitives)
         only(numericPrimitives + PrimitiveType.Char)

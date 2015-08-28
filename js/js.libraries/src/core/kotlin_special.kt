@@ -616,6 +616,13 @@ public fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
 }
 
 /**
+ * Sorts the array inplace according to the order specified by the given [comparator] object.
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    sort { a, b -> comparator.compare(a, b) }
+}
+
+/**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun BooleanArray.toTypedArray(): Array<Boolean> {

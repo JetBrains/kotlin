@@ -206,6 +206,120 @@ public fun String.reversed(): String {
 }
 
 /**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun <T, A: Array<out T>> A.reversedArray(): A {
+    if (isEmpty()) return this
+    val result = this.copyOf() as Array<T>
+    var i1 = 0
+    var i2 = lastIndex
+    while (i1 < i2) {
+        val tmp = result[i1]
+        result[i1] = result[i2]
+        result[i2] = tmp
+        i1 += 1
+        i2 -= 1
+    }
+    return result as A
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun BooleanArray.reversedArray(): BooleanArray {
+    if (isEmpty()) return this
+    val result = BooleanArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun ByteArray.reversedArray(): ByteArray {
+    if (isEmpty()) return this
+    val result = ByteArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun CharArray.reversedArray(): CharArray {
+    if (isEmpty()) return this
+    val result = CharArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun DoubleArray.reversedArray(): DoubleArray {
+    if (isEmpty()) return this
+    val result = DoubleArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun FloatArray.reversedArray(): FloatArray {
+    if (isEmpty()) return this
+    val result = FloatArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun IntArray.reversedArray(): IntArray {
+    if (isEmpty()) return this
+    val result = IntArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun LongArray.reversedArray(): LongArray {
+    if (isEmpty()) return this
+    val result = LongArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+public fun ShortArray.reversedArray(): ShortArray {
+    if (isEmpty()) return this
+    val result = ShortArray(size())
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
+
+/**
  * Returns a sorted list of all elements.
  */
 deprecated("This method may change its behavior soon. Use sorted() instead.", ReplaceWith("sorted()"))
@@ -381,6 +495,150 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
             return sortedList.iterator()
         }
     }
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun <T : Comparable<T>, A: Array<out T>> A.sortedArray(): A {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as A
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun ByteArray.sortedArray(): ByteArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as ByteArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun CharArray.sortedArray(): CharArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as CharArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun DoubleArray.sortedArray(): DoubleArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as DoubleArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun FloatArray.sortedArray(): FloatArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as FloatArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun IntArray.sortedArray(): IntArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as IntArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun LongArray.sortedArray(): LongArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as LongArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun ShortArray.sortedArray(): ShortArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() } as ShortArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>, A: Array<out T>> A.sortedArrayDescending(): A {
+    if (isEmpty()) return this
+    // TODO: Use reverseOrder<T>()
+    return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) } as A
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun ByteArray.sortedArrayDescending(): ByteArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as ByteArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun CharArray.sortedArrayDescending(): CharArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as CharArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun DoubleArray.sortedArrayDescending(): DoubleArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as DoubleArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun FloatArray.sortedArrayDescending(): FloatArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as FloatArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun IntArray.sortedArrayDescending(): IntArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as IntArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun LongArray.sortedArrayDescending(): LongArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as LongArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun ShortArray.sortedArrayDescending(): ShortArray {
+    if (isEmpty()) return this
+    // TODO: Use in-place reverse
+    return this.copyOf().apply { sort() }.reversedArray() as ShortArray
+}
+
+/**
+ * Returns an array with all elements of this array sorted according the specified [comparator].
+ */
+public fun <T, A: Array<out T>> A.sortedArrayWith(comparator: Comparator<in T>): A {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortWith(comparator) } as A
 }
 
 /**

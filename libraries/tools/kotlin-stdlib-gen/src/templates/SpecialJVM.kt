@@ -127,6 +127,16 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+    templates add f("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size())") {
+        only(ArraysOfObjects)
+        doc { "Sorts array or range in array inplace." }
+        returns("Unit")
+        body {
+            "Arrays.sort(this, fromIndex, toIndex, comparator)"
+        }
+
+    }
+
     templates add f("filterIsInstanceTo(destination: C, klass: Class<R>)") {
         doc { "Appends all elements that are instances of specified class to the given [destination]." }
         receiverAsterisk(true)
