@@ -249,6 +249,7 @@ public class PackageCodegen {
             @NotNull List<JvmSerializationBindings> bindings
     ) {
         generateKotlinPackageReflectionField();
+        MemberCodegen.generateModuleNameField(state, v);
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(tasks.keySet())) {
             tasks.get(member).run();

@@ -130,7 +130,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     }
 
     private fun createReflectedPackageView(classLoader: URLClassLoader, moduleName: String): SyntheticPackageViewForTest {
-        val module = RuntimeModuleData.create(classLoader, moduleName).module
+        val moduleData = RuntimeModuleData.create(classLoader)
+        moduleData.packageFacadeProvider.registerModule(moduleName)
+        val module = moduleData.module
 
 
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())

@@ -18,31 +18,31 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageFacades
-import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.util.concurrent.ConcurrentHashMap
 
-class RuntimePackageFacadeProvider(val moduleName: String, val classLoader : ClassLoader) : PackageFacadeProvider {
+class RuntimePackageFacadeProvider(val classLoader : ClassLoader) : PackageFacadeProvider {
 
-    val mapping: ModuleMapping by lazy {
-        val resourceAsStream = classLoader.getResourceAsStream("META-INF/$moduleName.kotlin_module") ?: return@lazy ModuleMapping("")
+    val module2Mapping = ConcurrentHashMap<String, Lazy<ModuleMapping>>()
 
-        try {
-            val out = ByteArrayOutputStream(4096)
-            val buffer = ByteArray(4096)
-            while (true) {
-                val r = resourceAsStream.read(buffer)
-                if (r == -1) break
-                out.write(buffer, 0, r)
+    fun registerModule(moduleName: String?) {
+        if (moduleName == null) return
+
+        module2Mapping.putIfAbsent(moduleName, lazy {
+            val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.kotlin_module") ?: return@lazy ModuleMapping("")
+
+            try {
+                val bytes = resourceAsStream.readBytes()
+                return@lazy ModuleMapping(String(bytes, "UTF-8"))
             }
-
-            val ret = out.toByteArray()
-            return@lazy ModuleMapping(String(ret, "UTF-8"))
-        } finally {
-            resourceAsStream.close()
-        }
+            catch (e: Exception) {
+                return@lazy ModuleMapping("")
+            }
+        })
     }
 
+
     override fun findPackageFacades(packageInternalName: String): List<String> {
-        return mapping.package2MiniFacades.getOrElse (packageInternalName, { PackageFacades("default") }).parts.toList()
+        return module2Mapping.values().map { it.value.findPackageParts(packageInternalName) }.filterNotNull().flatMap { it.parts }.distinct()
     }
 }

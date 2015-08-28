@@ -92,9 +92,18 @@ public val KType.javaType: Type
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
  * for more information.
  */
+@deprecated("After package refactoring it would be impossible to retrieve package by class")
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
-                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) KPackageImpl(this, "undefined") else null
+                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
+        val field = this.getField("\$moduleName")
+        if (field != null) {
+            KPackageImpl(this, field.get(null) as String)
+        } else {
+            null
+        }
+
+    } else null
 
 
 /**

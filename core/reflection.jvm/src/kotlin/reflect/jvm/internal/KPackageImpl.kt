@@ -29,7 +29,8 @@ import kotlin.reflect.KPackage
 
 class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl(), KPackage {
     val descriptor by ReflectProperties.lazySoft {
-        val moduleData = jClass.getOrCreateModule(moduleName)
+        val moduleData = jClass.getOrCreateModule()
+        moduleData.packageFacadeProvider.registerModule(moduleName)
         val fqName = jClass.classId.getPackageFqName()
 
         moduleData.module.getPackage(fqName)

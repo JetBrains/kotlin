@@ -44,8 +44,9 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
             ref.get()?.let { it.toString() } ?: "<null>"
 }
 
-internal fun Class<*>.getOrCreateModule(moduleName: String?): RuntimeModuleData {
+internal fun Class<*>.getOrCreateModule(): RuntimeModuleData {
     val classLoader = this.safeClassLoader
+
     val key = WeakClassLoaderBox(classLoader)
 
     val cached = moduleByClassLoader[key]
@@ -54,7 +55,7 @@ internal fun Class<*>.getOrCreateModule(moduleName: String?): RuntimeModuleData 
         moduleByClassLoader.remove(key, cached)
     }
 
-    val module = RuntimeModuleData.create(classLoader, moduleName)
+    val module = RuntimeModuleData.create(classLoader)
     try {
         while (true) {
             val ref = moduleByClassLoader.putIfAbsent(key, WeakReference(module))

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -472,6 +473,14 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         v.invokestatic(REFLECTION, factory.getName(), factory.getDescriptor(), false);
         v.putstatic(thisAsmType.getInternalName(), fieldName, type);
+    }
+
+    public static void generateModuleNameField(
+            @NotNull GenerationState state,
+            @NotNull ClassBuilder classBuilder
+    ) {
+        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$moduleName",
+                              AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, JvmCodegenUtil.getModuleName(state.getModule()));
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {

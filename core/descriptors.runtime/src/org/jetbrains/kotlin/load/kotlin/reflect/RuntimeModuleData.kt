@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.reflect.ReflectJavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
@@ -39,12 +38,12 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-public class RuntimeModuleData private constructor(public val deserialization: DeserializationComponents) {
+public class RuntimeModuleData private constructor(public val deserialization: DeserializationComponents, val packageFacadeProvider: RuntimePackageFacadeProvider) {
     public val module: ModuleDescriptor get() = deserialization.moduleDescriptor
     public val localClassResolver: LocalClassResolver get() = deserialization.localClassResolver
 
     companion object {
-        public fun create(classLoader: ClassLoader, moduleName: String?): RuntimeModuleData {
+        public fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager,
                                               ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE))
@@ -52,12 +51,14 @@ public class RuntimeModuleData private constructor(public val deserialization: D
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
             val singleModuleClassResolver = SingleModuleClassResolver()
+            val runtimePackageFacadeProvider = RuntimePackageFacadeProvider(classLoader)
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, ExternalSignatureResolver.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
                     JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver,
-                    if (moduleName == null) PackageFacadeProvider.EMPTY else RuntimePackageFacadeProvider(moduleName, classLoader)
+                    runtimePackageFacadeProvider
             )
+
             val lazyJavaPackageFragmentProvider =
                     LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module))
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module)
@@ -70,7 +71,7 @@ public class RuntimeModuleData private constructor(public val deserialization: D
             module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
             module.initialize(javaDescriptorResolver.packageFragmentProvider)
 
-            return RuntimeModuleData(deserializationComponentsForJava.components)
+            return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackageFacadeProvider)
         }
     }
 }

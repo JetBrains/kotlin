@@ -48,11 +48,11 @@ public class LazyJavaPackageScope(
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
             = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
 
-    public val kotlinBinaryClasses: List<KotlinJvmBinaryClass>
-    init {
+    public val kotlinBinaryClasses: List<KotlinJvmBinaryClass> by lazy {
         val files = c.components.packageMapper.findPackageFacades(jPackage.getFqName().asString().replace('.', '/'))
         val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName
-        kotlinBinaryClasses = files.map {
+
+        files.map {
             val classId = ClassId(packageClassId, Name.identifierNoValidate(it.substringAfterLast("/")))
             c.components.kotlinClassFinder.findKotlinClass(classId)
         }.filterNotNull()
