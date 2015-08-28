@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeTag
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
@@ -83,7 +84,8 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
         additionalTypeCheckers = listOf(
                 JavaNullabilityWarningsChecker(),
-                RuntimeAssertionsTypeChecker
+                RuntimeAssertionsTypeChecker,
+                JavaGenericVarianceViolationTypeChecker
         ),
 
         additionalSymbolUsageValidators = listOf(),

@@ -67,6 +67,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory2<JetElement, JetType, JetType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetExpression, JetType, JetType> JAVA_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
     enum NullabilityInformationSource {
         KOTLIN {

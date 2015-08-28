@@ -1,0 +1,16 @@
+package
+
+internal fun main(/*0*/ a: A, /*1*/ ml: kotlin.MutableList<kotlin.String>, /*2*/ l: kotlin.List<kotlin.String>, /*3*/ ms: kotlin.MutableSet<kotlin.String>, /*4*/ s: kotlin.Set<kotlin.String>, /*5*/ mm: kotlin.MutableMap<kotlin.Any, kotlin.String>, /*6*/ m: kotlin.Map<kotlin.Any, kotlin.String>, /*7*/ mme: kotlin.MutableMap.MutableEntry<kotlin.Any, kotlin.String>, /*8*/ me: kotlin.Map.Entry<kotlin.Any, kotlin.String>): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Iterable<*>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Iterator<*>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)List<*>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Map.(Mutable)Entry<*, *>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Map<*, *>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Set<*>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

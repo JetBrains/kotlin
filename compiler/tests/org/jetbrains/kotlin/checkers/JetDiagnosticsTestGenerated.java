@@ -10395,6 +10395,63 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class GenericVarianceViolation extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInGenericVarianceViolation() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("listSuperType.kt")
+                public void testListSuperType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/listSuperType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawTypes.kt")
+                public void testRawTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/rawTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCast.kt")
+                public void testSmartCast() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/smartCast.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("strangeVariance.kt")
+                public void testStrangeVariance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/strangeVariance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("userDefinedOut.kt")
+                public void testUserDefinedOut() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/userDefinedOut.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valueFromJava.kt")
+                public void testValueFromJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/valueFromJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("wildcards.kt")
+                public void testWildcards() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/wildcards.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/intersection")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
