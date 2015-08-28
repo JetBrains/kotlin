@@ -175,7 +175,10 @@ class BasicLookupElementFactory(
                     element = element.withPresentableText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderClassifierName(descriptor))
 
                     while (container is ClassDescriptor) {
-                        element = element.withLookupString(container.name.asString())
+                        val containerName = container.name
+                        if (!containerName.isSpecial) {
+                            element = element.withLookupString(containerName.asString())
+                        }
                         container = container.getContainingDeclaration()
                     }
                 }

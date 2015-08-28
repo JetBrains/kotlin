@@ -113,6 +113,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("NestedClassAfterAs")
+    public void testNestedClassAfterAs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NestedClassAfterAs/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoObjectDuplication")
     public void testNoObjectDuplication() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NoObjectDuplication/");

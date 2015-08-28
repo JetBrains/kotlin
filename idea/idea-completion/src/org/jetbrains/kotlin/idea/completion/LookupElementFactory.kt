@@ -132,7 +132,7 @@ class LookupElementFactory(
         var parametersRenderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES
         if (descriptor.valueParameters.size() > 1) {
             parametersRenderer = parametersRenderer.withOptions {
-                valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by DescriptorRenderer.ValueParametersHandler.DEFAULT {
+                valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by this.valueParametersHandler {
                     override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
                         builder.append("..., ")
                     }
@@ -236,12 +236,12 @@ class LookupElementFactory(
     ): LookupElement {
         var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments)
 
-        val weight = callableWeight(descriptor)
-        if (weight != null) {
-            element.putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
-        }
-
         if (useReceiverTypes) {
+            val weight = callableWeight(descriptor)
+            if (weight != null) {
+                element.putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
+            }
+
             element = element.boldIfImmediate(weight)
         }
         return element
