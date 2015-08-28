@@ -1,28 +1,14 @@
 package test
 
 internal final enum class My : kotlin.Enum<test.My> {
-    public enum entry ALPHA : test.My {
-        private constructor ALPHA()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ALPHA
 
-    public enum entry BETA : test.My {
-        private constructor BETA()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry BETA
 
-    public enum entry OMEGA : test.My {
-        private constructor OMEGA()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry OMEGA
 
     private constructor My()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

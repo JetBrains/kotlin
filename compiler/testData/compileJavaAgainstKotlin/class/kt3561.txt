@@ -1,14 +1,10 @@
 package test
 
 internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
-    public enum entry OK : test.MyEnum {
-        private constructor OK()
-        public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
-        public final /*fake_override*/ fun name(): kotlin.String
-        public final /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry OK
 
     private constructor MyEnum()
+    protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
     public final /*fake_override*/ fun name(): kotlin.String
     public final /*fake_override*/ fun ordinal(): kotlin.Int

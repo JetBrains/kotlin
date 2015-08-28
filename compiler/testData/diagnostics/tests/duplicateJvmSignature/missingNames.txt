@@ -20,6 +20,7 @@ internal interface <no name provided> {
 
 internal final enum class <no name provided> : kotlin.Enum<<no name provided>> {
     private constructor <no name provided>()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: <no name provided>): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -69,6 +70,7 @@ internal final class Outer {
 
     internal final enum class <no name provided> : kotlin.Enum<Outer.<no name provided>> {
         private constructor <no name provided>()
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Outer.<no name provided>): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

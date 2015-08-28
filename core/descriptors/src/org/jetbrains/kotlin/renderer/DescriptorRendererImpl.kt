@@ -725,13 +725,18 @@ internal class DescriptorRendererImpl(
 
     /* CLASSES */
     private fun renderClass(klass: ClassDescriptor, builder: StringBuilder) {
+        val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
+
         if (!startFromName) {
             renderAnnotations(klass, builder)
-            renderVisibility(klass.getVisibility(), builder)
-            if (!(klass.getKind() == ClassKind.INTERFACE && klass.getModality() == Modality.ABSTRACT || klass.getKind().isSingleton() && klass.getModality() == Modality.FINAL)) {
-                renderModality(klass.getModality(), builder)
+            if (!isEnumEntry) {
+                renderVisibility(klass.visibility, builder)
             }
-            renderInner(klass.isInner(), builder)
+            if (!(klass.kind == ClassKind.INTERFACE && klass.modality == Modality.ABSTRACT ||
+                  klass.kind.isSingleton && klass.modality == Modality.FINAL)) {
+                renderModality(klass.modality, builder)
+            }
+            renderInner(klass.isInner, builder)
             renderClassKindPrefix(klass, builder)
         }
 
@@ -743,15 +748,17 @@ internal class DescriptorRendererImpl(
             renderCompanionObjectName(klass, builder)
         }
 
-        val typeParameters = klass.getTypeConstructor().getParameters()
+        if (isEnumEntry) return
+
+        val typeParameters = klass.typeConstructor.getParameters()
         renderTypeParameters(typeParameters, builder, false)
 
-        if (!klass.getKind().isSingleton() && classWithPrimaryConstructor) {
-            val primaryConstructor = klass.getUnsubstitutedPrimaryConstructor()
+        if (!klass.kind.isSingleton && classWithPrimaryConstructor) {
+            val primaryConstructor = klass.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
                 builder.append(" ")
                 renderAnnotations(primaryConstructor, builder, true)
-                renderVisibility(primaryConstructor.getVisibility(), builder)
+                renderVisibility(primaryConstructor.visibility, builder)
                 builder.append("constructor")
                 renderValueParameters(primaryConstructor.valueParameters, primaryConstructor.hasSynthesizedParameterNames(), builder)
             }

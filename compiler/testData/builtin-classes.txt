@@ -576,21 +576,9 @@ public interface Function</*0*/ out R> {
 }
 
 public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
-    public enum entry LOCAL_CONTINUE_AND_BREAK : kotlin.InlineOption {
-        /*primary*/ private constructor LOCAL_CONTINUE_AND_BREAK()
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry LOCAL_CONTINUE_AND_BREAK
 
-    public enum entry ONLY_LOCAL_RETURN : kotlin.InlineOption {
-        /*primary*/ private constructor ONLY_LOCAL_RETURN()
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ONLY_LOCAL_RETURN
 
     /*primary*/ private constructor InlineOption()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -604,21 +592,9 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
 }
 
 public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
-    public enum entry AS_FUNCTION : kotlin.InlineStrategy {
-        /*primary*/ private constructor AS_FUNCTION()
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry AS_FUNCTION
 
-    public enum entry IN_PLACE : kotlin.InlineStrategy {
-        /*primary*/ private constructor IN_PLACE()
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry IN_PLACE
 
     /*primary*/ private constructor InlineStrategy()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

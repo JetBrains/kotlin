@@ -1,15 +1,11 @@
 package test
 
 public final enum class EnumConstructorParameter : kotlin.Enum<test.EnumConstructorParameter!> {
-    public enum entry INSTANCE : test.EnumConstructorParameter {
-        private constructor INSTANCE()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumConstructorParameter!): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry INSTANCE
 
     private constructor EnumConstructorParameter(/*0*/ p0: kotlin.Int)
     private constructor EnumConstructorParameter(/*0*/ test.EnumConstructorParameter.Anno(value = "string") p0: kotlin.String!)
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumConstructorParameter!): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

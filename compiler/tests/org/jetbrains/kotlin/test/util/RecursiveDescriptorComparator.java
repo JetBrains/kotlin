@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
@@ -104,15 +104,18 @@ public class RecursiveDescriptorComparator {
             @NotNull Printer printer,
             boolean topLevel
     ) {
-        if (!isEnumEntry(descriptor) &&
-            (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
+        boolean isEnumEntry = isEnumEntry(descriptor);
+        boolean isClassOrPackage =
+                (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !isEnumEntry;
+
+        if (isClassOrPackage && !topLevel) {
             printer.println();
         }
 
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", conf.renderer.render(descriptor));
 
-        if (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
+        if (isClassOrPackage) {
             if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }
@@ -167,7 +170,7 @@ public class RecursiveDescriptorComparator {
             printer.printlnWithNoIndent();
         }
 
-        if (isEnumEntry(descriptor)) {
+        if (isEnumEntry) {
             printer.println();
         }
     }

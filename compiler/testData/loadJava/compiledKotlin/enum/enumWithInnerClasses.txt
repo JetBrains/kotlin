@@ -1,29 +1,14 @@
 package test
 
 internal final enum class Enum : kotlin.Enum<test.Enum> {
-    public enum entry ENTRY1 : test.Enum {
-        /*primary*/ private constructor ENTRY1()
-        internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
-        internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ENTRY1
 
-    public enum entry ENTRY2 : test.Enum {
-        /*primary*/ private constructor ENTRY2()
-        internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
-        internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ENTRY2
 
     /*primary*/ private constructor Enum()
     internal final val c: kotlin.Int = 1
         internal final fun <get-c>(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
     internal final fun f(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String

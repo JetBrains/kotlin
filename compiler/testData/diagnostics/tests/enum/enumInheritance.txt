@@ -20,6 +20,7 @@ internal final enum class MyEnum : MyClass {
 
 internal final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     private constructor MyEnum2()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2): kotlin.Int
     public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -34,6 +35,7 @@ internal final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
 
 internal final enum class MyEnum3 : MyEnumBase {
     private constructor MyEnum3()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -48,6 +50,7 @@ internal final enum class MyEnum3 : MyEnumBase {
 
 internal final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     private constructor MyEnumBase()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

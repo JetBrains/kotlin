@@ -1,14 +1,7 @@
 package
 
 internal interface Some {
-    public enum entry D : Some {
-        private constructor D()
-        internal abstract override /*1*/ /*fake_override*/ val foo: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal abstract override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry D
 
     internal abstract val foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
