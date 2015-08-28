@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -87,8 +86,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private void writeModuleMappings(Collection<PackageCodegen> values) {
-        String moduleName = KotlinPackage.removeSurrounding(state.getModule().getName().asString(), "<", ">");
-        String outputFilePath = getMappingFileName(moduleName);
+        String outputFilePath = getMappingFileName(state.getModuleName());
         final StringWriter moduleMapping = new StringWriter(1024);
         for (PackageCodegen codegen : values) {
             codegen.getFacades().serialize(moduleMapping);

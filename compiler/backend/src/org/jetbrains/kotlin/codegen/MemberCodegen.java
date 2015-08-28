@@ -480,7 +480,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             @NotNull ClassBuilder classBuilder
     ) {
         classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$moduleName",
-                              AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, JvmCodegenUtil.getModuleName(state.getModule()));
+                              AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, state.getModuleName());
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {

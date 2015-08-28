@@ -51,10 +51,14 @@ public class GenerationState jvmOverloads constructor(
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
         public val moduleId: String? = null,
+        moduleName: String? = null,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
         public val outDirectory: File? = null,
         public val progress: Progress = Progress.DEAF
 ) {
+
+    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
+
     public interface GenerateClassFilter {
         public fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean
         public fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean

@@ -148,7 +148,8 @@ public class KotlinToJVMBytecodeCompiler {
                     }
             );
             GenerationState generationState =
-                    generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
+                    generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()),
+                             module.getModuleName());
             outputFiles.put(module, generationState.getFactory());
         }
 
@@ -302,7 +303,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         result.throwIfError();
 
-        return generate(environment, result, environment.getSourceFiles(), null, null);
+        return generate(environment, result, environment.getSourceFiles(), null, null, null);
     }
 
     @Nullable
@@ -357,7 +358,8 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
             @Nullable String moduleId,
-            File outputDirectory
+            File outputDirectory,
+            String moduleName
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
@@ -388,6 +390,7 @@ public class KotlinToJVMBytecodeCompiler {
                 diagnosticHolder,
                 packagesWithObsoleteParts,
                 moduleId,
+                moduleName,
                 outputDirectory
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

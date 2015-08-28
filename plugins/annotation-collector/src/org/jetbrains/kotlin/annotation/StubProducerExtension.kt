@@ -39,7 +39,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
             files: Collection<JetFile>
     ): AnalysisResult? {
         val forExtraDiagnostics = BindingTraceContext()
-        
+
         val generationState = GenerationState(
                 project,
                 StubClassBuilderFactory(),
