@@ -37,6 +37,12 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<
 
     public override final fun compareTo(other: E): Int
 
+    /**
+     * Throws an exception since enum constants cannot be cloned.
+     * This method prevents enum classes from inheriting from [Cloneable].
+     */
+    protected final fun clone(): Any
+
     public override final fun equals(other: Any?): Boolean
     public override final fun hashCode(): Int
     public override fun toString(): String

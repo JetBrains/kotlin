@@ -5298,6 +5298,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt8972_cloneNotAllowed.kt")
+            public void testKt8972_cloneNotAllowed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/kt8972_cloneNotAllowed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localEnums.kt")
             public void testLocalEnums() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/localEnums.kt");

@@ -1,5 +1,6 @@
 -InheritedMembersOfEnum.kt
  -Test
+  clone(): Any location=→Enum
   compareTo(E): Int location=→Enum
   equals(Any?): Boolean location=→Enum
   FIRST
