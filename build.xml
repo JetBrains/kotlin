@@ -117,6 +117,8 @@
         <include name="backend-common/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
+        <include name="rmi-server/**"/>
+        <include name="rmi-interface/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
@@ -200,6 +202,8 @@
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
+            <include name="compiler/rmi/rmi-server/src"/>
+            <include name="compiler/rmi/rmi-interface/src"/>
             <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>

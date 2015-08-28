@@ -26,12 +26,7 @@ import java.rmi.Remote
 import java.rmi.registry.LocateRegistry
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.thread
-import kotlin.concurrent.write
-import kotlin.platform.platformStatic
-import kotlin.reflect.KProperty1
 
 fun Process.isAlive() =
         try {
@@ -71,7 +66,7 @@ public class KotlinCompilerClient {
         }
 
 
-        private fun startDaemon(compilerId: CompilerId, daemonLaunchingOptions: DaemonLaunchingOptions, daemonOptions: DaemonOptions, errStream: PrintStream) {
+        private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, errStream: PrintStream) {
             val javaExecutable = File(System.getProperty("java.home"), "bin").let {
                 val javaw = File(it, "javaw.exe")
                 if (javaw.exists()) javaw
@@ -80,10 +75,10 @@ public class KotlinCompilerClient {
             // TODO: add some specific environment variables to the cp and may be command line, to allow some specific startup configs
             val args = listOf(javaExecutable.absolutePath,
                               "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
-                       daemonLaunchingOptions.extractors.flatMap { it.extract("-") } +
+                       daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
                        COMPILER_DAEMON_CLASS_FQN +
-                       daemonOptions.extractors.flatMap { it.extract(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                       compilerId.extractors.flatMap { it.extract(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+                       daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
+                       compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
             errStream.println("[daemon client] starting the daemon as: " + args.joinToString(" "))
             val processBuilder = ProcessBuilder(args).redirectErrorStream(true)
             // assuming daemon process is deaf and (mostly) silent, so do not handle streams
@@ -135,14 +130,14 @@ public class KotlinCompilerClient {
                    (localId.compilerDigest.isEmpty() || remoteId.compilerDigest.isEmpty() || localId.compilerDigest == remoteId.compilerDigest)
         }
 
-        public fun connectToCompileService(compilerId: CompilerId, daemonLaunchingOptions: DaemonLaunchingOptions, daemonOptions: DaemonOptions, errStream: PrintStream, autostart: Boolean = true, checkId: Boolean = true): CompileService? {
+        public fun connectToCompileService(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, errStream: PrintStream, autostart: Boolean = true, checkId: Boolean = true): CompileService? {
             val service = connectToService(compilerId, daemonOptions, errStream)
             if (service != null) {
                 if (!checkId || checkCompilerId(service, compilerId, errStream)) {
                     errStream.println("[daemon client] found the suitable daemon")
                     return service
                 }
-                errStream.println("[daemon client] compiler identity don't match: " + compilerId.extractors.flatMap { it.extract("") }.joinToString(" "))
+                errStream.println("[daemon client] compiler identity don't match: " + compilerId.mappers.flatMap { it.toArgs("") }.joinToString(" "))
                 if (!autostart) return null;
                 errStream.println("[daemon client] shutdown the daemon")
                 service.shutdown()
@@ -155,13 +150,13 @@ public class KotlinCompilerClient {
                 else errStream.println("[daemon client] cannot connect to Compile Daemon, trying to start")
             }
 
-            startDaemon(compilerId, daemonLaunchingOptions, daemonOptions, errStream)
+            startDaemon(compilerId, daemonJVMOptions, daemonOptions, errStream)
             errStream.println("[daemon client] daemon started, trying to connect")
             return connectToService(compilerId, daemonOptions, errStream)
         }
 
         public fun shutdownCompileService(daemonOptions: DaemonOptions): Unit {
-            KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonLaunchingOptions(), daemonOptions, System.out, autostart = false, checkId = false)
+            KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonJVMOptions(), daemonOptions, System.out, autostart = false, checkId = false)
                     ?.shutdown()
         }
 
@@ -196,20 +191,17 @@ public class KotlinCompilerClient {
 
         data class ClientOptions(
                 public var stop: Boolean = false
-        ) :CmdlineParams {
-            override val extractors: List<PropExtractor<*, *, *>>
-                get() = listOf( BoolPropExtractor(this, ::stop))
-
-            override val parsers: List<PropParser<*,*,*>>
-                get() = listOf( BoolPropParser(this, ::stop))
+        ) : OptionsGroup {
+            override val mappers: List<PropMapper<*, *, *>>
+                get() = listOf( BoolPropMapper(this, ::stop))
         }
 
-        platformStatic public fun main(vararg args: String) {
+        jvmStatic public fun main(vararg args: String) {
             val compilerId = CompilerId()
             val daemonOptions = DaemonOptions()
-            val daemonLaunchingOptions = DaemonLaunchingOptions()
+            val daemonLaunchingOptions = DaemonJVMOptions()
             val clientOptions = ClientOptions()
-            val filteredArgs = args.asIterable().filterSetProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+            val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
             if (!clientOptions.stop) {
                 if (compilerId.compilerClasspath.none()) {

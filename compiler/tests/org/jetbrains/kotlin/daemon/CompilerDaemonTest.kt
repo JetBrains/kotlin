@@ -20,7 +20,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.CliBaseTest
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.DaemonLaunchingOptions
+import org.jetbrains.kotlin.rmi.DaemonJVMOptions
 import org.jetbrains.kotlin.rmi.DaemonOptions
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -34,7 +34,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     data class CompilerResults(val resultCode: Int, val out: String)
 
     val daemonOptions = DaemonOptions(port = KOTLIN_DAEMON_TEST_PORT)
-    val daemonLaunchingOptions = DaemonLaunchingOptions()
+    val daemonLaunchingOptions = DaemonJVMOptions()
     val compilerId by lazy { CompilerId.makeCompilerId( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }

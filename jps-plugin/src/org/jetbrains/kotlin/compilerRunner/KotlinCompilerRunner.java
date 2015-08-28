@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -136,9 +135,9 @@ public class KotlinCompilerRunner {
                 //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
                 CompilerId compilerId = CompilerId.makeCompilerId(new File(libPath, "kotlin-compiler.jar"));
                 DaemonOptions daemonOptions = RmiPackage.configureDaemonOptions();
-                DaemonLaunchingOptions daemonLaunchingOptions = RmiPackage.configureDaemonLaunchingOptions(true);
+                DaemonJVMOptions daemonJVMOptions = RmiPackage.configureDaemonLaunchingOptions(true);
                 // TODO: find proper stream to report daemon connection progress
-                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, true, true);
+                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, System.out, true, true);
                 if (daemon != null) {
                     Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, out);
                     return res.toString();

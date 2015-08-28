@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -25,15 +24,12 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
 import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
-import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.jar.Manifest
@@ -86,12 +82,14 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
     public class IncrementalCompilationComponentsImpl(val idToCache: Map<String, CompileService.RemoteIncrementalCache>): IncrementalCompilationComponents {
         // perf: cheap object, but still the pattern may be costly if there are too many calls to cache with the same id (which seems not to be the case now)
         override fun getIncrementalCache(moduleId: String): IncrementalCache = RemoteIncrementalCacheClient(idToCache[moduleId]!!)
+        // TODO: add appropriate proxy into interaction when lookup tracker is needed
         override fun getLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
     }
 
     private fun createCompileServices(incrementalCaches: Map<String, CompileService.RemoteIncrementalCache>): Services =
         Services.Builder()
-                .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches))
+                .register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches))
+                // TODO: add remote proxy for cancellation status tracking
 //                .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
 //                    override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
 //                })
@@ -111,6 +109,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         return memHeap.used
     }
 
+    // TODO: consider using version as a part of compiler ID or drop this function
     private fun loadKotlinVersionFromResource(): String {
         (javaClass.classLoader as? URLClassLoader)
         ?.findResource("META-INF/MANIFEST.MF")
@@ -158,6 +157,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         else body()
     }
 
+    // sometimes used for debugging
     fun<R> spy(msg: String, body: () -> R): R {
         val res = body()
         log.info(msg + " = " + res.toString())
@@ -178,26 +178,25 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
     }
 
     override fun remoteCompile(args: Array<out String>, errStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
-        ifAlive {
-            checkedCompile(args) {
-                val strm = RemoteOutputStreamClient(errStream)
-                val printStrm = PrintStream(strm)
-                when (outputFormat) {
-                    CompileService.OutputFormat.PLAIN -> compiler.exec(printStrm, *args)
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStrm, Services.EMPTY, *args)
-                }.code
-            }
+        doCompile(args, errStream) { printStream ->
+            when (outputFormat) {
+                CompileService.OutputFormat.PLAIN -> compiler.exec(printStream, *args)
+                CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, Services.EMPTY, *args)
+            }.code
         }
 
-    override fun remoteIncrementalCompile(args: Array<out String>, caches: Map<String, CompileService.RemoteIncrementalCache>, errStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
+    override fun remoteIncrementalCompile(args: Array<out String>, caches: Map<String, CompileService.RemoteIncrementalCache>, outputStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
+        doCompile(args, outputStream) { printStream ->
+            when (outputFormat) {
+                CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
+                CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(caches), *args)
+            }.code
+        }
+
+    fun doCompile(args: Array<out String>, errStream: RemoteOutputStream, body: (PrintStream) -> Int): Int =
         ifAlive {
             checkedCompile(args) {
-                val strm = RemoteOutputStreamClient(errStream)
-                val printStrm = PrintStream(strm)
-                when (outputFormat) {
-                    CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStrm, createCompileServices(caches), *args)
-                }.code
+                body( PrintStream( RemoteOutputStreamClient(errStream)))
             }
         }
 }
