@@ -109,12 +109,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PureKotlin extends AbstractIncrementalJpsTest {
-        @TestMetadata("accessPrivateMembers")
-        public void testAccessPrivateMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessPrivateMembers/");
-            doTest(fileName);
-        }
-
         @TestMetadata("accessingFunctionsViaPackagePart")
         public void testAccessingFunctionsViaPackagePart() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaPackagePart/");
