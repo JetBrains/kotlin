@@ -146,7 +146,18 @@ public class LightClassUtil {
 
     @Nullable
     public static PsiMethod getLightClassAccessorMethod(@NotNull JetPropertyAccessor accessor) {
-        return getPsiMethodWrapper(accessor);
+        JetProperty property = PsiTreeUtil.getParentOfType(accessor, JetProperty.class);
+        if (property == null) {
+            return null;
+        }
+        List<PsiMethod> wrappers = getPsiMethodWrappers(property, true);
+        for (PsiMethod wrapper : wrappers) {
+            if ((accessor.isGetter() && !wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) ||
+                (accessor.isSetter() && wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX))) {
+                return wrapper;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -331,13 +342,13 @@ public class LightClassUtil {
 
             for (PsiMethod wrapper : wrappers) {
                 if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    assert setterWrapper == null : String.format(
+                    assert setterWrapper == null || setterWrapper == specialSetter: String.format(
                             "Setter accessor isn't expected to be reassigned (old: %s, new: %s)", setterWrapper, wrapper);
 
                     setterWrapper = wrapper;
                 }
                 else {
-                    assert getterWrapper == null : String.format(
+                    assert getterWrapper == null || getterWrapper == specialGetter: String.format(
                             "Getter accessor isn't expected to be reassigned (old: %s, new: %s)", getterWrapper, wrapper);
 
                     getterWrapper = wrapper;
