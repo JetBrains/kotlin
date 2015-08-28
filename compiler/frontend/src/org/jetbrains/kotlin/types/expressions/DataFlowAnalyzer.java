@@ -164,24 +164,13 @@ public class DataFlowAnalyzer {
         return typeInfo.replaceType(checkType(typeInfo.getType(), expression, context));
     }
 
-    @Nullable
-    public JetType checkType(
-            @Nullable JetType expressionType,
-            @NotNull JetExpression expressionToCheck,
+    @NotNull
+    private JetType checkTypeInternal(
+            @NotNull JetType expressionType,
+            @NotNull JetExpression expression,
             @NotNull ResolutionContext c,
-            @Nullable Ref<Boolean> hasError
+            @NotNull Ref<Boolean> hasError
     ) {
-        if (hasError != null) hasError.set(false);
-
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
-        recordExpectedType(c.trace, expression, c.expectedType);
-
-        if (expressionType == null) return null;
-
-        for (AdditionalTypeChecker checker : additionalTypeCheckers) {
-            checker.checkType(expression, expressionType, c);
-        }
-
         if (noExpectedType(c.expectedType) || !c.expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, c.expectedType)) {
             return expressionType;
@@ -206,6 +195,35 @@ public class DataFlowAnalyzer {
         c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
         if (hasError != null) hasError.set(true);
         return expressionType;
+    }
+
+    @Nullable
+    public JetType checkType(
+            @Nullable JetType expressionType,
+            @NotNull JetExpression expressionToCheck,
+            @NotNull ResolutionContext c,
+            @Nullable Ref<Boolean> hasError
+    ) {
+        if (hasError == null) {
+            hasError = Ref.create(false);
+        }
+        else {
+            hasError.set(false);
+        }
+
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
+        recordExpectedType(c.trace, expression, c.expectedType);
+
+        if (expressionType == null) return null;
+
+        JetType result = checkTypeInternal(expressionType, expression, c, hasError);
+        if (Boolean.FALSE.equals(hasError.get())) {
+            for (AdditionalTypeChecker checker : additionalTypeCheckers) {
+                checker.checkType(expression, expressionType, result, c);
+            }
+        }
+
+        return result;
     }
 
     @Nullable

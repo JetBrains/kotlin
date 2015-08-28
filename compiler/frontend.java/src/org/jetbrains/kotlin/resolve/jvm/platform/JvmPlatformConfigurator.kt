@@ -346,7 +346,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
     }
 
-    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
+    override fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>) {
         doCheckType(
                 expressionType,
                 c.expectedType,
