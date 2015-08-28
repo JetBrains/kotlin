@@ -32,7 +32,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -63,8 +63,45 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
 
         DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(declaration);
 
+        List<PsiElement> superDeclarations = findSuperDeclarations(descriptor);
+
+        if (superDeclarations.isEmpty()) return;
+        if (superDeclarations.size() == 1) {
+            Navigatable navigatable = EditSourceUtil.getDescriptor(superDeclarations.get(0));
+            if (navigatable != null && navigatable.canNavigate()) {
+                navigatable.navigate(true);
+            }
+        }
+        else {
+            String message = getTitle(descriptor);
+            PsiElement[] superDeclarationsArray = PsiUtilCore.toPsiElementArray(superDeclarations);
+            JBPopup popup = descriptor instanceof ClassDescriptor
+                            ? NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
+                            : NavigationUtil.getPsiElementPopup(superDeclarationsArray,
+                                                                new JetFunctionPsiElementCellRenderer(), message);
+            popup.showInBestPositionFor(editor);
+        }
+    }
+
+    @Nullable
+    private static String getTitle(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return JetBundle.message("goto.super.class.chooser.title");
+        }
+
+        if (descriptor instanceof PropertyDescriptor) {
+            return JetBundle.message("goto.super.property.chooser.title");
+        }
+
+        if (descriptor instanceof SimpleFunctionDescriptor) {
+            return JetBundle.message("goto.super.function.chooser.title");
+        }
+
+        return null;
+    }
+
+    private static List<PsiElement> findSuperDeclarations(DeclarationDescriptor descriptor) {
         Collection<? extends DeclarationDescriptor> superDescriptors;
-        String message;
         if (descriptor instanceof ClassDescriptor) {
             Collection<JetType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
             List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<JetType, ClassDescriptor>() {
@@ -79,23 +116,14 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             });
             ContainerUtil.removeDuplicates(superclasses);
             superDescriptors = superclasses;
-            message = JetBundle.message("goto.super.class.chooser.title");
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
             superDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-            if (descriptor instanceof PropertyDescriptor) {
-                message = JetBundle.message("goto.super.property.chooser.title");
-            }
-            else if (descriptor instanceof SimpleFunctionDescriptor) {
-                message = JetBundle.message("goto.super.function.chooser.title");
-            }
-            else
-                throw new IllegalStateException("Unknown member type: " + descriptor.getClass().getName());
         }
         else
-            return;
+            return null;
 
-        List<PsiElement> superDeclarations = ContainerUtil.mapNotNull(superDescriptors, new Function<DeclarationDescriptor, PsiElement>() {
+        return ContainerUtil.mapNotNull(superDescriptors, new Function<DeclarationDescriptor, PsiElement>() {
             @Override
             public PsiElement fun(DeclarationDescriptor descriptor) {
                 if (descriptor instanceof ClassDescriptor && isAny((ClassDescriptor) descriptor)) {
@@ -104,21 +132,6 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                 return DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
             }
         });
-        if (superDeclarations.isEmpty()) return;
-        if (superDeclarations.size() == 1) {
-            Navigatable navigatable = EditSourceUtil.getDescriptor(superDeclarations.get(0));
-            if (navigatable != null && navigatable.canNavigate()) {
-                navigatable.navigate(true);
-            }
-        }
-        else {
-            PsiElement[] superDeclarationsArray = PsiUtilCore.toPsiElementArray(superDeclarations);
-            JBPopup popup = descriptor instanceof ClassDescriptor
-                            ? NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
-                            : NavigationUtil.getPsiElementPopup(superDeclarationsArray,
-                                                                new JetFunctionPsiElementCellRenderer(), message);
-            popup.showInBestPositionFor(editor);
-        }
     }
 
     @Override
