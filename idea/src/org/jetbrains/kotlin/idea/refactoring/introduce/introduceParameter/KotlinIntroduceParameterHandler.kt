@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.refactoring.listeners.RefactoringEventListener
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -346,10 +348,7 @@ private fun findInternalUsagesOfParametersAndReceiver(
     targetParent.getValueParameters()
             .filter { !it.hasValOrVar() }
             .forEach {
-                val paramUsages = DefaultSearchHelper<JetParameter>()
-                        .newRequest(UsagesSearchTarget(element = it))
-                        .search()
-                        .map { it.getElement() as JetElement }
+                val paramUsages = ReferencesSearch.search(it).map { it.getElement() as JetElement }
                 if (paramUsages.isNotEmpty()) {
                     usages.put(it, paramUsages)
                 }
