@@ -219,7 +219,8 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     public static class NoScopeRecordCliBindingTrace extends CliBindingTrace {
         @Override
         public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
+            if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE
+                || slice == BindingContext.LEXICAL_SCOPE) {
                 // In the compiler there's no need to keep scopes
                 return;
             }
