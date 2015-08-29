@@ -230,7 +230,9 @@ public class TypeSubstitutor {
                                            type.getConstructor(),             // The same constructor
                                            type.isMarkedNullable(),           // Same nullability
                                            substitutedArguments,
-                                           new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)));
+                                           substitutionFilteringTypeParameters,
+                                           new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)),
+                                           type.getCapabilities());
         return new TypeProjectionImpl(projectionKind, substitutedType);
     }
 

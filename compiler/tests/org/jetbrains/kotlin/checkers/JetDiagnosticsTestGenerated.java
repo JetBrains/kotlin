@@ -10772,6 +10772,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("saveRawCapabilitiesAfterSubtitution.kt")
+                public void testSaveRawCapabilitiesAfterSubtitution() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/saveRawCapabilitiesAfterSubtitution.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/simple.kt");
