@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaElement
 
 public object RuntimeSourceElementFactory : JavaSourceElementFactory {
-    private class RuntimeSourceElement(override val javaElement: ReflectJavaElement) : JavaSourceElement
+    private class RuntimeSourceElement(override val javaElement: ReflectJavaElement) : JavaSourceElement {
+        override fun toString() = javaClass.name + ": " + javaElement.toString()
+    }
 
     override fun source(javaElement: JavaElement) = RuntimeSourceElement(javaElement as ReflectJavaElement)
 }
