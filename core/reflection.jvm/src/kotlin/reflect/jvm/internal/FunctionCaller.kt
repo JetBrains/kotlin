@@ -99,7 +99,7 @@ internal abstract class FunctionCaller<out M : Member>(
         }
     }
 
-    class PlatformStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = true) {
+    class JvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = true) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             checkObjectInstance(args.firstOrNull())
@@ -151,7 +151,7 @@ internal abstract class FunctionCaller<out M : Member>(
 
     class InstanceFieldGetter(field: ReflectField) : FieldGetter(field)
 
-    class PlatformStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
+    class JvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             checkObjectInstance(args.firstOrNull())
@@ -162,7 +162,7 @@ internal abstract class FunctionCaller<out M : Member>(
 
     class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
 
-    class PlatformStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
+    class JvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             checkObjectInstance(args.firstOrNull())

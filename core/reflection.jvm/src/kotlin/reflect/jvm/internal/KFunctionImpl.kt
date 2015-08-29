@@ -69,7 +69,7 @@ open class KFunctionImpl protected constructor(
 
                 descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
-                    FunctionCaller.PlatformStaticInObject(member)
+                    FunctionCaller.JvmStaticInObject(member)
 
                 else -> FunctionCaller.StaticMethod(member)
             }
@@ -100,7 +100,7 @@ open class KFunctionImpl protected constructor(
             is Method -> when {
                 descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
-                    FunctionCaller.PlatformStaticInObject(member)
+                    FunctionCaller.JvmStaticInObject(member)
 
                 else -> FunctionCaller.StaticMethod(member)
             }

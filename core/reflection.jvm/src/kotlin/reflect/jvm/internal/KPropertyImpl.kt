@@ -85,7 +85,7 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
 
 
 private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
-    fun isPlatformStaticProperty() =
+    fun isJvmStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
@@ -96,9 +96,9 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
             else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())
-        isPlatformStaticProperty() ->
-            if (isGetter) FunctionCaller.PlatformStaticInObjectFieldGetter(field)
-            else FunctionCaller.PlatformStaticInObjectFieldSetter(field, isNotNullProperty())
+        isJvmStaticProperty() ->
+            if (isGetter) FunctionCaller.JvmStaticInObjectFieldGetter(field)
+            else FunctionCaller.JvmStaticInObjectFieldSetter(field, isNotNullProperty())
         else ->
             if (isGetter) FunctionCaller.StaticFieldGetter(field)
             else FunctionCaller.StaticFieldSetter(field, isNotNullProperty())
@@ -123,7 +123,7 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
             when {
                 accessor == null -> computeFieldCaller(property.javaField!!)
                 !Modifier.isStatic(accessor.modifiers) -> FunctionCaller.InstanceMethod(accessor)
-                isPlatformStaticProperty() -> FunctionCaller.PlatformStaticInObject(accessor)
+                isJvmStaticProperty() -> FunctionCaller.JvmStaticInObject(accessor)
                 else -> FunctionCaller.StaticMethod(accessor)
             }
         }
