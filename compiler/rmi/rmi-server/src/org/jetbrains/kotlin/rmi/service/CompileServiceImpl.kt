@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -182,7 +183,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             when (outputFormat) {
                 CompileService.OutputFormat.PLAIN -> compiler.exec(printStream, *args)
                 CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, Services.EMPTY, *args)
-            }.code
+            }
         }
 
     override fun remoteIncrementalCompile(args: Array<out String>, caches: Map<String, CompileService.RemoteIncrementalCache>, outputStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
@@ -190,13 +191,13 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             when (outputFormat) {
                 CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
                 CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(caches), *args)
-            }.code
+            }
         }
 
-    fun doCompile(args: Array<out String>, errStream: RemoteOutputStream, body: (PrintStream) -> Int): Int =
+    fun doCompile(args: Array<out String>, errStream: RemoteOutputStream, body: (PrintStream) -> ExitCode): Int =
         ifAlive {
             checkedCompile(args) {
-                body( PrintStream( RemoteOutputStreamClient(errStream)))
+                body( PrintStream( RemoteOutputStreamClient(errStream))).code
             }
         }
 }

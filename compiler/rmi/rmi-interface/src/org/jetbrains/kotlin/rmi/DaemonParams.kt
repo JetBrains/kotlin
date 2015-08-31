@@ -37,46 +37,6 @@ public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
 
 val COMPILER_ID_DIGEST = "MD5"
 
-//open class PropExtractor<C, V, P: KProperty1<C, V>>(val dest: C,
-//                                                    val prop: P,
-//                                                    val name: String,
-//                                                    val convert: ((v: V) -> String?) = { it.toString() },
-//                                                    val skipIf: ((v: V) -> Boolean) = { false },
-//                                                    val mergeWithDelimiter: String? = null)
-//{
-//    constructor(dest: C, prop: P, convert: ((v: V) -> String?) = { it.toString() }, skipIf: ((v: V) -> Boolean) = { false }) : this(dest, prop, prop.name, convert, skipIf)
-//    open fun extract(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
-//            when {
-//                skipIf(prop.get(dest)) -> listOf<String>()
-//                mergeWithDelimiter != null -> listOf(prefix + name + mergeWithDelimiter + convert(prop.get(dest))).filterNotNull()
-//                else -> listOf(prefix + name, convert(prop.get(dest))).filterNotNull()
-//            }
-//}
-//
-//class BoolPropExtractor<C, P: KMutableProperty1<C, Boolean>>(dest: C, prop: P, name: String? = null)
-//    : PropExtractor<C, Boolean, P>(dest, prop, name ?: prop.name, convert = { null }, skipIf = { !prop.get(dest) })
-//
-//class RestPropExtractor<C, P: KMutableProperty1<C, out MutableCollection<String>>>(dest: C, prop: P) : PropExtractor<C, MutableCollection<String>, P>(dest, prop, convert = { null }) {
-//    override fun extract(prefix: String): List<String> = prop.get(dest).map { prefix + it }
-//}
-//
-//
-//open class PropParser<C, V, P: KMutableProperty1<C, V>>(val dest: C,
-//                                                        val prop: P, alternativeNames: List<String>,
-//                                                        val parse: (s: String) -> V,
-//                                                        val allowMergedArg: Boolean = false) {
-//    val names = listOf(prop.name) + alternativeNames
-//    constructor(dest: C, prop: P, parse: (s: String) -> V, allowMergedArg: Boolean = false) : this(dest, prop, listOf(), parse, allowMergedArg)
-//    fun apply(s: String) = prop.set(dest, parse(s))
-//}
-//
-//class BoolPropParser<C, P: KMutableProperty1<C, Boolean>>(dest: C, prop: P): PropParser<C, Boolean, P>(dest, prop, { true })
-//
-//class RestPropParser<C, P: KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P): PropParser<C, MutableCollection<String>, P>(dest, prop, { arrayListOf() }) {
-//    fun add(s: String) { prop.get(dest).add(s) }
-//}
-
-// --------------------------------------------------------
 
 open class PropMapper<C, V, P: KMutableProperty1<C, V>>(val dest: C,
                                                         val prop: P,
@@ -89,10 +49,10 @@ open class PropMapper<C, V, P: KMutableProperty1<C, V>>(val dest: C,
     open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
             when {
                 skipIf(prop.get(dest)) -> listOf<String>()
-                mergeDelimiter != null -> listOf(prefix + names.first() + mergeDelimiter + toString(prop.get(dest))).filterNotNull()
+                mergeDelimiter != null -> listOf( listOf(prefix + names.first(), toString(prop.get(dest))).filterNotNull().joinToString(mergeDelimiter))
                 else -> listOf(prefix + names.first(), toString(prop.get(dest))).filterNotNull()
             }
-    fun apply(s: String) = prop.set(dest, fromString(s))
+    open fun apply(s: String) = prop.set(dest, fromString(s))
 }
 
 class StringPropMapper<C, P: KMutableProperty1<C, String>>(dest: C,
@@ -113,68 +73,64 @@ class RestPropMapper<C, P: KMutableProperty1<C, MutableCollection<String>>>(dest
     : PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() }) 
 {
     override fun toArgs(prefix: String): List<String> = prop.get(dest).map { prefix + it }
+    override fun apply(s: String) = add(s)
     fun add(s: String) { prop.get(dest).add(s) }
 }
 
-// ------------------------------------------
+
+inline fun <T, R: Any> Iterable<T>.firstMapOrNull(mappingPredicate: (T) -> Pair<Boolean, R?>): R? {
+    for (element in this) {
+        val (found, mapped) = mappingPredicate(element)
+        if (found) return mapped
+    }
+    return null
+}
+
 
 fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*,*,*>>, prefix: String, restParser: RestPropMapper<*,*>? = null) : Iterable<String>  {
-    var currentPropMapper: PropMapper<*,*,*>? = null
-    var matchingOption = ""
-    val res = filter { param ->
-        if (currentPropMapper == null) {
-            val propMapper = propMappers.find {
-                it !is RestPropMapper<*,*> &&
-                it.names.any { name ->
-                    if (param.startsWith(prefix + name)) {
-                        matchingOption = prefix + name
-                        true
+
+    val iter = iterator()
+    val rest = arrayListOf<String>()
+
+    while (iter.hasNext()) {
+        val param = iter.next()
+        val (propMapper, matchingOption) = propMappers.firstMapOrNull {
+            val name = if (it !is RestPropMapper<*,*>) it.names.firstOrNull { param.startsWith(prefix + it) } else null
+            Pair(name != null, Pair(it, name))
+        } ?: Pair(null, null)
+
+        when {
+            propMapper != null -> {
+                val optionLength = prefix.length() + matchingOption!!.length()
+                when {
+                    propMapper is BoolPropMapper<*,*> -> {
+                        if (param.length() > optionLength)
+                            throw IllegalArgumentException("Invalid switch option '$param', expecting $prefix$matchingOption without arguments")
+                        propMapper.apply("")
                     }
-                    else {
-                        false
-                    }
-                }
-            }
-            when {
-                propMapper != null -> {
-                    val optionLength = matchingOption.length()
-                    when {
-                        propMapper is BoolPropMapper<*,*> -> {
-                            if (param.length() > optionLength)
-                                throw IllegalArgumentException("Invalid switch option '$param', expecting $matchingOption without arguments")
-                            propMapper.apply("")
+                    param.length() > optionLength ->
+                        if (param[optionLength] != '=') {
+                            if (propMapper.mergeDelimiter == null)
+                                throw IllegalArgumentException("Invalid option syntax '$param', expecting $prefix$matchingOption[= ]<arg>")
+                            propMapper.apply(param.substring(optionLength))
                         }
-                        param.length() > optionLength ->
-                            if (param[optionLength] != '=') {
-                                if (propMapper.mergeDelimiter == null)
-                                    throw IllegalArgumentException("Invalid option syntax '$param', expecting $matchingOption[= ]<arg>")
-                                propMapper.apply(param.substring(optionLength))
-                            }
-                            else {
-                                propMapper.apply(param.substring(optionLength + 1))
-                            }
-                        else ->
-                            currentPropMapper = propMapper
+                        else {
+                            propMapper.apply(param.substring(optionLength + 1))
+                        }
+                    else -> {
+                        if (!iter.hasNext()) throw IllegalArgumentException("Expecting argument for the option $prefix$matchingOption")
+                        propMapper.apply(iter.next())
                     }
-                    false
                 }
-                restParser != null && param.startsWith(prefix) -> {
-                    restParser.add(param.removePrefix(prefix))
-                    false
-                }
-                else -> true
             }
-        }
-        else {
-            currentPropMapper!!.apply(param)
-            currentPropMapper = null
-            false
+            restParser != null && param.startsWith(prefix) ->
+                restParser.add(param.removePrefix(prefix))
+            else -> rest.add(param)
         }
     }
-    if (currentPropMapper != null) 
-        throw IllegalArgumentException("Expecting argument for the option $matchingOption")
-    return res
+    return rest
 }
+
 
 // TODO: find out how to create more generic variant using first constructor
 //fun<C> C.propsToParams() {
@@ -196,7 +152,7 @@ public data class DaemonJVMOptions(
         public var maxMemory: String = "",
         public var maxPermSize: String = "",
         public var reservedCodeCacheSize: String = "",
-        public var otherJvmParams: MutableCollection<String> = arrayListOf()
+        public var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*,*,*>>
@@ -206,7 +162,7 @@ public data class DaemonJVMOptions(
                         restMapper)
 
     val restMapper: RestPropMapper<*,*>
-        get() = RestPropMapper(this, ::otherJvmParams)
+        get() = RestPropMapper(this, ::jvmParams)
 }
 
 public data class DaemonOptions(
@@ -292,7 +248,7 @@ public fun configureDaemonLaunchingOptions(opts: DaemonJVMOptions, inheritMemory
         ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
 
     System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
-        opts.otherJvmParams.addAll( it.trim('"', '\'').split(",").filterExtractProps(opts.mappers, "-", opts.restMapper))
+        opts.jvmParams.addAll(it.trim('"', '\'').split(",").filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
     return opts
 }
