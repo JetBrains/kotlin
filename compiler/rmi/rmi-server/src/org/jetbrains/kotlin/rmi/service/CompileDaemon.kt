@@ -17,23 +17,22 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
-import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.DaemonOptions
-import org.jetbrains.kotlin.rmi.filterExtractProps
+import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.service.CompileServiceImpl
+import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
+import java.rmi.RemoteException
 import java.rmi.registry.LocateRegistry
+import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
 import java.util.logging.LogManager
 import java.util.logging.Logger
-import kotlin.platform.platformStatic
 
 class LogStream(name: String) : OutputStream() {
 
@@ -107,7 +106,7 @@ public class CompileDaemon {
             return null
         }
 
-        platformStatic public fun main(args: Array<String>) {
+        jvmStatic public fun main(args: Array<String>) {
 
             log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
             log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
@@ -132,13 +131,23 @@ public class CompileDaemon {
 //
 //            setDaemonPpermissions(daemonOptions.port)
 
-            val registry = LocateRegistry.createRegistry(daemonOptions.port);
-            val compiler = K2JVMCompiler()
+            val (registry, port) = createRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS)
+            val runFileDir = File(daemonOptions.runFilesPath)
+            runFileDir.mkdirs()
+            val runFile = File(runFileDir,
+                 makeRunFilenameString(ts = "%tFT%<tRZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                                       digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                       port = port.toString()))
+            if (!runFile.createNewFile()) {
+                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'")
+            }
+            runFile.deleteOnExit()
 
+            val compiler = K2JVMCompiler()
             CompileServiceImpl(registry, compiler, compilerId, daemonOptions)
 
-            if (daemonOptions.startEcho.isNotEmpty())
-                println(daemonOptions.startEcho)
+            if (daemonOptions.runFilesPath.isNotEmpty())
+                println(runFile.name)
 
             // this stops redirected streams reader(s) on the client side and prevent some situations with hanging threads
             System.out.close()
@@ -146,6 +155,24 @@ public class CompileDaemon {
 
             System.setErr(PrintStream(LogStream("stderr")))
             System.setOut(PrintStream(LogStream("stdout")))
+        }
+
+        val random = Random()
+
+        private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
+            var i = 0
+            var lastException: RemoteException? = null
+            while (i++ < attempts) {
+                val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
+                try {
+                    return Pair(LocateRegistry.createRegistry(port), port)
+                }
+                catch (e: RemoteException) {
+                    // assuming that the port is already taken
+                    lastException = e
+                }
+            }
+            throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
         }
     }
 }

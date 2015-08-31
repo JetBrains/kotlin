@@ -115,6 +115,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
             return res
         }
+        // TODO: consider possibilities to handle OutOfMemory
         catch (e: Exception) {
             log.info("Error: $e")
             throw e

@@ -26,21 +26,21 @@ import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
-
-val KOTLIN_DAEMON_TEST_PORT = 19753
+import java.io.IOException
+import java.util.*
 
 public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val daemonOptions = DaemonOptions(port = KOTLIN_DAEMON_TEST_PORT)
-    val daemonLaunchingOptions = DaemonJVMOptions()
+    val daemonOptions = DaemonOptions(runFilesPath = tmpdir.absolutePath)
+    val daemonJVMOptions = DaemonJVMOptions()
     val compilerId by lazy { CompilerId.makeCompilerId( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }
 
     private fun compileOnDaemon(args: Array<out String>): CompilerResults {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.err, autostart = true, checkId = true)
+        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, System.err, autostart = true, checkId = true)
         TestCase.assertNotNull("failed to connect daemon", daemon)
         val strm = ByteArrayOutputStream()
         val code = KotlinCompilerClient.compile(daemon!!, args, strm)
