@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
@@ -54,6 +56,27 @@ public class JetTypeParameter extends JetNamedDeclarationStub<KotlinTypeParamete
         if (modifierList.hasModifier(JetTokens.OUT_KEYWORD)) return Variance.OUT_VARIANCE;
         if (modifierList.hasModifier(JetTokens.IN_KEYWORD)) return Variance.IN_VARIANCE;
         return Variance.INVARIANT;
+    }
+
+    @Nullable
+    public JetTypeReference setExtendsBound(@Nullable JetTypeReference typeReference) {
+        JetTypeReference currentExtendsBound = getExtendsBound();
+        if (currentExtendsBound != null) {
+            if (typeReference == null) {
+                PsiElement colon = findChildByType(JetTokens.COLON);
+                if (colon != null) colon.delete();
+                currentExtendsBound.delete();
+                return null;
+            }
+            return (JetTypeReference) currentExtendsBound.replace(typeReference);
+        }
+
+        if (typeReference != null) {
+            PsiElement colon = addAfter(new JetPsiFactory(getProject()).createColon(), getNameIdentifier());
+            return (JetTypeReference) addAfter(typeReference, colon);
+        }
+
+        return null;
     }
 
     @Nullable

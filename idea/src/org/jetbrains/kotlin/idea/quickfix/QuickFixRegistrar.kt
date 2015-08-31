@@ -318,5 +318,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
 
         ErrorsJvm.JAVA_TYPE_MISMATCH.registerFactory(CastExpressionFix.createFactoryForGenericVarianceConversion())
+
+        UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
+        TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
     }
 }

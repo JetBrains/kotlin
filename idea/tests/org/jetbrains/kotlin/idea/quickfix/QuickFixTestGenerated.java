@@ -176,6 +176,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addGenericUpperBound")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddGenericUpperBound extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddGenericUpperBound() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addGenericUpperBound"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("boundAlreadyExists.kt")
+        public void testBoundAlreadyExists() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/boundAlreadyExists.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inferenceTwoParams.kt")
+        public void testInferenceTwoParams() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/inferenceTwoParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassRuntime.kt")
+        public void testKClassRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/kClassRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("paramAsBound.kt")
+        public void testParamAsBound() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/paramAsBound.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withinDeclaration.kt")
+        public void testWithinDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addGenericUpperBound/withinDeclaration.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
