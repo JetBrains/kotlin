@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -61,7 +62,21 @@ public class MainFunctionDetector {
     }
 
     public boolean isMain(@NotNull JetNamedFunction function) {
-        if (!"main".equals(function.getName()) && function.getAnnotationEntries().isEmpty()) {
+        if (function.isLocal()) {
+            return false;
+        }
+
+        if (function.getValueParameters().size() != 1 || !function.getTypeParameters().isEmpty()) {
+            return false;
+        }
+
+        /* Psi only check for kotlin.jvm.jvmName annotation */
+        if (!"main".equals(function.getName()) && !hasAnnotationWithExactNumberOfArguments(function, 1)) {
+            return false;
+        }
+
+        /* Psi only check for kotlin.jvm.jvmStatic annotation */
+        if (!function.isTopLevel() && !hasAnnotationWithExactNumberOfArguments(function, 0)) {
             return false;
         }
 
@@ -128,5 +143,15 @@ public class MainFunctionDetector {
         }
 
         return functionDescriptor.getName().asString();
+    }
+
+    private static boolean hasAnnotationWithExactNumberOfArguments(@NotNull JetNamedFunction function, int number) {
+        for (JetAnnotationEntry entry : function.getAnnotationEntries()) {
+            if (entry.getValueArguments().size() == number) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
