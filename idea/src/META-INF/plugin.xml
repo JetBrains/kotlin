@@ -405,6 +405,7 @@
     <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRecursiveCallLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRunLineMarkerProvider"/>
     <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetFunctionPresenter"
                               forClass="org.jetbrains.kotlin.psi.JetFunction"/>
