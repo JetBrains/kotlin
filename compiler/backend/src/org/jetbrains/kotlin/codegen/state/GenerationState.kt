@@ -43,10 +43,10 @@ public class GenerationState(
         public val module: ModuleDescriptor,
         bindingContext: BindingContext,
         public val files: List<JetFile>,
-        private val disableCallAssertions: Boolean,
-        private val disableParamAssertions: Boolean,
+        disableCallAssertions: Boolean,
+        disableParamAssertions: Boolean,
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter,
-        private val disableInline: Boolean,
+        disableInline: Boolean,
         disableOptimization: Boolean,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
@@ -89,6 +89,15 @@ public class GenerationState(
     public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     private val interceptedBuilderFactory: ClassBuilderFactory
 
+    public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
+        @jvmName("isCallAssertionsEnabled") get
+
+    public val isParamAssertionsEnabled: Boolean = !disableParamAssertions
+        @jvmName("isParamAssertionsEnabled") get
+
+    public val isInlineEnabled: Boolean = !disableInline
+        @jvmName("isInlineEnabled") get
+
     public constructor(
             project: Project,
             builderFactory: ClassBuilderFactory,
@@ -115,12 +124,6 @@ public class GenerationState(
         this.interceptedBuilderFactory = interceptedBuilderFactory
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
     }
-
-    public fun isCallAssertionsEnabled(): Boolean = !disableCallAssertions
-
-    public fun isParamAssertionsEnabled(): Boolean = !disableParamAssertions
-
-    public fun isInlineEnabled(): Boolean = !disableInline
 
     public fun beforeCompile() {
         markUsed()
