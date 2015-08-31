@@ -40,6 +40,8 @@ public class SingleClassTestModel implements TestClassModel {
     private final File rootFile;
     @NotNull
     private final Pattern filenamePattern;
+    @Nullable
+    private final Boolean checkFilenameStartsLowerCase;
     @NotNull
     private final String doTestMethodName;
     @NotNull
@@ -52,12 +54,14 @@ public class SingleClassTestModel implements TestClassModel {
     public SingleClassTestModel(
             @NotNull File rootFile,
             @NotNull Pattern filenamePattern,
+            @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
             @NotNull TargetBackend targetBackend
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
+        this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
@@ -103,7 +107,8 @@ public class SingleClassTestModel implements TestClassModel {
 
     @NotNull
     protected Collection<TestMethodModel> getTestMethodsFromFile(File file) {
-        return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern,
+        return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName,
+                                                                                    filenamePattern, checkFilenameStartsLowerCase,
                                                                                     targetBackend));
     }
 

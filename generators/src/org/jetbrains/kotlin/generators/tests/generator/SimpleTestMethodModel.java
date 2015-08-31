@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.generators.tests.generator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
@@ -50,6 +51,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             @NotNull File file,
             @NotNull String doTestMethodName,
             @NotNull Pattern filenamePattern,
+            @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull TargetBackend targetBackend
     ) {
         this.rootDir = rootDir;
@@ -57,6 +59,16 @@ public class SimpleTestMethodModel implements TestMethodModel {
         this.doTestMethodName = doTestMethodName;
         this.filenamePattern = filenamePattern;
         this.targetBackend = targetBackend;
+
+        if (checkFilenameStartsLowerCase != null) {
+            char c = file.getName().charAt(0);
+            if (checkFilenameStartsLowerCase) {
+                assert Character.isLowerCase(c) : "Invalid file name '" + file + "', file name should start with lower-case letter";
+            }
+            else {
+                assert Character.isUpperCase(c) : "Invalid file name '" + file + "', file name should start with upper-case letter";
+            }
+        }
     }
 
     @Override

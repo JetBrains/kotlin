@@ -122,7 +122,7 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 
 fun main(args: Array<String>) {
@@ -369,7 +369,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractQuickFixTest>()) {
-            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$")
+            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {
@@ -387,7 +387,7 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractNavigateToLibrarySourceTest>()) {
             model("decompiler/navigation/usercode")
-            model("decompiler/navigation/usercode", testClassName="UsercodeWithJSModule", testMethod = "doWithJSModuleTest")
+            model("decompiler/navigation/usercode", testClassName ="UsercodeWithJSModule", testMethod = "doWithJSModuleTest")
         }
 
         testClass(javaClass<AbstractKotlinGotoImplementationTest>()) {
@@ -524,7 +524,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractMultiFileIntentionTest>()) {
-            model("multiFileIntentions", extension = "test", singleClass = true)
+            model("multiFileIntentions", extension = "test", singleClass = true, filenameStartsLowerCase = true)
         }
 
         testClass(javaClass<AbstractJetMultiFileInspectionTest>()) {
@@ -873,7 +873,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractMultiModuleTest>()) {
-            model("multiModule/cases", extension = null, recursive=false)
+            model("multiModule/cases", extension = null, recursive =false)
         }
 
         testClass(javaClass<AbstractInlineJsTest>()) {
@@ -889,7 +889,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractInlineMultiModuleTest>()) {
-            model("inlineMultiModule/cases", extension = null, recursive=false)
+            model("inlineMultiModule/cases", extension = null, recursive =false)
         }
 
         testClass(javaClass<AbstractLabelTest>()) {
@@ -971,7 +971,8 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 singleClass: Boolean = false,
                 testClassName: String? = null,
                 targetBackend: TargetBackend = TargetBackend.ANY,
-                excludeDirs: List<String> = listOf()
+                excludeDirs: List<String> = listOf(),
+                filenameStartsLowerCase: Boolean? = null
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
@@ -979,12 +980,11 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
             testModels.add(
                     if (singleClass) {
                         if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
-                        SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
+                        SingleClassTestModel(rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend)
                     }
                     else {
-                        SimpleTestClassModel(
-                                rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend, excludeDirs
-                        )
+                        SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
+                                             compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend, excludeDirs)
                     }
             )
         }
