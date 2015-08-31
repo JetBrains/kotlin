@@ -20,8 +20,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
@@ -61,8 +59,9 @@ public class GenerationUtils {
         GenerationState state = new GenerationState(
                 project, ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
-                files, false, false, GenerationState.GenerateClassFilter.GENERATE_ALL,
-                false, false, Collections.<FqName>emptySet(), null, DiagnosticSink.DO_NOTHING, null
+                files,
+                /* disableCallAssertions = */ false,
+                /* disableParamAssertions = */ false
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;

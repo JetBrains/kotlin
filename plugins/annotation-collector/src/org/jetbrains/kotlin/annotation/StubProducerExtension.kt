@@ -46,15 +46,9 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
                 module,
                 bindingContext,
                 files.toArrayList(),
-                /*disableCallAssertions =*/ false,
-                /*disableParamAssertions =*/ false,
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                /*disableInline =*/ false,
-                /*disableOptimization =*/ false,
-                /*packagesWithObsoleteParts =*/ emptySet(),
-                /*moduleId =*/ null,
-                forExtraDiagnostics,
-                /*outDirectory =*/ null)
+                disableCallAssertions = false,
+                disableParamAssertions = false,
+                diagnostics = forExtraDiagnostics)
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 

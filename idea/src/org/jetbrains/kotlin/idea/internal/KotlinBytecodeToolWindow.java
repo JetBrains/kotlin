@@ -237,7 +237,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                         toProcess, !enableAssertions, !enableAssertions,
                                         generateClassFilter,
                                         !enableInline, !enableOptimization, Collections.<FqName>emptySet(), null,
-                                        sink, null);
+                                        sink);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (ProcessCanceledException e) {

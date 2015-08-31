@@ -50,10 +50,8 @@ import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.Progress
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetLanguage
@@ -367,12 +365,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         moduleDescriptor,
                         bindingContext,
                         files,
-                        true, true,
-                        generateClassFilter,
-                        false, false,
-                        emptySet(), null,
-                        DiagnosticSink.DO_NOTHING,
-                        null)
+                        generateDeclaredClassFilter = generateClassFilter)
 
                 val frameVisitor = FrameVisitor(context)
 
