@@ -14,3 +14,7 @@ class MyFile : File("")
 
 val MyFile.isFile: Boolean
     get() = isFile()
+
+@HiddenDeclaration
+val Thread.priority: Int
+    get() = getPriority()

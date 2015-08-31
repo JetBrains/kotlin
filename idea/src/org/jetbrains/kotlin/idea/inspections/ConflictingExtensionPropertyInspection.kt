@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.FileScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -60,8 +61,12 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
 
                 if (property.receiverTypeReference != null) {
                     val nameElement = property.nameIdentifier ?: return
-                    val conflictingExtension = conflictingSyntheticExtension(property.resolveToDescriptor() as PropertyDescriptor, fileScope)
+                    val propertyDescriptor = property.resolveToDescriptor() as PropertyDescriptor
+                    val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, fileScope)
                     if (conflictingExtension != null) {
+                        // don't report on hidden declarations
+                        if (propertyDescriptor.isAnnotatedAsHidden()) return
+
                         val problemDescriptor = holder.manager.createProblemDescriptor(
                                 nameElement,
                                 "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
