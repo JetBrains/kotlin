@@ -89,6 +89,12 @@ public class GotoSuperTestGenerated extends AbstractGotoSuperTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SuperWithNativeToGenericMapping.test")
+    public void testSuperWithNativeToGenericMapping() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSuper/SuperWithNativeToGenericMapping.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("TraitSimple.test")
     public void testTraitSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSuper/TraitSimple.test");

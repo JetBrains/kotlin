@@ -71,6 +71,12 @@ public class KotlinGotoImplementationTestGenerated extends AbstractKotlinGotoImp
         doTest(fileName);
     }
 
+    @TestMetadata("ImplementGenericWithPrimitives.kt")
+    public void testImplementGenericWithPrimitives() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/ImplementGenericWithPrimitives.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OverridesInEnumEntries.kt")
     public void testOverridesInEnumEntries() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/OverridesInEnumEntries.kt");
