@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Ki
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.junit.Assert
+import kotlin.test.assertFalse
 
 public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
     private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
@@ -59,6 +60,20 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
             Assert.assertTrue("Should have some decompiled text",
                               classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
         }
+    }
+
+    protected fun doTestNoFilesAreBuiltForSyntheticClass(kind: KotlinSyntheticClass.Kind): Unit =
+            doTestNoClassFilesAreBuiltFor(kind.toString(), isSyntheticClassOfKind(kind))
+
+    protected fun doTestNoClassFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
+        val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!
+        val files = arrayListOf<VirtualFile>()
+        root.checkRecursively {
+            if (acceptFile()) {
+                files.add(this)
+            }
+        }
+        assert(files.isEmpty()) { "No class files should be built for $fileKind; found ${files.size()} files: $files" }
     }
 
     protected fun doTestNoPsiFilesAreBuiltForLocalClass(kind: KotlinClass.Kind): Unit =

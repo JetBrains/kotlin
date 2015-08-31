@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Ki
 public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/internalClasses"
 
-    fun testPackagePartIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(PACKAGE_PART)
+    fun testNoPackagePartClassesAreBuilt() = doTestNoFilesAreBuiltForSyntheticClass(PACKAGE_PART)
 
     fun testSamWrapperIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(SAM_WRAPPER)
 

@@ -92,6 +92,14 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
         doTest();
     }
 
+    public void testMainKt() {
+        doTest();
+    }
+
+    public void testExtraKt() {
+        doTest();
+    }
+
     private void doTest() {
         classFile = getClassFile(PACKAGE, getTestName(false), myModule);
         PsiFile decompiledPsiFile = PsiManager.getInstance(getProject()).findFile(classFile);
