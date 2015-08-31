@@ -37,25 +37,57 @@ public class VariableValuesBasedChecker(
 ) {
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
             PseudocodeIntegerVariablesDataCollector(pseudocode, trace.bindingContext)
-    private val variableValuesData: Map<Instruction, Edges<ValuesData>> =
+    private val variableValuesData: Map<Instruction, Edges<ValuesData>>? =
             pseudocodeVariablesDataCollector.collectVariableValuesData()
 
-    // Checks if there are out-of-bound-access errors in the `pseudocode` and reports them using `report` function
+    public val hasValuesInfo: Boolean = variableValuesData != null
+
+    // Checks if there are out-of-bound-access errors in the `pseudocode` and reports them using `report` function.
+    // Throws IllegalStateException if there is no variable values data available
     public fun checkOutOfBoundErrors() {
-        val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
-        pseudocode.traverse(TraversalOrder.FORWARD, variableValuesData, { instruction, inData: ValuesData, outData: ValuesData ->
-            if (instruction is CallInstruction) {
-                val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForAccess(instruction)
-                if (pseudoAnnotation != null) {
-                    checkOutOfBoundAccess(instruction, inData, reportedDiagnosticMap)
+        if (variableValuesData != null) {
+            val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
+            pseudocode.traverse(TraversalOrder.FORWARD, variableValuesData, { instruction, inData: ValuesData, outData: ValuesData ->
+                if (instruction is CallInstruction) {
+                    val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForAccess(instruction)
+                    if (pseudoAnnotation != null) {
+                        checkOutOfBoundAccess(instruction, inData, reportedDiagnosticMap)
+                    }
                 }
-            }
-        })
+            })
+        }
+        else throw IllegalStateException("No values info, checks cannot be performed")
+    }
+
+    // Returns `true` if the passed `instruction` is unreachable according to variable values analysis.
+    // Throws IllegalStateException if there is no variable values data available
+    public fun isUnreachableAccordingValueAnalysis(instruction: Instruction): Boolean =
+        if (variableValuesData != null)
+            variableValuesData[instruction]?.incoming is ValuesData.Dead
+        else throw IllegalStateException("No values info, checks cannot be performed")
+
+    // Checks if there are out-of-bound-access errors in the `pseudocode` and reports them using `report` function.
+    // and does nothing if there is no variable values data available
+    public fun tryCheckOutOfBoundErrors() {
+        if (variableValuesData != null) {
+            val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
+            pseudocode.traverse(TraversalOrder.FORWARD, variableValuesData, { instruction, inData: ValuesData, outData: ValuesData ->
+                if (instruction is CallInstruction) {
+                    val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForAccess(instruction)
+                    if (pseudoAnnotation != null) {
+                        checkOutOfBoundAccess(instruction, inData, reportedDiagnosticMap)
+                    }
+                }
+            })
+        }
     }
 
     // Returns `true` if the passed `instruction` is unreachable according to variable values analysis
-    public fun isUnreachableAccordingValueAnalysis(instruction: Instruction): Boolean =
-            variableValuesData[instruction]?.incoming is ValuesData.Dead
+    // Returns `false` otherwise and if there is no variable values data
+    public fun tryIsUnreachableAccordingValueAnalysis(instruction: Instruction): Boolean =
+            if (variableValuesData != null)
+                variableValuesData[instruction]?.incoming is ValuesData.Dead
+            else false
 
     private fun checkOutOfBoundAccess(
             instruction: CallInstruction,

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -56,9 +57,32 @@ import java.util.HashSet
 // merge functionality in this two files
 
 public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
-    private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
-    private val loopsInfo: LoopsInfo = createLoopsInfoMap()
-    private val localDeclarationsInfo: LocalDeclarationsInfo = createLocalDeclarationsMap()
+    private val hasLocalClasses: Boolean = hasLocalClasses()
+    private val lexicalScopeVariableInfo: LexicalScopeVariableInfo
+    private val loopsInfo: LoopsInfo
+    private val localDeclarationsInfo: LocalDeclarationsInfo
+
+    private fun hasLocalClasses(): Boolean {
+        val functionPsiElement = pseudocode.enterInstruction.element
+        return PsiTreeUtil.findChildOfType(functionPsiElement, javaClass<JetClass>()) != null
+    }
+
+    init {
+        // Analysis is not performed for functions with local classes, because they can update variables captured
+        // in closure and handling such situations is challenging
+        if (!hasLocalClasses) {
+            this.lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
+            this.loopsInfo = createLoopsInfoMap()
+            this.localDeclarationsInfo = createLocalDeclarationsMap()
+        }
+        else {
+            this.lexicalScopeVariableInfo = LexicalScopeVariableInfoImpl()
+            this.loopsInfo = LoopsInfo(hashMapOf(), hashSetOf())
+            this.localDeclarationsInfo = LocalDeclarationsInfo(hashMapOf(), hashMapOf(), hashMapOf())
+        }
+    }
+
+    // The functions below perform pre processing to collect info needed for analysis
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -217,15 +241,17 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 else -> null
             }
 
-    public fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
-        return pseudocode.collectData(
+    // Performs value analysis
+    public fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>>? =
+        if (hasLocalClasses)
+            null
+        else pseudocode.collectData(
                 TraversalOrder.FORWARD,
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
                 { previous, current, edgeData -> updateEdge(previous, current, edgeData) },
                 ValuesData.Defined()
         )
-    }
 
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData =
         if (edgeData is ValuesData.Defined) {

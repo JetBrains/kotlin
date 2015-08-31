@@ -146,7 +146,7 @@ public class JetFlowInformationProvider {
 
         markWhenWithoutElse();
 
-        variableValuesBasedChecker.checkOutOfBoundErrors();
+        variableValuesBasedChecker.tryCheckOutOfBoundErrors();
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
@@ -303,7 +303,7 @@ public class JetFlowInformationProvider {
                 if (!isJumpElement) continue;
             }
 
-            if (instruction.getDead() || variableValuesBasedChecker.isUnreachableAccordingValueAnalysis(instruction)) {
+            if (instruction.getDead() || variableValuesBasedChecker.tryIsUnreachableAccordingValueAnalysis(instruction)) {
                 unreachableElements.add(element);
             }
             else {

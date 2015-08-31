@@ -33,7 +33,7 @@ public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
 
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
         val integerVariableValues = PseudocodeIntegerVariablesDataCollector(pseudocode, bindingContext).collectVariableValuesData()
-        if(integerVariableValues.isEmpty()) {
+        if(integerVariableValues == null || integerVariableValues.isEmpty()) {
             return
         }
         val inPrefix = "    in: "

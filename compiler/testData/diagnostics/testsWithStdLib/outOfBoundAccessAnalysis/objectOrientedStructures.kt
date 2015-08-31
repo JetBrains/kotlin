@@ -70,10 +70,11 @@ public class A(val a: Int, var b: Int = 3, val arr: Array<Int>, val lst: ArrayLi
 }
 
 fun withLocalClass(): Int {
+    // wunctions with local classes are not processed
     class A () {
         fun foo(): Int {
             val arr = arrayListOf(3)
-            return <!OUT_OF_BOUND_ACCESS!>arr[3]<!>
+            return arr[3]
         }
     }
     class B (val arr: IntArray)
@@ -98,6 +99,7 @@ fun classMutableField(): Int {
 }
 
 fun closureInLocalClass() {
+    // wunctions with local classes are not processed
     val arr = arrayOf(1)
     var c = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>0<!>
     class B () {
@@ -118,20 +120,20 @@ fun closureInLocalClass() {
             c = 0
         }
     }
-    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm because `init` is a part of closureInLocalClass pseudocode for some reason and `c` = 100 here
+    arr[c]
 
     c = 100
     val b = B(3)
-    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+    arr[c]
 
     b.a
-    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+    arr[c]
 
     b.a = 3
-    <!OUT_OF_BOUND_ACCESS!>arr[c]<!>                  // false alarm
+    arr[c]
 
     b.boo()
-    arr[c]                  // this is processed correctly, no alarm, `c` is undefined
+    arr[c]
 
     c = 100
     val obj = object : Comparable<Int> {
@@ -141,5 +143,5 @@ fun closureInLocalClass() {
         }
     }
     obj.compareTo(3)
-    arr[c]                  // this is also processed correctrly, `c` is undefined
+    arr[c]
 }
