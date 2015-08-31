@@ -70,7 +70,7 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         //TODO add assertion from readData(kotlinClass, CLASS);
-        String[] data = kotlinClass.getClassHeader().getAnnotationData();
+        String[] data = readData(kotlinClass, KotlinClassHeader.Kind.FILE_FACADE);
         if (data != null) {
             //all classes are included in java scope
             PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
@@ -92,8 +92,12 @@ public final class DeserializedDescriptorResolver {
         List<JetScope> list = new ArrayList<JetScope>();
         for (KotlinJvmBinaryClass callable : packageParts) {
             JetScope scope = createKotlinPackageScope(descriptor, callable);
-            assert scope != null : "Can't create scope for " + callable;
-            list.add(scope);
+            if (scope != null) {
+                list.add(scope);
+            }
+        }
+        if (list.isEmpty()) {
+            return JetScope.Empty.INSTANCE$;
         }
         return new DeserializedNewPackageMemberScope(descriptor, list);
     }
