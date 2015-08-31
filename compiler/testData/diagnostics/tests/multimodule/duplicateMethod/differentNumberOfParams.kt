@@ -29,6 +29,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, "")
+        <!DEBUG_INFO_SMARTCAST!>b<!><!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")
     }
 }

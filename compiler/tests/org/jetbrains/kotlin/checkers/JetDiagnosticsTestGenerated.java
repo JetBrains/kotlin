@@ -9807,6 +9807,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("defaultParameters.kt")
+            public void testDefaultParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/defaultParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("EmptyArgumentListInLambda.kt")
             public void testEmptyArgumentListInLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/EmptyArgumentListInLambda.kt");

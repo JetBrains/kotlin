@@ -24,6 +24,7 @@ public enum ResolutionStatus {
     UNKNOWN_STATUS,
     UNSAFE_CALL_ERROR,
     OTHER_ERROR,
+    ARGUMENTS_MAPPING_ERROR,
     // '1.foo()' shouldn't be resolved to 'fun String.foo()'
     // candidates with such error are treated specially
     // (are mentioned in 'unresolved' error, if there are no other options)
@@ -31,7 +32,6 @@ public enum ResolutionStatus {
     // 'a.foo()' shouldn't be resolved to package level non-extension 'fun foo()'
     // candidates with such error are thrown away completely
     RECEIVER_PRESENCE_ERROR,
-    ARGUMENTS_MAPPING_ERROR,
     INCOMPLETE_TYPE_INFERENCE,
     SUCCESS(true);
 

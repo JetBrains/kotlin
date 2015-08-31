@@ -7,7 +7,7 @@ class Delegate {
         return 1
     }
 
-    fun propertyDelegated(p: PropertyMetadata) {}
+    fun propertyDelegated(p: PropertyMetadata, i: Int = 1) {}
 
     fun propertyDelegated(p: PropertyMetadata, s: String = "") {}
 }

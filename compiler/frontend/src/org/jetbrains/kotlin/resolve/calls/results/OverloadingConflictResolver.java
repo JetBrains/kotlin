@@ -158,7 +158,7 @@ public class OverloadingConflictResolver {
         if (fIsVararg && !gIsVararg) return false;
 
         if (!fIsVararg && !gIsVararg) {
-            if (fSize != gSize) return false;
+            if (fSize > gSize) return false;
 
             for (int i = 0; i < fSize; i++) {
                 ValueParameterDescriptor fParam = fParams.get(i);
