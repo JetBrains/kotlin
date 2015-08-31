@@ -20,15 +20,12 @@ import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
 public class KotlinTypeParameterFindUsagesHandler(
         element: JetNamedDeclaration,
@@ -43,11 +40,12 @@ public class KotlinTypeParameterFindUsagesHandler(
     }
 
     protected override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        return runReadAction {
-            val target = options.toSearchTarget(element as JetNamedDeclaration, true)
-            val request = DefaultSearchHelper<JetNamedDeclaration>().newRequest(target)
-            request.search().all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) }
+        for (reference in ReferencesSearch.search(element)) {
+            if (!KotlinFindUsagesHandler.processUsage(processor, reference)) {
+                return false
+            }
         }
+        return true
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
