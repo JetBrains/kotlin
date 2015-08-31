@@ -990,6 +990,27 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/deleteRedundantExtension")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeleteRedundantExtension extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInDeleteRedundantExtension() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deleteRedundantExtension"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("removeImports.before.Main.kt")
+            public void testRemoveImports() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/removeImports.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("removeImportsOverloads.before.Main.kt")
+            public void testRemoveImportsOverloads() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/removeImportsOverloads.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/javaAnnotationPositionedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,3 @@
+// "Delete redundant extension property" "true"
+import java.io.File
+

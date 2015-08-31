@@ -94,6 +94,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
         }
 
+        @TestMetadata("conflictingExtensionProperty/inspectionData/inspections.test")
+        public void testConflictingExtensionProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/conflictingExtensionProperty/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantSamConstructor/inspectionData/inspections.test")
         public void testRedundantSamConstructor_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/redundantSamConstructor/inspectionData/inspections.test");

@@ -21,18 +21,24 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
+import com.intellij.codeInspection.InspectionEP;
+import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.codeInspection.LocalInspectionEP;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
+import org.jetbrains.kotlin.idea.quickfix.utils.UtilsPackage;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -42,6 +48,7 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +72,33 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     protected void doTestWithExtraFile(String beforeFileName) throws Exception {
+        enableInspections(beforeFileName);
         doTest(beforeFileName, true);
+    }
+
+    private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
+        File inspectionFile = UtilsPackage.findInspectionFile(new File(beforeFileName).getParentFile());
+        if (inspectionFile != null) {
+            String className = FileUtil.loadFile(inspectionFile).trim();
+            Class<?> inspectionClass = Class.forName(className);
+            enableInspectionTools(inspectionClass);
+        }
+    }
+
+    private void enableInspectionTools(@NotNull Class<?> klass) {
+        List<InspectionEP> eps = ContainerUtil.newArrayList();
+        ContainerUtil.addAll(eps, Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION));
+        ContainerUtil.addAll(eps, Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION));
+
+        InspectionProfileEntry tool = null;
+        for (InspectionEP ep : eps) {
+            if (klass.getName().equals(ep.implementationClass)) {
+                tool = ep.instantiateTool();
+            }
+        }
+        assert tool != null : "Could not find inspection tool for class: " + klass;
+
+        enableInspectionTools(tool);
     }
 
     @Override

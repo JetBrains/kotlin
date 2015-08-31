@@ -1138,6 +1138,13 @@
                      level="WARNING"
     />
 
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
+                       displayName="Extension property conflicts with synthetic one"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="WARNING"
+      />
+
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

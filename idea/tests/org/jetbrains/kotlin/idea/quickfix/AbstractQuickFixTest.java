@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
+import org.jetbrains.kotlin.idea.quickfix.utils.UtilsPackage;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -62,19 +63,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
-    @Nullable
-    private static File findInspectionFile(@NotNull File startDir) {
-        File currentDir = startDir;
-        while (currentDir != null) {
-            File inspectionFile = new File(currentDir, ".inspection");
-            if (inspectionFile.exists()) {
-                return inspectionFile;
-            }
-            currentDir = currentDir.getParentFile();
-        }
-        return null;
     }
 
     protected void doTest(@NotNull String beforeFileName) throws Exception {
@@ -184,7 +172,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
-        File inspectionFile = findInspectionFile(new File(beforeFileName).getParentFile());
+        File inspectionFile = UtilsPackage.findInspectionFile(new File(beforeFileName).getParentFile());
         if (inspectionFile != null) {
             String className = FileUtil.loadFile(inspectionFile).trim();
             Class<?> inspectionClass = Class.forName(className);

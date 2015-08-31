@@ -3923,6 +3923,87 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/deleteRedundantExtension")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeleteRedundantExtension extends AbstractQuickFixTest {
+            public void testAllFilesPresentInDeleteRedundantExtension() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deleteRedundantExtension"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("explicitThis.kt")
+            public void testExplicitThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/explicitThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("memberExtension.kt")
+            public void testMemberExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/memberExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("returnInGetter.kt")
+            public void testReturnInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/returnInGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valInsteadOfVar.kt")
+            public void testValInsteadOfVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/valInsteadOfVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInsteadOfVal.kt")
+            public void testVarInsteadOfVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/varInsteadOfVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withSetter.kt")
+            public void testWithSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/withSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongExplicitThis.kt")
+            public void testWrongExplicitThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/wrongExplicitThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongExplicitThis2.kt")
+            public void testWrongExplicitThis2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/wrongExplicitThis2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongGetter.kt")
+            public void testWrongGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/wrongGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongGetter2.kt")
+            public void testWrongGetter2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/wrongGetter2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongSetter.kt")
+            public void testWrongSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deleteRedundantExtension/wrongSetter.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
