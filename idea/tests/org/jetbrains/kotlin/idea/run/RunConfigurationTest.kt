@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.execution.Executor
 import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.RunManagerEx
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.JavaCommandLine
+import com.intellij.execution.configurations.JavaParameters
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
@@ -51,11 +54,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.junit.Assert
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 private val RUN_PREFIX = "// RUN:"
 
-class RunConfigurationTest: CodeInsightTestCase() {
+class RunConfigurationTest: KotlinCodeInsightTestCase() {
     fun getTestProject() = myProject!!
     override fun getModule() = myModule!!
 
