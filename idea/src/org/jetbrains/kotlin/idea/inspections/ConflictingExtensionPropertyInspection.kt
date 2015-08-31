@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.FileScope
@@ -67,12 +69,25 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                         // don't report on hidden declarations
                         if (propertyDescriptor.isAnnotatedAsHidden()) return
 
+                        val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
+                            val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), file)
+                            // don't add the second fix when on the fly to allow code cleanup
+                            val fix2 = if (isOnTheFly)
+                                object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), file), LowPriorityAction {}
+                            else
+                                null
+                            listOf(fix1, fix2).filterNotNull().toTypedArray()
+                        }
+                        else {
+                            emptyArray()
+                        }
+
                         val problemDescriptor = holder.manager.createProblemDescriptor(
                                 nameElement,
                                 "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
-                                createQuickFix(property, conflictingExtension),
-                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                true
+                                true,
+                                fixes,
+                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         )
                         holder.registerProblem(problemDescriptor)
                     }
@@ -88,18 +103,18 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                 .firstIsInstanceOrNull()
     }
 
-    private fun createQuickFix(declaration: JetProperty, syntheticProperty: SyntheticJavaPropertyDescriptor): LocalQuickFix? {
-        val getter = declaration.getter ?: return null
+    private fun isSameAsSynthetic(declaration: JetProperty, syntheticProperty: SyntheticJavaPropertyDescriptor): Boolean {
+        val getter = declaration.getter ?: return false
         val setter = declaration.setter
 
-        if (!checkGetterBodyIsGetMethodCall(getter, syntheticProperty.getMethod)) return null
+        if (!checkGetterBodyIsGetMethodCall(getter, syntheticProperty.getMethod)) return false
 
         if (setter != null) {
-            val setMethod = syntheticProperty.setMethod ?: return null // synthetic property is val but our property is var
-            if (!checkSetterBodyIsSetMethodCall(setter, setMethod)) return null
+            val setMethod = syntheticProperty.setMethod ?: return false // synthetic property is val but our property is var
+            if (!checkSetterBodyIsSetMethodCall(setter, setMethod)) return false
         }
 
-        return IntentionWrapper(DeleteRedundantExtensionAction(declaration), declaration.containingFile)
+        return true
     }
 
     private fun checkGetterBodyIsGetMethodCall(getter: JetPropertyAccessor, getMethod: FunctionDescriptor): Boolean {
@@ -193,6 +208,33 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
             }
             else {
                 project.executeWriteCommand(text) { declaration.delete() }
+            }
+        }
+    }
+
+    private class MarkHiddenAndDeprecatedAction(property: JetProperty) : JetIntentionAction<JetProperty>(property) {
+        override fun getFamilyName() = "Mark with @HiddenDeclaration and @deprecated"
+        override fun getText() = familyName
+
+        override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+            val factory = JetPsiFactory(project)
+            val name = element.nameAsName!!.render()
+            element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@deprecated(\"Is replaced with automatic synthetic extension\", ReplaceWith(\"$name\"))"))
+            element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@HiddenDeclaration"))
+        }
+
+        //TODO: move into PSI?
+        private fun JetNamedDeclaration.addAnnotationWithLineBreak(annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+            val newLine = JetPsiFactory(this).createNewLine()
+            if (modifierList != null) {
+                val result = addAnnotationEntry(annotationEntry)
+                modifierList!!.addAfter(newLine, result)
+                return result
+            }
+            else {
+                val result = addAnnotationEntry(annotationEntry)
+                addAfter(newLine, modifierList)
+                return result
             }
         }
     }
