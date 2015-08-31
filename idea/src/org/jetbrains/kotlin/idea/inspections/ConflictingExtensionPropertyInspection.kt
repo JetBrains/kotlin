@@ -64,7 +64,6 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                     if (conflictingExtension != null) {
                         val problemDescriptor = holder.manager.createProblemDescriptor(
                                 nameElement,
-                                //TODO: review message
                                 "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
                                 createQuickFix(property, conflictingExtension),
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
