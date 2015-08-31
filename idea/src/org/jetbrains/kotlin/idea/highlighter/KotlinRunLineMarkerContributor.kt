@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.execution.lineMarker.RunLineMarkerInfo
+import com.intellij.execution.lineMarker.ExecutorAction
+import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetIcons
@@ -27,25 +26,21 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.JetNamedFunction
 
 
-public class KotlinRunLineMarkerProvider : LineMarkerProvider {
-    override fun getLineMarkerInfo(e: PsiElement): LineMarkerInfo<PsiElement>? {
-        val function = e.parent as? JetNamedFunction
+public class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
+    override fun getInfo(element: PsiElement?): RunLineMarkerContributor.Info? {
+        val function = element?.parent as? JetNamedFunction
         if (function == null) return null
 
-        if (function.nameIdentifier != e) return null
+        if (function.nameIdentifier != element) return null
 
         val detector = MainFunctionDetector { function ->
             function.resolveToDescriptor() as FunctionDescriptor
         }
 
         if (detector.isMain(function)) {
-            return RunLineMarkerInfo(function, JetIcons.LAUNCH, null)
+            return RunLineMarkerContributor.Info(JetIcons.LAUNCH, null, ExecutorAction.ACTIONS)
         }
 
         return null
-
-    }
-
-    override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
     }
 }
