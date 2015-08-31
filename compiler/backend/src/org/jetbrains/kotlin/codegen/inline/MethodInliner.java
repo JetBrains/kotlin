@@ -674,21 +674,21 @@ public class MethodInliner {
     //TODO: check it's external module
     //TODO?: assert method exists in facade?
     public String changeOwnerForExternalPackage(String type, int opcode) {
-        if (isSameModule || (opcode & Opcodes.INVOKESTATIC) == 0) {
-            return type;
-        }
+        //if (isSameModule || (opcode & Opcodes.INVOKESTATIC) == 0) {
+        //    return type;
+        //}
 
-        JvmClassName name = JvmClassName.byInternalName(type);
-        String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(name.getPackageFqName());
-        if (type.startsWith(packageClassInternalName + '$')) {
-            VirtualFile virtualFile = InlineCodegenUtil.findVirtualFile(inliningContext.state.getProject(), type);
-            if (virtualFile != null) {
-                KotlinJvmBinaryClass klass = KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile);
-                if (klass != null && klass.getClassHeader().getSyntheticClassKind() == KotlinSyntheticClass.Kind.PACKAGE_PART) {
-                    return packageClassInternalName;
-                }
-            }
-        }
+        //JvmClassName name = JvmClassName.byInternalName(type);
+        //String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(name.getPackageFqName());
+        //if (type.startsWith(packageClassInternalName + '$')) {
+        //    VirtualFile virtualFile = InlineCodegenUtil.findVirtualFile(inliningContext.state.getProject(), type);
+        //    if (virtualFile != null) {
+        //        KotlinJvmBinaryClass klass = KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile);
+        //        if (klass != null && klass.getClassHeader().getSyntheticClassKind() == KotlinSyntheticClass.Kind.PACKAGE_PART) {
+        //            return packageClassInternalName;
+        //        }
+        //    }
+        //}
 
         return type;
     }

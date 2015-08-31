@@ -36,8 +36,8 @@ fun check(body: () -> Unit, signature: String): String? {
 }
 
 fun box(): String {
-    return check({defaultGetter}, "_DefaultPackage.getDefaultGetter()I")
-           ?: check({defaultSetter = 1}, "_DefaultPackage.setDefaultSetter(I)V")
+    return check({defaultGetter}, "NativePropertyAccessorsKt.getDefaultGetter()I")
+           ?: check({defaultSetter = 1}, "NativePropertyAccessorsKt.setDefaultSetter(I)V")
 
            ?: check({C.defaultGetter}, "C\$Companion.getDefaultGetter()I")
            ?: check({C.defaultSetter = 1}, "C\$Companion.setDefaultSetter(I)V")

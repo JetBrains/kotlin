@@ -159,7 +159,7 @@ public class JetTypeMapper {
             @NotNull CallableMemberDescriptor descriptor,
             boolean insideModule
     ) {
-        if (insideModule) {
+        ///if (insideModule) {
             JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
             if (file != null) {
                 return PackagePartClassUtils.getPackagePartInternalName(file);
@@ -171,9 +171,11 @@ public class JetTypeMapper {
                 FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
                 return internalNameByFqNameWithoutInnerClasses(packagePartFqName);
             }
-        }
 
-        return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
+        //}
+
+        throw new RuntimeException("Unreachable state");
+        //return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
     }
 
     @NotNull

@@ -13,7 +13,7 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != "foo.FooPackage.bar(JLjava/lang/String;)D") return "Fail 1: " + e.getMessage()
+        if (e.getMessage() != "foo.TopLevelKt.bar(JLjava/lang/String;)D") return "Fail 1: " + e.getMessage()
     }
 
     return "OK"
