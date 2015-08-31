@@ -22,21 +22,29 @@ import java.lang.management.ManagementFactory
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import kotlin.reflect.KMutableProperty1
+import kotlin.text.Regex
 
 
 public val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
 public val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
 public val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.rmi.service.CompileDaemon"
-public val COMPILE_DAEMON_DEFAULT_PORT: Int = 17031
-public val COMPILE_DAEMON_ENABLED_PROPERTY: String ="kotlin.daemon.enabled"
-public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String ="kotlin.daemon.jvm.options"
-public val COMPILE_DAEMON_OPTIONS_PROPERTY: String ="kotlin.daemon.options"
+public val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
+public val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
+public val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
+public val COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS: Long = 10000L
+public val COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS: Long = 100L
+public val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
+public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
+public val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
+public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
 public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String ="kotlin.daemon.startup.timeout"
-public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String ="--daemon-"
 public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
 public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
 
 val COMPILER_ID_DIGEST = "MD5"
+
+public fun makeRunFilenameString(ts: String, digest: String, port: String, esc: String = ""): String = "kotlin-daemon$esc.$ts$esc.$digest$esc.$port$esc.run"
+public fun makeRunFilenameRegex(ts: String = "[0-9-]+", digest: String = "[0-9a-f]+", port: String = "\\d+"): Regex = makeRunFilenameString(ts, digest, port, esc = "\\").toRegex()
 
 
 open class PropMapper<C, V, P: KMutableProperty1<C, V>>(val dest: C,
@@ -167,17 +175,15 @@ public data class DaemonJVMOptions(
 }
 
 public data class DaemonOptions(
-        public var port: Int = COMPILE_DAEMON_DEFAULT_PORT,
+        public var runFilesPath: String = File(System.getProperty("java.io.tmpdir"), "kotlin_daemon").absolutePath,
         public var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
-        public var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_TIMEOUT_INFINITE_S,
-        public var startEcho: String = COMPILER_SERVICE_RMI_NAME
+        public var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_TIMEOUT_INFINITE_S
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf( PropMapper(this, ::port, fromString = { it.toInt() }),
+        get() = listOf( PropMapper(this, ::runFilesPath, fromString = { it.trim('"') }),
                         PropMapper(this, ::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }),
-                        PropMapper(this, ::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }),
-                        PropMapper(this, ::startEcho, fromString = { it.trim('"') }))
+                        PropMapper(this, ::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }))
 }
 
 
@@ -205,13 +211,20 @@ fun updateEntryDigest(entry: File, md: MessageDigest) {
     }
 }
 
+jvmName("getFilesClasspathDigest_Files")
 fun Iterable<File>.getFilesClasspathDigest(): String {
     val md = MessageDigest.getInstance(COMPILER_ID_DIGEST)
     this.forEach { updateEntryDigest(it, md) }
     return md.digest().joinToString("", transform = { "%02x".format(it) })
 }
 
-fun Iterable<String>.getClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
+jvmName("getFilesClasspathDigest_Strings")
+fun Iterable<String>.getFilesClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
+
+fun Iterable<String>.distinctStringsDigest(): String =
+    MessageDigest.getInstance(COMPILER_ID_DIGEST)
+            .digest(this.distinct().sort().joinToString("").toByteArray())
+            .joinToString("", transform = { "%02x".format(it) })
 
 
 public data class CompilerId(
@@ -227,7 +240,7 @@ public data class CompilerId(
                         StringPropMapper(this, ::compilerVersion))
 
     public fun updateDigest() {
-        compilerDigest = compilerClasspath.getClasspathDigest()
+        compilerDigest = compilerClasspath.getFilesClasspathDigest()
     }
 
     companion object {
