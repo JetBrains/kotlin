@@ -22,17 +22,21 @@ import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
-public class IdeXmlMessagesParser {
-    private fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))
+// using '#' to avoid collisions with xml escaping
+public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+public val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
 
-    fun parse(inputMessage: String): String {
-        val docFactory = DocumentBuilderFactory.newInstance()
-        val docBuilder = docFactory.newDocumentBuilder()
-        val input = docBuilder.parse(strToSource(inputMessage))
+fun parseXml(inputMessage: String): String {
+    fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))
 
-        val root = input.firstChild as Element
-        val inputContent = StringUtil.replace(root.textContent, EscapeConstants.XML_REPLACEMENTS, EscapeConstants.SOURCE_CHARS).trim()
+    val docFactory = DocumentBuilderFactory.newInstance()
+    val docBuilder = docFactory.newDocumentBuilder()
+    val input = docBuilder.parse(strToSource(inputMessage))
 
-        return inputContent
-    }
+    val root = input.firstChild as Element
+    return root.textContent
+}
+
+public object IdeLinebreaksUnescaper {
+    jvmStatic fun unescapeFromDiez(inputMessage: String) = StringUtil.replace(inputMessage, XML_REPLACEMENTS, SOURCE_CHARS)
 }

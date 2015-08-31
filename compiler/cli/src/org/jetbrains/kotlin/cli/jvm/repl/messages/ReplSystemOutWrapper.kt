@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.LineSeparator
 import java.io.PrintStream
 
-public class ReplSystemOutWrapper(private val standardOut: PrintStream, private val ideMode: Boolean) : PrintStream(standardOut, true) {
-    private val END_LINE = LineSeparator.getSystemLineSeparator().separatorString
+public val END_LINE: String = "\n"
 
+private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+
+public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: PrintStream) : PrintStream(standardOut, true) {
     private enum class EscapeType {
         INITIAL_PROMPT,
         HELP_PROMPT,
@@ -53,8 +54,8 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
     }
 
     private fun xmlEscape(s: String, escapeType: EscapeType): String {
-        val singleLine = StringUtil.replace(s, EscapeConstants.SOURCE_CHARS, EscapeConstants.XML_REPLACEMENTS)
-        return "${EscapeConstants.XML_PREAMBLE}<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
+        val singleLine = StringUtil.replace(s, SOURCE_CHARS, XML_REPLACEMENTS)
+        return "$XML_PREAMBLE<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
     fun printlnInit(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)

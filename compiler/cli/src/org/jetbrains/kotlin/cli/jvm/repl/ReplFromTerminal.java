@@ -25,7 +25,8 @@ import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeXmlMessagesParser;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeLinebreaksUnescaper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -41,8 +42,8 @@ public class ReplFromTerminal {
     private final Object waitRepl = new Object();
 
     private final boolean ideMode;
+    private ReplSystemInWrapper replReader;
     private final ReplSystemOutWrapper replWriter;
-    private final IdeXmlMessagesParser ideXmlParser = new IdeXmlMessagesParser();
 
     private final ConsoleReader consoleReader;
 
@@ -53,11 +54,18 @@ public class ReplFromTerminal {
         String replIdeMode = System.getProperty("repl.ideMode");
         ideMode = replIdeMode != null && replIdeMode.equals("true");
 
+        // wrapper for `in` is required to give user possibility of calling
+        // [readLine] from ide-console repl
+        if (ideMode) {
+            replReader = new ReplSystemInWrapper(System.in);
+            System.setIn(replReader);
+        }
+
         new Thread("initialize-repl") {
             @Override
             public void run() {
                 try {
-                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, ideMode);
+                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, ideMode, replReader);
                 }
                 catch (Throwable e) {
                     replInitializationFailed = e;
@@ -68,10 +76,10 @@ public class ReplFromTerminal {
             }
         }.start();
 
-        // wrapper is required to escape every input in [ideMode];
+        // wrapper for `out` is required to escape every input in [ideMode];
         // if [ideMode == false] then just redirects all input to [System.out]
         // if user calls [System.setOut(...)] then undefined behaviour
-        replWriter = new ReplSystemOutWrapper(System.out, ideMode);
+        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
         System.setOut(replWriter);
 
         try {
@@ -187,7 +195,7 @@ public class ReplFromTerminal {
     private String readLine(@Nullable String prompt) throws IOException {
         String line = consoleReader.readLine(prompt);
         if (ideMode && line != null) {
-            line = ideXmlParser.parse(line);
+            line = IdeLinebreaksUnescaper.unescapeFromDiez(line).trim();
         }
         return line;
     }

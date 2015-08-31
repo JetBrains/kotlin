@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
 import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
@@ -104,8 +105,14 @@ public class ReplInterpreter {
     private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
 
     private final boolean ideMode;
+    private final ReplSystemInWrapper replReader;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration, boolean ideMode) {
+    public ReplInterpreter(
+            @NotNull Disposable disposable,
+            @NotNull CompilerConfiguration configuration,
+            boolean ideMode,
+            @Nullable ReplSystemInWrapper replReader
+    ) {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         Project project = environment.getProject();
@@ -158,6 +165,7 @@ public class ReplInterpreter {
         this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()]), null));
 
         this.ideMode = ideMode;
+        this.replReader = replReader;
     }
 
     private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
@@ -329,11 +337,15 @@ public class ReplInterpreter {
             Constructor<?> scriptInstanceConstructor = scriptClass.getConstructor(constructorParams);
             Object scriptInstance;
             try {
+                setReplScriptExecuting(true);
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
+                setReplScriptExecuting(false);
                 return LineResult.runtimeError(renderStackTrace(e.getCause()));
             }
+            setReplScriptExecuting(false);
+
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
@@ -349,6 +361,12 @@ public class ReplInterpreter {
             classLoader.dumpClasses(writer);
             writer.flush();
             throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    private void setReplScriptExecuting(boolean isExecuting) {
+        if (replReader != null) {
+            replReader.setIsReplScriptExecuting(isExecuting);
         }
     }
 
