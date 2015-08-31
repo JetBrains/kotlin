@@ -1,0 +1,57 @@
+package
+
+package test {
+    internal val a0: java.lang.Class<test.A.Companion>
+    internal val a1: java.lang.Class<test.A.Companion>
+    internal val a2: java.lang.Class<test.A.Companion>
+    internal val a3: java.lang.Class<test.A>
+    internal val a4: java.lang.Class<test.A>
+    internal val a5: java.lang.Class<test.A.Companion>
+    internal val e0: [ERROR : Type for E.javaClass]
+    internal val e1: java.lang.Class<test.E>
+    internal val e2: java.lang.Class<test.E>
+    internal val int0: java.lang.Class<kotlin.Int.Companion>
+    internal val int1: java.lang.Class<kotlin.Int>
+    internal val o0: java.lang.Class<test.O>
+    internal val o1: java.lang.Class<test.O>
+    internal val string0: java.lang.Class<kotlin.String.Companion>
+    internal val string1: java.lang.Class<kotlin.String>
+
+    internal final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final enum class E : kotlin.Enum<test.E> {
+        enum entry ENTRY
+
+        private constructor E()
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
+        public final /*synthesized*/ fun values(): kotlin.Array<test.E>
+    }
+
+    internal object O {
+        private constructor O()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

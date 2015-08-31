@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
@@ -64,6 +65,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetElement> INAPPLICABLE_PUBLIC_FIELD = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory2<JetElement, JetType, JetType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
 
     enum NullabilityInformationSource {
         KOTLIN {

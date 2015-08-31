@@ -75,6 +75,12 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
 
         MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
+
+        MAP.put(ErrorsJvm.JAVA_CLASS_ON_COMPANION,
+                "The resulting type of this ''javaClass'' call is {0} and not {1}. " +
+                "Please use the more clear ''::class.java'' syntax to avoid confusion",
+                Renderers.RENDER_TYPE, Renderers.RENDER_TYPE
+        );
     }
 
     @NotNull

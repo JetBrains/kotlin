@@ -47,6 +47,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         doTest(fileName);
     }
 
+    @TestMetadata("javaClassOnCompanion.kt")
+    public void testJavaClassOnCompanion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/javaClassOnCompanion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outstar.kt")
     public void testOutstar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outstar.kt");

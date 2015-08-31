@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.jvm.calls.checkers.JavaClassOnCompanionChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.ReflectionAPICallChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.TraitDefaultMethodCallChecker
@@ -76,7 +77,8 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 NeedSyntheticChecker(),
                 JavaAnnotationCallChecker(),
                 JavaAnnotationMethodCallChecker(),
-                TraitDefaultMethodCallChecker()
+                TraitDefaultMethodCallChecker(),
+                JavaClassOnCompanionChecker()
         ),
 
         additionalTypeCheckers = listOf(
