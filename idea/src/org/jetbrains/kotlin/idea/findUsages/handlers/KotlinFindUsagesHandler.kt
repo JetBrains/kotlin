@@ -18,19 +18,17 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
                                                               private val elementsToSearch: Collection<PsiElement>,
@@ -99,6 +97,16 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         private fun Processor<UsageInfo>.processIfNotNull(callback: () -> UsageInfo?): Boolean {
             val usageInfo = runReadAction(callback)
             return if (usageInfo != null) process(usageInfo) else true
+        }
+
+        protected fun createReferenceProcessor(usageInfoProcessor: Processor<UsageInfo>): Processor<PsiReference> {
+            val uniqueProcessor = CommonProcessors.UniqueProcessor(usageInfoProcessor)
+
+            return object: Processor<PsiReference> {
+                override fun process(t: PsiReference): Boolean {
+                    return KotlinFindUsagesHandler.processUsage(uniqueProcessor, t)
+                }
+            }
         }
     }
 }

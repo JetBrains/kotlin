@@ -18,35 +18,39 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaFindUsagesHandler
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.FilteredQuery
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindClassUsagesDialog
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.kotlin.idea.findUsages.toClassHelper
-import org.jetbrains.kotlin.idea.findUsages.toClassDeclarationsHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import java.util.Collections
-import com.intellij.find.findUsages.JavaFindUsagesHandler
-import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
-import com.intellij.psi.*
-import com.intellij.psi.search.searches.MethodReferencesSearch
-import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.search.usagesSearch.isConstructorUsage
+import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.psiUtil.isInheritable
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
+import java.util.*
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -73,9 +77,9 @@ public class KotlinFindClassUsagesHandler(
                     PsiElementProcessorAdapter(
                             object : PsiElementProcessor<PsiClass> {
                                 public override fun execute(element: PsiClass): Boolean {
-                                    val traitOrInterface = element.isInterface()
+                                    val isInterface = element.isInterface()
                                     return when {
-                                        traitOrInterface && options.isDerivedInterfaces, !traitOrInterface && options.isDerivedClasses ->
+                                        isInterface && options.isDerivedInterfaces, !isInterface && options.isDerivedClasses ->
                                             KotlinFindUsagesHandler.processUsage(processor, element.getNavigationElement())
                                         else -> true
                                     }
@@ -86,26 +90,94 @@ public class KotlinFindClassUsagesHandler(
         }
 
         val classOrObject = element as JetClassOrObject
+        val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
 
-        val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
+        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
+            if (!processClassReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
+        }
 
-        return runReadAction {
-            val target = kotlinOptions.toSearchTarget(classOrObject, true)
-            val classUsages = kotlinOptions.toClassHelper().newRequest(target).search()
-            val declarationUsages = kotlinOptions.toClassDeclarationsHelper().newRequest(target).search()
+        if (kotlinOptions.isFieldsUsages || kotlinOptions.isMethodsUsages) {
+            if (!processMemberReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
+        }
 
-            if (kotlinOptions.searchConstructorUsages) {
-                val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
-                for (constructor in constructors) {
-                    if (constructor !is KotlinLightMethod) continue
-                    constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
-                        it.getCalleeExpression()?.mainReference?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
+        if (kotlinOptions.isUsages && classOrObject is JetObjectDeclaration && classOrObject.isCompanion()) {
+            if (!processClassObjectInternalReferences(classOrObject, referenceProcessor)) {
+                return false
+            }
+        }
+
+        if (kotlinOptions.searchConstructorUsages) {
+            val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
+            for (constructor in constructors) {
+                if (constructor !is KotlinLightMethod) continue
+                constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
+                    it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) }
+                }
+            }
+        }
+
+        if (options.isDerivedClasses || options.isDerivedInterfaces) {
+            if (!processInheritors()) return false
+        }
+
+        return true
+    }
+
+    private fun processClassReferences(classOrObject: JetClassOrObject,
+                                       options: KotlinClassFindUsagesOptions,
+                                       processor: Processor<PsiReference>): Boolean {
+        var usagesQuery = ReferencesSearch.search(classOrObject)
+
+        if (options.isSkipImportStatements) {
+            usagesQuery = FilteredQuery(usagesQuery) { !it.isImportUsage() }
+        }
+
+        if (!options.searchConstructorUsages) {
+            usagesQuery = FilteredQuery(usagesQuery) { !it.isConstructorUsage(classOrObject) }
+        }
+        else if (!options.isUsages) {
+            usagesQuery = FilteredQuery(usagesQuery) { it.isConstructorUsage(classOrObject) }
+        }
+        return usagesQuery.forEach(processor)
+    }
+
+    private fun processClassObjectInternalReferences(classObject: JetObjectDeclaration,
+                                                     processor: Processor<PsiReference>): Boolean {
+        val klass = classObject.getStrictParentOfType<JetClass>() ?: return true
+        val companionObjectDescriptor = classObject.descriptor
+        var stop: Boolean = false
+        klass.acceptChildren(object : JetVisitorVoid() {
+            override fun visitJetElement(element: JetElement) {
+                if (element == classObject) return // skip companion object itself
+                if (stop) return
+                element.acceptChildren(this)
+
+                val bindingContext = element.analyze()
+                val call = bindingContext[BindingContext.CALL, element] ?: return
+                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
+                if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
+                    || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
+                    element.getReferences().forEach {
+                        if (!stop && !processor.process(it)) {
+                            stop = true
+                        }
                     }
                 }
             }
+        })
+        return !stop
+    }
 
-            (classUsages + declarationUsages).all { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it)} && processInheritors()
+    private fun processMemberReferences(classOrObject: JetClassOrObject,
+                                        options: KotlinClassFindUsagesOptions,
+                                        processor: Processor<PsiReference>): Boolean {
+        for (decl in classOrObject.effectiveDeclarations()) {
+            if ((decl is JetNamedFunction && options.isMethodsUsages) ||
+                ((decl is JetProperty || decl is JetParameter) && options.isFieldsUsages)) {
+                if (!ReferencesSearch.search(decl).forEach(processor)) return false
+            }
         }
+        return true
     }
 
     protected override fun getStringsToSearch(element: PsiElement): Collection<String> {
