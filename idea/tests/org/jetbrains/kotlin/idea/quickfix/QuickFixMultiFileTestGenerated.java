@@ -1220,6 +1220,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
+        @TestMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GenericVarianceViolation extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInGenericVarianceViolation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("basicMultiple.before.Main.kt")
+            public void testBasicMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation/basicMultiple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
     }
 
     @TestMetadata("idea/testData/quickfix/variables")
