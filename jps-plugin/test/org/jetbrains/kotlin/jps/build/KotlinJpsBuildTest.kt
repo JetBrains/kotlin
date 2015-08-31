@@ -694,10 +694,10 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
         val path = FileUtilRt.toSystemIndependentName(File(workDir, fileName).getAbsolutePath())
-        val fakeVirtualFile = object : LightVirtualFile(path) {
+        val fakeVirtualFile = object : LightVirtualFile(path.substringAfterLast('/')) {
             override fun getPath(): String {
                 // strip extra "/" from the beginning
-                return super.getPath().substring(1)
+                return path.substring(1)
             }
         }
 
