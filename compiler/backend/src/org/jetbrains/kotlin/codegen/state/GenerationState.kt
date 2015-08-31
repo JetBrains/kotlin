@@ -74,12 +74,10 @@ public class GenerationState jvmOverloads constructor(
         }
     }
 
-    private var used = false
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     public val bindingContext: BindingContext = bindingTrace.getBindingContext()
     public val typeMapper: JetTypeMapper = JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory)
-    public val factory: ClassFileFactory
     public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
@@ -87,7 +85,9 @@ public class GenerationState jvmOverloads constructor(
     public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
     public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
+    public val factory: ClassFileFactory
     private val interceptedBuilderFactory: ClassBuilderFactory
+    private var used = false
 
     public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
         @jvmName("isCallAssertionsEnabled") get
