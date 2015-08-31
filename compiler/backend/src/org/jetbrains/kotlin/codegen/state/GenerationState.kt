@@ -99,13 +99,9 @@ public class GenerationState jvmOverloads constructor(
         @jvmName("isInlineEnabled") get
 
     init {
-        var builderFactory = builderFactory
-
-        builderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
-
+        val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
         var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
-                builderFactory, this.bindingContext, diagnostics)
-
+                optimizationClassBuilderFactory, this.bindingContext, diagnostics)
         val interceptExtensions = ClassBuilderInterceptorExtension.getInstances(project)
 
         for (extension in interceptExtensions) {
