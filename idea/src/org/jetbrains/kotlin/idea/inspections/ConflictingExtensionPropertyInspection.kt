@@ -63,34 +63,34 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
 
                 if (property.receiverTypeReference != null) {
                     val nameElement = property.nameIdentifier ?: return
-                    val propertyDescriptor = property.resolveToDescriptor() as PropertyDescriptor
-                    val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, fileScope)
-                    if (conflictingExtension != null) {
-                        // don't report on hidden declarations
-                        if (propertyDescriptor.isAnnotatedAsHidden()) return
+                    val propertyDescriptor = property.resolveToDescriptor() as? PropertyDescriptor ?: return
 
-                        val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
-                            val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), file)
-                            // don't add the second fix when on the fly to allow code cleanup
-                            val fix2 = if (isOnTheFly)
-                                object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), file), LowPriorityAction {}
-                            else
-                                null
-                            listOf(fix1, fix2).filterNotNull().toTypedArray()
-                        }
-                        else {
-                            emptyArray()
-                        }
+                    val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, fileScope) ?: return
 
-                        val problemDescriptor = holder.manager.createProblemDescriptor(
-                                nameElement,
-                                "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
-                                true,
-                                fixes,
-                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                        )
-                        holder.registerProblem(problemDescriptor)
+                    // don't report on hidden declarations
+                    if (propertyDescriptor.isAnnotatedAsHidden()) return
+
+                    val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
+                        val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), file)
+                        // don't add the second fix when on the fly to allow code cleanup
+                        val fix2 = if (isOnTheFly)
+                            object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), file), LowPriorityAction {}
+                        else
+                            null
+                        listOf(fix1, fix2).filterNotNull().toTypedArray()
                     }
+                    else {
+                        emptyArray()
+                    }
+
+                    val problemDescriptor = holder.manager.createProblemDescriptor(
+                            nameElement,
+                            "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
+                            true,
+                            fixes,
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                    )
+                    holder.registerProblem(problemDescriptor)
                 }
             }
         }
