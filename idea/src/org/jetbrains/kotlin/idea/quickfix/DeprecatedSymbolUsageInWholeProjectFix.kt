@@ -35,9 +35,8 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
-import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
@@ -96,36 +95,34 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
     private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
         UIUtil.invokeLaterIfNeeded {
-            project.executeCommand(getText()) {
-                runWriteAction {
-                    // we should delete imports later to not affect other usages
-                    val importsToDelete = arrayListOf<JetImportDirective>()
+            project.executeWriteCommand(text) {
+                // we should delete imports later to not affect other usages
+                val importsToDelete = arrayListOf<JetImportDirective>()
 
-                    for (usage in usages) {
-                        try {
-                            if (!usage.isValid()) continue // TODO: nested calls
+                for (usage in usages) {
+                    try {
+                        if (!usage.isValid()) continue // TODO: nested calls
 
-                            val importDirective = usage.getStrictParentOfType<JetImportDirective>()
-                            if (importDirective != null) {
-                                if (!importDirective.isAllUnder && importDirective.targetDescriptors().size() == 1) {
-                                    importsToDelete.add(importDirective)
-                                }
-                                continue
+                        val importDirective = usage.getStrictParentOfType<JetImportDirective>()
+                        if (importDirective != null) {
+                            if (!importDirective.isAllUnder && importDirective.targetDescriptors().size() == 1) {
+                                importsToDelete.add(importDirective)
                             }
+                            continue
+                        }
 
-                            val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
-                            val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
-                            if (!resolvedCall.getStatus().isSuccess()) continue
-                            // copy replacement expression because it is modified by performReplacement
-                            DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
-                        }
-                        catch (e: Throwable) {
-                            LOG.error(e)
-                        }
+                        val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
+                        val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
+                        if (!resolvedCall.getStatus().isSuccess()) continue
+                        // copy replacement expression because it is modified by performReplacement
+                        DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
                     }
-
-                    importsToDelete.forEach { it.delete() }
+                    catch (e: Throwable) {
+                        LOG.error(e)
+                    }
                 }
+
+                importsToDelete.forEach { it.delete() }
             }
         }
     }
