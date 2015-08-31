@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -26,15 +27,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
+import org.jetbrains.kotlin.idea.caches.resolve.IDEPackageFacadeProvider
 
 public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
-    override fun getPackages(): List<FqName> = listOf(FqName("kotlin"))
+    override fun getPackages(): List<FqName> = emptyList()
 
-    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin" to "linkedListOf")
+    override fun getFacades(): List<FqName> = listOf(FqName("kotlin.JUtilKt"))
+
+    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin.JUtilKt" to "linkedListOf")
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
-        JvmVirtualFileFinder.SERVICE.getInstance(getProject())
+            JvmVirtualFileFinder.SERVICE.getInstance(getProject())
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledText(packageFile, it) } ?: buildDecompiledText(packageFile)).text
@@ -42,10 +46,12 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject(), "test"),
-                    listOf(), BindingTraceContext(), null, null, PackageFacadeProvider.EMPTY
+                    listOf(), BindingTraceContext(), null, null,
+                    IDEPackageFacadeProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor
 
-    override fun getProjectDescriptor() = object : JetWithJdkAndRuntimeLightProjectDescriptor() {
-        override fun getSdk() = PluginTestCaseBase.fullJdk()
-    }
+    override fun getProjectDescriptor() =
+            object : JetWithJdkAndRuntimeLightProjectDescriptor() {
+                override fun getSdk() = PluginTestCaseBase.fullJdk()
+            }
 }

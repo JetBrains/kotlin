@@ -25,17 +25,22 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.junit.Assert
 
 public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getPackages(): List<FqName>
+
+    protected open fun getFacades(): List<FqName> = emptyList()
 
     protected abstract fun getTopLevelMembers(): Map<String, String>
 
@@ -46,16 +51,25 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
     protected abstract fun getModuleDescriptor(): ModuleDescriptor
 
     public fun testConsistency() {
-        getPackages().forEach { doTest(it) }
+        getPackages().forEach { doTestPackage(it) }
+        getFacades().forEach { doTestFacade(it) }
     }
 
-    private fun doTest(packageFqName: FqName) {
-        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
-        val projectBasedText = getDecompiledText(packageFile, ResolverForDecompilerImpl(getModuleDescriptor()))
-        val deserializedText = getDecompiledText(packageFile)
+    private fun doTestPackage(packageFqName: FqName) {
+        doTestClass(packageFqName, PackageClassUtils.getPackageClassId(packageFqName))
+    }
+
+    private fun doTestFacade(facadeFqName: FqName) {
+        doTestClass(facadeFqName, ClassId.topLevel(facadeFqName))
+    }
+
+    private fun doTestClass(testFqName: FqName, classId: ClassId) {
+        val classFile = getVirtualFileFinder().findVirtualFileWithHeader(classId)!!
+        val projectBasedText = getDecompiledText(classFile, ResolverForDecompilerImpl(getModuleDescriptor()))
+        val deserializedText = getDecompiledText(classFile)
         Assert.assertEquals(projectBasedText, deserializedText)
         // sanity checks
-        getTopLevelMembers()[packageFqName.asString()]?.let {
+        getTopLevelMembers()[testFqName.asString()]?.let {
             Assert.assertTrue(projectBasedText.contains(it))
         }
         Assert.assertFalse(projectBasedText.contains("ERROR"))
@@ -63,14 +77,17 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
 }
 
 private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
-    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
-        return module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
-    }
+    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? =
+            module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
 
-    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
-        // TODO how to handle non-package facades properly here?
-        return module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors() filter {
-            it is CallableMemberDescriptor && it.module != KotlinBuiltIns.getInstance().getBuiltInsModule()
-        } sortBy MemberComparator.INSTANCE
-    }
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
+            module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
+                it is CallableMemberDescriptor &&
+                it.module != KotlinBuiltIns.getInstance().builtInsModule &&
+                (it is DeserializedCallableMemberDescriptor && isFromFacade(it, facadeFqName))
+            }.sortedWith(MemberComparator.INSTANCE)
+
+    private fun isFromFacade(descriptor: DeserializedCallableMemberDescriptor, facadeFqName: FqName): Boolean =
+            descriptor.proto.hasExtension(JvmProtoBuf.implClassName) &&
+            facadeFqName == PackagePartClassUtils.getPackagePartFqName(descriptor)
 }
