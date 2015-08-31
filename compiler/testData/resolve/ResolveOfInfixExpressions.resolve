@@ -60,7 +60,7 @@ fun <T> tt(t : T) : T {
   val x : ArrayList<Int> = 0
   x`java::java.util.ArrayList.get()`[1]
   val foo = `Bar`Bar()
-  foo`!!`[null, 1]
+  foo`get2`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]
   foo`set1`[1] = ""

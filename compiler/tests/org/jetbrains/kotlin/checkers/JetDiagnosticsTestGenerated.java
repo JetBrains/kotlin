@@ -2370,6 +2370,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overloadedFunction.kt")
+            public void testOverloadedFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/overloadedFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SpreadVarargs.kt")
             public void testSpreadVarargs() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/SpreadVarargs.kt");

@@ -160,7 +160,7 @@ public class CandidateResolver(
                 val argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
                         call, tracing, candidateCall, Sets.newLinkedHashSet<ValueArgument>())
                 if (!argumentMappingStatus.isSuccess()) {
-                    candidateCall.addStatus(OTHER_ERROR)
+                    candidateCall.addStatus(ARGUMENTS_MAPPING_ERROR)
                 }
             }
 

@@ -11,10 +11,10 @@ fun other() {
 }
 
 // EXIST: { lookupString:"nFirst", itemText:"nFirst =" }
-// EXIST: { lookupString:"nSecond", itemText:"nSecond =" }
-// EXIST: { lookupString:"nThird", itemText:"nThird =" }
 // EXIST: nLocal
 
 // todo - should exist
 // ABSENT: nClassParam
+// ABSENT: nSecond
+// ABSENT: nThird
 // ABSENT: nClassField
