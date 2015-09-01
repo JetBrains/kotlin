@@ -20,6 +20,7 @@ import com.intellij.psi.stubs.IndexSink;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.*;
@@ -36,10 +37,17 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         sink.occurrence(JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
 
-        JetFile psi = stub.getPsi();
-        if (psi != null) {
-            FqName staticFacadeFqName = PackagePartClassUtils.getPackagePartFqName(psi);
+        String facadeSimpleName = stub.getFacadeSimpleName();
+        if (facadeSimpleName != null) {
+            FqName staticFacadeFqName = packageFqName.child(Name.identifier(facadeSimpleName));
             sink.occurrence(JetStaticFacadeClassIndex.INSTANCE.getKey(), staticFacadeFqName.asString());
+        }
+        else {
+            JetFile psi = stub.getPsi();
+            if (psi != null) {
+                FqName staticFacadeFqName = PackagePartClassUtils.getPackagePartFqName(psi);
+                sink.occurrence(JetStaticFacadeClassIndex.INSTANCE.getKey(), staticFacadeFqName.asString());
+            }
         }
     }
 

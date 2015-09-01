@@ -68,7 +68,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
             header.isCompatiblePackageFacadeKind() -> {
                 val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.getNameResolver(), packageFqName)
-                createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)
+                createPackageFacadeStub(packageData.getPackageProto(), packageFqName, context)
             }
             header.isCompatibleClassKind() -> {
                 if (header.classKind != JvmAnnotationNames.KotlinClass.Kind.CLASS) return null
@@ -79,7 +79,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
             header.isCompatibleFileFacadeKind() -> {
                 val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.getNameResolver(), packageFqName)
-                createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)
+                createFileFacadeStub(packageData.getPackageProto(), classId.asSingleFqName(), context)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }

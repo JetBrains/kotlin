@@ -129,6 +129,11 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
         doTest("2/foo2.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
     }
 
+    public fun testKotlinClass() {
+        val kotlinClassFqName = "A"
+        doTest("a.kt", 3, { kotlinClassFqName })
+    }
+
     public fun testLibrarySources() {
         val mockLibrary = MockLibraryUtil.compileLibraryToJar(getTestDataPath() + getTestRoot() + "mockLibrary", "mockLibrary", true)
 

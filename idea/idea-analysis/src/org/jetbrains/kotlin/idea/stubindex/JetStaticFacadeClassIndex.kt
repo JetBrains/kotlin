@@ -29,10 +29,10 @@ public class JetStaticFacadeClassIndex private constructor() : StringStubIndexEx
             super.get(key, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project))
 
     companion object {
-        private val KEY = KotlinIndexUtil.createIndexKey(javaClass<JetStaticFacadeClassIndex>())
+        private val KEY = KotlinIndexUtil.createIndexKey(JetStaticFacadeClassIndex::class.java)
 
         public val INSTANCE: JetStaticFacadeClassIndex = JetStaticFacadeClassIndex()
 
-        public fun getInstance(): JetStaticFacadeClassIndex = INSTANCE
+        public @jvmStatic fun getInstance(): JetStaticFacadeClassIndex = INSTANCE
     }
 }

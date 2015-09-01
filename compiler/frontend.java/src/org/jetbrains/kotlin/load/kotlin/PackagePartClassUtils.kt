@@ -59,7 +59,7 @@ import java.util.*
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
     public @jvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
-        val partClassName = getPartClassName(FileUtil.getNameWithoutExtension(fileName))
+        val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
@@ -91,4 +91,6 @@ import java.util.*
     public @jvmStatic fun getFilesForPart(partFqName: FqName, files: Collection<JetFile>): List<JetFile> =
             getFilesWithCallables(files).filter { getPackagePartFqName(it) == partFqName }
 
+    public @jvmStatic fun getFilePartShortName(fileName: String): String =
+            getPartClassName(FileUtil.getNameWithoutExtension(fileName))
 }

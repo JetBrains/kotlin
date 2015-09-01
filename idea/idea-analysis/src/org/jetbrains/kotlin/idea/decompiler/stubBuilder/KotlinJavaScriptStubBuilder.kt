@@ -63,7 +63,7 @@ public open class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         if (isPackageHeader) {
             val packageData = content.toPackageData(nameResolver)
             val context = components.createContext(packageData.getNameResolver(), packageFqName)
-            return createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)
+            return createPackageFacadeStub(packageData.getPackageProto(), packageFqName, context)
         }
         else {
             val classData =  content.toClassData(nameResolver)

@@ -18,17 +18,26 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import kotlin.platform.platformStatic
 
 public object StaticFacadeIndexUtil {
 
-    platformStatic public fun findFilesForStaticFacade(
+    @jvmStatic public fun findFilesForStaticFacade(
             facadeFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
     ) : Collection<JetFile> =
             JetStaticFacadeClassIndex.INSTANCE.get(facadeFqName.asString(), project, searchScope)
 
+    // TODO change as we introduce multi-file facades (this will require a separate index)
+    @jvmStatic public fun findFilesForFilePart(
+            partFqName: FqName,
+            searchScope: GlobalSearchScope,
+            project: Project
+    ) : Collection<JetFile> =
+            PackagePartClassUtils.getFilesWithCallables(
+                    JetStaticFacadeClassIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 }
