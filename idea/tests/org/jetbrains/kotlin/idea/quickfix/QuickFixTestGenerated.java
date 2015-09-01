@@ -3121,6 +3121,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyToSyntheticExtension.kt")
+        public void testPropertyToSyntheticExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyToSyntheticExtension.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("replaceCallWithArgument.kt")
         public void testReplaceCallWithArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/replaceCallWithArgument.kt");

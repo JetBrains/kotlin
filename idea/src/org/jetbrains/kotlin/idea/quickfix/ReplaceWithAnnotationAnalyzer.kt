@@ -38,12 +38,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -91,9 +91,9 @@ object ReplaceWithAnnotationAnalyzer {
 
         val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
 
-        val symbolScope = getResolutionScope(symbolDescriptor)
-        val scope = LexicalChainedScope(symbolScope, symbolDescriptor, false, null, "ReplaceWith resolution scope",
-                            ExplicitImportsScope(explicitlyImportedSymbols))
+        val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
+        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
+                                       listOf(ExplicitImportsScope(explicitlyImportedSymbols)) + additionalScopes.scopes)
 
         var bindingContext = analyzeInContext(expression, symbolDescriptor, scope, resolutionFacade)
 
@@ -137,7 +137,7 @@ object ReplaceWithAnnotationAnalyzer {
                     else
                         resolvedCall.getDispatchReceiver()
                     if (receiver is ThisReceiver) {
-                        val receiverExpression = receiver.asExpression(symbolScope.asJetScope(), psiFactory)
+                        val receiverExpression = receiver.asExpression(scope.asJetScope(), psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
                         }
@@ -170,32 +170,31 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor): LexicalScope {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<JetScope>): LexicalScope {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
-                val moduleDescriptor = descriptor.getContainingDeclaration()
-                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName))
+                val moduleDescriptor = descriptor.containingDeclaration
+                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
             }
 
             is PackageViewDescriptor ->
-                descriptor.memberScope.memberScopeAsFileScope()
+                ChainedScope(ownerDescriptor, "ReplaceWith resolution scope", descriptor.memberScope, *additionalScopes.toTypedArray()).asLexicalScope()
 
             is ClassDescriptorWithResolutionScopes ->
-                descriptor.getScopeForMemberDeclarationResolution()
+                descriptor.scopeForMemberDeclarationResolution
 
             is ClassDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.getContainingDeclaration())
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope })
-                        .scopeForMemberDeclarationResolution()
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes)
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
             }
 
             is FunctionDescriptor ->
-                FunctionDescriptorUtil.getFunctionInnerScope(getResolutionScope(descriptor.getContainingDeclaration()),
+                FunctionDescriptorUtil.getFunctionInnerScope(getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes),
                                                              descriptor, RedeclarationHandler.DO_NOTHING)
 
             is PropertyDescriptor ->
                 JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                               getResolutionScope(descriptor.getContainingDeclaration()),
+                                                               getResolutionScope(descriptor.getContainingDeclaration(), ownerDescriptor, additionalScopes),
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
