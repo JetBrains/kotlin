@@ -56,7 +56,7 @@ public class CompilerRunnerUtil {
     }
 
     @Nullable
-    private static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
+    public static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
         File libs = paths.getLibPath();
         if (libs.exists() && !libs.isFile()) return libs;
 

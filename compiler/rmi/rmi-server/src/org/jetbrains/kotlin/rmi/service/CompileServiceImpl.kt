@@ -1,0 +1,203 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.service
+
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
+import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
+import java.io.IOException
+import java.io.PrintStream
+import java.lang.management.ManagementFactory
+import java.net.URLClassLoader
+import java.rmi.registry.Registry
+import java.rmi.server.UnicastRemoteObject
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.jar.Manifest
+import java.util.logging.Logger
+import kotlin.concurrent.read
+import kotlin.concurrent.write
+
+
+class CompileServiceImpl<Compiler: CLICompiler<*>>(
+        val registry: Registry,
+        val compiler: Compiler,
+        val selfCompilerId: CompilerId,
+        val daemonOptions: DaemonOptions
+) : CompileService, UnicastRemoteObject() {
+
+    val log by lazy { Logger.getLogger("compiler") }
+
+    private val rwlock = ReentrantReadWriteLock()
+    private var alive = false
+
+    // TODO: consider matching compilerId coming from outside with actual one
+//    private val selfCompilerId by lazy {
+//        CompilerId(
+//                compilerClasspath = System.getProperty("java.class.path")
+//                                            ?.split(File.pathSeparator)
+//                                            ?.map { File(it) }
+//                                            ?.filter { it.exists() }
+//                                            ?.map { it.absolutePath }
+//                                    ?: listOf(),
+//                compilerVersion = loadKotlinVersionFromResource()
+//        )
+//    }
+
+    init {
+        // assuming logically synchronized
+        try {
+            // cleanup for the case of incorrect restart
+            UnicastRemoteObject.unexportObject(this, false)
+        }
+        catch (e: java.rmi.NoSuchObjectException) {
+            // ignoring if object already exported
+        }
+
+        val stub = UnicastRemoteObject.exportObject(this, 0) as CompileService
+        // TODO: use version-specific name
+        registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
+        alive = true
+    }
+
+    public class IncrementalCompilationComponentsImpl(val idToCache: Map<String, CompileService.RemoteIncrementalCache>): IncrementalCompilationComponents {
+        // perf: cheap object, but still the pattern may be costly if there are too many calls to cache with the same id (which seems not to be the case now)
+        override fun getIncrementalCache(moduleId: String): IncrementalCache = RemoteIncrementalCacheClient(idToCache[moduleId]!!)
+        // TODO: add appropriate proxy into interaction when lookup tracker is needed
+        override fun getLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
+    }
+
+    private fun createCompileServices(incrementalCaches: Map<String, CompileService.RemoteIncrementalCache>): Services =
+        Services.Builder()
+                .register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches))
+                // TODO: add remote proxy for cancellation status tracking
+//                .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
+//                    override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
+//                })
+                .build()
+
+
+    fun usedMemory(): Long {
+        System.gc()
+        val rt = Runtime.getRuntime()
+        return (rt.totalMemory() - rt.freeMemory())
+    }
+
+    fun usedMemoryMX(): Long {
+        System.gc()
+        val memoryMXBean= ManagementFactory.getMemoryMXBean()
+        val memHeap=memoryMXBean.getHeapMemoryUsage()
+        return memHeap.used
+    }
+
+    // TODO: consider using version as a part of compiler ID or drop this function
+    private fun loadKotlinVersionFromResource(): String {
+        (javaClass.classLoader as? URLClassLoader)
+        ?.findResource("META-INF/MANIFEST.MF")
+        ?.let {
+            try {
+                return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: ""
+            }
+            catch (e: IOException) {}
+        }
+        return ""
+    }
+
+
+    fun<R> checkedCompile(args: Array<out String>, body: () -> R): R {
+        try {
+            if (args.none())
+                throw IllegalArgumentException("Error: empty arguments list.")
+            log.info("Starting compilation with args: " + args.joinToString(" "))
+            val startMemMX = usedMemoryMX() / 1024
+            val startMem = usedMemory() / 1024
+            val startTime = System.nanoTime()
+            val res = body()
+            val endTime = System.nanoTime()
+            val endMem = usedMemory() / 1024
+            val endMemMX = usedMemoryMX() / 1024
+            log.info("Done with result " + res.toString())
+            log.info("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
+            log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
+            log.info("Used memory (from MemoryMXBean): $endMemMX kb (${"%+d".format(endMemMX - startMemMX)} kb)")
+            return res
+        }
+        catch (e: Exception) {
+            log.info("Error: $e")
+            throw e
+        }
+    }
+
+    fun<R> ifAlive(body: () -> R): R = rwlock.read {
+        if (!alive) throw IllegalStateException("Kotlin Compiler Service is not in alive state")
+        else body()
+    }
+
+    fun<R> ifAliveExclusive(body: () -> R): R = rwlock.write {
+        if (!alive) throw IllegalStateException("Kotlin Compiler Service is not in alive state")
+        else body()
+    }
+
+    // sometimes used for debugging
+    fun<R> spy(msg: String, body: () -> R): R {
+        val res = body()
+        log.info(msg + " = " + res.toString())
+        return res
+    }
+
+    override fun getCompilerId(): CompilerId = ifAlive { selfCompilerId }
+
+    override fun getUsedMemory(): Long = ifAlive { usedMemory() }
+
+    override fun shutdown() {
+        ifAliveExclusive {
+            log.info("Shutdown started")
+            alive = false
+            UnicastRemoteObject.unexportObject(this, true)
+            log.info("Shutdown complete")
+        }
+    }
+
+    override fun remoteCompile(args: Array<out String>, errStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
+        doCompile(args, errStream) { printStream ->
+            when (outputFormat) {
+                CompileService.OutputFormat.PLAIN -> compiler.exec(printStream, *args)
+                CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, Services.EMPTY, *args)
+            }
+        }
+
+    override fun remoteIncrementalCompile(args: Array<out String>, caches: Map<String, CompileService.RemoteIncrementalCache>, outputStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
+        doCompile(args, outputStream) { printStream ->
+            when (outputFormat) {
+                CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
+                CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(caches), *args)
+            }
+        }
+
+    fun doCompile(args: Array<out String>, errStream: RemoteOutputStream, body: (PrintStream) -> ExitCode): Int =
+        ifAlive {
+            checkedCompile(args) {
+                body( PrintStream( RemoteOutputStreamClient(errStream))).code
+            }
+        }
+}

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.FilterPackage;
 import org.jetbrains.kotlin.idea.decompiler.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
+import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 public class PluginStartupComponent implements ApplicationComponent {
@@ -51,5 +52,6 @@ public class PluginStartupComponent implements ApplicationComponent {
 
     @Override
     public void disposeComponent() {
+        KotlinCompilerClient.Companion.shutdownCompileService();
     }
 }
