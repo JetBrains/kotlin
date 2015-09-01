@@ -12,14 +12,14 @@ class X {
         return super.toString()
     }
 
-    throws(CloneNotSupportedException::class)
+    Throws(CloneNotSupportedException::class)
     protected fun clone(): Any {
         return super.clone()
     }
 }
 
 class Y : Thread() {
-    throws(CloneNotSupportedException::class)
+    Throws(CloneNotSupportedException::class)
     override fun clone(): Any {
         return super.clone()
     }

@@ -587,7 +587,7 @@ class Converter private constructor(
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
-        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
+        val annotation = Annotation(Identifier("Throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 

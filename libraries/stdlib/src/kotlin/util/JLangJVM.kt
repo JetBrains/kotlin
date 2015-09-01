@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
-public annotation(retention = AnnotationRetention.SOURCE) class throws(public vararg val exceptionClasses: KClass<out Throwable>)
+public annotation(retention = AnnotationRetention.SOURCE) class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
  * Returns the runtime Java class of this object.
