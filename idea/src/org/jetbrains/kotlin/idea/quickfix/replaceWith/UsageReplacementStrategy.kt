@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetElement
@@ -32,10 +33,16 @@ interface UsageReplacementStrategy {
         fun build(element: JetSimpleNameExpression, replaceWith: ReplaceWith): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
-            val target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
+            var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
+
+            var replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.replaceWithPattern(target, resolutionFacade.project)
+            if (replacePatternFromSymbol == null && target is ConstructorDescriptor) {
+                target = target.containingDeclaration
+                replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.replaceWithPattern(target, resolutionFacade.project)
+            }
 
             // check that ReplaceWith hasn't changed
-            if (DeprecatedSymbolUsageFixBase.replaceWithPattern(target, resolutionFacade.project) != replaceWith) return null
+            if (replacePatternFromSymbol != replaceWith) return null
 
             when (target) {
                 is CallableDescriptor -> {
