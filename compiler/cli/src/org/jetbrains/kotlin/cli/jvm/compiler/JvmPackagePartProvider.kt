@@ -32,8 +32,8 @@ public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePar
                 }.filter { it?.findChild("META-INF") != null }.filterNotNull()
     }
 
-    override fun findPackageParts(packageInternalName: String): List<String> {
-        val pathParts = packageInternalName.split('/')
+    override fun findPackageParts(packageFqName: String): List<String> {
+        val pathParts = packageFqName.split('.')
         val mappings = roots.filter {
             //filter all roots by package path existing
             pathParts.fold(it) {
@@ -47,9 +47,9 @@ public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePar
         }.filterNotNull().flatMap {
             it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }.toList<VirtualFile>()
         }.map {
-            ModuleMapping(String(it.contentsToByteArray(), "UTF-8"))
+            ModuleMapping(it.contentsToByteArray())
         }
 
-        return mappings.map { it.findPackageParts(packageInternalName) }.filterNotNull().flatMap { it.parts }.distinct()
+        return mappings.map { it.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
     }
 }

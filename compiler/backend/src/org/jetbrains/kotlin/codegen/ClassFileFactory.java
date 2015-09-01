@@ -27,13 +27,16 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -86,29 +89,43 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private void writeModuleMappings(Collection<PackageCodegen> values) {
+        final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
-        final StringWriter moduleMapping = new StringWriter(1024);
-        for (PackageCodegen codegen : values) {
-            codegen.getPackageParts().serialize(moduleMapping);
-        }
-        state.getProgress().reportOutput(Collections.<File>emptyList(), new File(outputFilePath));
-        //TODO: source files?
-        generators.put(outputFilePath, new OutAndSourceFileList(Collections.<File>emptyList()) {
-            @Override
-            public byte[] asBytes(ClassBuilderFactory factory) {
-                try {
-                    return moduleMapping.toString().getBytes("UTF-8");
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
 
-            @Override
-            public String asText(ClassBuilderFactory factory) {
-                return moduleMapping.toString();
-            }
-        });
+        for (PackageCodegen codegen : values) {
+            PackageParts.Companion.serialize(codegen.getPackageParts(), builder);
+        }
+
+        if (builder.getPackagePartsCount() != 0) {
+            state.getProgress().reportOutput(Collections.<File>emptyList(), new File(outputFilePath));
+            //TODO: source files?
+            generators.put(outputFilePath, new OutAndSourceFileList(Collections.<File>emptyList()) {
+                @Override
+                public byte[] asBytes(ClassBuilderFactory factory) {
+                    try {
+                        ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(1024);
+                        builder.build().writeTo(moduleMapping);
+                        return moduleMapping.toByteArray();
+                    }
+                    catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public String asText(ClassBuilderFactory factory) {
+                    try {
+                        return new String(asBytes(factory), "UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
     }
 
     @NotNull

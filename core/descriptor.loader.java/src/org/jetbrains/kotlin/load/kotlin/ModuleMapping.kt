@@ -16,23 +16,30 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.Writer
 
-public class ModuleMapping(val moduleMapping: String) {
+public class ModuleMapping(val proto: ByteArray? = null) {
 
-    val package2Parts = hashMapOf<String, PackageParts>()
+    val packageFqName2Parts = hashMapOf<String, PackageParts>()
 
     init {
-        for (i in moduleMapping.split("\n")) {
-            if(i.isEmpty()) continue
-            val (pakage, facade) = i.split("->")
-            val miniFacades = package2Parts.getOrPut(pakage, { PackageParts(pakage) })
-            miniFacades.parts.add(facade)
+        if (proto != null) {
+            val parseFrom: JvmPackageTable.PackageTable? = JvmPackageTable.PackageTable.parseFrom(proto)
+            if (parseFrom != null) {
+                parseFrom.packagePartsList.map {
+                    val packageParts = PackageParts(it.packageFqName)
+                    packageFqName2Parts.put(it.packageFqName, packageParts)
+                    it.classNameList.map {
+                        packageParts.parts.add(it)
+                    }
+                }
+            }
         }
     }
 
-    fun findPackageParts(internalPackageName: String): PackageParts? {
-        return package2Parts[internalPackageName]
+    fun findPackageParts(packageFqName: String): PackageParts? {
+        return packageFqName2Parts[packageFqName]
     }
 
     companion object {
@@ -40,22 +47,16 @@ public class ModuleMapping(val moduleMapping: String) {
     }
 }
 
-public class PackageParts(val packageInternalName: String) {
+public class PackageParts(val packageFqName: String) {
 
     val parts = linkedSetOf<String>()
-
-    fun serialize(out: Writer) {
-        for (i in parts) {
-            out.write("$packageInternalName->$i\n")
-        }
-    }
 
     override fun equals(other: Any?): Boolean {
         if (other !is PackageParts) {
             return false;
         }
 
-        if (other.packageInternalName != packageInternalName) {
+        if (other.packageFqName != packageFqName) {
             return false;
         }
 
@@ -73,6 +74,18 @@ public class PackageParts(val packageInternalName: String) {
     }
 
     override fun hashCode(): Int {
-        return packageInternalName.hashCode() / 3 + parts.size() / 3 + (parts.firstOrNull()?.hashCode() ?: 0) / 3
+        return packageFqName.hashCode() / 3 + parts.size() / 3 + (parts.firstOrNull()?.hashCode() ?: 0) / 3
+    }
+
+    companion object {
+        @jvmStatic public fun PackageParts.serialize(builder : JvmPackageTable.PackageTable.Builder) {
+            if (this.parts.isNotEmpty()) {
+                val packageParts = JvmPackageTable.PackageParts.newBuilder()
+                packageParts.setPackageFqName(this.packageFqName)
+                packageParts.addAllClassName(this.parts.sorted())
+                builder.addPackageParts(packageParts)
+            }
+        }
     }
 }
+

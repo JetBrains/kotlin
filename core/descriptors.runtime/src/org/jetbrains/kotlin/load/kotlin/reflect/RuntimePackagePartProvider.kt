@@ -29,20 +29,19 @@ class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartPro
         if (moduleName == null) return
 
         module2Mapping.putIfAbsent(moduleName, lazy {
-            val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.kotlin_module") ?: return@lazy ModuleMapping("")
+            val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.kotlin_module") ?: return@lazy ModuleMapping()
 
             try {
-                val bytes = resourceAsStream.readBytes()
-                return@lazy ModuleMapping(String(bytes, "UTF-8"))
+                return@lazy ModuleMapping(resourceAsStream.readBytes())
             }
             catch (e: Exception) {
-                return@lazy ModuleMapping("")
+                return@lazy ModuleMapping()
             }
         })
     }
 
 
-    override fun findPackageParts(packageInternalName: String): List<String> {
-        return module2Mapping.values().map { it.value.findPackageParts(packageInternalName) }.filterNotNull().flatMap { it.parts }.distinct()
+    override fun findPackageParts(packageFqName: String): List<String> {
+        return module2Mapping.values().map { it.value.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
     }
 }

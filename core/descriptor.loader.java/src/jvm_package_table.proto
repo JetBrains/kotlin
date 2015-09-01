@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors
+package org.jetbrains.kotlin.serialization.jvm;
 
-interface PackagePartProvider {
+option java_outer_classname = "JvmPackageTable";
+option optimize_for = LITE_RUNTIME;
 
-    /**
-     * return packagepart simple names
-     */
-    fun findPackageParts(packageFqName: String): List<String>
+message PackageTable {
+  repeated PackageParts package_parts = 1;
+}
 
-    companion object {
-        val EMPTY = object : PackagePartProvider {
-            override fun findPackageParts(packageFqName: String): List<String> {
-                return emptyList()
-            }
-        }
-    }
+message PackageParts {
+    required string package_fq_name = 1;
+    repeated string class_name = 2;
 }

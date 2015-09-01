@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.load.kotlin.PackageParts
 
 public class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {
 
-    override fun findPackageParts(packageInternalName: String): List<String> {
-        val values: MutableList<PackageParts> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageInternalName, scope)
+    override fun findPackageParts(packageFqName: String): List<String> {
+        val values: MutableList<PackageParts> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageFqName, scope)
         return values.flatMap { it.parts }.distinct()
     }
 }

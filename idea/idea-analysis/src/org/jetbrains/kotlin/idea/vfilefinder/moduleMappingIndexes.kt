@@ -25,18 +25,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.DataInput
 import java.io.DataOutput
 
-class PackageData(val data: List<String>) {
-
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other)
-    }
-
-    override fun hashCode(): Int {
-        return data.size() + (data.firstOrNull()?.hashCode() ?: 0)
-    }
-}
-
-
 public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
     private val classOfIndex = javaClass<KotlinModuleMappingIndex>().getCanonicalName()
@@ -55,8 +43,8 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
 
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(`in`: DataInput): PackageParts? {
-            val internalName = `in`.readUTF()
-            val facades = PackageParts(internalName)
+            val packageFqName = `in`.readUTF()
+            val facades = PackageParts(packageFqName)
             val size = `in`.readInt()
             (1..size).forEach {
                 facades.parts.add(`in`.readUTF())
@@ -66,7 +54,7 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
         }
 
         override fun save(out: DataOutput, value: PackageParts?) {
-            out.writeUTF(value!!.packageInternalName)
+            out.writeUTF(value!!.packageFqName)
             out.writeInt(value.parts.size())
             value.parts.forEach { out.writeUTF(it) }
         }
@@ -91,9 +79,9 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return object : DataIndexer<String, PackageParts, FileContent> {
             override fun map(inputData: FileContent): MutableMap<String, PackageParts> {
-                val content = String(inputData.getContent())
+                val content = inputData.getContent()
                 val moduleMapping = ModuleMapping(content)
-                return moduleMapping.package2Parts
+                return moduleMapping.packageFqName2Parts
             }
         }
     }

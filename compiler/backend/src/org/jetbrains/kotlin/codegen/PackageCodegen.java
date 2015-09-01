@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
+import org.jetbrains.kotlin.load.kotlin.KotlinPackage;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -120,7 +121,7 @@ public class PackageCodegen {
                 return v;
             }
         });
-        packageParts = new PackageParts(fqName.asString().replaceAll("\\.", "/"));
+        packageParts = new PackageParts(fqName.asString());
     }
 
     // Returns null if file has callables in several files
@@ -338,7 +339,8 @@ public class PackageCodegen {
 
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
 
-        packageParts.getParts().add(packagePartType.getInternalName());
+        String name = packagePartType.getInternalName();
+        packageParts.getParts().add(name.substring(name.lastIndexOf('/') + 1));
 
         ClassBuilder builder = state.getFactory().newVisitor(PackagePart(file, packageFragment), packagePartType, file);
 
