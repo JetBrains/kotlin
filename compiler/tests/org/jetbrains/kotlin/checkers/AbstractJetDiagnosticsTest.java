@@ -89,15 +89,30 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 }
         );
 
-        LazyOperationsLog lazyOperationsLog = new LazyOperationsLog(HASH_SANITIZER);
+        boolean checkLazyResolveLog = KotlinPackage.any(testFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return file.checkLazyLog;
+            }
+        });
+
+        LazyOperationsLog lazyOperationsLog = null;
+        GlobalContext context;
+
         ExceptionTracker tracker = new ExceptionTracker();
-        GlobalContext context = new SimpleGlobalContext(
-                new LoggingStorageManager(
-                        LockBasedStorageManager.createWithExceptionHandling(tracker),
-                        lazyOperationsLog.getAddRecordFunction()
-                ),
-                tracker
-        );
+        if (checkLazyResolveLog) {
+            lazyOperationsLog = new LazyOperationsLog(HASH_SANITIZER);
+            context = new SimpleGlobalContext(
+                    new LoggingStorageManager(
+                            LockBasedStorageManager.createWithExceptionHandling(tracker),
+                            lazyOperationsLog.getAddRecordFunction()
+                    ),
+                    tracker
+            );
+        }
+        else {
+            context = new SimpleGlobalContext(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker);
+        }
 
         Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule, context.getStorageManager());
         Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
@@ -123,12 +138,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
         Throwable exceptionFromLazyResolveLogValidation = null;
-        if (KotlinPackage.any(testFiles, new Function1<TestFile, Boolean>() {
-            @Override
-            public Boolean invoke(TestFile file) {
-                return file.checkLazyLog;
-            }
-        })) {
+        if (checkLazyResolveLog) {
             exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
         }
         else {
