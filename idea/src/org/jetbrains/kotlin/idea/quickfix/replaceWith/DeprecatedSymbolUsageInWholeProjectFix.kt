@@ -27,10 +27,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
@@ -46,10 +44,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class DeprecatedSymbolUsageInWholeProjectFix(
         element: JetSimpleNameExpression,
@@ -68,16 +62,10 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
         val targetPsiElement = element.mainReference.resolve()
-        return targetPsiElement is JetNamedFunction || targetPsiElement is JetProperty
+        return targetPsiElement is JetNamedFunction || targetPsiElement is JetProperty //TODO
     }
 
-    override fun invoke(
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            bindingContext: BindingContext,
-            replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
-            project: Project,
-            editor: Editor?
-    ) {
+    override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
         val psiElement = element.mainReference.resolve()!!
 
         ProgressManager.getInstance().run(
@@ -89,12 +77,12 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                                     .filterIsInstance<JetSimpleNameReference>()
                                     .map { ref -> ref.expression }
                         }
-                        replaceUsages(project, usages, replacement)
+                        replaceUsages(project, usages, replacementStrategy)
                     }
                 })
     }
 
-    private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
+    private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacementStrategy: UsageReplacementStrategy) {
         UIUtil.invokeLaterIfNeeded {
             project.executeWriteCommand(text) {
                 // we should delete imports later to not affect other usages
@@ -104,6 +92,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                     try {
                         if (!usage.isValid) continue // TODO: nested calls
 
+                        //TODO: keep the import if we don't know how to replace some of the usages
                         val importDirective = usage.getStrictParentOfType<JetImportDirective>()
                         if (importDirective != null) {
                             if (!importDirective.isAllUnder && importDirective.targetDescriptors().size() == 1) {
@@ -112,11 +101,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                             continue
                         }
 
-                        val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
-                        val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
-                        if (!resolvedCall.status.isSuccess) continue
-                        // copy replacement expression because it is modified by performReplacement
-                        performCallReplacement(usage, bindingContext, resolvedCall, replacement.copy())
+                        replacementStrategy.createReplacer(usage)?.invoke()
                     }
                     catch (e: Throwable) {
                         LOG.error(e)

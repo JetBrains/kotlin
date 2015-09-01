@@ -50,7 +50,22 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-fun performCallReplacement(
+class CallableUsageReplacementStrategy(
+        private val replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
+) : UsageReplacementStrategy {
+
+    override fun createReplacer(usage: JetSimpleNameExpression): (() -> JetElement)? {
+        val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
+        if (!resolvedCall.status.isSuccess) return null
+        return {
+            // copy replacement expression because it is modified by performCallReplacement
+            performCallReplacement(usage, bindingContext, resolvedCall, replacement.copy())
+        }
+    }
+}
+
+private fun performCallReplacement(
         element: JetSimpleNameExpression,
         bindingContext: BindingContext,
         resolvedCall: ResolvedCall<out CallableDescriptor>,

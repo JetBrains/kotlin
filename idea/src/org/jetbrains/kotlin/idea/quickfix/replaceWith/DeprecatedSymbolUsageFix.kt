@@ -21,7 +21,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -29,9 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class DeprecatedSymbolUsageFix(
         element: JetSimpleNameExpression/*TODO?*/,
@@ -40,17 +37,10 @@ public class DeprecatedSymbolUsageFix(
 
     override fun getFamilyName() = "Replace deprecated symbol usage"
 
-    override fun getText() = "Replace with '${replaceWith.expression}'" //TODO: substitute?
+    override fun getText() = "Replace with '${replaceWith.pattern}'" //TODO: substitute?
 
-    override fun invoke(
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            bindingContext: BindingContext,
-            replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
-            project: Project,
-            editor: Editor?
-    ) {
-        val result = performCallReplacement(element, bindingContext, resolvedCall, replacement)
-
+    override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
+        val result = replacementStrategy.createReplacer(element)!!.invoke()
         val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
         editor?.moveCaret(offset)
     }

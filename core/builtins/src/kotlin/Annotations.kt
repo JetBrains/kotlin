@@ -16,9 +16,9 @@
 
 package kotlin
 
-import kotlin.annotation.*
+import kotlin.annotation.AnnotationRetention.BINARY
+import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
-import kotlin.annotation.AnnotationRetention.*
 
 /**
  * Marks the annotated class as a data class. The compiler automatically generates
@@ -40,11 +40,11 @@ target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_S
 public annotation(mustBeDocumented = true) class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
- * Specifies a code fragment that can be used to replace a deprecated function or property. Tools such
+ * Specifies a code fragment that can be used to replace a deprecated function, property or class. Tools such
  * as IDEs can automatically apply the replacements specified through this annotation.
  *
  * @property expression the replacement expression. The replacement expression is interpreted in the context
- *     of the function or property being called, and can reference members of enclosing classes etc.
+ *     of the symbol being used, and can reference members of enclosing classes etc.
  *     For function calls, the replacement expression may contain argument names of the deprecated function,
  *     which will be substituted with actual parameters used in the call being updated. The imports used in the file
  *     containing the deprecated function or property are NOT accessible; if the replacement expression refers

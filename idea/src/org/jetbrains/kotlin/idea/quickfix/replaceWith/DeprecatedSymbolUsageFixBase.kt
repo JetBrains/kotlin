@@ -22,61 +22,36 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-//TODO: replacement of class usages
 //TODO: different replacements for property accessors
 
 public abstract class DeprecatedSymbolUsageFixBase(
-        element: JetSimpleNameExpression/*TODO?*/,
+        element: JetSimpleNameExpression,
         val replaceWith: ReplaceWith
 ) : JetIntentionAction<JetSimpleNameExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
-
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
-        if (!resolvedCall.status.isSuccess) return false
-        val descriptor = resolvedCall.resultingDescriptor
-        if (replaceWithPattern(descriptor, project) != replaceWith) return false
-
-        try {
-            JetPsiFactory(project).createExpression(replaceWith.expression)
-            return true
-        }
-        catch(e: Exception) {
-            return false
-        }
+        val strategy = UsageReplacementStrategy.build(element, replaceWith)
+        return strategy != null && strategy.createReplacer(element) != null
     }
 
     final override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val bindingContext = element.analyze()
-        val resolvedCall = element.getResolvedCall(bindingContext)!!
-        val descriptor = resolvedCall.resultingDescriptor
-
-        val replacement = ReplaceWithAnnotationAnalyzer.analyze(replaceWith, descriptor, element.getResolutionFacade())
-
-        invoke(resolvedCall, bindingContext, replacement, project, editor)
+        val strategy = UsageReplacementStrategy.build(element, replaceWith)!!
+        invoke(strategy, project, editor)
     }
 
     protected abstract fun invoke(
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            bindingContext: BindingContext,
-            replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
+            replacementStrategy: UsageReplacementStrategy,
             project: Project,
             editor: Editor?)
 
