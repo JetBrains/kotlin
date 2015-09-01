@@ -62,8 +62,16 @@ public class JetGotoImplementationMultifileTest extends JetLightCodeInsightFixtu
         doKotlinJavaTest();
     }
 
+    public void testImplementJavaInnerInterface() throws Exception {
+        doJavaKotlinTest();
+    }
+
     private void doKotlinJavaTest() throws Exception {
         doMultifileTest(getTestName(false) + ".kt", getTestName(false) + ".java");
+    }
+
+    private void doJavaKotlinTest() throws Exception {
+        doMultifileTest(getTestName(false) + ".java", getTestName(false) + ".kt");
     }
 
     @NotNull
