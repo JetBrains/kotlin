@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-fun performReplacement(
+fun performCallReplacement(
         element: JetSimpleNameExpression,
         bindingContext: BindingContext,
         resolvedCall: ResolvedCall<out CallableDescriptor>,

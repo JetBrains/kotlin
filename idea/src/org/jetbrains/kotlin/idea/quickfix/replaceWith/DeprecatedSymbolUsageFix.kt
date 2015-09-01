@@ -49,7 +49,7 @@ public class DeprecatedSymbolUsageFix(
             project: Project,
             editor: Editor?
     ) {
-        val result = performReplacement(element, bindingContext, resolvedCall, replacement)
+        val result = performCallReplacement(element, bindingContext, resolvedCall, replacement)
 
         val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
         editor?.moveCaret(offset)

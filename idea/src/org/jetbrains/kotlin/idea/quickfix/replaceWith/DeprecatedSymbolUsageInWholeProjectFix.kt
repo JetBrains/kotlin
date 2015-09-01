@@ -116,7 +116,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                         val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
                         if (!resolvedCall.status.isSuccess) continue
                         // copy replacement expression because it is modified by performReplacement
-                        performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
+                        performCallReplacement(usage, bindingContext, resolvedCall, replacement.copy())
                     }
                     catch (e: Throwable) {
                         LOG.error(e)
