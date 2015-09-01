@@ -44,42 +44,23 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null) return null
 
-        val semaphore = Semaphore()
-        semaphore.down()
-
-        var sourcePosition : SourcePosition? = null
-        var allClasses: List<ReferenceType>? = null
-        val worker = object : DebuggerCommandImpl() {
-            override fun action() {
-                try {
-                    sourcePosition = runReadAction { ContextUtil.getSourcePosition(suspendContext) }
-                    if (sourcePosition != null) {
-                        allClasses = suspendContext.debugProcess.positionManager.getAllClasses(sourcePosition!!)
-                    }
-                }
-                finally {
-                    semaphore.up()
-                }
-            }
+        val result: Pair<SourcePosition, List<ReferenceType>>? = computeInManagerThread(suspendContext) {
+            val sp = runReadAction { ContextUtil.getSourcePosition(it) } ?: return@computeInManagerThread null
+            val cl = it.debugProcess.positionManager.getAllClasses(sp)
+            sp to cl
         }
 
-        suspendContext.debugProcess.managerThread?.invoke(worker)
+        val (sourcePosition, allClasses)  = result ?: return null
+        val computedReferenceType = allClasses.firstOrNull() ?: return null
 
-        for (i in 0..25) {
-            if (semaphore.waitFor(20)) break
-        }
+        val file = sourcePosition.file as? JetFile ?: return null
 
-        val computedSourcePosition = sourcePosition ?: return null
-        val computedReferenceType = allClasses?.firstOrNull() ?: return null
-
-        val file = computedSourcePosition.file as? JetFile ?: return null
-
-        val inlinedArguments = getInlinedArgumentsIfAny(computedSourcePosition) ?: return null
+        val inlinedArguments = getInlinedArgumentsIfAny(sourcePosition) ?: return null
 
         val locations = computedReferenceType.allLineLocations()
         val countOfLinesInFile = file.getLineCount()
 
-        val nextLine = computedSourcePosition.line + 2 /* +1 - because of locations are counted from 1 and +1 - because we want next line */
+        val nextLine = sourcePosition.line + 2 /* +1 - because of locations are counted from 1 and +1 - because we want next line */
 
         for (lineNumber in nextLine..countOfLinesInFile) {
             val location = locations.firstOrNull { it.lineNumber() == lineNumber }
@@ -95,6 +76,31 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         }
 
         return null
+    }
+
+    private fun <T: Any> computeInManagerThread(suspendContext: SuspendContextImpl, action: (SuspendContextImpl) -> T?): T? {
+        val semaphore = Semaphore()
+        semaphore.down()
+
+        var result : T? = null
+        val worker = object : DebuggerCommandImpl() {
+            override fun action() {
+                try {
+                    result = action(suspendContext)
+                }
+                finally {
+                    semaphore.up()
+                }
+            }
+        }
+
+        suspendContext.debugProcess.managerThread?.invoke(worker)
+
+        for (i in 0..25) {
+            if (semaphore.waitFor(20)) break
+        }
+
+        return result
     }
 
     private fun getInlinedArgumentsIfAny(sourcePosition: SourcePosition): List<JetFunction>? {
