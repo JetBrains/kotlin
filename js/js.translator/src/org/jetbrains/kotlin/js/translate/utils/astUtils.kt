@@ -77,17 +77,9 @@ fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
     }
 }
 
-public var JsNameRef.qualifier: JsExpression?
-    get() = getQualifier()
-    set(value) = setQualifier(value)
-
 public var JsWhile.test: JsExpression
     get() = getCondition()
     set(value) = setCondition(value)
-
-public var JsWhile.body: JsStatement
-    get() = getBody()
-    set(value) = setBody(value)
 
 public var JsArrayAccess.index: JsExpression
     get() = getIndexExpression()
@@ -108,18 +100,3 @@ public var JsConditional.then: JsExpression
 public var JsConditional.otherwise: JsExpression
     get() = getElseExpression()
     set(value) = setElseExpression(value)
-
-public var JsBinaryOperation.arg1: JsExpression
-    get() = getArg1()
-    set(value) = setArg1(value)
-
-public var JsBinaryOperation.arg2: JsExpression
-    get() = getArg2()
-    set(value) = setArg2(value)
-
-public val JsBinaryOperation.operator: JsBinaryOperator
-    get() = getOperator()
-
-public var JsVars.JsVar.initExpression: JsExpression?
-    get() = getInitExpression()
-    set(value) = setInitExpression(value)
