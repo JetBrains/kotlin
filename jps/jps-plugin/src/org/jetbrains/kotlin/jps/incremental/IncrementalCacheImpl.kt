@@ -22,6 +22,7 @@ import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.storage.BuildDataManager
+import org.jetbrains.jps.incremental.storage.OneToManyPathsMapping
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -102,6 +104,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val PACKAGE_PARTS = "package-parts.tab"
         val SOURCE_TO_CLASSES = "source-to-classes.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
+        val HAS_INLINE_TO = "has-inline-to.tab"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -113,10 +116,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val packagePartMap = PackagePartMap()
     private val sourceToClassesMap = SourceToClassesMap()
     private val dirtyOutputClassesMap = DirtyOutputClassesMap()
+    private val hasInlineTo = OneToManyPathsMapping(File(baseDir, HAS_INLINE_TO))
 
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, sourceToClassesMap, dirtyOutputClassesMap)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
+
+    private val inlineRegistering = object : InlineRegistering {
+        override fun registerInline(fromPath: String, toPath: String) {
+            hasInlineTo.appendData(fromPath, toPath)
+        }
+    }
+
+    override fun getInlineRegistering(): InlineRegistering = inlineRegistering
 
     TestOnly
     public fun dump(): String {
