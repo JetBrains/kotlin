@@ -24,7 +24,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
@@ -64,7 +67,10 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -325,7 +331,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
                 if (anchor == null) return;
                 boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
-                                       commonContainer instanceof JetClassBody ||
                                        commonContainer instanceof JetClassInitializer);
                 if (!needBraces) {
                     property = (JetProperty)commonContainer.addBefore(property, anchor);
@@ -543,8 +548,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     @Nullable
     private static PsiElement getContainer(PsiElement place) {
-        if (place instanceof JetBlockExpression || place instanceof JetClassBody ||
-            place instanceof JetClassInitializer) {
+        if (place instanceof JetBlockExpression || place instanceof JetClassInitializer) {
             return place;
         }
         while (place != null) {
@@ -554,8 +558,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     return parent;
                 }
             }
-            if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry ||
-                parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
+            if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry || parent instanceof JetClassInitializer) {
                 return parent;
             }
             if (parent instanceof JetDeclarationWithBody && ((JetDeclarationWithBody) parent).getBodyExpression() == place) {
@@ -592,12 +595,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
             }
             else if (parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
-                if (result == null) {
-                    return parent;
-                }
-                else {
-                    return result;
-                }
+                return result;
             }
             else if (parent instanceof JetBlockExpression) {
                 result = parent;
