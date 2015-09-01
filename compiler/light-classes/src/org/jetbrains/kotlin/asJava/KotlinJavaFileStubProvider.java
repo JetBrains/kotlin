@@ -338,10 +338,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
-                    Collections.<FqName>emptySet(),
-                    null,
-                    forExtraDiagnostics,
-                    null
+                    forExtraDiagnostics
             );
             KotlinCodegenFacade.prepareForCompilation(state);
 

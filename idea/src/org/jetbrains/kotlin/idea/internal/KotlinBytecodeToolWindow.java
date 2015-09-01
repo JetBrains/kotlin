@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
@@ -234,9 +233,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST,
                                         resolutionFacade.getModuleDescriptor(), bindingContext,
-                                        toProcess, !enableAssertions, !enableAssertions,
+                                        toProcess,
+                                        !enableAssertions,
+                                        !enableAssertions,
                                         generateClassFilter,
-                                        !enableInline, !enableOptimization, Collections.<FqName>emptySet(), null,
+                                        !enableInline,
+                                        !enableOptimization,
                                         sink);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         }

@@ -383,9 +383,9 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                diagnosticHolder,
                 packagesWithObsoleteParts,
                 moduleId,
-                diagnosticHolder,
                 outputDirectory
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

@@ -59,8 +59,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.ArrayList
-import java.util.WeakHashMap
+import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class PositionedElement(val className: String?, val element: PsiElement?)
@@ -321,8 +320,12 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val analysisResult = file.analyzeFullyAndGetResult()
             analysisResult.throwIfError()
 
-            val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
-                                        analysisResult.bindingContext, listOf(file))
+            val state = GenerationState(
+                    project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
             state.beforeCompile()
             return state.typeMapper
         }
@@ -437,8 +440,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
             val analysisResult = element!!.analyzeAndGetResult()
 
-            val state = GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
-                                        analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
+            val state = GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
             return state.typeMapper
         }

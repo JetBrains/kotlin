@@ -47,10 +47,10 @@ public class GenerationState jvmOverloads constructor(
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
-        public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
-        // for PackageCodegen in incremental compilation mode
-        public val moduleId: String? = null,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
+        // for PackageCodegen in incremental compilation mode
+        public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
+        public val moduleId: String? = null,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
         public val outDirectory: File? = null,
         public val progress: Progress = Progress.DEAF
