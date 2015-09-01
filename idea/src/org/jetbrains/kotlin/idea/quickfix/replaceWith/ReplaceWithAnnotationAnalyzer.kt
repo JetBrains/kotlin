@@ -71,7 +71,7 @@ object ReplaceWithAnnotationAnalyzer {
         val originalDescriptor = (if (symbolDescriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
         else
-            symbolDescriptor).getOriginal()
+            symbolDescriptor).original
         return analyzeOriginal(annotation, originalDescriptor, resolutionFacade)
     }
 
@@ -86,7 +86,7 @@ object ReplaceWithAnnotationAnalyzer {
         val importFqNames = annotation.imports
                 .filter { FqNameUnsafe.isValid(it) }
                 .map { FqNameUnsafe(it) }
-                .filter { it.isSafe() }
+                .filter { it.isSafe }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
 
         val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
@@ -106,7 +106,7 @@ object ReplaceWithAnnotationAnalyzer {
 
         if (typeArgsToAdd.isNotEmpty()) {
             for ((callExpr, typeArgs) in typeArgsToAdd) {
-                callExpr.addAfter(typeArgs, callExpr.getCalleeExpression())
+                callExpr.addAfter(typeArgs, callExpr.calleeExpression)
             }
 
             // reanalyze expression - new usages of type parameters may be added
@@ -123,19 +123,19 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             if (expression.getReceiverExpression() == null) {
-                if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
-                    expression.putCopyableUserData(PARAMETER_USAGE_KEY, target.getName())
+                if (target is ValueParameterDescriptor && target.containingDeclaration == symbolDescriptor) {
+                    expression.putCopyableUserData(PARAMETER_USAGE_KEY, target.name)
                 }
-                else if (target is TypeParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
-                    expression.putCopyableUserData(TYPE_PARAMETER_USAGE_KEY, target.getName())
+                else if (target is TypeParameterDescriptor && target.containingDeclaration == symbolDescriptor) {
+                    expression.putCopyableUserData(TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall != null && resolvedCall.getStatus().isSuccess()) {
-                    val receiver = if (resolvedCall.getResultingDescriptor().isExtension)
-                        resolvedCall.getExtensionReceiver()
+                if (resolvedCall != null && resolvedCall.status.isSuccess) {
+                    val receiver = if (resolvedCall.resultingDescriptor.isExtension)
+                        resolvedCall.extensionReceiver
                     else
-                        resolvedCall.getDispatchReceiver()
+                        resolvedCall.dispatchReceiver
                     if (receiver is ThisReceiver) {
                         val receiverExpression = receiver.asExpression(scope.asJetScope(), psiFactory)
                         if (receiverExpression != null) {
@@ -147,8 +147,8 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         // add receivers in reverse order because arguments of a call were processed after the callee's name
-        for ((expr, receiverExpression) in receiversToAdd.reverse()) {
-            val expressionToReplace = expr.getParent() as? JetCallExpression ?: expr
+        for ((expr, receiverExpression) in receiversToAdd.reversed()) {
+            val expressionToReplace = expr.parent as? JetCallExpression ?: expr
             val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
             if (expressionToReplace == expression) {
                 expression = newExpr
@@ -165,7 +165,7 @@ object ReplaceWithAnnotationAnalyzer {
             resolutionFacade: ResolutionFacade
     ): BindingContext {
         val traceContext = BindingTraceContext()
-        resolutionFacade.getFrontendService(symbolDescriptor.module, javaClass<ExpressionTypingServices>())
+        resolutionFacade.getFrontendService(symbolDescriptor.module, ExpressionTypingServices::class.java)
                 .getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
         return traceContext.bindingContext
     }
@@ -194,7 +194,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             is PropertyDescriptor ->
                 JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                               getResolutionScope(descriptor.getContainingDeclaration(), ownerDescriptor, additionalScopes),
+                                                               getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes),
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
