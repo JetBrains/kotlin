@@ -57,7 +57,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     }
 
     @NotNull
-    /* package */ static String toString(@NotNull DeclarationDescriptor descriptor) {
+    public static String toString(@NotNull DeclarationDescriptor descriptor) {
         try {
             return DescriptorRenderer.DEBUG_TEXT.render(descriptor) +
                    "[" + descriptor.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(descriptor)) + "]";

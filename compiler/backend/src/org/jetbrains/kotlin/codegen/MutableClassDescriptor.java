@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -162,5 +163,10 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Override
     public JetScope getStaticScope() {
         return JetScope.Empty.INSTANCE$;
+    }
+
+    @Override
+    public String toString() {
+        return DeclarationDescriptorImpl.toString(this);
     }
 }
