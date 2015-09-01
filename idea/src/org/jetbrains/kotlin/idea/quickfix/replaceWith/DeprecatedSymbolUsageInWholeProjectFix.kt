@@ -28,7 +28,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
@@ -36,10 +35,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
@@ -61,12 +57,11 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
-        val targetPsiElement = element.mainReference.resolve()
-        return targetPsiElement is JetNamedFunction || targetPsiElement is JetProperty //TODO
+        return targetPsiElement() != null
     }
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
-        val psiElement = element.mainReference.resolve()!!
+        val psiElement = targetPsiElement()!!
 
         ProgressManager.getInstance().run(
                 object : Task.Modal(project, "Applying '$text'", true) {
@@ -80,6 +75,16 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                         replaceUsages(project, usages, replacementStrategy)
                     }
                 })
+    }
+
+    private fun targetPsiElement(): JetDeclaration? {
+        val referenceTarget = element.mainReference.resolve()
+        return when (referenceTarget) {
+            is JetNamedFunction -> referenceTarget
+            is JetProperty -> referenceTarget
+            is JetConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
+            else -> null
+        }
     }
 
     private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacementStrategy: UsageReplacementStrategy) {
@@ -127,9 +132,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val nameExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
-            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).a
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
+            val (nameExpression, replacement, descriptor) = DeprecatedSymbolUsageFixBase.extractDataFromDiagnostic(diagnostic) ?: return null
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
         }

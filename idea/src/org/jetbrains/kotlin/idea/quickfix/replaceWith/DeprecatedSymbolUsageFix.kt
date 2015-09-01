@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
@@ -60,9 +59,7 @@ public class DeprecatedSymbolUsageFix(
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val nameExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
-            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).a
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
+            val (nameExpression, replacement) = DeprecatedSymbolUsageFixBase.extractDataFromDiagnostic(diagnostic) ?: return null
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 

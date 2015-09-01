@@ -3312,6 +3312,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotation1.kt")
+            public void testAnnotation1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/annotation1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("annotation2.kt")
+            public void testAnnotation2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/annotation2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorUsage1.kt")
             public void testConstructorUsage1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage1.kt");

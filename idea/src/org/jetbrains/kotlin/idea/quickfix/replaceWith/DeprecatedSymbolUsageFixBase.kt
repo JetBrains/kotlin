@@ -22,8 +22,11 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -56,7 +59,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             editor: Editor?)
 
     companion object {
-        public fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
+        fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.deprecatedAnnotation
             val annotation = descriptor.annotations.findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
             val replaceWithValue = annotation.argumentValue(kotlin.deprecated::replaceWith.name) as? AnnotationDescriptor ?: return null
@@ -71,6 +74,35 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 descriptor.valueParameters.any { it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null }) return null
 
             return ReplaceWith(pattern, *imports.toTypedArray())
+        }
+
+        data class Data(
+                val nameExpression: JetSimpleNameExpression,
+                val replaceWith: ReplaceWith,
+                val descriptor: DeclarationDescriptor
+        )
+
+        fun extractDataFromDiagnostic(deprecatedDiagnostic: Diagnostic): Data? {
+            val psiElement = deprecatedDiagnostic.psiElement
+
+            //TODO: compiler crash here
+            /*
+                        val nameExpression: JetSimpleNameExpression = when (psiElement) {
+                            is JetSimpleNameExpression -> psiElement
+                            is JetConstructorCalleeExpression -> psiElement.constructorReferenceExpression
+                            else -> null
+                        } ?: return null
+            */
+            val nameExpression: JetSimpleNameExpression = (if (psiElement is JetSimpleNameExpression)
+                psiElement
+            else if (psiElement is JetConstructorCalleeExpression)
+                psiElement.constructorReferenceExpression
+            else
+                null) ?: return null
+
+            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(deprecatedDiagnostic).a
+            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
+            return Data(nameExpression, replacement, descriptor)
         }
     }
 }
