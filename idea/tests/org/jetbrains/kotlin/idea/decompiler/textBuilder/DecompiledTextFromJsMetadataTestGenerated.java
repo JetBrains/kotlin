@@ -89,6 +89,12 @@ public class DecompiledTextFromJsMetadataTestGenerated extends AbstractDecompile
         doTest(fileName);
     }
 
+    @TestMetadata("Inherited")
+    public void testInherited() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Inherited/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Object")
     public void testObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Object/");
