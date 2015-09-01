@@ -2,7 +2,7 @@ package kotlin.io
 
 import java.io.*
 import java.nio.charset.Charset
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.
@@ -57,18 +57,24 @@ public val File.parent: File?
 /**
  * Returns the canonical path of this file.
  */
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"))
 public val File.canonicalPath: String
     get() = getCanonicalPath()
 
 /**
  * Returns the file name.
  */
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
 public val File.name: String
     get() = getName()
 
 /**
  * Returns the file path.
  */
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"))
 public val File.path: String
     get() = getPath()
 

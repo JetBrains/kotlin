@@ -11,7 +11,8 @@ public val currentThread: Thread
 /**
  * Exposes the name of this thread as a property.
  */
-deprecated("Remove import of koltin.concurrent.name to use synthetic extension property instead.")
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
 public var Thread.name: String
     get() = getName()
     set(value) {
@@ -39,7 +40,8 @@ public val Thread.alive: Boolean
 /**
  * Exposes the priority of this thread as a property.
  */
-deprecated("Remove import of koltin.concurrent.priority to use synthetic extension property instead.")
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("priority"))
 public var Thread.priority: Int
     get() = getPriority()
     set(value) {
@@ -49,7 +51,8 @@ public var Thread.priority: Int
 /**
  * Exposes the context class loader of this thread as a property.
  */
-deprecated("Remove import of koltin.concurrent.contextClassLoader to use synthetic extension property instead.")
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("contextClassLoader"))
 public var Thread.contextClassLoader: ClassLoader?
     get() = getContextClassLoader()
     set(value) {
