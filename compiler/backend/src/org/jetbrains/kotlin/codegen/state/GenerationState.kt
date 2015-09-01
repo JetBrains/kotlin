@@ -48,8 +48,8 @@ public class GenerationState jvmOverloads constructor(
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
-        // for PackageCodegen in incremental compilation mode
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
+        // for PackageCodegen in incremental compilation mode
         public val moduleId: String? = null,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
         public val outDirectory: File? = null,
