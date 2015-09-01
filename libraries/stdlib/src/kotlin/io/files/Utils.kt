@@ -51,8 +51,9 @@ public val File.directory: File
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
  */
+@deprecated("Use parentFile", ReplaceWith("parentFile"))
 public val File.parent: File?
-    get() = getParentFile()
+    get() = parentFile
 
 /**
  * Returns the canonical path of this file.

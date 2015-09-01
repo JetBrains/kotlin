@@ -20,9 +20,11 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 // JavaScript style properties - TODO could auto-generate these
+@deprecated("Use getNodeName()", ReplaceWith("getNodeName() ?: \"\""))
 public val Node.nodeName: String
     get() = getNodeName() ?: ""
 
+@deprecated("Use getNodeValue()", ReplaceWith("getNodeValue() ?: \"\""))
 public val Node.nodeValue: String
     get() = getNodeValue() ?: ""
 
@@ -36,6 +38,7 @@ public val Node.nodeType: Short
 public val Node.parentNode: Node?
     get() = getParentNode()
 
+@deprecated("Use getChildNodes()", ReplaceWith("getChildNodes()!!"))
 public val Node.childNodes: NodeList
     get() = getChildNodes()!!
 
@@ -74,18 +77,23 @@ public val Node.ownerDocument: Document?
 public val Document.documentElement: Element?
     get() = this.getDocumentElement()
 
+@deprecated("Use getNamespaceURI()", ReplaceWith("getNamespaceURI() ?: \"\""))
 public val Node.namespaceURI: String
     get() = getNamespaceURI() ?: ""
 
+@deprecated("Use getPrefix()", ReplaceWith("getPrefix() ?: \"\""))
 public val Node.prefix: String
     get() = getPrefix() ?: ""
 
+@deprecated("Use getLocalName()", ReplaceWith("getLocalName() ?: \"\""))
 public val Node.localName: String
     get() = getLocalName() ?: ""
 
+@deprecated("Use getBaseURI", ReplaceWith("getBaseURI() ?: \"\""))
 public val Node.baseURI: String
     get() = getBaseURI() ?: ""
 
+@deprecated("Use getTextContent()/setTextContent()")
 public var Node.textContent: String
     get() = getTextContent() ?: ""
     set(value) {
