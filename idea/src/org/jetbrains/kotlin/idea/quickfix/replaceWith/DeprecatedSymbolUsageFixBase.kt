@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix
+package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -577,7 +578,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         private fun restoreFunctionLiteralArguments(expression: JetExpression) {
             val callExpressions = ArrayList<JetCallExpression>()
 
-            expression.forEachDescendantOfType<JetExpression>( fun (expr: JetExpression) {
+            expression.forEachDescendantOfType<JetExpression>(fun (expr: JetExpression) {
                 if (!expr[WAS_FUNCTION_LITERAL_ARGUMENT_KEY]) return
                 assert(expr.unpackFunctionLiteral() != null)
 

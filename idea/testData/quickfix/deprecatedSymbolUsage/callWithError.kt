@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix" "false"
 // ERROR: Too many arguments for kotlin.deprecated internal fun oldFun(): kotlin.Unit defined in root package
 
 @deprecated("", ReplaceWith("newFun()"))

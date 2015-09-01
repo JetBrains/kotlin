@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix
+package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.*

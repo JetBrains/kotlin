@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix" "false"
 // ERROR: An integer literal does not conform to the expected type kotlin.String
 
 @deprecated("", ReplaceWith("newFun()", imports = 123))
