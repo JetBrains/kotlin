@@ -19,7 +19,7 @@ public object Delegates {
      * specified block of code. Supports lazy initialization semantics for properties.
      * @param initializer the function that returns the value of the property.
      */
-    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
+    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(LazyThreadSafetyMode.NONE, initializer)"))
     public fun lazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = LazyVal(initializer)
 
     /**
@@ -30,8 +30,18 @@ public object Delegates {
      *             the property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */
+    deprecated("Use lazy {} instead in kotlin package")
+    public fun blockingLazy<T>(lock: Any?, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
+
+    /**
+     * Returns a property delegate for a read-only property that is initialized on first access by calling the
+     * specified block of code under a specified lock. Supports lazy initialization semantics for properties and
+     * concurrent access.
+     * The property delegate object itself is used as a lock.
+     * @param initializer the function that returns the value of the property.
+     */
     deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
-    public fun blockingLazy<T>(lock: Any? = null, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
+    public fun blockingLazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(null, initializer)
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed.
