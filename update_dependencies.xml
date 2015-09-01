@@ -437,40 +437,6 @@
         </sequential>
     </macrodef>
 
-    <!-- deprecated -->
-    <macrodef name="execute_update_with_id_resolve">
-        <attribute name="teamcity.server.url"/>
-        <attribute name="build.locator.request"/>
-
-        <sequential>
-            <loadresource property="execute.build.id">
-                <url url="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request},count:1"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <local name="idea.already.downloaded"/>
-            <condition property="idea.already.downloaded">
-                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
-            </condition>
-
-            <echo message="IDEA build id: ${execute.build.id}. Already downloaded." if:set="idea.already.downloaded"/>
-
-            <sequential unless:set="idea.already.downloaded">
-                <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
-                <execute_update base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
-
-                <propertyfile file="${dependencies.info.file}">
-                    <entry key="idea.build.id" value="${execute.build.id}"/>
-                </propertyfile>
-            </sequential>
-        </sequential>
-    </macrodef>
-
     <macrodef name="download_teamcity_artifact">
         <attribute name="teamcity.server.url"/>
         <attribute name="build.locator.request"/>
@@ -746,75 +712,6 @@
 
             <unzip src="@{dir}.zip" dest="@{dir}" if:set="need.unpack"/>
             <echo message="Folder exist - so not unpacked @{dir}" unless:set="need.unpack"/>
-        </sequential>
-    </macrodef>
-
-    <!-- deprecated -->
-    <macrodef name="execute_update">
-        <attribute name="base.url"/>
-
-        <sequential>
-            <loadresource property="idea.build.number">
-                <url url="@{base.url}/artifacts/children"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-
-                        <replaceregex pattern="^(.*)ideaIC-([\w\.]+)\.win\.zip(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
-
-            <echo message="IDEA build number: ${idea.build.number}"/>
-            <echo message="IDEA archive file: ${idea.archive.name}"/>
-
-            <property name="content.base.url" value="@{base.url}/artifacts/content"/>
-            <property name="idea.download.dir" value="dependencies/idea" />
-            <property name="jps.extracted.dir" value="${idea.download.dir}/standalone-jps"/>
-            <property name="core.dir" value="${idea.download.dir}/core"/>
-
-            <sequential if:true="${idea.sdk.fetch.needed}">
-                <delete dir="${idea.download.dir}"/>
-                <mkdir dir="${idea.download.dir}"/>
-
-                <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
-                     dest="${idea.download.dir}/standalone-jps.zip"/>
-                <unzip src="${idea.download.dir}/standalone-jps.zip"
-                       dest="${jps.extracted.dir}"/>
-
-                <delete file="${idea.download.dir}/${idea.archive.name}" failonerror="false"/>
-                <get src="${content.base.url}/${idea.archive.name}"
-                     dest="${idea.download.dir}/${idea.archive.name}"/>
-
-                <get src="${content.base.url}/jps/jps-build-test-IC-${idea.build.number}.jar"
-                     dest="${idea.download.dir}/jps-build-test.jar"
-                     usetimestamp="true"/>
-
-                <mkdir dir="${core.dir}"/>
-                <get src="${content.base.url}/core/intellij-core.jar" dest="${core.dir}/intellij-core.jar"/>
-                <get src="${content.base.url}/core/annotations.jar" dest="${core.dir}/annotations.jar"/>
-                <get src="${content.base.url}/core/guava-17.0.jar" dest="${core.dir}/guava-17.0.jar"/>
-                <get src="${content.base.url}/core/picocontainer.jar" dest="${core.dir}/picocontainer.jar"/>
-                <get src="${content.base.url}/core/trove4j.jar" dest="${core.dir}/trove4j.jar"/>
-
-                <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core.dir}/intellij-core-analysis.jar"/>
-
-                <delete file="${idea.download.dir}/idea-sdk-sources.jar" failonerror="false"/>
-                <get src="${content.base.url}/sources.jar" dest="${idea.download.dir}/idea-sdk-sources.jar"/>
-            </sequential>
-
-            <configure_idea_sdk_dir
-                idea.dir="${idea.dir}"
-                idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
-
-                download.dir.intellij-core="${core.dir}"
-                download.dir.jps-standalone="${jps.extracted.dir}"
-                download.file.archive.idea="${idea.download.dir}/${idea.archive.name}"
-                download.file.archive.idea.win.only="false"
-                download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.jar"
-                download.file.archive.jps-build-test="${idea.download.dir}/jps-build-test.jar"/>
         </sequential>
     </macrodef>
 
