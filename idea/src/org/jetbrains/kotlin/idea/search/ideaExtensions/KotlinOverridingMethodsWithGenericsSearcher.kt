@@ -41,7 +41,7 @@ public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMeth
         val declaration = method.getOrigin() as? JetCallableDeclaration
         if (declaration == null) return true
 
-        val callDescriptor = declaration.resolveToDescriptor()
+        val callDescriptor = runReadAction { declaration.resolveToDescriptor() }
         if (callDescriptor !is CallableDescriptor) return true
 
         // Java overriding method search can't find overloads with primitives types, so
