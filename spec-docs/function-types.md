@@ -40,7 +40,7 @@ or an extension function expression where a function is expected and vice versa.
 If you really want to do that, change the shape, assign literal to a variable or use the `as` operator.
 
 So basically you can now safely coerce values between function and extension function types,
-but still should invoke them in the format which you specified in their type (with or without `@extension`).
+but still should invoke them in the format which you specified in their type (with or without `@Extension`).
 
 With this we'll get rid of classes `ExtensionFunction0`, `ExtensionFunction1`, ...
 and the rest of this article will deal only with usual functions.

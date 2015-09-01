@@ -175,7 +175,7 @@ public class KotlinBuiltIns {
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
         public final FqName inlineOptions = fqName("inlineOptions");
-        public final FqName extension = fqName("extension");
+        public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("target");
         public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
@@ -721,7 +721,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
-        return new AnnotationDescriptorImpl(getBuiltInClassByName("extension").getDefaultType(),
+        return new AnnotationDescriptorImpl(getBuiltInClassByName(FQ_NAMES.extension.shortName()).getDefaultType(),
                                             Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 

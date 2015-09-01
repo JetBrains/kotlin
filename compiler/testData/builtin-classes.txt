@@ -427,6 +427,10 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation(mustBeDocumented = true) public final class Extension : kotlin.Annotation {
+    /*primary*/ public constructor Extension()
+}
+
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
@@ -1260,10 +1264,6 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, Annotati
         internal final fun <get-replaceWith>(): kotlin.ReplaceWith
     internal final val value: kotlin.String
         internal final fun <get-value>(): kotlin.String
-}
-
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation(mustBeDocumented = true) public final class extension : kotlin.Annotation {
-    /*primary*/ public constructor extension()
 }
 
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {

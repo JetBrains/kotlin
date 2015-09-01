@@ -59,7 +59,7 @@ public annotation(retention = BINARY, mustBeDocumented = true) class ReplaceWith
  * Signifies that the annotated functional type represents an extension function.
  */
 target(TYPE)
-public annotation(mustBeDocumented = true) class extension
+public annotation(mustBeDocumented = true) class Extension
 
 /**
  * Suppresses the given compilation warnings in the annotated element.
