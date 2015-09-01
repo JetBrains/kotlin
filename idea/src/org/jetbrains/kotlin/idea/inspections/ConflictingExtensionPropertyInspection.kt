@@ -129,9 +129,13 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
 
     private fun checkSetterBodyIsSetMethodCall(setter: JetPropertyAccessor, setMethod: FunctionDescriptor): Boolean {
         val valueParameterName = setter.valueParameters.singleOrNull()?.nameAsName ?: return false
-        if (!setter.hasBlockBody()) return false
-        val statement = (setter.bodyExpression as? JetBlockExpression)?.statements?.singleOrNull() ?: return false
-        return statement.isSetMethodCall(setMethod, valueParameterName)
+        if (setter.hasBlockBody()) {
+            val statement = (setter.bodyExpression as? JetBlockExpression)?.statements?.singleOrNull() ?: return false
+            return statement.isSetMethodCall(setMethod, valueParameterName)
+        }
+        else {
+            return setter.bodyExpression.isSetMethodCall(setMethod, valueParameterName)
+        }
     }
 
     private fun JetExpression?.isGetMethodCall(getMethod: FunctionDescriptor): Boolean {
