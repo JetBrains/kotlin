@@ -44,6 +44,8 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null) return null
 
+        if (!isKotlinStrataPresent(suspendContext)) return null
+
         val result: Pair<SourcePosition, List<ReferenceType>>? = computeInManagerThread(suspendContext) {
             val sp = runReadAction { ContextUtil.getSourcePosition(it) } ?: return@computeInManagerThread null
             val cl = it.debugProcess.positionManager.getAllClasses(sp)
@@ -76,6 +78,11 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         }
 
         return null
+    }
+
+    private fun isKotlinStrataPresent(suspendContext: SuspendContextImpl): Boolean {
+        val availableStrata = suspendContext.frameProxy?.location()?.declaringType()?.availableStrata() ?: return false
+        return availableStrata.contains("Kotlin")
     }
 
     private fun <T: Any> computeInManagerThread(suspendContext: SuspendContextImpl, action: (SuspendContextImpl) -> T?): T? {
