@@ -10912,6 +10912,69 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/reassignment")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Reassignment extends AbstractJetDiagnosticsTest {
+            @TestMetadata("afterfor.kt")
+            public void testAfterfor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/afterfor.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInReassignment() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/reassignment"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("dowhile.kt")
+            public void testDowhile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/dowhile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("else.kt")
+            public void testElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/else.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("foronly.kt")
+            public void testForonly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/foronly.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("if.kt")
+            public void testIf() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/if.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifelse.kt")
+            public void testIfelse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/ifelse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noifelse.kt")
+            public void testNoifelse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/noifelse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/when.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whiletrue.kt")
+            public void testWhiletrue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reassignment/whiletrue.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/recovery")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

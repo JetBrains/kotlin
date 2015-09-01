@@ -23,9 +23,9 @@ L0:
     v(i)                                                                                                          INIT: in: {numbers=ID} out: {i=D, numbers=ID}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                                                                      INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}
+    jmp?(L3)                                                                                                      INIT: in: {i=I?D, numbers=ID} out: {i=I?D, numbers=ID}
     magic[LOOP_RANGE_ITERATION](numbers|<v1>) -> <v2>
-    w(i|<v2>)                                                                                                     INIT: in: {i=D, numbers=ID} out: {i=ID, numbers=ID}
+    w(i|<v2>)                                                                                                     INIT: in: {i=I?D, numbers=ID} out: {i=ID, numbers=ID}
     mark(for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })        INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}                USE: in: {} out: {}
 L4 [body entry point]:
   4 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })
@@ -53,7 +53,7 @@ L8 ['if' expression result]:
 - 3 jmp(L2)
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                                                                                   INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}
+    read (Unit)                                                                                                   INIT: in: {i=I?D, numbers=ID} out: {i=I?D, numbers=ID}
 L1:
   1 <END>                                                                                                         INIT: in: {numbers=ID} out: {numbers=ID}
 error:

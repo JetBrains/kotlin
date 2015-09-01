@@ -372,14 +372,14 @@ public class JetFlowInformationProvider {
         if (!(element instanceof JetSimpleNameExpression)) return;
 
 
-        boolean isInitialized = ctxt.exitInitState.isInitialized;
+        boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor) {
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
-                isInitialized = true;
+                isDefinitelyInitialized = true;
             }
         }
-        if (!isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
+        if (!isDefinitelyInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             if (!(variableDescriptor instanceof PropertyDescriptor)) {
                 varWithUninitializedErrorGenerated.add(variableDescriptor);
             }
@@ -412,7 +412,7 @@ public class JetFlowInformationProvider {
             }
         }
 
-        boolean isInitializedNotHere = ctxt.enterInitState.isInitialized;
+        boolean mayBeInitializedNotHere = ctxt.enterInitState.mayBeInitialized();
         boolean hasBackingField = true;
         if (variableDescriptor instanceof PropertyDescriptor) {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
@@ -437,7 +437,7 @@ public class JetFlowInformationProvider {
         }
         boolean isThisOrNoDispatchReceiver =
                 PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.getBindingContext());
-        if ((isInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver) && !variableDescriptor.isVar()) {
+        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver) && !variableDescriptor.isVar()) {
             boolean hasReassignMethodReturningUnit = false;
             JetSimpleNameExpression operationReference = null;
             PsiElement parent = expression.getParent();
@@ -483,7 +483,7 @@ public class JetFlowInformationProvider {
 
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull JetExpression expression) {
         if (!ctxt.enterInitState.isDeclared && !ctxt.exitInitState.isDeclared
-                && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
+            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
             return true;
         }
@@ -492,7 +492,8 @@ public class JetFlowInformationProvider {
 
     private boolean checkInitializationUsingBackingField(@NotNull VariableInitContext ctxt, @NotNull JetExpression expression) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (variableDescriptor instanceof PropertyDescriptor && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
+        if (variableDescriptor instanceof PropertyDescriptor
+            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
             PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
@@ -590,7 +591,7 @@ public class JetFlowInformationProvider {
         for (VariableDescriptor variable : declaredVariables) {
             if (variable instanceof PropertyDescriptor) {
                 PseudocodeVariablesData.VariableInitState variableInitState = initializers.getIncoming().get(variable);
-                if (variableInitState != null && variableInitState.isInitialized) continue;
+                if (variableInitState != null && variableInitState.definitelyInitialized()) continue;
                 trace.record(BindingContext.IS_UNINITIALIZED, (PropertyDescriptor) variable);
             }
         }

@@ -10,7 +10,7 @@ object FileRead {
             val fstream = FileInputStream()
             val `in` = DataInputStream(fstream)
             val br = BufferedReader(InputStreamReader(`in`))
-            val strLine: String
+            var strLine: String
             while ((strLine = br.readLine()) != null) {
                 println(strLine)
             }

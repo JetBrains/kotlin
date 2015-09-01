@@ -155,7 +155,7 @@ public class PseudocodeVariablesData {
         boolean declaredOutsideThisDeclaration =
                 declaredIn == null //declared outside this pseudocode
                 || declaredIn.getLexicalScopeForContainingDeclaration() != instruction.getLexicalScope().getLexicalScopeForContainingDeclaration();
-        return VariableInitState.create(/*isInitialized=*/declaredOutsideThisDeclaration);
+        return VariableInitState.create(/*initState=*/declaredOutsideThisDeclaration);
     }
 
     @NotNull
@@ -169,20 +169,21 @@ public class PseudocodeVariablesData {
 
         Map<VariableDescriptor, VariableInitState> enterInstructionData = Maps.newHashMap();
         for (VariableDescriptor variable : variablesInScope) {
-            boolean isInitialized = true;
+            TriInitState initState = null;
             boolean isDeclared = true;
             for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
-                VariableInitState initState = edgeData.get(variable);
-                if (initState != null) {
-                    if (!initState.isInitialized) {
-                        isInitialized = false;
-                    }
-                    if (!initState.isDeclared) {
+                VariableInitState varControlFlowState = edgeData.get(variable);
+                if (varControlFlowState != null) {
+                    initState = initState != null ? initState.merge(varControlFlowState.initState) : varControlFlowState.initState;
+                    if (!varControlFlowState.isDeclared) {
                         isDeclared = false;
                     }
                 }
             }
-            enterInstructionData.put(variable, VariableInitState.create(isInitialized, isDeclared));
+            if (initState == null) {
+                throw new AssertionError("An empty set of incoming edges data");
+            }
+            enterInstructionData.put(variable, VariableInitState.create(initState, isDeclared));
         }
         return enterInstructionData;
     }
@@ -217,8 +218,8 @@ public class PseudocodeVariablesData {
             if (enterInitState == null) {
                 enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo);
             }
-            if (enterInitState == null || !enterInitState.isInitialized || !enterInitState.isDeclared) {
-                boolean isInitialized = enterInitState != null && enterInitState.isInitialized;
+            if (enterInitState == null || !enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
+                boolean isInitialized = enterInitState != null && enterInitState.mayBeInitialized();
                 VariableInitState variableDeclarationInfo = VariableInitState.create(isInitialized, true);
                 exitInstructionData.put(variable, variableDeclarationInfo);
             }
@@ -279,28 +280,54 @@ public class PseudocodeVariablesData {
         );
     }
 
+    private enum TriInitState {
+        INITIALIZED("I"), UNKNOWN("I?"), NOT_INITIALIZED("");
+
+        private final String s;
+
+        TriInitState(String s) {
+            this.s = s;
+        }
+
+        private TriInitState merge(@NotNull TriInitState other) {
+            if (this == other) return this;
+            return UNKNOWN;
+        }
+
+        @Override
+        public String toString() {
+            return s;
+        }
+    }
+
     public static class VariableInitState {
-        public final boolean isInitialized;
+
+        public final TriInitState initState;
         public final boolean isDeclared;
 
-        private VariableInitState(boolean isInitialized, boolean isDeclared) {
-            this.isInitialized = isInitialized;
+        private VariableInitState(TriInitState initState, boolean isDeclared) {
+            this.initState = initState;
             this.isDeclared = isDeclared;
         }
 
-        private static final VariableInitState VS_TT = new VariableInitState(true, true);
-        private static final VariableInitState VS_TF = new VariableInitState(true, false);
-        private static final VariableInitState VS_FT = new VariableInitState(false, true);
-        private static final VariableInitState VS_FF = new VariableInitState(false, false);
+        private static final VariableInitState VS_IT = new VariableInitState(TriInitState.INITIALIZED, true);
+        private static final VariableInitState VS_IF = new VariableInitState(TriInitState.INITIALIZED, false);
+        private static final VariableInitState VS_UT = new VariableInitState(TriInitState.UNKNOWN, true);
+        private static final VariableInitState VS_UF = new VariableInitState(TriInitState.UNKNOWN, false);
+        private static final VariableInitState VS_NT = new VariableInitState(TriInitState.NOT_INITIALIZED, true);
+        private static final VariableInitState VS_NF = new VariableInitState(TriInitState.NOT_INITIALIZED, false);
 
+
+        private static VariableInitState create(TriInitState initState, boolean isDeclared) {
+            switch (initState) {
+                case INITIALIZED: return isDeclared ? VS_IT : VS_IF;
+                case UNKNOWN: return isDeclared ? VS_UT : VS_UF;
+                default: return isDeclared ? VS_NT : VS_NF;
+            }
+        }
 
         private static VariableInitState create(boolean isInitialized, boolean isDeclared) {
-            if (isInitialized) {
-                if (isDeclared) return VS_TT;
-                return VS_TF;
-            }
-            if (isDeclared) return VS_FT;
-            return VS_FF;
+            return create(isInitialized ? TriInitState.INITIALIZED : TriInitState.NOT_INITIALIZED, isDeclared);
         }
 
         private static VariableInitState create(boolean isInitialized) {
@@ -311,14 +338,22 @@ public class PseudocodeVariablesData {
             return create(true, isDeclaredHere || (mergedEdgesData != null && mergedEdgesData.isDeclared));
         }
 
+        public boolean definitelyInitialized() {
+            return initState == TriInitState.INITIALIZED;
+        }
+
+        public boolean mayBeInitialized() {
+            return initState != TriInitState.NOT_INITIALIZED;
+        }
+
         @Override
         public String toString() {
-            if (!isInitialized && !isDeclared) return "-";
-            return (isInitialized ? "I" : "") + (isDeclared ? "D" : "");
+            if (initState == TriInitState.NOT_INITIALIZED && !isDeclared) return "-";
+            return initState + (isDeclared ? "D" : "");
         }
     }
 
-    public static enum VariableUseState {
+    public enum VariableUseState {
         READ(3),
         WRITTEN_AFTER_READ(2),
         ONLY_WRITTEN_NEVER_READ(1),

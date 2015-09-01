@@ -10,7 +10,7 @@ L0:
     v(val sum: (Int)->Int = { (x: Int) -> sum(x - 1) + x })    INIT: in: {} out: {sum=D}
     mark({ (x: Int) -> sum(x - 1) + x })                       INIT: in: {sum=D} out: {sum=D}
     jmp?(L2)
-    d({ (x: Int) -> sum(x - 1) + x })                                                              USE: in: {sum=READ} out: {sum=READ}
+    d({ (x: Int) -> sum(x - 1) + x })                                                                USE: in: {sum=READ} out: {sum=READ}
 L2 [after local declaration]:
     r({ (x: Int) -> sum(x - 1) + x }) -> <v0>
     w(sum|<v0>)                                                INIT: in: {sum=D} out: {sum=ID}
@@ -19,7 +19,7 @@ L1:
 error:
     <ERROR>                                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                                     INIT: in: {sum=D} out: {sum=D}      USE: in: {} out: {}
+    <SINK>                                                     INIT: in: {sum=I?D} out: {sum=I?D}    USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { (x: Int) ->
@@ -101,7 +101,7 @@ L1:
 error:
     <ERROR>                                                                              INIT: in: {} out: {}
 sink:
-    <SINK>                                                                               INIT: in: {obj=D} out: {obj=D}               USE: in: {} out: {}
+    <SINK>                                                                               INIT: in: {obj=I?D} out: {obj=I?D}           USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {

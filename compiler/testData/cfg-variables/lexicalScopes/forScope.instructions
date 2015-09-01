@@ -19,9 +19,9 @@ L0:
     v(i)                                                         INIT: in: {} out: {i=D}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                     INIT: in: {i=D} out: {i=D}
+    jmp?(L3)                                                     INIT: in: {i=I?D} out: {i=I?D}
     magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
-    w(i|<v4>)                                                    INIT: in: {i=D} out: {i=ID}
+    w(i|<v4>)                                                    INIT: in: {i=I?D} out: {i=ID}
     mark(for (i in 1..10) { val a = i })                         INIT: in: {i=ID} out: {i=ID}
 L4 [body entry point]:
   4 mark({ val a = i })
@@ -31,7 +31,7 @@ L4 [body entry point]:
   3 jmp(L2)                                                      INIT: in: {i=ID} out: {i=ID}               USE: in: {i=READ} out: {i=READ}
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                                  INIT: in: {i=D} out: {i=D}
+    read (Unit)                                                  INIT: in: {i=I?D} out: {i=I?D}
   2 mark("after")                                                INIT: in: {} out: {}
     r("after") -> <v6>
 L1:
