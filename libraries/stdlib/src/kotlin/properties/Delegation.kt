@@ -30,7 +30,7 @@ public object Delegates {
      *             the property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */
-    deprecated("Use lazy {} instead in kotlin package")
+    deprecated("Use lazy(lock) {} instead in kotlin package", ReplaceWith("lazy(lock, initializer)"))
     public fun blockingLazy<T>(lock: Any?, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
 
     /**

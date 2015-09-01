@@ -17,6 +17,23 @@ class LazyValTest {
     }
 }
 
+class SynchronizedLazyValTest {
+    volatile var result = 0
+    val a by lazy(this) {
+        ++result
+    }
+
+    test fun doTest() {
+        synchronized(this) {
+            // thread { a } // not available in js // TODO: Make this test JVM-only
+            result = 1
+            a
+        }
+        assertTrue(a == 2, "fail: initializer should be invoked only once")
+        assertTrue(result == 2, "fail result should be incremented after test")
+    }
+}
+
 class UnsafeLazyValTest {
     var result = 0
     val a by lazy(LazyThreadSafetyMode.NONE) {
