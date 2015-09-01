@@ -79,7 +79,9 @@ target(FUNCTION)
 public annotation(retention = SOURCE) class tailRecursive
 
 /**
- * TODO
+ * Hides the annotated function, property or constructor from the overload resolution,
+ * thus preventing its usages from newly compiled code, but keeps compiling it
+ * to retain binary compatibility with the code compiled against it before.
  */
 target(FUNCTION, PROPERTY, CONSTRUCTOR)
 annotation(retention = BINARY, mustBeDocumented = true)
