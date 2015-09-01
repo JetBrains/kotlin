@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver
 import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
@@ -47,7 +47,7 @@ class JavaResolverComponents(
         val samConversionResolver: SamConversionResolver,
         val sourceElementFactory: JavaSourceElementFactory,
         val moduleClassResolver: ModuleClassResolver,
-        val packageMapper: PackageFacadeProvider
+        val packageMapper: PackagePartProvider
 )
 
 open class LazyJavaResolverContext(

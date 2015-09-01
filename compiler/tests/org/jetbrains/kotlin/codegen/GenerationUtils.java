@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
@@ -48,21 +48,21 @@ public class GenerationUtils {
             @NotNull KotlinCoreEnvironment environment
     ) {
         AnalysisResult analysisResult =
-                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackageFacadeProvider(environment));
+                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackagePartProvider(environment));
         return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
-        return compileManyFilesGetGenerationStateForTest(project, files, PackageFacadeProvider.EMPTY);
+        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.EMPTY);
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files,
-            @NotNull PackageFacadeProvider packageFacadeProvider
+            @NotNull PackagePartProvider packagePartProvider
     ) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, packageFacadeProvider);
+                project, files, packagePartProvider);
         return compileFilesGetGenerationState(project, analysisResult, files);
     }
 

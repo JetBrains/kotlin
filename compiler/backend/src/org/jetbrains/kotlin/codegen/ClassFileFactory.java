@@ -89,7 +89,7 @@ public class ClassFileFactory implements OutputFileCollection {
         String outputFilePath = getMappingFileName(state.getModuleName());
         final StringWriter moduleMapping = new StringWriter(1024);
         for (PackageCodegen codegen : values) {
-            codegen.getFacades().serialize(moduleMapping);
+            codegen.getPackageParts().serialize(moduleMapping);
         }
         state.getProgress().reportOutput(Collections.<File>emptyList(), new File(outputFilePath));
         //TODO: source files?

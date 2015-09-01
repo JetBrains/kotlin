@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -62,7 +62,7 @@ public class LazyResolveTestUtil {
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
-                new JvmPackageFacadeProvider(environment)
+                new JvmPackagePartProvider(environment)
         );
 
         return moduleContext.getModule();

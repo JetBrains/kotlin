@@ -328,7 +328,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 sharedTrace,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                                new JvmPackageFacadeProvider(environment)
+                                new JvmPackagePartProvider(environment)
                         );
                     }
                 }

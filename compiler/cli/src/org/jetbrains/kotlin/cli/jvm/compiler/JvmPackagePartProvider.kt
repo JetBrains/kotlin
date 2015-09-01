@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 
-public class JvmPackageFacadeProvider(val env: KotlinCoreEnvironment) : PackageFacadeProvider {
+public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
 
     val roots by lazy {
         env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).
@@ -32,7 +32,7 @@ public class JvmPackageFacadeProvider(val env: KotlinCoreEnvironment) : PackageF
                 }.filter { it?.findChild("META-INF") != null }.filterNotNull()
     }
 
-    override fun findPackageFacades(packageInternalName: String): List<String> {
+    override fun findPackageParts(packageInternalName: String): List<String> {
         val pathParts = packageInternalName.split('/')
         val mappings = roots.filter {
             //filter all roots by package path existing

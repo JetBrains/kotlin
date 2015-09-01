@@ -20,10 +20,10 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackageFacadeProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -37,11 +37,11 @@ public class JvmResolveUtil {
     public static String TEST_MODULE_NAME = "java-integration-test";
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
-        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackageFacadeProvider.EMPTY);
+        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.EMPTY);
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file, @NotNull PackageFacadeProvider provider) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file, @NotNull PackagePartProvider provider) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
         AnalysisResult analysisResult = analyzeOneFileWithJavaIntegration(file, provider);
@@ -53,17 +53,17 @@ public class JvmResolveUtil {
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull KotlinCoreEnvironment environment) {
-        return analyzeOneFileWithJavaIntegration(file, new JvmPackageFacadeProvider(environment));
+        return analyzeOneFileWithJavaIntegration(file, new JvmPackagePartProvider(environment));
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull PackageFacadeProvider provider) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull PackagePartProvider provider) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), provider);
     }
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
-        return analyzeOneFileWithJavaIntegration(file, PackageFacadeProvider.EMPTY);
+        return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.EMPTY);
     }
 
     @NotNull
@@ -71,20 +71,20 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
-        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackageFacadeProvider.EMPTY);
+        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.EMPTY);
     }
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
-            @NotNull PackageFacadeProvider packageFacadeProvider
+            @NotNull PackagePartProvider packagePartProvider
     ) {
         for (JetFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
 
-        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files, packageFacadeProvider);
+        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files, packagePartProvider);
 
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
@@ -97,14 +97,14 @@ public class JvmResolveUtil {
             @NotNull Collection<JetFile> files,
             @NotNull KotlinCoreEnvironment environment
     ) {
-        return analyzeFilesWithJavaIntegration(project, files, new JvmPackageFacadeProvider(environment));
+        return analyzeFilesWithJavaIntegration(project, files, new JvmPackagePartProvider(environment));
     }
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
-            @NotNull PackageFacadeProvider packageFacadeProvider
+            @NotNull PackagePartProvider packagePartProvider
     ) {
 
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, TEST_MODULE_NAME);
@@ -112,6 +112,6 @@ public class JvmResolveUtil {
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(moduleContext, files, trace, null, null,
-                                                                                            packageFacadeProvider);
+                                                                                            packagePartProvider);
     }
 }

@@ -21,7 +21,7 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageFacades
+import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.DataInput
 import java.io.DataOutput
 
@@ -37,11 +37,11 @@ class PackageData(val data: List<String>) {
 }
 
 
-public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageFacades>() {
+public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
     private val classOfIndex = javaClass<KotlinModuleMappingIndex>().getCanonicalName()
 
-    public val KEY: ID<String, PackageFacades> = ID.create(classOfIndex)
+    public val KEY: ID<String, PackageParts> = ID.create(classOfIndex)
 
     private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
         override fun save(output: DataOutput, value: String) = output.writeUTF(value)
@@ -53,10 +53,10 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
         override fun isEqual(val1: String?, val2: String?) = val1 == val2
     }
 
-    private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageFacades> {
-        override fun read(`in`: DataInput): PackageFacades? {
+    private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
+        override fun read(`in`: DataInput): PackageParts? {
             val internalName = `in`.readUTF()
-            val facades = PackageFacades(internalName)
+            val facades = PackageParts(internalName)
             val size = `in`.readInt()
             (1..size).forEach {
                 facades.parts.add(`in`.readUTF())
@@ -65,7 +65,7 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
             return facades
         }
 
-        override fun save(out: DataOutput, value: PackageFacades?) {
+        override fun save(out: DataOutput, value: PackageParts?) {
             out.writeUTF(value!!.packageInternalName)
             out.writeInt(value.parts.size())
             value.parts.forEach { out.writeUTF(it) }
@@ -88,12 +88,12 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
 
     override fun getVersion(): Int = 1
 
-    override fun getIndexer(): DataIndexer<String, PackageFacades, FileContent> {
-        return object : DataIndexer<String, PackageFacades, FileContent> {
-            override fun map(inputData: FileContent): MutableMap<String, PackageFacades> {
+    override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
+        return object : DataIndexer<String, PackageParts, FileContent> {
+            override fun map(inputData: FileContent): MutableMap<String, PackageParts> {
                 val content = String(inputData.getContent())
                 val moduleMapping = ModuleMapping(content)
-                return moduleMapping.package2MiniFacades
+                return moduleMapping.package2Parts
             }
         }
     }

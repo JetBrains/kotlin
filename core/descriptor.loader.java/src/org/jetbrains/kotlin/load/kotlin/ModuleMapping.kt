@@ -20,19 +20,19 @@ import java.io.Writer
 
 public class ModuleMapping(val moduleMapping: String) {
 
-    val package2MiniFacades = hashMapOf<String, PackageFacades>()
+    val package2Parts = hashMapOf<String, PackageParts>()
 
     init {
         for (i in moduleMapping.split("\n")) {
             if(i.isEmpty()) continue
             val (pakage, facade) = i.split("->")
-            val miniFacades = package2MiniFacades.getOrPut(pakage, { PackageFacades(pakage) })
+            val miniFacades = package2Parts.getOrPut(pakage, { PackageParts(pakage) })
             miniFacades.parts.add(facade)
         }
     }
 
-    fun findPackageParts(internalPackageName: String): PackageFacades? {
-        return package2MiniFacades[internalPackageName]
+    fun findPackageParts(internalPackageName: String): PackageParts? {
+        return package2Parts[internalPackageName]
     }
 
     companion object {
@@ -40,7 +40,7 @@ public class ModuleMapping(val moduleMapping: String) {
     }
 }
 
-public class PackageFacades(val packageInternalName: String) {
+public class PackageParts(val packageInternalName: String) {
 
     val parts = linkedSetOf<String>()
 
@@ -51,7 +51,7 @@ public class PackageFacades(val packageInternalName: String) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is PackageFacades) {
+        if (other !is PackageParts) {
             return false;
         }
 

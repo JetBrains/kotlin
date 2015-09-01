@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.cli.jvm.repl.di
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
@@ -40,9 +39,9 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 public fun createContainerForReplWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes,
-        packageFacadeProvider: PackageFacadeProvider
+        packagePartProvider: PackagePartProvider
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
-    useInstance(packageFacadeProvider)
+    useInstance(packagePartProvider)
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
 

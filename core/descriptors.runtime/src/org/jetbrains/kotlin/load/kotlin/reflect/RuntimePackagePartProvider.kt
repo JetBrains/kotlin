@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.load.kotlin.reflect
 
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 
-class RuntimePackageFacadeProvider(val classLoader : ClassLoader) : PackageFacadeProvider {
+class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartProvider {
 
     val module2Mapping = ConcurrentHashMap<String, Lazy<ModuleMapping>>()
 
@@ -42,7 +42,7 @@ class RuntimePackageFacadeProvider(val classLoader : ClassLoader) : PackageFacad
     }
 
 
-    override fun findPackageFacades(packageInternalName: String): List<String> {
+    override fun findPackageParts(packageInternalName: String): List<String> {
         return module2Mapping.values().map { it.value.findPackageParts(packageInternalName) }.filterNotNull().flatMap { it.parts }.distinct()
     }
 }

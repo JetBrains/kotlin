@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.descriptors
 
-interface PackageFacadeProvider {
+interface PackagePartProvider {
 
-    fun findPackageFacades(packageInternalName: String): List<String>
+    fun findPackageParts(packageInternalName: String): List<String>
 
     companion object {
-        val EMPTY = object : PackageFacadeProvider {
-            override fun findPackageFacades(packageInternalName: String): List<String> {
+        val EMPTY = object : PackagePartProvider {
+            override fun findPackageParts(packageInternalName: String): List<String> {
                 return emptyList()
             }
         }

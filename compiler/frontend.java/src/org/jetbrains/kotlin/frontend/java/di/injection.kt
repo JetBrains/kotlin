@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
-import org.jetbrains.kotlin.descriptors.PackageFacadeProvider
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
@@ -72,10 +72,10 @@ public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
-        packageFacadeProvider: PackageFacadeProvider
+        packagePartProvider: PackagePartProvider
 ): ComponentProvider = createContainer("LazyResolveWithJava") {
     //TODO: idea specific code
-    useInstance(packageFacadeProvider)
+    useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
@@ -99,9 +99,9 @@ public fun createContainerForTopDownAnalyzerForJvm(
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
         lookupTracker: LookupTracker,
-        packageFacadeProvider: PackageFacadeProvider
+        packagePartProvider: PackagePartProvider
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
-    useInstance(packageFacadeProvider)
+    useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)

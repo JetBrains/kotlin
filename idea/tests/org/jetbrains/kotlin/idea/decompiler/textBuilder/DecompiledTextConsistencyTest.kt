@@ -18,16 +18,17 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.idea.caches.resolve.IDEPackageFacadeProvider
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
@@ -49,7 +50,7 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test"),
                     listOf(), BindingTraceContext(), null, null,
-                    IDEPackageFacadeProvider(GlobalSearchScope.allScope(project))
+                    IDEPackagePartProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor
 
     override fun getProjectDescriptor() =
