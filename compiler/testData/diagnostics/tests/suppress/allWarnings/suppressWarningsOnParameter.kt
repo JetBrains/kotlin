@@ -1,3 +1,3 @@
 class C {
-    fun foo(suppress("warnings") p: String?? = "" as String) {}
+    fun foo(@Suppress("warnings") p: String?? = "" as String) {}
 }

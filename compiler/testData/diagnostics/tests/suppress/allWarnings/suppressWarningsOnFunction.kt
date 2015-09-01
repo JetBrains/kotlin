@@ -1,4 +1,4 @@
 class C {
-    suppress("warnings")
+    @Suppress("warnings")
     fun foo(p: String??) {}
 }

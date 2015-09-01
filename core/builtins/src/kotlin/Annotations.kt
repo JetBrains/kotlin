@@ -67,7 +67,7 @@ public annotation(mustBeDocumented = true) class Extension
  */
 target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
-public annotation(retention = SOURCE) class suppress(vararg val names: String)
+public annotation(retention = SOURCE) class Suppress(vararg val names: String)
 
 /**
  * Enables the tail call optimization for the annotated function. If the annotated function

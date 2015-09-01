@@ -1243,6 +1243,12 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class Suppress : kotlin.Annotation {
+    /*primary*/ public constructor Suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    internal final val names: kotlin.Array<out kotlin.String>
+        internal final fun <get-names>(): kotlin.Array<out kotlin.String>
+}
+
 public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String? = ..., /*1*/ cause: kotlin.Throwable? = ...)
     public final fun getCause(): kotlin.Throwable?
@@ -1281,13 +1287,6 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
-
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class suppress : kotlin.Annotation {
-    /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
-    internal final val names: kotlin.Array<out kotlin.String>
-        internal final fun <get-names>(): kotlin.Array<out kotlin.String>
-}
-
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
 }

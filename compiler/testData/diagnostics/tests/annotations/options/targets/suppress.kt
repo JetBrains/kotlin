@@ -1,5 +1,5 @@
-@file:suppress("abc")
+@file:Suppress("abc")
 
 fun foo(): Int {
-    @suppress("xyz") return 1
+    @Suppress("xyz") return 1
 }

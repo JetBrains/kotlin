@@ -10,7 +10,7 @@ package h
 
 interface H
 
-@suppress("UNUSED_CHANGED_VALUE")
+@Suppress("UNUSED_CHANGED_VALUE")
 fun f(h: H?) {
     var h1 = h
     h1<caret>++

@@ -155,7 +155,7 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe any = fqNameUnsafe("Any");
         public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
         public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");
-        public final FqNameUnsafe suppress = fqNameUnsafe("suppress");
+        public final FqNameUnsafe suppress = fqNameUnsafe("Suppress");
         public final FqNameUnsafe unit = fqNameUnsafe("Unit");
         public final FqNameUnsafe string = fqNameUnsafe("String");
         public final FqNameUnsafe array = fqNameUnsafe("Array");

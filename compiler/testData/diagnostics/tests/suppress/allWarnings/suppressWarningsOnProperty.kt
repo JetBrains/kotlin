@@ -1,4 +1,4 @@
 class C {
-    suppress("warnings")
+    @Suppress("warnings")
     val foo: String?? = null as Nothing?
 }

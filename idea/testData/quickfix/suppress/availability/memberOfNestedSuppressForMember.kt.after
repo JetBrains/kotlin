@@ -2,7 +2,7 @@
 
 class C {
     class D {
-        @suppress("REDUNDANT_NULLABLE")
+        @Suppress("REDUNDANT_NULLABLE")
         fun foo(): String?<caret>? = null
     }
 }

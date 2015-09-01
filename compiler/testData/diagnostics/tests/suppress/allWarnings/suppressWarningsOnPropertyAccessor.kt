@@ -1,5 +1,5 @@
 class C {
     val foo: String?
-        @suppress("warnings")
+        @Suppress("warnings")
         get(): String?? = null as Nothing?
 }

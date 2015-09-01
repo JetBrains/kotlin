@@ -126,7 +126,7 @@ public class KotlinSuppressIntentionAction(
         }
     }
 
-    private fun suppressAnnotationText(id: String) = "@suppress($id)"
+    private fun suppressAnnotationText(id: String) = "@Suppress($id)"
 
     private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
         val context = annotated.analyze()
