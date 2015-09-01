@@ -65,12 +65,9 @@ public fun buildDecompiledText(
                             .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
                     mapOf())
         }
-        classHeader.isCompatiblePackageFacadeKind() ->
-            buildDecompiledText(packageFqName,
-                                ArrayList(resolver.resolveDeclarationsInFacade(PackageClassUtils.getPackageClassFqName(packageFqName))))
+        classHeader.isCompatiblePackageFacadeKind(),
         classHeader.isCompatibleFileFacadeKind() ->
-            buildDecompiledText(packageFqName,
-                                ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
+            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
         classHeader.isCompatibleClassKind() ->
             buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
         else ->

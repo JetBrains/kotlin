@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/decompiler/decompiledText")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
+public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledTextTest {
     public void testAllFilesPresentInDecompiledText() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText"), Pattern.compile("^([^\\.]+)$"), true);
     }
@@ -104,12 +104,6 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SimpleClass/");
-        doTest(fileName);
-    }
-
-    @TestMetadata("TestPackage")
-    public void testTestPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TestPackage/");
         doTest(fileName);
     }
 

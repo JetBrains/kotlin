@@ -25,15 +25,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.junit.Assert
 
 public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
@@ -49,6 +46,8 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
     protected abstract fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler? = null): String
 
     protected abstract fun getModuleDescriptor(): ModuleDescriptor
+
+    protected abstract fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean
 
     public fun testConsistency() {
         getPackages().forEach { doTestPackage(it) }
@@ -74,20 +73,17 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
         }
         Assert.assertFalse(projectBasedText.contains("ERROR"))
     }
+
+    private inner class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
+        override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? =
+                module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
+
+        override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
+                module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
+                    it is CallableMemberDescriptor &&
+                    it.module != KotlinBuiltIns.getInstance().builtInsModule &&
+                    isFromFacade(it, facadeFqName)
+                }.sortedWith(MemberComparator.INSTANCE)
+    }
 }
 
-private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
-    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? =
-            module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
-
-    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
-            module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
-                it is CallableMemberDescriptor &&
-                it.module != KotlinBuiltIns.getInstance().builtInsModule &&
-                (it is DeserializedCallableMemberDescriptor && isFromFacade(it, facadeFqName))
-            }.sortedWith(MemberComparator.INSTANCE)
-
-    private fun isFromFacade(descriptor: DeserializedCallableMemberDescriptor, facadeFqName: FqName): Boolean =
-            descriptor.proto.hasExtension(JvmProtoBuf.implClassName) &&
-            facadeFqName == PackagePartClassUtils.getPackagePartFqName(descriptor)
-}

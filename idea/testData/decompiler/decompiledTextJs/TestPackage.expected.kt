@@ -10,4 +10,3 @@ internal val p: kotlin.Int /* compiled code */
 internal fun f(): kotlin.Unit { /* compiled code */ }
 
 internal fun kotlin.Int.plus(i: kotlin.Int /* = compiled code */): kotlin.Int { /* compiled code */ }
-

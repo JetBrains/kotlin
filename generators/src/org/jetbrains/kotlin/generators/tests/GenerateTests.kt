@@ -61,8 +61,7 @@ import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextFromJsMetadataTest
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.*
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -607,12 +606,20 @@ fun main(args: Array<String>) {
             model("expressionSelection", testMethod = "doTestExpressionSelection", pattern = """^([^\.]+)\.kt$""")
         }
 
-        testClass(javaClass<AbstractDecompiledTextTest>()) {
+        testClass(AbstractCommonDecompiledTextTest::class.java) {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
         }
 
-        testClass(javaClass<AbstractDecompiledTextFromJsMetadataTest>()) {
+        testClass(AbstractJvmDecompiledTextTest::class.java) {
+            model("decompiler/decompiledTextJvm", pattern = """^([^\.]+)$""")
+        }
+
+        testClass(AbstractCommonDecompiledTextFromJsMetadataTest::class.java) {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""", targetBackend = TargetBackend.JS)
+        }
+
+        testClass(AbstractJsDecompiledTextFromJsMetadataTest::class.java) {
+            model("decompiler/decompiledTextJs", pattern = """^([^\.]+)$""", targetBackend = TargetBackend.JS)
         }
 
         testClass(javaClass<AbstractClsStubBuilderTest>()) {

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/decompiler/decompiledText")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class DecompiledTextFromJsMetadataTestGenerated extends AbstractDecompiledTextFromJsMetadataTest {
+public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
     @TestMetadata("DependencyOnNestedClasses")
     public void ignoredDependencyOnNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses/");
@@ -104,12 +104,6 @@ public class DecompiledTextFromJsMetadataTestGenerated extends AbstractDecompile
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SimpleClass/");
-        doTest(fileName);
-    }
-
-    @TestMetadata("TestPackage")
-    public void testTestPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TestPackage/");
         doTest(fileName);
     }
 

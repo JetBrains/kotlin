@@ -27,11 +27,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import kotlin.test.assertTrue
 
-public abstract class AbstractDecompiledTextFromJsMetadataTest : AbstractDecompiledTextBaseTest(true) {
-
+public abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
     protected override fun getFileToDecompile(): VirtualFile {
         val className = getTestName(false)
-        val virtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(getProject())
+        val virtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(project)
         val classId = ClassId(FqName(TEST_PACKAGE), FqName(className), false)
         return virtualFileFinder.findVirtualFileWithHeader(classId)!!
     }
@@ -42,6 +41,10 @@ public abstract class AbstractDecompiledTextFromJsMetadataTest : AbstractDecompi
     override fun setUp() {
         super.setUp()
         myModule!!.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
-        KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary()
+        KotlinJavaScriptLibraryManager.getInstance(project).syncUpdateProjectLibrary()
     }
 }
+
+public abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")
+
+public abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")
