@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinClassOrObjectStub<out JetClassOrObject>>, JetDeclarationContainer, JetNamedDeclaration {
+abstract public class JetClassOrObject :
+        JetTypeParameterListOwnerStub<KotlinClassOrObjectStub<out JetClassOrObject>>, JetDeclarationContainer, JetNamedDeclaration {
     public constructor(node: ASTNode) : super(node)
     public constructor(stub: KotlinClassOrObjectStub<out JetClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
