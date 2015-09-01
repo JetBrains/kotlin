@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.idea.navigation;
 
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
-public class JetGotoImplementationMultifileTest extends KotlinCodeInsightTestCase {
+public class JetGotoImplementationMultifileTest extends JetLightCodeInsightFixtureTestCase {
     public void testImplementFunInJava() throws Exception {
         doKotlinJavaTest();
     }
@@ -63,8 +66,14 @@ public class JetGotoImplementationMultifileTest extends KotlinCodeInsightTestCas
         doMultifileTest(getTestName(false) + ".kt", getTestName(false) + ".java");
     }
 
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
+    }
+
     private void doMultifileTest(String ... fileNames) throws Exception {
-        configureByFiles(null, fileNames);
+        myFixture.configureByFiles(fileNames);
         GotoTargetHandler.GotoData gotoData = NavigationTestUtils.invokeGotoImplementations(getEditor(), getFile());
         NavigationTestUtils.assertGotoImplementations(getEditor(), gotoData);
     }
