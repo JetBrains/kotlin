@@ -114,6 +114,7 @@ public class AnnotationProcessingManager(
         private val androidVariant: Any? = null) {
 
     private val project = task.project
+    private val javaAptSourceDir = File(aptWorkingDir, "java_src")
 
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
@@ -152,6 +153,7 @@ public class AnnotationProcessingManager(
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
 
+        javaTask.source(javaAptSourceDir)
 
         appendAnnotationsArguments()
         appendAdditionalComplerArgs()
@@ -167,7 +169,6 @@ public class AnnotationProcessingManager(
     }
 
     fun generateJavaHackFile() {
-        val javaAptSourceDir = File(aptWorkingDir, "java_src")
         val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
 
         if (!javaHackPackageDir.exists()) javaHackPackageDir.mkdirs()
