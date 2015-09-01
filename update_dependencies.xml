@@ -8,15 +8,15 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <condition property="os.tag" value="win.zip">
+    <condition property="isWindows">
         <os family="windows"/>
     </condition>
 
-    <condition property="os.tag" value="mac.zip">
+    <condition property="isMac">
         <os family="mac"/>
     </condition>
 
-    <condition property="os.tag" value="tar.gz">
+    <condition property="isLinux">
         <and>
             <os family="unix"/>
             <not>
@@ -240,7 +240,10 @@
 
         <local name="bootstrap.need.chmod"/>
         <condition property="bootstrap.need.chmod">
-            <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
+            <or>
+                <isset property="isMac" />
+                <isset property="isLinux" />
+            </or>
         </condition>
 
         <!-- Java can't manipulate permissions -->
@@ -500,7 +503,6 @@
         <attribute name="download.dir.jps-standalone"/>
 
         <attribute name="download.file.archive.idea"/>
-        <attribute name="download.file.archive.idea.win.only"/>
 
         <attribute name="download.file.archive.sources"/>
         <attribute name="download.file.archive.jps-build-test"/>
@@ -518,59 +520,25 @@
                     <exclude name="system-idea/**"/>
                 </delete>
 
-                <local name="unpack.idea.sdk.windows"/>
-                <condition property="unpack.idea.sdk.windows">
-                    <or>
-                        <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
-                        <istrue value="@{download.file.archive.idea.win.only}"/>
-                    </or>
-                </condition>
+                <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}" />
 
-                <local name="unpack.idea.sdk.mac"/>
-                <condition property="unpack.idea.sdk.mac">
-                    <and>
-                        <not>
-                            <isset property="unpack.idea.sdk.windows"/>
-                        </not>
-                        <matches pattern=".+\.mac\.zip" string="${idea.archive.name}"/>
-                    </and>
-                </condition>
-
-                <local name="unpack.idea.sdk.unix"/>
-                <condition property="unpack.idea.sdk.unix">
-                    <not>
-                        <or>
-                            <isset property="unpack.idea.sdk.windows"/>
-                            <isset property="unpack.idea.sdk.mac"/>
-                        </or>
-                    </not>
-                </condition>
-
-                <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}" if:set="unpack.idea.sdk.windows"/>
-
-                <sequential if:set="unpack.idea.sdk.mac">
-                    <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}">
-                        <cutdirsmapper dirs="2"/>
-                    </unzip>
+                <sequential if:set="isMac">
                     <!-- Java can't manipulate permissions -->
                     <exec executable="chmod">
                         <arg value="a+x"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier"/>
+                        <arg path="@{idea.dir}/bin/mac/fsnotifier"/>
                         <arg path="@{idea.dir}/bin/inspect.sh"/>
                         <arg path="@{idea.dir}/bin/printenv.py"/>
                         <arg path="@{idea.dir}/bin/restarter"/>
                     </exec>
                 </sequential>
 
-                <sequential if:set="unpack.idea.sdk.unix">
-                    <untar src="@{download.file.archive.idea}" dest="@{idea.dir}" compression="gzip">
-                        <cutdirsmapper dirs="1"/>
-                    </untar>
+                <sequential if:set="isLinux">
                     <!-- Java can't manipulate permissions -->
                     <exec executable="chmod">
                         <arg value="a+x"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier64"/>
+                        <arg path="@{idea.dir}/bin/linux/fsnotifier"/>
+                        <arg path="@{idea.dir}/bin/linux/fsnotifier64"/>
                         <arg path="@{idea.dir}/bin/inspect.sh"/>
                         <arg path="@{idea.dir}/bin/idea.sh"/>
                     </exec>
@@ -689,7 +657,6 @@
                 download.dir.intellij-core="@{download.dir}/intellij-core-@{idea.maven.version}"
                 download.dir.jps-standalone="@{download.dir}/jps-standalone-@{idea.maven.version}"
                 download.file.archive.idea="@{download.dir}/ideaIC-@{idea.maven.version}.zip"
-                download.file.archive.idea.win.only="true"
                 download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar"
                 download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
         </sequential>
