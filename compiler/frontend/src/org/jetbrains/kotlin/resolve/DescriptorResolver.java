@@ -343,7 +343,7 @@ public class DescriptorResolver {
         if (modifierList != null) {
             if (valueParameter.hasValOrVar()) {
                 AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
-                        allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
+                        storageManager, allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
                 valueParameterAnnotations = annotationSplitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER);
             }
             else {
@@ -718,7 +718,8 @@ public class DescriptorResolver {
         final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper();
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace);
-        AnnotationSplitter annotationSplitter = new AnnotationSplitter(allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
+        AnnotationSplitter annotationSplitter =
+                new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
             @Override
             public Set<AnnotationUseSiteTarget> invoke() {
                 return AnnotationSplitter.getTargetSet(false, trace.getBindingContext(), wrapper);
@@ -1076,8 +1077,7 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ValueParameterDescriptor valueParameter,
             @NotNull LexicalScope scope,
-            @NotNull JetParameter parameter,
-            final BindingTrace trace
+            @NotNull JetParameter parameter, final BindingTrace trace
     ) {
         JetType type = resolveParameterType(scope, parameter, trace);
         Name name = parameter.getNameAsSafeName();
@@ -1092,12 +1092,13 @@ public class DescriptorResolver {
 
         final AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper();
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
-        AnnotationSplitter annotationSplitter = new AnnotationSplitter(allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
-            @Override
-            public Set<AnnotationUseSiteTarget> invoke() {
-                return AnnotationSplitter.getTargetSet(true, trace.getBindingContext(), propertyWrapper);
-            }
-        });
+        AnnotationSplitter annotationSplitter =
+                new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
+                    @Override
+                    public Set<AnnotationUseSiteTarget> invoke() {
+                        return AnnotationSplitter.getTargetSet(true, trace.getBindingContext(), propertyWrapper);
+                    }
+                });
 
         Annotations propertyAnnotations = new CompositeAnnotations(
                 annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),

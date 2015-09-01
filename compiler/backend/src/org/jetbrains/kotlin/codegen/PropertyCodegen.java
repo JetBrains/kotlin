@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -118,7 +119,7 @@ public class PropertyCodegen {
 
             boolean hasBackingField = hasBackingField(declaration, descriptor);
 
-            AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
+            AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
                     descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(false, descriptor.isVar(), hasBackingField));
 
             Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
@@ -171,7 +172,7 @@ public class PropertyCodegen {
     }
 
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
-        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
+        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
                 descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(true, descriptor.isVar(), hasBackingField(p, descriptor)));
 
         Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
