@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-<caret>@deprecated("")
+<caret>@Deprecated("")
 fun foo() {
     bar() ?: return
 }

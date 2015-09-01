@@ -1,6 +1,6 @@
 // "Replace with 'NewClass'" "true"
 
-@deprecated("", ReplaceWith("NewClass"))
+@Deprecated("", ReplaceWith("NewClass"))
 class OldClass
 
 class NewClass

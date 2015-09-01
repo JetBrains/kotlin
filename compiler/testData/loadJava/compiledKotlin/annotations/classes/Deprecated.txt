@@ -1,17 +1,17 @@
 package test
 
-kotlin.deprecated(value = "Class") internal final class Class {
+kotlin.Deprecated(value = "Class") internal final class Class {
     /*primary*/ public constructor Class()
 
-    kotlin.deprecated(value = "companion object") public companion object Companion {
+    kotlin.Deprecated(value = "companion object") public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 
-    kotlin.deprecated(value = "Inner") internal final inner class Inner {
+    kotlin.Deprecated(value = "Inner") internal final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    kotlin.deprecated(value = "Nested") internal final class Nested {
+    kotlin.Deprecated(value = "Nested") internal final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

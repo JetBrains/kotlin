@@ -1,4 +1,4 @@
-class MyClass(@set:deprecated("") var test: Int) {}
+class MyClass(@set:Deprecated("") var test: Int) {}
 
 
 // TESTED_OBJECT_KIND: function

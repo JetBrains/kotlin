@@ -3,7 +3,7 @@
 
 class Outer {
     inner class Inner {
-        @deprecated("", ReplaceWith("newFun(this)"))
+        @Deprecated("", ReplaceWith("newFun(this)"))
         fun oldFun() {}
     }
 

@@ -1,7 +1,7 @@
-deprecated("text")
+Deprecated("text")
 annotation class obsolete()
 
-deprecated("text")
+Deprecated("text")
 annotation class obsoleteWithParam(val text: String)
 
 <!DEPRECATED_SYMBOL_WITH_MESSAGE!>obsolete<!> class Obsolete

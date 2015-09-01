@@ -3,7 +3,7 @@ package ppp
 
 fun bar(): Int = 0
 
-@deprecated("", ReplaceWith("newFun()"))
+@Deprecated("", ReplaceWith("newFun()"))
 fun oldFun(p: Int = ppp.bar()) {
     newFun()
 }

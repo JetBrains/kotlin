@@ -2,11 +2,11 @@ package org.test
 
 public class SomeClass {
 
-    @Deprecated constructor() {
+    @java.lang.Deprecated constructor() {
 
     }
 
-    @Deprecated constructor(s: String) {
+    @java.lang.Deprecated constructor(s: String) {
 
     }
 

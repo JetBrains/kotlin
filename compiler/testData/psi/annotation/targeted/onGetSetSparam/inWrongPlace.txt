@@ -9,7 +9,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -20,7 +20,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -31,7 +31,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -42,7 +42,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -53,7 +53,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -64,7 +64,7 @@ JetFile: inWrongPlace.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('deprecated')
+              PsiElement(IDENTIFIER)('Deprecated')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
@@ -85,7 +85,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -96,7 +96,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -107,7 +107,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
@@ -124,7 +124,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -135,7 +135,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -146,7 +146,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
@@ -163,7 +163,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -174,7 +174,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -185,7 +185,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -205,7 +205,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -216,7 +216,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -227,7 +227,7 @@ JetFile: inWrongPlace.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('deprecated')
+                PsiElement(IDENTIFIER)('Deprecated')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')

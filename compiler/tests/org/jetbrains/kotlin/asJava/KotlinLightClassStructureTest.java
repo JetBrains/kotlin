@@ -85,7 +85,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testDeprecation() {
-            checkModifiers("test.Deprecated", PUBLIC, FINAL, DEPRECATED);
+            checkModifiers("test.DeprecatedClass", PUBLIC, FINAL, DEPRECATED);
             checkModifiers("test.DeprecatedFQN", PUBLIC, FINAL, DEPRECATED);
             checkModifiers("test.DeprecatedFQNSpaces", PUBLIC, FINAL, DEPRECATED);
             checkModifiers("test.DeprecatedWithBrackets", PUBLIC, FINAL, DEPRECATED);

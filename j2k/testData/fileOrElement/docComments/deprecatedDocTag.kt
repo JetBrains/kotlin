@@ -1,5 +1,5 @@
 /**
  * This is a deprecated class.
  */
-deprecated("do not use")
+Deprecated("do not use")
 class C

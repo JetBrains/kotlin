@@ -1,28 +1,28 @@
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 package boo
 
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 class A
 
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 interface I
 
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 fun a()
 
-@get:deprecated
-@set:deprecated
-@sparam:deprecated
+@get:Deprecated
+@set:Deprecated
+@sparam:Deprecated
 fun b()

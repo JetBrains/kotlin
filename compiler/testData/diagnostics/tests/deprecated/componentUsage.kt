@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Data {
-    deprecated("text")
+    Deprecated("text")
     fun component1(): String = throw Exception()
     fun component2(): String = throw Exception()
 }

@@ -5,7 +5,7 @@ package a {
     package a.b {
 
         package a.b.c {
-            kotlin.deprecated(value = "aaa") a.b.c.ann1(p = kotlin.deprecated(value = "aaa")) a.b.c.ann1() a.b.c.ann2(p = a.b.c.ann1()) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn()) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn()) a.b.c.annArray(p = {"a"}) internal fun test(): kotlin.Int
+            kotlin.Deprecated(value = "aaa") a.b.c.ann1(p = kotlin.Deprecated(value = "aaa")) a.b.c.ann1() a.b.c.ann2(p = a.b.c.ann1()) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn()) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn()) a.b.c.annArray(p = {"a"}) internal fun test(): kotlin.Int
 
             internal final class A {
                 public constructor A()
@@ -22,8 +22,8 @@ package a {
             }
 
             kotlin.annotation.annotation() internal final class ann1 : kotlin.Annotation {
-                public constructor ann1(/*0*/ p: kotlin.deprecated = ...)
-                internal final val p: kotlin.deprecated
+                public constructor ann1(/*0*/ p: kotlin.Deprecated = ...)
+                internal final val p: kotlin.Deprecated
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

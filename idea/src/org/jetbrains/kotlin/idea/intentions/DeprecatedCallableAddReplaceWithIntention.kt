@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -44,7 +45,7 @@ import java.util.ArrayList
 public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<JetCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
 public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(
-        javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'deprecated' annotation"
+        javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
 ) {
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
@@ -112,7 +113,8 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
 
             //TODO
             val descriptor = resolvedCall.getResultingDescriptor().getContainingDeclaration()
-            if (DescriptorUtils.getFqName(descriptor).asString() != "kotlin.deprecated") continue
+            val descriptorFqName = DescriptorUtils.getFqName(descriptor).toSafe()
+            if (descriptorFqName != KotlinBuiltIns.FQ_NAMES.deprecated) continue
 
             val replaceWithArguments = resolvedCall.getValueArguments().entrySet()
                     .single { it.key.getName().asString() == "replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/ }.value

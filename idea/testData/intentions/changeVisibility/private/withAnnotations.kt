@@ -1,2 +1,2 @@
-@deprecated("a")
+@Deprecated("a")
 <caret>class C

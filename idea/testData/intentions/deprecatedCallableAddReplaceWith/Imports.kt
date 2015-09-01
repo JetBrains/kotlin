@@ -2,7 +2,7 @@ package pack
 
 import dependency.valueFromOtherPackage
 
-<caret>@deprecated("")
+<caret>@Deprecated("")
 fun foo() {
     bar(valueFromOtherPackage)
 }

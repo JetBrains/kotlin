@@ -1,7 +1,7 @@
 // "Replace with 's.newFun(this)'" "true"
 
 class X {
-    @deprecated("", ReplaceWith("s.newFun(this)"))
+    @Deprecated("", ReplaceWith("s.newFun(this)"))
     fun oldFun(s: String){}
 }
 

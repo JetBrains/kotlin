@@ -2,27 +2,27 @@ package org.test
 
 public class SomeClass {
 
-    Deprecated
+    java.lang.Deprecated
     companion object {
 
     }
 
-    Deprecated
+    java.lang.Deprecated
     object SomeInnerObject {
 
     }
 
-    Deprecated
+    java.lang.Deprecated
     inner class InnerClass {
 
-        Deprecated
+        java.lang.Deprecated
         inner class InnerClassInInnerClass {
 
         }
 
     }
 
-    Deprecated
+    java.lang.Deprecated
     class NestedClass {
 
     }

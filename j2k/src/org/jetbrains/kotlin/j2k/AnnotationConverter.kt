@@ -77,7 +77,7 @@ class AnnotationConverter(private val converter: Converter) {
         val deferredExpression = converter.deferredElement<Expression> {
             LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
         }
-        return Annotation(Identifier("deprecated").assignPrototype(deprecatedTag.getNameElement()),
+        return Annotation(Identifier("Deprecated").assignPrototype(deprecatedTag.getNameElement()),
                           listOf(null to deferredExpression), withAt = false, newLineAfter = true)
                 .assignPrototype(deprecatedTag)
     }
@@ -104,7 +104,7 @@ class AnnotationConverter(private val converter: Converter) {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
             val deferredExpression = converter.deferredElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
-            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to deferredExpression), withAt, newLineAfter).assignPrototype(annotation) //TODO: insert comment
+            return Annotation(Identifier("Deprecated").assignNoPrototype(), listOf(null to deferredExpression), withAt, newLineAfter).assignPrototype(annotation) //TODO: insert comment
         }
         if (qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_TARGET) {
             val attributes = annotation.parameterList.attributes

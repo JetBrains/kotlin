@@ -1,4 +1,4 @@
-<caret>@deprecated("")
+<caret>@Deprecated("")
 fun foo() {
     bar()
 }

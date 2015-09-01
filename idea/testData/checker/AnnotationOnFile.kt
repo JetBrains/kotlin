@@ -1,8 +1,8 @@
-<error>@file:kotlin.deprecated("message")</error>
+<error>@file:kotlin.Deprecated("message")</error>
 @file:Suppress(<error>BAR</error>)
 <error>@file:Suppress(BAZ)</error>
 
-<error><error>@<error>k</error>otlin.deprecated("message")</error></error>
+<error><error>@<error>k</error>otlin.Deprecated("message")</error></error>
 <error>@<error>S</error>uppress(<error>BAR</error>)</error>
 <error>@<error>S</error>uppress(BAZ)</error>
 

@@ -1,7 +1,7 @@
 // "Replace with 'newFun(t, k)'" "true"
 
 open class Base<T> {
-    @deprecated("", ReplaceWith("newFun(t, k)"))
+    @Deprecated("", ReplaceWith("newFun(t, k)"))
     fun <K> oldFun(t: T, k: K) = k
 
     fun <K> newFun(t: T, k: K) = k

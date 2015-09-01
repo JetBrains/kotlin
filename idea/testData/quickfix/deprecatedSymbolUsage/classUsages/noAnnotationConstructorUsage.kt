@@ -1,6 +1,6 @@
 // "class org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix" "false"
 
-@deprecated("")
+@Deprecated("")
 class C(p: Int)
 
 fun foo() {

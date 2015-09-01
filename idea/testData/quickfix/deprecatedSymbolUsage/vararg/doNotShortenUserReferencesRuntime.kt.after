@@ -1,6 +1,6 @@
 // "Replace with 'newFun(*c)'" "true"
 
-@deprecated("", ReplaceWith("newFun(*c)"))
+@Deprecated("", ReplaceWith("newFun(*c)"))
 fun oldFun(vararg c: Char){}
 
 fun newFun(vararg c: Char){}

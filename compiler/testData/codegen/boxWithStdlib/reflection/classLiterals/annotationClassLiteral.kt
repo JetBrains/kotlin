@@ -1,7 +1,7 @@
 import kotlin.test.assertEquals
 
 fun box(): String {
-    assertEquals("deprecated", deprecated::class.simpleName)
+    assertEquals("Deprecated", Deprecated::class.simpleName)
 
     return "OK"
 }

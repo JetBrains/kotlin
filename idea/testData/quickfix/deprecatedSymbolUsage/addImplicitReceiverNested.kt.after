@@ -1,7 +1,7 @@
 // "Replace with 'newFun1(newFun2())'" "true"
 
 class X {
-    @deprecated("", ReplaceWith("newFun1(newFun2())"))
+    @Deprecated("", ReplaceWith("newFun1(newFun2())"))
     fun oldFun() {
         newFun1(newFun2())
     }

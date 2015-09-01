@@ -24,7 +24,7 @@ class A {
         return bar1(null)
     }
 
-    deprecated("")
+    Deprecated("")
     public fun f() {
         f(1)
     }

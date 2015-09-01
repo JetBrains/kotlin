@@ -1,37 +1,37 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class Delegate() {
-    deprecated("text")
+    Deprecated("text")
     fun get(instance: Any, property: PropertyMetadata) : Int = 1
 
-    deprecated("text")
+    Deprecated("text")
     fun set(instance: Any, property: PropertyMetadata, value: Int) {}
 }
 
 class PropertyHolder {
-    deprecated("text")
+    Deprecated("text")
     val x = 1
 
-    deprecated("text")
+    Deprecated("text")
     var name = "String"
 
     val valDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()
     var varDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE, DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()
 
     public val test1: String = ""
-        @deprecated("val-getter") get
+        @Deprecated("val-getter") get
 
     public var test2: String = ""
-        @deprecated("var-getter") get
-        @deprecated("var-setter") set
+        @Deprecated("var-getter") get
+        @Deprecated("var-setter") set
 
     public var test3: String = ""
-        @deprecated("var-getter") get
+        @Deprecated("var-getter") get
         set
 
     public var test4: String = ""
         get
-        @deprecated("var-setter") set
+        @Deprecated("var-setter") set
 }
 
 fun PropertyHolder.extFunction() {

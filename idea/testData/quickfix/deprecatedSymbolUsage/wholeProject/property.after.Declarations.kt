@@ -1,6 +1,6 @@
 package pack
 
-@deprecated("", ReplaceWith("newProp"))
+@Deprecated("", ReplaceWith("newProp"))
 val oldProp: String = ""
 
 val String.oldProp: String get() = ""

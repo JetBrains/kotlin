@@ -170,7 +170,7 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe _double = fqNameUnsafe("Double");
 
         public final FqName data = fqName("data");
-        public final FqName deprecated = fqName("deprecated");
+        public final FqName deprecated = fqName("Deprecated");
         public final FqName tailRecursive = fqName("tailrec");
         public final FqName tailRecursiveDeprecated = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
@@ -389,7 +389,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
-        return getBuiltInClassByName("deprecated");
+        return getBuiltInClassByName(FQ_NAMES.deprecated.shortName());
     }
 
     @NotNull

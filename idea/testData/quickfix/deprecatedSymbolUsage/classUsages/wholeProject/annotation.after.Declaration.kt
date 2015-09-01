@@ -1,6 +1,6 @@
 package dependency
 
-@deprecated("", ReplaceWith("dependency.NewAnnotation"))
+@Deprecated("", ReplaceWith("dependency.NewAnnotation"))
 annotation class OldAnnotation(val p: Int = 0)
 
 annotation class NewAnnotation(val p: Int = 0, val newP: String = "")

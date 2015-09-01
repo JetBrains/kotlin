@@ -1,2 +1,2 @@
-deprecated("do not use")
+Deprecated("do not use")
 class C

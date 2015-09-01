@@ -1,7 +1,7 @@
 // "Replace with 'NewClass'" "true"
 package ppp
 
-@deprecated("", ReplaceWith("NewClass"))
+@Deprecated("", ReplaceWith("NewClass"))
 class OldClass(p: Int)
 
 class NewClass(p: Int)

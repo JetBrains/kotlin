@@ -1,5 +1,5 @@
 class A {
-    deprecated("")
+    Deprecated("")
     Volatile var field1 = 0
 
     Transient var field2 = 1

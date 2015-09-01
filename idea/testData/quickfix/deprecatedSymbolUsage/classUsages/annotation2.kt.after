@@ -2,7 +2,7 @@
 
 package test
 
-@deprecated("Replace with bar", ReplaceWith("test.Bar"))
+@Deprecated("Replace with bar", ReplaceWith("test.Bar"))
 annotation class Foo(val p1: String, val p2: Int)
 
 annotation class Bar(val p1: String, val p2: Int)

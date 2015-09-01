@@ -1,5 +1,5 @@
 class C {
-    @deprecated("", ReplaceWith("bar()"))
+    @Deprecated("", ReplaceWith("bar()"))
     val foo: String
         get() {
             return bar()

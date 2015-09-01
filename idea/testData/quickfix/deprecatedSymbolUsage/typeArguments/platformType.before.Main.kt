@@ -1,6 +1,6 @@
 // "Replace with 'newFun()'" "true"
 
-@deprecated("", ReplaceWith("newFun()"))
+@Deprecated("", ReplaceWith("newFun()"))
 fun <T> Collection<T>.oldFun() {}
 
 fun <T> Collection<T>.newFun() {}

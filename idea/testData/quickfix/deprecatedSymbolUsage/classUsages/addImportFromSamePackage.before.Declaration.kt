@@ -1,6 +1,6 @@
 package dependency
 
-@deprecated("", ReplaceWith("NewClass"))
+@Deprecated("", ReplaceWith("NewClass"))
 class OldClass
 
 class NewClass

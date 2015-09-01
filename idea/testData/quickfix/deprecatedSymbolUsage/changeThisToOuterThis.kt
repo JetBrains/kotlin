@@ -1,7 +1,7 @@
 // "Replace with 's.newFun(this)'" "true"
 
 open class Base {
-    @deprecated("", ReplaceWith("s.newFun(this)"))
+    @Deprecated("", ReplaceWith("s.newFun(this)"))
     fun oldFun(s: String){}
 
     open inner class Inner

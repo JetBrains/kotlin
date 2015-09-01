@@ -1,6 +1,6 @@
 // "Replace with 'newFun(p)'" "true"
 
-@deprecated("", ReplaceWith("newFun(p)"))
+@Deprecated("", ReplaceWith("newFun(p)"))
 fun oldFun(p: List<String>) {
     newFun(p)
 }

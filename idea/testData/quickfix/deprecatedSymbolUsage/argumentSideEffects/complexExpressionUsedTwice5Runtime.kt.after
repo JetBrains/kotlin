@@ -2,7 +2,7 @@
 
 import java.util.*
 
-@deprecated("", ReplaceWith("newFun(p, p)"))
+@Deprecated("", ReplaceWith("newFun(p, p)"))
 fun oldFun(p: List<String>) {
     newFun(p, p)
 }

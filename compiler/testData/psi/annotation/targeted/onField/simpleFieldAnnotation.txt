@@ -22,7 +22,7 @@ JetFile: simpleFieldAnnotation.kt
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('deprecated')
+                    PsiElement(IDENTIFIER)('Deprecated')
         PsiWhiteSpace('\n    ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')

@@ -37,7 +37,7 @@ public annotation(mustBeDocumented = true) class data
  */
 target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
        LOCAL_VARIABLE, VALUE_PARAMETER)
-public annotation(mustBeDocumented = true) class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
+public annotation(mustBeDocumented = true) class Deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
  * Specifies a code fragment that can be used to replace a deprecated function, property or class. Tools such

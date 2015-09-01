@@ -3,10 +3,10 @@ package org.test
 public data class SomeClass {
 
     public val immutableProperty: Int = 5
-        @Deprecated get
+        @java.lang.Deprecated get
 
     public var mutableProperty: String = "String"
-        @Deprecated get
-        @Deprecated set
+        @java.lang.Deprecated get
+        @java.lang.Deprecated set
 
 }

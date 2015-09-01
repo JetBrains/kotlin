@@ -1,4 +1,4 @@
-@deprecated("", <caret>ReplaceWith("s.bar()"))
+@Deprecated("", <caret>ReplaceWith("s.bar()"))
 fun foo(s: String) {
     s.bar()
 }

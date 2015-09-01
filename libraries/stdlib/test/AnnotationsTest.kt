@@ -6,8 +6,8 @@ import org.junit.Test as test
 
 annotation(retention = AnnotationRetention.RUNTIME) class MyAnno
 
-MyAnno
-Deprecated
+@MyAnno
+@java.lang.Deprecated
 class AnnotatedClass
 
 
@@ -22,7 +22,7 @@ class AnnotationTest {
             val clazz = annotation!!.annotationType()
             when {
                 clazz == javaClass<MyAnno>() -> foundMyAnno = true
-                clazz == javaClass<Deprecated>() -> foundDeprecated = true
+                clazz == javaClass<java.lang.Deprecated>() -> foundDeprecated = true
                 else -> {}
             }
         }

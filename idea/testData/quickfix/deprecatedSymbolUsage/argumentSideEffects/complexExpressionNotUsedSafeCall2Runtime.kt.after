@@ -1,7 +1,7 @@
 // "Replace with 'newFun()'" "true"
 
 class C {
-    @deprecated("", ReplaceWith("newFun()"))
+    @Deprecated("", ReplaceWith("newFun()"))
     fun oldFun(): Int {
         return newFun()
     }

@@ -8,6 +8,10 @@ PsiJetFileStubImpl[package=]
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=java]
+                  REFERENCE_EXPRESSION:[referencedName=lang]
                 REFERENCE_EXPRESSION:[referencedName=Deprecated]
         ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Override]
           CONSTRUCTOR_CALLEE:

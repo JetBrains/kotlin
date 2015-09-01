@@ -1,6 +1,6 @@
 // "Replace with 'newFun(*p, *list.toIntArray())'" "true"
 
-@deprecated("", ReplaceWith("newFun(*p, *list.toIntArray())"))
+@Deprecated("", ReplaceWith("newFun(*p, *list.toIntArray())"))
 fun oldFun(list: List<Int>, vararg p: Int){
     newFun(*p, *list.toIntArray())
 }

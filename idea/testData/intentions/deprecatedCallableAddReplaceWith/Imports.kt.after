@@ -2,7 +2,7 @@ package pack
 
 import dependency.valueFromOtherPackage
 
-@deprecated("", ReplaceWith("bar(valueFromOtherPackage)", "dependency.valueFromOtherPackage"))
+@Deprecated("", ReplaceWith("bar(valueFromOtherPackage)", "dependency.valueFromOtherPackage"))
 fun foo() {
     bar(valueFromOtherPackage)
 }

@@ -1,13 +1,13 @@
-@field:deprecated
+@field:Deprecated
 
-@field:deprecated
+@field:Deprecated
 package boo
 
-@field:deprecated
+@field:Deprecated
 class A
 
-@field:deprecated
+@field:Deprecated
 interface I
 
-@field:deprecated
+@field:Deprecated
 fun a()

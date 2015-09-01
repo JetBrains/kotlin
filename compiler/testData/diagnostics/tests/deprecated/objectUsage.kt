@@ -1,10 +1,10 @@
-deprecated("Object")
+Deprecated("Object")
 object Obsolete {
     fun use() {}
 }
 
 class Another {
-    deprecated("Object")
+    Deprecated("Object")
     companion object {
         fun use() {}
     }

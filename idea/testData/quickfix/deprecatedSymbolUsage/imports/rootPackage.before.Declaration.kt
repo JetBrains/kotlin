@@ -1,4 +1,4 @@
-@deprecated("", ReplaceWith("newFun()"))
+@Deprecated("", ReplaceWith("newFun()"))
 fun oldFun() {
     newFun()
 }

@@ -1,6 +1,6 @@
 // "Replace with 'newFun(b, a, null)'" "true"
 
-@deprecated("", ReplaceWith("newFun(b, a, null)"))
+@Deprecated("", ReplaceWith("newFun(b, a, null)"))
 fun oldFun(a: Int, b: String) {
 }
 

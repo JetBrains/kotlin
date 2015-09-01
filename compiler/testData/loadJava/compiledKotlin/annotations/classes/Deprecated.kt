@@ -1,10 +1,10 @@
 //ALLOW_AST_ACCESS
 package test
 
-deprecated("Class") class Class {
-    deprecated("Nested") class Nested
+Deprecated("Class") class Class {
+    Deprecated("Nested") class Nested
 
-    deprecated("Inner") inner class Inner
+    Deprecated("Inner") inner class Inner
 
-    deprecated("companion object") companion object
+    Deprecated("companion object") companion object
 }
