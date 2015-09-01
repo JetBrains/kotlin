@@ -188,8 +188,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             var result = expressionToBeReplaced.replace(wrapper.expression) as JetExpression
 
-            //TODO: drop import of old function (if not needed anymore)?
-
             val file = result.getContainingJetFile()
             replacement.fqNamesToImport
                     .flatMap { file.resolveImportReference(it) }
