@@ -48,28 +48,28 @@ public class DeprecatedSymbolUsageFix(
     ) {
         val result = DeprecatedSymbolUsageFixBase.performReplacement(element, bindingContext, resolvedCall, replacement)
 
-        val offset = (result.getCalleeExpressionIfAny() ?: result).getTextOffset()
+        val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
         editor?.moveCaret(offset)
     }
 
     override fun elementToBeInvalidated(): PsiElement? {
-        val parent = element.getParent()
+        val parent = element.parent
         return when (parent) {
             is JetCallExpression -> {
-                val qualified = parent.getParent() as? JetQualifiedExpression
-                if (parent == qualified?.getSelectorExpression()) qualified else parent
+                val qualified = parent.parent as? JetQualifiedExpression
+                if (parent == qualified?.selectorExpression) qualified else parent
             }
-            is JetQualifiedExpression -> if (element == parent.getSelectorExpression()) parent else element
-            is JetOperationExpression -> if (element == parent.getOperationReference()) parent else element
+            is JetQualifiedExpression -> if (element == parent.selectorExpression) parent else element
+            is JetOperationExpression -> if (element == parent.operationReference) parent else element
             else -> element
         }
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val nameExpression = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return null
-            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).getA()
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.getProject()) ?: return null
+            val nameExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
+            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).a
+            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 

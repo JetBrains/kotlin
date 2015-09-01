@@ -56,7 +56,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
 
-    private val LOG = Logger.getInstance(javaClass<DeprecatedSymbolUsageInWholeProjectFix>());
+    private val LOG = Logger.getInstance(DeprecatedSymbolUsageInWholeProjectFix::class.java);
 
     override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
 
@@ -101,7 +101,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
                 for (usage in usages) {
                     try {
-                        if (!usage.isValid()) continue // TODO: nested calls
+                        if (!usage.isValid) continue // TODO: nested calls
 
                         val importDirective = usage.getStrictParentOfType<JetImportDirective>()
                         if (importDirective != null) {
@@ -113,7 +113,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
                         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
                         val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
-                        if (!resolvedCall.getStatus().isSuccess()) continue
+                        if (!resolvedCall.status.isSuccess) continue
                         // copy replacement expression because it is modified by performReplacement
                         DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
                     }
@@ -141,9 +141,9 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val nameExpression = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return null
-            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).getA()
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.getProject()) ?: return null
+            val nameExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
+            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).a
+            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
         }
