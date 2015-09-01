@@ -46,13 +46,12 @@ public var KProperty<*>.accessible: Boolean
     get() = isAccessible
     set(value) { isAccessible = value }
 
+@HiddenDeclaration
+@deprecated("Moved to package kotlin.jvm", ReplaceWith("java"))
+public val <T : Any> KClass<T>.java: Class<T>
+    get() = java
 
-@deprecated("Use .java instead.", ReplaceWith("java"))
-public val <T : Any> KClass<T>.__java: Class<T>
-    @jvmName("getJava")
-    get() = this.java
-
-@deprecated("Use .kotlin instead.", ReplaceWith("kotlin"))
-public val <T : Any> Class<T>.__kotlin: KClass<T>
-    @jvmName("getKotlin")
-    get() = this.kotlin
+@HiddenDeclaration
+@deprecated("Moved to package kotlin.jvm", ReplaceWith("kotlin"))
+public val <T : Any> Class<T>.kotlin: KClass<T>
+    get() = kotlin
