@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.get
 
 /*
     This class lazily splits Annotations into several different Annotations according to declaration site target priority on property.
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.storage.StorageManager
  */
 
 public class AnnotationSplitter(
-        storageManager: StorageManager,
+        val storageManager: StorageManager,
         allAnnotations: Annotations,
         applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
 ) {
@@ -106,16 +107,16 @@ public class AnnotationSplitter(
         map to AnnotationsImpl.create(other)
     }
 
-    public fun getOtherAnnotations(): Annotations = LazySplitAnnotations(null)
+    public fun getOtherAnnotations(): Annotations = LazySplitAnnotations(storageManager, null)
 
-    public fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(target)
+    public fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(storageManager, target)
 
     public fun getAnnotationsForTargets(vararg targets: AnnotationUseSiteTarget): Annotations {
         return CompositeAnnotations(targets.map { getAnnotationsForTarget(it) })
     }
 
-    private inner class LazySplitAnnotations(target: AnnotationUseSiteTarget?) : Annotations {
-        private val annotations: Annotations by lazy {
+    private inner class LazySplitAnnotations(storageManager: StorageManager, target: AnnotationUseSiteTarget?) : Annotations {
+        private val annotations by storageManager.createLazyValue {
             val splitAnnotations = this@AnnotationSplitter.splitAnnotations()
 
             if (target != null)
