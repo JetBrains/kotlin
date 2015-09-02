@@ -199,7 +199,3 @@ public val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor
 public val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
     get() = parentsWithSelf.drop(1)
 
-private val HIDDEN_ANNOTATION_FQ_NAME = FqName(HiddenDeclaration::class.qualifiedName!!)
-
-public fun DeclarationDescriptor.isAnnotatedAsHidden(): Boolean = annotations.findAnnotation(HIDDEN_ANNOTATION_FQ_NAME) != null
-
