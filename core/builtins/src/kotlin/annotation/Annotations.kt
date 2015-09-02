@@ -20,8 +20,6 @@ package kotlin.annotation
  * Contains the list of code elements which are the possible annotation targets
  */
 public enum class AnnotationTarget {
-    /** Package directive */
-    PACKAGE,
     /** Class, interface or object, annotation class is also included */
     CLASSIFIER,
     /** Annotation class only */
