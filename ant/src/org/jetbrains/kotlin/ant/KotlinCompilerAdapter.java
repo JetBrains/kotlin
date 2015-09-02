@@ -38,10 +38,17 @@ public class KotlinCompilerAdapter extends Javac13 {
     private static final List<String> KOTLIN_EXTENSIONS = Arrays.asList("kt", "kts");
 
     private Path externalAnnotations;
+
+    private String moduleName;
+
     public List<Commandline.Argument> additionalArguments = new ArrayList<Commandline.Argument>(0);
 
     public void setExternalAnnotations(Path externalAnnotations) {
         this.externalAnnotations = externalAnnotations;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public Path createExternalAnnotations() {
@@ -84,6 +91,8 @@ public class KotlinCompilerAdapter extends Javac13 {
         kotlinc.setSrc(javac.getSrcdir());
 
         kotlinc.setExternalAnnotations(externalAnnotations);
+
+        kotlinc.setModuleName(moduleName);
 
         kotlinc.getAdditionalArguments().addAll(additionalArguments);
 

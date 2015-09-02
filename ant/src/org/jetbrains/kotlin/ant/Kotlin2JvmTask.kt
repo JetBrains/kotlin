@@ -25,6 +25,7 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
 
     public var externalAnnotations: Path? = null
     public var includeRuntime: Boolean = true
+    public var moduleName: String? = null
 
     private var compileClasspath: Path? = null
 
