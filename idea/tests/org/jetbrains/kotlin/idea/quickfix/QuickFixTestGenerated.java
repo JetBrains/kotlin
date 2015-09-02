@@ -3383,6 +3383,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/simple.kt");
                 doTest(fileName);
             }
+
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments")
