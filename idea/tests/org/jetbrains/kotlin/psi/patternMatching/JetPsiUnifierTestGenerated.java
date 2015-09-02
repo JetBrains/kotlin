@@ -389,6 +389,12 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callAndCalleeRuntime.kt")
+                public void testCallAndCalleeRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callAndCalleeRuntime.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("callTypeArgumentsRuntime.kt")
                 public void testCallTypeArgumentsRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callTypeArgumentsRuntime.kt");

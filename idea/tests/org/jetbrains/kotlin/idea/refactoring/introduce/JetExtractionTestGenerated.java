@@ -61,6 +61,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("ComplexCallee.kt")
+        public void testComplexCallee() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ComplexCallee.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ConstructorDelegationCall.kt")
         public void testConstructorDelegationCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ConstructorDelegationCall.kt");
