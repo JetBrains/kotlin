@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -319,7 +320,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment,
-                            incrementalCaches.mapKeysTo(HashMap<String, IncrementalCache>(incrementalCaches.size()), { it.getKey().id }),
+                            incrementalCaches.mapKeysTo(HashMap<Module, IncrementalCache>(incrementalCaches.size()),
+                                                        { ModuleToModuleBuildTargetAdapter(it.getKey()) }),
                             filesToCompile, messageCollector)
     }
 
@@ -486,7 +488,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun compileToJs(chunk: ModuleChunk,
                             commonArguments: CommonCompilerArguments,
                             environment: CompilerEnvironment,
-                            incrementalCaches: MutableMap<String, IncrementalCache>?,
+                            incrementalCaches: MutableMap<Module, IncrementalCache>?,
                             messageCollector: MessageCollectorAdapter, project: JpsProject
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -541,7 +543,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                              context: CompileContext,
                              dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
                              environment: CompilerEnvironment,
-                             incrementalCaches: MutableMap<String, IncrementalCache>?,
+                             incrementalCaches: MutableMap<Module, IncrementalCache>?,
                              filesToCompile: MultiMap<ModuleBuildTarget, File>, messageCollector: MessageCollectorAdapter
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()

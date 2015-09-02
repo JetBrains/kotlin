@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
 import org.jetbrains.kotlin.rmi.CompileService
 import java.rmi.server.UnicastRemoteObject
 
@@ -32,6 +33,10 @@ public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : Compile
     override fun getPackagePartData(fqName: String): ByteArray? = cache.getPackagePartData(fqName)
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
+
+    override fun getInlineRegistering(): InlineRegistering = cache.getInlineRegistering()
+
+    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
 
     override fun close() {
         cache.close()

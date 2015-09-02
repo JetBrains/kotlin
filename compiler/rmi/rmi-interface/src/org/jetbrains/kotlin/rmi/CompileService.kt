@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.rmi
 
+import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
+import org.jetbrains.kotlin.modules.Module
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -37,6 +39,12 @@ public interface CompileService : Remote {
         public fun getModuleMappingData(): ByteArray?
 
         throws(RemoteException::class)
+        public fun getInlineRegistering(): InlineRegistering
+
+        throws(RemoteException::class)
+        fun getClassFilePath(internalClassName: String): String
+
+        throws(RemoteException::class)
         public fun close()
     }
 
@@ -55,7 +63,7 @@ public interface CompileService : Remote {
     throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
-            caches: Map<String, RemoteIncrementalCache>,
+            caches: Map<Module, RemoteIncrementalCache>,
             outputStream: RemoteOutputStream,
             outputFormat: OutputFormat): Int
 }

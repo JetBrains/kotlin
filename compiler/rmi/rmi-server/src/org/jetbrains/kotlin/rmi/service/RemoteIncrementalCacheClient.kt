@@ -17,14 +17,19 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
 import org.jetbrains.kotlin.rmi.CompileService
 
 public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache): IncrementalCache {
+    override fun getInlineRegistering(): InlineRegistering = cache.getInlineRegistering()
+
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
     override fun getPackagePartData(fqName: String): ByteArray? = cache.getPackagePartData(fqName)
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
+
+    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
 
     override fun close(): Unit = cache.close()
 }
