@@ -76,7 +76,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                             ?: KotlinReferencesSearchOptions.Empty
-        val resultProcessor = MyRequestResultProcessor(unwrappedElement, refFilter, kotlinOptions)
+        val resultProcessor = MyRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
         if (kotlinOptions.anyEnabled()) {
             val name = unwrappedElement.name
@@ -115,7 +115,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
         }
 
-        val processor = MyRequestResultProcessor(parameter, { it.isNamedArgumentReference() }, KotlinReferencesSearchOptions.Empty)
+        val processor = MyRequestResultProcessor(parameter, filter = { it.isNamedArgumentReference() })
         queryParameters.optimizer.searchWord(parameterName,
                                              namedArgsScope,
                                              KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
@@ -130,8 +130,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
     private class MyRequestResultProcessor(
             private val unwrappedElement: PsiElement,
-            private val filter: (PsiReference) -> Boolean,
-            private val options: KotlinReferencesSearchOptions
+            private val originalElement: PsiElement = unwrappedElement,
+            private val filter: (PsiReference) -> Boolean = { true },
+            private val options: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty
     ) : RequestResultProcessor() {
         private val referenceService = PsiReferenceService.getService()
 
@@ -152,14 +153,14 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             if (isReferenceTo(element)) {
                 return true
             }
-            if (element is JetNamedDeclaration) {
-                if (options.acceptCallableOverrides && isCallableOverrideUsage(element)) {
+            if (originalElement is JetNamedDeclaration) {
+                if (options.acceptCallableOverrides && isCallableOverrideUsage(originalElement)) {
                     return true
                 }
-                if (options.acceptOverloads && isUsageInContainingDeclaration(element)) {
+                if (options.acceptOverloads && isUsageInContainingDeclaration(originalElement)) {
                     return true
                 }
-                if (options.acceptExtensionsOfDeclarationClass && isExtensionOfDeclarationClassUsage(element)) {
+                if (options.acceptExtensionsOfDeclarationClass && isExtensionOfDeclarationClassUsage(originalElement)) {
                     return true
                 }
             }
@@ -278,8 +279,11 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
                 val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                                     ?: KotlinReferencesSearchOptions.Empty
+                val resultProcessor = MyRequestResultProcessor(element,
+                                                               queryParameters.getElementToSearch().namedUnwrappedElement ?: element,
+                                                               options = kotlinOptions)
                 queryParameters.getOptimizer().searchWord(name, scope, context.toShort(), true, element,
-                                                          MyRequestResultProcessor(element, { true }, kotlinOptions))
+                                                          resultProcessor)
             }
         }
     }
