@@ -7,7 +7,7 @@ RepeatableAnnotation() RepeatableAnnotation() internal final class My {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-java.lang.annotation.Repeatable(value = RepeatableAnnotations::class) kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.RUNTIME) public final class RepeatableAnnotation : kotlin.Annotation {
+kotlin.annotation.Repeatable() kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final class RepeatableAnnotation : kotlin.Annotation {
     public constructor RepeatableAnnotation()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
