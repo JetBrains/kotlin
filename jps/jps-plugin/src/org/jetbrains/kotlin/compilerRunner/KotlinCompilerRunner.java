@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.rmi.*;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -58,7 +59,7 @@ public class KotlinCompilerRunner {
             CompilerSettings compilerSettings,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches,
+            Map<Module, IncrementalCache> incrementalCaches,
             File moduleFile,
             OutputItemsCollector collector
     ) {
@@ -75,7 +76,7 @@ public class KotlinCompilerRunner {
             @NotNull CompilerSettings compilerSettings,
             @NotNull MessageCollector messageCollector,
             @NotNull CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches,
+            Map<Module, IncrementalCache> incrementalCaches,
             @NotNull OutputItemsCollector collector,
             @NotNull Collection<File> sourceFiles,
             @NotNull List<String> libraryFiles,
@@ -95,7 +96,7 @@ public class KotlinCompilerRunner {
             MessageCollector messageCollector,
             OutputItemsCollector collector,
             CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches
+            Map<Module, IncrementalCache> incrementalCaches
     ) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(stream);
@@ -116,7 +117,7 @@ public class KotlinCompilerRunner {
             CommonCompilerArguments arguments,
             String additionalArguments,
             CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches,
+            Map<Module, IncrementalCache> incrementalCaches,
             PrintStream out,
             MessageCollector messageCollector
     ) {

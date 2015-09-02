@@ -34,7 +34,7 @@ public class IncrementalCompilationComponentsImpl(
     override fun getLookupTracker(): LookupTracker = lookupTracker
 }
 
-private class ModuleToModuleBuildTargetAdapter(
+public class ModuleToModuleBuildTargetAdapter(
         private val moduleBuildTarget: ModuleBuildTarget
 ) : Module {
 
