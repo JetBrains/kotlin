@@ -296,7 +296,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        NamedArgumentCompletion.complete(position, collector, bindingContext)
+        NamedArgumentCompletion.complete(position, collector, expectedInfos)
     }
 
     private fun addNonImported(completionKind: CompletionKind) {

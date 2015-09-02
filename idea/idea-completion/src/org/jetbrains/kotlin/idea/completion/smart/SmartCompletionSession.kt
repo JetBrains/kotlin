@@ -51,7 +51,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
-            NamedArgumentCompletion.complete(position, collector, bindingContext)
+            NamedArgumentCompletion.complete(position, collector, expectedInfos)
             return
         }
 

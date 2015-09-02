@@ -26,24 +26,17 @@ import com.intellij.psi.filters.ClassFilter
 import com.intellij.psi.filters.OrFilter
 import com.intellij.psi.filters.position.ParentElementFilter
 import org.jetbrains.kotlin.core.FirstChildInParentFilter
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.JetValueArgumentName
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 object NamedArgumentCompletion {
@@ -73,41 +66,31 @@ object NamedArgumentCompletion {
         return false
     }
 
-    public fun complete(position: PsiElement, collector: LookupElementsCollector, bindingContext: BindingContext) {
+    public fun complete(position: PsiElement, collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
         if (!positionFilter.isAcceptable(position, position)) return
 
-        val valueArgument = position.getStrictParentOfType<JetValueArgument>()!!
-
-        val callElement = valueArgument.getStrictParentOfType<JetCallElement>() ?: return
-        val callSimpleName = callElement.getCallNameExpression() ?: return
-
-        val functionDescriptors = callSimpleName.mainReference.resolveToDescriptors(bindingContext)
-                .filterIsInstance<FunctionDescriptor>()
-
-        for (funDescriptor in functionDescriptors) {
-            if (!funDescriptor.hasStableParameterNames()) continue
-            val call = callElement.getCall(bindingContext) ?: continue
-
-            var argumentToParameter = HashMap(call.mapArgumentsToParameters(funDescriptor))
-            argumentToParameter.remove(valueArgument)
-            val usedParameters = argumentToParameter.values().toSet()
-
-            for (parameter in funDescriptor.getValueParameters()) {
-                if (parameter !in usedParameters) {
-                    val name = parameter.getName().asString()
-                    val lookupElement = LookupElementBuilder.create(name)
-                            .withPresentableText("$name =")
-                            .withTailText(" ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
-                            .withIcon(JetIcons.PARAMETER)
-                            .withInsertHandler(NamedArgumentInsertHandler(parameter.getName()))
-                            .assignPriority(ItemPriority.NAMED_PARAMETER)
-                    collector.addElement(lookupElement)
-                }
+        val nameToParameterType = HashMap<Name, MutableSet<JetType>>()
+        for (expectedInfo in expectedInfos) {
+            val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
+            argumentData.namedArgumentCandidates?.forEach { parameter ->
+                nameToParameterType.getOrPut(parameter.name) { HashSet() }.add(parameter.type)
             }
+        }
+
+        for ((name, types) in nameToParameterType) {
+            val typeText = types.singleOrNull()?.let { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) } ?: "..."
+            val nameString = name.asString()
+            val lookupElement = LookupElementBuilder.create(nameString)
+                    .withPresentableText("$nameString =")
+                    .withTailText(" $typeText")
+                    .withIcon(JetIcons.PARAMETER)
+                    .withInsertHandler(NamedArgumentInsertHandler(name))
+                    .assignPriority(ItemPriority.NAMED_PARAMETER)
+            collector.addElement(lookupElement)
         }
     }
 
-    private class NamedArgumentInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
+    private class NamedArgumentInsertHandler(private val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val editor = context.getEditor()
             val text = parameterName.render()

@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.LinkedHashSet
+import java.util.*
 
 enum class Tail {
     COMMA,
@@ -78,6 +78,10 @@ interface ByTypeFilter {
     object All : ByTypeFilter {
         override fun matchingSubstitutor(descriptorType: FuzzyType) = TypeSubstitutor.EMPTY
     }
+
+    object None : ByTypeFilter {
+        override fun matchingSubstitutor(descriptorType: FuzzyType) = null
+    }
 }
 
 class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
@@ -88,7 +92,8 @@ class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
     override fun hashCode() = fuzzyType.hashCode()
 }
 
-data class ExpectedInfo(
+data /* for copy() */
+class ExpectedInfo(
         val filter: ByTypeFilter,
         val expectedName: String?,
         val tail: Tail?,
@@ -109,8 +114,12 @@ data class ExpectedInfo(
     fun matchingSubstitutor(descriptorType: JetType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
 
     companion object {
-        fun createForArgument(type: JetType, name: String?, tail: Tail?, function: FunctionDescriptor, position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
-            return ExpectedInfo(FuzzyType(type, function.typeParameters), name, tail, itemOptions, ArgumentAdditionalData(function, position))
+        fun createForArgument(type: JetType, expectedName: String?, tail: Tail?, argumentData: ArgumentPositionData, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
+            return ExpectedInfo(FuzzyType(type, argumentData.function.typeParameters), expectedName, tail, itemOptions, argumentData)
+        }
+
+        fun createForNamedArgumentExpected(argumentData: ArgumentPositionData): ExpectedInfo {
+            return ExpectedInfo(ByTypeFilter.None, null, null/*TODO?*/, ItemOptions.DEFAULT, argumentData)
         }
 
         fun createForReturnValue(type: JetType?, callable: CallableDescriptor): ExpectedInfo {
@@ -123,26 +132,18 @@ data class ExpectedInfo(
 val ExpectedInfo.fuzzyType: FuzzyType?
     get() = (this.filter as? ByExpectedTypeFilter)?.fuzzyType
 
-data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val isFunctionLiteralArgument: Boolean) {
-    constructor(argumentIndex: Int, isFunctionLiteralArgument: Boolean = false) : this(argumentIndex, null, isFunctionLiteralArgument)
-    constructor(argumentIndex: Int, argumentName: Name?) : this(argumentIndex, argumentName, false)
+sealed class ArgumentPositionData(val function: FunctionDescriptor) : ExpectedInfo.AdditionalData {
+    class Positional(
+            function: FunctionDescriptor,
+            val argumentIndex: Int,
+            val isFunctionLiteralArgument: Boolean,
+            val namedArgumentCandidates: Collection<ParameterDescriptor>?
+    ) : ArgumentPositionData(function)
+
+    class Named(function: FunctionDescriptor, val argumentName: Name) : ArgumentPositionData(function)
 }
 
-class ArgumentAdditionalData(val function: FunctionDescriptor, val position: ArgumentPosition) : ExpectedInfo.AdditionalData {
-    override fun equals(other: Any?)
-            = other is ArgumentAdditionalData && function == other.function && position == other.position
-
-    override fun hashCode()
-            = function.hashCode()
-}
-
-class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData {
-    override fun equals(other: Any?)
-            = other is ReturnValueAdditionalData && callable == other.callable
-
-    override fun hashCode()
-            = callable.hashCode()
-}
+class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData
 
 class ExpectedInfos(
         val bindingContext: BindingContext,
@@ -193,7 +194,7 @@ class ExpectedInfos(
         val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument)
 
         fun makesSenseToUseOuterCallExpectedType(info: ExpectedInfo): Boolean {
-            val data = info.additionalData as ArgumentAdditionalData
+            val data = info.additionalData as ArgumentPositionData
             return info.fuzzyType != null
                    && info.fuzzyType!!.freeParameters.isNotEmpty()
                    && data.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false
@@ -211,7 +212,6 @@ class ExpectedInfos(
                     .map { it.type }
                     .toSet()
                     .flatMap { calculateForArgument(call, it, argument) }
-                    .toSet()
         }
 
         return results
@@ -224,7 +224,6 @@ class ExpectedInfos(
         }
         val argumentName = argument.getArgumentName()?.asName
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
-        val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
 
         // leave only arguments before the current one
         val truncatedCall = object : DelegatingCall(call) {
@@ -245,7 +244,7 @@ class ExpectedInfos(
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val expectedInfos = LinkedHashSet<ExpectedInfo>()
+        val expectedInfos = ArrayList<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val status = candidate.getStatus()
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
@@ -260,13 +259,33 @@ class ExpectedInfos(
             if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.ownerDescriptor)) continue
 
             var argumentToParameter = call.mapArgumentsToParameters(descriptor)
-            var parameter = argumentToParameter[argument] ?: continue
+            var parameter = argumentToParameter[argument]
 
             //TODO: we can loose partially inferred substitution here but what to do?
-            if (parameter.type.containsError()) {
+            if (parameter != null && parameter.type.containsError()) {
                 descriptor = descriptor.original
-                parameter = descriptor.valueParameters[parameter.index]
+                parameter = descriptor.valueParameters[parameter.index]!!
                 argumentToParameter = call.mapArgumentsToParameters(descriptor)
+            }
+
+            val argumentPositionData = if (argumentName != null) {
+                ArgumentPositionData.Named(descriptor, argumentName)
+            }
+            else {
+                val namedArgumentCandidates = if (!isFunctionLiteralArgument && descriptor.hasStableParameterNames()) {
+                    val usedParameters = argumentToParameter.filter { it.key != argument }.map { it.value }.toSet()
+                    descriptor.valueParameters.filter { it !in usedParameters }
+                }
+                else {
+                    null
+                }
+                ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
+            }
+
+            if (parameter == null) {
+                if (argumentPositionData !is ArgumentPositionData.Positional || argumentPositionData.namedArgumentCandidates == null) continue
+                expectedInfos.add(ExpectedInfo.createForNamedArgumentExpected(argumentPositionData))
+                continue
             }
 
             val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
@@ -295,7 +314,7 @@ class ExpectedInfos(
 
             val alreadyHasStar = argument.getSpreadElement() != null
 
-            val varargElementType = parameter.getVarargElementType()
+            val varargElementType = parameter!!.getVarargElementType()
             if (varargElementType != null) {
                 if (isFunctionLiteralArgument) continue
 
@@ -305,28 +324,28 @@ class ExpectedInfos(
                     tail
 
                 if (!alreadyHasStar) {
-                    expectedInfos.add(ExpectedInfo.createForArgument(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
+                    expectedInfos.add(ExpectedInfo.createForArgument(varargElementType, expectedName?.unpluralize(), varargTail, argumentPositionData))
                 }
 
                 val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-                expectedInfos.add(ExpectedInfo.createForArgument(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
+                expectedInfos.add(ExpectedInfo.createForArgument(parameter!!.getType(), expectedName, varargTail, argumentPositionData, starOptions))
             }
             else {
                 if (alreadyHasStar) continue
 
                 val parameterType = if (useHeuristicSignatures)
                     resolutionFacade.ideService<HeuristicSignatures>().
-                            correctedParameterType(descriptor, parameter) ?: parameter.getType()
+                            correctedParameterType(descriptor, parameter!!) ?: parameter!!.getType()
                 else
-                    parameter.getType()
+                    parameter!!.getType()
 
                 if (isFunctionLiteralArgument) {
                     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                        expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, null, descriptor, argumentPosition))
+                        expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
                     }
                 }
                 else {
-                    expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, tail, descriptor, argumentPosition))
+                    expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, tail, argumentPositionData))
                 }
             }
         }

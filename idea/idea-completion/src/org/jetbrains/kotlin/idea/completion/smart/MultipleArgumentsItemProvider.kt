@@ -23,7 +23,10 @@ import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
+import org.jetbrains.kotlin.idea.completion.ExpectedInfo
+import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
+import org.jetbrains.kotlin.idea.completion.Tail
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.JetExpression
@@ -44,7 +47,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
-            if (expectedInfo.additionalData is ArgumentAdditionalData && expectedInfo.additionalData.position == ArgumentPosition(0)) {
+            if (expectedInfo.additionalData is ArgumentPositionData.Positional && expectedInfo.additionalData.argumentIndex == 0) {
                 val parameters = expectedInfo.additionalData.function.valueParameters
                 if (parameters.size() > 1) {
                     val variables = ArrayList<VariableDescriptor>()

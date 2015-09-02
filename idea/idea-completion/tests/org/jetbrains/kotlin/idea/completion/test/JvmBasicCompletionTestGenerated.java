@@ -1485,6 +1485,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NamedArgumentsFromOverloads2.kt")
+            public void testNamedArgumentsFromOverloads2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentsFromOverloads2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAlreadyUsedParameters.kt")
             public void testNoAlreadyUsedParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NoAlreadyUsedParameters.kt");
