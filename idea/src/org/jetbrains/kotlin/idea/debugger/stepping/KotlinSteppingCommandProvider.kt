@@ -24,14 +24,20 @@ import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.impl.XSourcePositionImpl
+import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
+import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -44,16 +50,13 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null) return null
 
-        if (!isKotlinStrataPresent(suspendContext)) return null
-
-        val result: Pair<SourcePosition, List<ReferenceType>>? = computeInManagerThread(suspendContext) {
+        val result: Pair<SourcePosition, ReferenceType>? = computeInManagerThread(suspendContext) {
             val sp = runReadAction { ContextUtil.getSourcePosition(it) } ?: return@computeInManagerThread null
-            val cl = it.debugProcess.positionManager.getAllClasses(sp)
+            val cl = it.frameProxy?.location()?.declaringType() ?: return@computeInManagerThread null
             sp to cl
         }
 
-        val (sourcePosition, allClasses)  = result ?: return null
-        val computedReferenceType = allClasses.firstOrNull() ?: return null
+        val (sourcePosition, computedReferenceType)  = result ?: return null
 
         val file = sourcePosition.file as? JetFile ?: return null
 
@@ -80,7 +83,107 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return null
     }
 
-    private fun isKotlinStrataPresent(suspendContext: SuspendContextImpl): Boolean {
+    override fun getStepOutCommand(suspendContext: SuspendContextImpl?, stepSize: Int): DebugProcessImpl.ResumeCommand? {
+        if (suspendContext == null) return null
+
+        val location = computeInManagerThread(suspendContext) {
+            it.frameProxy?.location()
+        } ?: return null
+
+        val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
+        val computedReferenceType = location.declaringType() ?: return null
+
+        val locations = computedReferenceType.allLineLocations()
+
+        val file = sourcePosition.file as? JetFile ?: return null
+        val lineStartOffset = file.getLineStartOffset(sourcePosition.line) ?: return null
+        val nextLineLocations = locations.dropWhile { it.lineNumber() != location.lineNumber() }.filter { it.method() == location.method() }
+
+        val inlineFunction = getInlineFunctionsIfAny(file, lineStartOffset)
+        if (inlineFunction != null) {
+            val xPosition = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunction) ?: return null
+            return suspendContext.debugProcess.createRunToCursorCommand(suspendContext, xPosition, true)
+        }
+
+        val inlinedArgument = getInlineArgumentIfAny(file, lineStartOffset)
+        if (inlinedArgument != null) {
+            val xPosition = suspendContext.getXPositionForStepOutFromInlinedArgument(nextLineLocations, inlinedArgument) ?: return null
+            return suspendContext.debugProcess.createRunToCursorCommand(suspendContext, xPosition, true)
+        }
+
+        return null
+    }
+
+    private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
+            locations: List<Location>,
+            inlineFunctionsToSkip: List<JetNamedFunction>
+    ): XSourcePositionImpl? {
+        return getNextPositionWithFilter(locations) {
+            file, offset ->
+            if (inlineFunctionsToSkip.any { it.textRange.contains(offset) }) {
+                return@getNextPositionWithFilter true
+            }
+
+            val inlinedArgument = getInlineArgumentIfAny(file, offset)
+            inlinedArgument != null && inlinedArgument.textRange.contains(offset)
+        }
+    }
+
+    private fun SuspendContextImpl.getXPositionForStepOutFromInlinedArgument(
+            locations: List<Location>,
+            inlinedArgumentToSkip: JetFunctionLiteral
+    ): XSourcePositionImpl? {
+        return getNextPositionWithFilter(locations) {
+            file, offset ->
+            inlinedArgumentToSkip.textRange.contains(offset)
+        }
+    }
+
+    private fun SuspendContextImpl.getNextPositionWithFilter(
+            locations: List<Location>,
+            skip: (JetFile, Int) -> Boolean
+    ): XSourcePositionImpl? {
+        for (location in locations) {
+            val file = this.debugProcess.positionManager.getSourcePosition(location)?.file as? JetFile ?: continue
+            val currentLine = location.lineNumber() - 1
+            val lineStartOffset = file.getLineStartOffset(currentLine) ?: continue
+            if (skip(file, lineStartOffset)) continue
+
+            val elementAt = file.findElementAt(lineStartOffset) ?: continue
+            return XSourcePositionImpl.createByElement(elementAt)
+        }
+
+        return null
+    }
+
+    private fun getInlineFunctionsIfAny(file: JetFile, offset: Int): List<JetNamedFunction>? {
+        val elementAt = file.findElementAt(offset) ?: return null
+        val containingFunction = elementAt.getParentOfType<JetNamedFunction>(false) ?: return null
+
+        val descriptor = containingFunction.resolveToDescriptor()
+        if (!InlineUtil.isInline(descriptor)) return null
+
+        val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(
+                containingFunction.getResolutionFacade(),
+                containingFunction.analyzeFully(),
+                containingFunction,
+                false
+        ).filterIsInstance<JetNamedFunction>()
+
+        return inlineFunctionsCalls
+    }
+
+    private fun getInlineArgumentIfAny(file: JetFile, offset: Int): JetFunctionLiteral? {
+        val elementAt = file.findElementAt(offset) ?: return null
+        val functionLiteralExpression = elementAt.getParentOfType<JetFunctionLiteralExpression>(false) ?: return null
+
+        val context = functionLiteralExpression.analyze(BodyResolveMode.PARTIAL)
+        if (!InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, context, false)) return null
+
+        return functionLiteralExpression.functionLiteral
+    }
+
+    private fun isKotlinStrataAvailable(suspendContext: SuspendContextImpl): Boolean {
         val availableStrata = suspendContext.frameProxy?.location()?.declaringType()?.availableStrata() ?: return false
         return availableStrata.contains("Kotlin")
     }
@@ -93,7 +196,9 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val worker = object : DebuggerCommandImpl() {
             override fun action() {
                 try {
-                    result = action(suspendContext)
+                    if (isKotlinStrataAvailable(suspendContext)) {
+                        result = action(suspendContext)
+                    }
                 }
                 finally {
                     semaphore.up()

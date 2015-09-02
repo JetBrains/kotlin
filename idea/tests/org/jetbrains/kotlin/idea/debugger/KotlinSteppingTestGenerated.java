@@ -297,6 +297,36 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/inapplicableFieldWatchpoints.kt");
             doStepOutTest(fileName);
         }
+
+        @TestMetadata("stepOutInlineFunction.kt")
+        public void testStepOutInlineFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutInlineFunction.kt");
+            doStepOutTest(fileName);
+        }
+
+        @TestMetadata("stepOutInlinedLambdaArgument.kt")
+        public void testStepOutInlinedLambdaArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutInlinedLambdaArgument.kt");
+            doStepOutTest(fileName);
+        }
+
+        @TestMetadata("stepOutSeveralInlineArgumentDeepest.kt")
+        public void testStepOutSeveralInlineArgumentDeepest() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutSeveralInlineArgumentDeepest.kt");
+            doStepOutTest(fileName);
+        }
+
+        @TestMetadata("stepOutSeveralInlineFunctions.kt")
+        public void testStepOutSeveralInlineFunctions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutSeveralInlineFunctions.kt");
+            doStepOutTest(fileName);
+        }
+
+        @TestMetadata("stepOutSeveralInlineFunctionsDeepest.kt")
+        public void testStepOutSeveralInlineFunctionsDeepest() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutSeveralInlineFunctionsDeepest.kt");
+            doStepOutTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver")
@@ -442,6 +472,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stepIntoStdlibInlineFun2step.kt")
         public void testStepIntoStdlibInlineFun2step() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepIntoStdlibInlineFun2step.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("stepOutInlineFunctionStdlib.kt")
+        public void testStepOutInlineFunctionStdlib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepOutInlineFunctionStdlib.kt");
             doCustomTest(fileName);
         }
     }

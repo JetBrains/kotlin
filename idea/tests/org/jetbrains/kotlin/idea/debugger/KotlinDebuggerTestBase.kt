@@ -136,7 +136,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.stepOut() {
-        dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
+        val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, StepRequest.STEP_LINE) }
+                              ?: dp.createStepOutCommand(this)
+        dp.getManagerThread()!!.schedule(stepOutCommand)
     }
 
     protected fun SuspendContextImpl.stepOver() {
