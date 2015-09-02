@@ -34,10 +34,14 @@ import org.jetbrains.kotlin.load.kotlin.JavaClassDataFinder
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-public class RuntimeModuleData private constructor(public val module: ModuleDescriptor, public val localClassResolver: LocalClassResolver) {
+public class RuntimeModuleData private constructor(public val deserialization: DeserializationComponents) {
+    public val module: ModuleDescriptor get() = deserialization.moduleDescriptor
+    public val localClassResolver: LocalClassResolver get() = deserialization.localClassResolver
+
     companion object {
         public fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
@@ -63,7 +67,7 @@ public class RuntimeModuleData private constructor(public val module: ModuleDesc
             module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
             module.initialize(javaDescriptorResolver.packageFragmentProvider)
 
-            return RuntimeModuleData(module, deserializationComponentsForJava.components.localClassResolver)
+            return RuntimeModuleData(deserializationComponentsForJava.components)
         }
     }
 }

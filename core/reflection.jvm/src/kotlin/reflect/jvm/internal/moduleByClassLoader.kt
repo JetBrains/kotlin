@@ -44,7 +44,7 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
             ref.get()?.let { it.toString() } ?: "<null>"
 }
 
-private fun Class<*>.getOrCreateModule(): RuntimeModuleData {
+internal fun Class<*>.getOrCreateModule(): RuntimeModuleData {
     val classLoader = this.safeClassLoader
     val key = WeakClassLoaderBox(classLoader)
 
