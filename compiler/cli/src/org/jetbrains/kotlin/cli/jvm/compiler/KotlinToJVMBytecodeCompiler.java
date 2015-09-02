@@ -391,7 +391,8 @@ public class KotlinToJVMBytecodeCompiler {
                 packagesWithObsoleteParts,
                 moduleId,
                 moduleName,
-                outputDirectory
+                outputDirectory,
+                incrementalCompilationComponents
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 

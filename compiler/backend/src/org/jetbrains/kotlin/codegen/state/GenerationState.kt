@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
@@ -54,6 +55,7 @@ public class GenerationState jvmOverloads constructor(
         moduleName: String? = null,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
         public val outDirectory: File? = null,
+        public val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         public val progress: Progress = Progress.DEAF
 ) {
 
