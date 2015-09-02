@@ -180,6 +180,9 @@ public class KotlinBuiltIns {
         public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
+        public final FqName retention = annotationName("Retention");
+        public final FqName repeatable = annotationName("Repeatable");
+        public final FqName mustBeDocumented = annotationName("MustBeDocumented");
 
         public final FqName mutableList = fqName("MutableList");
         public final FqName mutableSet = fqName("MutableSet");
@@ -391,6 +394,21 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getTargetAnnotation() {
         return getAnnotationClassByName(FQ_NAMES.target.shortName());
+    }
+
+    @NotNull
+    public ClassDescriptor getRetentionAnnotation() {
+        return getAnnotationClassByName(FQ_NAMES.retention.shortName());
+    }
+
+    @NotNull
+    public ClassDescriptor getRepeatableAnnotation() {
+        return getAnnotationClassByName(FQ_NAMES.repeatable.shortName());
+    }
+
+    @NotNull
+    public ClassDescriptor getMustBeDocumentedAnnotation() {
+        return getAnnotationClassByName(FQ_NAMES.mustBeDocumented.shortName());
     }
 
     @NotNull

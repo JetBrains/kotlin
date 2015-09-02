@@ -89,3 +89,23 @@ public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = tru
         val repeatable: Boolean = false,
         val mustBeDocumented: Boolean = false
 )
+
+/**
+ * This meta-annotation determines whether an annotation is stored in binary output and visible for reflection. By default, both are true.
+ *
+ * @property value necessary annotation retention (RUNTIME, BINARY or SOURCE)
+ */
+target(AnnotationTarget.ANNOTATION_CLASS)
+public annotation class Retention(val value: AnnotationRetention = AnnotationRetention.RUNTIME)
+
+/**
+ * This meta-annotation determines that an annotation is applicable twice or more on a single code element
+ */
+target(AnnotationTarget.ANNOTATION_CLASS)
+public annotation class Repeatable
+
+/**
+ * This meta-annotation determines that an annotation is a part of public API and therefore must be documented
+ */
+target(AnnotationTarget.ANNOTATION_CLASS)
+public annotation class MustBeDocumented
