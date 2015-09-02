@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tasks
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -38,12 +37,13 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.filtered
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -80,11 +80,12 @@ public class TaskPrioritizer(
     ): List<ResolutionTask<D, F>> {
         val explicitReceiver = context.call.getExplicitReceiver()
         val result = ResolutionTaskHolder<D, F>(storageManager, context, PriorityProviderImpl<D>(context), tracing)
-        val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope.asJetScope(), callableDescriptorCollectors)
+        val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope, callableDescriptorCollectors)
 
         if (explicitReceiver is QualifierReceiver) {
             val qualifierReceiver: QualifierReceiver = explicitReceiver
-            doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(qualifierReceiver.getNestedClassesAndPackageMembersScope()))
+            val receiverScope = qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsFileScope()
+            doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
             computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
         }
         else {
@@ -128,7 +129,7 @@ public class TaskPrioritizer(
             addCandidatesForInvoke(receiverWithTypes, c)
             return
         }
-        val implicitReceivers = Sets.newLinkedHashSet<ReceiverValue>(JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope))
+        val implicitReceivers = c.scope.getImplicitReceiversHierarchy().map { it.value }
         if (receiver.exists()) {
             addCandidatesForExplicitReceiver(receiverWithTypes, implicitReceivers, c, isExplicit = true)
             addMembers(receiverWithTypes, c, staticMembers = true, isExplicit = true)
@@ -182,7 +183,7 @@ public class TaskPrioritizer(
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver.value,
-                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.types, createLookupLocation(c), c.context.trace),
+                        callableDescriptorCollector.getExtensionsByName(c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c), c.context.trace),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -230,7 +231,7 @@ public class TaskPrioritizer(
         addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit)
 
         c.result.addCandidates {
-            val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.getContainingDeclaration())
+            val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.ownerDescriptor)
 
             val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
                 it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c), c.context.trace)
@@ -269,14 +270,14 @@ public class TaskPrioritizer(
 
             val members = convertWithImpliedThisAndNoReceiver(
                     c.scope,
-                    callableDescriptorCollector.getNonExtensionsByName(c.scope, c.name, createLookupLocation(c), c.context.trace),
+                    callableDescriptorCollector.getNonExtensionsByName(c.scope.asJetScope(), c.name, createLookupLocation(c), c.context.trace),
                     c.context.call
             )
 
             if (members.isNotEmpty()) {
                 val nonlocals = Lists.newArrayList<ResolutionCandidate<D>>()
                 val locals = Lists.newArrayList<ResolutionCandidate<D>>()
-                splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals)
+                splitLexicallyLocalDescriptors(members, c.scope.ownerDescriptor, locals, nonlocals)
 
                 localsList.add(locals)
                 nonlocalsList.add(nonlocals)
@@ -311,7 +312,7 @@ public class TaskPrioritizer(
     })
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverWithTypes, c: TaskPrioritizerContext<D, F>) {
-        val implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope)
+        val implicitReceivers = c.scope.getImplicitReceiversHierarchy().map { it.value }
 
         // For 'a.foo()' where foo has function type,
         // a is explicitReceiver, foo is variableReceiver.
@@ -385,7 +386,7 @@ public class TaskPrioritizer(
     }
 
     public fun <D : CallableDescriptor> convertWithImpliedThisAndNoReceiver(
-            scope: JetScope,
+            scope: LexicalScope,
             descriptors: Collection<D>,
             call: Call
     ): Collection<ResolutionCandidate<D>> {
@@ -393,7 +394,7 @@ public class TaskPrioritizer(
     }
 
     public fun <D : CallableDescriptor> convertWithImpliedThis(
-            scope: JetScope,
+            scope: LexicalScope,
             receiverParameter: ReceiverValue,
             descriptors: Collection<D>,
             receiverKind: ExplicitReceiverKind,
@@ -412,7 +413,7 @@ public class TaskPrioritizer(
     }
 
     private fun <D : CallableDescriptor> setImpliedThis(
-            scope: JetScope,
+            scope: LexicalScope,
             candidate: ResolutionCandidate<D>
     ): Boolean {
         val dispatchReceiver = candidate.getDescriptor().getDispatchReceiverParameter()
@@ -472,10 +473,10 @@ public class TaskPrioritizer(
             val name: Name,
             val result: ResolutionTaskHolder<D, F>,
             val context: BasicCallResolutionContext,
-            val scope: JetScope,
+            val scope: LexicalScope,
             val callableDescriptorCollectors: CallableDescriptorCollectors<D>
     ) {
-        fun replaceScope(newScope: JetScope): TaskPrioritizerContext<D, F> {
+        fun replaceScope(newScope: LexicalScope): TaskPrioritizerContext<D, F> {
             return TaskPrioritizerContext(name, result, context, newScope, callableDescriptorCollectors)
         }
 

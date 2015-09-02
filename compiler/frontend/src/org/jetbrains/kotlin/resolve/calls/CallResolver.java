@@ -343,7 +343,7 @@ public class CallResolver {
             return checkArgumentTypesAndFail(context);
         }
         Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(UtilsPackage.asJetScope(context.scope), constructors, context.call);
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(context.scope, constructors, context.call);
 
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
