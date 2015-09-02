@@ -330,8 +330,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 JetProperty property = psiFactory.createProperty(variableText);
                 PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
                 if (anchor == null) return;
-                boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
-                                       commonContainer instanceof JetClassInitializer);
+                boolean needBraces = !(commonContainer instanceof JetBlockExpression);
                 if (!needBraces) {
                     property = (JetProperty)commonContainer.addBefore(property, anchor);
                     commonContainer.addBefore(psiFactory.createNewLine(), anchor);
@@ -548,7 +547,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     @Nullable
     private static PsiElement getContainer(PsiElement place) {
-        if (place instanceof JetBlockExpression || place instanceof JetClassInitializer) {
+        if (place instanceof JetBlockExpression) {
             return place;
         }
         while (place != null) {
@@ -559,8 +558,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
             }
             if (parent instanceof JetBlockExpression
-                || (parent instanceof JetWhenEntry && place == ((JetWhenEntry) parent).getExpression())
-                || parent instanceof JetClassInitializer) {
+                || (parent instanceof JetWhenEntry && place == ((JetWhenEntry) parent).getExpression())) {
                 return parent;
             }
             if (parent instanceof JetDeclarationWithBody && ((JetDeclarationWithBody) parent).getBodyExpression() == place) {
@@ -596,7 +594,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     result = parent;
                 }
             }
-            else if (parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
+            else if (parent instanceof JetClassBody || parent instanceof JetFile) {
                 return result;
             }
             else if (parent instanceof JetBlockExpression) {

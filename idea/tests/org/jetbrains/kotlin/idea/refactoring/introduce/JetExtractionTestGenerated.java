@@ -145,6 +145,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("InsideOfInitializerAnnotation.kt")
+        public void testInsideOfInitializerAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/InsideOfInitializerAnnotation.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("IntroduceAndCreateBlock.kt")
         public void testIntroduceAndCreateBlock() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IntroduceAndCreateBlock.kt");
