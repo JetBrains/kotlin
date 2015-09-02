@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger.stepping
 
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
@@ -25,7 +24,6 @@ import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.Location
-import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -50,13 +47,12 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null) return null
 
-        val result: Pair<SourcePosition, ReferenceType>? = computeInManagerThread(suspendContext) {
-            val sp = runReadAction { ContextUtil.getSourcePosition(it) } ?: return@computeInManagerThread null
-            val cl = it.frameProxy?.location()?.declaringType() ?: return@computeInManagerThread null
-            sp to cl
-        }
+        val location = computeInManagerThread(suspendContext) {
+            it.frameProxy?.location()
+        } ?: return null
 
-        val (sourcePosition, computedReferenceType)  = result ?: return null
+        val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
+        val computedReferenceType = location.declaringType() ?: return null
 
         val file = sourcePosition.file as? JetFile ?: return null
 
@@ -68,8 +64,8 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val nextLine = sourcePosition.line + 2 /* +1 - because of locations are counted from 1 and +1 - because we want next line */
 
         for (lineNumber in nextLine..countOfLinesInFile) {
-            val location = locations.firstOrNull { it.lineNumber() == lineNumber }
-            if (location != null) {
+            val locationAtLine = locations.firstOrNull { it.lineNumber() == lineNumber }
+            if (locationAtLine != null) {
                 val lineStartOffset = file.getLineStartOffset(lineNumber - 1) ?: continue
                 if (inlinedArguments.any { it.textRange.contains(lineStartOffset) }) continue
 
