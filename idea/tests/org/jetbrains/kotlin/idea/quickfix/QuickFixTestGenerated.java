@@ -3348,6 +3348,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inTypeArgument.kt")
+            public void testInTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inTypeArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nestedClassToNestedClass.kt")
             public void testNestedClassToNestedClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/nestedClassToNestedClass.kt");
