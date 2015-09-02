@@ -38,7 +38,7 @@ public class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
         }
 
         if (detector.isMain(function)) {
-            return RunLineMarkerContributor.Info(JetIcons.LAUNCH, null, ExecutorAction.ACTIONS)
+            return RunLineMarkerContributor.Info(JetIcons.LAUNCH, null, ExecutorAction.getActions(0))
         }
 
         return null
