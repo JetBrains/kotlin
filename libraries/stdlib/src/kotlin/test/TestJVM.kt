@@ -51,12 +51,6 @@ public var asserter: Asserter
  */
 private class DefaultAsserter() : Asserter {
 
-    public override fun assertTrue(message : String, actual : Boolean) {
-        if (!actual) {
-            fail(message)
-        }
-    }
-
     public override fun assertEquals(message : String, expected : Any?, actual : Any?) {
         if (expected != actual) {
             fail("$message. Expected <$expected> actual <$actual>")
@@ -69,17 +63,7 @@ private class DefaultAsserter() : Asserter {
         }
     }
 
-    public override fun assertNotNull(message : String, actual : Any?) {
-        if (actual == null) {
-            fail(message)
-        }
-    }
 
-    public override fun assertNull(message : String, actual : Any?) {
-        if (actual != null) {
-            fail(message)
-        }
-    }
     public override fun fail(message : String) {
         throw AssertionError(message)
     }

@@ -4,16 +4,16 @@
 package kotlin.test
 
 /** Asserts that the given [block] returns `true`. */
-public inline fun assertTrue(message: String, block: () -> Boolean) {
+public fun assertTrue(message: String, block: () -> Boolean) {
     val actual = block()
     asserter.assertTrue(message, actual)
 }
 
 /** Asserts that the given [block] returns `true`. */
-public inline fun assertTrue(block: () -> Boolean): Unit = assertTrue("expected true", block)
+public fun assertTrue(block: () -> Boolean): Unit = assertTrue("expected true", block)
 
 /** Asserts that the given [block] returns `false`. */
-public inline fun assertNot(message: String, block: () -> Boolean) {
+public fun assertNot(message: String, block: () -> Boolean) {
     assertTrue(message) { !block() }
 }
 
@@ -65,12 +65,12 @@ public fun fail(message: String = "") {
 }
 
 /** Asserts that given function [block] returns the given [expected] value. */
-public inline fun <T> expect(expected: T, block: () -> T) {
+public fun <T> expect(expected: T, block: () -> T) {
     expect(expected, "expected " + expected, block)
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
-public inline fun <T> expect(expected: T, message: String, block: () -> T) {
+public fun <T> expect(expected: T, message: String, block: () -> T) {
     val actual = block()
     assertEquals(expected, actual, message)
 }
@@ -98,7 +98,11 @@ public interface Asserter {
      *
      * @param message the message to report if the assertion fails.
      */
-    public fun assertTrue(message: String, actual: Boolean): Unit
+    public fun assertTrue(message: String, actual: Boolean): Unit {
+        if (!actual) {
+            fail(message)
+        }
+    }
 
     /**
      * Asserts that the specified values are equal.
@@ -119,14 +123,22 @@ public interface Asserter {
      *
      * @param message the message to report if the assertion fails.
      */
-    public fun assertNotNull(message: String, actual: Any?): Unit
+    public fun assertNotNull(message: String, actual: Any?): Unit {
+        if (actual == null) {
+            fail(message)
+        }
+    }
 
     /**
      * Asserts that the specified value is `null`.
      *
      * @param message the message to report if the assertion fails.
      */
-    public fun assertNull(message: String, actual: Any?): Unit
+    public fun assertNull(message: String, actual: Any?): Unit {
+        if (actual != null) {
+            fail(message)
+        }
+    }
 
     /**
      * Fails the current test with the specified message.
