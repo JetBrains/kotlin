@@ -50,7 +50,7 @@ public class PseudocodeVariablesData {
 
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
 
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers;
+    private Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> variableInitializers;
 
     public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
         this.pseudocode = pseudocode;
@@ -112,7 +112,7 @@ public class PseudocodeVariablesData {
     // variable initializers
 
     @NotNull
-    public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
+    public Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> getVariableInitializers() {
         if (variableInitializers == null) {
             variableInitializers = computeVariableInitializers();
         }
@@ -121,31 +121,31 @@ public class PseudocodeVariablesData {
     }
 
     @NotNull
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> computeVariableInitializers() {
+    private Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> computeVariableInitializers() {
 
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
 
         return pseudocodeVariableDataCollector.collectData(
                 FORWARD, /*mergeDataWithLocalDeclarations=*/ false,
-                new InstructionDataMergeStrategy<VariableInitState>() {
+                new InstructionDataMergeStrategy<VariableControlFlowState>() {
                     @NotNull
                     @Override
-                    public Edges<Map<VariableDescriptor, VariableInitState>> invoke(
+                    public Edges<Map<VariableDescriptor, VariableControlFlowState>> invoke(
                             @NotNull Instruction instruction,
-                            @NotNull Collection<? extends Map<VariableDescriptor, VariableInitState>> incomingEdgesData
+                            @NotNull Collection<? extends Map<VariableDescriptor, VariableControlFlowState>> incomingEdgesData
                     ) {
 
-                        Map<VariableDescriptor, VariableInitState> enterInstructionData =
+                        Map<VariableDescriptor, VariableControlFlowState> enterInstructionData =
                                 mergeIncomingEdgesDataForInitializers(incomingEdgesData);
-                        Map<VariableDescriptor, VariableInitState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
+                        Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
                                 instruction, enterInstructionData, lexicalScopeVariableInfo);
-                        return new Edges<Map<VariableDescriptor, VariableInitState>>(enterInstructionData, exitInstructionData);
+                        return new Edges<Map<VariableDescriptor, VariableControlFlowState>>(enterInstructionData, exitInstructionData);
                     }
                 }
         );
     }
 
-    public static VariableInitState getDefaultValueForInitializers(
+    public static VariableControlFlowState getDefaultValueForInitializers(
             @NotNull VariableDescriptor variable,
             @NotNull Instruction instruction,
             @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
@@ -155,24 +155,24 @@ public class PseudocodeVariablesData {
         boolean declaredOutsideThisDeclaration =
                 declaredIn == null //declared outside this pseudocode
                 || declaredIn.getLexicalScopeForContainingDeclaration() != instruction.getLexicalScope().getLexicalScopeForContainingDeclaration();
-        return VariableInitState.create(/*initState=*/declaredOutsideThisDeclaration);
+        return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration);
     }
 
     @NotNull
-    private static Map<VariableDescriptor, VariableInitState> mergeIncomingEdgesDataForInitializers(
-            @NotNull Collection<? extends Map<VariableDescriptor, VariableInitState>> incomingEdgesData
+    private static Map<VariableDescriptor, VariableControlFlowState> mergeIncomingEdgesDataForInitializers(
+            @NotNull Collection<? extends Map<VariableDescriptor, VariableControlFlowState>> incomingEdgesData
     ) {
         Set<VariableDescriptor> variablesInScope = Sets.newHashSet();
-        for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
+        for (Map<VariableDescriptor, VariableControlFlowState> edgeData : incomingEdgesData) {
             variablesInScope.addAll(edgeData.keySet());
         }
 
-        Map<VariableDescriptor, VariableInitState> enterInstructionData = Maps.newHashMap();
+        Map<VariableDescriptor, VariableControlFlowState> enterInstructionData = Maps.newHashMap();
         for (VariableDescriptor variable : variablesInScope) {
             TriInitState initState = null;
             boolean isDeclared = true;
-            for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
-                VariableInitState varControlFlowState = edgeData.get(variable);
+            for (Map<VariableDescriptor, VariableControlFlowState> edgeData : incomingEdgesData) {
+                VariableControlFlowState varControlFlowState = edgeData.get(variable);
                 if (varControlFlowState != null) {
                     initState = initState != null ? initState.merge(varControlFlowState.initState) : varControlFlowState.initState;
                     if (!varControlFlowState.isDeclared) {
@@ -183,15 +183,15 @@ public class PseudocodeVariablesData {
             if (initState == null) {
                 throw new AssertionError("An empty set of incoming edges data");
             }
-            enterInstructionData.put(variable, VariableInitState.create(initState, isDeclared));
+            enterInstructionData.put(variable, VariableControlFlowState.create(initState, isDeclared));
         }
         return enterInstructionData;
     }
 
     @NotNull
-    private Map<VariableDescriptor, VariableInitState> addVariableInitStateFromCurrentInstructionIfAny(
+    private Map<VariableDescriptor, VariableControlFlowState> addVariableInitStateFromCurrentInstructionIfAny(
             @NotNull Instruction instruction,
-            @NotNull Map<VariableDescriptor, VariableInitState> enterInstructionData,
+            @NotNull Map<VariableDescriptor, VariableControlFlowState> enterInstructionData,
             @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
     ) {
         if (!(instruction instanceof WriteValueInstruction) && !(instruction instanceof VariableDeclarationInstruction)) {
@@ -201,26 +201,27 @@ public class PseudocodeVariablesData {
         if (variable == null) {
             return enterInstructionData;
         }
-        Map<VariableDescriptor, VariableInitState> exitInstructionData = Maps.newHashMap(enterInstructionData);
+        Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = Maps.newHashMap(enterInstructionData);
         if (instruction instanceof WriteValueInstruction) {
             // if writing to already initialized object
             if (!PseudocodeUtil.isThisOrNoDispatchReceiver((WriteValueInstruction) instruction, bindingContext)) {
                 return enterInstructionData;
             }
 
-            VariableInitState enterInitState = enterInstructionData.get(variable);
-            VariableInitState initializationAtThisElement =
-                    VariableInitState.create(((WriteValueInstruction) instruction).getElement() instanceof JetProperty, enterInitState);
+            VariableControlFlowState enterInitState = enterInstructionData.get(variable);
+            VariableControlFlowState initializationAtThisElement =
+                    VariableControlFlowState
+                            .create(((WriteValueInstruction) instruction).getElement() instanceof JetProperty, enterInitState);
             exitInstructionData.put(variable, initializationAtThisElement);
         }
         else { // instruction instanceof VariableDeclarationInstruction
-            VariableInitState enterInitState = enterInstructionData.get(variable);
+            VariableControlFlowState enterInitState = enterInstructionData.get(variable);
             if (enterInitState == null) {
                 enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo);
             }
             if (enterInitState == null || !enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
                 boolean isInitialized = enterInitState != null && enterInitState.mayBeInitialized();
-                VariableInitState variableDeclarationInfo = VariableInitState.create(isInitialized, true);
+                VariableControlFlowState variableDeclarationInfo = VariableControlFlowState.create(isInitialized, true);
                 exitInstructionData.put(variable, variableDeclarationInfo);
             }
         }
@@ -300,25 +301,25 @@ public class PseudocodeVariablesData {
         }
     }
 
-    public static class VariableInitState {
+    public static class VariableControlFlowState {
 
         public final TriInitState initState;
         public final boolean isDeclared;
 
-        private VariableInitState(TriInitState initState, boolean isDeclared) {
+        private VariableControlFlowState(TriInitState initState, boolean isDeclared) {
             this.initState = initState;
             this.isDeclared = isDeclared;
         }
 
-        private static final VariableInitState VS_IT = new VariableInitState(TriInitState.INITIALIZED, true);
-        private static final VariableInitState VS_IF = new VariableInitState(TriInitState.INITIALIZED, false);
-        private static final VariableInitState VS_UT = new VariableInitState(TriInitState.UNKNOWN, true);
-        private static final VariableInitState VS_UF = new VariableInitState(TriInitState.UNKNOWN, false);
-        private static final VariableInitState VS_NT = new VariableInitState(TriInitState.NOT_INITIALIZED, true);
-        private static final VariableInitState VS_NF = new VariableInitState(TriInitState.NOT_INITIALIZED, false);
+        private static final VariableControlFlowState VS_IT = new VariableControlFlowState(TriInitState.INITIALIZED, true);
+        private static final VariableControlFlowState VS_IF = new VariableControlFlowState(TriInitState.INITIALIZED, false);
+        private static final VariableControlFlowState VS_UT = new VariableControlFlowState(TriInitState.UNKNOWN, true);
+        private static final VariableControlFlowState VS_UF = new VariableControlFlowState(TriInitState.UNKNOWN, false);
+        private static final VariableControlFlowState VS_NT = new VariableControlFlowState(TriInitState.NOT_INITIALIZED, true);
+        private static final VariableControlFlowState VS_NF = new VariableControlFlowState(TriInitState.NOT_INITIALIZED, false);
 
 
-        private static VariableInitState create(TriInitState initState, boolean isDeclared) {
+        private static VariableControlFlowState create(TriInitState initState, boolean isDeclared) {
             switch (initState) {
                 case INITIALIZED: return isDeclared ? VS_IT : VS_IF;
                 case UNKNOWN: return isDeclared ? VS_UT : VS_UF;
@@ -326,15 +327,15 @@ public class PseudocodeVariablesData {
             }
         }
 
-        private static VariableInitState create(boolean isInitialized, boolean isDeclared) {
+        private static VariableControlFlowState create(boolean isInitialized, boolean isDeclared) {
             return create(isInitialized ? TriInitState.INITIALIZED : TriInitState.NOT_INITIALIZED, isDeclared);
         }
 
-        private static VariableInitState create(boolean isInitialized) {
+        private static VariableControlFlowState create(boolean isInitialized) {
             return create(isInitialized, false);
         }
 
-        private static VariableInitState create(boolean isDeclaredHere, @Nullable VariableInitState mergedEdgesData) {
+        private static VariableControlFlowState create(boolean isDeclaredHere, @Nullable VariableControlFlowState mergedEdgesData) {
             return create(true, isDeclaredHere || (mergedEdgesData != null && mergedEdgesData.isDeclared));
         }
 
