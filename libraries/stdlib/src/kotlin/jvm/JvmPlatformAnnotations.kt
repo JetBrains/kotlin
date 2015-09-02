@@ -31,7 +31,7 @@ public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = tru
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
  * for more information.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmStatic
 
 /**

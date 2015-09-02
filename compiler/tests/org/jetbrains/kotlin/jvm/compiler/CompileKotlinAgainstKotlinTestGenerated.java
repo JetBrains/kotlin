@@ -131,6 +131,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("PlatformStaticInObject.A.kt")
+    public void testPlatformStaticInObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformStaticInObject.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PlatformTypes.A.kt")
     public void testPlatformTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformTypes.A.kt");

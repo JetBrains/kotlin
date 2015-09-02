@@ -7,7 +7,7 @@ internal final class A {
 
     public companion object Companion {
         private constructor Companion()
-        @field:kotlin.platform.platformStatic() internal final val b: kotlin.String
+        kotlin.platform.platformStatic() internal final val b: kotlin.String
         internal final var test.A.c: kotlin.String
     }
 }
