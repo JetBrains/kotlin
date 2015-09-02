@@ -42,7 +42,7 @@ public class KotlinCompilerClient {
 
     companion object {
 
-        val DAEMON_STARTUP_TIMEOUT_MS = 10000L
+        val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
 
         private fun connectToService(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream): CompileService? {
 
@@ -103,16 +103,25 @@ public class KotlinCompilerClient {
             try {
                 // trying to wait for process
                 if (daemonOptions.startEcho.isNotEmpty()) {
+                    val daemonStartupTimeout = System.getProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY)?.let {
+                            try {
+                                it.toLong()
+                            }
+                            catch (e: Exception) {
+                                errStream.println("[daemon client] unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms")
+                                null
+                            }
+                        } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
                     errStream.println("[daemon client] waiting for daemon to respond")
-                    val succeeded = isEchoRead.tryAcquire(DAEMON_STARTUP_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                    val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
                     if (!daemon.isAlive())
                         throw Exception("Daemon terminated unexpectedly")
                     if (!succeeded)
-                        throw Exception("Unable to get response from daemon in $DAEMON_STARTUP_TIMEOUT_MS ms")
+                        throw Exception("Unable to get response from daemon in $daemonStartupTimeout ms")
                 }
                 else
                 // without startEcho defined waiting for max timeout
-                    Thread.sleep(DAEMON_STARTUP_TIMEOUT_MS)
+                    Thread.sleep(DAEMON_DEFAULT_STARTUP_TIMEOUT_MS)
             }
             finally {
                 // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
@@ -207,7 +216,7 @@ public class KotlinCompilerClient {
             if (!clientOptions.stop) {
                 if (compilerId.compilerClasspath.none()) {
                     // attempt to find compiler to use
-                    println("compiler wasn't explicitly specified, attempt to find appropriate jar")
+                    System.err.println("compiler wasn't explicitly specified, attempt to find appropriate jar")
                     System.getProperty("java.class.path")
                             ?.split(File.pathSeparator)
                             ?.map { File(it).parent }
@@ -231,7 +240,7 @@ public class KotlinCompilerClient {
             val daemon = connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)
 
             if (daemon == null) {
-                if (clientOptions.stop) println("No daemon found to shut down")
+                if (clientOptions.stop) System.err.println("No daemon found to shut down")
                 else throw Exception("Unable to connect to daemon")
             }
             else when {

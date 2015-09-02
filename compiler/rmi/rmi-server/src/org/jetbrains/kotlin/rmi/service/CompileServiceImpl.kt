@@ -26,15 +26,11 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
 import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
-import java.io.IOException
 import java.io.PrintStream
-import java.lang.management.ManagementFactory
-import java.net.URLClassLoader
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.jar.Manifest
 import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -104,43 +100,19 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         return (rt.totalMemory() - rt.freeMemory())
     }
 
-    fun usedMemoryMX(): Long {
-        System.gc()
-        val memoryMXBean= ManagementFactory.getMemoryMXBean()
-        val memHeap=memoryMXBean.getHeapMemoryUsage()
-        return memHeap.used
-    }
-
-    // TODO: consider using version as a part of compiler ID or drop this function
-    private fun loadKotlinVersionFromResource(): String {
-        (javaClass.classLoader as? URLClassLoader)
-        ?.findResource("META-INF/MANIFEST.MF")
-        ?.let {
-            try {
-                return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: ""
-            }
-            catch (e: IOException) {}
-        }
-        return ""
-    }
-
-
     fun<R> checkedCompile(args: Array<out String>, body: () -> R): R {
         try {
             if (args.none())
                 throw IllegalArgumentException("Error: empty arguments list.")
             log.info("Starting compilation with args: " + args.joinToString(" "))
-            val startMemMX = usedMemoryMX() / 1024
             val startMem = usedMemory() / 1024
             val startTime = System.nanoTime()
             val res = body()
             val endTime = System.nanoTime()
             val endMem = usedMemory() / 1024
-            val endMemMX = usedMemoryMX() / 1024
             log.info("Done with result " + res.toString())
             log.info("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
             log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
-            log.info("Used memory (from MemoryMXBean): $endMemMX kb (${"%+d".format(endMemMX - startMemMX)} kb)")
             return res
         }
         catch (e: Exception) {

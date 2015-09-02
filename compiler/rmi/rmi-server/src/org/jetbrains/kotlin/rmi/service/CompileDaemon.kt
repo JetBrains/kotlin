@@ -17,14 +17,20 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
+import org.jetbrains.kotlin.rmi.CompilerId
+import org.jetbrains.kotlin.rmi.DaemonOptions
+import org.jetbrains.kotlin.rmi.filterExtractProps
 import org.jetbrains.kotlin.service.CompileServiceImpl
+import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
-import java.rmi.RMISecurityManager
+import java.lang.management.ManagementFactory
+import java.net.URLClassLoader
 import java.rmi.registry.LocateRegistry
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.jar.Manifest
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.platform.platformStatic
@@ -89,7 +95,23 @@ public class CompileDaemon {
 
         val log by lazy { Logger.getLogger("daemon") }
 
+        private fun loadVersionFromResource(): String? {
+            (javaClass.classLoader as? URLClassLoader)
+                    ?.findResource("META-INF/MANIFEST.MF")
+                    ?.let {
+                        try {
+                            return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: ""
+                        }
+                        catch (e: IOException) {}
+                    }
+            return null
+        }
+
         platformStatic public fun main(args: Array<String>) {
+
+            log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
+            log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
+            log.info("daemon args: " + args.joinToString(" "))
 
             val compilerId = CompilerId()
             val daemonOptions = DaemonOptions()
