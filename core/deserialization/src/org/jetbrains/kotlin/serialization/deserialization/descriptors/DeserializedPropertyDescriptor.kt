@@ -38,9 +38,11 @@ public class DeserializedPropertyDescriptor(
         name: Name,
         kind: Kind,
         override public val proto: ProtoBuf.Callable,
-        override public val nameResolver: NameResolver
+        override public val nameResolver: NameResolver,
+        lateInit: Boolean
 ) : DeserializedCallableMemberDescriptor,
-    PropertyDescriptorImpl(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE) {
+    PropertyDescriptorImpl(containingDeclaration, original, annotations,
+                           modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, lateInit) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -50,6 +52,6 @@ public class DeserializedPropertyDescriptor(
             kind: Kind
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
-                newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, proto, nameResolver)
+                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, proto, nameResolver, isLateInit)
     }
 }

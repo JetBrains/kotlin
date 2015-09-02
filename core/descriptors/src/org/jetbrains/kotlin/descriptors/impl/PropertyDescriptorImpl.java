@@ -38,6 +38,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final Set<PropertyDescriptor> overriddenProperties = new LinkedHashSet<PropertyDescriptor>(); // LinkedHashSet is essential here
     private final PropertyDescriptor original;
     private final Kind kind;
+    private final boolean lateInit;
 
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
@@ -55,13 +56,15 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean isVar,
             @NotNull Name name,
             @NotNull Kind kind,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean lateInit
     ) {
         super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
         this.visibility = visibility;
         this.original = original == null ? this : original;
         this.kind = kind;
+        this.lateInit = lateInit;
     }
 
     @NotNull
@@ -73,9 +76,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean isVar,
             @NotNull Name name,
             @NotNull Kind kind,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean lateInit
     ) {
-        return new PropertyDescriptorImpl(containingDeclaration, null, annotations, modality, visibility, isVar, name, kind, source);
+        return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
+                                          modality, visibility, isVar, name, kind, source, lateInit);
     }
 
     public void setType(
@@ -166,6 +171,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @Override
     public boolean isSetterProjectedOut() {
         return setterProjectedOut;
+    }
+
+    @Override
+    public boolean isLateInit() {
+        return lateInit;
     }
 
     @Override
@@ -288,7 +298,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Kind kind
     ) {
         return new PropertyDescriptorImpl(newOwner, original,
-                                          getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE);
+                                          getAnnotations(), newModality, newVisibility,
+                                          isVar(), getName(), kind, SourceElement.NO_SOURCE, isLateInit());
     }
 
     @NotNull

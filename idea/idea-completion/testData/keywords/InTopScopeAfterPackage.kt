@@ -29,5 +29,6 @@ package Test
 /*why?*/
 // EXIST:  companion object
 // EXIST:  sealed
+// EXIST:  lateinit
 /*TODO*/
 // NOTHING_ELSE

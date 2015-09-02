@@ -92,7 +92,8 @@ public class LazyScriptClassMemberScope protected constructor(
                 false,
                 Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME),
                 CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                false
         )
 
         val returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType()
@@ -132,7 +133,8 @@ public class LazyScriptClassMemberScope protected constructor(
                 false,
                 parameter.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                false
         )
         propertyDescriptor.setType(
                 parameter.getType(),

@@ -458,6 +458,12 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderLateInit(propertyDescriptor: PropertyDescriptor, builder: StringBuilder) {
+        if (propertyDescriptor.isLateInit) {
+            builder.append("lateinit ")
+        }
+    }
+
     override fun render(declarationDescriptor: DeclarationDescriptor): String {
         return StringBuilder {
             declarationDescriptor.accept(RenderDeclarationDescriptorVisitor(), this)
@@ -706,6 +712,7 @@ internal class DescriptorRendererImpl(
             renderVisibility(property.getVisibility(), builder)
             renderModalityForCallable(property, builder)
             renderOverride(property, builder)
+            renderLateInit(property, builder)
             renderMemberKind(property, builder)
             renderValVarPrefix(property, builder)
             renderTypeParameters(property.getTypeParameters(), builder, true)

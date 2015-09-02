@@ -48,6 +48,8 @@ public class Flags {
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
 
+    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(HAS_CONSTANT);
+
     // Parameters
 
     public static final FlagField<Boolean> DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
@@ -112,7 +114,8 @@ public class Flags {
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
             boolean hasGetter,
             boolean hasSetter,
-            boolean hasConstant
+            boolean hasConstant,
+            boolean lateInit
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -122,6 +125,7 @@ public class Flags {
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
                | HAS_CONSTANT.toFlags(hasConstant)
+               | LATE_INIT.toFlags(lateInit)
                ;
     }
 

@@ -38,4 +38,5 @@ class A {
 /*why?*/
 // EXIST:  companion object
 // EXIST:  sealed
+// EXIST:  lateinit
 // NOTHING_ELSE

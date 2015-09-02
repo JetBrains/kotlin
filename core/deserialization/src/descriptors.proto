@@ -250,6 +250,7 @@ message Callable {
      hasGetter
      hasSetter
      hasConstant
+     lateinit
    */
   optional int32 flags = 1;
 

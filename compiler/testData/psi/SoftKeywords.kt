@@ -59,6 +59,7 @@ ref
     val receiver
     val param
     val sparam
+    val lateinit
       get() = a
       set(S : s) {}
 
@@ -92,6 +93,7 @@ ref
     fun receiver  () : receiver
     fun param  () : param
     fun sparam  () : sparam
+    fun lateinit  () : lateinit
 
     fun test(
         abstract  : t,
@@ -122,6 +124,7 @@ ref
         receiver  : t,
         param     : t,
         sparam    : t,
+        lateinit  : t,
     public protected private internal abstract
     open
     enum
@@ -169,6 +172,7 @@ class F(val foo : bar,
         receiver  : t,
         param     : t,
         sparam    : t,
+        lateinit  : t,
     public protected private internal abstract
     open
     enum

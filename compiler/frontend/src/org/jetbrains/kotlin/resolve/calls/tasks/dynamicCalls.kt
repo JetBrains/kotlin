@@ -94,7 +94,8 @@ object DynamicCallableDescriptors {
                 true,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                false
         )
         propertyDescriptor.setType(
                 DynamicType,

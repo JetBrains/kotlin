@@ -30,4 +30,5 @@ class TestClass {
 // EXIST:  init
 // EXIST:  companion object
 // EXIST:  sealed
+// EXIST:  lateinit
 // NOTHING_ELSE

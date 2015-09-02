@@ -23,4 +23,5 @@
 // EXIST: {"lookupString":"val","itemText":"val","attributes":"bold"}
 // EXIST: {"lookupString":"var","itemText":"var","attributes":"bold"}
 // EXIST: {"lookupString":"vararg","itemText":"vararg","attributes":"bold"}
+// EXIST: {"lookupString":"lateinit","itemText":"lateinit","attributes":"bold"}
 // NOTHING_ELSE

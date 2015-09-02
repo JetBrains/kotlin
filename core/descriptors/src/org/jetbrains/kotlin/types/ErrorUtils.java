@@ -400,7 +400,8 @@ public class ErrorUtils {
                 true,
                 Name.special("<ERROR PROPERTY>"),
                 CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                /*lateInit =*/ false
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),

@@ -53,4 +53,6 @@ public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDe
 
     @Override
     PropertyDescriptor substitute(@NotNull TypeSubstitutor substitutor);
+
+    boolean isLateInit();
 }
