@@ -59,7 +59,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             editor: Editor?)
 
     companion object {
-        fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
+        fun fetchReplaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.deprecatedAnnotation
             val annotation = descriptor.annotations.findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
             val replaceWithValue = annotation.argumentValue(kotlin.deprecated::replaceWith.name) as? AnnotationDescriptor ?: return null
@@ -101,7 +101,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 null) ?: return null
 
             val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(deprecatedDiagnostic).a
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.project) ?: return null
+            val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }
     }

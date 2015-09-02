@@ -65,7 +65,7 @@ public class DeprecatedSymbolUsageFix(
 
         public fun isImportToBeRemoved(import: JetImportDirective): Boolean {
             return !import.isAllUnder
-                   && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.replaceWithPattern(it, import.project) != null }
+                   && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null }
         }
     }
 }

@@ -48,7 +48,7 @@ public annotation(mustBeDocumented = true) class deprecated(val value: String, v
  *     For function calls, the replacement expression may contain argument names of the deprecated function,
  *     which will be substituted with actual parameters used in the call being updated. The imports used in the file
  *     containing the deprecated function or property are NOT accessible; if the replacement expression refers
- *     on any of those imports, they need to be specified explicitly in the [imports] parmeter.
+ *     on any of those imports, they need to be specified explicitly in the [imports] parameter.
  * @property imports the qualified names that need to be imported in order for the references in the
  *     replacement expression to be resolved correctly.
  */

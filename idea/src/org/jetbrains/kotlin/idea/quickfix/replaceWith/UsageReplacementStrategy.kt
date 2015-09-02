@@ -35,10 +35,10 @@ interface UsageReplacementStrategy {
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
 
-            var replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.replaceWithPattern(target, resolutionFacade.project)
+            var replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
             if (replacePatternFromSymbol == null && target is ConstructorDescriptor) {
                 target = target.containingDeclaration
-                replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.replaceWithPattern(target, resolutionFacade.project)
+                replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
             }
 
             // check that ReplaceWith hasn't changed

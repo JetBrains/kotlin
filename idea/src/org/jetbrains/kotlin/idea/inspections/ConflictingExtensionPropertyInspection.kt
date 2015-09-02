@@ -70,22 +70,11 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                     // don't report on hidden declarations
                     if (propertyDescriptor.isAnnotatedAsHidden()) return
 
-                    val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
-                        val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), file)
-                        // don't add the second fix when on the fly to allow code cleanup
-                        val fix2 = if (isOnTheFly)
-                            object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), file), LowPriorityAction {}
-                        else
-                            null
-                        listOf(fix1, fix2).filterNotNull().toTypedArray()
-                    }
-                    else {
-                        emptyArray()
-                    }
+                    val fixes = createFixes(property, conflictingExtension, isOnTheFly)
 
                     val problemDescriptor = holder.manager.createProblemDescriptor(
                             nameElement,
-                            "This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler",
+                            "This property conflicts with synthetic extension and should be removed or renamed to avoid breaking code by future changes in the compiler",
                             true,
                             fixes,
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
@@ -169,6 +158,22 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
 
             else -> return false
         }
+    }
+
+    private fun createFixes(property: JetProperty, conflictingExtension: SyntheticJavaPropertyDescriptor, isOnTheFly: Boolean): Array<IntentionWrapper> {
+        val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
+            val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), property.containingFile)
+            // don't add the second fix when on the fly to allow code cleanup
+            val fix2 = if (isOnTheFly)
+                object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), property.containingFile), LowPriorityAction {}
+            else
+                null
+            listOf(fix1, fix2).filterNotNull().toTypedArray()
+        }
+        else {
+            emptyArray()
+        }
+        return fixes
     }
 
     private class DeleteRedundantExtensionAction(property: JetProperty) : JetIntentionAction<JetProperty>(property) {
