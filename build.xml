@@ -698,7 +698,7 @@
     </macrodef>
 
     <target name="builtins">
-        <new-kotlinc output="${output}/classes/builtins" moduleName="builtins">
+        <new-kotlinc output="${output}/classes/builtins" moduleName="kotlin-builtins">
             <src>
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
@@ -711,7 +711,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="stdlib">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>
@@ -722,7 +722,7 @@
     </target>
 
     <target name="core">
-        <new-kotlinc output="${output}/classes/core" moduleName="core">
+        <new-kotlinc output="${output}/classes/core" moduleName="kotlin-core">
             <src>
                 <include name="core/descriptor.loader.java/src"/>
                 <include name="core/descriptors/src"/>
@@ -740,7 +740,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="reflection">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>
