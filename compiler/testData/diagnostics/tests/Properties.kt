@@ -26,5 +26,5 @@ class Test() {
     <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
     a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
    }
-   <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val i<!> = 1
+   public val i = 1
 }

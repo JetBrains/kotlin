@@ -4245,12 +4245,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("publicDelegatedProperty.kt")
-            public void testPublicDelegatedProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/publicDelegatedProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("recursiveType.kt")
             public void testRecursiveType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/recursiveType.kt");

@@ -5,9 +5,9 @@ open class MyClass {
 
 class Foo {
 
-    <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>protected val protectedProperty<!> = object : MyClass() {}
+    protected val protectedProperty = object : MyClass() {}
 
-    <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val publicProperty<!> = object : MyClass() {}
+    public val publicProperty = object : MyClass() {}
 
     protected val protected2Property : MyClass = object : MyClass() {fun invisible() {}}
 
@@ -35,9 +35,9 @@ class Foo {
     }
 
 
-    <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>protected fun protectedFunction()<!> = object : MyClass() {}
+    protected fun protectedFunction() = object : MyClass() {}
 
-    <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public fun publicFunction()<!> = object : MyClass() {}
+    public fun publicFunction() = object : MyClass() {}
 
     protected fun protected2Function(): MyClass = object : MyClass() {fun visible() {}}
 
@@ -67,9 +67,9 @@ class Foo {
 
     class FooInner {
 
-        <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val publicProperty<!> = object : MyClass() {}
+        public val publicProperty = object : MyClass() {}
 
-        <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>protected val protectedProperty<!> = object : MyClass() {}
+        protected val protectedProperty = object : MyClass() {}
 
         protected val protected2Property : MyClass = object : MyClass() {fun invisible() {}}
 
@@ -97,9 +97,9 @@ class Foo {
         }
 
 
-         <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>protected fun protectedFunction()<!> = object : MyClass() {}
+         protected fun protectedFunction() = object : MyClass() {}
 
-         <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public fun publicFunction()<!> = object : MyClass() {}
+         public fun publicFunction() = object : MyClass() {}
 
          protected fun protected2Function(): MyClass = object : MyClass() {fun visible() {}}
 
@@ -136,9 +136,9 @@ class Foo {
 
 }
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty<!> = object : MyClass() {}
+<!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty = object : MyClass() {}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val packagePublicProperty<!> = object : MyClass() {}
+public val packagePublicProperty = object : MyClass() {}
 
 public val packagePublic2Property : MyClass = object : MyClass() {fun invisible() {}}
 
@@ -164,9 +164,9 @@ fun testProperties() {
 
 private fun privateFunction() = object : MyClass() {fun invisible() {}}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> fun protectedFunction()<!> = object : MyClass() {}
+<!WRONG_MODIFIER_TARGET!>protected<!> fun protectedFunction() = object : MyClass() {}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public fun publicFunction()<!> = object : MyClass() {}
+public fun publicFunction() = object : MyClass() {}
 
 public fun public2Function() : MyClass = object : MyClass() {fun invisible() {}}
 
@@ -197,4 +197,3 @@ fun fooPackage() {
     fooPackageLocal().f1()
     fooPackageLocal().visible()
 }
-

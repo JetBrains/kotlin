@@ -42,7 +42,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
         if (element is JetConstructor<*>) return false
         if (element.getTypeReference() != null) return false
 
-        if (getTypeForDeclaration(element).isError() || hasPublicMemberDiagnostic(element)) return false
+        if (getTypeForDeclaration(element).isError()) return false
 
         val initializer = (element as? JetWithExpressionInitializer)?.getInitializer()
         if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
@@ -52,11 +52,6 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
         setText(if (element is JetFunction) "Specify return type explicitly" else "Specify type explicitly")
 
         return true
-    }
-
-    private fun hasPublicMemberDiagnostic(declaration: JetNamedDeclaration): Boolean {
-        return declaration.analyze().getDiagnostics().forElement(declaration)
-                .any { it.getFactory() == Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE }
     }
 
     override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
