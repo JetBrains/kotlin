@@ -41,7 +41,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private val smartCompletion by lazy {
         expression?.let {
             SmartCompletion(it, resolutionFacade,
-                            bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
+                            bindingContext, isVisibleFilter, prefixMatcher, originalSearchScope,
                             toFromOriginalFileMapper, lookupElementFactory)
         }
     }

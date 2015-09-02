@@ -100,7 +100,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
+                it, resolutionFacade, bindingContext, isVisibleFilter, prefixMatcher,
                 GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true
         )
     }
