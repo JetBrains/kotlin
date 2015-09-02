@@ -406,6 +406,7 @@
 
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRecursiveCallLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="jet" implementationClass="com.intellij.execution.lineMarker.RunLineMarkerProvider"/>
     <runLineMarkerContributor language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRunLineMarkerContributor"/>
 
     <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
