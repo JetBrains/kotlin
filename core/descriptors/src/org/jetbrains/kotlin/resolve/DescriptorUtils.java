@@ -540,6 +540,13 @@ public class DescriptorUtils {
         return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
     }
 
+    public static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {
+        for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
+            if (constructor.getValueParameters().isEmpty()) return true;
+        }
+        return false;
+    }
+
     public static Set<FqName> getPackagesFqNames(ModuleDescriptor module) {
         Set<FqName> result = getSubPackagesFqNames(module.getPackage(FqName.ROOT));
         result.add(FqName.ROOT);

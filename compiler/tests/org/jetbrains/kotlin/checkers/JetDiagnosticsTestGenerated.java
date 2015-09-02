@@ -5199,6 +5199,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("emptyConstructor.kt")
+            public void testEmptyConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/emptyConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("entryShouldBeOfEnumType.kt")
             public void testEntryShouldBeOfEnumType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/entryShouldBeOfEnumType.kt");
@@ -5382,6 +5388,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("modifiersOnEnumEntry.kt")
             public void testModifiersOnEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/modifiersOnEnumEntry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multipleConstructors.kt")
+            public void testMultipleConstructors() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/multipleConstructors.kt");
                 doTest(fileName);
             }
 
