@@ -183,7 +183,7 @@ public class TaskPrioritizer(
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver.value,
-                        callableDescriptorCollector.getExtensionsByName(c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c), c.context.trace),
+                        callableDescriptorCollector.getExtensionsByName(c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c)),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -202,10 +202,10 @@ public class TaskPrioritizer(
                 val members = Lists.newArrayList<ResolutionCandidate<D>>()
                 for (type in explicitReceiver.types) {
                     val membersForThisVariant = if (staticMembers) {
-                        callableDescriptorCollector.getStaticMembersByName(type, c.name, createLookupLocation(c), c.context.trace)
+                        callableDescriptorCollector.getStaticMembersByName(type, c.name, createLookupLocation(c))
                     }
                     else {
-                        callableDescriptorCollector.getMembersByName(type, c.name, createLookupLocation(c), c.context.trace)
+                        callableDescriptorCollector.getMembersByName(type, c.name, createLookupLocation(c))
                     }
                     convertWithReceivers(
                             membersForThisVariant,
@@ -234,7 +234,7 @@ public class TaskPrioritizer(
             val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.ownerDescriptor)
 
             val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
-                it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c), c.context.trace)
+                it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c))
             }
 
             convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
@@ -255,7 +255,7 @@ public class TaskPrioritizer(
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, createLookupLocation(c), c.context.trace)
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, createLookupLocation(c))
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }
@@ -270,7 +270,7 @@ public class TaskPrioritizer(
 
             val members = convertWithImpliedThisAndNoReceiver(
                     c.scope,
-                    callableDescriptorCollector.getNonExtensionsByName(c.scope.asJetScope(), c.name, createLookupLocation(c), c.context.trace),
+                    callableDescriptorCollector.getNonExtensionsByName(c.scope.asJetScope(), c.name, createLookupLocation(c)),
                     c.context.call
             )
 
