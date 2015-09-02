@@ -7226,6 +7226,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt8879.kt")
+                public void testKt8879() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/kt8879.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("notNullConstraintOnNullableType.kt")
                 public void testNotNullConstraintOnNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/notNullConstraintOnNullableType.kt");

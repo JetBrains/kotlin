@@ -720,6 +720,12 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 doTest(fileName);
             }
 
+            @TestMetadata("kt8879.constraints")
+            public void testKt8879() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/recursive/kt8879.constraints");
+                doTest(fileName);
+            }
+
             @TestMetadata("mutuallyRecursive.constraints")
             public void testMutuallyRecursive() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/recursive/mutuallyRecursive.constraints");

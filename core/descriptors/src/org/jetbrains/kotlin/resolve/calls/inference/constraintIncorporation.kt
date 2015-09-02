@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
@@ -24,11 +25,17 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
+
+data class ConstraintContext(
+        val position: ConstraintPosition,
+        // see TypeBounds.Bound.derivedFrom
+        val derivedFrom: Set<TypeParameterDescriptor>? = null)
 
 fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
@@ -45,7 +52,8 @@ fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
 
     val constrainingType = newBound.constrainingType
     if (isMyTypeVariable(constrainingType)) {
-        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), newBound.position)
+        val context = ConstraintContext(newBound.position, newBound.derivedFrom)
+        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), context)
         return
     }
     constrainingType.getNestedTypeVariables().forEach {
@@ -61,12 +69,12 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
 
     val oldType = old.constrainingType
     val newType = new.constrainingType
-    val position = CompoundConstraintPosition(old.position, new.position)
+    val context = ConstraintContext(CompoundConstraintPosition(old.position, new.position), old.derivedFrom + new.derivedFrom)
 
     when {
-        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, position, topLevel = false)
-        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, position, topLevel = false)
-        old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, position, topLevel = false)
+        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, context, topLevel = false)
+        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, context, topLevel = false)
+        old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, context, topLevel = false)
     }
 }
 
@@ -97,7 +105,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
         if (derivedFrom.contains(substitution.typeVariable)) return
 
         derivedFrom.add(substitution.typeVariable)
-        addBound(bound.typeVariable, newConstrainingType, newBoundKind, position, derivedFrom)
+        addBound(bound.typeVariable, newConstrainingType, newBoundKind, ConstraintContext(position, derivedFrom))
     }
 
     if (substitution.kind == EXACT_BOUND) {

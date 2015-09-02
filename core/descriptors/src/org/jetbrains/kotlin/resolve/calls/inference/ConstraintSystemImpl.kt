@@ -153,8 +153,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.getUpperBounds()) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
-                val position = TYPE_BOUND_POSITION.position(typeVariable.getIndex())
-                addBound(typeVariable, declaredUpperBound, UPPER_BOUND, position)
+                val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.getIndex()))
+                addBound(typeVariable, declaredUpperBound, UPPER_BOUND, context)
             }
         }
     }
@@ -204,27 +204,31 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, newSubjectType, constrainingType, constraintPosition, topLevel = true)
+        addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition), topLevel = true)
     }
 
     override fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition) {
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, constrainingType, newSubjectType, constraintPosition, topLevel = true)
+        addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition), topLevel = true)
     }
 
     fun addConstraint(
             constraintKind: ConstraintKind,
             subType: JetType?,
             superType: JetType?,
-            constraintPosition: ConstraintPosition,
+            constraintContext: ConstraintContext,
             topLevel: Boolean
     ) {
+        val constraintPosition = constraintContext.position
+
+        // when processing nested constraints, `derivedFrom` information should be reset
+        val newConstraintContext = ConstraintContext(constraintContext.position, derivedFrom = null)
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var depth = 0
 
             override fun assertEqualTypes(a: JetType, b: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
-                doAddConstraint(EQUAL, a, b, constraintPosition, typeCheckingProcedure, topLevel = false)
+                doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure, topLevel = false)
                 depth--
                 return true
 
@@ -236,7 +240,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
             override fun assertSubtype(subtype: JetType, supertype: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
-                doAddConstraint(SUB_TYPE, subtype, supertype, constraintPosition, typeCheckingProcedure, topLevel = false)
+                doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure, topLevel = false)
                 depth--
                 return true
             }
@@ -249,7 +253,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                     if (depth > 0) {
                         errors.add(CannotCapture(constraintPosition, myTypeVariable))
                     }
-                    generateTypeParameterCaptureConstraint(typeVariable, typeProjection, constraintPosition)
+                    generateTypeParameterCaptureConstraint(typeVariable, typeProjection, newConstraintContext)
                     return true
                 }
                 return false
@@ -260,7 +264,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return true
             }
         })
-        doAddConstraint(constraintKind, subType, superType, constraintPosition, typeCheckingProcedure, topLevel)
+        doAddConstraint(constraintKind, subType, superType, constraintContext, typeCheckingProcedure, topLevel)
     }
 
     private fun isErrorOrSpecialType(type: JetType?, constraintPosition: ConstraintPosition): Boolean {
@@ -279,10 +283,11 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constraintKind: ConstraintKind,
             subType: JetType?,
             superType: JetType?,
-            constraintPosition: ConstraintPosition,
+            constraintContext: ConstraintContext,
             typeCheckingProcedure: TypeCheckingProcedure,
             topLevel: Boolean
     ) {
+        val constraintPosition = constraintContext.position
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
@@ -306,11 +311,11 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         fun simplifyConstraint(subType: JetType, superType: JetType) {
             if (isMyTypeVariable(subType)) {
-                generateTypeParameterBound(subType, superType, constraintKind.toBound(), constraintPosition)
+                generateTypeParameterBound(subType, superType, constraintKind.toBound(), constraintContext)
                 return
             }
             if (isMyTypeVariable(superType)) {
-                generateTypeParameterBound(superType, subType, constraintKind.toBound().reverse(), constraintPosition)
+                generateTypeParameterBound(superType, subType, constraintKind.toBound().reverse(), constraintContext)
                 return
             }
             // if subType is nullable and superType is not nullable, unsafe call or type mismatch error will be generated later,
@@ -335,10 +340,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
             typeVariable: TypeParameterDescriptor,
             constrainingType: JetType,
             kind: TypeBounds.BoundKind,
-            position: ConstraintPosition,
-            derivedFrom: Set<TypeParameterDescriptor> = emptySet()
+            constraintContext: ConstraintContext
     ) {
-        val bound = Bound(typeVariable, constrainingType, kind, position, constrainingType.isProper(), derivedFrom)
+        val bound = Bound(typeVariable, constrainingType, kind, constraintContext.position,
+                          constrainingType.isProper(), constraintContext.derivedFrom ?: emptySet())
         val typeBounds = getTypeBounds(typeVariable)
         if (typeBounds.bounds.contains(bound)) return
 
@@ -358,7 +363,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             parameterType: JetType,
             constrainingType: JetType,
             boundKind: TypeBounds.BoundKind,
-            constraintPosition: ConstraintPosition
+            constraintContext: ConstraintContext
     ) {
         val typeVariable = getMyTypeVariable(parameterType)!!
 
@@ -380,7 +385,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
 
         if (!parameterType.isMarkedNullable() || !TypeUtils.isNullableType(newConstrainingType)) {
-            addBound(typeVariable, newConstrainingType, boundKind, constraintPosition)
+            addBound(typeVariable, newConstrainingType, boundKind, constraintContext)
             return
         }
         // For parameter type T:
@@ -390,23 +395,23 @@ public class ConstraintSystemImpl : ConstraintSystem {
         // constraints T? >: Int?; T? >: Int! should transform to T >: Int
         val notNullConstrainingType = TypeUtils.makeNotNullable(newConstrainingType)
         if (boundKind == EXACT_BOUND || boundKind == LOWER_BOUND) {
-            addBound(typeVariable, notNullConstrainingType, LOWER_BOUND, constraintPosition)
+            addBound(typeVariable, notNullConstrainingType, LOWER_BOUND, constraintContext)
         }
         // constraints T? <: Int?; T? <: Int! should transform to T <: Int?; T <: Int! correspondingly
         if (boundKind == EXACT_BOUND || boundKind == UPPER_BOUND) {
-            addBound(typeVariable, newConstrainingType, UPPER_BOUND, constraintPosition)
+            addBound(typeVariable, newConstrainingType, UPPER_BOUND, constraintContext)
         }
     }
 
     private fun generateTypeParameterCaptureConstraint(
             parameterType: JetType,
             constrainingTypeProjection: TypeProjection,
-            constraintPosition: ConstraintPosition
+            constraintContext: ConstraintContext
     ) {
         val typeVariable = getMyTypeVariable(parameterType)!!
         if (!typeVariable.getUpperBoundsAsType().isDefaultBound()
             && constrainingTypeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
-            errors.add(CannotCapture(constraintPosition, typeVariable))
+            errors.add(CannotCapture(constraintContext.position, typeVariable))
         }
         val typeProjection = if (parameterType.isMarkedNullable()) {
             TypeProjectionImpl(constrainingTypeProjection.getProjectionKind(), TypeUtils.makeNotNullable(constrainingTypeProjection.getType()))
@@ -415,7 +420,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constrainingTypeProjection
         }
         val capturedType = createCapturedType(typeProjection)
-        addBound(typeVariable, capturedType, EXACT_BOUND, constraintPosition)
+        addBound(typeVariable, capturedType, EXACT_BOUND, constraintContext)
     }
 
     override fun getTypeVariables() = originalToVariables.keySet()
@@ -483,7 +488,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         val value = typeBounds.value ?: return
 
-        addBound(typeVariable, value, TypeBounds.BoundKind.EXACT_BOUND, ConstraintPositionKind.FROM_COMPLETER.position())
+        addBound(typeVariable, value, TypeBounds.BoundKind.EXACT_BOUND, ConstraintContext(ConstraintPositionKind.FROM_COMPLETER.position()))
     }
 
     fun fixVariables() {

@@ -1,0 +1,4 @@
+VARIABLES T P
+
+T <: My<T>
+Inv<P> <: Inv<T>

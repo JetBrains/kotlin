@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
@@ -92,12 +93,12 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         for (constraint in constraints) {
             val firstType = testDeclarations.getType(constraint.firstType).assertNotError()
             val secondType = testDeclarations.getType(constraint.secondType).assertNotError()
-            val position = SPECIAL.position()
+            val context = ConstraintContext(SPECIAL.position())
             when (constraint.kind) {
-                MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
-                MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
+                MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, context.position)
+                MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.EQUAL -> constraintSystem.addConstraint(
-                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position, topLevel = true)
+                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, context, topLevel = true)
             }
         }
         if (fixVariables) constraintSystem.fixVariables()
