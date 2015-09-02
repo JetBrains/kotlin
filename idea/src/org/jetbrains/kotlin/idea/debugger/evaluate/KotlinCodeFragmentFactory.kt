@@ -35,6 +35,7 @@ import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ArrayReference
 import com.sun.jdi.PrimitiveValue
 import com.sun.jdi.Value
@@ -144,6 +145,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                                     debuggerContext.frameProxy
 
                                 visibleVariables = frameProxy?.let { f -> f.visibleVariables().map { it to f.getValue(it) } } ?: emptyList()
+                            }
+                            catch(ignored: AbsentInformationException) {
+                                // Debug info unavailable
                             }
                             finally {
                                 semaphore.up()
