@@ -130,6 +130,13 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             }
         }
 
+        //noinspection unchecked
+        if (PsiTreeUtil.getNonStrictParentOfType(expression,
+                                                 JetTypeReference.class, JetConstructorCalleeExpression.class, JetSuperExpression.class) != null) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.container"));
+            return;
+        }
+
         AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(expression);
         final BindingContext bindingContext = analysisResult.getBindingContext();
         final JetType expressionType = bindingContext.getType(expression); //can be null or error type

@@ -61,6 +61,42 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("ConstructorDelegationCall.kt")
+        public void testConstructorDelegationCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ConstructorDelegationCall.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("DelegatorByExpressionInDelegate.kt")
+        public void testDelegatorByExpressionInDelegate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DelegatorByExpressionInDelegate.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("DelegatorByExpressionInType.kt")
+        public void testDelegatorByExpressionInType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DelegatorByExpressionInType.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("DelegatorToSuperCallInArgument.kt")
+        public void testDelegatorToSuperCallInArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DelegatorToSuperCallInArgument.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("DelegatorToSuperCallInType.kt")
+        public void testDelegatorToSuperCallInType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DelegatorToSuperCallInType.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("DelegatorToSuperClass.kt")
+        public void testDelegatorToSuperClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DelegatorToSuperClass.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("DoWhileAddBlock.kt")
         public void testDoWhileAddBlock() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DoWhileAddBlock.kt");
@@ -292,6 +328,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("StringInjection.kt")
         public void testStringInjection() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/StringInjection.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("SuperReference.kt")
+        public void testSuperReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/SuperReference.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("ThisReference.kt")
+        public void testThisReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ThisReference.kt");
             doIntroduceVariableTest(fileName);
         }
 
