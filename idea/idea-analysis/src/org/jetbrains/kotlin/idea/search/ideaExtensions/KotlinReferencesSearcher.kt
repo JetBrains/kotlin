@@ -130,7 +130,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             private val originalElement: PsiElement = unwrappedElement,
             private val filter: (PsiReference) -> Boolean = { true },
             private val options: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty
-    ) : RequestResultProcessor() {
+    ) : RequestResultProcessor(unwrappedElement, originalElement, filter, options) {
         private val referenceService = PsiReferenceService.getService()
 
         override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
