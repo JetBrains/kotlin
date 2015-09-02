@@ -56,22 +56,6 @@ public class TaskPrioritizer(
         private val smartCastManager: SmartCastManager
 ) {
 
-    public fun <D : CallableDescriptor> splitLexicallyLocalDescriptors(
-            allDescriptors: Collection<ResolutionCandidate<D>>,
-            containerOfTheCurrentLocality: DeclarationDescriptor,
-            local: MutableCollection<ResolutionCandidate<D>>,
-            nonlocal: MutableCollection<ResolutionCandidate<D>>
-    ) {
-        for (resolvedCall in allDescriptors) {
-            if (ExpressionTypingUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getDescriptor())) {
-                local.add(resolvedCall)
-            }
-            else {
-                nonlocal.add(resolvedCall)
-            }
-        }
-    }
-
     public fun <D : CallableDescriptor, F : D> computePrioritizedTasks(
             context: BasicCallResolutionContext,
             name: Name,
@@ -264,28 +248,18 @@ public class TaskPrioritizer(
             implicitReceivers: Collection<ReceiverValue>,
             c: TaskPrioritizerContext<D, F>
     ) {
-        val localsList = Lists.newArrayList<Collection<ResolutionCandidate<D>>>()
-        val nonlocalsList = Lists.newArrayList<Collection<ResolutionCandidate<D>>>()
-        for (callableDescriptorCollector in c.callableDescriptorCollectors) {
-
-            val members = convertWithImpliedThisAndNoReceiver(
-                    c.scope,
-                    callableDescriptorCollector.getNonExtensionsByName(c.scope.asJetScope(), c.name, createLookupLocation(c)),
-                    c.context.call
-            )
-
-            if (members.isNotEmpty()) {
-                val nonlocals = Lists.newArrayList<ResolutionCandidate<D>>()
-                val locals = Lists.newArrayList<ResolutionCandidate<D>>()
-                splitLexicallyLocalDescriptors(members, c.scope.ownerDescriptor, locals, nonlocals)
-
-                localsList.add(locals)
-                nonlocalsList.add(nonlocals)
-            }
-        }
+        val lookupLocation = createLookupLocation(c)
 
         //locals
-        c.result.addCandidates(localsList)
+        c.callableDescriptorCollectors.forEach {
+            c.result.addCandidates {
+                convertWithImpliedThisAndNoReceiver(
+                        c.scope,
+                        it.getLocalNonExtensionsByName(c.scope, c.name, lookupLocation),
+                        c.context.call
+                )
+            }
+        }
 
         val implicitReceiversWithTypes = implicitReceivers.map { ReceiverWithTypes(it, c.context) }
 
@@ -295,7 +269,13 @@ public class TaskPrioritizer(
         }
 
         //nonlocals
-        c.result.addCandidates(nonlocalsList)
+        c.callableDescriptorCollectors.forEach {
+            c.result.addCandidates {
+                val descriptors = it.getNonExtensionsByName(c.scope.asJetScope(), c.name, lookupLocation)
+                        .filter { !ExpressionTypingUtils.isLocal(c.scope.ownerDescriptor, it) }
+                convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
+            }
+        }
 
         //static (only for better error reporting)
         for (implicitReceiver in implicitReceiversWithTypes) {

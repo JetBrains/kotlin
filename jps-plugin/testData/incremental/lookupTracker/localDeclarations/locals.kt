@@ -8,7 +8,7 @@ import bar.*
     val a = 1
     val b = a
     fun localFun() = b
-    fun /*p:local.declarations*/Int.localExtFun() = /*p:local.declarations p:bar*/localFun()
+    fun /*p:local.declarations*/Int.localExtFun() = localFun()
 
     interface LocalI {
         var a: /*p:local.declarations*/Int
@@ -30,10 +30,10 @@ import bar.*
         fun foo(): LocalI = null as LocalI
     }
 
-    /*p:local.declarations p:bar*/localFun()
+    localFun()
     1./*p:local.declarations p:bar*/localExtFun()
 
-    val c = /*p:local.declarations p:bar*/LocalC()
+    val c = LocalC()
     c.a
     c.b
     c.foo()

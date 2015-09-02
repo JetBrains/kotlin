@@ -27,12 +27,17 @@ import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 public interface CallableDescriptorCollector<D : CallableDescriptor> {
+
+    public fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
     public fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D>
 
@@ -71,6 +76,17 @@ public fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(fil
         CallableDescriptorCollectors(this.collectors.map { it.filtered(filter) })
 
 private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {
+    override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        return lexicalScope.collectAllFromMeAndParent {
+            if (it.ownerDescriptor is FunctionDescriptor) {
+                it.getDeclaredFunctions(name, location).filter { it.extensionReceiverParameter == null } +
+                    getConstructors(it.getDeclaredClassifier(name, location))
+            }
+            else {
+                emptyList()
+            }
+        }
+    }
 
     override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return scope.getFunctions(name, location).filter { it.extensionReceiverParameter == null } + getConstructors(scope, name, location)
@@ -117,6 +133,13 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
             filterClassPredicate: (ClassDescriptor) -> Boolean = { true }
     ): Collection<FunctionDescriptor> {
         val classifier = scope.getClassifier(name, location)
+        return getConstructors(classifier, filterClassPredicate)
+    }
+
+    private fun getConstructors(
+            classifier: ClassifierDescriptor?,
+            filterClassPredicate: (ClassDescriptor) -> Boolean = { true }
+    ): Collection<FunctionDescriptor> {
         if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier) || !filterClassPredicate(classifier)
             // Constructors of singletons shouldn't be callable from the code
             || classifier.kind.isSingleton) {
@@ -129,6 +152,9 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 }
 
 private object VariableCollector : CallableDescriptorCollector<VariableDescriptor> {
+    override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        return listOfNotNull(lexicalScope.getLocalVariable(name))
+    }
 
     private fun getFakeDescriptorForObject(scope: JetScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.getClassifier(name, location)
@@ -172,6 +198,10 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
     private fun filterProperties(variableDescriptors: Collection<VariableDescriptor>) =
             variableDescriptors.filter { it is PropertyDescriptor }
 
+    override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getLocalNonExtensionsByName(lexicalScope, name, location))
+    }
+
     override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, location))
     }
@@ -194,6 +224,10 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
 private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(filter: (D) -> Boolean): CallableDescriptorCollector<D> {
     val delegate = this
     return object : CallableDescriptorCollector<D> {
+        override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D> {
+            return delegate.getLocalNonExtensionsByName(lexicalScope, name, location).filter(filter)
+        }
+
         override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D> {
             return delegate.getNonExtensionsByName(scope, name, location).filter(filter)
         }

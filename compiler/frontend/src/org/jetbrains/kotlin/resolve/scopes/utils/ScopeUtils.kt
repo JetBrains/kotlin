@@ -266,7 +266,7 @@ private inline fun <T: Any> LexicalScope.collectFromMeAndParent(
     return result ?: emptyList()
 }
 
-private inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
+internal inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
         collect: (LexicalScope) -> Collection<T>
 ): Collection<T> {
     var result: Collection<T>? = null

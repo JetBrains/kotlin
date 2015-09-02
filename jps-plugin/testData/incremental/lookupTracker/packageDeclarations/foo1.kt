@@ -12,6 +12,6 @@ import baz./*p:baz*/C
 }
 
 /*p:foo*/fun /*p:foo*/MyClass.extFunc(p: /**p:foo p:bar*//*p:foo*/Array</*p:foo p:bar*/B>, e: /*p:foo*/MyEnum, c: /**???*/C): /*p:foo*/MyInterface {
-    /*p:foo p:bar c:foo.MyClass*/b
-    return /*p:foo p:bar c:foo.MyClass*/MyClass()
+    /*c:foo.MyClass p:foo p:bar*/b
+    return /*c:foo.MyClass p:foo p:bar*/MyClass()
 }
