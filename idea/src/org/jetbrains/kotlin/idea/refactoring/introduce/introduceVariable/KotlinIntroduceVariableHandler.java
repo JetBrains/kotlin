@@ -558,7 +558,9 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     return parent;
                 }
             }
-            if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry || parent instanceof JetClassInitializer) {
+            if (parent instanceof JetBlockExpression
+                || (parent instanceof JetWhenEntry && place == ((JetWhenEntry) parent).getExpression())
+                || parent instanceof JetClassInitializer) {
                 return parent;
             }
             if (parent instanceof JetDeclarationWithBody && ((JetDeclarationWithBody) parent).getBodyExpression() == place) {

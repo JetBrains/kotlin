@@ -331,6 +331,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("WhenEntryCondition.kt")
+        public void testWhenEntryCondition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenEntryCondition.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("WhenParts.kt")
         public void testWhenParts() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenParts.kt");
