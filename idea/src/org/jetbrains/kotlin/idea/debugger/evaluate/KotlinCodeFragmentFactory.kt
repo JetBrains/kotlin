@@ -157,6 +157,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                         if (semaphore.waitFor(20)) break
                     }
 
+                    if (visibleVariables == null) return@lamdba null
+
                     fun isLocalVariableForParameterPresent(p: ValueParameterDescriptor): Boolean {
                         return visibleVariables?.firstOrNull {
                             if (it.first.name() != p.name.asString()) return@firstOrNull false
