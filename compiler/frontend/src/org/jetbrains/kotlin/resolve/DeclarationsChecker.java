@@ -22,15 +22,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.SubstitutionUtils;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeProjection;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.Collection;
@@ -260,6 +258,7 @@ public class DeclarationsChecker {
             PropertyDescriptor propertyDescriptor = trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (propertyDescriptor != null) {
                 modifiersChecker.checkModifiersForDeclaration(parameter, propertyDescriptor);
+                checkPropertyLateInit(parameter, propertyDescriptor);
             }
         }
 
@@ -325,8 +324,54 @@ public class DeclarationsChecker {
         if (containingDeclaration instanceof ClassDescriptor) {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
         }
+        checkPropertyLateInit(property, propertyDescriptor);
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
+    }
+
+    private void checkPropertyLateInit(@NotNull JetCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
+        JetModifierList modifierList = property.getModifierList();
+        if (modifierList == null) return;
+        PsiElement modifier = modifierList.getModifier(JetTokens.LATE_INIT_KEYWORD);
+        if (modifier == null) return;
+
+        boolean hasBackingField =
+                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
+
+        boolean hasDelegateOrInitializer = false;
+        boolean hasCorrespondingValueParameter = false;
+
+        if (property instanceof JetProperty) {
+            hasDelegateOrInitializer = ((JetProperty) property).hasDelegateExpressionOrInitializer();
+        }
+        else if (property instanceof JetParameter) {
+            hasCorrespondingValueParameter = true;
+        }
+
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+
+        boolean customGetterOrSetter = false;
+        if (getter != null) {
+            customGetterOrSetter = getter.hasBody();
+        }
+        if (setter != null) {
+            customGetterOrSetter |= setter.hasBody();
+        }
+
+        boolean returnTypeIsNullable = true;
+        boolean returnTypeIsPrimitive = true;
+
+        JetType returnType = propertyDescriptor.getReturnType();
+        if (returnType != null) {
+            returnTypeIsNullable = TypeUtils.isNullableType(returnType);
+            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);
+        }
+
+        if (!hasBackingField || hasCorrespondingValueParameter || hasDelegateOrInitializer || customGetterOrSetter
+                || returnTypeIsNullable || returnTypeIsPrimitive || propertyDescriptor.getExtensionReceiverParameter() != null) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier));
+        }
     }
 
     private void checkPropertyAbstractness(
@@ -392,7 +437,7 @@ public class DeclarationsChecker {
 
         if (initializer == null && delegate == null) {
             boolean error = false;
-            if (backingFieldRequired && !inTrait &&
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit() &&
                 Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.IS_UNINITIALIZED, propertyDescriptor))) {
                 if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
                     error = true;
