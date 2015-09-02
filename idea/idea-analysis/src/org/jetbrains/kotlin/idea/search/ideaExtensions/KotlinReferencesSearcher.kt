@@ -23,10 +23,7 @@ import com.intellij.psi.impl.cache.CacheManager
 import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.asJava.KotlinLightParameter
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
@@ -180,6 +177,21 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         val fieldForCompanionObject = runReadAction { LightClassUtil.getLightFieldForCompanionObject(element) }
                         if (fieldForCompanionObject != null) {
                             searchNamedElement(queryParameters, fieldForCompanionObject)
+                        }
+
+                        val originClass = element.getStrictParentOfType<JetClass>()
+                        val originLightClass = LightClassUtil.getPsiClass(originClass)
+                        if (originLightClass != null) {
+                            val lightDeclarations: List<KotlinLightElement<*, *>?> =
+                                    originLightClass.methods.map { it as? KotlinLightMethod } +
+                                    originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+
+                            for (declaration in element.declarations) {
+                                val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
+                                if (lightDeclaration != null) {
+                                    searchNamedElement(queryParameters, lightDeclaration)
+                                }
+                            }
                         }
                     }
                 }
