@@ -35,7 +35,8 @@ import java.util.*
 data class ConstraintContext(
         val position: ConstraintPosition,
         // see TypeBounds.Bound.derivedFrom
-        val derivedFrom: Set<TypeParameterDescriptor>? = null)
+        val derivedFrom: Set<TypeParameterDescriptor>? = null,
+        val initial: Boolean = false)
 
 fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
@@ -72,9 +73,9 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
     val context = ConstraintContext(CompoundConstraintPosition(old.position, new.position), old.derivedFrom + new.derivedFrom)
 
     when {
-        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, context, topLevel = false)
-        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, context, topLevel = false)
-        old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, context, topLevel = false)
+        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, context)
+        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, context)
+        old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, context)
     }
 }
 

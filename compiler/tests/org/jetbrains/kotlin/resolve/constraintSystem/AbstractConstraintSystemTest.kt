@@ -93,12 +93,12 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         for (constraint in constraints) {
             val firstType = testDeclarations.getType(constraint.firstType).assertNotError()
             val secondType = testDeclarations.getType(constraint.secondType).assertNotError()
-            val context = ConstraintContext(SPECIAL.position())
+            val context = ConstraintContext(SPECIAL.position(), initial = true)
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.EQUAL -> constraintSystem.addConstraint(
-                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, context, topLevel = true)
+                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, context)
             }
         }
         if (fixVariables) constraintSystem.fixVariables()

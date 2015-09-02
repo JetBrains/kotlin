@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
@@ -39,10 +38,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.LinkedHashMap
+import java.util.*
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -204,31 +200,30 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition), topLevel = true)
+        addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
     }
 
     override fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition) {
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition), topLevel = true)
+        addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition, initial = true))
     }
 
     fun addConstraint(
             constraintKind: ConstraintKind,
             subType: JetType?,
             superType: JetType?,
-            constraintContext: ConstraintContext,
-            topLevel: Boolean
+            constraintContext: ConstraintContext
     ) {
         val constraintPosition = constraintContext.position
 
         // when processing nested constraints, `derivedFrom` information should be reset
-        val newConstraintContext = ConstraintContext(constraintContext.position, derivedFrom = null)
+        val newConstraintContext = ConstraintContext(constraintContext.position, derivedFrom = null, initial = false)
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var depth = 0
 
             override fun assertEqualTypes(a: JetType, b: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
-                doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure, topLevel = false)
+                doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure)
                 depth--
                 return true
 
@@ -240,7 +235,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
             override fun assertSubtype(subtype: JetType, supertype: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
-                doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure, topLevel = false)
+                doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure)
                 depth--
                 return true
             }
@@ -264,7 +259,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return true
             }
         })
-        doAddConstraint(constraintKind, subType, superType, constraintContext, typeCheckingProcedure, topLevel)
+        doAddConstraint(constraintKind, subType, superType, constraintContext, typeCheckingProcedure)
     }
 
     private fun isErrorOrSpecialType(type: JetType?, constraintPosition: ConstraintPosition): Boolean {
@@ -284,8 +279,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             subType: JetType?,
             superType: JetType?,
             constraintContext: ConstraintContext,
-            typeCheckingProcedure: TypeCheckingProcedure,
-            topLevel: Boolean
+            typeCheckingProcedure: TypeCheckingProcedure
     ) {
         val constraintPosition = constraintContext.position
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
@@ -320,8 +314,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
             }
             // if subType is nullable and superType is not nullable, unsafe call or type mismatch error will be generated later,
             // but constraint system should be solved anyway
-            val subTypeNotNullable = if (topLevel) TypeUtils.makeNotNullable(subType) else subType
-            val superTypeNotNullable = if (topLevel) TypeUtils.makeNotNullable(superType) else superType
+            val subTypeNotNullable = if (constraintContext.initial) TypeUtils.makeNotNullable(subType) else subType
+            val superTypeNotNullable = if (constraintContext.initial) TypeUtils.makeNotNullable(superType) else superType
             val result = if (constraintKind == EQUAL) {
                 typeCheckingProcedure.equalTypes(subTypeNotNullable, superTypeNotNullable)
             }
@@ -330,7 +324,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             }
             if (!result) errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
         }
-        if (topLevel) {
+        if (constraintContext.initial) {
             storeInitialConstraint(constraintKind, subType, superType, constraintPosition)
         }
         simplifyConstraint(newSubType, superType)
