@@ -21,14 +21,22 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class CollectionToArray {
-    // Implementation copied from AbstractCollection
+    // Based on the implementation from AbstractCollection
+
+    @SuppressWarnings("SSBasedInspection")
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
     public static Object[] toArray(Collection<?> collection) {
-        Object[] r = new Object[collection.size()];
+        int size = collection.size();
+        if (size == 0) return EMPTY_OBJECT_ARRAY;
+
+        Object[] r = new Object[size];
         Iterator<?> it = collection.iterator();
-        for (int i = 0; i < r.length; i++) {
-            if (! it.hasNext())	// fewer elements than expected
+        for (int i = 0; i < size; i++) {
+            if (!it.hasNext()) {
+                // fewer elements than expected
                 return Arrays.copyOf(r, i);
+            }
             r[i] = it.next();
         }
         return it.hasNext() ? finishToArray(r, it) : r;
