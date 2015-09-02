@@ -33,17 +33,9 @@ private var _asserter: Asserter? = null
 public var asserter: Asserter
     get() {
         if (_asserter == null) {
-            val klass = javaClass<Asserter>()
+            val klass = Asserter::class.java
             val loader = ServiceLoader.load(klass)
-            for (a in loader) {
-                if (a != null) {
-                    _asserter = a
-                    break
-                }
-            }
-            if (_asserter == null) {
-                _asserter = DefaultAsserter()
-            }
+            _asserter = loader.firstOrNull { it != null } ?: DefaultAsserter()
             //debug("using asserter $_asserter")
         }
         return _asserter!!
