@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -1024,13 +1025,25 @@ public abstract class StackValue {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a getter or a backingFieldOwner: " + descriptor;
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
-                genNotNullAssertionForField(v, state, descriptor);
+                if (!genNotNullAssertionForField(v, state, descriptor)) {
+                    genNotNullAssertionForLateInitIfNeeded(v);
+                }
                 coerceTo(type, v);
             }
             else {
                 getter.genInvokeInstruction(v);
                 coerce(getter.getReturnType(), type, v);
             }
+        }
+
+        private void genNotNullAssertionForLateInitIfNeeded(@NotNull InstructionAdapter v) {
+            if (!descriptor.isLateInit()) return;
+
+            v.dup();
+            Label ok = new Label();
+            v.ifnonnull(ok);
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false);
+            v.mark(ok);
         }
 
         @Override

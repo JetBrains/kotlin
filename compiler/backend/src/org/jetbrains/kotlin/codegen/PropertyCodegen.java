@@ -288,7 +288,7 @@ public class PropertyCodegen {
             modifiers |= ACC_STATIC;
         }
 
-        if (!propertyDescriptor.isVar() || isDelegate) {
+        if (!propertyDescriptor.isLateInit() && (!propertyDescriptor.isVar() || isDelegate)) {
             modifiers |= ACC_FINAL;
         }
 
@@ -302,7 +302,10 @@ public class PropertyCodegen {
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
-            if (hasPublicFieldAnnotation && !isDelegate) {
+            if (propertyDescriptor.isLateInit()) {
+                modifiers |= getVisibilityAccessFlag(propertyDescriptor);
+            }
+            else if (hasPublicFieldAnnotation && !isDelegate) {
                 modifiers |= ACC_PUBLIC;
             }
             else {
@@ -315,6 +318,9 @@ public class PropertyCodegen {
                 backingFieldContext = codegen.context;
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
+        }
+        else if (propertyDescriptor.isLateInit()) {
+            modifiers |= getVisibilityAccessFlag(propertyDescriptor);
         }
         else if (!isDelegate && hasPublicFieldAnnotation) {
             modifiers |= ACC_PUBLIC;

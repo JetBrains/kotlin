@@ -6534,6 +6534,69 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/twoAnnotatedExtensionPropertiesWithoutBackingFields.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Lateinit extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("accessor.kt")
+            public void testAccessor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/accessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessorException.kt")
+            public void testAccessorException() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/accessorException.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInLateinit() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("exceptionField.kt")
+            public void testExceptionField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/exceptionField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("exceptionGetter.kt")
+            public void testExceptionGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/exceptionGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/override.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overrideException.kt")
+            public void testOverrideException() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/overrideException.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleField.kt")
+            public void testSimpleField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simpleField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleVar.kt")
+            public void testSimpleVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simpleVar.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/reflection")

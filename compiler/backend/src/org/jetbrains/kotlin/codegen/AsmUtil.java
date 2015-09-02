@@ -620,29 +620,29 @@ public class AsmUtil {
         }
     }
 
-    public static void genNotNullAssertionForField(
+    public static boolean genNotNullAssertionForField(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
             @NotNull PropertyDescriptor descriptor
     ) {
-        genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
+        return genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
     }
 
-    private static void genNotNullAssertion(
+    private static boolean genNotNullAssertion(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
             @NotNull CallableDescriptor descriptor,
             @NotNull String assertMethodToCall
     ) {
         // Assertions are generated elsewhere for platform types
-        if (JvmPackage.getPLATFORM_TYPES()) return;
+        if (JvmPackage.getPLATFORM_TYPES()) return false;
 
-        if (!state.isCallAssertionsEnabled()) return;
+        if (!state.isCallAssertionsEnabled()) return false;
 
-        if (!isDeclaredInJava(descriptor)) return;
+        if (!isDeclaredInJava(descriptor)) return false;
 
         JetType type = descriptor.getReturnType();
-        if (type == null || isNullableType(TypesPackage.lowerIfFlexible(type))) return;
+        if (type == null || isNullableType(TypesPackage.lowerIfFlexible(type))) return false;
 
         Type asmType = state.getTypeMapper().mapReturnType(descriptor);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
@@ -651,7 +651,10 @@ public class AsmUtil {
             v.visitLdcInsn(descriptor.getName().asString());
             v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, assertMethodToCall,
                            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
+            return true;
         }
+
+        return false;
     }
 
     @NotNull
