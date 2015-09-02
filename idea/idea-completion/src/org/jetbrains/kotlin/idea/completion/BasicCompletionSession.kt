@@ -109,7 +109,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     private fun calcCompletionKind(): CompletionKind {
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
+        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
             return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
@@ -296,7 +296,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        NamedArgumentCompletion.complete(position, collector, expectedInfos)
+        NamedArgumentCompletion.complete(collector, expectedInfos)
     }
 
     private fun addNonImported(completionKind: CompletionKind) {

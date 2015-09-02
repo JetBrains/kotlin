@@ -20,19 +20,12 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.PsiElement
-import com.intellij.psi.filters.AndFilter
-import com.intellij.psi.filters.ClassFilter
-import com.intellij.psi.filters.OrFilter
-import com.intellij.psi.filters.position.ParentElementFilter
-import org.jetbrains.kotlin.core.FirstChildInParentFilter
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetValueArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
@@ -40,35 +33,18 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 object NamedArgumentCompletion {
-    private val positionFilter = AndFilter(
-            LeafElementFilter(JetTokens.IDENTIFIER),
-            OrFilter(
-                    AndFilter(
-                            ParentElementFilter(ClassFilter(javaClass<JetValueArgument>()), 2),
-                            FirstChildInParentFilter(2)
-                    ),
-                    ParentElementFilter(ClassFilter(javaClass<JetValueArgumentName>()), 2)
-            )
-    )
-
-    public fun isOnlyNamedArgumentExpected(position: PsiElement): Boolean {
-        if (!positionFilter.isAcceptable(position, position)) return false
-
-        val thisArgument = position.getStrictParentOfType<JetValueArgument>()!!
+    public fun isOnlyNamedArgumentExpected(nameExpression: JetSimpleNameExpression): Boolean {
+        val thisArgument = nameExpression.parent as? JetValueArgument ?: return false
+        if (thisArgument.isNamed()) return false
 
         val callElement = thisArgument.getStrictParentOfType<JetCallElement>() ?: return false
 
-        for (argument in callElement.getValueArguments()) {
-            if (argument == thisArgument) break
-            if (argument.isNamed()) return true
-        }
-
-        return false
+        return callElement.valueArguments
+                .takeWhile { it != thisArgument }
+                .any { it.isNamed() }
     }
 
-    public fun complete(position: PsiElement, collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
-        if (!positionFilter.isAcceptable(position, position)) return
-
+    public fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
         val nameToParameterType = HashMap<Name, MutableSet<JetType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue

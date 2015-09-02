@@ -50,8 +50,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     override fun doComplete() {
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
-            NamedArgumentCompletion.complete(position, collector, expectedInfos)
+        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+            NamedArgumentCompletion.complete(collector, expectedInfos)
             return
         }
 
