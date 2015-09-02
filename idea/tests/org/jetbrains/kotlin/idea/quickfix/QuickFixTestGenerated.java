@@ -3384,6 +3384,20 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WholeProject extends AbstractQuickFixTest {
+                public void testAllFilesPresentInWholeProject() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("inheritance.kt")
+                public void testInheritance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject/inheritance.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments")
