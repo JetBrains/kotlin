@@ -44,12 +44,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
-        val strategy = UsageReplacementStrategy.build(element, replaceWith)
+        val strategy = UsageReplacementStrategy.build(element, replaceWith, recheckAnnotation = true)
         return strategy != null && strategy.createReplacer(element) != null
     }
 
     final override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val strategy = UsageReplacementStrategy.build(element, replaceWith)!!
+        val strategy = UsageReplacementStrategy.build(element, replaceWith, recheckAnnotation = false)!!
         invoke(strategy, project, editor)
     }
 

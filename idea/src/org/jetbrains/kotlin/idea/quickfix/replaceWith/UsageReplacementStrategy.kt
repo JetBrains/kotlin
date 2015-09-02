@@ -30,7 +30,7 @@ interface UsageReplacementStrategy {
     fun createReplacer(usage: JetSimpleNameExpression): (() -> JetElement)?
 
     companion object {
-        fun build(element: JetSimpleNameExpression, replaceWith: ReplaceWith): UsageReplacementStrategy? {
+        fun build(element: JetSimpleNameExpression, replaceWith: ReplaceWith, recheckAnnotation: Boolean): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
@@ -42,7 +42,7 @@ interface UsageReplacementStrategy {
             }
 
             // check that ReplaceWith hasn't changed
-            if (replacePatternFromSymbol != replaceWith) return null
+            if (recheckAnnotation && replacePatternFromSymbol != replaceWith) return null
 
             when (target) {
                 is CallableDescriptor -> {
