@@ -69,6 +69,7 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
             throws IOException {
         dataStream.writeName(stub.getPackageFqName().asString());
         dataStream.writeName(stub.getFacadeSimpleName());
+        dataStream.writeName(stub.getPartSimpleName());
         dataStream.writeBoolean(stub.isScript());
     }
 
@@ -78,7 +79,8 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
         StringRef packageFqNameAsString = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
         StringRef facadeSimpleName = dataStream.readName();
-        return new KotlinFileStubImpl(null, packageFqNameAsString, facadeSimpleName, isScript);
+        StringRef partSimpleName = dataStream.readName();
+        return new KotlinFileStubImpl(null, packageFqNameAsString, facadeSimpleName, partSimpleName, isScript);
     }
 
     @Override

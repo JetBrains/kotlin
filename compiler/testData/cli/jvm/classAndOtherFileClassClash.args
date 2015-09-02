@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/classAndOtherFileClassClash1.kt
+$TESTDATA_DIR$/classAndOtherFileClassClash2.kt
+-d
+$TEMP_DIR$

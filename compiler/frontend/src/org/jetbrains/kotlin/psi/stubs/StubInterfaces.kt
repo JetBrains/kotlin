@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 public interface KotlinFileStub : PsiFileStub<JetFile> {
     public fun getPackageFqName(): FqName
     public fun getFacadeSimpleName(): String?
+    public fun getPartSimpleName(): String?
     public fun isScript(): Boolean
     public fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub>
 }

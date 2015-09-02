@@ -389,7 +389,7 @@ public class ReplInterpreter {
 
             PsiElement jetScript = descriptorToDeclaration(earlierDescriptor);
             if (jetScript != null) {
-                registerClassNameForScript(state.getBindingTrace(), (JetScript) jetScript, earlierClassType);
+                registerClassNameForScript(state.getBindingTrace(), (JetScript) jetScript, earlierClassType, state.getFileClassesManager());
                 earlierScriptDescriptors.add(earlierDescriptor);
             }
         }
@@ -404,7 +404,7 @@ public class ReplInterpreter {
             @NotNull CompilationErrorHandler errorHandler
     ) {
         registerEarlierScripts(state, earlierScripts);
-        registerClassNameForScript(state.getBindingTrace(), script, classType);
+        registerClassNameForScript(state.getBindingTrace(), script, classType, state.getFileClassesManager());
 
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -39,15 +40,21 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         String facadeSimpleName = stub.getFacadeSimpleName();
         if (facadeSimpleName != null) {
-            FqName staticFacadeFqName = packageFqName.child(Name.identifier(facadeSimpleName));
-            sink.occurrence(JetStaticFacadeClassIndex.INSTANCE.getKey(), staticFacadeFqName.asString());
+            FqName fileFacadeFqName = packageFqName.child(Name.identifier(facadeSimpleName));
+            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileFacadeFqName.asString());
         }
-        else {
-            JetFile psi = stub.getPsi();
-            if (psi != null) {
-                FqName staticFacadeFqName = PackagePartClassUtils.getPackagePartFqName(psi);
-                sink.occurrence(JetStaticFacadeClassIndex.INSTANCE.getKey(), staticFacadeFqName.asString());
-            }
+
+        String partSimpleName = stub.getPartSimpleName();
+        if (partSimpleName != null) {
+            FqName filePartFqName = packageFqName.child(Name.identifier(partSimpleName));
+            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), filePartFqName.asString());
+        }
+
+        JetFile jetFile = stub.getPsi();
+        if (jetFile != null) {
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile);
+            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
+            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), fileClassInfo.getFileClassFqName().asString());
         }
     }
 

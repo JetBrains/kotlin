@@ -30,7 +30,7 @@ public object StaticFacadeIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ) : Collection<JetFile> =
-            JetStaticFacadeClassIndex.INSTANCE.get(facadeFqName.asString(), project, searchScope)
+            JetFileFacadeClassIndex.INSTANCE.get(facadeFqName.asString(), project, searchScope)
 
     // TODO change as we introduce multi-file facades (this will require a separate index)
     @jvmStatic public fun findFilesForFilePart(
@@ -39,5 +39,5 @@ public object StaticFacadeIndexUtil {
             project: Project
     ) : Collection<JetFile> =
             PackagePartClassUtils.getFilesWithCallables(
-                    JetStaticFacadeClassIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+                    JetFileFacadeClassIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 }

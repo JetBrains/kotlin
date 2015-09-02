@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL,
@@ -40,11 +41,12 @@ private val EXTERNAL_SOURCES_KINDS = arrayOf(
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
-        private val diagnostics: DiagnosticSink
+        private val diagnostics: DiagnosticSink,
+        fileClassesProvider: JvmFileClassesProvider
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
     // Avoid errors when some classes are not loaded for some reason
-    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES)
+    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider)
 
     override fun handleClashingSignatures(data: ConflictingJvmDeclarationsData) {
         val noOwnImplementations = data.signatureOrigins.all { it.originKind in EXTERNAL_SOURCES_KINDS }

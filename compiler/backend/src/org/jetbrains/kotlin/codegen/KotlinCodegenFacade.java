@@ -44,7 +44,7 @@ public class KotlinCodegenFacade {
 
                 FqName name = ScriptNameUtil.classNameForScript(script);
                 Type type = AsmUtil.asmTypeByFqNameWithoutInnerClasses(name);
-                registerClassNameForScript(state.getBindingTrace(), script, type);
+                registerClassNameForScript(state.getBindingTrace(), script, type, state.getFileClassesManager());
             }
         }
 

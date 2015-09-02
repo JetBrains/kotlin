@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-    public object PackagePartClassUtils {
+public object PackagePartClassUtils {
     public @jvmStatic fun getPathHashCode(file: VirtualFile): Int =
             file.path.toLowerCase().hashCode()
 
@@ -66,15 +65,13 @@ import java.util.*
     public @jvmStatic fun isPartClassFqName(classFqName: FqName): Boolean =
             classFqName.shortName().asString().endsWith(PART_CLASS_NAME_SUFFIX)
 
-    public @jvmStatic fun getPackagePartType(file: JetFile): Type =
-            Type.getObjectType(getPackagePartInternalName(file))
-
+    @deprecated("Migrate to JvmFileClassesProvider")
     public @jvmStatic fun getPackagePartInternalName(file: JetFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
+    @deprecated("Migrate to JvmFileClassesProvider")
     public @jvmStatic fun getPackagePartFqName(file: JetFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
-
 
     public @jvmStatic fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
         val implClassName = callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
@@ -93,4 +90,5 @@ import java.util.*
 
     public @jvmStatic fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))
+
 }

@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.ClassId;
@@ -82,10 +82,16 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class JetTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
+    private final JvmFileClassesProvider fileClassesManager;
 
-    public JetTypeMapper(@NotNull BindingContext bindingContext, @NotNull ClassBuilderMode classBuilderMode) {
+    public JetTypeMapper(
+            @NotNull BindingContext bindingContext,
+            @NotNull ClassBuilderMode classBuilderMode,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
+        this.fileClassesManager = fileClassesManager;
     }
 
     @NotNull
@@ -154,7 +160,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private static String internalNameForPackage(
+    private String internalNameForPackage(
             @NotNull PackageFragmentDescriptor packageFragment,
             @NotNull CallableMemberDescriptor descriptor,
             boolean insideModule
@@ -162,7 +168,7 @@ public class JetTypeMapper {
         ///if (insideModule) {
             JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
             if (file != null) {
-                return PackagePartClassUtils.getPackagePartInternalName(file);
+                return fileClassesManager.getFileClassInternalName(file);
             }
 
             CallableMemberDescriptor directMember = getDirectMember(descriptor);
@@ -396,7 +402,7 @@ public class JetTypeMapper {
         }
 
         Type asmType = Type.getObjectType(computeAsmTypeImpl(klass));
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType, fileClassesManager);
         return asmType;
     }
 

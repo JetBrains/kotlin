@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
@@ -74,6 +74,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     protected final PropertyCodegen propertyCodegen;
     protected final JetTypeMapper typeMapper;
     protected final BindingContext bindingContext;
+    protected final JvmFileClassesProvider fileClassesManager;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
     protected final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
@@ -94,6 +95,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.bindingContext = state.getBindingContext();
+        this.fileClassesManager = state.getFileClassesManager();
         this.element = element;
         this.context = context;
         this.v = builder;
@@ -288,7 +290,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             return typeMapper.mapType(((ClassContext) outermost).getContextDescriptor());
         }
         else if (outermost instanceof PackageContext && !(outermost instanceof PackageFacadeContext)) {
-            return PackagePartClassUtils.getPackagePartType(element.getContainingJetFile());
+            return fileClassesManager.getFileClassType(element.getContainingJetFile());
         }/*disabled cause of KT-7775
         else if (outermost instanceof ScriptContext) {
             return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
@@ -310,7 +312,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @NotNull
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
-            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper);
+            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper, fileClassesManager);
             inlineNameGenerator = new NameGenerator(prefix);
         }
         return inlineNameGenerator;

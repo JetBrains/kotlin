@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -75,12 +75,14 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private final BindingContext bindingContext;
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
+    private final JvmFileClassesProvider fileClassesManager;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
         this.bindingContext = state.getBindingContext();
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
+        this.fileClassesManager = state.getFileClassesManager();
     }
 
     @NotNull
@@ -333,7 +335,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     private void recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name));
+        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name), fileClassesManager);
     }
 
     @Override
@@ -391,7 +393,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             JetFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return PackagePartClassUtils.getPackagePartInternalName(containingFile) + '$' + name;
+            return fileClassesManager.getFileClassInternalName(containingFile) + '$' + name;
         }
 
         return null;
@@ -572,7 +574,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             }
         }
 
-        return PackagePartClassUtils.getPackagePartInternalName(file);
+        return fileClassesManager.getFileClassInternalName(file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

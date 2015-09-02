@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.state;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilderMode;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.io.File;
@@ -32,9 +33,10 @@ public class JetTypeMapperWithOutDirectory extends JetTypeMapper {
     public JetTypeMapperWithOutDirectory(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
+            @NotNull JvmFileClassesProvider fileClassesManager,
             @Nullable File outDirectory
     ) {
-        super(bindingContext, classBuilderMode);
+        super(bindingContext, classBuilderMode, fileClassesManager);
         this.outDirectory = outDirectory;
     }
 

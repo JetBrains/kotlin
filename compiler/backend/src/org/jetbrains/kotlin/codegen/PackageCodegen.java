@@ -312,7 +312,7 @@ public class PackageCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
-        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
+        Type packagePartType = state.getFileClassesManager().getFileClassType(file);
         PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
@@ -414,7 +414,7 @@ public class PackageCodegen {
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
+        Type packagePartType = state.getFileClassesManager().getFileClassType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
