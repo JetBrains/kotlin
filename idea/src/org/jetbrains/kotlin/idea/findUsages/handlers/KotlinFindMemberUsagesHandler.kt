@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
-import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
@@ -126,9 +125,6 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
         if (options.isUsages) {
             val searchParameters = KotlinReferencesSearchParameters(element,
-                                                                    element.project.allScope(),
-                                                                    ignoreAccessScope = false,
-                                                                    optimizer = null,
                                                                     kotlinOptions = createKotlinReferencesSearchOptions(options))
 
             val query = applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))

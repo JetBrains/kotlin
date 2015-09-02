@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindClassUsagesDialog
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.isConstructorUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
@@ -126,7 +128,9 @@ public class KotlinFindClassUsagesHandler(
     private fun processClassReferences(classOrObject: JetClassOrObject,
                                        options: KotlinClassFindUsagesOptions,
                                        processor: Processor<PsiReference>): Boolean {
-        var usagesQuery = ReferencesSearch.search(classOrObject)
+        val searchParameters = KotlinReferencesSearchParameters(classOrObject,
+                                                                kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
+        var usagesQuery = ReferencesSearch.search(searchParameters)
 
         if (options.isSkipImportStatements) {
             usagesQuery = FilteredQuery(usagesQuery) { !it.isImportUsage() }

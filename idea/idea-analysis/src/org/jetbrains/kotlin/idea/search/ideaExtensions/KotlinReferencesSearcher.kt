@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
+import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -34,9 +35,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean,
-                                         val acceptOverloads: Boolean,
-                                         val acceptExtensionsOfDeclarationClass: Boolean) {
+data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
+                                         val acceptOverloads: Boolean = false,
+                                         val acceptExtensionsOfDeclarationClass: Boolean = false,
+                                         val acceptCompanionObjectMembers: Boolean = false) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
     companion object {
@@ -45,10 +47,10 @@ data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean,
 }
 
 public class KotlinReferencesSearchParameters(elementToSearch: PsiElement,
-                                              scope: SearchScope,
-                                              ignoreAccessScope: Boolean,
-                                              optimizer: SearchRequestCollector?,
-                                              val kotlinOptions: KotlinReferencesSearchOptions)
+                                              scope: SearchScope = elementToSearch.project.allScope(),
+                                              ignoreAccessScope: Boolean = false,
+                                              optimizer: SearchRequestCollector? = null,
+                                              val kotlinOptions: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty)
         : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer) {
 }
 
@@ -179,17 +181,20 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                             searchNamedElement(queryParameters, fieldForCompanionObject)
                         }
 
-                        val originClass = element.getStrictParentOfType<JetClass>()
-                        val originLightClass = LightClassUtil.getPsiClass(originClass)
-                        if (originLightClass != null) {
-                            val lightDeclarations: List<KotlinLightElement<*, *>?> =
-                                    originLightClass.methods.map { it as? KotlinLightMethod } +
-                                    originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+                        val kotlinReferencesSearchOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                        if (kotlinReferencesSearchOptions?.acceptCompanionObjectMembers == true) {
+                            val originClass = element.getStrictParentOfType<JetClass>()
+                            val originLightClass = LightClassUtil.getPsiClass(originClass)
+                            if (originLightClass != null) {
+                                val lightDeclarations: List<KotlinLightElement<*, *>?> =
+                                        originLightClass.methods.map { it as? KotlinLightMethod } +
+                                        originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
 
-                            for (declaration in element.declarations) {
-                                val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
-                                if (lightDeclaration != null) {
-                                    searchNamedElement(queryParameters, lightDeclaration)
+                                for (declaration in element.declarations) {
+                                    val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
+                                    if (lightDeclaration != null) {
+                                        searchNamedElement(queryParameters, lightDeclaration)
+                                    }
                                 }
                             }
                         }
