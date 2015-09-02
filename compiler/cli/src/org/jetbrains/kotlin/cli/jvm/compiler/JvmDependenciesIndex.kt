@@ -171,13 +171,17 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 
         var processedRootsUpTo = -1
         // traverse caches starting from last, which contains most specific information
-        for (cacheIndex in caches.indices.reversed()) {
-            val cache = caches[cacheIndex]
-            for (i in cache.rootIndices.indices) {
+
+        // NOTE: indices manipulation instead of using caches.indices.reversed() is here for performance reasons
+        val cachesLastIndex = caches.lastIndex
+        for (cacheIndex in 0..cachesLastIndex) {
+            val reverseCacheIndex = cachesLastIndex - cacheIndex
+            val cache = caches[reverseCacheIndex]
+            for (i in 0..cache.rootIndices.size() - 1) {
                 val rootIndex = cache.rootIndices[i]
                 if (rootIndex <= processedRootsUpTo) continue // roots with those indices have been processed by now
 
-                val directoryInRoot = travelPath(rootIndex, packagesPath, cacheIndex, caches) ?: continue
+                val directoryInRoot = travelPath(rootIndex, packagesPath, reverseCacheIndex, caches) ?: continue
                 val root = roots[rootIndex]
                 val result = handle(root, directoryInRoot)
                 if (result != null) {
