@@ -31,6 +31,7 @@ public val COMPILE_DAEMON_DEFAULT_PORT: Int = 17031
 public val COMPILE_DAEMON_ENABLED_PROPERTY: String ="kotlin.daemon.enabled"
 public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String ="kotlin.daemon.jvm.options"
 public val COMPILE_DAEMON_OPTIONS_PROPERTY: String ="kotlin.daemon.options"
+public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String ="kotlin.daemon.startup.timeout"
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String ="--daemon-"
 public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
 public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
@@ -66,11 +67,11 @@ class StringPropMapper<C, P: KMutableProperty1<C, String>>(dest: C,
                             fromString = fromString,  toString = toString, skipIf = skipIf, mergeDelimiter = mergeDelimiter)
 
 class BoolPropMapper<C, P: KMutableProperty1<C, Boolean>>(dest: C, prop: P, names: List<String> = listOf())
-    : PropMapper<C, Boolean, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name), 
+    : PropMapper<C, Boolean, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
                                 fromString = { true },  toString = { null }, skipIf = { !prop.get(dest) })
 
-class RestPropMapper<C, P: KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P) 
-    : PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() }) 
+class RestPropMapper<C, P: KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P)
+    : PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() })
 {
     override fun toArgs(prefix: String): List<String> = prop.get(dest).map { prefix + it }
     override fun apply(s: String) = add(s)
@@ -248,7 +249,10 @@ public fun configureDaemonLaunchingOptions(opts: DaemonJVMOptions, inheritMemory
         ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
 
     System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
-        opts.jvmParams.addAll(it.trim('"', '\'').split(",").filterExtractProps(opts.mappers, "-", opts.restMapper))
+        opts.jvmParams.addAll( it.trim('"', '\'')
+                                 .split("(?<!\\\\),".toRegex())
+                                 .map { it.replace("[\\\\](.)".toRegex(), "$1") }
+                                 .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
     return opts
 }
