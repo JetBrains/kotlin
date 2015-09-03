@@ -144,9 +144,11 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         cacheFormatVersion.saveIfNeeded()
     }
 
-    public fun saveModuleMappingToCache(file: File): RecompilationDecision {
-        protoMap.put(JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME), file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
+    public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): RecompilationDecision {
+        val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
+        protoMap.put(jvmClassName, file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
+        sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, jvmClassName) }
         return DO_NOTHING
     }
 
