@@ -117,7 +117,7 @@ public class IncrementalCacheImpl(
         val CLASS_TO_SOURCES = "class-to-sources.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
         val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
-        val HAS_INLINE_TO = "has-inline-to.tab"
+        val INLINED_TO = "inlined-to.tab"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -135,7 +135,7 @@ public class IncrementalCacheImpl(
     private val classToSourcesMap = ClassToSourcesMap(CLASS_TO_SOURCES.storageFile)
     private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
     private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
-    private val hasInlineTo = InlineFunctionsFilesMap(HAS_INLINE_TO.storageFile)
+    private val inlinedTo = InlineFunctionsFilesMap(INLINED_TO.storageFile)
 
     private val maps = listOf(protoMap,
                               constantsMap,
@@ -143,7 +143,7 @@ public class IncrementalCacheImpl(
                               packagePartMap,
                               sourceToClassesMap,
                               dirtyOutputClassesMap,
-                              hasInlineTo)
+                              inlinedTo)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
@@ -151,7 +151,7 @@ public class IncrementalCacheImpl(
 
     private val inlineRegistering = object : InlineRegistering {
         override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-            hasInlineTo.add(fromPath, jvmSignature, toPath)
+            inlinedTo.add(fromPath, jvmSignature, toPath)
         }
     }
 
@@ -195,7 +195,7 @@ public class IncrementalCacheImpl(
             val classFilePath = getClassFilePath(internalName)
 
             fun addFilesAffectedByChangedInlineFuns(cache: IncrementalCacheImpl) {
-                val targetFiles = functions.flatMap { cache.hasInlineTo[classFilePath, it] }
+                val targetFiles = functions.flatMap { cache.inlinedTo[classFilePath, it] }
                 result.addAll(targetFiles)
             }
 
