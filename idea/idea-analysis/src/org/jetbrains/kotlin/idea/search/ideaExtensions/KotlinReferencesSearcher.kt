@@ -88,7 +88,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         }
         words.forEach { word ->
             queryParameters.optimizer.searchWord(word, effectiveSearchScope,
-                                                 UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
+                                                 UsageSearchContext.ANY, true, unwrappedElement,
                                                  resultProcessor)
         }
 
