@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 
 public class ConvertToStringTemplateInspection : IntentionBasedInspection<JetBinaryExpression>(
         ConvertToStringTemplateIntention(),
-        { ConvertToStringTemplateIntention().isConversionResultSimple(it) }
+        { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
 public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Convert concatenation to template") {
@@ -50,8 +50,9 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
         return element.replaced(buildReplacement(element))
     }
 
-    public fun isConversionResultSimple(expression: JetBinaryExpression): Boolean {
-        return buildReplacement(expression).getEntries().none { it is JetBlockStringTemplateEntry }
+    public fun shouldSuggestToConvert(expression: JetBinaryExpression): Boolean {
+        val entries = buildReplacement(expression).entries
+        return entries.none { it is JetBlockStringTemplateEntry } && entries.count { it is JetLiteralStringTemplateEntry } > 1
     }
 
     private fun isApplicableToNoParentCheck(expression: JetBinaryExpression): Boolean {

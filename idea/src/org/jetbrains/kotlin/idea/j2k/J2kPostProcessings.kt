@@ -148,7 +148,7 @@ object J2KPostProcessingRegistrar {
         private val intention = ConvertToStringTemplateIntention()
 
         override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is JetBinaryExpression && intention.isApplicableTo(element) && intention.isConversionResultSimple(element)) {
+            if (element is JetBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
                 return { intention.applyTo(element) }
             }
             else {
