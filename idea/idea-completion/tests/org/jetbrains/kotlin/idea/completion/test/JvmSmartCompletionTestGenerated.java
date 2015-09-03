@@ -413,6 +413,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("PreviousArgError.kt")
+    public void testPreviousArgError() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/PreviousArgError.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("QualifiedOverloadedMethodCallArgument1.kt")
     public void testQualifiedOverloadedMethodCallArgument1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument1.kt");

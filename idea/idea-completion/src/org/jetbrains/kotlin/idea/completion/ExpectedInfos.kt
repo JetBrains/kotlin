@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -250,7 +249,7 @@ class ExpectedInfos(
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
 
             // check that all arguments before the current one matched
-            if (!candidate.noErrorsInValueArguments()) continue
+            if (!candidate.allArgumentsMatched()) continue
 
             var descriptor = candidate.getResultingDescriptor()
             if (descriptor.valueParameters.isEmpty()) continue
@@ -351,6 +350,12 @@ class ExpectedInfos(
         }
         return expectedInfos
     }
+
+    private fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMatched()
+            = call.valueArguments.none { argument -> getArgumentMapping(argument).isError() && !argument.hasError() /* ignore arguments that has error type */ }
+
+    private fun ValueArgument.hasError()
+            = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
 
     private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: Name, descriptor: FunctionDescriptor): Tail? {
         val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
