@@ -17,17 +17,22 @@
 package org.jetbrains.kotlin.idea.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.UtilPackage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class IdeStubIndexService extends StubIndexService {
@@ -38,16 +43,14 @@ public class IdeStubIndexService extends StubIndexService {
 
         sink.occurrence(JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
 
-        String facadeSimpleName = stub.getFacadeSimpleName();
-        if (facadeSimpleName != null) {
-            FqName fileFacadeFqName = packageFqName.child(Name.identifier(facadeSimpleName));
-            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileFacadeFqName.asString());
+        FqName facadeFqName = ((KotlinFileStubForIde) stub).getFacadeFqName();
+        if (facadeFqName != null) {
+            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), facadeFqName.asString());
         }
 
-        String partSimpleName = stub.getPartSimpleName();
-        if (partSimpleName != null) {
-            FqName filePartFqName = packageFqName.child(Name.identifier(partSimpleName));
-            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), filePartFqName.asString());
+        FqName partFqName = ((KotlinFileStubForIde) stub).getPartFqName();
+        if (partFqName != null) {
+            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), partFqName.asString());
         }
 
         JetFile jetFile = stub.getPsi();
@@ -168,5 +171,40 @@ public class IdeStubIndexService extends StubIndexService {
             parent = parent.getParentStub();
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public KotlinFileStub createFileStub(@NotNull JetFile file) {
+        StringRef packageFqName = StringRef.fromString(file.getPackageFqNameByTree().asString());
+        boolean isScript = file.isScriptByTree();
+        if (PackagePartClassUtils.fileHasTopLevelCallables(file)) {
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
+            StringRef facadeSimpleName = StringRef.fromString(fileClassInfo.getFacadeClassFqName().shortName().asString());
+            StringRef partSimpleName = StringRef.fromString(fileClassInfo.getFileClassFqName().shortName().asString());
+            return new KotlinFileStubForIde(file, packageFqName, isScript, facadeSimpleName, partSimpleName);
+        }
+        return new KotlinFileStubForIde(file, packageFqName, isScript, null, null);
+    }
+
+    @Override
+    public void serializeFileStub(
+            @NotNull KotlinFileStub stub, @NotNull StubOutputStream dataStream
+    ) throws IOException {
+        KotlinFileStubForIde fileStub = (KotlinFileStubForIde) stub;
+        dataStream.writeName(fileStub.getPackageFqName().asString());
+        dataStream.writeBoolean(fileStub.isScript());
+        dataStream.writeName(StringRef.toString(fileStub.getFacadeSimpleName()));
+        dataStream.writeName(StringRef.toString(fileStub.getPartSimpleName()));
+    }
+
+    @NotNull
+    @Override
+    public KotlinFileStub deserializeFileStub(@NotNull StubInputStream dataStream) throws IOException {
+        StringRef packageFqNameAsString = dataStream.readName();
+        boolean isScript = dataStream.readBoolean();
+        StringRef facadeSimpleName = dataStream.readName();
+        StringRef partSimpleName = dataStream.readName();
+        return new KotlinFileStubForIde(null, packageFqNameAsString, isScript, facadeSimpleName, partSimpleName);
     }
 }

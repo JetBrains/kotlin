@@ -23,6 +23,7 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import java.io.IOException
 
 public open class StubIndexService protected constructor() {
     public open fun indexFile(stub: KotlinFileStub, sink: IndexSink) {
@@ -47,19 +48,17 @@ public open class StubIndexService protected constructor() {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
     }
 
+    throws(IOException::class)
     public open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getPackageFqName().asString())
-        dataStream.writeName(stub.getFacadeSimpleName())
-        dataStream.writeName(stub.getPartSimpleName())
         dataStream.writeBoolean(stub.isScript())
     }
 
+    throws(IOException::class)
     public open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
         val packageFqNameAsString = dataStream.readName()
         val isScript = dataStream.readBoolean()
-        val facadeSimpleName = dataStream.readName()
-        val partSimpleName = dataStream.readName()
-        return KotlinFileStubImpl(null, packageFqNameAsString!!, facadeSimpleName, partSimpleName, isScript)
+        return KotlinFileStubImpl(null, packageFqNameAsString!!, isScript)
     }
 
     companion object {

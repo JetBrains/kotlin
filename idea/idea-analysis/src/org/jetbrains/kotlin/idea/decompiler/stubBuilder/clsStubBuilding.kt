@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -48,7 +49,7 @@ fun createPackageFacadeStub(
         packageFqName: FqName,
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer(null, packageFqName)
     for (callableProto in packageProto.getMemberList()) {
@@ -63,7 +64,7 @@ fun createFileFacadeStub(
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer(null, facadeFqName.parent())
     for (callableProto in packageProto.getMemberList()) {
@@ -78,7 +79,7 @@ fun createMultifileClassStub(
         components: ClsStubBuilderComponents
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubImpl.forMultifileClassStub(facadeFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val multifileClassContainer = ProtoContainer(null, packageFqName)
     for (partHeader in partHeaders) {
@@ -94,7 +95,7 @@ fun createMultifileClassStub(
 fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
 
 fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     return fileStub
 }
