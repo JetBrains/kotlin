@@ -31,7 +31,6 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
@@ -52,10 +51,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.*
-import java.util.Arrays
-import java.util.Collections
-import java.util.HashSet
-import java.util.TreeSet
+import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.test.*
@@ -537,15 +533,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }), true)
         makeAll().assertSuccessful()
-    }
-
-    public fun testDoNotCreateUselessKotlinIncrementalCaches() {
-        initProject()
-        makeAll().assertSuccessful()
-
-        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()
-        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
-        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
     public fun testCancelLongKotlinCompilation() {
