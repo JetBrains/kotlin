@@ -1,6 +1,6 @@
 package
 
-internal fun composite(): kotlin.Unit
-internal fun html(): kotlin.Unit
-internal fun html1(): kotlin.Unit
-internal fun import(): kotlin.Unit
+public fun composite(): kotlin.Unit
+public fun html(): kotlin.Unit
+public fun html1(): kotlin.Unit
+public fun import(): kotlin.Unit

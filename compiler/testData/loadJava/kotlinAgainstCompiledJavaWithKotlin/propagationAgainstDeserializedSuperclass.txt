@@ -5,11 +5,11 @@ public open class J : test.K {
     public open override /*1*/ fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
 }
 
-internal interface K {
+public interface K {
     public abstract fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
 }
 
-internal final class K1 : test.J {
+public final class K1 : test.J {
     public constructor K1()
     public open override /*1*/ fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
 }

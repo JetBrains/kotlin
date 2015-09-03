@@ -1,13 +1,13 @@
 package
 
-internal open class MyClass {
+public open class MyClass {
     public constructor MyClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final enum class MyEnum : MyClass {
+public final enum class MyEnum : MyClass {
     private constructor MyEnum()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -18,7 +18,7 @@ internal final enum class MyEnum : MyClass {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
 
-internal final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
+public final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     private constructor MyEnum2()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2): kotlin.Int
@@ -33,7 +33,7 @@ internal final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2>
 }
 
-internal final enum class MyEnum3 : MyEnumBase {
+public final enum class MyEnum3 : MyEnumBase {
     private constructor MyEnum3()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int
@@ -48,7 +48,7 @@ internal final enum class MyEnum3 : MyEnumBase {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum3>
 }
 
-internal final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
+public final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     private constructor MyEnumBase()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int
@@ -63,7 +63,7 @@ internal final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnumBase>
 }
 
-internal interface MyTrait {
+public interface MyTrait {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

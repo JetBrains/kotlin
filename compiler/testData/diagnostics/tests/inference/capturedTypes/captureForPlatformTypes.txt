@@ -1,7 +1,7 @@
 package
 
-internal fun tes2t(/*0*/ clazz: java.lang.Class<in kotlin.Int>): kotlin.Unit
-internal fun test1(/*0*/ clazz: java.lang.Class<out kotlin.Int>): kotlin.Unit
+public fun tes2t(/*0*/ clazz: java.lang.Class<in kotlin.Int>): kotlin.Unit
+public fun test1(/*0*/ clazz: java.lang.Class<out kotlin.Int>): kotlin.Unit
 
 public open class A {
     public constructor A()

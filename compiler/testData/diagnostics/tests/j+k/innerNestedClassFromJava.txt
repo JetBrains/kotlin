@@ -1,5 +1,5 @@
 package
 
 package b {
-    internal fun f(): kotlin.Unit
+    public fun f(): kotlin.Unit
 }

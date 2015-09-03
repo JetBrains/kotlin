@@ -1,6 +1,6 @@
 package
 
-internal abstract class K : p.C {
+public abstract class K : p.C {
     public constructor K()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun </*0*/ TB : kotlin.Any!> foo(/*0*/ p: TB!): kotlin.Unit

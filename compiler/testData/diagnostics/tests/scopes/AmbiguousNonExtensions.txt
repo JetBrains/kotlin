@@ -1,14 +1,14 @@
 package
 
-internal val ff: [ERROR : Type for f()]
-internal val vv: [ERROR : Type for v]
+public val ff: [ERROR : Type for f()]
+public val vv: [ERROR : Type for v]
 
 package a {
-    internal val v: kotlin.Int = 1
-    internal fun f(): kotlin.Int
+    public val v: kotlin.Int = 1
+    public fun f(): kotlin.Int
 }
 
 package b {
-    internal val v: kotlin.Int = 1
-    internal fun f(): kotlin.Int
+    public val v: kotlin.Int = 1
+    public fun f(): kotlin.Int
 }

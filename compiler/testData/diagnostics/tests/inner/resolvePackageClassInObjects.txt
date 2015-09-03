@@ -1,6 +1,6 @@
 package
 
-internal final class MoreTest {
+public final class MoreTest {
     public constructor MoreTest()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -13,7 +13,7 @@ internal final class MoreTest {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal object Some : PackageTest {
+    public object Some : PackageTest {
         private constructor Some()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -21,7 +21,7 @@ internal final class MoreTest {
     }
 }
 
-internal open class PackageTest {
+public open class PackageTest {
     public constructor PackageTest()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

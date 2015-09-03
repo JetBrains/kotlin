@@ -1,16 +1,16 @@
 package
 
 package bar {
-    internal fun f1(): foo.E
-    internal fun f2(): foo.E
-    internal fun f3(): foo.E.Nested
-    internal fun f4(): kotlin.Int
-    internal fun f5(): kotlin.Array<foo.E>
+    public fun f1(): foo.E
+    public fun f2(): foo.E
+    public fun f3(): foo.E.Nested
+    public fun f4(): kotlin.Int
+    public fun f5(): kotlin.Array<foo.E>
 }
 
 package foo {
 
-    internal final enum class E : kotlin.Enum<foo.E> {
+    public final enum class E : kotlin.Enum<foo.E> {
         enum entry ENTRY
 
         enum entry ANOTHER
@@ -24,7 +24,7 @@ package foo {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class Nested {
+        public final class Nested {
             public constructor Nested()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -33,7 +33,7 @@ package foo {
             public companion object Companion {
                 private constructor Companion()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                internal final fun foo(): kotlin.Int
+                public final fun foo(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }

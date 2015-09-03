@@ -1,5 +1,5 @@
 package test
 
-internal final class ClassWithConstructorAndTypeParameter</*0*/ P> {
+public final class ClassWithConstructorAndTypeParameter</*0*/ P> {
     /*primary*/ public constructor ClassWithConstructorAndTypeParameter</*0*/ P>()
 }

@@ -1,8 +1,8 @@
 package
 
 public /*synthesized*/ fun JavaInterface1(/*0*/ function: () -> kotlin.String!): JavaInterface1
-internal fun foo(/*0*/ k: KotlinClass): kotlin.Unit
-internal fun useString(/*0*/ i: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ k: KotlinClass): kotlin.Unit
+public fun useString(/*0*/ i: kotlin.String): kotlin.Unit
 
 public interface JavaInterface1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -27,7 +27,7 @@ public interface JavaInterface3 : JavaInterface1, JavaInterface2 {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal abstract class KotlinClass : JavaInterface3 {
+public abstract class KotlinClass : JavaInterface3 {
     public constructor KotlinClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun getSomething(): kotlin.String

@@ -1,49 +1,49 @@
 package
 
-internal fun barWithoutElse(/*0*/ s: Sealed): kotlin.Int
-internal fun foo(/*0*/ s: Sealed): kotlin.Int
-internal fun fooWithElse(/*0*/ s: Sealed): kotlin.Int
-internal fun fooWithoutElse(/*0*/ s: Sealed): kotlin.Int
+public fun barWithoutElse(/*0*/ s: Sealed): kotlin.Int
+public fun foo(/*0*/ s: Sealed): kotlin.Int
+public fun fooWithElse(/*0*/ s: Sealed): kotlin.Int
+public fun fooWithoutElse(/*0*/ s: Sealed): kotlin.Int
 
-internal sealed class Sealed {
+public sealed class Sealed {
     private constructor Sealed()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal object First : Sealed {
+    public object First : Sealed {
         private constructor First()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal open class NonFirst : Sealed {
+    public open class NonFirst : Sealed {
         public constructor NonFirst()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class NonSecond : Sealed.NonFirst {
+        public final class NonSecond : Sealed.NonFirst {
             public constructor NonSecond()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-            internal final class NonThird : Sealed {
+            public final class NonThird : Sealed {
                 public constructor NonThird()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-                internal final class Fifth : Sealed {
+                public final class Fifth : Sealed {
                     public constructor Fifth()
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
                 }
 
-                internal object Fourth : Sealed.NonFirst {
+                public object Fourth : Sealed.NonFirst {
                     private constructor Fourth()
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -51,7 +51,7 @@ internal sealed class Sealed {
                 }
             }
 
-            internal object Third : Sealed {
+            public object Third : Sealed {
                 private constructor Third()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -59,7 +59,7 @@ internal sealed class Sealed {
             }
         }
 
-        internal object Second : Sealed {
+        public object Second : Sealed {
             private constructor Second()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

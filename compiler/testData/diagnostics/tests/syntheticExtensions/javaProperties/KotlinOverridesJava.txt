@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ k: KotlinClass): kotlin.Unit
-internal fun useInt(/*0*/ i: kotlin.Int): kotlin.Unit
-internal fun useString(/*0*/ i: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ k: KotlinClass): kotlin.Unit
+public fun useInt(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun useString(/*0*/ i: kotlin.String): kotlin.Unit
 
 public open class JavaClass {
     public constructor JavaClass()
@@ -24,7 +24,7 @@ public interface JavaInterface {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal abstract class KotlinClass : JavaClass, KotlinInterface, JavaInterface {
+public abstract class KotlinClass : JavaClass, KotlinInterface, JavaInterface {
     public constructor KotlinClass()
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ fun getSomething1(): kotlin.Int
@@ -38,7 +38,7 @@ internal abstract class KotlinClass : JavaClass, KotlinInterface, JavaInterface 
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface KotlinInterface {
+public interface KotlinInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun getSomething1(): kotlin.Int
     public abstract fun getSomething4(): kotlin.String

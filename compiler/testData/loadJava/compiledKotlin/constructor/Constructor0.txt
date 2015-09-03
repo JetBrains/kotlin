@@ -1,5 +1,5 @@
 package test
 
-internal final class ClassWithConstructor0 {
+public final class ClassWithConstructor0 {
     /*primary*/ public constructor ClassWithConstructor0()
 }

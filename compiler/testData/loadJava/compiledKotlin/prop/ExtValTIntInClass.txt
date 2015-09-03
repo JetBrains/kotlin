@@ -1,7 +1,7 @@
 package test
 
-internal final class ExtValPIntInClass</*0*/ P> {
+public final class ExtValPIntInClass</*0*/ P> {
     /*primary*/ public constructor ExtValPIntInClass</*0*/ P>()
-    internal final val P.asas: kotlin.Int
-        internal final fun P.<get-asas>(): kotlin.Int
+    public final val P.asas: kotlin.Int
+        public final fun P.<get-asas>(): kotlin.Int
 }

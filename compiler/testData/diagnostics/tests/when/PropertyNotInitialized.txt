@@ -1,6 +1,6 @@
 package
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry A
 
     enum entry B
@@ -19,7 +19,7 @@ internal final enum class E : kotlin.Enum<E> {
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
-internal final class Outer {
+public final class Outer {
     public constructor Outer(/*0*/ e: E)
     private final val prop: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

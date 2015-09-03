@@ -1,9 +1,9 @@
 package
 
-internal final class C {
+public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.Suppress(names = {"REDUNDANT_NULLABLE"}) internal final fun foo(): kotlin.String?
+    kotlin.Suppress(names = {"REDUNDANT_NULLABLE"}) public final fun foo(): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

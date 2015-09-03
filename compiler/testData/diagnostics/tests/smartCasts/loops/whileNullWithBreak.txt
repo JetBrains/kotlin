@@ -1,4 +1,4 @@
 package
 
-internal fun bar(): kotlin.Boolean
-internal fun foo(/*0*/ s: kotlin.String?): kotlin.Int
+public fun bar(): kotlin.Boolean
+public fun foo(/*0*/ s: kotlin.String?): kotlin.Int

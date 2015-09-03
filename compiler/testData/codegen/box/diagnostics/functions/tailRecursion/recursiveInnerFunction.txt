@@ -1,4 +1,4 @@
 package
 
-internal fun box(): kotlin.String
-internal fun test(): kotlin.Unit
+public fun box(): kotlin.String
+public fun test(): kotlin.Unit

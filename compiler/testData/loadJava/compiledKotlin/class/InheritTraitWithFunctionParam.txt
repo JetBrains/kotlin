@@ -1,10 +1,10 @@
 package test
 
-internal open class Class : test.Trait {
+public open class Class : test.Trait {
     /*primary*/ public constructor Class()
-    internal open override /*1*/ /*fake_override*/ fun f(/*0*/ a: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun f(/*0*/ a: kotlin.String): kotlin.Unit
 }
 
-internal interface Trait {
-    internal open fun f(/*0*/ a: kotlin.String): kotlin.Unit
+public interface Trait {
+    public open fun f(/*0*/ a: kotlin.String): kotlin.Unit
 }

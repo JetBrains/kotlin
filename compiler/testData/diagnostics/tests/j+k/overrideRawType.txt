@@ -9,7 +9,7 @@ public interface Bar {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class BarImpl : Bar {
+public final class BarImpl : Bar {
     public constructor BarImpl()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun f(/*0*/ f: Foo<*>?): kotlin.Unit

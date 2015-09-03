@@ -5,7 +5,7 @@ package a {
 
 package b {
 
-    internal object O {
+    public object O {
         private constructor O()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -15,7 +15,7 @@ package b {
 
 package c {
 
-    internal object O {
+    public object O {
         private constructor O()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,6 +1,6 @@
 package test
 
-internal open class Base {
+public open class Base {
     /*primary*/ public constructor Base()
     internal open val int: kotlin.Int = 1
         internal open fun <get-int>(): kotlin.Int
@@ -10,7 +10,7 @@ internal open class Base {
         public open fun <get-pub>(): kotlin.Int
 }
 
-internal final class Child : test.Base {
+public final class Child : test.Base {
     /*primary*/ public constructor Child(/*0*/ prot: kotlin.Int, /*1*/ int: kotlin.Int, /*2*/ pub: kotlin.Int)
     internal open override /*1*/ val int: kotlin.Int
         internal open override /*1*/ fun <get-int>(): kotlin.Int

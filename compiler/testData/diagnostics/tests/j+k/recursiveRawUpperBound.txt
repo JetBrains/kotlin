@@ -1,6 +1,6 @@
 package
 
-internal fun foo(/*0*/ p: X): Bad<(raw) Bad<*>!>!
+public fun foo(/*0*/ p: X): Bad<(raw) Bad<*>!>!
 
 public/*package*/ open class Bad</*0*/ T : Bad<(raw) Bad<*>>!> {
     public/*package*/ constructor Bad</*0*/ T : Bad<(raw) Bad<*>>!>()

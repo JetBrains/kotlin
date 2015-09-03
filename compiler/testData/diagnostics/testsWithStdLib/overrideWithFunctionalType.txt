@@ -1,10 +1,10 @@
 package
 
-internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
-internal interface Base {
+public interface Base {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun </*0*/ V : kotlin.Any> foo(/*0*/ compute: () -> V?): kotlin.Unit
+    public abstract fun </*0*/ V : kotlin.Any> foo(/*0*/ compute: () -> V?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

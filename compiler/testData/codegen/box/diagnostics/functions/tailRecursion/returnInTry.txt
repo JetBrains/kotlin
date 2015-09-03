@@ -1,4 +1,4 @@
 package
 
-internal fun box(): kotlin.String
-kotlin.tailrec() internal fun test(/*0*/ counter: kotlin.Int): kotlin.Int
+public fun box(): kotlin.String
+kotlin.tailrec() public fun test(/*0*/ counter: kotlin.Int): kotlin.Int

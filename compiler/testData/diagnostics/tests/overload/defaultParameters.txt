@@ -1,19 +1,19 @@
 package
 
-internal fun </*0*/ T> discriminateGeneric(/*0*/ a: T): kotlin.Int
-internal fun discriminateGeneric(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.String = ...): kotlin.String
-internal fun simple(): kotlin.Int
-internal fun simple(/*0*/ a: kotlin.Int = ...): kotlin.String
-internal fun test(): kotlin.Unit
-internal fun twoDefault(/*0*/ a: kotlin.Any = ..., /*1*/ b: kotlin.String = ...): kotlin.String
-internal fun twoDefault(/*0*/ a: kotlin.Int = ...): kotlin.Int
-internal fun </*0*/ T : kotlin.CharSequence> withDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ...): kotlin.Int
-internal fun </*0*/ T : kotlin.Any> withDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ..., /*2*/ a: kotlin.Int = ...): kotlin.String
-internal fun </*0*/ T> withGeneric(/*0*/ a: T): kotlin.Int
-internal fun </*0*/ T> withGeneric(/*0*/ a: T, /*1*/ b: kotlin.Int = ...): kotlin.String
-internal fun wrong(/*0*/ a: kotlin.Int = ...): kotlin.Unit
-internal fun wrong(/*0*/ a: kotlin.String = ..., /*1*/ b: kotlin.Int = ...): kotlin.Unit
-internal fun wrongTwoDefault(/*0*/ a: kotlin.Any = ...): kotlin.Int
-internal fun wrongTwoDefault(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.String = ...): kotlin.String
-internal fun </*0*/ T : kotlin.Any> wrongWithDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ...): kotlin.Int
-internal fun </*0*/ T : kotlin.CharSequence> wrongWithDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ..., /*2*/ a: kotlin.Int = ...): kotlin.String
+public fun </*0*/ T> discriminateGeneric(/*0*/ a: T): kotlin.Int
+public fun discriminateGeneric(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.String = ...): kotlin.String
+public fun simple(): kotlin.Int
+public fun simple(/*0*/ a: kotlin.Int = ...): kotlin.String
+public fun test(): kotlin.Unit
+public fun twoDefault(/*0*/ a: kotlin.Any = ..., /*1*/ b: kotlin.String = ...): kotlin.String
+public fun twoDefault(/*0*/ a: kotlin.Int = ...): kotlin.Int
+public fun </*0*/ T : kotlin.CharSequence> withDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ...): kotlin.Int
+public fun </*0*/ T : kotlin.Any> withDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ..., /*2*/ a: kotlin.Int = ...): kotlin.String
+public fun </*0*/ T> withGeneric(/*0*/ a: T): kotlin.Int
+public fun </*0*/ T> withGeneric(/*0*/ a: T, /*1*/ b: kotlin.Int = ...): kotlin.String
+public fun wrong(/*0*/ a: kotlin.Int = ...): kotlin.Unit
+public fun wrong(/*0*/ a: kotlin.String = ..., /*1*/ b: kotlin.Int = ...): kotlin.Unit
+public fun wrongTwoDefault(/*0*/ a: kotlin.Any = ...): kotlin.Int
+public fun wrongTwoDefault(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.String = ...): kotlin.String
+public fun </*0*/ T : kotlin.Any> wrongWithDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ...): kotlin.Int
+public fun </*0*/ T : kotlin.CharSequence> wrongWithDefaultGeneric(/*0*/ t: T, /*1*/ d: T? = ..., /*2*/ a: kotlin.Int = ...): kotlin.String

@@ -1,6 +1,6 @@
 package
 
-internal interface One {
+public interface One {
     private final fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Int
@@ -8,7 +8,7 @@ internal interface One {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface OneImpl : One {
+public interface OneImpl : One {
     invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
@@ -16,7 +16,7 @@ internal interface OneImpl : One {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Test1 : TwoImpl, OneImpl {
+public final class Test1 : TwoImpl, OneImpl {
     public constructor Test1()
     invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -25,7 +25,7 @@ internal final class Test1 : TwoImpl, OneImpl {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Test2 : One, Two {
+public final class Test2 : One, Two {
     public constructor Test2(/*0*/ a: One)
     invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -34,7 +34,7 @@ internal final class Test2 : One, Two {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Test3 : Two, One {
+public final class Test3 : Two, One {
     public constructor Test3(/*0*/ a: One, /*1*/ b: Two)
     invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -43,14 +43,14 @@ internal final class Test3 : Two, One {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Two {
+public interface Two {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface TwoImpl : Two {
+public interface TwoImpl : Two {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

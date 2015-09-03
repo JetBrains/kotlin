@@ -1,5 +1,5 @@
 package
 
-internal fun box(): kotlin.String
-internal fun escapeChar(/*0*/ c: kotlin.Char): kotlin.String?
-kotlin.tailrec() internal fun kotlin.String.escape(/*0*/ i: kotlin.Int = ..., /*1*/ result: java.lang.StringBuilder = ...): kotlin.String
+public fun box(): kotlin.String
+public fun escapeChar(/*0*/ c: kotlin.Char): kotlin.String?
+kotlin.tailrec() public fun kotlin.String.escape(/*0*/ i: kotlin.Int = ..., /*1*/ result: java.lang.StringBuilder = ...): kotlin.String

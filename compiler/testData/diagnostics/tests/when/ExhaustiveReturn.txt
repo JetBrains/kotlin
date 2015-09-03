@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ dir: Direction): kotlin.Int
+public fun foo(/*0*/ dir: Direction): kotlin.Int
 
-internal final enum class Direction : kotlin.Enum<Direction> {
+public final enum class Direction : kotlin.Enum<Direction> {
     enum entry NORTH
 
     enum entry SOUTH

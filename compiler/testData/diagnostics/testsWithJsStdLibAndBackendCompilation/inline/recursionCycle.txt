@@ -1,5 +1,5 @@
 package
 
-kotlin.inline() internal fun f(): kotlin.Unit
-kotlin.inline() internal fun g(): kotlin.Unit
-kotlin.inline() internal fun h(): kotlin.Unit
+kotlin.inline() public fun f(): kotlin.Unit
+kotlin.inline() public fun g(): kotlin.Unit
+kotlin.inline() public fun h(): kotlin.Unit

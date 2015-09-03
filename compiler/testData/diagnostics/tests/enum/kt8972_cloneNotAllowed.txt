@@ -1,6 +1,6 @@
 package
 
-internal final enum class E : kotlin.Enum<E>, kotlin.Cloneable {
+public final enum class E : kotlin.Enum<E>, kotlin.Cloneable {
     enum entry A
 
     private constructor E()

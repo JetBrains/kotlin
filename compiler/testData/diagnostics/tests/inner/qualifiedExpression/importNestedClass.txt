@@ -1,25 +1,25 @@
 package
 
-internal val a: A
-internal val ab: A.B
-internal val abc: A.B.C
-internal val b: A.B
-internal val bc: A.B.C
-internal val c: A.B.C
+public val a: A
+public val ab: A.B
+public val abc: A.B.C
+public val b: A.B
+public val bc: A.B.C
+public val c: A.B.C
 
-internal final class A {
+public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class C {
+        public final class C {
             public constructor C()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

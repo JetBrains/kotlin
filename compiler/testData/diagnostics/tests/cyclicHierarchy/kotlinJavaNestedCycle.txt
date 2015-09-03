@@ -1,6 +1,6 @@
 package
 
-internal interface ExceptionTracker {
+public interface ExceptionTracker {
 }
 
 public/*package*/ open class LockBasedStorageManager : StorageManager {
@@ -18,6 +18,6 @@ public/*package*/ open class LockBasedStorageManager : StorageManager {
     public/*package*/ final /*synthesized*/ fun ExceptionHandlingStrategy(/*0*/ function: () -> kotlin.Unit): LockBasedStorageManager.ExceptionHandlingStrategy
 }
 
-internal interface StorageManager {
-    internal abstract fun foo(): kotlin.Unit
+public interface StorageManager {
+    public abstract fun foo(): kotlin.Unit
 }

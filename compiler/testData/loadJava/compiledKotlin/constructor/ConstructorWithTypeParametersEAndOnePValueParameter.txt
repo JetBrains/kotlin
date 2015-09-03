@@ -1,5 +1,5 @@
 package test
 
-internal final class OneTypeParameterErased</*0*/ P, /*1*/ Q> {
+public final class OneTypeParameterErased</*0*/ P, /*1*/ Q> {
     /*primary*/ public constructor OneTypeParameterErased</*0*/ P, /*1*/ Q>(/*0*/ q: Q)
 }

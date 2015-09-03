@@ -2,7 +2,7 @@ package
 
 public val bar: kotlin.Int = 1
 public fun foo(): kotlin.Int
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 public final class Bar {
     public constructor Bar()
@@ -11,7 +11,7 @@ public final class Bar {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class Baz {
+public open class Baz {
     public constructor Baz()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     private final fun foo(): kotlin.Unit
@@ -19,12 +19,12 @@ internal open class Baz {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Bzz {
+public final class Bzz {
     public constructor Bzz(/*0*/ q: kotlin.Int = ...)
     public final val q: kotlin.Int
     public final val x: kotlin.Int = 2
     public final val y: kotlin.Int
-    internal final val z: kotlin.Int
+    public final val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -49,7 +49,7 @@ internal final class Bzz {
     }
 }
 
-internal abstract class Foo {
+public abstract class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

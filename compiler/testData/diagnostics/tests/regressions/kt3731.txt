@@ -1,21 +1,21 @@
 package
 
-internal final class A {
+public final class A {
     public constructor A()
-    internal final fun bar(/*0*/ f: A.() -> kotlin.Unit = ...): kotlin.Unit
+    public final fun bar(/*0*/ f: A.() -> kotlin.Unit = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun foo(): kotlin.Unit
+    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B {
+public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class D {
+    public final class D {
         public constructor D()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

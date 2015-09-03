@@ -1,13 +1,13 @@
 package test
 
-internal open class BaseClass {
+public open class BaseClass {
     /*primary*/ public constructor BaseClass()
-    internal final val exactly: kotlin.Int = 17
-        internal final fun <get-exactly>(): kotlin.Int
+    public final val exactly: kotlin.Int = 17
+        public final fun <get-exactly>(): kotlin.Int
 }
 
-internal final class Subclass : test.BaseClass {
+public final class Subclass : test.BaseClass {
     /*primary*/ public constructor Subclass()
-    internal final override /*1*/ /*fake_override*/ val exactly: kotlin.Int
-        internal final override /*1*/ /*fake_override*/ fun <get-exactly>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val exactly: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-exactly>(): kotlin.Int
 }

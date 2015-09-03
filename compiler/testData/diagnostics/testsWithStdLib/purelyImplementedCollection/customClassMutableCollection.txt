@@ -1,7 +1,7 @@
 package
 
-internal fun bar(): kotlin.String?
-internal fun foo(): kotlin.Unit
+public fun bar(): kotlin.String?
+public fun foo(): kotlin.Unit
 
 kotlin.jvm.PurelyImplements(value = "kotlin.MutableCollection") public/*package*/ open class A</*0*/ T : kotlin.Any!> : java.util.AbstractCollection<T!>, kotlin.MutableCollection<T> {
     public/*package*/ constructor A</*0*/ T : kotlin.Any!>()

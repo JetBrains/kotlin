@@ -2,17 +2,17 @@ package
 
 package test {
 
-    kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
+    kotlin.annotation.annotation() public final class A : kotlin.Annotation {
         public constructor A(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.String = ..., /*2*/ c: kotlin.String)
-        internal final val a: kotlin.Int
-        internal final val b: kotlin.String
-        internal final val c: kotlin.String
+        public final val a: kotlin.Int
+        public final val b: kotlin.String
+        public final val c: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    test.A(a = 12, c = "Hello") internal object SomeObject {
+    test.A(a = 12, c = "Hello") public object SomeObject {
         private constructor SomeObject()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

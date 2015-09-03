@@ -53,7 +53,7 @@ package p {
 // -- Module: <m4> --
 package
 
-internal fun test(/*0*/ b: p.B?): kotlin.Unit
+public fun test(/*0*/ b: p.B?): kotlin.Unit
 
 package p {
 

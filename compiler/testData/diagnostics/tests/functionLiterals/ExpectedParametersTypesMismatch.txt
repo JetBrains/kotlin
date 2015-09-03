@@ -1,8 +1,8 @@
 package
 
 package a {
-    internal fun foo0(/*0*/ f: () -> kotlin.String): () -> kotlin.String
-    internal fun foo1(/*0*/ f: (kotlin.Int) -> kotlin.String): (kotlin.Int) -> kotlin.String
-    internal fun foo2(/*0*/ f: (kotlin.Int, kotlin.String) -> kotlin.String): (kotlin.Int, kotlin.String) -> kotlin.String
-    internal fun test1(): kotlin.Unit
+    public fun foo0(/*0*/ f: () -> kotlin.String): () -> kotlin.String
+    public fun foo1(/*0*/ f: (kotlin.Int) -> kotlin.String): (kotlin.Int) -> kotlin.String
+    public fun foo2(/*0*/ f: (kotlin.Int, kotlin.String) -> kotlin.String): (kotlin.Int, kotlin.String) -> kotlin.String
+    public fun test1(): kotlin.Unit
 }

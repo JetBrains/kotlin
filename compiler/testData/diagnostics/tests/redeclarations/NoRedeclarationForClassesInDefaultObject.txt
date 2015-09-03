@@ -2,7 +2,7 @@ package
 
 package kt2247 {
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -14,7 +14,7 @@ package kt2247 {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-            internal final class Y {
+            public final class Y {
                 public constructor Y()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -22,7 +22,7 @@ package kt2247 {
             }
         }
 
-        internal final class Y {
+        public final class Y {
             public constructor Y()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

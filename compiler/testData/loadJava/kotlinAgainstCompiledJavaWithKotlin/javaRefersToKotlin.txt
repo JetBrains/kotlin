@@ -6,9 +6,9 @@ public interface J {
     public abstract fun foo(/*0*/ p0: test.K!): kotlin.Unit
 }
 
-internal interface K {
+public interface K {
 }
 
-internal interface K1 : test.J {
+public interface K1 : test.J {
     public abstract override /*1*/ fun foo(/*0*/ k: test.K?): kotlin.Unit
 }

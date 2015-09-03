@@ -1,5 +1,5 @@
 package
 
 package e {
-    internal fun main(): kotlin.Unit
+    public fun main(): kotlin.Unit
 }

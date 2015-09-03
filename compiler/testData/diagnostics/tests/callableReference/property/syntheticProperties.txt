@@ -1,6 +1,6 @@
 package
 
-internal val customerName: kotlin.reflect.KMutableProperty1<Customer, kotlin.String!>
+public val customerName: kotlin.reflect.KMutableProperty1<Customer, kotlin.String!>
 
 public open class Customer {
     public constructor Customer(/*0*/ name: kotlin.String!)

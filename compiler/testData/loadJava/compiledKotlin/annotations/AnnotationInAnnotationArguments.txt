@@ -4,7 +4,7 @@ test.OptionGroups(o1 = test.StringOptions(option = {"abc", "d", "ef"}), o2 = tes
     /*primary*/ public constructor AnnotationInAnnotationArguments()
 }
 
-internal final enum class E : kotlin.Enum<test.E> {
+public final enum class E : kotlin.Enum<test.E> {
     enum entry ENTRY
 
     /*primary*/ private constructor E()
@@ -18,22 +18,22 @@ internal final enum class E : kotlin.Enum<test.E> {
     public final /*synthesized*/ fun values(): kotlin.Array<test.E>
 }
 
-kotlin.annotation.annotation() internal final class EnumOption : kotlin.Annotation {
+kotlin.annotation.annotation() public final class EnumOption : kotlin.Annotation {
     /*primary*/ public constructor EnumOption(/*0*/ option: test.E)
-    internal final val option: test.E
-        internal final fun <get-option>(): test.E
+    public final val option: test.E
+        public final fun <get-option>(): test.E
 }
 
-kotlin.annotation.annotation() internal final class OptionGroups : kotlin.Annotation {
+kotlin.annotation.annotation() public final class OptionGroups : kotlin.Annotation {
     /*primary*/ public constructor OptionGroups(/*0*/ o1: test.StringOptions, /*1*/ o2: test.EnumOption)
-    internal final val o1: test.StringOptions
-        internal final fun <get-o1>(): test.StringOptions
-    internal final val o2: test.EnumOption
-        internal final fun <get-o2>(): test.EnumOption
+    public final val o1: test.StringOptions
+        public final fun <get-o1>(): test.StringOptions
+    public final val o2: test.EnumOption
+        public final fun <get-o2>(): test.EnumOption
 }
 
-kotlin.annotation.annotation() internal final class StringOptions : kotlin.Annotation {
+kotlin.annotation.annotation() public final class StringOptions : kotlin.Annotation {
     /*primary*/ public constructor StringOptions(/*0*/ vararg option: kotlin.String /*kotlin.Array<out kotlin.String>*/)
-    internal final val option: kotlin.Array<out kotlin.String>
-        internal final fun <get-option>(): kotlin.Array<out kotlin.String>
+    public final val option: kotlin.Array<out kotlin.String>
+        public final fun <get-option>(): kotlin.Array<out kotlin.String>
 }

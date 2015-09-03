@@ -48,7 +48,7 @@ package p {
 // -- Module: <m4> --
 package
 
-internal fun p.B.test(): kotlin.Unit
+public fun p.B.test(): kotlin.Unit
 
 package p {
 

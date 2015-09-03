@@ -1,4 +1,4 @@
 package
 
-internal fun a(/*0*/ e: java.util.Enumeration<kotlin.Int>): kotlin.Unit
-internal fun </*0*/ T> java.util.Enumeration<T>.iterator(): kotlin.Iterator<T>
+public fun a(/*0*/ e: java.util.Enumeration<kotlin.Int>): kotlin.Unit
+public fun </*0*/ T> java.util.Enumeration<T>.iterator(): kotlin.Iterator<T>

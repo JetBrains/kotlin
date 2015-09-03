@@ -1,21 +1,21 @@
 package test
 
-internal final class ClassVal {
+public final class ClassVal {
     /*primary*/ public constructor ClassVal()
-    internal final var property1: kotlin.Int
-        internal final fun <get-property1>(): kotlin.Int
-        internal final fun <set-property1>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final var property1: kotlin.Int
+        public final fun <get-property1>(): kotlin.Int
+        public final fun <set-property1>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     public final var property10: kotlin.Int
         public final fun <get-property10>(): kotlin.Int
         protected final fun <set-property10>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     public final var property11: kotlin.Int
         public final fun <get-property11>(): kotlin.Int
         internal final fun <set-property11>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-    internal final var property2: java.lang.Object
-        internal final fun <get-property2>(): java.lang.Object
+    public final var property2: java.lang.Object
+        public final fun <get-property2>(): java.lang.Object
         protected final fun <set-property2>(/*0*/ <set-?>: java.lang.Object): kotlin.Unit
-    internal final var property3: java.lang.Object
-        internal final fun <get-property3>(): java.lang.Object
+    public final var property3: java.lang.Object
+        public final fun <get-property3>(): java.lang.Object
         private final fun <set-property3>(/*0*/ <set-?>: java.lang.Object): kotlin.Unit
     protected final var property4: kotlin.String
         protected final fun <get-property4>(): kotlin.String

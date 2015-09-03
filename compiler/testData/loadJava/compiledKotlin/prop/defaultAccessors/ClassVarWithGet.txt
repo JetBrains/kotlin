@@ -1,10 +1,10 @@
 package test
 
-internal final class ClassVal {
+public final class ClassVal {
     /*primary*/ public constructor ClassVal()
-    internal final var property1: kotlin.Int
-        internal final fun <get-property1>(): kotlin.Int
-        internal final fun <set-property1>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final var property1: kotlin.Int
+        public final fun <get-property1>(): kotlin.Int
+        public final fun <set-property1>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     internal final var property2: kotlin.Int
         internal final fun <get-property2>(): kotlin.Int
         internal final fun <set-property2>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit

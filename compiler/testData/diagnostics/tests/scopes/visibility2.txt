@@ -2,11 +2,11 @@ package
 
 package a {
     private fun foo(): kotlin.Unit
-    internal fun makeA(): a.A
+    public fun makeA(): a.A
 
     private open class A {
         public constructor A()
-        internal final fun bar(): kotlin.Unit
+        public final fun bar(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,9 +21,9 @@ package a {
 }
 
 package b {
-    internal fun test(): kotlin.Unit
+    public fun test(): kotlin.Unit
 
-    internal final class B : a.A {
+    public final class B : a.A {
         public constructor B()
         invisible_fake final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
         invisible_fake open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -31,7 +31,7 @@ package b {
         invisible_fake open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class NewClass : java.util.ArrayList<java.lang.Integer> {
+    public final class NewClass : java.util.ArrayList<java.lang.Integer> {
         public constructor NewClass()
         invisible_fake final override /*1*/ /*fake_override*/ var elementData: kotlin.Array<(out) kotlin.Any!>!
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
@@ -78,16 +78,16 @@ package b {
         invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
     }
 
-    internal final class Q {
+    public final class Q {
         public constructor Q()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class W {
+        public final class W {
             public constructor W()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal final fun foo(): kotlin.Unit
+            public final fun foo(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }

@@ -1,20 +1,20 @@
 package
 
-internal val @receiver:Ann() kotlin.String.extensionProperty: kotlin.String
-internal fun @receiver:Ann() kotlin.String.length2(): kotlin.Int
+public val @receiver:Ann() kotlin.String.extensionProperty: kotlin.String
+public fun @receiver:Ann() kotlin.String.length2(): kotlin.Int
 
-kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
     public constructor Ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@receiver:Ann() internal final class SomeClass {
+@receiver:Ann() public final class SomeClass {
     @receiver:Ann() public constructor SomeClass(/*0*/ @receiver:Ann() a: kotlin.String)
     @receiver:Ann() protected final val simpleProperty: kotlin.String = "text"
-    internal final val @receiver:Ann() kotlin.String.extensionProperty2: kotlin.String
-    @receiver:Ann() internal final fun anotherFun(): kotlin.Unit
+    public final val @receiver:Ann() kotlin.String.extensionProperty2: kotlin.String
+    @receiver:Ann() public final fun anotherFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

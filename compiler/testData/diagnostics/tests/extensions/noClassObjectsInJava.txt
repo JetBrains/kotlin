@@ -1,8 +1,8 @@
 package
 
-internal fun f1(): [ERROR : Error function type]
-internal fun f2(): [ERROR : Error function type]
-internal fun kotlin.Any?.bar(): kotlin.Int
+public fun f1(): [ERROR : Error function type]
+public fun f2(): [ERROR : Error function type]
+public fun kotlin.Any?.bar(): kotlin.Int
 
 public open class A {
     public constructor A()

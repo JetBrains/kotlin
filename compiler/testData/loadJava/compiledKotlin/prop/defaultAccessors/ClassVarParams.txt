@@ -1,10 +1,10 @@
 package test
 
-internal final class ClassVarParams {
+public final class ClassVarParams {
     /*primary*/ public constructor ClassVarParams(/*0*/ pr1: kotlin.String, /*1*/ pr2: kotlin.Int, /*2*/ pr3: kotlin.Long, /*3*/ pr4: java.util.Date, /*4*/ pr5: kotlin.Any, /*5*/ pr6: java.lang.Object)
-    internal final var pr1: kotlin.String
-        internal final fun <get-pr1>(): kotlin.String
-        internal final fun <set-pr1>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
+    public final var pr1: kotlin.String
+        public final fun <get-pr1>(): kotlin.String
+        public final fun <set-pr1>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
     internal final var pr2: kotlin.Int
         internal final fun <get-pr2>(): kotlin.Int
         internal final fun <set-pr2>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit

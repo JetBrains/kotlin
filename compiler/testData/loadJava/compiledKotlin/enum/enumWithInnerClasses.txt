@@ -1,28 +1,28 @@
 package test
 
-internal final enum class Enum : kotlin.Enum<test.Enum> {
+public final enum class Enum : kotlin.Enum<test.Enum> {
     enum entry ENTRY1
 
     enum entry ENTRY2
 
     /*primary*/ private constructor Enum()
-    internal final val c: kotlin.Int = 1
-        internal final fun <get-c>(): kotlin.Int
+    public final val c: kotlin.Int = 1
+        public final fun <get-c>(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
-    internal final fun f(): kotlin.Int
+    public final fun f(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
-    internal final inner class Inner {
+    public final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    internal final class Nested {
+    public final class Nested {
         /*primary*/ public constructor Nested()
     }
 
-    internal interface Trait {
+    public interface Trait {
     }
 
     // Static members

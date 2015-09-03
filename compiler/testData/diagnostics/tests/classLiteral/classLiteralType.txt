@@ -1,18 +1,18 @@
-package 
+package
 
-internal val a1: kotlin.reflect.KClass<*>
-internal val a2: kotlin.reflect.KClass<A>
-internal val a3: kotlin.reflect.KClass<B>
-internal val a4: B
+public val a1: kotlin.reflect.KClass<*>
+public val a2: kotlin.reflect.KClass<A>
+public val a3: kotlin.reflect.KClass<B>
+public val a4: B
 
-internal final class A {
+public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B {
+public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

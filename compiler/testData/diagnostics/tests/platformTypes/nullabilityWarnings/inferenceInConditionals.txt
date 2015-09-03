@@ -1,8 +1,8 @@
 package
 
-internal fun elvis(/*0*/ c: J): kotlin.Any?
-internal fun ifelse(/*0*/ c: J): kotlin.Any?
-internal fun safeCall(/*0*/ c: J?): kotlin.Unit
+public fun elvis(/*0*/ c: J): kotlin.Any?
+public fun ifelse(/*0*/ c: J): kotlin.Any?
+public fun safeCall(/*0*/ c: J?): kotlin.Unit
 
 public open class J {
     public constructor J()

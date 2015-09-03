@@ -1,5 +1,5 @@
 package
 
 package c {
-    internal val i: kotlin.String
+    public val i: kotlin.String
 }

@@ -1,6 +1,6 @@
 package
 
-internal val nullableInt: kotlin.Int? = null
-internal fun bar(): kotlin.String?
-internal fun hashMapTest(): kotlin.Unit
-internal fun treeMapTest(): kotlin.Unit
+public val nullableInt: kotlin.Int? = null
+public fun bar(): kotlin.String?
+public fun hashMapTest(): kotlin.Unit
+public fun treeMapTest(): kotlin.Unit

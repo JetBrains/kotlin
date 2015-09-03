@@ -1,9 +1,9 @@
 package
 
-internal fun box(): kotlin.String
-internal fun A.invoke(/*0*/ i: kotlin.Int): kotlin.Int
+public fun box(): kotlin.String
+public fun A.invoke(/*0*/ i: kotlin.Int): kotlin.Int
 
-internal final enum class A : kotlin.Enum<A> {
+public final enum class A : kotlin.Enum<A> {
     enum entry ONE
 
     enum entry TWO

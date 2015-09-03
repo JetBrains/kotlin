@@ -1,57 +1,57 @@
 package
 
-kotlin.js.native() internal final class A {
+kotlin.js.native() public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class B {
+    public final class B {
         public constructor B()
-        internal final val anonymous: kotlin.Any
+        public final val anonymous: kotlin.Any
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class A {
+        public final class A {
             public constructor A()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            kotlin.js.nativeSetter() internal final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
-            kotlin.js.nativeSetter() internal final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
-            kotlin.js.nativeSetter() internal final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
+            kotlin.js.nativeSetter() public final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
+            kotlin.js.nativeSetter() public final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+            kotlin.js.nativeSetter() public final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             public companion object Companion {
                 private constructor Companion()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
+                kotlin.js.nativeSetter() public final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                kotlin.js.nativeSetter() internal final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
-                kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
-                kotlin.js.nativeSetter() internal final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
-                kotlin.js.nativeSetter() internal final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
+                kotlin.js.nativeSetter() public final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
+                kotlin.js.nativeSetter() public final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
+                kotlin.js.nativeSetter() public final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+                kotlin.js.nativeSetter() public final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
         }
 
-        internal final class B {
+        public final class B {
             public constructor B()
-            kotlin.js.nativeSetter() internal final val foo: kotlin.Int = 0
+            kotlin.js.nativeSetter() public final val foo: kotlin.Int = 0
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             public companion object Companion {
                 private constructor Companion()
-                kotlin.js.nativeSetter() internal final val foo: kotlin.Int = 0
+                kotlin.js.nativeSetter() public final val foo: kotlin.Int = 0
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-                kotlin.js.nativeSetter() internal object Obj2 {
+                kotlin.js.nativeSetter() public object Obj2 {
                     private constructor Obj2()
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -59,7 +59,7 @@ kotlin.js.native() internal final class A {
                 }
             }
 
-            kotlin.js.nativeSetter() internal object Obj1 {
+            kotlin.js.nativeSetter() public object Obj1 {
                 private constructor Obj1()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -67,35 +67,35 @@ kotlin.js.native() internal final class A {
             }
         }
 
-        internal final class C {
+        public final class C {
             public constructor C()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Double = ..., /*1*/ v: kotlin.String = ...): kotlin.String
+            kotlin.js.nativeSetter() public final fun foo(/*0*/ a: kotlin.Double = ..., /*1*/ v: kotlin.String = ...): kotlin.String
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            kotlin.js.nativeSetter() internal final fun set(): kotlin.Any?
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A): kotlin.Any?
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A, /*1*/ v: kotlin.Any?): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number
+            kotlin.js.nativeSetter() public final fun set(): kotlin.Any?
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: A.B.A): kotlin.Any?
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: A.B.A, /*1*/ v: kotlin.Any?): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
         }
 
-        internal object obj {
+        public object obj {
             private constructor obj()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String = ...): kotlin.String
+            kotlin.js.nativeSetter() public final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String = ...): kotlin.String
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            kotlin.js.nativeSetter() internal final fun set(): kotlin.Any?
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A): kotlin.Any?
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A, /*1*/ v: kotlin.Any?): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun set(): kotlin.Any?
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: A.B.A): kotlin.Any?
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: A.B.A, /*1*/ v: kotlin.Any?): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
-            kotlin.js.nativeSetter() internal final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
+            kotlin.js.nativeSetter() public final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
         }
     }
 }

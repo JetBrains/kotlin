@@ -1,8 +1,8 @@
 package
 
 package kt2317 {
-    internal fun foo(/*0*/ l: kotlin.Long?): kotlin.Int?
-    internal fun quux(/*0*/ x: kotlin.Int?): kotlin.Unit
-    internal fun kotlin.Any?.bar(): kotlin.Unit
-    internal fun kotlin.Any?.baz(): kotlin.Int
+    public fun foo(/*0*/ l: kotlin.Long?): kotlin.Int?
+    public fun quux(/*0*/ x: kotlin.Int?): kotlin.Unit
+    public fun kotlin.Any?.bar(): kotlin.Unit
+    public fun kotlin.Any?.baz(): kotlin.Int
 }

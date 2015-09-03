@@ -1,6 +1,6 @@
 package
 
-internal fun main(/*0*/ a: A, /*1*/ ml: kotlin.Any): kotlin.Unit
+public fun main(/*0*/ a: A, /*1*/ ml: kotlin.Any): kotlin.Unit
 
 public open class A {
     public constructor A()

@@ -1,34 +1,34 @@
 package
 
 package nestedObejcts {
-    internal val a: nestedObejcts.A
-    internal val b: nestedObejcts.B
-    internal val c: nestedObejcts.A.B
-    internal val d: nestedObejcts.A.B.A
-    internal val e: [ERROR : <ERROR PROPERTY TYPE>]
+    public val a: nestedObejcts.A
+    public val b: nestedObejcts.B
+    public val c: nestedObejcts.A.B
+    public val d: nestedObejcts.A.B.A
+    public val e: [ERROR : <ERROR PROPERTY TYPE>]
 
-    internal object A {
+    public object A {
         private constructor A()
-        internal final val b: nestedObejcts.A.B
-        internal final val d: nestedObejcts.A.B.A
+        public final val b: nestedObejcts.A.B
+        public final val d: nestedObejcts.A.B.A
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal object B {
+        public object B {
             private constructor B()
-            internal final val a: nestedObejcts.A.B.A
-            internal final val e: nestedObejcts.A.B.A
+            public final val a: nestedObejcts.A.B.A
+            public final val e: nestedObejcts.A.B.A
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-            internal object A {
+            public object A {
                 private constructor A()
-                internal final val a: nestedObejcts.A.B.A
-                internal final val b: nestedObejcts.A.B
-                internal final val x: nestedObejcts.A.B.A
-                internal final val y: [ERROR : Type for this@A]
+                public final val a: nestedObejcts.A.B.A
+                public final val b: nestedObejcts.A.B
+                public final val x: nestedObejcts.A.B.A
+                public final val y: [ERROR : Type for this@A]
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -36,10 +36,10 @@ package nestedObejcts {
         }
     }
 
-    internal object B {
+    public object B {
         private constructor B()
-        internal final val b: nestedObejcts.B
-        internal final val c: nestedObejcts.A.B
+        public final val b: nestedObejcts.B
+        public final val c: nestedObejcts.A.B
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

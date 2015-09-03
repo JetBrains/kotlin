@@ -1,7 +1,7 @@
 package
 
 public /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.String!, java.lang.Runnable!) -> kotlin.Unit): JavaInterface
-internal fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
+public fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
 
 public interface JavaInterface {
     public abstract fun doIt(/*0*/ org.jetbrains.annotations.NotNull() s: kotlin.String, /*1*/ org.jetbrains.annotations.NotNull() runnable: java.lang.Runnable): kotlin.Unit

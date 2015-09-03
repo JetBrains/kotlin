@@ -1,8 +1,8 @@
 package
 
-internal val anonObject: kotlin.Any
+public val anonObject: kotlin.Any
 
-internal object A {
+public object A {
     private constructor A()
     private constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -10,7 +10,7 @@ internal object A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final enum class B : kotlin.Enum<B> {
+public final enum class B : kotlin.Enum<B> {
     enum entry X
 
     private constructor B()
@@ -27,7 +27,7 @@ internal final enum class B : kotlin.Enum<B> {
     public final /*synthesized*/ fun values(): kotlin.Array<B>
 }
 
-internal final class C {
+public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

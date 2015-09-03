@@ -1,6 +1,6 @@
 package
 
-internal final class A : E.ENTRY {
+public final class A : E.ENTRY {
     public constructor A()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
@@ -11,7 +11,7 @@ internal final class A : E.ENTRY {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry ENTRY
 
     private constructor E()

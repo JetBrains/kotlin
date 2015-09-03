@@ -1,18 +1,18 @@
 package
 
-internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers> {
+public final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers> {
     enum entry E1
 
     enum entry E2
 
     private constructor EnumWithOpenMembers()
-    internal final val b: kotlin.Int = 3
-    internal open val bar: kotlin.String = ""
+    public final val b: kotlin.Int = 3
+    public open val bar: kotlin.String = ""
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun f(): kotlin.Int
-    internal open fun foo(): kotlin.Int
+    public final fun f(): kotlin.Int
+    public open fun foo(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

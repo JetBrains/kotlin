@@ -1,5 +1,5 @@
 package
 
-internal fun fn(): kotlin.Unit
-internal fun getArray(): kotlin.Array<kotlin.Int>
-internal fun getList(): kotlin.MutableList<kotlin.Int>
+public fun fn(): kotlin.Unit
+public fun getArray(): kotlin.Array<kotlin.Int>
+public fun getList(): kotlin.MutableList<kotlin.Int>

@@ -1,5 +1,5 @@
 package
 
 package f {
-    internal fun test(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Int
+    public fun test(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Int
 }

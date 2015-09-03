@@ -1,5 +1,5 @@
 package
 
-internal fun testInvoke(): kotlin.Unit
-internal fun testInvokeWithLambda(): kotlin.Unit
-internal fun todo(): kotlin.Nothing
+public fun testInvoke(): kotlin.Unit
+public fun testInvokeWithLambda(): kotlin.Unit
+public fun todo(): kotlin.Nothing

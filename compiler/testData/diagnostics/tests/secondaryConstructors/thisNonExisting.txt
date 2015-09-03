@@ -1,6 +1,6 @@
 package
 
-internal final class A {
+public final class A {
     public constructor A()
     public constructor A(/*0*/ x: kotlin.Int)
     public constructor A(/*0*/ x: kotlin.String)

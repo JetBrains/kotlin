@@ -9,7 +9,7 @@ public inline fun test() {
     <!INVISIBLE_MEMBER_FROM_INLINE!>Z<!>().<!INVISIBLE_MEMBER_FROM_INLINE!>publicFun<!>()
 }
 
-inline fun testInternal() {
+internal inline fun testInternal() {
     Z().publicProperty
     Z().publicFun()
 }

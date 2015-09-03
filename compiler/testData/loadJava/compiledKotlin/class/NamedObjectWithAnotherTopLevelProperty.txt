@@ -1,7 +1,7 @@
 package test
 
-internal val x: kotlin.Int = 5
-    internal fun <get-x>(): kotlin.Int
+public val x: kotlin.Int = 5
+    public fun <get-x>(): kotlin.Int
 
 public object Obj {
     /*primary*/ private constructor Obj()

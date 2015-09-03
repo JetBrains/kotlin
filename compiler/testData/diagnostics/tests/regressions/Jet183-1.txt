@@ -1,8 +1,8 @@
 package
 
-internal fun box(): kotlin.String
+public fun box(): kotlin.String
 
-internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
+public final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     enum entry WAITING
 
     enum entry TALKING
@@ -14,7 +14,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    internal abstract fun signal(): ProtocolState
+    public abstract fun signal(): ProtocolState
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members

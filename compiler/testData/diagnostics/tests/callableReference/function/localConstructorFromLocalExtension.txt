@@ -1,3 +1,3 @@
 package
 
-internal fun main(): kotlin.Unit
+public fun main(): kotlin.Unit

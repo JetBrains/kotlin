@@ -1,6 +1,6 @@
 package
 
-internal val a: (kotlin.Int?) -> kotlin.Int
-internal val b: kotlin.Int
-internal val c: kotlin.Int
-internal fun </*0*/ R> let(/*0*/ f: (kotlin.Int?) -> R): R
+public val a: (kotlin.Int?) -> kotlin.Int
+public val b: kotlin.Int
+public val c: kotlin.Int
+public fun </*0*/ R> let(/*0*/ f: (kotlin.Int?) -> R): R

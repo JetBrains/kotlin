@@ -1,25 +1,25 @@
 package
 
-internal final class A {
+public final class A {
     private constructor A(/*0*/ x: kotlin.Int)
-    internal final val x: kotlin.Int
+    public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun foo(): kotlin.Unit
+    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final inner class B {
+    public final inner class B {
         Ann(x = 2) public constructor B(/*0*/ y: kotlin.Int)
-        internal final val y: kotlin.Int
+        public final val y: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ x: kotlin.Int = ...)
-    internal final val x: kotlin.Int
+    public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

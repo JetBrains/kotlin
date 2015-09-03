@@ -8,7 +8,7 @@ public abstract class Aaa {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Bbb : Aaa {
+public final class Bbb : Aaa {
     public constructor Bbb()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ vararg args: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Unit

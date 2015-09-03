@@ -1,5 +1,5 @@
 package
 
-internal fun foo(/*0*/ x: kotlin.Int?): kotlin.Unit
-internal fun orElse(): kotlin.Unit
-internal fun smth(): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun orElse(): kotlin.Unit
+public fun smth(): kotlin.Unit

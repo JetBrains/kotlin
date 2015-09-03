@@ -1,14 +1,14 @@
 package test
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
     /*primary*/ public constructor Ann(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Double)
-    internal final val x: kotlin.String
-        internal final fun <get-x>(): kotlin.String
-    internal final val y: kotlin.Double
-        internal final fun <get-y>(): kotlin.Double
+    public final val x: kotlin.String
+        public final fun <get-x>(): kotlin.String
+    public final val y: kotlin.Double
+        public final fun <get-y>(): kotlin.Double
 }
 
-internal final class TypeAnnotationWithArguments {
+public final class TypeAnnotationWithArguments {
     /*primary*/ public constructor TypeAnnotationWithArguments()
-    internal final fun foo(/*0*/ param: @[test.Ann(x = "param", y = 3.14.toDouble())] kotlin.IntRange): @[test.Ann(x = "fun", y = 2.72.toDouble())] kotlin.Unit
+    public final fun foo(/*0*/ param: @[test.Ann(x = "param", y = 3.14.toDouble())] kotlin.IntRange): @[test.Ann(x = "fun", y = 2.72.toDouble())] kotlin.Unit
 }

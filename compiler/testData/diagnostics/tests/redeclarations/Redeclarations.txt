@@ -1,19 +1,19 @@
 package
 
 package redeclarations {
-    internal val A: kotlin.Int = 1
+    public val A: kotlin.Int = 1
 
-    internal final class A {
+    public final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal object A {
+    public object A {
         private constructor A()
-        internal final val A: kotlin.Int = 1
-        internal final val x: kotlin.Int = 0
+        public final val A: kotlin.Int = 1
+        public final val x: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,7 +21,7 @@ package redeclarations {
 
     package redeclarations.A {
 
-        internal final class A {
+        public final class A {
             public constructor A()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

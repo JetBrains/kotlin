@@ -1,23 +1,23 @@
 package
 
-internal final class C : T1, T2 {
+public final class C : T1, T2 {
     public constructor C()
-    internal open override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ val x: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal open override /*1*/ /*fake_override*/ fun getX(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun getX(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface T1 {
+public interface T1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal open fun getX(): kotlin.Int
+    public open fun getX(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface T2 {
-    internal open val x: kotlin.Int
+public interface T2 {
+    public open val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

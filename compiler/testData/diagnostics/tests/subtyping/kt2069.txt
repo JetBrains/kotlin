@@ -2,11 +2,11 @@ package
 
 package kt2069 {
 
-    internal final class T : kt2069.T1 {
+    public final class T : kt2069.T1 {
         public constructor T()
-        internal final fun bar(): kotlin.Unit
+        public final fun bar(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
@@ -18,9 +18,9 @@ package kt2069 {
         }
     }
 
-    internal interface T1 {
+    public interface T1 {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal open fun foo(): kotlin.Unit
+        public open fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

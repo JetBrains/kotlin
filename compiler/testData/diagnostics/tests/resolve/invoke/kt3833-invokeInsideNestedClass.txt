@@ -2,7 +2,7 @@ package
 
 package m {
 
-    internal final class C {
+    public final class C {
         public constructor C()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -11,48 +11,48 @@ package m {
         public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal final fun f(): kotlin.Unit
+            public final fun f(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
 
-    internal final class Either1 {
+    public final class Either1 {
         public constructor Either1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class Left {
+        public final class Left {
             public constructor Left()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final fun match(/*0*/ left: () -> kotlin.Unit): kotlin.Unit
+            public final fun match(/*0*/ left: () -> kotlin.Unit): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal final inner class Right {
+        public final inner class Right {
             public constructor Right()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final fun match(/*0*/ right: () -> kotlin.Unit): kotlin.Unit
+            public final fun match(/*0*/ right: () -> kotlin.Unit): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
 
-    internal object Foo {
+    public object Foo {
         private constructor Foo()
-        internal final val v: m.X
+        public final val v: m.X
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class X {
+    public final class X {
         public constructor X()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun invoke(): kotlin.Unit
+        public final fun invoke(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

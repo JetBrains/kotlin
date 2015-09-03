@@ -1,3 +1,3 @@
 package test
 
-internal fun getFoo(): kotlin.Int
+public fun getFoo(): kotlin.Int

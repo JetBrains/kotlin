@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ me: MyEnum): kotlin.Boolean
+public fun foo(/*0*/ me: MyEnum): kotlin.Boolean
 
-internal final enum class MyEnum : kotlin.Enum<MyEnum> {
+public final enum class MyEnum : kotlin.Enum<MyEnum> {
     enum entry FIRST
 
     enum entry SECOND

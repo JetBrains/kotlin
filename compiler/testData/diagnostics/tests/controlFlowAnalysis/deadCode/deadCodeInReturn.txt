@@ -1,4 +1,4 @@
 package
 
-internal fun testReturn(): kotlin.Unit
-internal fun todo(): kotlin.Nothing
+public fun testReturn(): kotlin.Unit
+public fun todo(): kotlin.Nothing

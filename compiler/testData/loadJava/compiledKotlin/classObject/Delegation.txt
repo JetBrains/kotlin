@@ -1,15 +1,15 @@
 package test
 
-internal final class A : test.T {
+public final class A : test.T {
     /*primary*/ public constructor A()
-    internal open override /*1*/ fun foo(): kotlin.Int
+    public open override /*1*/ fun foo(): kotlin.Int
 
     public companion object Companion : test.T {
         /*primary*/ private constructor Companion()
-        internal open override /*1*/ /*delegation*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*delegation*/ fun foo(): kotlin.Int
     }
 }
 
-internal interface T {
-    internal abstract fun foo(): kotlin.Int
+public interface T {
+    public abstract fun foo(): kotlin.Int
 }

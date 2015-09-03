@@ -1,6 +1,6 @@
 package
 
-internal fun main(/*0*/ x: B<*>): kotlin.Unit
+public fun main(/*0*/ x: B<*>): kotlin.Unit
 
 public/*package*/ open class A</*0*/ T : kotlin.CharSequence!> {
     public/*package*/ constructor A</*0*/ T : kotlin.CharSequence!>()

@@ -1,12 +1,12 @@
 package
 
-internal fun nullableNothing(): kotlin.Nothing?
-internal fun platformType(): kotlin.Int
-internal fun test(/*0*/ e: E?): kotlin.Int
-internal fun withNull(/*0*/ e: E?): kotlin.Int?
-internal fun withNullableNothing(/*0*/ e: E?): kotlin.Int?
+public fun nullableNothing(): kotlin.Nothing?
+public fun platformType(): kotlin.Int
+public fun test(/*0*/ e: E?): kotlin.Int
+public fun withNull(/*0*/ e: E?): kotlin.Int?
+public fun withNullableNothing(/*0*/ e: E?): kotlin.Int?
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry A
 
     enum entry B

@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun foo(): kotlin.Unit
+    public fun foo(): kotlin.Unit
 
     public open class Test</*0*/ T : kotlin.Any!> {
         public constructor Test</*0*/ T : kotlin.Any!>()

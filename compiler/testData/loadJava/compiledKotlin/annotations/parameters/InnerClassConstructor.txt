@@ -1,23 +1,23 @@
 package test
 
-kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
+kotlin.annotation.annotation() public final class A : kotlin.Annotation {
     /*primary*/ public constructor A(/*0*/ s: kotlin.String)
-    internal final val s: kotlin.String
-        internal final fun <get-s>(): kotlin.String
+    public final val s: kotlin.String
+        public final fun <get-s>(): kotlin.String
 }
 
-internal final class Outer {
+public final class Outer {
     /*primary*/ public constructor Outer()
 
-    internal final inner class Inner {
+    public final inner class Inner {
         /*primary*/ public constructor Inner(/*0*/ test.A(s = "inner") y: kotlin.String)
-        internal final val y: kotlin.String
-            internal final fun <get-y>(): kotlin.String
+        public final val y: kotlin.String
+            public final fun <get-y>(): kotlin.String
     }
 
-    internal final class Nested {
+    public final class Nested {
         /*primary*/ public constructor Nested(/*0*/ test.A(s = "nested") x: kotlin.String)
-        internal final val x: kotlin.String
-            internal final fun <get-x>(): kotlin.String
+        public final val x: kotlin.String
+            public final fun <get-x>(): kotlin.String
     }
 }

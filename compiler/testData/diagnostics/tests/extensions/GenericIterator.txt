@@ -1,13 +1,13 @@
 package
 
-internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-internal fun </*0*/ T : kotlin.Any> T?.iterator(): MyIterator<T>
-internal fun </*0*/ T> java.util.Enumeration<T>.iterator(): kotlin.Iterator<T>
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> T?.iterator(): MyIterator<T>
+public fun </*0*/ T> java.util.Enumeration<T>.iterator(): kotlin.Iterator<T>
 
-internal interface MyIterator</*0*/ T> {
+public interface MyIterator</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun hasNext(): kotlin.Boolean
+    public abstract fun hasNext(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal abstract fun next(): T
+    public abstract fun next(): T
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

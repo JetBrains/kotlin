@@ -1,6 +1,6 @@
 package
 
 package kt41 {
-    internal fun aaa(): [ERROR : Error function type]
-    internal fun bbb(): kotlin.Unit
+    public fun aaa(): [ERROR : Error function type]
+    public fun bbb(): kotlin.Unit
 }

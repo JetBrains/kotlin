@@ -2,7 +2,7 @@ package
 
 package test {
 
-    internal final class KFrame : javax.swing.JFrame {
+    public final class KFrame : javax.swing.JFrame {
         public constructor KFrame()
         invisible_fake final override /*1*/ /*fake_override*/ var acc: [ERROR : Unresolved java classifier: AccessControlContext]!
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var accessibleContext: [ERROR : Unresolved java classifier: AccessibleContext]!

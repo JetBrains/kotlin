@@ -1,6 +1,6 @@
 package
 
-internal final enum class MyEnum : kotlin.Enum<MyEnum> {
+public final enum class MyEnum : kotlin.Enum<MyEnum> {
     enum entry FIRST
 
     private constructor MyEnum()

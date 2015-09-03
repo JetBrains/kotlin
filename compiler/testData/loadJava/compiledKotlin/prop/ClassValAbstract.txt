@@ -1,7 +1,7 @@
 package test
 
-internal abstract class ClassValAbstract {
+public abstract class ClassValAbstract {
     /*primary*/ public constructor ClassValAbstract()
-    internal abstract val a: kotlin.Int
-        internal abstract fun <get-a>(): kotlin.Int
+    public abstract val a: kotlin.Int
+        public abstract fun <get-a>(): kotlin.Int
 }

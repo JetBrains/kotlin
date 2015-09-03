@@ -1,6 +1,6 @@
 package
 
-internal fun main(/*0*/ j: C, /*1*/ s: kotlin.Array<kotlin.String?>): kotlin.Unit
+public fun main(/*0*/ j: C, /*1*/ s: kotlin.Array<kotlin.String?>): kotlin.Unit
 
 public open class C {
     public constructor C()

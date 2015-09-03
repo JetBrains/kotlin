@@ -1,5 +1,5 @@
 package test
 
-internal final class Ramification {
+public final class Ramification {
     /*primary*/ public constructor Ramification()
 }

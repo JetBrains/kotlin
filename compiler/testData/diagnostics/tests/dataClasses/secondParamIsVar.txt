@@ -1,11 +1,11 @@
 package
 
-internal fun foo(/*0*/ a: A): kotlin.Unit
+public fun foo(/*0*/ a: A): kotlin.Unit
 
-kotlin.data() internal final class A {
+kotlin.data() public final class A {
     public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
-    internal final var y: kotlin.String
-    internal final /*synthesized*/ fun component1(): kotlin.String
+    public final var y: kotlin.String
+    public final /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): A
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

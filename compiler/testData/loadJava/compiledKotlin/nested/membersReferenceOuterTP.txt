@@ -1,15 +1,15 @@
 package test
 
-internal final class MembersReferenceOuterTP</*0*/ P> {
+public final class MembersReferenceOuterTP</*0*/ P> {
     /*primary*/ public constructor MembersReferenceOuterTP</*0*/ P>()
 
-    internal final inner class Inner {
+    public final inner class Inner {
         /*primary*/ public constructor Inner()
-        internal final val v: P
-            internal final fun <get-v>(): P
-        internal final val </*0*/ Q : P> w: Q
-            internal final fun <get-w>(): Q
-        internal final fun </*0*/ Q : P> f(): kotlin.Unit
-        internal final fun g(/*0*/ p: P): P
+        public final val v: P
+            public final fun <get-v>(): P
+        public final val </*0*/ Q : P> w: Q
+            public final fun <get-w>(): Q
+        public final fun </*0*/ Q : P> f(): kotlin.Unit
+        public final fun g(/*0*/ p: P): P
     }
 }

@@ -1,6 +1,6 @@
 package
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry A
 
     enum entry B
@@ -10,8 +10,8 @@ internal final enum class E : kotlin.Enum<E> {
     private constructor E()
     private constructor E(/*0*/ x: kotlin.Int)
     private constructor E(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
-    internal final val x: kotlin.Int
-    internal final val y: kotlin.Int
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

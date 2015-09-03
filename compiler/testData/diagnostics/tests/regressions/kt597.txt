@@ -1,5 +1,5 @@
 package
 
-internal fun test(): kotlin.Unit
-internal fun </*0*/ T> kotlin.Array<T>?.get(/*0*/ i: kotlin.Int): T
-internal fun kotlin.Int?.inc(): kotlin.Int
+public fun test(): kotlin.Unit
+public fun </*0*/ T> kotlin.Array<T>?.get(/*0*/ i: kotlin.Int): T
+public fun kotlin.Int?.inc(): kotlin.Int

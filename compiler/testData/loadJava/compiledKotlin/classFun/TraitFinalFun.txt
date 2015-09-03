@@ -1,5 +1,5 @@
 package test
 
-internal interface A {
-    internal final fun f(): kotlin.String
+public interface A {
+    public final fun f(): kotlin.String
 }

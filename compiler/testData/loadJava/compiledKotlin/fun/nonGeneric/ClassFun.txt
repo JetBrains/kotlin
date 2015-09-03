@@ -1,6 +1,6 @@
 package test
 
-internal final class River {
+public final class River {
     /*primary*/ public constructor River()
-    internal final fun song(): kotlin.Int
+    public final fun song(): kotlin.Int
 }

@@ -1,13 +1,13 @@
 package
 
 package d {
-    internal val a: kotlin.Int
+    public val a: kotlin.Int
 
-    internal final class A {
+    public final class A {
         public constructor A()
-        internal final val a: kotlin.Int
+        public final val a: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(): kotlin.Unit
+        public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

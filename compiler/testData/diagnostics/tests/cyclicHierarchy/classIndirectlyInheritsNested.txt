@@ -1,9 +1,9 @@
 package
 
-internal open class C {
+public open class C {
     public constructor C()
 
-    internal open class CC {
+    public open class CC {
         public constructor CC()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -11,6 +11,6 @@ internal open class C {
     }
 }
 
-internal open class D {
+public open class D {
     public constructor D()
 }

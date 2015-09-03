@@ -1,7 +1,7 @@
 package
 
 package kt786 {
-    internal fun bar(): kotlin.Int
-    internal fun fff(): kotlin.Int
-    internal fun foo(): kotlin.Int
+    public fun bar(): kotlin.Int
+    public fun fff(): kotlin.Int
+    public fun foo(): kotlin.Int
 }

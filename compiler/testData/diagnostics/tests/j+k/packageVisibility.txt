@@ -1,10 +1,10 @@
 package
 
 package a {
-    internal val mc: a.MyJavaClass
-    internal val x: kotlin.Int
-    internal val y: kotlin.Int
-    internal val z: a.MyJavaClass.NestedClass
+    public val mc: a.MyJavaClass
+    public val x: kotlin.Int
+    public val y: kotlin.Int
+    public val z: a.MyJavaClass.NestedClass
 
     public/*package*/ open class MyJavaClass {
         public/*package*/ constructor MyJavaClass()
@@ -27,16 +27,16 @@ package a {
     }
 
     package a.c {
-        internal val mc1: a.MyJavaClass
-        internal val x: kotlin.Int
-        internal val y: kotlin.Int
-        internal val z: a.MyJavaClass.NestedClass
+        public val mc1: a.MyJavaClass
+        public val x: kotlin.Int
+        public val y: kotlin.Int
+        public val z: a.MyJavaClass.NestedClass
     }
 }
 
 package b {
-    internal val mc1: a.MyJavaClass
-    internal val x: kotlin.Int
-    internal val y: kotlin.Int
-    internal val z: a.MyJavaClass.NestedClass
+    public val mc1: a.MyJavaClass
+    public val x: kotlin.Int
+    public val y: kotlin.Int
+    public val z: a.MyJavaClass.NestedClass
 }

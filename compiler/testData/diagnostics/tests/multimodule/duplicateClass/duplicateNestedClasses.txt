@@ -148,7 +148,7 @@ package p {
 // -- Module: <m3> --
 package
 
-internal fun test(/*0*/ m1: p.M1): kotlin.Unit
+public fun test(/*0*/ m1: p.M1): kotlin.Unit
 
 package p {
     public fun a(/*0*/ p: p.A): kotlin.Unit

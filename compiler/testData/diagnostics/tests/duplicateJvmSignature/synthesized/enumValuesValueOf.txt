@@ -1,6 +1,6 @@
 package
 
-internal final enum class A : kotlin.Enum<A> {
+public final enum class A : kotlin.Enum<A> {
     enum entry A1
 
     enum entry A2
@@ -13,10 +13,10 @@ internal final enum class A : kotlin.Enum<A> {
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    internal final fun valueOf(): kotlin.String
-    internal final fun valueOf(/*0*/ s: kotlin.String): A
-    internal final fun values(): kotlin.Array<A>
-    internal final fun values(/*0*/ x: kotlin.String): kotlin.String
+    public final fun valueOf(): kotlin.String
+    public final fun valueOf(/*0*/ s: kotlin.String): A
+    public final fun values(): kotlin.Array<A>
+    public final fun values(/*0*/ x: kotlin.String): kotlin.String
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A

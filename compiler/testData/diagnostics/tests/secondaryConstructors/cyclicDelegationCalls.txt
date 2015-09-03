@@ -1,6 +1,6 @@
 package
 
-internal final class A : B {
+public final class A : B {
     public constructor A(/*0*/ x1: kotlin.Double, /*1*/ x2: kotlin.Double)
     public constructor A(/*0*/ x1: kotlin.Double, /*1*/ x2: kotlin.Double, /*2*/ x3: kotlin.Double)
     public constructor A(/*0*/ x1: kotlin.Double, /*1*/ x2: kotlin.Double, /*2*/ x3: kotlin.Double, /*3*/ x4: kotlin.Double)
@@ -9,14 +9,14 @@ internal final class A : B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class A1 {
+public final class A1 {
     public constructor A1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class A2 {
+public final class A2 {
     public constructor A2()
     public constructor A2(/*0*/ x: kotlin.Byte)
     public constructor A2(/*0*/ x1: kotlin.Double)
@@ -37,7 +37,7 @@ internal final class A2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class B {
+public open class B {
     public constructor B(/*0*/ x: kotlin.Byte)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,8 +1,8 @@
 package
 
-internal val x: kotlin.Enum<*>
+public val x: kotlin.Enum<*>
 
-internal final enum class A : kotlin.Enum<A> {
+public final enum class A : kotlin.Enum<A> {
     enum entry A
 
     private constructor A()
@@ -19,7 +19,7 @@ internal final enum class A : kotlin.Enum<A> {
     public final /*synthesized*/ fun values(): kotlin.Array<A>
 }
 
-internal final enum class B : kotlin.Enum<B> {
+public final enum class B : kotlin.Enum<B> {
     enum entry B
 
     private constructor B()

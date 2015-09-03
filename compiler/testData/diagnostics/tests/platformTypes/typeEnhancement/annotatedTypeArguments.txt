@@ -1,4 +1,4 @@
-package 
+package
 
 public/*package*/ open class AnnotatedTypeArguments {
     public/*package*/ constructor AnnotatedTypeArguments()

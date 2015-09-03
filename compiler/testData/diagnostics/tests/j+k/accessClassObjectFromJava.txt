@@ -1,6 +1,6 @@
 package
 
-internal final class Foo {
+public final class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -8,10 +8,10 @@ internal final class Foo {
 
     public companion object Companion {
         private constructor Companion()
-        internal final val bar: kotlin.Int = 1
+        public final val bar: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun test(/*0*/ a: [ERROR : Foo.`object`]): kotlin.Unit
+        public final fun test(/*0*/ a: [ERROR : Foo.`object`]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

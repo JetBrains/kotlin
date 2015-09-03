@@ -1,6 +1,6 @@
 package test
 
-internal final class SimpleClassObject {
+public final class SimpleClassObject {
     /*primary*/ public constructor SimpleClassObject()
 
     public companion object Companion {

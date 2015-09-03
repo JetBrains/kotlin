@@ -1,17 +1,17 @@
 package
 
-internal val B.c: kotlin.String
+public val B.c: kotlin.String
 
-internal object A {
+public object A {
     private constructor A()
-    internal final val c: kotlin.String = "test"
+    public final val c: kotlin.String = "test"
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun f(/*0*/ b: B): kotlin.String
+    public final fun f(/*0*/ b: B): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B {
+public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

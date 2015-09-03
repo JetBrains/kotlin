@@ -1,4 +1,4 @@
 package
 
-internal fun foo(): kotlin.Int
-internal fun get(): kotlin.String?
+public fun foo(): kotlin.Int
+public fun get(): kotlin.String?

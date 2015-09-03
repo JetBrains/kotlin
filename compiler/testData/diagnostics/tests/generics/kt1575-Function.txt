@@ -1,8 +1,8 @@
 package
 
-internal fun </*0*/ T : C<T>> foo(): kotlin.Unit
+public fun </*0*/ T : C<T>> foo(): kotlin.Unit
 
-internal final class C</*0*/ T> {
+public final class C</*0*/ T> {
     public constructor C</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

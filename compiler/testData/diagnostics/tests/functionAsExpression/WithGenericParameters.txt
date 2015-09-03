@@ -1,12 +1,12 @@
 package
 
-internal val extension_generic_fun: T.(T) -> T
-internal val generic_fun: (T) -> T
-internal fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
-internal fun fun_with_where(): T.(T) -> T
-internal fun outer(): kotlin.Unit
+public val extension_generic_fun: T.(T) -> T
+public val generic_fun: (T) -> T
+public fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun fun_with_where(): T.(T) -> T
+public fun outer(): kotlin.Unit
 
-internal interface A {
+public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

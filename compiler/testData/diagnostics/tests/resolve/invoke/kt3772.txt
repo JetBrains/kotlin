@@ -1,11 +1,11 @@
 package
 
 package bar {
-    internal val bar.C.attr: bar.A
-    internal val bar.D.attr: bar.B
-    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public val bar.C.attr: bar.A
+    public val bar.D.attr: bar.B
+    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
-    internal open class A {
+    public open class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -13,7 +13,7 @@ package bar {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -21,14 +21,14 @@ package bar {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal open class C {
+    public open class C {
         public constructor C()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal open class D : bar.C {
+    public open class D : bar.C {
         public constructor D()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

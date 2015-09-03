@@ -43,7 +43,7 @@ package p {
 // -- Module: <m3> --
 package
 
-internal final class Foo : p.A, p.B {
+public final class Foo : p.A, p.B {
     public constructor Foo()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit

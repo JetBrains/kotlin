@@ -1,10 +1,10 @@
 package
 
-internal fun foo(): @[My(x = 42)] kotlin.Int
+public fun foo(): @[My(x = 42)] kotlin.Int
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() internal final class My : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() public final class My : kotlin.Annotation {
     public constructor My(/*0*/ x: kotlin.Int)
-    internal final val x: kotlin.Int
+    public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

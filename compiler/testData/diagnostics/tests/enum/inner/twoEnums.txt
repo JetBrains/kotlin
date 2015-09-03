@@ -1,12 +1,12 @@
 package
 
-internal final class A {
+public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final enum class E : kotlin.Enum<A.E> {
+    public final enum class E : kotlin.Enum<A.E> {
         enum entry ABC
 
         private constructor E()
@@ -23,7 +23,7 @@ internal final class A {
         public final /*synthesized*/ fun values(): kotlin.Array<A.E>
     }
 
-    internal final enum class F : kotlin.Enum<A.F> {
+    public final enum class F : kotlin.Enum<A.F> {
         enum entry DEF
 
         private constructor F()

@@ -1,5 +1,5 @@
 package test
 
-internal fun array(/*0*/ a: kotlin.Array<kotlin.Int>): kotlin.Array<(out) kotlin.Int!>!
-internal fun list(): kotlin.(Mutable)List<kotlin.String!>!
-internal fun printStream(): java.io.PrintStream!
+public fun array(/*0*/ a: kotlin.Array<kotlin.Int>): kotlin.Array<(out) kotlin.Int!>!
+public fun list(): kotlin.(Mutable)List<kotlin.String!>!
+public fun printStream(): java.io.PrintStream!

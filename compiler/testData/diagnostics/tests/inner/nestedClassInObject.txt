@@ -1,29 +1,29 @@
 package
 
-internal object Object {
+public object Object {
     private constructor Object()
-    internal final val outerVal: kotlin.Int = 4
+    public final val outerVal: kotlin.Int = 4
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal final fun outerFun(): kotlin.Unit
+    public final fun outerFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class NestedClass {
+    public final class NestedClass {
         public constructor NestedClass()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun test(): kotlin.Unit
+        public final fun test(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class OuterClass {
+    public final class OuterClass {
         public constructor OuterClass()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal object OuterObject {
+    public object OuterObject {
         private constructor OuterObject()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

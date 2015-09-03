@@ -1,6 +1,6 @@
 package test
 
-internal final class ClassFunGetFoo {
+public final class ClassFunGetFoo {
     /*primary*/ public constructor ClassFunGetFoo()
-    internal final fun getFoo(): kotlin.Int
+    public final fun getFoo(): kotlin.Int
 }

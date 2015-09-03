@@ -1,19 +1,19 @@
 package
 
 package kt7351 {
-    internal fun crashMe(/*0*/ node: kt7351.Node): kotlin.Unit
-    internal fun kt7351.Node.append(/*0*/ block: kt7351.Source<kotlin.Int>.() -> kotlin.Unit): kotlin.Unit
-    internal fun </*0*/ T, /*1*/ S : kt7351.Source<T>> S.woo(): T
+    public fun crashMe(/*0*/ node: kt7351.Node): kotlin.Unit
+    public fun kt7351.Node.append(/*0*/ block: kt7351.Source<kotlin.Int>.() -> kotlin.Unit): kotlin.Unit
+    public fun </*0*/ T, /*1*/ S : kt7351.Source<T>> S.woo(): T
 
-    internal interface Node {
+    public interface Node {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface Source</*0*/ T> {
+    public interface Source</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal abstract fun f(): T
+        public abstract fun f(): T
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

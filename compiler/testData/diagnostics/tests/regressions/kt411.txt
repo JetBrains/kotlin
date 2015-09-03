@@ -1,10 +1,10 @@
 package
 
 package kt411 {
-    internal fun f(): kotlin.Unit
-    internal fun invoker(/*0*/ gen: () -> kotlin.Int): kotlin.Int
-    internal fun t1(): kotlin.Unit
-    internal fun t2(): kotlin.String
-    internal fun t3(): kotlin.String
-    internal fun t4(): kotlin.Int
+    public fun f(): kotlin.Unit
+    public fun invoker(/*0*/ gen: () -> kotlin.Int): kotlin.Int
+    public fun t1(): kotlin.Unit
+    public fun t2(): kotlin.String
+    public fun t3(): kotlin.String
+    public fun t4(): kotlin.Int
 }

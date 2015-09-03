@@ -1,8 +1,8 @@
 package
 
 package root {
-    internal val x: [ERROR : Type for root.a]
-    internal val y2: [ERROR : Type for package]
+    public val x: [ERROR : Type for root.a]
+    public val y2: [ERROR : Type for package]
 
     package root.a {
     }

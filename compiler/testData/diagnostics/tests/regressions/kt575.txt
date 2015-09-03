@@ -2,23 +2,23 @@ package
 
 package kt575 {
 
-    internal final class Creature {
+    public final class Creature {
         public constructor Creature()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal object A {
+        public object A {
             private constructor A()
-            internal final var bbb: kotlin.Int
+            public final var bbb: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal final class C {
+        public final class C {
             public constructor C()
-            internal final var ccc: kotlin.Int
+            public final var ccc: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -26,7 +26,7 @@ package kt575 {
 
         public companion object Companion {
             private constructor Companion()
-            internal final var numCreated: kotlin.Int
+            public final var numCreated: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

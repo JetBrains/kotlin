@@ -1,7 +1,7 @@
 package
 
 package d {
-    internal val f: () -> kotlin.Int
-    internal var g: kotlin.Int
-    internal fun test(): kotlin.Unit
+    public val f: () -> kotlin.Int
+    public var g: kotlin.Int
+    public fun test(): kotlin.Unit
 }

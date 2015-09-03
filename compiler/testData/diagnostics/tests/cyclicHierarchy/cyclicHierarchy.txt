@@ -1,43 +1,43 @@
 package
 
-internal val a: A? = null
-internal val b: B? = null
-internal val c: C? = null
-internal val d: D? = null
-internal val e: E? = null
-internal val f: F? = null
-internal val g: G? = null
-internal val h: H? = null
-internal fun test(): kotlin.Unit
+public val a: A? = null
+public val b: B? = null
+public val c: C? = null
+public val d: D? = null
+public val e: E? = null
+public val f: F? = null
+public val g: G? = null
+public val h: H? = null
+public fun test(): kotlin.Unit
 
-internal interface A {
+public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal open fun foo(): kotlin.Unit
+    public open fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface B : A {
+public interface B : A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface C {
+public interface C {
 }
 
-internal interface D {
+public interface D {
 }
 
-internal interface E {
+public interface E {
 }
 
-internal interface F {
+public interface F {
 }
 
-internal interface G : F {
+public interface G : F {
 }
 
-internal interface H : F {
+public interface H : F {
 }

@@ -1,6 +1,6 @@
 package
 
-internal fun foo(/*0*/ x: B<*>): kotlin.Unit
+public fun foo(/*0*/ x: B<*>): kotlin.Unit
 
 public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()

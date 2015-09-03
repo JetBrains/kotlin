@@ -1,5 +1,5 @@
 package
 
 package l {
-    internal fun test(/*0*/ a: kotlin.Int): kotlin.Unit
+    public fun test(/*0*/ a: kotlin.Int): kotlin.Unit
 }

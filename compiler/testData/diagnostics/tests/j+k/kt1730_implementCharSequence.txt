@@ -10,7 +10,7 @@ public open class C : kotlin.CharSequence {
     java.lang.Override() public open override /*1*/ fun toString(): kotlin.String
 }
 
-internal final class T : C {
+public final class T : C {
     public constructor T()
     java.lang.Override() public open override /*1*/ /*fake_override*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

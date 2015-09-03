@@ -3,8 +3,8 @@
 private val privateProperty = 11;
 private fun privateFun() {}
 
-val internalProperty = 11;
-fun internalFun() {}
+internal val internalProperty = 11;
+internal fun internalFun() {}
 
 public inline fun test() {
     <!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
@@ -16,12 +16,12 @@ public inline fun test2() {
     <!INVISIBLE_MEMBER_FROM_INLINE!>internalProperty<!>
 }
 
-inline fun testInternal() {
+internal inline fun testInternal() {
     privateFun()
     privateProperty
 }
 
-inline fun test2Internal() {
+internal inline fun test2Internal() {
     internalFun()
     internalProperty
 }

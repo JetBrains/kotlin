@@ -3,7 +3,7 @@ package
 
 package p {
     private val a: kotlin.Int = 1
-    internal val b: kotlin.Int = 1
+    public val b: kotlin.Int = 1
 }
 
 
@@ -12,6 +12,6 @@ package
 
 package p {
     private val a: kotlin.Int = 1
-    internal val b: kotlin.Int = 1
-    internal val c: kotlin.Int = 1
+    public val b: kotlin.Int = 1
+    public val c: kotlin.Int = 1
 }

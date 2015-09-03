@@ -1,11 +1,11 @@
 package
 
-internal fun bar(): E
-internal fun baz(): E
-internal fun foo(): kotlin.Array<E>
-internal fun quux(): E.Companion
+public fun bar(): E
+public fun baz(): E
+public fun foo(): kotlin.Array<E>
+public fun quux(): E.Companion
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry ENTRY
 
     private constructor E()

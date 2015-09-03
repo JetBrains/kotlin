@@ -1,6 +1,6 @@
 package
 
-internal fun foo(): kotlin.Int
+public fun foo(): kotlin.Int
 
 public final enum class J : kotlin.Enum<J!> {
     enum entry A

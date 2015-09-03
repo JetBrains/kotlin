@@ -1,9 +1,9 @@
 package test
 
-internal final class ClassValParams {
+public final class ClassValParams {
     /*primary*/ public constructor ClassValParams(/*0*/ pr1: kotlin.String, /*1*/ pr2: kotlin.Int, /*2*/ pr3: kotlin.Long, /*3*/ pr4: java.util.Date, /*4*/ pr5: kotlin.Any, /*5*/ pr6: java.lang.Object)
-    internal final val pr1: kotlin.String
-        internal final fun <get-pr1>(): kotlin.String
+    public final val pr1: kotlin.String
+        public final fun <get-pr1>(): kotlin.String
     internal final val pr2: kotlin.Int
         internal final fun <get-pr2>(): kotlin.Int
     private final val pr3: kotlin.Long

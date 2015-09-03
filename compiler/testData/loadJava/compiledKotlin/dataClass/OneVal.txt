@@ -1,9 +1,9 @@
 package test
 
-kotlin.data() internal final class DataClass {
+kotlin.data() public final class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x: kotlin.String)
-    internal final val x: kotlin.String
-        internal final fun <get-x>(): kotlin.String
-    internal final /*synthesized*/ fun component1(): kotlin.String
+    public final val x: kotlin.String
+        public final fun <get-x>(): kotlin.String
+    public final /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): test.DataClass
 }

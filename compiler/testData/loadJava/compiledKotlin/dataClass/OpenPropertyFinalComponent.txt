@@ -1,9 +1,9 @@
 package test
 
-kotlin.data() internal open class DataClass {
+kotlin.data() public open class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x: kotlin.String)
-    internal open val x: kotlin.String
-        internal open fun <get-x>(): kotlin.String
-    internal final /*synthesized*/ fun component1(): kotlin.String
+    public open val x: kotlin.String
+        public open fun <get-x>(): kotlin.String
+    public final /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): test.DataClass
 }

@@ -1,18 +1,18 @@
 package
 
-internal fun devNull(/*0*/ obj: kotlin.Any?): kotlin.Unit
-internal fun fromOutside(): kotlin.Unit
+public fun devNull(/*0*/ obj: kotlin.Any?): kotlin.Unit
+public fun fromOutside(): kotlin.Unit
 
-internal open class A {
+public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun fromClass(): kotlin.Unit
+    public final fun fromClass(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        internal final val internal_val: kotlin.Int = 1
+        public final val internal_val: kotlin.Int = 1
         private final val private_val: kotlin.Int = 3
         protected final val protected_val: kotlin.Int = 5
         public final val public_val: kotlin.Int = 2
@@ -22,11 +22,11 @@ internal open class A {
     }
 }
 
-internal final class B : A {
+public final class B : A {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final override /*1*/ /*fake_override*/ fun fromClass(): kotlin.Unit
-    internal final fun fromSubclass(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun fromClass(): kotlin.Unit
+    public final fun fromSubclass(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

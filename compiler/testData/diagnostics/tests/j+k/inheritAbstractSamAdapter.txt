@@ -17,7 +17,7 @@ public interface B : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C : B {
+public final class C : B {
     public constructor C()
     public open override /*1*/ fun bar(/*0*/ r: java.lang.Runnable?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

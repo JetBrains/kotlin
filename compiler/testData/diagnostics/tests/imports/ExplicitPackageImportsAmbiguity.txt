@@ -4,7 +4,7 @@ package a {
 
     package a.x {
 
-        internal final class X {
+        public final class X {
             public constructor X()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -17,7 +17,7 @@ package b {
 
     package b.x {
 
-        internal final class X {
+        public final class X {
             public constructor X()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -28,7 +28,7 @@ package b {
 
 package c {
 
-    internal final class Y {
+    public final class Y {
         public constructor Y()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

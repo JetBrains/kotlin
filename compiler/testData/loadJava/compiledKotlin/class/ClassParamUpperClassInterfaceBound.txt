@@ -1,5 +1,5 @@
 package test
 
-internal final class Clock</*0*/ A : java.lang.Number> where A : java.io.Serializable {
+public final class Clock</*0*/ A : java.lang.Number> where A : java.io.Serializable {
     /*primary*/ public constructor Clock</*0*/ A : java.lang.Number>() where A : java.io.Serializable
 }

@@ -1,4 +1,4 @@
 package
 
-internal fun asCall(): kotlin.Unit
-internal fun asSafe(): kotlin.Unit
+public fun asCall(): kotlin.Unit
+public fun asSafe(): kotlin.Unit

@@ -1,11 +1,11 @@
 package
 
-internal val bar: (???) -> kotlin.Unit
-internal val la: (???) -> kotlin.Unit
-internal val las: (kotlin.Int) -> kotlin.Unit
-internal fun test(/*0*/ a: [ERROR : Type annotation was missing for parameter a]): kotlin.Unit
+public val bar: (???) -> kotlin.Unit
+public val la: (???) -> kotlin.Unit
+public val las: (kotlin.Int) -> kotlin.Unit
+public fun test(/*0*/ a: [ERROR : Type annotation was missing for parameter a]): kotlin.Unit
 
-internal final class A {
+public final class A {
     public constructor A(/*0*/ a: [ERROR : Type annotation was missing for parameter a])
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

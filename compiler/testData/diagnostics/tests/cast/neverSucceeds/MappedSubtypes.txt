@@ -1,8 +1,8 @@
 package
 
-internal fun test(/*0*/ s: Sub, /*1*/ js: JSub, /*2*/ cs: kotlin.CharSequence, /*3*/ jcs: java.lang.CharSequence): kotlin.Unit
+public fun test(/*0*/ s: Sub, /*1*/ js: JSub, /*2*/ cs: kotlin.CharSequence, /*3*/ jcs: java.lang.CharSequence): kotlin.Unit
 
-internal final class JSub : java.lang.CharSequence {
+public final class JSub : java.lang.CharSequence {
     public constructor JSub()
     public abstract override /*1*/ /*fake_override*/ fun charAt(/*0*/ p0: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -12,7 +12,7 @@ internal final class JSub : java.lang.CharSequence {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Sub : kotlin.CharSequence {
+public final class Sub : kotlin.CharSequence {
     public constructor Sub()
     public abstract override /*1*/ /*fake_override*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

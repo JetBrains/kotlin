@@ -1,4 +1,4 @@
 package
 
-internal fun box(): kotlin.String
-kotlin.tailrec() internal fun noTails(): kotlin.Unit
+public fun box(): kotlin.String
+kotlin.tailrec() public fun noTails(): kotlin.Unit

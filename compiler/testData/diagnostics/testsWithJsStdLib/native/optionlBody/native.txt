@@ -1,62 +1,62 @@
 package
 
-kotlin.js.native() internal val baz: kotlin.Int
-kotlin.js.native() internal val boo: kotlin.Int
-kotlin.js.native() internal val kotlin.Int.baz: kotlin.Int
-kotlin.js.native() internal fun bar(): kotlin.Unit
-kotlin.js.native() internal fun foo(): kotlin.Unit
-internal fun test(): kotlin.Unit
-kotlin.js.native() internal fun kotlin.String.bar(): kotlin.Int
-kotlin.js.native() internal fun kotlin.String.foo(): kotlin.Int
+kotlin.js.native() public val baz: kotlin.Int
+kotlin.js.native() public val boo: kotlin.Int
+kotlin.js.native() public val kotlin.Int.baz: kotlin.Int
+kotlin.js.native() public fun bar(): kotlin.Unit
+kotlin.js.native() public fun foo(): kotlin.Unit
+public fun test(): kotlin.Unit
+kotlin.js.native() public fun kotlin.String.bar(): kotlin.Int
+kotlin.js.native() public fun kotlin.String.foo(): kotlin.Int
 
-kotlin.js.native() internal final class C {
+kotlin.js.native() public final class C {
     public constructor C()
-    internal final val baz: kotlin.Int
-    internal final val boo: kotlin.Int
-    internal final fun bar(): kotlin.Unit
+    public final val baz: kotlin.Int
+    public final val boo: kotlin.Int
+    public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun foo(): kotlin.Unit
+    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        internal final val baz: kotlin.Int
-        internal final val boo: kotlin.Int
-        internal final fun bar(): kotlin.String
+        public final val baz: kotlin.Int
+        public final val boo: kotlin.Int
+        public final fun bar(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(): kotlin.Unit
+        public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-kotlin.js.native() internal object O {
+kotlin.js.native() public object O {
     private constructor O()
-    internal final val baz: kotlin.Int
-    internal final val boo: kotlin.Int
-    internal final fun bar(/*0*/ s: kotlin.String): kotlin.String
+    public final val baz: kotlin.Int
+    public final val boo: kotlin.Int
+    public final fun bar(/*0*/ s: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun foo(/*0*/ s: kotlin.String): kotlin.String
+    public final fun foo(/*0*/ s: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.js.native() internal interface T {
-    internal abstract val baz: kotlin.Int
-    internal open fun bar(): kotlin.Unit
+kotlin.js.native() public interface T {
+    public abstract val baz: kotlin.Int
+    public open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun foo(): kotlin.Unit
+    public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        internal final val baz: kotlin.Int
-        internal final val boo: kotlin.Int
-        internal final fun bar(): kotlin.String
+        public final val baz: kotlin.Int
+        public final val boo: kotlin.Int
+        public final fun bar(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(): kotlin.Unit
+        public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

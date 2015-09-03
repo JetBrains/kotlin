@@ -1,8 +1,8 @@
 package
 
-internal var n: J?
-internal var v: J
-internal fun test(): kotlin.Unit
+public var n: J?
+public var v: J
+public fun test(): kotlin.Unit
 
 public open class J {
     public constructor J()

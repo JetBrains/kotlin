@@ -1,4 +1,4 @@
 package
 
-internal fun box(): kotlin.String
-kotlin.tailrec() internal fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun box(): kotlin.String
+kotlin.tailrec() public fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit

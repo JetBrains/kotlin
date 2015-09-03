@@ -4,7 +4,7 @@ package kt510 {
 
     public open class Identifier1 {
         public constructor Identifier1()
-        internal final var field: kotlin.Boolean
+        public final var field: kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -12,7 +12,7 @@ package kt510 {
 
     public open class Identifier2 {
         public constructor Identifier2()
-        internal final var field: kotlin.Boolean
+        public final var field: kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -1,10 +1,10 @@
 package
 
-internal val a: () -> A?
-internal val b: () -> A?
-internal val flag: kotlin.Boolean = true
+public val a: () -> A?
+public val b: () -> A?
+public val flag: kotlin.Boolean = true
 
-internal final class A {
+public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

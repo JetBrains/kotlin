@@ -1,6 +1,6 @@
 package
 
-internal fun foo(): kotlin.Unit
+public fun foo(): kotlin.Unit
 
 public open class JavaClass {
     public constructor JavaClass()

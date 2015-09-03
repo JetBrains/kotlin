@@ -1,30 +1,30 @@
 package
 
-internal interface Base {
-    internal open var v: kotlin.Int
+public interface Base {
+    public open var v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Diamond : Left, Right {
+public final class Diamond : Left, Right {
     public constructor Diamond()
-    internal open override /*2*/ /*fake_override*/ var v: kotlin.Int
+    public open override /*2*/ /*fake_override*/ var v: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class Left : Base {
+public open class Left : Base {
     public constructor Left()
-    internal open override /*1*/ /*fake_override*/ var v: kotlin.Int
+    public open override /*1*/ /*fake_override*/ var v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Right : Base {
-    internal open override /*1*/ /*fake_override*/ var v: kotlin.Int
+public interface Right : Base {
+    public open override /*1*/ /*fake_override*/ var v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

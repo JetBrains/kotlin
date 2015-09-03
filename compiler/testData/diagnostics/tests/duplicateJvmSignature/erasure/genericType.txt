@@ -1,9 +1,9 @@
 package
 
-internal fun foo(/*0*/ x: G<kotlin.Int>): G<kotlin.String>
-internal fun foo(/*0*/ x: G<kotlin.String>): G<kotlin.Int>
+public fun foo(/*0*/ x: G<kotlin.Int>): G<kotlin.String>
+public fun foo(/*0*/ x: G<kotlin.String>): G<kotlin.Int>
 
-internal final class G</*0*/ T> {
+public final class G</*0*/ T> {
     public constructor G</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
