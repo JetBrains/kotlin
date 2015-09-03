@@ -17,5 +17,5 @@ abstract class A<T extends I, U extends I, V> {
     @NotNull
     public final Z foo8;
 
-    public abstract <S extends T> void foo(@NotNull T x1, @NotNull Z<T> x2, Object y1, @NotNull Z y2, @NotNull I w1, @NotNull Z w2, @NotNull S s1, @NotNull Z<S> s2);
+    abstract <S extends T> void foo(@NotNull T x1, @NotNull Z<T> x2, Object y1, @NotNull Z y2, @NotNull I w1, @NotNull Z w2, @NotNull S s1, @NotNull Z<S> s2);
 }
