@@ -13,7 +13,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
  * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
- * [Follow Kotlin on Twitter](http://twitter.com/#!/project_kotlin)
+ * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
 
 ## Editing Kotlin
