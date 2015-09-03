@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -43,6 +45,21 @@ public open class StubIndexService protected constructor() {
 
     public open fun createFileStub(file: JetFile): KotlinFileStub {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
+    }
+
+    public open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
+        dataStream.writeName(stub.getPackageFqName().asString())
+        dataStream.writeName(stub.getFacadeSimpleName())
+        dataStream.writeName(stub.getPartSimpleName())
+        dataStream.writeBoolean(stub.isScript())
+    }
+
+    public open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
+        val packageFqNameAsString = dataStream.readName()
+        val isScript = dataStream.readBoolean()
+        val facadeSimpleName = dataStream.readName()
+        val partSimpleName = dataStream.readName()
+        return KotlinFileStubImpl(null, packageFqNameAsString!!, facadeSimpleName, partSimpleName, isScript)
     }
 
     companion object {
