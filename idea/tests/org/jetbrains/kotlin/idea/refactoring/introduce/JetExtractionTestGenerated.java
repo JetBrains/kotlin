@@ -1979,6 +1979,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("missingReceiver.kt")
+                public void testMissingReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/missingReceiver.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("paramAsExplicitInvoke.kt")
                 public void testParamAsExplicitInvoke() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/paramAsExplicitInvoke.kt");

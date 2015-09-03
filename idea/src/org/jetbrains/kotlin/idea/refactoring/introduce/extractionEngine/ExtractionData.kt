@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -213,7 +214,9 @@ data class ExtractionData(
             if (parent is JetUserType && (parent.getParent() as? JetUserType)?.getQualifier() == parent) continue
 
             val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
-            val isBadRef = !compareDescriptors(project, originalResolveResult.descriptor, descriptor) || smartCast != null
+            val isBadRef = !(compareDescriptors(project, originalResolveResult.descriptor, descriptor)
+                             && originalContext.diagnostics.forElement(originalResolveResult.originalRefExpr) == context.diagnostics.forElement(ref))
+                           || smartCast != null
             if (isBadRef && !originalResolveResult.declaration.isInsideOf(originalElements)) {
                 val originalResolvedCall = originalResolveResult.resolvedCall as? VariableAsFunctionResolvedCall
                 val originalFunctionCall = originalResolvedCall?.functionCall
