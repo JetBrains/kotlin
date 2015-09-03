@@ -40,6 +40,6 @@ public class JetAnnotationUseSiteTargetElementType(debugName: String) : JetStubE
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>): KotlinAnnotationUseSiteTargetStub {
         val useSiteTarget = dataStream.readName()
-        return KotlinAnnotationUseSiteTargetStubImpl(parentStub, useSiteTarget!!)
+        return KotlinAnnotationUseSiteTargetStubImpl(parentStub, useSiteTarget)
     }
 }
