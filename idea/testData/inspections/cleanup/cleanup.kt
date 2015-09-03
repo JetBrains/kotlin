@@ -14,7 +14,7 @@ val x = fun foo(x: String) { }
 fun foo() {
     @loop
     for (i in 1..100) {
-        val v = oldFun2(i as Int)/* as Int*/
+        val v = oldFun2(i as Int) as Int
         /* comment */
         continue@loop
     }
