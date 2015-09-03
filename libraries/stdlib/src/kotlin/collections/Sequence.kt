@@ -43,8 +43,17 @@ public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpt
 /**
  * Creates a sequence that returns all values in the specified [progression].
  */
-public fun <T> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
+public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = progression.iterator()
+}
+
+/**
+ * Returns an [Iterable] instance that wraps the original sequence.
+ */
+public fun <T> Sequence<T>.asIterable(): Iterable<T> {
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
 }
 
 /**

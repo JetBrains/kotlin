@@ -5,14 +5,10 @@ test.OptionGroups(o1 = test.StringOptions(option = {"abc", "d", "ef"}), o2 = tes
 }
 
 internal final enum class E : kotlin.Enum<test.E> {
-    public enum entry ENTRY : test.E {
-        /*primary*/ private constructor ENTRY()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ENTRY
 
     /*primary*/ private constructor E()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

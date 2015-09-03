@@ -47,6 +47,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         doTest(fileName);
     }
 
+    @TestMetadata("javaClassOnCompanion.kt")
+    public void testJavaClassOnCompanion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/javaClassOnCompanion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outstar.kt")
     public void testOutstar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outstar.kt");
@@ -111,9 +117,9 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
-            @TestMetadata("platformName.kt")
-            public void testPlatformName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/platformName.kt");
+            @TestMetadata("jvmName.kt")
+            public void testJvmName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmName.kt");
                 doTest(fileName);
             }
         }
@@ -580,6 +586,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("parameterNames.kt")
         public void testParameterNames() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Kt7585 extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInKt7585() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kt7585"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("delegate.kt")
+        public void testDelegate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585/delegate.kt");
             doTest(fileName);
         }
     }

@@ -36,7 +36,7 @@ public annotation(mustBeDocumented = true) class data
  *     the deprecated API usage.
  */
 target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
-       LOCAL_VARIABLE, FIELD, VALUE_PARAMETER)
+       LOCAL_VARIABLE, VALUE_PARAMETER)
 public annotation(mustBeDocumented = true) class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
@@ -77,3 +77,12 @@ public annotation(retention = SOURCE) class suppress(vararg val names: String)
  */
 target(FUNCTION)
 public annotation(retention = SOURCE) class tailRecursive
+
+/**
+ * Hides the annotated function, property or constructor from the overload resolution,
+ * thus preventing its usages from newly compiled code, but keeps compiling it
+ * to retain binary compatibility with the code compiled against it before.
+ */
+target(FUNCTION, PROPERTY, CONSTRUCTOR)
+annotation(retention = BINARY, mustBeDocumented = true)
+public class HiddenDeclaration

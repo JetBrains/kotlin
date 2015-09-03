@@ -30,7 +30,7 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
 ) : CreateFromUsageFactory<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>,
+            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?,
             quickFixFactory: (E, List<CallableInfo>) -> CreateCallableFromUsageFixBase<E>
     ): QuickFixWithDelegateFactory {
         return QuickFixWithDelegateFactory {
@@ -48,7 +48,7 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
     override fun createQuickFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>
+            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?
     ): List<QuickFixWithDelegateFactory> {
         val memberFix = newCallableQuickFix(originalElementPointer, quickFixDataFactory) { element, data ->
             CreateCallableFromUsageFix(element, data)

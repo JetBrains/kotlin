@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collection;
@@ -46,7 +46,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull Function0<Collection<ResolutionCandidate<D>>> lazyCandidates,
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -99,7 +99,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     @Override
     protected ResolutionTask<D, F> create(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,

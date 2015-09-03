@@ -25,7 +25,9 @@ import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.PsiClassHolderFileStub
+import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
@@ -36,9 +38,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import javax.swing.Icon
@@ -46,8 +50,8 @@ import javax.swing.Icon
 public open class KotlinLightClassForExplicitDeclaration(
         manager: PsiManager,
         private val classFqName: FqName, // FqName of (possibly inner) class
-        protected val classOrObject: JetClassOrObject) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
-
+        protected val classOrObject: JetClassOrObject)
+: KotlinWrappingLightClass(manager), JetJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out JetClassOrObject>> {
     private var delegate: PsiClass? = null
 
     private fun getLocalClassParent(): PsiElement? {
@@ -140,7 +144,21 @@ public open class KotlinLightClassForExplicitDeclaration(
             val psiClass = LightClassUtil.findClass(classFqName, javaFileStub)
             if (psiClass == null) {
                 val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-                throw IllegalStateException("Class was not found " + classFqName + "\n" + "in " + outermostClassOrObject.containingFile.text + "\n" + "stub: \n" + javaFileStub.psi.text)
+                val ktFileText: String? = try {
+                    outermostClassOrObject.containingFile.text
+                }
+                catch (e: Exception) {
+                    "Can't get text for outermost class"
+                }
+
+                val stubFileText: String? = try {
+                    javaFileStub.psi.text
+                }
+                catch (e: Exception) {
+                    "Can't get stub text"
+                }
+
+                throw IllegalStateException("Class was not found $classFqName\nin $ktFileText\nstub: \n$stubFileText")
             }
             delegate = psiClass
         }
@@ -361,6 +379,9 @@ public open class KotlinLightClassForExplicitDeclaration(
 
     override fun getUseScope(): SearchScope = getOrigin().useScope
 
+    override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
+    override fun getStub(): KotlinClassOrObjectStub<out JetClassOrObject>? = classOrObject.stub
+
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<OutermostKotlinClassLightClassData>>("JAVA_API_STUB")
 
@@ -425,7 +446,8 @@ public open class KotlinLightClassForExplicitDeclaration(
 
             if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
 
-            val mappedDescriptor = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(qualifiedName))
+            val fqName = FqNameUnsafe(qualifiedName)
+            val mappedDescriptor = if (fqName.isSafe()) JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName.toSafe()) else null
             val mappedQName = if (mappedDescriptor == null) null else DescriptorUtils.getFqName(mappedDescriptor).asString()
             if (qualifiedName == mappedQName) return true
 

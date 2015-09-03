@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.JetType
@@ -55,7 +55,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             function: JetNamedFunction,
             context: ExpressionTypingContext,
             isStatement: Boolean,
-            statementScope: WritableScope? // must be not null if isStatement
+            statementScope: LexicalWritableScope? // must be not null if isStatement
     ): JetTypeInfo {
         if (!isStatement) {
             // function expression
@@ -80,7 +80,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionDescriptor: SimpleFunctionDescriptor
         if (isStatement) {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
+                    context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo)
             assert(statementScope != null) {
                 "statementScope must be not null for function: " + function.getName() + " at location " + DiagnosticUtils.atLocation(function)
             }
@@ -88,7 +88,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
         else {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionExpressionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function,
+                    context.scope.ownerDescriptor, context.scope, function,
                     context.trace, context.dataFlowInfo, context.expectedType
             )
         }
@@ -161,12 +161,12 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
         val functionDescriptor = AnonymousFunctionDescriptor(
-            context.scope.getContainingDeclaration(),
+            context.scope.ownerDescriptor,
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement()
         )
         components.functionDescriptorResolver.
-                initializeFunctionDescriptorAndExplicitReturnType(context.scope.getContainingDeclaration(), context.scope, functionLiteral,
+                initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,
                                                                   functionDescriptor, context.trace, context.expectedType)
         for (parameterDescriptor in functionDescriptor.getValueParameters()) {
             ForceResolveUtil.forceResolveAllContents(parameterDescriptor.getAnnotations())

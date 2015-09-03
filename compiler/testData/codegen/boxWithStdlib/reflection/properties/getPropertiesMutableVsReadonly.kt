@@ -1,4 +1,3 @@
-import kotlin.reflect.jvm.kotlin
 import kotlin.reflect.*
 
 class A(val readonly: String) {

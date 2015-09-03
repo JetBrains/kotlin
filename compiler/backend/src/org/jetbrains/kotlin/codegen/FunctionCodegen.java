@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
+import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
@@ -34,7 +35,9 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
@@ -71,6 +74,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -166,7 +170,8 @@ public class FunctionCodegen {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }
 
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        generateMethodAnnotations(functionDescriptor, asmMethod, mv);
+
         generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignature(functionDescriptor));
 
         generateBridges(functionDescriptor);
@@ -210,6 +215,22 @@ public class FunctionCodegen {
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
     }
 
+    private void generateMethodAnnotations(
+            @NotNull FunctionDescriptor functionDescriptor,
+            Method asmMethod,
+            MethodVisitor mv
+    ) {
+        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, typeMapper);
+
+        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+            AnnotationUseSiteTarget target = functionDescriptor instanceof PropertySetterDescriptor ? PROPERTY_SETTER : PROPERTY_GETTER;
+            annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType(), target);
+        }
+        else {
+            annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        }
+    }
+
     private void generateParameterAnnotations(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodVisitor mv,
@@ -229,7 +250,30 @@ public class FunctionCodegen {
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
                 v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
-                AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter, parameterSignature.getAsmType());
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+
+                if (functionDescriptor instanceof PropertySetterDescriptor) {
+                    PropertyDescriptor propertyDescriptor = ((PropertySetterDescriptor) functionDescriptor).getCorrespondingProperty();
+                    Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(propertyDescriptor);
+                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), SETTER_PARAMETER);
+                }
+
+                if (functionDescriptor instanceof ConstructorDescriptor) {
+                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType(), CONSTRUCTOR_PARAMETER);
+                }
+                else {
+                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType());
+                }
+            }
+            else if (kind == JvmMethodParameterKind.RECEIVER) {
+                ReceiverParameterDescriptor receiver = ((functionDescriptor instanceof PropertyAccessorDescriptor)
+                                             ? ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty()
+                                             : functionDescriptor).getExtensionReceiverParameter();
+                if (receiver != null) {
+                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+                    Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(receiver.getType());
+                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
+                }
             }
         }
     }

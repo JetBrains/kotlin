@@ -20,14 +20,13 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
+import org.jetbrains.kotlin.codegen.MutableClassDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_ABSTRACT
@@ -48,7 +47,7 @@ class CollectionStubMethodGenerator(
         private val functionCodegen: FunctionCodegen,
         private val v: ClassBuilder
 ) {
-    private val typeMapper = state.getTypeMapper()
+    private val typeMapper = state.typeMapper
 
     fun generate() {
         val superCollectionClasses = findRelevantSuperCollectionClasses()
@@ -193,7 +192,7 @@ class CollectionStubMethodGenerator(
     }
 
     private fun createSyntheticSubclass(): Pair<MutableClassDescriptor, List<TypeParameterDescriptor>> {
-        val child = MutableClassDescriptor(descriptor.getContainingDeclaration(), JetScope.Empty, ClassKind.CLASS, false,
+        val child = MutableClassDescriptor(descriptor.getContainingDeclaration(), ClassKind.CLASS, false,
                                            Name.special("<synthetic inheritor of ${descriptor.getName()}>"), descriptor.getSource())
         child.setModality(Modality.FINAL)
         child.setVisibility(Visibilities.PUBLIC)

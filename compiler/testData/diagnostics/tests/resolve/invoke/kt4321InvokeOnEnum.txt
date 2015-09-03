@@ -3,29 +3,12 @@ package
 internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
 internal final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClasses> {
-    public enum entry cls1 : DOMElementTestClasses {
-        private constructor cls1()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry cls1
 
-    public enum entry cls2 : DOMElementTestClasses {
-        private constructor cls2()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry cls2
 
     private constructor DOMElementTestClasses()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -47,18 +30,10 @@ internal interface EnumStyleClass {
 }
 
 internal final enum class TestClasses : kotlin.Enum<TestClasses>, EnumStyleClass {
-    public enum entry cls : TestClasses {
-        private constructor cls()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestClasses): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal open override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry cls
 
     private constructor TestClasses()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestClasses): kotlin.Int
     public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int

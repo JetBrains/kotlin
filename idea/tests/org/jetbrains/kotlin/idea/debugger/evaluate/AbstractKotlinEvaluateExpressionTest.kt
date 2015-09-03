@@ -120,6 +120,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             }
         }
 
+        // doStepping(path)
+
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
             try {
@@ -290,7 +292,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.getContainingFile().getText(), "// DEBUG_LABEL: ")
             if (labelsAsText.isEmpty()) return contextElement
 
-            val markupMap = hashMapOf<ObjectReference, ValueMarkup>()
+            val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
             for (labelAsText in labelsAsText) {
                 val labelParts = labelAsText.splitBy("=")
                 assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
@@ -298,13 +300,13 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 val labelName = labelParts[1].trim()
                 val localVariable = context.getFrameProxy()!!.visibleVariableByName(localVariableName)
                 assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
-                val localVariableValue = context.getFrameProxy()!!.getValue(localVariable) as? ObjectReference
+                val localVariableValue = context.getFrameProxy()!!.getValue(localVariable)
                 assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
                 localVariableValue!!
                 markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
             }
 
-            val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(markupMap)
+            val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(contextElement.project, markupMap)
             return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), getProject())!!
         }
 
@@ -315,6 +317,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         runReadAction {
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = createContextElement(this)
+
+            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext?.frameProxy)
 
             try {
 

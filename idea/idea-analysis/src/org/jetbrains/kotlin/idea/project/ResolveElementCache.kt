@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -43,10 +42,8 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ResolveElementCache(
         private val resolveSession: ResolveSession,
@@ -523,7 +520,7 @@ public class ResolveElementCache(
 
     private class BodyResolveContextForLazy(
             private val topDownAnalysisMode: TopDownAnalysisMode,
-            private val declaringScopes: Function1<JetDeclaration, JetScope?>
+            private val declaringScopes: Function1<JetDeclaration, LexicalScope?>
     ) : BodiesResolveContext {
         override fun getFiles(): Collection<JetFile> = setOf()
 
@@ -537,7 +534,7 @@ public class ResolveElementCache(
 
         override fun getFunctions(): MutableMap<JetNamedFunction, SimpleFunctionDescriptor> = hashMapOf()
 
-        override fun getDeclaringScope(declaration: JetDeclaration): JetScope? = declaringScopes(declaration)
+        override fun getDeclaringScope(declaration: JetDeclaration): LexicalScope? = declaringScopes(declaration)
 
         override fun getScripts(): MutableMap<JetScript, ScriptDescriptor> = hashMapOf()
 

@@ -21,7 +21,6 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
@@ -167,13 +166,17 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     private static final DescriptorRenderer.ValueParametersHandler VALUE_PARAMETERS_HANDLER = new DescriptorRenderer.ValueParametersHandler() {
         @Override
-        public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder builder) {
+        public void appendBeforeValueParameter(
+                @NotNull ValueParameterDescriptor parameter, int parameterIndex, int parameterCount, @NotNull StringBuilder builder
+        ) {
             builder.append("<td align=\"right\" style=\"white-space:nowrap;font-weight:bold;\">");
         }
 
         @Override
-        public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder builder) {
-            boolean last = parameter.getContainingDeclaration().getValueParameters().size() - 1 == parameter.getIndex();
+        public void appendAfterValueParameter(
+                @NotNull ValueParameterDescriptor parameter, int parameterIndex, int parameterCount, @NotNull StringBuilder builder
+        ) {
+            boolean last = parameterIndex == parameterCount - 1;
             if (!last) {
                 builder.append(",");
             }
@@ -181,9 +184,9 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
 
         @Override
-        public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
+        public void appendBeforeValueParameters(int parameterCount, @NotNull StringBuilder builder) {
             builder.append("</td>");
-            if (function.getValueParameters().isEmpty()) {
+            if (parameterCount == 0) {
                 tdBold(builder, "( )");
             }
             else {
@@ -192,8 +195,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
 
         @Override
-        public void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
-            if (!function.getValueParameters().isEmpty()) {
+        public void appendAfterValueParameters(int parameterCount, @NotNull StringBuilder builder) {
+            if (parameterCount != 0) {
                 tdBold(builder, ")");
             }
             builder.append("<td style=\"white-space:nowrap;font-weight:bold;\">");

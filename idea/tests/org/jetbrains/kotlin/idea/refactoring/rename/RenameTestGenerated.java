@@ -89,15 +89,21 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
-    @TestMetadata("defaultObject/defaultObject.test")
-    public void testDefaultObject_DefaultObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObject/defaultObject.test");
+    @TestMetadata("companionObject/companionObject.test")
+    public void testCompanionObject_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObject/companionObject.test");
         doTest(fileName);
     }
 
-    @TestMetadata("defaultObjectWithDefaultName/defaultObject.test")
-    public void testDefaultObjectWithDefaultName_DefaultObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObjectWithDefaultName/defaultObject.test");
+    @TestMetadata("companionObjectWithDefaultName/companionObject.test")
+    public void testCompanionObjectWithDefaultName_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObjectWithDefaultName/companionObject.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("companionObjectWithNameMatchingClass/companionObject.test")
+    public void testCompanionObjectWithNameMatchingClass_CompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionObjectWithNameMatchingClass/companionObject.test");
         doTest(fileName);
     }
 
@@ -269,6 +275,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinFunctionInEnum/renameKotlinFunctionInEnumFromSubclass.test")
+    public void testRenameKotlinFunctionInEnum_RenameKotlinFunctionInEnumFromSubclass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFunctionInEnum/renameKotlinFunctionInEnumFromSubclass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinMethod/javaWrapperForKotlinMethod.test")
     public void testRenameKotlinMethod_JavaWrapperForKotlinMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinMethod/javaWrapperForKotlinMethod.test");
@@ -311,6 +323,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinPrimaryConstructorProperty/renameKotlinPrimaryConstructorProperty.test")
+    public void testRenameKotlinPrimaryConstructorProperty_RenameKotlinPrimaryConstructorProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPrimaryConstructorProperty/renameKotlinPrimaryConstructorProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinPrimaryConstructorPropertyFromOverride/renameKotlinPrimaryConstructorPropertyFromOverride.test")
+    public void testRenameKotlinPrimaryConstructorPropertyFromOverride_RenameKotlinPrimaryConstructorPropertyFromOverride() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPrimaryConstructorPropertyFromOverride/renameKotlinPrimaryConstructorPropertyFromOverride.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinStaticMethod/renameKotlinStaticMethod.test")
     public void testRenameKotlinStaticMethod_RenameKotlinStaticMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinStaticMethod/renameKotlinStaticMethod.test");
@@ -332,6 +356,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinValProperty/renameOverriden.test")
     public void testRenameKotlinValProperty_RenameOverriden() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinValProperty/renameOverriden.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinValPropertyInCompanionObject/renameKotlinValPropertyInCompanionObject.test")
+    public void testRenameKotlinValPropertyInCompanionObject_RenameKotlinValPropertyInCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinValPropertyInCompanionObject/renameKotlinValPropertyInCompanionObject.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinValPropertyInObject/renameKotlinValPropertyInObject.test")
+    public void testRenameKotlinValPropertyInObject_RenameKotlinValPropertyInObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinValPropertyInObject/renameKotlinValPropertyInObject.test");
         doTest(fileName);
     }
 

@@ -77,7 +77,7 @@ object KeywordCompletion {
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler
                                            else
-                                               KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER)
+                                               KotlinFunctionInsertHandler(inputTypeArguments = false, inputValueArguments = false))
                 consumer(element)
             }
         }

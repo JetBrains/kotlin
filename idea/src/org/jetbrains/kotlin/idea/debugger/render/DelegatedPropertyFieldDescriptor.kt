@@ -87,4 +87,8 @@ class DelegatedPropertyFieldDescriptor(
 
         return getObject().referenceType().methodsByName(JvmAbi.getterName(fieldName))?.firstOrNull()
     }
+
+    override fun getDeclaredType(): String? {
+        return objectRef.type().name()
+    }
 }

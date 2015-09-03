@@ -32,28 +32,14 @@ internal final class Class {
 }
 
 internal final enum class Weapon : kotlin.Enum<test.Weapon> {
-    public enum entry ROCK : test.Weapon {
-        private constructor ROCK()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ROCK
 
-    public enum entry PAPER : test.Weapon {
-        private constructor PAPER()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry PAPER
 
-    public enum entry SCISSORS : test.Weapon {
-        private constructor SCISSORS()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry SCISSORS
 
     private constructor Weapon()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

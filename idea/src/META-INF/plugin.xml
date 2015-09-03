@@ -334,10 +334,15 @@
     <lookup.charFilter implementation="org.jetbrains.kotlin.idea.completion.KotlinCompletionCharFilter"/>
     <lookup.actionProvider implementation="org.jetbrains.kotlin.idea.completion.KotlinExcludeFromCompletionLookupActionProvider"/>
 
+    <statistician key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionStatistician"/>
+    <statistician key="proximity" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinProximityStatistician"/>
+
+    <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
+
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
-                               implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJetClassProcessor"
+                               implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
                                order="first"/>
     <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinFunctionProcessor"
                                id="KotlinFunction"
@@ -355,6 +360,7 @@
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticVariableInJavaRenamerFactory"/>
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticInheritorRenamerFactory"/>
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticOverloadsRenamerFactory"/>
+    <vetoRenameCondition implementation="org.jetbrains.kotlin.idea.refactoring.KotlinVetoRenameCondition"/>
 
     <spellchecker.support implementationClass="org.jetbrains.kotlin.idea.KotlinSpellcheckingStrategy" language="jet"/>
 
@@ -403,8 +409,12 @@
     <configurationType implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSBrowserProgramRunner"/>
     <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer"/>
+
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRecursiveCallLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="jet" implementationClass="com.intellij.execution.lineMarker.RunLineMarkerProvider"/>
+    <runLineMarkerContributor language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRunLineMarkerContributor"/>
+
     <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetFunctionPresenter"
                               forClass="org.jetbrains.kotlin.psi.JetFunction"/>
@@ -447,8 +457,8 @@
     <debugger.syntheticProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinSyntheticTypeComponentProvider"/>
     <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinBreakpointHandlerFactory"/>
 
-    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler"/>
-    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler"/>
+    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler"/>
 
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JSFrameworkType"/>
@@ -508,6 +518,7 @@
 
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
+    <overridingMethodsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodsWithGenericsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinPropertyAccessorsReferenceSearcher"/>
@@ -724,6 +735,11 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1021,6 +1037,13 @@
         level="WEAK WARNING"
         />
 
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
+        displayName="Supertype qualification is unnecessary"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WEAK WARNING"
+        />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionInspection"
         displayName="Simplify negated binary expression"
         groupName="Kotlin"
@@ -1059,6 +1082,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
                      displayName="Use property access syntax"
                      groupName="Kotlin"
+                     cleanupTool="true"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />

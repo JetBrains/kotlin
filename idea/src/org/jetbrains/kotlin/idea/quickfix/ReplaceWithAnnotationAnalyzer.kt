@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -42,12 +41,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 data class ReplaceWith(val expression: String, vararg val imports: String)
 
@@ -91,7 +92,8 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
-        val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
+        val scope = LexicalChainedScope(symbolScope, symbolDescriptor, false, null, "ReplaceWith resolution scope",
+                            ExplicitImportsScope(explicitlyImportedSymbols))
 
         var bindingContext = analyzeInContext(expression, symbolDescriptor, scope, resolutionFacade)
 
@@ -116,7 +118,7 @@ object ReplaceWithAnnotationAnalyzer {
         expression.forEachDescendantOfType<JetSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
-            if (target.canBeReferencedViaImport() && (target.isExtension || expression.getReceiverExpression() == null)) {
+            if (target.isExtension || expression.getReceiverExpression() == null) {
                 importFqNames.addIfNotNull(target.importableFqName)
             }
 
@@ -135,7 +137,7 @@ object ReplaceWithAnnotationAnalyzer {
                     else
                         resolvedCall.getDispatchReceiver()
                     if (receiver is ThisReceiver) {
-                        val receiverExpression = receiver.asExpression(symbolScope, psiFactory)
+                        val receiverExpression = receiver.asExpression(symbolScope.asJetScope(), psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
                         }
@@ -159,7 +161,7 @@ object ReplaceWithAnnotationAnalyzer {
     private fun analyzeInContext(
             expression: JetExpression,
             symbolDescriptor: CallableDescriptor,
-            scope: ChainedScope,
+            scope: LexicalScope,
             resolutionFacade: ResolutionFacade
     ): BindingContext {
         val traceContext = BindingTraceContext()
@@ -168,7 +170,7 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor): LexicalScope {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.getContainingDeclaration()
@@ -176,14 +178,15 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor ->
-                descriptor.memberScope
+                descriptor.memberScope.memberScopeAsFileScope()
 
             is ClassDescriptorWithResolutionScopes ->
                 descriptor.getScopeForMemberDeclarationResolution()
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.getContainingDeclaration())
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).getScopeForMemberDeclarationResolution()
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope })
+                        .scopeForMemberDeclarationResolution()
             }
 
             is FunctionDescriptor ->
@@ -196,7 +199,7 @@ object ReplaceWithAnnotationAnalyzer {
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
-                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!
+                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!.asLexicalScope()
             }
 
             //TODO?

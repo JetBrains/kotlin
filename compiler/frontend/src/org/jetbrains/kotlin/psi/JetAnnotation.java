@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -40,5 +41,10 @@ public class JetAnnotation extends JetElementImplStub<KotlinPlaceHolderStub<JetA
 
     public List<JetAnnotationEntry> getEntries() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION_ENTRY);
+    }
+
+    @Nullable
+    public JetAnnotationUseSiteTarget getUseSiteTarget() {
+        return getStubOrPsiChild(JetStubElementTypes.ANNOTATION_TARGET);
     }
 }

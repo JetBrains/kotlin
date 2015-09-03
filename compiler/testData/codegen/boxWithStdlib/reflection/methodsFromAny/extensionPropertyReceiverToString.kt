@@ -8,6 +8,9 @@ fun check(expected: String, p: KProperty1<*, *>) {
     assert(s.startsWith("val ") || s.startsWith("var ")) { "Fail val/var: $s" }
     s = s.substring(4)
 
+    // Strip property type
+    s = s.substringBeforeLast(':')
+
     // Strip property name, leave only receiver class
     s = s.substringBeforeLast('.')
 

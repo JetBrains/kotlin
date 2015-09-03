@@ -1,5 +1,4 @@
 import java.lang.reflect.Method
-import kotlin.reflect.jvm.java
 import kotlin.test.assertEquals
 
 target(AnnotationTarget.EXPRESSION)

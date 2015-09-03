@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
@@ -37,6 +38,8 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val caller: FunctionCaller<*> get() = getter.caller
 
+    override val defaultCaller: FunctionCaller<*>? get() = getter.defaultCaller
+
     abstract class Accessor<out R> : KProperty.Accessor<R> {
         abstract override val property: KPropertyImpl<R>
 
@@ -48,12 +51,14 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default getter created this way won't have any source information
-            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor)
+            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
         }
 
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = true)
         }
+
+        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 }
 
@@ -68,18 +73,20 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information
-            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor)
+            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY)
         }
 
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
+
+        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 }
 
 
 private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
-    fun isPlatformStaticProperty() =
+    fun isJvmStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
@@ -90,9 +97,9 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
             else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())
-        isPlatformStaticProperty() ->
-            if (isGetter) FunctionCaller.PlatformStaticInObjectFieldGetter(field)
-            else FunctionCaller.PlatformStaticInObjectFieldSetter(field, isNotNullProperty())
+        isJvmStaticProperty() ->
+            if (isGetter) FunctionCaller.JvmStaticInObjectFieldGetter(field)
+            else FunctionCaller.JvmStaticInObjectFieldSetter(field, isNotNullProperty())
         else ->
             if (isGetter) FunctionCaller.StaticFieldGetter(field)
             else FunctionCaller.StaticFieldSetter(field, isNotNullProperty())
@@ -117,7 +124,7 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
             when {
                 accessor == null -> computeFieldCaller(property.javaField!!)
                 !Modifier.isStatic(accessor.modifiers) -> FunctionCaller.InstanceMethod(accessor)
-                isPlatformStaticProperty() -> FunctionCaller.PlatformStaticInObject(accessor)
+                isJvmStaticProperty() -> FunctionCaller.JvmStaticInObject(accessor)
                 else -> FunctionCaller.StaticMethod(accessor)
             }
         }

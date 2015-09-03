@@ -77,7 +77,7 @@ public class KotlinCacheService(val project: Project) {
     }
 
     deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
-    public fun <T> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+    public fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
         return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 

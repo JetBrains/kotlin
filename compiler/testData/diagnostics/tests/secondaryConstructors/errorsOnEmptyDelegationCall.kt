@@ -14,8 +14,8 @@ open class B1 {
 }
 
 class A1 : B1 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>super<!>()
+    constructor()
+    constructor(x: Int) : super()
 }
 
 // --------------------------

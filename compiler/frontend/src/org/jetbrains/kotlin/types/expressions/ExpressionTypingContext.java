@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.JetType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
@@ -34,7 +34,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public static ExpressionTypingContext newContext(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType
     ) {
@@ -44,7 +44,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public static ExpressionTypingContext newContext(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull CallChecker callChecker
@@ -69,7 +69,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public static ExpressionTypingContext newContext(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
@@ -87,7 +87,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     private ExpressionTypingContext(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
@@ -106,7 +106,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @Override
     protected ExpressionTypingContext create(
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,

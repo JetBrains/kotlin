@@ -1,3 +1,6 @@
+import pack.bar
+import pack.oldFun2 // should not be removed for non-deprecated overload used
+
 interface Foo {
 }
 
@@ -10,12 +13,14 @@ val x = fun(x: String) { }
 fun foo() {
     loop@
     for (i in 1..100) {
-        val v = bar(i + 2)
+        val v = bar(i + 2)/* as Int*/
         /* comment */
         continue@loop
     }
 
     bar(bar(10 + 2) + 1)
+
+    oldFun2()
 }
 
 fun unnecessarySafeCall(x: String) {

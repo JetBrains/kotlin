@@ -507,8 +507,7 @@ public class DeclarationsChecker {
         if (DescriptorUtils.isEnumClass(declaration)) {
             ClassDescriptor enumClass = (ClassDescriptor) declaration;
 
-            ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-            if ((constructor == null || !constructor.getValueParameters().isEmpty()) && !enumEntry.hasInitializer()) {
+            if (!enumEntry.hasInitializer() && !DescriptorUtils.hasDefaultConstructor(enumClass)) {
                 trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry));
             }
         }

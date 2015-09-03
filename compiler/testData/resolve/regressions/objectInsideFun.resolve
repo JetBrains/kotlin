@@ -1,0 +1,9 @@
+interface A {
+    ~from-interface~val foo: Int
+}
+
+fun test(~param~foo: Int) {
+    object : A {
+        ~property~override val foo: Int = `param`foo
+    }
+}

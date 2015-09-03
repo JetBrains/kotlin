@@ -86,6 +86,8 @@
         <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
+        <include name="compiler/rmi/rmi-server/src"/>
+        <include name="compiler/rmi/rmi-interface/src"/>
         <include name="compiler/container/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
@@ -115,6 +117,8 @@
         <include name="backend-common/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
+        <include name="rmi-server/**"/>
+        <include name="rmi-interface/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
@@ -198,6 +202,8 @@
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
+            <include name="compiler/rmi/rmi-server/src"/>
+            <include name="compiler/rmi/rmi-interface/src"/>
             <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>
@@ -415,11 +421,9 @@
             <assertions>
                 <enable/>
             </assertions>
-            <!-- TODO: use the new command-line interface to preloader here -->
+            <arg value="-cp"/>
             <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
             <arg value="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"/>
-            <arg value="4096"/>
-            <arg value="notime"/>
             <arg value="${output}/builtins"/>
             <arg value="core/builtins/native"/>
             <arg value="core/builtins/src"/>
@@ -534,6 +538,26 @@
 
                 <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
             </manifest>
+        </jar>
+    </target>
+
+    <target name="kotlinr">
+        <cleandir dir="${output}/classes/kotlinr"/>
+
+        <kotlinc output="${output}/classes/kotlinr">
+            <src>
+                <pathelement path="compiler/rmi/kotlinr/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+        </kotlinc>
+
+        <jar destfile="${kotlin-home}/lib/kotlinr.jar">
+            <fileset dir="${output}/classes/kotlinr"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
         </jar>
     </target>
 
@@ -841,7 +865,7 @@
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,kotlinr"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"

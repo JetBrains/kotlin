@@ -1,4 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class X<T>(val t: T) {
-    constructor(t: T, i: Int) : <!NONE_APPLICABLE!>this<!>(i)
+    constructor(t: T, i: Int) : this(<!TYPE_MISMATCH!>i<!>)
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
 
 public fun JetElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -96,6 +95,6 @@ public fun getResolveScope(file: JetFile): GlobalSearchScope {
     }
 }
 
-public fun ResolutionFacade.getFileTopLevelScope(file: JetFile): JetScope {
+public fun ResolutionFacade.getFileTopLevelScope(file: JetFile): LazyFileScope {
     return frontendService<FileScopeProvider>().getFileScope(file)
 }

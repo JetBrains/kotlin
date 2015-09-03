@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -61,7 +60,7 @@ public class JvmRuntimeTypes {
     @NotNull
     private static ClassDescriptor createClass(@NotNull PackageFragmentDescriptor packageFragment, @NotNull String name) {
         MutableClassDescriptor descriptor = new MutableClassDescriptor(
-                packageFragment, packageFragment.getMemberScope(), ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE
+                packageFragment, ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE
         );
 
         descriptor.setModality(Modality.FINAL);

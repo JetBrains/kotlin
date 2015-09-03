@@ -62,6 +62,17 @@ public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
  * The [mode] parameter is ignored. */
 public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
+ *
+ * The [lock] parameter is ignored.
+ */
+public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+
+
+private fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
+    return arrayOfNulls<Any>(size) as Array<T>
+}
 
 private fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
     val result = source.slice(0, newSize)

@@ -131,6 +131,45 @@ fun specialJS(): List<GenericFunction> {
         }
     }
 
+    templates add f("sort(comparison: (T, T) -> Int)") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        exclude(PrimitiveType.Boolean)
+        annotations("native")
+        returns("Unit")
+        doc { "Sorts the array inplace according to the order specified by the given [comparison] function." }
+        body { "return noImpl" }
+    }
+
+    templates add f("sortWith(comparator: Comparator<in T>)") {
+        only(ArraysOfObjects)
+        exclude(PrimitiveType.Boolean)
+        returns("Unit")
+        doc { "Sorts the array inplace according to the order specified by the given [comparator] object." }
+        body { "sort { a, b -> comparator.compare(a, b) }" }
+    }
+
+    templates add f("sort()") {
+        only(ArraysOfPrimitives)
+        only(numericPrimitives + PrimitiveType.Char)
+        exclude(PrimitiveType.Long)
+        returns("Unit")
+        doc { "Sorts the array inplace." }
+        annotations("""library("primitiveArraySort")""")
+        body { "return noImpl" }
+    }
+
+    templates add f("sort()") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(PrimitiveType.Long)
+        typeParam("T: Comparable<T>")
+        returns("Unit")
+        doc { "Sorts the array inplace." }
+        body {
+            """
+            sort { a: T, b: T -> a.compareTo(b) }
+            """
+        }
+    }
 
 
     return templates

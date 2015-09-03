@@ -1,4 +1,4 @@
 package test
 
-public class ClassWithTypePRefSelf<P : kotlin.Enum<P>?>() {
+public class ClassWithTypePRefSelf<P : kotlin.Enum<P>>() {
 }

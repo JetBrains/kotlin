@@ -146,7 +146,18 @@ public class LightClassUtil {
 
     @Nullable
     public static PsiMethod getLightClassAccessorMethod(@NotNull JetPropertyAccessor accessor) {
-        return getPsiMethodWrapper(accessor);
+        JetProperty property = PsiTreeUtil.getParentOfType(accessor, JetProperty.class);
+        if (property == null) {
+            return null;
+        }
+        List<PsiMethod> wrappers = getPsiMethodWrappers(property, true);
+        for (PsiMethod wrapper : wrappers) {
+            if ((accessor.isGetter() && !wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) ||
+                (accessor.isSetter() && wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX))) {
+                return wrapper;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -172,6 +183,34 @@ public class LightClassUtil {
         PsiMethod setterWrapper = setter != null ? getLightClassAccessorMethod(setter) : null;
 
         return extractPropertyAccessors(property, getterWrapper, setterWrapper);
+    }
+
+    @Nullable
+    private static PsiField getLightClassBackingField(JetDeclaration declaration) {
+        PsiClass psiClass = getWrappingClass(declaration);
+        if (psiClass == null) {
+            return null;
+        }
+
+        if (psiClass instanceof KotlinLightClass) {
+            JetClassOrObject origin = ((KotlinLightClass) psiClass).getOrigin();
+            if (origin instanceof JetObjectDeclaration && ((JetObjectDeclaration) origin).isCompanion()) {
+                JetClass containingClass = PsiTreeUtil.getParentOfType(origin, JetClass.class);
+                if (containingClass != null) {
+                    PsiClass containingLightClass = getPsiClass(containingClass);
+                    if (containingLightClass != null) {
+                        psiClass = containingLightClass;
+                    }
+                }
+            }
+        }
+
+        for (PsiField field : psiClass.getFields()) {
+            if (field instanceof KotlinLightField && ((KotlinLightField) field).getOrigin() == declaration) {
+                return field;
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -303,21 +342,23 @@ public class LightClassUtil {
 
             for (PsiMethod wrapper : wrappers) {
                 if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    assert setterWrapper == null : String.format(
+                    assert setterWrapper == null || setterWrapper == specialSetter: String.format(
                             "Setter accessor isn't expected to be reassigned (old: %s, new: %s)", setterWrapper, wrapper);
 
                     setterWrapper = wrapper;
                 }
                 else {
-                    assert getterWrapper == null : String.format(
+                    assert getterWrapper == null || getterWrapper == specialGetter: String.format(
                             "Getter accessor isn't expected to be reassigned (old: %s, new: %s)", getterWrapper, wrapper);
 
                     getterWrapper = wrapper;
                 }
             }
+
         }
 
-        return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper);
+        PsiField backingField = getLightClassBackingField(jetDeclaration);
+        return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField);
     }
 
     @NotNull
@@ -341,9 +382,10 @@ public class LightClassUtil {
     public static class PropertyAccessorsPsiMethods implements Iterable<PsiMethod> {
         private final PsiMethod getter;
         private final PsiMethod setter;
+        private final PsiField backingField;
         private final Collection<PsiMethod> accessors = new ArrayList<PsiMethod>(2);
 
-        PropertyAccessorsPsiMethods(@Nullable PsiMethod getter, @Nullable PsiMethod setter) {
+        PropertyAccessorsPsiMethods(@Nullable PsiMethod getter, @Nullable PsiMethod setter, @Nullable PsiField backingField) {
             this.getter = getter;
             if (getter != null) {
                 accessors.add(getter);
@@ -353,6 +395,8 @@ public class LightClassUtil {
             if (setter != null) {
                 accessors.add(setter);
             }
+
+            this.backingField = backingField;
         }
 
         @Nullable
@@ -363,6 +407,11 @@ public class LightClassUtil {
         @Nullable
         public PsiMethod getSetter() {
             return setter;
+        }
+
+        @Nullable
+        public PsiField getBackingField() {
+            return backingField;
         }
 
         @NotNull

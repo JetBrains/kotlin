@@ -1,21 +1,12 @@
 package test
 
 public open enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpecializedEntry!> {
-    public enum entry E1 : test.EnumWithSpecializedEntry {
-        private constructor E1()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry E1
 
-    public enum entry E2 : test.EnumWithSpecializedEntry {
-        private constructor E2()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry E2
 
     private constructor EnumWithSpecializedEntry()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

@@ -19,16 +19,22 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import java.util.HashMap
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import java.util.*
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
     val parameters = targetDescriptor.getValueParameters()
@@ -79,10 +85,11 @@ public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetP
     return expressionFactory.createExpression(psiFactory)
 }
 
-public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): JetScope {
+public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
     for (parent in parentsWithSelf) {
         if (parent is JetExpression) {
-            val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent] ?:
+                        bindingContext[BindingContext.RESOLUTION_SCOPE, parent]?.asLexicalScope() // todo remove this hack
             if (scope != null) return scope
         }
 
@@ -98,4 +105,9 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
         }
     }
     error("Not in JetFile")
+}
+
+public fun JetImportDirective.targetDescriptors(): Collection<DeclarationDescriptor> {
+    val nameExpression = importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return emptyList()
+    return nameExpression.mainReference.resolveToDescriptors(nameExpression.analyze())
 }

@@ -40,10 +40,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
@@ -51,6 +49,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -64,10 +63,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
@@ -366,7 +362,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         Collection<FqName> packagesWithObsoleteParts;
         if (moduleId == null || incrementalCompilationComponents == null) {
-            packagesWithObsoleteParts = null;
+            packagesWithObsoleteParts = Collections.emptySet();
         }
         else {
             IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
@@ -379,7 +375,6 @@ public class KotlinToJVMBytecodeCompiler {
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
-                Progress.DEAF,
                 result.getModuleDescriptor(),
                 result.getBindingContext(),
                 sourceFiles,
@@ -388,9 +383,9 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                diagnosticHolder,
                 packagesWithObsoleteParts,
                 moduleId,
-                diagnosticHolder,
                 outputDirectory
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

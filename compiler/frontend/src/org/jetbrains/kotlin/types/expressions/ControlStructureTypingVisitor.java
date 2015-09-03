@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.CommonSupertypes;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
@@ -66,7 +66,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private DataFlowInfo checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
+    private DataFlowInfo checkCondition(@NotNull LexicalScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
             JetTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope)
                     .replaceExpectedType(components.builtIns.getBooleanType()).replaceContextDependency(INDEPENDENT));
@@ -97,8 +97,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression elseBranch = ifExpression.getElse();
         JetExpression thenBranch = ifExpression.getThen();
 
-        WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
-        WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
+        LexicalWritableScope thenScope = newWritableScopeImpl(context, "Then scope");
+        LexicalWritableScope elseScope = newWritableScopeImpl(context, "Else scope");
         DataFlowInfo thenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
         DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
 
@@ -172,7 +172,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @NotNull
     private JetTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
             @NotNull JetExpression presentBranch,
-            @NotNull WritableScopeImpl presentScope,
+            @NotNull LexicalWritableScope presentScope,
             @NotNull DataFlowInfo presentInfo,
             @NotNull DataFlowInfo otherInfo,
             @NotNull ExpressionTypingContext context,
@@ -226,7 +226,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo bodyTypeInfo;
         DataFlowInfo conditionInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
         if (body != null) {
-            WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
+            LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
@@ -304,7 +304,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression body = expression.getBody();
-        JetScope conditionScope = context.scope;
+        LexicalScope conditionScope = context.scope;
         // Preliminary analysis
         PreliminaryLoopVisitor loopVisitor = PreliminaryLoopVisitor.visitLoop(expression);
         context = context.replaceDataFlowInfo(
@@ -319,7 +319,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
         }
         else if (body != null) {
-            WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
+            LexicalWritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
             conditionScope = writableScope;
             List<JetExpression> block;
             if (body instanceof JetBlockExpression) {
@@ -387,7 +387,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopRangeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
         }
 
-        WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
+        LexicalWritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
 
         JetParameter loopParameter = expression.getLoopParameter();
         if (loopParameter != null) {
@@ -432,7 +432,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
         if (typeReference != null) {
-            variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
+            variableDescriptor = components.descriptorResolver.
+                    resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             JetType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
                     !JetTypeChecker.DEFAULT.isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -443,14 +444,15 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (expectedParameterType == null) {
                 expectedParameterType = ErrorUtils.createErrorType("Error");
             }
-            variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
+            variableDescriptor = components.descriptorResolver.
+                    resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
         {
             // http://youtrack.jetbrains.net/issue/KT-527
 
-            VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
-            if (olderVariable != null && isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
+            VariableDescriptor olderVariable = UtilsPackage.getLocalVariable(context.scope, variableDescriptor.getName());
+            if (olderVariable != null && isLocal(context.scope.getOwnerDescriptor(), olderVariable)) {
                 PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
@@ -478,7 +480,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 JetType throwableType = components.builtIns.getThrowable().getDefaultType();
                 components.dataFlowAnalyzer.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
-                    WritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
+                    LexicalWritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
                     JetType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
                     if (type != null) {

@@ -34,14 +34,37 @@ class OrderingTest {
         assertTrue(diff == 0)
     }
 
+    Test fun compareNullables() {
+        val v1: Item? = this.v1
+        val v2: Item? = null
+        val diff = compareValuesBy(v1, v2) { it?.rating }
+        assertTrue(diff > 0)
+        val diff2 = nullsLast(compareBy<Item> { it.rating }.thenBy { it.name }).compare(v1, v2)
+        assertTrue(diff2 < 0)
+    }
+
     Test fun sortComparatorThenComparator() {
         val comparator = comparator<Item> { a, b -> a.name.compareTo(b.name) } thenComparator { a, b -> a.rating.compareTo(b.rating) }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
-        val items = arrayListOf(v1, v2).sortBy(comparator)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v2, items[0])
         assertEquals(v1, items[1])
+    }
+
+    Test fun combineComparators() {
+        val byName = compareBy<Item> { it.name }
+        val byRating = compareBy<Item> { it.rating }
+        val v3 = Item(v1.name, v1.rating + 1)
+        val v4 = Item(v2.name + "_", v2.rating)
+        assertTrue( (byName then byRating).compare(v1, v2) > 0 )
+        assertTrue( (byName then byRating).compare(v1, v3) < 0 )
+        assertTrue( (byName thenDescending byRating).compare(v1, v3) > 0 )
+
+        assertTrue( (byRating then byName).compare(v1, v2) < 0 )
+        assertTrue( (byRating then byName).compare(v4, v2) > 0 )
+        assertTrue( (byRating thenDescending byName).compare(v4, v2) < 0 )
     }
 
     Test fun sortByThenBy() {
@@ -49,7 +72,7 @@ class OrderingTest {
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff < 0)
-        val items = arrayListOf(v1, v2).sortBy(comparator)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v1, items[0])
         assertEquals(v2, items[1])
     }
@@ -59,7 +82,7 @@ class OrderingTest {
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff < 0)
-        val items = arrayListOf(v1, v2).sortBy(comparator)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v1, items[0])
         assertEquals(v2, items[1])
     }
@@ -68,7 +91,7 @@ class OrderingTest {
         val comparator = compareBy<Item>({ it.name }, { it.rating })
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
-        val items = arrayListOf(v1, v2).sortBy(comparator)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v2, items[0])
         assertEquals(v1, items[1])
     }
@@ -85,7 +108,7 @@ class OrderingTest {
         }
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
-        val items = arrayListOf(v1, v2).sortBy(comparator)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v2, items[0])
         assertEquals(v1, items[1])
     }

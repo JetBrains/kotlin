@@ -136,33 +136,36 @@ public class ResolutionResultsHandler {
                     }
                 }
                 if (!thisLevel.isEmpty()) {
-                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
-                    if (results.isSingleResult()) {
-                        results.getResultingCall().getTrace().moveAllMyDataTo(task.trace);
-                        return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
+                    if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
+                        return recordFailedInfo(task, thisLevel);
                     }
-
-                    task.tracing.noneApplicable(task.trace, results.getResultingCalls());
-                    task.tracing.recordAmbiguity(task.trace, results.getResultingCalls());
-                    return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResultingCalls());
+                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
+                    return recordFailedInfo(task, results.getResultingCalls());
                 }
             }
 
             assert false : "Should not be reachable, cause every status must belong to some level";
 
             Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
-            if (noOverrides.size() != 1) {
-                task.tracing.noneApplicable(task.trace, noOverrides);
-                task.tracing.recordAmbiguity(task.trace, noOverrides);
-                return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
-            }
-
-            failedCandidates = noOverrides;
+            return recordFailedInfo(task, noOverrides);
         }
 
-        MutableResolvedCall<D> failed = failedCandidates.iterator().next();
-        failed.getTrace().moveAllMyDataTo(task.trace);
-        return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
+        return recordFailedInfo(task, failedCandidates);
+    }
+
+    @NotNull
+    private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> recordFailedInfo(
+            @NotNull ResolutionTask task,
+            @NotNull Collection<MutableResolvedCall<D>> candidates
+    ) {
+        if (candidates.size() == 1) {
+            MutableResolvedCall<D> failed = candidates.iterator().next();
+            failed.getTrace().moveAllMyDataTo(task.trace);
+            return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
+        }
+        task.tracing.noneApplicable(task.trace, candidates);
+        task.tracing.recordAmbiguity(task.trace, candidates);
+        return OverloadResolutionResultsImpl.manyFailedCandidates(candidates);
     }
 
     private static <D extends CallableDescriptor> boolean allIncomplete(@NotNull Collection<MutableResolvedCall<D>> results) {

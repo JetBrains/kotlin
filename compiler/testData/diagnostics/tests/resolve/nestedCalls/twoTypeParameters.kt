@@ -11,7 +11,6 @@ public class ResolutionTaskHolder<F, G : F> {
 
         //todo the problem is the type of ResolutionTask is inferred as ResolutionTask<F, F> too early
         tasks.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(ResolutionTask(candidate))
-        tasks.<!NONE_APPLICABLE!>add<!>(ResolutionTask(candidate))
+        tasks.add(ResolutionTask(candidate))
     }
 }
-

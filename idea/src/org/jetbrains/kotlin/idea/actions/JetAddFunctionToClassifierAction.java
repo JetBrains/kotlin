@@ -52,7 +52,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 /**
  * Changes method signature to one of provided signatures.
- * Based on {@link JetAddImportAction}
+ * Based on {@link KotlinAddImportAction}
  */
 public class JetAddFunctionToClassifierAction implements QuestionAction {
     private final List<FunctionDescriptor> functionsToAdd;

@@ -64,6 +64,8 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet LAMBDA_VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET), MODIFIER_KEYWORDS);
     private static final TokenSet SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(CONSTRUCTOR_KEYWORD, INIT_KEYWORD);
+    private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
+            FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD);
 
     static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         JetParsing jetParsing = new JetParsing(builder);
@@ -543,8 +545,18 @@ public class JetParsing extends AbstractJetParsing {
      *   : annotationPrefix "[" unescapedAnnotation+ "]"
      *   ;
      *
+     *   annotationUseSiteTarget
+     *   : "file"
+     *   : "field"
+     *   : "property"
+     *   : "get"
+     *   : "set"
+     *   : "param"
+     *   : "sparam"
+     *   ;
+     *
      *  annotationPrefix:
-     *   : ("@" (":" "file")?)
+     *   : ("@" (annotationUseSiteTarget ":")?)
      *   ;
      */
     private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
@@ -556,7 +568,7 @@ public class JetParsing extends AbstractJetParsing {
             IElementType tokenToMatch = nextRawToken;
             boolean isTargetedAnnotation = false;
 
-            if ((nextRawToken == IDENTIFIER || nextRawToken == FILE_KEYWORD) && lookahead(2) == COLON) {
+            if ((nextRawToken == IDENTIFIER || ANNOTATION_TARGETS.contains(nextRawToken)) && lookahead(2) == COLON) {
                 tokenToMatch = lookahead(3);
                 isTargetedAnnotation = true;
             }
@@ -578,7 +590,7 @@ public class JetParsing extends AbstractJetParsing {
                         errorAndAdvance("Expected annotation identifier after ':'", 2); // AT, COLON
                     }
                     else {
-                        errorAndAdvance("Expected annotation identifier after '@file:'", 3); // AT, FILE_KEYWORD, COLON
+                        errorAndAdvance("Expected annotation identifier after ':'", 3); // AT, (ANNOTATION TARGET KEYWORD), COLON
                     }
                 }
                 else {
@@ -634,33 +646,62 @@ public class JetParsing extends AbstractJetParsing {
 
     // Returns true if we should continue parse annotation
     private boolean parseAnnotationTargetIfNeeded(AnnotationParsingMode mode) {
-        if (mode.isFileAnnotationParsingMode) {
-            if (at(COLON)) {
-                // recovery for "@:ann"
-                errorAndAdvance("Expected 'file' keyword before ':'"); // COLON
-                return true;
-            }
+        String expectedAnnotationTargetBeforeColon = "Expected annotation target before ':'";
 
-            if (lookahead(1) == COLON && !at(FILE_KEYWORD) && at(IDENTIFIER)) {
-                // recovery for "@fil:ann"
-                errorAndAdvance("Expected 'file' keyword as target"); // IDENTIFIER
-                advance(); // COLON
-                return true;
-            }
-
-            if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(at(FILE_KEYWORD) && lookahead(1) == COLON)) {
-                return false;
-            }
-
-            String message = "Expecting \"" + FILE_KEYWORD.getValue() + COLON.getValue() + "\" prefix for file annotations";
-            expect(FILE_KEYWORD, message);
-            expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
+        if (at(COLON)) {
+            // recovery for "@:ann"
+            errorAndAdvance(expectedAnnotationTargetBeforeColon); // COLON
+            return true;
         }
-        else if (at(FILE_KEYWORD) && lookahead(1) == COLON) {
-            errorAndAdvance("File annotations are only allowed before package declaration", 2);
+
+        JetKeywordToken targetKeyword = atTargetKeyword();
+        if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
+            return false;
+        }
+
+        if (lookahead(1) == COLON && targetKeyword == null && at(IDENTIFIER)) {
+            // recovery for "@fil:ann"
+            errorAndAdvance(expectedAnnotationTargetBeforeColon); // IDENTIFIER
+            advance(); // COLON
+            return true;
+        }
+
+        if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
+            parseAnnotationTarget(mode, FILE_KEYWORD);
+        }
+        else if (targetKeyword != null) {
+            parseAnnotationTarget(mode, targetKeyword);
         }
 
         return true;
+    }
+
+    private void parseAnnotationTarget(AnnotationParsingMode mode, JetKeywordToken keyword) {
+        if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
+            errorAndAdvance(AT.getValue() + keyword.getValue() + " annotations are only allowed before package declaration", 2);
+            return;
+        }
+
+        String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
+
+        PsiBuilder.Marker marker = mark();
+
+        if (!expect(keyword, message)) {
+            marker.drop();
+        }
+        else {
+            marker.done(ANNOTATION_TARGET);
+        }
+
+        expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
+    }
+
+    @Nullable
+    private JetKeywordToken atTargetKeyword() {
+        for (IElementType target : ANNOTATION_TARGETS.getTypes()) {
+            if (at(target)) return (JetKeywordToken) target;
+        }
+        return null;
     }
 
     /*
@@ -678,11 +719,12 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker annotation = mark();
 
-        if (at(AT)) {
+        boolean atAt = at(AT);
+        if (atAt) {
             advance(); // AT
         }
 
-        if (!parseAnnotationTargetIfNeeded(mode)) {
+        if (atAt && !parseAnnotationTargetIfNeeded(mode)) {
             annotation.rollbackTo();
             return false;
         }
@@ -2082,8 +2124,35 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     public void parseModifierListWithUnescapedAnnotations(TokenSet lookFor, TokenSet stopAt) {
-        int lastId = findLastBefore(lookFor, stopAt, false);
+        int lastId = matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AnnotationTargetStop(stopAt, ANNOTATION_TARGETS), false));
         createTruncatedBuilder(lastId).parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+    }
+
+    private class AnnotationTargetStop extends AbstractTokenStreamPredicate {
+        private final TokenSet stopAt;
+        private final TokenSet annotationTargets;
+
+        private IElementType previousToken;
+        private IElementType tokenBeforePrevious;
+
+        public AnnotationTargetStop(TokenSet stopAt, TokenSet annotationTargets) {
+            this.stopAt = stopAt;
+            this.annotationTargets = annotationTargets;
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            if (atSet(stopAt)) return true;
+
+            if (at(COLON) && !(tokenBeforePrevious == AT && (previousToken == IDENTIFIER || annotationTargets.contains(previousToken)))) {
+                return true;
+            }
+
+            tokenBeforePrevious = previousToken;
+            previousToken = tt();
+
+            return false;
+        }
     }
 
     /*
@@ -2181,7 +2250,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parseValueParameter(boolean rollbackOnFailure, boolean typeRequired) {
         PsiBuilder.Marker parameter = mark();
 
-        parseModifierListWithUnescapedAnnotations(TokenSet.create(COMMA, RPAR, COLON));
+        parseModifierListWithUnescapedAnnotations(TokenSet.create(COMMA, RPAR));
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD

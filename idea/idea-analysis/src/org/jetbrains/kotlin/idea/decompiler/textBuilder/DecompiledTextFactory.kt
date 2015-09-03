@@ -28,14 +28,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
@@ -139,13 +137,13 @@ public fun buildDecompiledText(
         renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
     }
 
-    fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean = false) {
+    fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
         if (descriptor is MissingDependencyErrorClass) {
             throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
         val startOffset = builder.length()
         val header = if (isEnumEntry(descriptor))
-            descriptor.name.asString() + if (lastEnumEntry) ";" else ","
+            descriptor.name.asString() + if (lastEnumEntry!!) ";" else ","
         else
             descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
         builder.append(header)
@@ -170,58 +168,64 @@ public fun buildDecompiledText(
                 endOffset = builder.length()
             }
         }
-        else if (descriptor is ClassDescriptor) {
-            if (!isEnumEntry(descriptor)) {
-                builder.append(" {\n")
-                var firstPassed = false
-                val subindent = indent + "    "
-                val allDescriptors = descriptor.secondaryConstructors + descriptor.getDefaultType().getMemberScope().getDescriptors()
-                val companionObject = descriptor.getCompanionObjectDescriptor()
-                var companionNeeded = (companionObject != null)
-                fun newlineExceptFirst() {
-                    if (firstPassed) {
-                        builder.append("\n")
-                    }
-                    else {
-                        firstPassed = true
-                    }
+        else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
+            builder.append(" {\n")
+
+            val subindent = indent + "    "
+
+            var firstPassed = false
+            fun newlineExceptFirst() {
+                if (firstPassed) {
+                    builder.append("\n")
                 }
-                val enumEntryCount = if (isEnumClass(descriptor)) allDescriptors.count { isEnumEntry(it) } else 0
-                var enumEntryIndex = 0
-                for (member in allDescriptors) {
-                    if (member.containingDeclaration != descriptor) {
-                        continue
-                    }
-                    if (member == companionObject) {
-                        continue
-                    }
-                    val isEnumEntry = isEnumEntry(member)
-                    if (companionNeeded && !isEnumEntry) {
-                        companionNeeded = false
-                        newlineExceptFirst()
-                        builder.append(subindent)
-                        appendDescriptor(companionObject!!, subindent)
-                    }
-                    if (member is CallableMemberDescriptor
-                        && member.kind != CallableMemberDescriptor.Kind.DECLARATION
-                        //TODO: not synthesized and component like
-                        && !isComponentLike(member.name)) {
-                        continue
-                    }
-                    newlineExceptFirst()
-                    builder.append(subindent)
-                    appendDescriptor(member, subindent, isEnumEntry && ++enumEntryIndex == enumEntryCount)
+                else {
+                    firstPassed = true
                 }
-                builder.append(indent).append("}")
-                endOffset = builder.length()
             }
+
+            val allDescriptors = descriptor.secondaryConstructors + descriptor.defaultType.memberScope.getDescriptors()
+            val (enumEntries, members) = allDescriptors.partition(::isEnumEntry)
+
+            for ((index, enumEntry) in enumEntries.withIndex()) {
+                newlineExceptFirst()
+                builder.append(subindent)
+                appendDescriptor(enumEntry, subindent, index == enumEntries.lastIndex)
+            }
+
+            val companionObject = descriptor.companionObjectDescriptor
+            if (companionObject != null) {
+                newlineExceptFirst()
+                builder.append(subindent)
+                appendDescriptor(companionObject, subindent)
+            }
+
+            for (member in members) {
+                if (member.containingDeclaration != descriptor) {
+                    continue
+                }
+                if (member == companionObject) {
+                    continue
+                }
+                if (member is CallableMemberDescriptor
+                    && member.kind != CallableMemberDescriptor.Kind.DECLARATION
+                    //TODO: not synthesized and component like
+                    && !isComponentLike(member.name)) {
+                    continue
+                }
+                newlineExceptFirst()
+                builder.append(subindent)
+                appendDescriptor(member, subindent)
+            }
+
+            builder.append(indent).append("}")
+            endOffset = builder.length()
         }
 
         builder.append("\n")
         saveDescriptorToRange(descriptor, startOffset, endOffset)
 
         if (descriptor is ClassDescriptor) {
-            val primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor()
+            val primaryConstructor = descriptor.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
                 saveDescriptorToRange(primaryConstructor, startOffset, endOffset)
             }

@@ -1,14 +1,10 @@
 package test
 
 internal final enum class E : kotlin.Enum<test.E> {
-    public enum entry CAKE : test.E {
-        /*primary*/ private constructor CAKE()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry CAKE
 
     /*primary*/ private constructor E()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

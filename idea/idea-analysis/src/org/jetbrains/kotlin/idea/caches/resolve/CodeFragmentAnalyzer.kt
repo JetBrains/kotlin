@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -70,8 +71,13 @@ public class CodeFragmentAnalyzer(
                    is JetDeclarationWithBody -> this.getBodyExpression()
                    is JetBlockExpression -> this.getStatements().lastOrNull()
                    else -> {
-                       this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
-                       ?: this.parents.firstIsInstanceOrNull<JetExpression>()
+                       val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
+                       if (previousSibling != null) return previousSibling
+                       for (parent in this.parents) {
+                           if (parent is JetWhenEntry || parent is JetIfExpression || parent is JetBlockExpression) return this
+                           if (parent is JetExpression) return parent
+                       }
+                       null
                    }
                } ?: this
     }
@@ -79,11 +85,11 @@ public class CodeFragmentAnalyzer(
     private fun getScopeAndDataFlowForAnalyzeFragment(
             codeFragment: JetCodeFragment,
             resolveToElement: (JetElement) -> BindingContext
-    ): Pair<JetScope, DataFlowInfo>? {
+    ): Pair<LexicalScope, DataFlowInfo>? {
         val context = codeFragment.getContext()
         if (context !is JetExpression) return null
 
-        val scopeForContextElement: JetScope?
+        val scopeForContextElement: LexicalScope?
         val dataFlowInfo: DataFlowInfo
 
         when (context) {
@@ -98,7 +104,7 @@ public class CodeFragmentAnalyzer(
 
                 val contextForElement = resolveToElement(correctedContext)
 
-                scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, correctedContext]
+                scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
             is JetFile -> {
@@ -111,10 +117,11 @@ public class CodeFragmentAnalyzer(
         if (scopeForContextElement == null) return null
 
         val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
-        val chainedScope = ChainedScope(
-                scopeForContextElement.getContainingDeclaration(),
+        val chainedScope = LexicalChainedScope(
+                scopeForContextElement, scopeForContextElement.ownerDescriptor,
+                false, null,
                 "Scope for resolve code fragment",
-                scopeForContextElement, codeFragmentScope)
+                codeFragmentScope)
 
         return chainedScope to dataFlowInfo
     }

@@ -1,0 +1,36 @@
+JetFile: recovery.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          ANNOTATION_TARGET
+            PsiElement(param)('param')
+          PsiElement(COLON)(':')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann')
+    PsiErrorElement:Expecting 'constructor' keyword
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('B')

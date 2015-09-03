@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -43,14 +44,18 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
+    public data class ExplicitReceiverData(
+            val expression: JetExpression,
+            val callType: CallType
+    )
+
     public data class ReceiversData(
             public val receivers: Collection<ReceiverValue>,
             public val callType: CallType
@@ -60,18 +65,20 @@ public class ReferenceVariantsHelper(
         }
     }
 
+    @jvmOverloads
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
+            explicitReceiverData: ExplicitReceiverData? = getExplicitReceiverData(expression),
             filterOutJavaGettersAndSetters: Boolean = false,
             useRuntimeReceiverType: Boolean = false
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
-                = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
-                .filter(visibilityFilter)
+                = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, nameFilter, explicitReceiverData, useRuntimeReceiverType)
+                .filter { !it.isAnnotatedAsHidden() && visibilityFilter(it) }
 
-        variants = ShadowedDeclarationsFilter(context, resolutionFacade).filter(variants, expression)
+        variants = ShadowedDeclarationsFilter(context, resolutionFacade, expression, explicitReceiverData).filter(variants)
 
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
@@ -91,8 +98,9 @@ public class ReferenceVariantsHelper(
     private fun getReferenceVariantsNoVisibilityFilter(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
-            useRuntimeReceiverType: Boolean,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
+            explicitReceiverData: ExplicitReceiverData?,
+            useRuntimeReceiverType: Boolean
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
@@ -115,9 +123,8 @@ public class ReferenceVariantsHelper(
             smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
         }.toSet()
 
-        val pair = getExplicitReceiverData(expression)
-        if (pair != null) {
-            val (receiverExpression, callType) = pair
+        if (explicitReceiverData != null) {
+            val (receiverExpression, callType) = explicitReceiverData
 
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
@@ -247,9 +254,9 @@ public class ReferenceVariantsHelper(
     public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression): ReceiversData {
         val receiverData = getExplicitReceiverData(expression)
         if (receiverData != null) {
-            val receiverExpression = receiverData.first
+            val receiverExpression = receiverData.expression
             val expressionType = context.getType(receiverExpression) ?: return ReceiversData.Empty
-            return ReceiversData(listOf(ExpressionReceiver(receiverExpression, expressionType)), receiverData.second)
+            return ReceiversData(listOf(ExpressionReceiver(receiverExpression, expressionType)), receiverData.callType)
         }
         else {
             val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return ReceiversData.Empty
@@ -275,7 +282,7 @@ public class ReferenceVariantsHelper(
     }
 
     companion object {
-        public fun getExplicitReceiverData(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
+        public fun getExplicitReceiverData(expression: JetSimpleNameExpression): ExplicitReceiverData? {
             val receiverExpression = expression.getReceiverExpression() ?: return null
             val parent = expression.getParent()
             val callType = when (parent) {
@@ -299,7 +306,7 @@ public class ReferenceVariantsHelper(
 
                 else -> return null
             }
-            return receiverExpression to callType
+            return ExplicitReceiverData(receiverExpression, callType)
         }
     }
 }

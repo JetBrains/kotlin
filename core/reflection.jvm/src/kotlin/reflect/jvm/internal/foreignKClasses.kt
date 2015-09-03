@@ -27,7 +27,7 @@ import kotlin.reflect.jvm.internal.pcollections.HashPMap
 private var FOREIGN_K_CLASSES = HashPMap.empty<String, Any>()
 
 // This function is invoked on each reflection access to Java classes, properties, etc. Performance is critical here.
-fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
+fun <T : Any> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
     val name = jClass.getName()
     val cached = FOREIGN_K_CLASSES[name]
     if (cached is WeakReference<*>) {

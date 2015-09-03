@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="ProjectDictionaryState">
   <dictionary name="valentin">
     <words>
@@ -10,6 +9,7 @@
       <w>inserter</w>
       <w>negatable</w>
       <w>pparent</w>
+      <w>prioritizer</w>
       <w>processings</w>
       <w>rbrace</w>
       <w>rbracket</w>

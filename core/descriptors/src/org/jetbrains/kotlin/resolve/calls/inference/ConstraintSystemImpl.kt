@@ -458,14 +458,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun satisfyInitialConstraints(): Boolean {
-        fun JetType.substituteAndMakeNotNullable(): JetType? {
+        fun JetType.substituteAndMakeNullable(): JetType? {
             val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
             val result = substitutor.substitute(this, Variance.INVARIANT) ?: return null
-            return TypeUtils.makeNotNullable(result)
+            return TypeUtils.makeNullable(result)
         }
         return initialConstraints.all {
-            val resultSubType = it.subtype.substituteAndMakeNotNullable() ?: return false
-            val resultSuperType = it.superType.substituteAndMakeNotNullable() ?: return false
+            val resultSubType = it.subtype.substituteAndMakeNullable() ?: return false
+            val resultSuperType = it.superType.substituteAndMakeNullable() ?: return false
             when (it.kind) {
                 SUB_TYPE -> JetTypeChecker.DEFAULT.isSubtypeOf(resultSubType, resultSuperType)
                 EQUAL -> JetTypeChecker.DEFAULT.equalTypes(resultSubType, resultSuperType)

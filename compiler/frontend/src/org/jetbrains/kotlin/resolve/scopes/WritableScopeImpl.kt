@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 import org.jetbrains.kotlin.utils.Printer
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 // Reads from:
 // 1. Maps
@@ -34,18 +33,18 @@ import java.util.HashMap
 public class WritableScopeImpl @jvmOverloads constructor(
         outerScope: JetScope,
         private val ownerDeclarationDescriptor: DeclarationDescriptor,
-        private val redeclarationHandler: RedeclarationHandler,
+        override val redeclarationHandler: RedeclarationHandler,
         private val debugName: String,
         implicitReceiver: ReceiverParameterDescriptor? = null,
         private val labeledDeclaration: DeclarationDescriptor? = null
-) : AbstractScopeAdapter(), WritableScope {
+) : AbstractScopeAdapter(), WritableScope, WritableScopeStorage {
 
     override val workerScope: JetScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
 
-    private val addedDescriptors = SmartList<DeclarationDescriptor>()
+    override val addedDescriptors = SmartList<DeclarationDescriptor>()
 
-    private var functionsByName: MutableMap<Name, IntList>? = null
-    private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
+    override var functionsByName: MutableMap<Name, WritableScopeStorage.IntList>? = null
+    override var variablesAndClassifiersByName: MutableMap<Name, WritableScopeStorage.IntList>? = null
 
     private val implicitReceiverHierarchy = if (implicitReceiver != null)
         listOf(implicitReceiver) + super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
@@ -54,25 +53,24 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
     private var lastSnapshot: Snapshot? = null
 
-    private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
-
     override fun getContainingDeclaration() = ownerDeclarationDescriptor
 
-    override fun changeLockLevel(lockLevel: WritableScope.LockLevel): WritableScope {
+    private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
+
+    override fun changeLockLevel(lockLevel: WritableScope.LockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
         this.lockLevel = lockLevel
-        return this
     }
 
-    protected fun checkMayRead() {
+    private fun checkMayRead() {
         if (lockLevel != WritableScope.LockLevel.READING && lockLevel != WritableScope.LockLevel.BOTH) {
             throw IllegalStateException("cannot read with lock level " + lockLevel + " at " + toString())
         }
     }
 
-    protected fun checkMayWrite() {
+    private fun checkMayWrite() {
         if (lockLevel != WritableScope.LockLevel.WRITING && lockLevel != WritableScope.LockLevel.BOTH) {
             throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
         }
@@ -107,27 +105,8 @@ public class WritableScopeImpl @jvmOverloads constructor(
             superResult
     }
 
-    private fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
-        checkMayWrite()
-
-        val name = descriptor.getName()
-
-        val originalDescriptor = variableOrClassDescriptorByName(name)
-        if (originalDescriptor != null) {
-            redeclarationHandler.handleRedeclaration(originalDescriptor, descriptor)
-        }
-
-        val descriptorIndex = addDescriptor(descriptor)
-
-        if (variablesAndClassifiersByName == null) {
-            variablesAndClassifiersByName = HashMap()
-        }
-        //TODO: could not use += because of KT-8050
-        variablesAndClassifiersByName!![name] = variablesAndClassifiersByName!![name] + descriptorIndex
-
-    }
-
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
+        checkMayWrite()
         addVariableOrClassDescriptor(variableDescriptor)
     }
 
@@ -144,15 +123,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
     override fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
         checkMayWrite()
-
-        val descriptorIndex = addDescriptor(functionDescriptor)
-
-        if (functionsByName == null) {
-            functionsByName = HashMap(1)
-        }
-        val name = functionDescriptor.getName()
-        //TODO: could not use += because of KT-8050
-        functionsByName!![name] = functionsByName!![name] + descriptorIndex
+        super<WritableScopeStorage>.addFunctionDescriptor(functionDescriptor)
     }
 
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
@@ -162,6 +133,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
+        checkMayWrite()
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
@@ -175,40 +147,6 @@ public class WritableScopeImpl @jvmOverloads constructor(
     override fun getImplicitReceiversHierarchy() = implicitReceiverHierarchy
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = addedDescriptors
-
-    private fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
-        if (descriptorLimit == 0) return null
-
-        var list = variablesAndClassifiersByName?.get(name)
-        while (list != null) {
-            val descriptorIndex = list.last
-            if (descriptorIndex < descriptorLimit) {
-                return descriptorIndex.descriptorByIndex()
-            }
-            list = list.prev
-        }
-        return null
-    }
-
-    private fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
-        if (descriptorLimit == 0) return null
-
-        var list = functionsByName?.get(name)
-        while (list != null) {
-            if (list.last < descriptorLimit) {
-                return list.toDescriptors<FunctionDescriptor>()
-            }
-            list = list.prev
-        }
-        return null
-    }
-
-    private fun addDescriptor(descriptor: DeclarationDescriptor): Int {
-        addedDescriptors.add(descriptor)
-        return addedDescriptors.size() - 1
-    }
-
-    private fun Int.descriptorByIndex() = addedDescriptors[this]
 
     override fun toString(): String {
         return javaClass.getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration()
@@ -225,20 +163,6 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
         p.popIndent()
         p.println("}")
-    }
-
-    private class IntList(val last: Int, val prev: IntList?)
-
-    private fun IntList?.plus(value: Int) = IntList(value, this)
-
-    private fun <TDescriptor: DeclarationDescriptor> IntList.toDescriptors(): List<TDescriptor> {
-        val result = ArrayList<TDescriptor>(1)
-        var rest: IntList? = this
-        do {
-            result.add(rest!!.last.descriptorByIndex() as TDescriptor)
-            rest = rest.prev
-        } while (rest != null)
-        return result
     }
 
     private inner class Snapshot(val descriptorLimit: Int) : JetScope by this@WritableScopeImpl {

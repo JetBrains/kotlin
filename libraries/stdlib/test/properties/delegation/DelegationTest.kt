@@ -10,7 +10,7 @@ class NotNullVarTest() {
     }
 }
 
-private class NotNullVarTestGeneric<T>(val a1: String, val b1: T) {
+private class NotNullVarTestGeneric<T : Any>(val a1: String, val b1: T) {
     var a: String by Delegates.notNull()
     var b by Delegates.notNull<T>()
 

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -24,14 +26,13 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FunctionDescriptorUtil {
     private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
@@ -60,27 +61,31 @@ public class FunctionDescriptorUtil {
     }
 
     @NotNull
-    public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
+    public static LexicalScope getFunctionInnerScope(@NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
         return getFunctionInnerScope(outerScope, descriptor, redeclarationHandler);
     }
 
     @NotNull
-    public static JetScope getFunctionInnerScope(
-            @NotNull JetScope outerScope,
-            @NotNull FunctionDescriptor descriptor,
+    public static LexicalScope getFunctionInnerScope(
+            @NotNull LexicalScope outerScope,
+            @NotNull final FunctionDescriptor descriptor,
             @NotNull RedeclarationHandler redeclarationHandler
     ) {
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope", receiver, descriptor);
-        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
-            parameterScope.addClassifierDescriptor(typeParameter);
-        }
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            parameterScope.addVariableDescriptor(valueParameterDescriptor);
-        }
-        parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
-        return parameterScope;
+        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, "Function inner scope", redeclarationHandler,
+                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                        @Override
+                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                                            for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+                                                handler.addClassifierDescriptor(typeParameter);
+                                            }
+                                            for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
+                                                handler.addVariableDescriptor(valueParameterDescriptor);
+                                            }
+                                            return Unit.INSTANCE$;
+                                        }
+                                    });
     }
 
     public static void initializeFromFunctionType(

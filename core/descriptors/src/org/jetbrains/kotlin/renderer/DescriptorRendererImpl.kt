@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
@@ -334,23 +335,26 @@ internal class DescriptorRendererImpl(
             builder.append(if (FqName.ROOT.equalsTo(fqName)) "root package" else renderFqName(fqName))
         }
     }
-
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
+        var hasTargetedAnnotations = false
 
         val annotationsBuilder = StringBuilder {
-            for (annotation in annotated.getAnnotations()) {
+            for ((annotation, target) in annotated.getAnnotations().getAllAnnotations()) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
                 if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                    append(renderAnnotation(annotation)).append(" ")
+                    if (target != null && !hasTargetedAnnotations) {
+                        hasTargetedAnnotations = true
+                    }
+                    append(renderAnnotation(annotation, target)).append(" ")
                 }
             }
         }
 
-        if (!needBrackets) {
+        if (!needBrackets || hasTargetedAnnotations) {
             builder.append(annotationsBuilder)
         }
         else if (annotationsBuilder.length() > 0) {
@@ -363,8 +367,11 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderAnnotation(annotation: AnnotationDescriptor): String {
+    override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {
+            if (target != null) {
+                append("@" + target.renderName + ":")
+            }
             append(renderType(annotation.getType()))
             if (verbose) {
                 renderAndSortAnnotationArguments(annotation).joinTo(this, ", ", "(", ")")
@@ -548,7 +555,7 @@ internal class DescriptorRendererImpl(
 
         renderName(function, builder)
 
-        renderValueParameters(function, builder)
+        renderValueParameters(function.valueParameters, function.hasSynthesizedParameterNames(), builder)
 
         renderReceiverAfterName(function, builder)
 
@@ -594,7 +601,7 @@ internal class DescriptorRendererImpl(
             renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false)
         }
 
-        renderValueParameters(constructor, builder)
+        renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)
 
         if (secondaryConstructorsAsPrimary) {
             renderWhereSuffix(constructor.getTypeParameters(), builder)
@@ -618,25 +625,26 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String {
-        return StringBuilder { renderValueParameters(functionDescriptor, this) }.toString()
+    override fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String {
+        return StringBuilder { renderValueParameters(parameters, synthesizedParameterNames, this) }.toString()
     }
 
-    private fun renderValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
-        val includeNames = shouldRenderParameterNames(function)
-        valueParametersHandler.appendBeforeValueParameters(function, builder)
-        for (parameter in function.getValueParameters()) {
-            valueParametersHandler.appendBeforeValueParameter(parameter, builder)
+    private fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean, builder: StringBuilder) {
+        val includeNames = shouldRenderParameterNames(synthesizedParameterNames)
+        val parameterCount = parameters.size()
+        valueParametersHandler.appendBeforeValueParameters(parameterCount, builder)
+        for ((index, parameter) in parameters.withIndex()) {
+            valueParametersHandler.appendBeforeValueParameter(parameter, index, parameterCount, builder)
             renderValueParameter(parameter, includeNames, builder, false)
-            valueParametersHandler.appendAfterValueParameter(parameter, builder)
+            valueParametersHandler.appendAfterValueParameter(parameter, index, parameterCount, builder)
         }
-        valueParametersHandler.appendAfterValueParameters(function, builder)
+        valueParametersHandler.appendAfterValueParameters(parameterCount, builder)
     }
 
-    private fun shouldRenderParameterNames(function: FunctionDescriptor): Boolean {
+    private fun shouldRenderParameterNames(synthesizedParameterNames: Boolean): Boolean {
         when (parameterNameRenderingPolicy) {
             ParameterNameRenderingPolicy.ALL -> return true
-            ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !function.hasSynthesizedParameterNames()
+            ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !synthesizedParameterNames
             ParameterNameRenderingPolicy.NONE -> return false
         }
     }
@@ -724,13 +732,18 @@ internal class DescriptorRendererImpl(
 
     /* CLASSES */
     private fun renderClass(klass: ClassDescriptor, builder: StringBuilder) {
+        val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
+
         if (!startFromName) {
             renderAnnotations(klass, builder)
-            renderVisibility(klass.getVisibility(), builder)
-            if (!(klass.getKind() == ClassKind.INTERFACE && klass.getModality() == Modality.ABSTRACT || klass.getKind().isSingleton() && klass.getModality() == Modality.FINAL)) {
-                renderModality(klass.getModality(), builder)
+            if (!isEnumEntry) {
+                renderVisibility(klass.visibility, builder)
             }
-            renderInner(klass.isInner(), builder)
+            if (!(klass.kind == ClassKind.INTERFACE && klass.modality == Modality.ABSTRACT ||
+                  klass.kind.isSingleton && klass.modality == Modality.FINAL)) {
+                renderModality(klass.modality, builder)
+            }
+            renderInner(klass.isInner, builder)
             renderClassKindPrefix(klass, builder)
         }
 
@@ -742,17 +755,19 @@ internal class DescriptorRendererImpl(
             renderCompanionObjectName(klass, builder)
         }
 
-        val typeParameters = klass.getTypeConstructor().getParameters()
+        if (isEnumEntry) return
+
+        val typeParameters = klass.typeConstructor.getParameters()
         renderTypeParameters(typeParameters, builder, false)
 
-        if (!klass.getKind().isSingleton() && classWithPrimaryConstructor) {
-            val primaryConstructor = klass.getUnsubstitutedPrimaryConstructor()
+        if (!klass.kind.isSingleton && classWithPrimaryConstructor) {
+            val primaryConstructor = klass.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
                 builder.append(" ")
                 renderAnnotations(primaryConstructor, builder, true)
-                renderVisibility(primaryConstructor.getVisibility(), builder)
+                renderVisibility(primaryConstructor.visibility, builder)
                 builder.append("constructor")
-                renderValueParameters(primaryConstructor, builder)
+                renderValueParameters(primaryConstructor.valueParameters, primaryConstructor.hasSynthesizedParameterNames(), builder)
             }
         }
 

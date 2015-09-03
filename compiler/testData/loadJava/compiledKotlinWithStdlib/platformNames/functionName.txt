@@ -1,6 +1,6 @@
 package test
 
-test.A(s = "2") internal var v: kotlin.Int
+@field:test.A(s = "2") internal var v: kotlin.Int
     kotlin.platform.platformName(name = "vget") test.A(s = "3") internal fun <get-v>(): kotlin.Int
     kotlin.platform.platformName(name = "vset") test.A(s = "4") internal fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 kotlin.platform.platformName(name = "bar") test.A(s = "1") internal fun foo(): kotlin.String

@@ -18,4 +18,6 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 
-public class KotlinJvmBinarySourceElement(public val binaryClass: KotlinJvmBinaryClass) : SourceElement
+public class KotlinJvmBinarySourceElement(public val binaryClass: KotlinJvmBinaryClass) : SourceElement {
+    override fun toString() = javaClass.name + ": " + binaryClass.toString()
+}

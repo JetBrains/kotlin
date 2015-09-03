@@ -33,6 +33,9 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val constructors: Collection<KFunction<Any>>
         get() = error()
 
+    override val nestedClasses: Collection<KClass<*>>
+        get() = error()
+
     override val annotations: List<Annotation>
         get() = error()
 

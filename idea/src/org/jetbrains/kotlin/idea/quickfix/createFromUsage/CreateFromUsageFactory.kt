@@ -29,22 +29,22 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-public abstract class CreateFromUsageFactory<E : JetElement, D> : JetIntentionActionsFactory() {
+public abstract class CreateFromUsageFactory<E : JetElement, D : Any> : JetIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
     protected open fun createQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D
+            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D?
     ): QuickFixWithDelegateFactory? = null
 
     protected open fun createQuickFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D
+            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D?
     ): List<QuickFixWithDelegateFactory> = createQuickFix(originalElementPointer, diagnostic, quickFixDataFactory).singletonOrEmptyList()
 
-    protected abstract fun createQuickFixData(element: E, diagnostic: Diagnostic): D
+    protected abstract fun createQuickFixData(element: E, diagnostic: Diagnostic): D?
 
     override final fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagnosticMessage = DefaultErrorMessages.render(diagnostic)

@@ -31,7 +31,7 @@ public class JavaClassFunction : IntrinsicMethod() {
         return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 codegen.putReifierMarkerIfTypeIsReifiedParameter(javaClass, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME)
-                putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(javaClass))
+                putJavaLangClassInstance(v, codegen.getState().typeMapper.mapType(javaClass))
             }
         }
     }

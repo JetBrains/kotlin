@@ -311,6 +311,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("DoNotInsertTypeArguments.kt")
+    public void testDoNotInsertTypeArguments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/DoNotInsertTypeArguments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DoNotReplaceOnEnter.kt")
     public void testDoNotReplaceOnEnter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/DoNotReplaceOnEnter.kt");
@@ -410,6 +416,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("InnerClassInstantiation2.kt")
     public void testInnerClassInstantiation2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/InnerClassInstantiation2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InsertTypeArguments.kt")
+    public void testInsertTypeArguments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/InsertTypeArguments.kt");
         doTest(fileName);
     }
 

@@ -1,0 +1,3 @@
+package
+
+internal fun </*0*/ E : kotlin.String?, /*1*/ T : (kotlin.CharSequence.() -> kotlin.Unit)?> foo(/*0*/ x: E, /*1*/ y: T): kotlin.Unit

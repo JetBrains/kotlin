@@ -21,6 +21,7 @@ internal final class A3 {
 
 internal final enum class A4 : kotlin.Enum<A4> {
     private constructor A4()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A4): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

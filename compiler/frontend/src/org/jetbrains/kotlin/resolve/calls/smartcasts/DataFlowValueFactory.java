@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableNothing;
 import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
@@ -53,7 +54,7 @@ public class DataFlowValueFactory {
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(expression, type, resolutionContext.trace.getBindingContext(),
-                                   resolutionContext.scope.getContainingDeclaration());
+                                   resolutionContext.scope.getOwnerDescriptor());
     }
 
     @NotNull
@@ -71,6 +72,20 @@ public class DataFlowValueFactory {
         if (isNullableNothing(type)) {
             return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
         }
+
+        if (ExpressionTypingUtils.isExclExclExpression(JetPsiUtil.deparenthesize(expression))) {
+            // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
+            // by calling `getImmanentNullability` (as it happens below).
+            //
+            // But there are some problem with types built on type parameters, e.g.
+            // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
+            return new DataFlowValue(expression,
+                                     type,
+                                     /* stableIdentifier  = */false,
+                                     /* uncapturedLocalVariable = */false,
+                                     Nullability.NOT_NULL);
+        }
+
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule);
         return new DataFlowValue(result == NO_IDENTIFIER_INFO ? expression : result.id,
                                  type,
@@ -91,7 +106,7 @@ public class DataFlowValueFactory {
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(receiverValue, resolutionContext.trace.getBindingContext(),
-                                   resolutionContext.scope.getContainingDeclaration());
+                                   resolutionContext.scope.getOwnerDescriptor());
     }
 
     @NotNull
@@ -103,8 +118,7 @@ public class DataFlowValueFactory {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
             JetType type = receiverValue.getType();
-            boolean nullable = type.isMarkedNullable() || TypeUtils.hasNullableSuperType(type);
-            return new DataFlowValue(receiverValue, type, nullable, false, Nullability.NOT_NULL);
+            return new DataFlowValue(receiverValue, type, true, false, getImmanentNullability(type));
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
             return createDataFlowValue((ThisReceiver) receiverValue);

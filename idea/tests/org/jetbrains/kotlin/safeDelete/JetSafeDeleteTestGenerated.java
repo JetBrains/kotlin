@@ -886,6 +886,12 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("dataClassComponent.kt")
+        public void testDataClassComponent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/dataClassComponent.kt");
+            doValueParameterTest(fileName);
+        }
+
         @TestMetadata("defaultParam1.kt")
         public void testDefaultParam1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam1.kt");

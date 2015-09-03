@@ -37,7 +37,7 @@ internal final class Test2</*0*/ A, /*1*/ B, /*2*/ C> {
 internal final class Test3</*0*/ in A, /*1*/ B, /*2*/ C> {
     public constructor Test3</*0*/ in A, /*1*/ B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
     private final val bar: kotlin.Any
-    private final val bas: [ERROR : Type for bas()]
+    private final val bas: kotlin.Int
     internal final val bas2: kotlin.Int
     internal final val foo: kotlin.Any
     internal final fun bar(): kotlin.Int
@@ -54,7 +54,7 @@ internal final class Test3</*0*/ in A, /*1*/ B, /*2*/ C> {
 internal final class Test4</*0*/ A, /*1*/ out B, /*2*/ C> {
     public constructor Test4</*0*/ A, /*1*/ out B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
     private final val bar: kotlin.Any
-    private final val bas: [ERROR : Type for bas()]
+    private final val bas: kotlin.Int
     internal final val bas2: kotlin.Int
     internal final val foo: kotlin.Any
     internal final fun bar(): kotlin.Int

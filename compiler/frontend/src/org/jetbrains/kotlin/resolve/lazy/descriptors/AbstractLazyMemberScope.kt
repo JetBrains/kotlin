@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -94,7 +94,7 @@ protected constructor(
         return result.toReadOnlyList()
     }
 
-    protected abstract fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): JetScope
+    protected abstract fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): LexicalScope
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 

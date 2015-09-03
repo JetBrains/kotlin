@@ -4,7 +4,7 @@ abstract class A {
     abstract fun f(): String
 }
 
-inline fun<reified T> foo(): A {
+inline fun<reified T : Any> foo(): A {
     return object : A() {
         override fun f(): String {
             return javaClass<T>().getName()

@@ -1,0 +1,20 @@
+JetFile: single.kt
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('bar')
+  IMPORT_LIST
+    <empty list>

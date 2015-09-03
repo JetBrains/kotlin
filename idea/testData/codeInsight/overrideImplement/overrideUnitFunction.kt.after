@@ -1,5 +1,5 @@
 interface A {
-    fun foo(value : String) : Unit = 0
+    fun foo(value : String) : Unit {}
 }
 
 class C : A {

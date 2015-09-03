@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.test;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -49,6 +50,9 @@ public final class ReferenceUtils {
 
         String presentableText = presentation.getPresentableText();
         String locationString = presentation.getLocationString();
+        if (locationString == null && element.getParent() instanceof PsiAnonymousClass) {
+            locationString = "<anonymous>";
+        }
         return locationString == null || navigationElement instanceof PsiPackage
                // for PsiPackage, presentableText is FQ name of current package
                ? presentableText

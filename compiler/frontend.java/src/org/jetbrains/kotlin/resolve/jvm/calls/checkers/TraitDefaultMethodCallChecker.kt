@@ -38,7 +38,7 @@ public class TraitDefaultMethodCallChecker : CallChecker {
 
         if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isTrait(containerDescriptor)) {
             //is java interface default method called from trait
-            val classifier = DescriptorUtils.getParentOfType(context.scope.getContainingDeclaration(), javaClass<ClassifierDescriptor>())
+            val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, javaClass<ClassifierDescriptor>())
 
             if (classifier != null && DescriptorUtils.isTrait(classifier)) {
                 context.trace.report(

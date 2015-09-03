@@ -1,6 +1,6 @@
 import kotlin.test.assertEquals
 
-inline fun<reified T> javaClassName(): String {
+inline fun<reified T : Any> javaClassName(): String {
     return javaClass<T>().getName()
 }
 

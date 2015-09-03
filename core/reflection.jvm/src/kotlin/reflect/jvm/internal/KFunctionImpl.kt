@@ -49,14 +49,14 @@ open class KFunctionImpl protected constructor(
 
     override val name: String get() = descriptor.name.asString()
 
+    private fun isDeclared(): Boolean = Visibilities.isPrivate(descriptor.visibility)
+
     override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction ->
-                if (name == "<init>") container.findConstructorBySignature(jvmSignature.signature, jvmSignature.nameResolver,
-                                                                           Visibilities.isPrivate(descriptor.visibility))
-                else container.findMethodBySignature(jvmSignature.proto, jvmSignature.signature, jvmSignature.nameResolver,
-                                                     Visibilities.isPrivate(descriptor.visibility))
+                if (name == "<init>") container.findConstructorBySignature(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
+                else container.findMethodBySignature(jvmSignature.proto, jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
             is BuiltInFunction -> jvmSignature.getMember(container)
@@ -66,14 +66,44 @@ open class KFunctionImpl protected constructor(
             is Constructor<*> -> FunctionCaller.Constructor(member)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) -> FunctionCaller.InstanceMethod(member)
-
                 descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
-                descriptor.annotations.findAnnotation(JVM_STATIC) != null->
-                    FunctionCaller.PlatformStaticInObject(member)
+                descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
+                    FunctionCaller.JvmStaticInObject(member)
 
                 else -> FunctionCaller.StaticMethod(member)
             }
-            else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor")
+            else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor (member = $member)")
+        }
+    }
+
+    override val defaultCaller: FunctionCaller<*>? by ReflectProperties.lazySoft {
+        val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
+        val member: Member? = when (jvmSignature) {
+            is KotlinFunction -> {
+                if (name == "<init>") {
+                    container.findDefaultConstructor(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
+                }
+                else {
+                    val isMember = !Modifier.isStatic(caller.member.modifiers)
+                    container.findDefaultMethod(jvmSignature.signature, jvmSignature.nameResolver, isMember, isDeclared())
+                }
+            }
+            else -> {
+                // Java methods, Java constructors and built-ins don't have $default methods
+                null
+            }
+        }
+
+        when (member) {
+            is Constructor<*> -> FunctionCaller.Constructor(member)
+            is Method -> when {
+                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
+                descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
+                    FunctionCaller.JvmStaticInObject(member)
+
+                else -> FunctionCaller.StaticMethod(member)
+            }
+            else -> null
         }
     }
 

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler;
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -89,7 +89,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
                 }
             }
 
-            new ImplementMethodsHandler().invoke(psiFile.getProject(), editor, psiFile, true);
+            new ImplementMembersHandler().invoke(psiFile.getProject(), editor, psiFile, true);
         }
     }
     

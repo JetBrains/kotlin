@@ -77,6 +77,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Inherited")
+    public void testInherited() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Inherited/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");

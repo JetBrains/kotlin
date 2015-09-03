@@ -40,7 +40,7 @@ fun test5() {
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    <!TYPE_MISMATCH!>l<!>.sure<T>()
+    <!TYPE_MISMATCH!>l<!>.sure<<!UPPER_BOUND_VIOLATED!>T<!>>()
 }
 
 

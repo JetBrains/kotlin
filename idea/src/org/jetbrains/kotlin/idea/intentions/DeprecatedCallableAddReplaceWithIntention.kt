@@ -202,7 +202,6 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression]
                              ?: bindingContext[BindingContext.REFERENCE_TARGET, expression]
                              ?: return
-                if (!target.canBeReferencedViaImport()) return
                 if (target.isExtension || expression.getReceiverExpression() == null) {
                     val fqName = target.importableFqName ?: return
                     if (!importHelper.isImportedWithDefault(ImportPath(fqName, false), file)

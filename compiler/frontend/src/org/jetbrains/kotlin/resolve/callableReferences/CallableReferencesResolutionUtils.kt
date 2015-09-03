@@ -16,35 +16,43 @@
 
 package org.jetbrains.kotlin.resolve.callableReferences
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
+import org.jetbrains.kotlin.diagnostics.Errors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
+import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.context.*
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import org.jetbrains.kotlin.utils.ThrowingList
-
-import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.ThrowingList
 
 public fun resolveCallableReferenceReceiverType(
         callableReferenceExpression: JetCallableReferenceExpression,
@@ -95,9 +103,9 @@ public fun resolvePossiblyAmbiguousCallableReference(
 ): OverloadResolutionResults<CallableDescriptor>? {
     val reference = callableReferenceExpression.getCallableReference()
 
-    fun resolveInScope(traceTitle: String, scope: JetScope): OverloadResolutionResults<CallableDescriptor> {
+    fun resolveInScope(traceTitle: String, staticScope: JetScope): OverloadResolutionResults<CallableDescriptor> {
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
-        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(scope)
+        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(staticScope.memberScopeAsFileScope())
         val results = resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, newContext, resolutionMode, callResolver)
         resolutionMode.acceptResolution(results, temporaryTraceAndCache)
         return results
@@ -177,7 +185,7 @@ private fun createReflectionTypeForProperty(
 
 private fun bindFunctionReference(expression: JetCallableReferenceExpression, referenceType: JetType, context: ResolutionContext<*>) {
     val functionDescriptor = AnonymousFunctionDescriptor(
-            context.scope.getContainingDeclaration(),
+            context.scope.ownerDescriptor,
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
             expression.toSourceElement())
@@ -188,7 +196,7 @@ private fun bindFunctionReference(expression: JetCallableReferenceExpression, re
 }
 
 private fun bindPropertyReference(expression: JetCallableReferenceExpression, referenceType: JetType, context: ResolutionContext<*>) {
-    val localVariable = LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),
+    val localVariable = LocalVariableDescriptor(context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"),
                                                 referenceType, /* mutable = */ false, expression.toSourceElement())
 
     context.trace.record(BindingContext.VARIABLE, expression, localVariable)

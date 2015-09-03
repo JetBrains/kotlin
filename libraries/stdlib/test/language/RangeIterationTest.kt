@@ -5,7 +5,7 @@ import kotlin.test.*
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationTest {
-    private fun <N> doTest(
+    private fun <N : Any> doTest(
             sequence: Progression<N>,
             expectedStart: N,
             expectedEnd: N,

@@ -1,4 +1,4 @@
-a public class Annotations private @a constructor(private @a val c1: Int, @a val c2: Int) {
+a public class Annotations private @a constructor(private @property:a @param:a val c1: Int, @property:a @param:a val c2: Int) {
 
     protected a fun f() {
     }

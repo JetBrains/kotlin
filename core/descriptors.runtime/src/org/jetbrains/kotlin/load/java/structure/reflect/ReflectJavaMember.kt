@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
+import java.lang.reflect.Method
 import java.lang.reflect.Type
-import java.util.ArrayList
+import java.util.*
 
 public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
     internal abstract val member: Member
@@ -42,9 +43,12 @@ public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnot
             isVararg: Boolean
     ): List<JavaValueParameter> {
         val result = ArrayList<JavaValueParameter>(parameterTypes.size())
+        val names = Java8ParameterNamesLoader.loadParameterNames(member)
         for (i in parameterTypes.indices) {
+            val type = ReflectJavaType.create(parameterTypes[i])
+            val name = names?.run { get(i) }
             val isParamVararg = isVararg && i == parameterTypes.lastIndex
-            result.add(ReflectJavaValueParameter(ReflectJavaType.create(parameterTypes[i]), parameterAnnotations[i], isParamVararg))
+            result.add(ReflectJavaValueParameter(type, parameterAnnotations[i], name, isParamVararg))
         }
         return result
     }
@@ -54,4 +58,41 @@ public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnot
     override fun hashCode() = member.hashCode()
 
     override fun toString() = javaClass.getName() + ": " + member
+}
+
+private object Java8ParameterNamesLoader {
+    class Cache(val getParameters: Method?, val getName: Method?)
+
+    var cache: Cache? = null
+
+    fun buildCache(member: Member): Cache {
+        // This should be either j.l.reflect.Method or j.l.reflect.Constructor
+        val methodOrConstructorClass = member.javaClass
+
+        val getParameters = try {
+            methodOrConstructorClass.getMethod("getParameters")
+        }
+        catch (e: NoSuchMethodException) {
+            return Cache(null, null)
+        }
+
+        val parameterClass = methodOrConstructorClass.safeClassLoader.loadClass("java.lang.reflect.Parameter")
+
+        return Cache(getParameters, parameterClass.getMethod("getName"))
+    }
+
+    fun loadParameterNames(member: Member): List<String>? {
+        var cache = cache
+        if (cache == null) {
+            cache = buildCache(member)
+            this.cache = cache
+        }
+
+        val getParameters = cache.getParameters ?: return null
+        val getName = cache.getName ?: return null
+
+        return (getParameters(member) as Array<*>).map { param ->
+            getName(param) as String
+        }
+    }
 }

@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Array
 
-public val Class<*>.classLoader: ClassLoader
-    get() = getClassLoader() ?: ClassLoader.getSystemClassLoader()
+public val Class<*>.safeClassLoader: ClassLoader
+    get() = classLoader ?: ClassLoader.getSystemClassLoader()
 
 public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         javaClass<Enum<*>>().isAssignableFrom(this)

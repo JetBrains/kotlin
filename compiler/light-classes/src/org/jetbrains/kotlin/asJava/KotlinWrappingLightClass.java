@@ -149,6 +149,9 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
             @Override
             public PsiMethod invoke(PsiMethod method) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
+                if (declaration instanceof JetPropertyAccessor) {
+                    declaration = PsiTreeUtil.getParentOfType(declaration, JetProperty.class);
+                }
 
                 if (declaration != null) {
                     return !isTraitFakeOverride(declaration) ?

@@ -61,6 +61,6 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
 
     @Override
     public String toString() {
-        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this);
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this, null);
     }
 }

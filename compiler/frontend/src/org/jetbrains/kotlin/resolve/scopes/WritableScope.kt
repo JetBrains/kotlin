@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import com.google.common.collect.Multimap
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 public interface WritableScope : JetScope {
     public enum class LockLevel {
@@ -29,7 +29,7 @@ public interface WritableScope : JetScope {
 
     public fun takeSnapshot(): JetScope
 
-    public fun changeLockLevel(lockLevel: LockLevel): WritableScope
+    public fun changeLockLevel(lockLevel: LockLevel)
 
     public fun addVariableDescriptor(variableDescriptor: VariableDescriptor)
 

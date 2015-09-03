@@ -116,6 +116,39 @@ Erase(A) = Raw(A) // `A` is a type constructor without parameters
                   // then it becomes `Foo<(raw) Any!>` inside Erase(A)
 ```
 
+## Unsafe covariant conversions
+
+In case of platform collections their upper bound contains covariant parameter, which means they may behave covariantly even it doesn't meant to do so.
+
+Example:
+```java
+class JavaClass {
+ void addObject(List<Object> x) {
+  x.add(new Object());
+ }
+}
+```
+
+```kotlin
+val x: MutableList<String> = arrayListOf()
+JavaClass.addObject(x) // Ok
+x[0].length() // ClassCastException
+```
+
+This happens because `MutableList<String>` <: `List<String>` <: `List<Any>` and by subtyping rule for flexible types `MutableList<String>` <: `(Mutable)Collection<Any!>!` follows.
+
+While it's legal from point of view of type system, in most cases such conversion is unintended and must be prohibited when being made implicitly.
+
+So implicit covariant conversion by i-th argument from type `source` to `target` is prohibited when:
+- `target` is flexible type with invariant i-th *parameter* of lower bound (when same parameter in upper bound may be covariant)
+- i-th *argument* of `target`'s lower bound is invariant (which means it declared as invariant in Java)
+- type of i-th argument of `source` is not *equal* to same argument in `target`'s lower bound.
+
+NOTE: Such conversion still may be done explicitly, with covariant upcast. E.g. for upper case:
+ ```
+ JavaClass.addObject(x as List<Any>) // No unchecked cast warning
+ ```
+
 ## Overriding
 
 When overriding a method from a Java class, one can not use flexible type, only replace them with denotable Kotlin types:

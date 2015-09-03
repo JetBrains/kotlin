@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import java.util.Collections
-import java.util.HashSet
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import java.util.*
 
 public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
@@ -192,7 +192,7 @@ fun DeclarationDescriptor.getContainingScope(bindingContext: BindingContext): Je
     else {
         val containingDescriptor = getContainingDeclaration() ?: return null
         return when (containingDescriptor) {
-            is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
+            is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution().asJetScope()
             is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
             else -> null
         }

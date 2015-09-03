@@ -9,7 +9,7 @@ interface A {
 
 fun box(): String {
     val x: A = object : A {
-        private inline fun <reified T> localClassName(): String = javaClass<T>().getName()
+        private inline fun <reified T : Any> localClassName(): String = javaClass<T>().getName()
         override fun f(): String = foo { localClassName<String>() }
         override fun g(): String = foo { localClassName<Int>() }
     }

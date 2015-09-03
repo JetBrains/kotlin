@@ -23,16 +23,16 @@ public fun createContainer(id: String, init: StorageComponentContainer.() -> Uni
     return c
 }
 
-public inline fun <reified T> StorageComponentContainer.useImpl() {
+public inline fun <reified T : Any> StorageComponentContainer.useImpl() {
     registerSingleton(javaClass<T>())
 }
 
-public inline fun <reified T> ComponentProvider.get(): T {
+public inline fun <reified T : Any> ComponentProvider.get(): T {
     return getService(javaClass<T>())
 }
 
 @suppress("UNCHECKED_CAST")
-public fun <T> ComponentProvider.getService(request: Class<T>): T {
+public fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
     return resolve(request)!!.getValue() as T
 }
 
@@ -40,6 +40,6 @@ public fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
-public inline fun <reified T> ComponentProvider.get(thisRef: Any?, desc: PropertyMetadata): T {
+public inline fun <reified T : Any> ComponentProvider.get(thisRef: Any?, desc: PropertyMetadata): T {
     return getService(javaClass<T>())
 }

@@ -38,13 +38,11 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.DebuggerUtils;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
@@ -233,12 +231,15 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
             };
 
-            state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+            state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST,
                                         resolutionFacade.getModuleDescriptor(), bindingContext,
-                                        toProcess, !enableAssertions, !enableAssertions,
+                                        toProcess,
+                                        !enableAssertions,
+                                        !enableAssertions,
                                         generateClassFilter,
-                                        !enableInline, !enableOptimization, null, null,
-                                        sink, null);
+                                        !enableInline,
+                                        !enableOptimization,
+                                        sink);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (ProcessCanceledException e) {

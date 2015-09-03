@@ -1,0 +1,63 @@
+JetFile: nonFIleAnnotationBeforePackage.kt
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace('\n')
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    PsiErrorElement:Expected annotation identifier after ':'
+      PsiElement(AT)('@')
+      PsiElement(IDENTIFIER)('file')
+      PsiElement(COLON)(':')
+    PsiWhiteSpace('\n')
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      PsiErrorElement:Expected annotation target before ':'
+        PsiElement(COLON)(':')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('baz')
+    PsiWhiteSpace('\n')
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      PsiErrorElement:Expected annotation target before ':'
+        PsiElement(IDENTIFIER)('fil')
+      PsiElement(COLON)(':')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ann')
+    PsiWhiteSpace('\n')
+    PsiErrorElement:Expected annotation identifier after ':'
+      PsiElement(AT)('@')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('boo')
+  IMPORT_LIST
+    <empty list>

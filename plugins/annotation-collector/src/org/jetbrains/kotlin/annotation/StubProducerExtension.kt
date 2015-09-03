@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.Progress
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,24 +43,17 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
         val generationState = GenerationState(
                 project,
                 StubClassBuilderFactory(),
-                Progress.DEAF,
                 module,
                 bindingContext,
                 files.toArrayList(),
-                /*disableCallAssertions =*/ false,
-                /*disableParamAssertions =*/ false,
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                /*disableInline =*/ false,
-                /*disableOptimization =*/ false,
-                /*packagesWithObsoleteParts =*/ null,
-                /*moduleId =*/ null,
-                forExtraDiagnostics,
-                /*outDirectory =*/ null)
+                disableCallAssertions = false,
+                disableParamAssertions = false,
+                diagnostics = forExtraDiagnostics)
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         if (!stubsOutputDir.exists()) stubsOutputDir.mkdirs()
-        generationState.getFactory().writeAllTo(stubsOutputDir)
+        generationState.factory.writeAllTo(stubsOutputDir)
 
         generationState.destroy()
         return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)

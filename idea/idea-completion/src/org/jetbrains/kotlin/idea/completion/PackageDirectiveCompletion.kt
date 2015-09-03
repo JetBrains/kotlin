@@ -53,8 +53,9 @@ object PackageDirectiveCompletion {
             val bindingContext = resolutionFacade.analyze(expression)
 
             val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, { true }).getPackageReferenceVariants(expression, prefixMatcher.asNameFilter())
+            val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(expectedInfosCalculator = { emptyList() }))
             for (variant in variants) {
-                val lookupElement = LookupElementFactory(resolutionFacade, listOf()).createLookupElement(variant, false)
+                val lookupElement = lookupElementFactory.createLookupElement(variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
                     result.addElement(lookupElement)
                 }

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -69,7 +68,7 @@ public open class DescriptorMemberChooserObject(
     companion object {
         private val MEMBER_RENDERER = DescriptorRenderer.withOptions {
             withDefinedIn = false
-            modifiers = emptySet<DescriptorRendererModifier>()
+            modifiers = emptySet()
             startFromName = true
             nameShortness = NameShortness.SHORT
         }

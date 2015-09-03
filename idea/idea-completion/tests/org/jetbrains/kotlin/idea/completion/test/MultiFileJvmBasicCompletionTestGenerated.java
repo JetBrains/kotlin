@@ -125,6 +125,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("HiddenDeclarations")
+    public void testHiddenDeclarations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/HiddenDeclarations/");
+        doTest(fileName);
+    }
+
     @TestMetadata("InImportedFunctionLiteralParameter")
     public void testInImportedFunctionLiteralParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/InImportedFunctionLiteralParameter/");

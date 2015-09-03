@@ -32,7 +32,7 @@ public class Services private constructor(private val map: Map<Class<*>, Any>) {
 
         private val map = HashMap<Class<*>, Any>()
 
-        public fun <T> register(interfaceClass: Class<T>, implementation: T): Builder {
+        public fun <T : Any> register(interfaceClass: Class<T>, implementation: T): Builder {
             map.put(interfaceClass, implementation)
             return this
         }

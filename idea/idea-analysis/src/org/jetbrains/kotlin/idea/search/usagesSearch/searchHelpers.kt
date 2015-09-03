@@ -76,7 +76,7 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
 }
 
 public fun PsiNamedElement.getClassNameForCompanionObject(): String? {
-    return if (this is JetObjectDeclaration) {
+    return if (this is JetObjectDeclaration && this.isCompanion()) {
         getNonStrictParentOfType<JetClass>()?.getName()
     } else {
         null

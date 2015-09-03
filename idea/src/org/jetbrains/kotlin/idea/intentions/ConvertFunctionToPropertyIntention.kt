@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -36,9 +37,6 @@ import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -51,7 +49,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import java.util.ArrayList
+import java.util.*
 
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(javaClass(), "Convert function to property"), LowPriorityAction {
     private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
@@ -128,7 +126,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
 
-                val usages = DefaultSearchHelper<PsiNamedElement>().newRequest(UsagesSearchTarget(callable)).search()
+                val usages = ReferencesSearch.search(callable)
                 for (usage in usages) {
                     if (usage is JetSimpleNameReference) {
                         val callElement = usage.expression.getParentOfTypeAndBranch<JetCallElement> { getCalleeExpression() }

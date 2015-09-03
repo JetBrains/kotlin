@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class FunctionReference
@@ -79,6 +80,11 @@ public class FunctionReference
 
     @Override
     public Object call(@NotNull Object... args) {
+        throw error();
+    }
+
+    @Override
+    public Object callBy(@NotNull Map args) {
         throw error();
     }
 

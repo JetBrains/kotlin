@@ -32,7 +32,7 @@ class ReversedViewsTest {
 
     test fun testBehavior() {
         val original = listOf(2L, 3L, Long.MAX_VALUE)
-        val reversed = original.reverse()
+        val reversed = original.reversed()
         compare(reversed, original.asReversed()) {
             listBehavior()
         }

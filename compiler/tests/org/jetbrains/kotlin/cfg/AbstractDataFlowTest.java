@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableInitState;
+import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
 import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
 
 public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
@@ -42,7 +42,7 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        final Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers =
+        final Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
@@ -54,8 +54,8 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @Override
             public String invoke(Instruction instruction, Instruction next, Instruction prev) {
                 StringBuilder result = new StringBuilder();
-                Edges<Map<VariableDescriptor, VariableInitState>> initializersEdges = variableInitializers.get(instruction);
-                Edges<Map<VariableDescriptor, VariableInitState>> previousInitializersEdges = variableInitializers.get(prev);
+                Edges<Map<VariableDescriptor, VariableControlFlowState>> initializersEdges = variableInitializers.get(instruction);
+                Edges<Map<VariableDescriptor, VariableControlFlowState>> previousInitializersEdges = variableInitializers.get(prev);
                 String initializersData = "";
                 if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
                     initializersData = dumpEdgesData(initPrefix, initializersEdges);
@@ -75,11 +75,11 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     private static int countDataColumnWidth(
             @NotNull String prefix,
             @NotNull List<Instruction> instructions,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> data
+            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> data
     ) {
         int maxWidth = 0;
         for (Instruction instruction : instructions) {
-            Edges<Map<VariableDescriptor, VariableInitState>> edges = data.get(instruction);
+            Edges<Map<VariableDescriptor, VariableControlFlowState>> edges = data.get(instruction);
             if (edges == null) continue;
             int length = dumpEdgesData(prefix, edges).length();
             if (maxWidth < length) {

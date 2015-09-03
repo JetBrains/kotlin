@@ -28,7 +28,7 @@ import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableInitState;
+import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
@@ -302,7 +302,7 @@ public class JetFlowInformationProvider {
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> initializers =
+        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
@@ -311,12 +311,12 @@ public class JetFlowInformationProvider {
 
         PseudocodeTraverserPackage.traverse(
                 pseudocode, FORWARD, initializers,
-                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableInitState>>() {
+                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableControlFlowState>>() {
                     @Override
                     public void execute(
                             @NotNull Instruction instruction,
-                            @Nullable Map<VariableDescriptor, VariableInitState> in,
-                            @Nullable Map<VariableDescriptor, VariableInitState> out
+                            @Nullable Map<VariableDescriptor, VariableControlFlowState> in,
+                            @Nullable Map<VariableDescriptor, VariableControlFlowState> out
                     ) {
                         assert in != null && out != null;
                         VariableInitContext ctxt =
@@ -356,7 +356,7 @@ public class JetFlowInformationProvider {
     public void recordInitializedVariables() {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> initializers =
+        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
@@ -372,14 +372,14 @@ public class JetFlowInformationProvider {
         if (!(element instanceof JetSimpleNameExpression)) return;
 
 
-        boolean isInitialized = ctxt.exitInitState.isInitialized;
+        boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor) {
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
-                isInitialized = true;
+                isDefinitelyInitialized = true;
             }
         }
-        if (!isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
+        if (!isDefinitelyInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             if (!(variableDescriptor instanceof PropertyDescriptor)) {
                 varWithUninitializedErrorGenerated.add(variableDescriptor);
             }
@@ -412,7 +412,7 @@ public class JetFlowInformationProvider {
             }
         }
 
-        boolean isInitializedNotHere = ctxt.enterInitState.isInitialized;
+        boolean mayBeInitializedNotHere = ctxt.enterInitState.mayBeInitialized();
         boolean hasBackingField = true;
         if (variableDescriptor instanceof PropertyDescriptor) {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
@@ -437,7 +437,7 @@ public class JetFlowInformationProvider {
         }
         boolean isThisOrNoDispatchReceiver =
                 PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.getBindingContext());
-        if ((isInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver) && !variableDescriptor.isVar()) {
+        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver) && !variableDescriptor.isVar()) {
             boolean hasReassignMethodReturningUnit = false;
             JetSimpleNameExpression operationReference = null;
             PsiElement parent = expression.getParent();
@@ -483,7 +483,7 @@ public class JetFlowInformationProvider {
 
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull JetExpression expression) {
         if (!ctxt.enterInitState.isDeclared && !ctxt.exitInitState.isDeclared
-                && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
+            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
             return true;
         }
@@ -492,7 +492,8 @@ public class JetFlowInformationProvider {
 
     private boolean checkInitializationUsingBackingField(@NotNull VariableInitContext ctxt, @NotNull JetExpression expression) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (variableDescriptor instanceof PropertyDescriptor && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
+        if (variableDescriptor instanceof PropertyDescriptor
+            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
             PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
@@ -583,14 +584,14 @@ public class JetFlowInformationProvider {
 
     private void recordInitializedVariables(
             @NotNull Pseudocode pseudocode,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>> initializersMap
+            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializersMap
     ) {
-        Edges<Map<VariableDescriptor, VariableInitState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        Edges<Map<VariableDescriptor, VariableControlFlowState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
             if (variable instanceof PropertyDescriptor) {
-                PseudocodeVariablesData.VariableInitState variableInitState = initializers.getIncoming().get(variable);
-                if (variableInitState != null && variableInitState.isInitialized) continue;
+                VariableControlFlowState variableControlFlowState = initializers.getIncoming().get(variable);
+                if (variableControlFlowState != null && variableControlFlowState.definitelyInitialized()) continue;
                 trace.record(BindingContext.IS_UNINITIALIZED, (PropertyDescriptor) variable);
             }
         }
@@ -976,14 +977,14 @@ public class JetFlowInformationProvider {
     }
 
     private class VariableInitContext extends VariableContext {
-        final VariableInitState enterInitState;
-        final VariableInitState exitInitState;
+        final VariableControlFlowState enterInitState;
+        final VariableControlFlowState exitInitState;
 
         private VariableInitContext(
                 @NotNull Instruction instruction,
                 @NotNull Map<Instruction, DiagnosticFactory<?>> map,
-                @NotNull Map<VariableDescriptor, VariableInitState> in,
-                @NotNull Map<VariableDescriptor, VariableInitState> out,
+                @NotNull Map<VariableDescriptor, VariableControlFlowState> in,
+                @NotNull Map<VariableDescriptor, VariableControlFlowState> out,
                 @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
         ) {
             super(instruction, map);
@@ -991,13 +992,13 @@ public class JetFlowInformationProvider {
             exitInitState = initialize(variableDescriptor, lexicalScopeVariableInfo, out);
         }
 
-        private VariableInitState initialize(
+        private VariableControlFlowState initialize(
                 VariableDescriptor variableDescriptor,
                 LexicalScopeVariableInfo lexicalScopeVariableInfo,
-                Map<VariableDescriptor, VariableInitState> map
+                Map<VariableDescriptor, VariableControlFlowState> map
         ) {
             if (variableDescriptor == null) return null;
-            VariableInitState state = map.get(variableDescriptor);
+            VariableControlFlowState state = map.get(variableDescriptor);
             if (state != null) return state;
             return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, lexicalScopeVariableInfo);
         }

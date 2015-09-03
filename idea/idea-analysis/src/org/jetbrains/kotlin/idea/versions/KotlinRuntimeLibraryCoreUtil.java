@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.versions;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -39,13 +41,21 @@ public class KotlinRuntimeLibraryCoreUtil {
         return ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-                for (String className : CANDIDATE_CLASSES) {
-                    PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
-                    if (psiClass != null) {
-                        return psiClass;
+                final Ref<PsiClass> result = new Ref<PsiClass>();
+                DumbService.getInstance(project).withAlternativeResolveEnabled(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (String className : CANDIDATE_CLASSES) {
+                            PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
+                            if (psiClass != null) {
+                                result.set(psiClass);
+                                return;
+                            }
+                        }
                     }
-                }
-                return null;
+                });
+
+                return result.get();
             }
         });
     }

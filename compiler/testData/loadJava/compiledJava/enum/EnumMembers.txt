@@ -1,26 +1,13 @@
 package test
 
 public final enum class EnumMembers : kotlin.Enum<test.EnumMembers!> {
-    public enum entry FIRST : test.EnumMembers {
-        private constructor FIRST()
-        public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumMembers!): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry FIRST
 
-    public enum entry SECOND : test.EnumMembers {
-        private constructor SECOND()
-        public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumMembers!): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry SECOND
 
     private constructor EnumMembers(/*0*/ p0: kotlin.Boolean)
     public final val isFirst: kotlin.Boolean
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumMembers!): kotlin.Int
     public open fun first(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String

@@ -1,0 +1,67 @@
+JetFile: simple.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(get)('get')
+            PsiElement(COLON)(':')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('An')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(set)('set')
+            PsiElement(COLON)(':')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('An')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(sparam)('sparam')
+            PsiElement(COLON)(':')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('An')
+        PsiWhiteSpace('\n    ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('A')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

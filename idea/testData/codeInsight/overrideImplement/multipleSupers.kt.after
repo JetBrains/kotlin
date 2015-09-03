@@ -12,18 +12,18 @@ class C : A(), B {
     }
 
     override fun equals(other: Any?): Boolean {
-        return super<A>.equals(other)
+        return super.equals(other)
     }
 
     override fun foo() {
-        super<A>.foo()
+        super.foo()
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 }

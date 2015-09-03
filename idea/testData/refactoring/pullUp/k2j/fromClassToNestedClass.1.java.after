@@ -5,8 +5,8 @@ class T {
 
         public final int x;
 
-        abstract boolean foo(int n);
+        public abstract boolean foo(int n);
 
-        abstract void bar(@NotNull String s);
+        public abstract void bar(@NotNull String s);
     }
 }

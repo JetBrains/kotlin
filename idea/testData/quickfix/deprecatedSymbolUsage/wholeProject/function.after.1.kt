@@ -1,5 +1,4 @@
 import newPack.newFun
-import pack.oldFun
 
 fun x() {
     newFun(1 + 1)

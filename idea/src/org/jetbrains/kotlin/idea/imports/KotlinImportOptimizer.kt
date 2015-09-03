@@ -44,8 +44,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -99,9 +98,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
                               ?: reference.resolveToDescriptors(bindingContext)
                 for (target in targets) {
-                    if (!target.canBeReferencedViaImport()) continue
-                    val importableDescriptor = target.getImportableDescriptor()
-                    val parentFqName = DescriptorUtils.getFqNameSafe(importableDescriptor).parent()
+                    val importableFqName = target.importableFqName ?: continue
+                    val parentFqName = importableFqName.parent()
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
                     if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
 
@@ -110,6 +108,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                         if (element.getIdentifier() == null) continue // skip 'this' etc
                         if (element.getReceiverExpression() != null) continue
                     }
+
+                    val importableDescriptor = target.getImportableDescriptor()
 
                     if (referencedName != null && importableDescriptor.name != referencedName) continue // resolved via alias
 
@@ -153,7 +153,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             val descriptorsByPackages = HashMultimap.create<FqName, DeclarationDescriptor>()
             for (descriptor in descriptorsToImport) {
-                val fqName = descriptor.importableFqNameSafe
+                val fqName = descriptor.importableFqName!!
                 val parentFqName = fqName.parent()
                 if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
                     importsToGenerate.add(ImportPath(fqName, false))
@@ -169,7 +169,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             for (packageName in descriptorsByPackages.keys()) {
                 val descriptors = descriptorsByPackages[packageName]
-                val fqNames = descriptors.map { it.importableFqNameSafe }.toSet()
+                val fqNames = descriptors.map { it.importableFqName!! }.toSet()
                 val explicitImports = fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
                                       && packageName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
                 if (explicitImports) {
@@ -182,7 +182,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 else {
                     for (descriptor in descriptors) {
                         if (descriptor is ClassDescriptor) {
-                            classNamesToCheck.add(descriptor.importableFqNameSafe)
+                            classNamesToCheck.add(descriptor.importableFqName!!)
                         }
                     }
 
@@ -201,13 +201,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
-                if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqNameSafe != fqName) {
+                if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
                     // add explicit import if failed to import with * (or from current package)
                     importsToGenerate.add(ImportPath(fqName, false))
 
                     val packageName = fqName.parent()
 
-                    for (descriptor in descriptorsByPackages[packageName].filter { it.importableFqNameSafe == fqName }) {
+                    for (descriptor in descriptorsByPackages[packageName].filter { it.importableFqName == fqName }) {
                         descriptorsByPackages.remove(packageName, descriptor)
                     }
 

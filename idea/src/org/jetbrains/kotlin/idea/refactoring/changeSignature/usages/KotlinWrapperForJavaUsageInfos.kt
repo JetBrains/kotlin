@@ -30,6 +30,6 @@ public class KotlinWrapperForJavaUsageInfos(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other == this || (other is KotlinWrapperForJavaUsageInfos && javaChangeInfo.getMethod() == other.javaChangeInfo.getMethod())
+        return other === this || (other is KotlinWrapperForJavaUsageInfos && javaChangeInfo.getMethod() == other.javaChangeInfo.getMethod())
     }
 }

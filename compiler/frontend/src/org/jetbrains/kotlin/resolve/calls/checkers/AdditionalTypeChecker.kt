@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 
 public interface AdditionalTypeChecker {
-    fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>)
+    fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>)
     fun checkReceiver(
             receiverParameter: ReceiverParameterDescriptor,
             receiverArgument: ReceiverValue,

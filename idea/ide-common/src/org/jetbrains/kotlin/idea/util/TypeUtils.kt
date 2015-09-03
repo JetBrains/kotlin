@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_READONLY_ANNO
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.substitute
@@ -75,7 +77,7 @@ private fun JetType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnota
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
 
-fun JetType.isResolvableInScope(scope: JetScope?, checkTypeParameters: Boolean): Boolean {
+fun JetType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
     if (canBeReferencedViaImport()) return true
 
     val descriptor = getConstructor().getDeclarationDescriptor()
@@ -85,7 +87,7 @@ fun JetType.isResolvableInScope(scope: JetScope?, checkTypeParameters: Boolean):
     return scope != null && scope.getClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
 
-public fun JetType.approximateWithResolvableType(scope: JetScope?, checkTypeParameters: Boolean): JetType {
+public fun JetType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): JetType {
     if (isError() || isResolvableInScope(scope, checkTypeParameters)) return this
     return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
            ?: KotlinBuiltIns.getInstance().getAnyType()

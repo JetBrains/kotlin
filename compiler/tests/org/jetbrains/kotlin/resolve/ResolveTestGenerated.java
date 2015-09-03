@@ -480,6 +480,12 @@ public class ResolveTestGenerated extends AbstractResolveTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/regressions/kt300.resolve");
             doTest(fileName);
         }
+
+        @TestMetadata("objectInsideFun.resolve")
+        public void testObjectInsideFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/regressions/objectInsideFun.resolve");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/resolve/varargs")

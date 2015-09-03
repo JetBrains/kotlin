@@ -22,9 +22,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import com.intellij.psi.search.SearchScope
-import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.PopupMenuListenerAdapter
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
@@ -33,15 +30,11 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.generate
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicatesSilently
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer.ControlWrapper
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.JetType
 import javax.swing.*
@@ -166,10 +159,6 @@ public class KotlinInplacePropertyIntroducer(
 
     override fun checkLocalScope(): PsiElement? {
         return myElementToRename.parentsWithSelf.first { it is JetClassOrObject || it is JetFile }
-    }
-
-    override fun collectRefs(referencesSearchScope: SearchScope): MutableCollection<PsiReference>? {
-        return DefaultSearchHelper<JetProperty>().newRequest(UsagesSearchTarget(property, referencesSearchScope)).search().toArrayList()
     }
 
     override fun moveOffsetAfter(success: Boolean) {

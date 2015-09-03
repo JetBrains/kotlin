@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +25,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH;
@@ -143,7 +141,7 @@ public class LabelResolver {
         Name labelName = expression.getLabelNameAsName();
         if (labelElement == null || labelName == null) return null;
 
-        Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
+        Collection<DeclarationDescriptor> declarationsByLabel = UtilsPackage.getDeclarationsByLabel(context.scope, labelName);
         int size = declarationsByLabel.size();
 
         if (size > 1) {
@@ -196,7 +194,7 @@ public class LabelResolver {
         JetSimpleNameExpression targetLabel = expression.getTargetLabel();
         assert targetLabel != null : expression;
 
-        Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
+        Collection<DeclarationDescriptor> declarationsByLabel = UtilsPackage.getDeclarationsByLabel(context.scope, labelName);
         int size = declarationsByLabel.size();
         if (size == 1) {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();

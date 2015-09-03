@@ -28,14 +28,16 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.kotlin.utils.rethrow
@@ -46,32 +48,32 @@ import kotlin.test.assertEquals
 public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
 
-    protected fun doImplementFileTest() {
-        doFileTest(ImplementMethodsHandler())
+    protected fun doImplementFileTest(memberToOverride: String? = null) {
+        doFileTest(ImplementMembersHandler(), memberToOverride)
     }
 
-    protected fun doOverrideFileTest() {
-        doFileTest(OverrideMethodsHandler())
+    protected fun doOverrideFileTest(memberToOverride: String? = null) {
+        doFileTest(OverrideMembersHandler(), memberToOverride)
     }
 
     protected fun doMultiImplementFileTest() {
-        doMultiFileTest(ImplementMethodsHandler())
+        doMultiFileTest(ImplementMembersHandler())
     }
 
     protected fun doMultiOverrideFileTest() {
-        doMultiFileTest(OverrideMethodsHandler())
+        doMultiFileTest(OverrideMembersHandler())
     }
 
-    protected fun doImplementDirectoryTest() {
-        doDirectoryTest(ImplementMethodsHandler())
+    protected fun doImplementDirectoryTest(memberToOverride: String? = null) {
+        doDirectoryTest(ImplementMembersHandler(), memberToOverride)
     }
 
-    protected fun doOverrideDirectoryTest(memberToImplement: String?) {
-        doDirectoryTest(OverrideMethodsHandler(), memberToImplement)
+    protected fun doOverrideDirectoryTest(memberToImplement: String? = null) {
+        doDirectoryTest(OverrideMembersHandler(), memberToImplement)
     }
 
     protected fun doMultiOverrideDirectoryTest() {
-        doMultiDirectoryTest(OverrideMethodsHandler())
+        doMultiDirectoryTest(OverrideMembersHandler())
     }
 
     protected fun doImplementJavaDirectoryTest(className: String, methodName: String) {
@@ -91,42 +93,38 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         myFixture.checkResultByFile(getTestName(true) + "/foo/JavaClass.java.after")
     }
 
-    private fun doFileTest(handler: OverrideImplementMethodsHandler) {
+    private fun doFileTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
         myFixture.configureByFile(getTestName(true) + ".kt")
-        doOverrideImplement(handler, null)
+        doOverrideImplement(handler, memberToOverride)
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
-    private fun doMultiFileTest(handler: OverrideImplementMethodsHandler) {
+    private fun doMultiFileTest(handler: OverrideImplementMembersHandler) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         doMultiOverrideImplement(handler)
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
-    protected fun doDirectoryTest(handler: OverrideImplementMethodsHandler) {
-        doDirectoryTest(handler, null)
-    }
-
-    private fun doDirectoryTest(handler: OverrideImplementMethodsHandler, memberToOverride: String?) {
+    private fun doDirectoryTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doOverrideImplement(handler, memberToOverride)
         checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
     }
 
-    private fun doMultiDirectoryTest(handler: OverrideImplementMethodsHandler) {
+    private fun doMultiDirectoryTest(handler: OverrideImplementMembersHandler) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doMultiOverrideImplement(handler)
         checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
     }
 
-    private fun doOverrideImplement(handler: OverrideImplementMethodsHandler, memberToOverride: String?) {
+    private fun doOverrideImplement(handler: OverrideImplementMembersHandler, memberToOverride: String?) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<JetClassOrObject>())
                             ?: error("Caret should be inside class or object")
 
-        val chooserObjects = handler.collectMethodsToGenerate(classOrObject)
+        val chooserObjects = handler.collectMembersToGenerate(classOrObject)
 
         val singleToOverride = if (memberToOverride == null) {
             val filtered = chooserObjects.filter { it.descriptor.containingDeclaration != KotlinBuiltIns.getInstance().any }
@@ -152,12 +150,12 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         performGenerateCommand(classOrObject, listOf(singleToOverride))
     }
 
-    private fun doMultiOverrideImplement(handler: OverrideImplementMethodsHandler) {
+    private fun doMultiOverrideImplement(handler: OverrideImplementMembersHandler) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<JetClassOrObject>())
                             ?: error("Caret should be inside class or object")
 
-        val chooserObjects = handler.collectMethodsToGenerate(classOrObject).sortBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
+        val chooserObjects = handler.collectMembersToGenerate(classOrObject).sortBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
         performGenerateCommand(classOrObject, chooserObjects)
     }
 
@@ -178,7 +176,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
             selectedElements: List<OverrideMemberChooserObject>) {
         try {
             myFixture.project.executeWriteCommand("") {
-                OverrideImplementMethodsHandler.generateMethods(myFixture.editor, classOrObject, selectedElements)
+                OverrideImplementMembersHandler.generateMethods(myFixture.editor, classOrObject, selectedElements)
             }
         }
         catch (throwable: Throwable) {
@@ -191,6 +189,11 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         val expectedFile = File(myFixture.testDataPath, fileName)
         try {
             Assert.assertTrue(expectedFile.exists())
+            val file = myFixture.file as JetFile
+            val document = myFixture.getDocument(file)
+            myFixture.project.executeWriteCommand("") {
+                document.replaceString(0, document.textLength, file.dumpTextWithErrors())
+            }
             myFixture.checkResultByFile(fileName)
         }
         catch (error: AssertionError) {

@@ -1,3 +1,3 @@
 import javax.inject.Inject
 
-println(javaClass<Inject>())
+println(Inject::class.java)

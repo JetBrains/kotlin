@@ -1,6 +1,4 @@
 package test
 
-import kotlin.platform.*
-
-@platformName("bar")
+@jvmName("bar")
 fun foo() {}

@@ -5,7 +5,7 @@ abstract class C<A> {
 fun f() {
     class R
 
-    object : C<R> {
+    object : C<R>() {
         <caret>
     }
 }

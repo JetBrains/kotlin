@@ -45,7 +45,8 @@ public object KotlinJavascriptMetadataUtils {
     public fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
 
     platformStatic
-    public fun hasMetadata(text: String): Boolean = METADATA_PATTERN.matcher(text).find()
+    public fun hasMetadata(text: String): Boolean =
+            KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
     public fun hasMetadataWithIncompatibleAbiVersion(text: String): Boolean {
         val matcher = METADATA_PATTERN.matcher(text)

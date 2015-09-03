@@ -131,9 +131,9 @@ class StringTest {
     }
 
     test fun reverse() {
-        assertEquals("dcba", "abcd".reverse())
-        assertEquals("4321", "1234".reverse())
-        assertEquals("", "".reverse())
+        assertEquals("dcba", "abcd".reversed())
+        assertEquals("4321", "1234".reversed())
+        assertEquals("", "".reversed())
     }
 
     test fun indices() {
@@ -409,12 +409,12 @@ class StringTest {
         val substrings = listOf("rac", "ra")
         assertEquals(2, string.indexOfAny(substrings))
         assertEquals(9, string.indexOfAny(substrings, startIndex = 3))
-        assertEquals(2, string.indexOfAny(substrings.reverse()))
+        assertEquals(2, string.indexOfAny(substrings.reversed()))
         assertEquals(-1, string.indexOfAny(substrings, 10))
 
         assertEquals(9, string.lastIndexOfAny(substrings))
         assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8))
-        assertEquals(2, string.lastIndexOfAny(substrings.reverse(), startIndex = 8))
+        assertEquals(2, string.lastIndexOfAny(substrings.reversed(), startIndex = 8))
         assertEquals(-1, string.lastIndexOfAny(substrings, 1))
 
         assertEquals(0, string.indexOfAny(listOf("dab", "")), "empty strings are not ignored")
@@ -439,12 +439,12 @@ class StringTest {
         val substrings = listOf("rac", "ra")
         assertEquals(2 to "rac", string.findAnyOf(substrings))
         assertEquals(9 to "ra", string.findAnyOf(substrings, startIndex = 3))
-        assertEquals(2 to "ra", string.findAnyOf(substrings.reverse()))
+        assertEquals(2 to "ra", string.findAnyOf(substrings.reversed()))
         assertEquals(null, string.findAnyOf(substrings, 10))
 
         assertEquals(9 to "ra", string.findLastAnyOf(substrings))
         assertEquals(2 to "rac", string.findLastAnyOf(substrings, startIndex = 8))
-        assertEquals(2 to "ra", string.findLastAnyOf(substrings.reverse(), startIndex = 8))
+        assertEquals(2 to "ra", string.findLastAnyOf(substrings.reversed(), startIndex = 8))
         assertEquals(null, string.findLastAnyOf(substrings, 1))
 
         assertEquals(0 to "", string.findAnyOf(listOf("dab", "")), "empty strings are not ignored")

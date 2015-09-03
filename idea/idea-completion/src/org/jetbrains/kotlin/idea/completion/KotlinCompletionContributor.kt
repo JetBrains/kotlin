@@ -74,6 +74,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             isInClassHeader(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER // do not add '$' to not interrupt class declaration parsing
 
+            isInUnclosedSuperQualifier(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">"
+
             else -> specialLambdaSignatureDummyIdentifier(tokenBefore)
                     ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
@@ -414,5 +416,15 @@ public class KotlinCompletionContributor : CompletionContributor() {
             current = current.prevLeaf()
         }
         return balance
+    }
+
+    private fun isInUnclosedSuperQualifier(tokenBefore: PsiElement?): Boolean {
+        if (tokenBefore == null) return false
+        val tokensToSkip = TokenSet.orSet(TokenSet.create(JetTokens.IDENTIFIER, JetTokens.DOT ), JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET)
+        val tokens = sequence(tokenBefore) { it.prevLeaf() }
+        val ltToken = tokens.firstOrNull { it.node.elementType !in tokensToSkip } ?: return false
+        if (ltToken.node.elementType != JetTokens.LT) return false
+        val superToken = ltToken.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
+        return superToken?.node?.elementType == JetTokens.SUPER_KEYWORD
     }
 }

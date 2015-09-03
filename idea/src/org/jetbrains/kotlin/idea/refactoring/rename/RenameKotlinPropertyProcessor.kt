@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.SyntheticElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.OverridingMethodsSearch
@@ -32,61 +33,71 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
-    override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
+    override fun canProcessElement(element: PsiElement): Boolean {
+        val namedUnwrappedElement = element.namedUnwrappedElement
+        return namedUnwrappedElement is JetProperty || (namedUnwrappedElement is JetParameter && namedUnwrappedElement.hasValOrVar())
+    }
 
     /* Can't properly update getters and setters in Java */
     override fun isInplaceRenameSupported() = false
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
-        val jetProperty = element?.namedUnwrappedElement as? JetProperty
-        if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+        val namedUnwrappedElement = element?.namedUnwrappedElement
 
-        val deepestSuperProperty = findDeepestOverriddenProperty(jetProperty)
-        if (deepestSuperProperty == null || deepestSuperProperty == jetProperty) {
-            return jetProperty
+        val callableDeclaration = namedUnwrappedElement as? JetCallableDeclaration
+        if (callableDeclaration == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+
+        val deepestSuperDeclaration = findDeepestOverriddenDeclaration(callableDeclaration)
+        if (deepestSuperDeclaration == null || deepestSuperDeclaration == callableDeclaration) {
+            return callableDeclaration
         }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            return deepestSuperProperty
+            return deepestSuperDeclaration
         }
 
         val containsText: String? =
-                deepestSuperProperty.getFqName()?.parent()?.asString() ?:
-                (deepestSuperProperty.getParent() as? JetClassOrObject)?.getName()
+                deepestSuperDeclaration.getFqName()?.parent()?.asString() ?:
+                (deepestSuperDeclaration.getParent() as? JetClassOrObject)?.getName()
 
         val result = Messages.showYesNoCancelDialog(
-                deepestSuperProperty.getProject(),
+                deepestSuperDeclaration.getProject(),
                 if (containsText != null) "Do you want to rename base property from \n$containsText" else "Do you want to rename base property",
                 "Rename warning",
                 Messages.getQuestionIcon())
 
         return when (result) {
-            Messages.YES -> deepestSuperProperty
-            Messages.NO -> jetProperty
+            Messages.YES -> deepestSuperDeclaration
+            Messages.NO -> callableDeclaration
             else -> /* Cancel rename */ null
         }
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        val jetProperty = element?.namedUnwrappedElement as? JetProperty
-        if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
-
-        val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(jetProperty) }
+        val namedUnwrappedElement = element?.namedUnwrappedElement
+        val propertyMethods = when(namedUnwrappedElement) {
+            is JetProperty -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
+            is JetParameter -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
+            else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+        }
 
         for (propertyMethod in propertyMethods) {
-            addRenameElements(propertyMethod, jetProperty.getName(), newName, allRenames, scope)
+            addRenameElements(propertyMethod, (element as PsiNamedElement).name, newName, allRenames, scope)
         }
     }
 
@@ -97,12 +108,12 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     }
 
     override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
-        if (element !is JetProperty) {
+        if (element !is JetProperty && element !is JetParameter) {
             super.renameElement(element, newName, usages, listener)
             return
         }
 
-        val name = element.getName()!!
+        val name = (element as PsiNamedElement).getName()!!
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
 
@@ -165,10 +176,14 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         }
     }
 
-    private fun findDeepestOverriddenProperty(jetProperty: JetProperty): JetProperty? {
-        if (jetProperty.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
-            val bindingContext = jetProperty.analyze()
-            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, jetProperty]
+    private fun findDeepestOverriddenDeclaration(declaration: JetCallableDeclaration): JetCallableDeclaration? {
+        if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
+            val bindingContext = declaration.analyze()
+            var descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            if (descriptor is ValueParameterDescriptor) {
+                descriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+                    ?: return declaration
+            }
 
             if (descriptor != null) {
                 assert(descriptor is PropertyDescriptor, "Property descriptor is expected")
@@ -179,7 +194,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                 val deepest = supers.first()
                 if (deepest != descriptor) {
                     val superPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(deepest)
-                    return superPsiElement as? JetProperty
+                    return superPsiElement as? JetCallableDeclaration
                 }
             }
         }

@@ -1,0 +1,21 @@
+@kotlin.jvm.internal.KotlinClass A {
+    field $kotlinClass: kotlin.reflect.KClass
+    method <clinit>(): void
+    @org.jetbrains.annotations.NotNull method f(@Ann p0: java.lang.String): java.lang.String
+    @org.jetbrains.annotations.NotNull method getP(@Ann p0: java.lang.String): java.lang.String
+    method <init>(): void
+}
+
+@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass Ann
+
+@kotlin.jvm.internal.KotlinSyntheticClass _DefaultPackage$onReceiver$b389baba {
+    @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
+    @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+}
+
+@kotlin.jvm.internal.KotlinPackage _DefaultPackage {
+    field $kotlinPackage: kotlin.reflect.KPackage
+    method <clinit>(): void
+    @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+    @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
+}

@@ -20,29 +20,25 @@ import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class AllClassesCompletion(private val parameters: CompletionParameters,
                            private val kotlinIndicesHelper: KotlinIndicesHelper,
                            private val prefixMatcher: PrefixMatcher,
-                           private val kindFilter: (ClassKind) -> Boolean) {
+                           private val kindFilter: (ClassKind) -> Boolean
+) {
     fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
         //TODO: this is a temporary hack until we have built-ins in indices
-        val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses()
-        val filteredBuiltIns = builtIns
-                .filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
-        filteredBuiltIns.forEach { classDescriptorCollector(it) }
+        collectClassesFromScope(classDescriptorCollector, KotlinBuiltIns.getInstance().builtInsPackageScope)
 
         kotlinIndicesHelper
                 .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
@@ -50,6 +46,18 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(javaClassCollector)
+        }
+    }
+
+    private fun collectClassesFromScope(collector: (ClassDescriptor) -> Unit, scope: JetScope) {
+        for (descriptor in scope.getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)) {
+            if (descriptor is ClassDescriptor) {
+                if (kindFilter(descriptor.kind) && prefixMatcher.prefixMatches(descriptor.name.asString())) {
+                    collector(descriptor)
+                }
+
+                collectClassesFromScope(collector, descriptor.unsubstitutedInnerClassesScope)
+            }
         }
     }
 

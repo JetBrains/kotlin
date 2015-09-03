@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.renderer.CustomFlexibleRendering
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 
+public object RawTypeTag : TypeCapability
+
 public object RawTypeCapabilities : TypeCapabilities {
     private object RawSubstitutionCapability : CustomSubstitutionCapability {
         override val substitution = RawSubstitution
@@ -72,6 +74,7 @@ public object RawTypeCapabilities : TypeCapabilities {
         return when(capabilityClass) {
             javaClass<CustomSubstitutionCapability>() -> RawSubstitutionCapability as T
             javaClass<CustomFlexibleRendering>() -> RawFlexibleRendering as T
+            javaClass<RawTypeTag>() -> RawTypeTag as T
             else -> null
         }
     }

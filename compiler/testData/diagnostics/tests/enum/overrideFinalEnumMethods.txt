@@ -1,17 +1,10 @@
 package
 
 internal final enum class E : kotlin.Enum<E> {
-    public enum entry ENTRY : E {
-        private constructor ENTRY()
-        public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public open override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry ENTRY
 
     private constructor E()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public open override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
     public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun hashCode(): kotlin.Int

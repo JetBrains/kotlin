@@ -8,7 +8,7 @@ annotation class A(val s: String)
 A("1")
 fun foo() = "foo"
 
-A("2")
+@field:A("2")
 var v: Int = 1
     @platformName("vget")
     @A("3")

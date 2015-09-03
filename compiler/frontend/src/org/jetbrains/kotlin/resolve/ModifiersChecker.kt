@@ -208,7 +208,7 @@ public object ModifierCheckerCore {
                 }
             }
         }
-        val actualTargets = AnnotationChecker.getActualTargetList(listOwner, descriptor as? ClassDescriptor)
+        val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(listOwner, descriptor as? ClassDescriptor)
         val list = listOwner.modifierList ?: return
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets)
     }

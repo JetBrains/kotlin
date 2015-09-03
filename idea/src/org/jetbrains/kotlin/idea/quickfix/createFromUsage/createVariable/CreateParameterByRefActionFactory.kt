@@ -37,10 +37,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.LinkedHashSet
+import java.util.*
 
 object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSimpleNameExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
@@ -126,7 +127,7 @@ fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, conte
     val scope =
             when (functionDescriptor) {
                 is ConstructorDescriptor -> {
-                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
+                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution?.asJetScope()
                 }
 
                 is FunctionDescriptor -> {

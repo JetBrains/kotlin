@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateP
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
@@ -144,7 +145,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS))
 
 
-        val implementMethodsHandler = ImplementMethodsHandler()
+        val implementMethodsHandler = ImplementMembersHandler()
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
         MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
 
@@ -315,5 +316,10 @@ public class QuickFixRegistrar : QuickFixContributor {
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
 
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
+
+        ErrorsJvm.JAVA_TYPE_MISMATCH.registerFactory(CastExpressionFix.createFactoryForGenericVarianceConversion())
+
+        UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
+        TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
     }
 }

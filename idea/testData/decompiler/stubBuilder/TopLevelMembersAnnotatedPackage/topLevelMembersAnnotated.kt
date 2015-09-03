@@ -2,7 +2,7 @@ package a.b.c.topLevelMembersAnnotated
 
 import d.e.f.*
 
-a b val i: Int = 0
+@property:a @property:b val i: Int = 0
 
 a b fun f(@a @b p1: C): Int = 0
 

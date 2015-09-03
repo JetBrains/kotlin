@@ -68,7 +68,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
         }
 
         if (!lookup.isSelectionTouched()) {
-            currentItem?.putUserData(JUST_TYPING_PREFIX, lookup.itemPattern(currentItem))
+            currentItem?.putUserDataDeep(JUST_TYPING_PREFIX, lookup.itemPattern(currentItem))
         }
 
         return when (c) {

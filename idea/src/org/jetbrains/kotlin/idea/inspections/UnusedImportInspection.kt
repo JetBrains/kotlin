@@ -42,17 +42,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.DocumentUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
-import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class UnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
@@ -76,7 +72,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         val fqNames = HashSet<FqName>()
         val parentFqNames = HashSet<FqName>()
         for (descriptor in descriptorsToImport) {
-            val fqName = descriptor.importableFqNameSafe
+            val fqName = descriptor.importableFqName!!
             fqNames.add(fqName)
 
             if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
@@ -106,8 +102,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
             }
 
             if (!isUsed) {
-                val nameExpression = directive.importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression
-                if (nameExpression == null || nameExpression.getReferenceTargets(nameExpression.analyze()).isEmpty()) continue // do not highlight unresolved imports as unused
+                if (directive.targetDescriptors().isEmpty()) continue // do not highlight unresolved imports as unused
 
                 val fixes = arrayListOf<LocalQuickFix>()
                 fixes.add(OptimizeImportsQuickFix(file))
@@ -169,7 +164,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         if (project.isDisposed || !file.isValid || editor.isDisposed || !file.isWritable) return false
 
         // do not optimize imports on the fly during undo/redo
-        val undoManager = UndoManager.getInstance(editor.project)
+        val undoManager = UndoManager.getInstance(project)
         if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return false
 
         // if we stand inside import statements, do not optimize

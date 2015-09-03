@@ -53,9 +53,15 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
-        @TestMetadata("ambiguousClassName.before.Main.kt")
-        public void testAmbiguousClassName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousClassName.before.Main.kt");
+        @TestMetadata("ambiguousNamePreferFromJdk.before.Main.kt")
+        public void testAmbiguousNamePreferFromJdk() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousNamePreferFromJdk.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("ambiguousNamePreferWithImportsFromPackage.before.Main.kt")
+        public void testAmbiguousNamePreferWithImportsFromPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousNamePreferWithImportsFromPackage.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 
@@ -1212,6 +1218,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     public static class TypeMismatch extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GenericVarianceViolation extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInGenericVarianceViolation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("basicMultiple.before.Main.kt")
+            public void testBasicMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation/basicMultiple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
         }
 
     }

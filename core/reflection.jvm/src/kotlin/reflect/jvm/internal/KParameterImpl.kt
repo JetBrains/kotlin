@@ -19,12 +19,14 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
 class KParameterImpl(
         val callable: KCallableImpl<*>,
         override val index: Int,
+        override val kind: KParameter.Kind,
         computeDescriptor: () -> ParameterDescriptor
 ) : KParameter, KAnnotatedElementImpl {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
@@ -40,4 +42,16 @@ class KParameterImpl(
 
     override val type: KType
         get() = KTypeImpl(descriptor.type) { callable.caller.parameterTypes[index] }
+
+    override val isOptional: Boolean
+        get() = (descriptor as? ValueParameterDescriptor)?.hasDefaultValue() ?: false
+
+    override fun equals(other: Any?) =
+            other is KParameterImpl && callable == other.callable && descriptor == other.descriptor
+
+    override fun hashCode() =
+            (callable.hashCode() * 31) + descriptor.hashCode()
+
+    override fun toString() =
+            ReflectionObjectRenderer.renderParameter(this)
 }

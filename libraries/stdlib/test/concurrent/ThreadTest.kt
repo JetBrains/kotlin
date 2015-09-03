@@ -13,7 +13,7 @@ class ThreadTest {
 
         val pool = Executors.newFixedThreadPool(1)
         val countDown = CountDownLatch(1)
-        pool {
+        pool execute {
             countDown.countDown()
         }
         assertTrue(countDown.await(2, SECONDS), "Count down is executed")
@@ -22,8 +22,8 @@ class ThreadTest {
     test fun callableInvoke() {
 
         val pool = Executors.newFixedThreadPool(1)
-        val future = pool<String> {
-            "Hello"
+        val future = pool.submit<String> {  // type specification required here to choose overload for callable, see KT-7882
+           "Hello"
         }
         assertEquals("Hello", future.get(2, SECONDS))
     }

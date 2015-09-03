@@ -13,17 +13,10 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         internal final enum class E : kotlin.Enum<A.Companion.E> {
-            public enum entry ENTRY2 : A.Companion.E {
-                private constructor ENTRY2()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.Companion.E): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
+            enum entry ENTRY2
 
             private constructor E()
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.Companion.E): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -38,17 +31,10 @@ internal final class A {
     }
 
     internal final enum class E : kotlin.Enum<A.E> {
-        public enum entry ENTRY : A.E {
-            private constructor ENTRY()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry ENTRY
 
         private constructor E()
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -73,6 +73,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EnumEntry.kt")
+        public void testEnumEntry() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/EnumEntry.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FakeOverrideForClasses.kt")
         public void testFakeOverrideForClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/FakeOverrideForClasses.kt");

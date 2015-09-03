@@ -68,7 +68,7 @@ abstract class AbstractValueBase<V>(
     }
 
     override fun hashCode(): Int {
-        return value.hashCode() + 17 * asmType.hashCode()
+        return value!!.hashCode() + 17 * asmType.hashCode()
     }
 }
 

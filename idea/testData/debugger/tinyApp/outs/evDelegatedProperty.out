@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
      field    = prop$delegate: kotlin.properties.ReadWriteProperty = {kotlin.properties.NotNullVar@uniqueID} (sp = evDelegatedProperty.kt, 6)
        field    = value: java.lang.Object = {java.lang.Integer@uniqueID}1 (sp = Delegation.!EXT!)
          field    = value: int = 1 (sp = Integer.!EXT!)
-     field    = prop: int = 1 (sp = evDelegatedProperty.kt, 6)
+     field    = prop: int: evDelegatedProperty.A = 1 (sp = evDelegatedProperty.kt, 6)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

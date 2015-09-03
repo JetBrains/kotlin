@@ -28,37 +28,14 @@ internal final class Internal {
 }
 
 internal final enum class Kind : kotlin.Enum<Kind> {
-    public enum entry LOCAL : Kind {
-        private constructor LOCAL()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Kind): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry LOCAL
 
-    public enum entry EXT_RETURN : Kind {
-        private constructor EXT_RETURN()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Kind): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry EXT_RETURN
 
-    public enum entry GLOBAL_RETURN : Kind {
-        private constructor GLOBAL_RETURN()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Kind): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry GLOBAL_RETURN
 
     private constructor Kind()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Kind): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

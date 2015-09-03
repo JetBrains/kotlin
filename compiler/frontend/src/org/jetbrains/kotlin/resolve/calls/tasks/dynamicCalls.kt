@@ -103,9 +103,9 @@ object DynamicCallableDescriptors {
                 null: JetType?
         )
 
-        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor)
+        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
         getter.initialize(propertyDescriptor.getType())
-        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor)
+        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY)
 
         propertyDescriptor.initialize(getter, setter)
 

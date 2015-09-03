@@ -8,16 +8,11 @@ public open class DefaultArgumentInEnumConstructor {
 }
 
 internal final enum class K : kotlin.Enum<test.K> {
-    public enum entry ENTRY : test.K {
-        private constructor ENTRY()
-        invisible_fake final /*fake_override*/ val default: kotlin.String
-        public final /*fake_override*/ fun compareTo(/*0*/ test.K): kotlin.Int
-        public final /*fake_override*/ fun name(): kotlin.String
-        public final /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry ENTRY
 
     private constructor K(/*0*/ kotlin.String = ...)
     private final val default: kotlin.String
+    protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.K): kotlin.Int
     public final /*fake_override*/ fun name(): kotlin.String
     public final /*fake_override*/ fun ordinal(): kotlin.Int

@@ -1,0 +1,56 @@
+JetFile: manyInOneAnnotationBlock.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(field)('field')
+            PsiElement(COLON)(':')
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('first')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('second')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('third')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n    ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('String')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

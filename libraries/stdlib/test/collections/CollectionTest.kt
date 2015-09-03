@@ -310,19 +310,19 @@ class CollectionTest {
 
     test fun reverse() {
         val data = listOf("foo", "bar")
-        val rev = data.reverse()
+        val rev = data.reversed()
         assertEquals(listOf("bar", "foo"), rev)
     }
 
     test fun reverseFunctionShouldReturnReversedCopyForList() {
         val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { list.reverse() }
+        expect(listOf(1, 3, 2)) { list.reversed() }
         expect(listOf(2, 3, 1)) { list }
     }
 
     test fun reverseFunctionShouldReturnReversedCopyForIterable() {
         val iterable: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { iterable.reverse() }
+        expect(listOf(1, 3, 2)) { iterable.reversed() }
         expect(listOf(2, 3, 1)) { iterable }
     }
 
@@ -469,18 +469,6 @@ class CollectionTest {
         assertTrue(IterableWrapper(hashSetOf(45, 14, 13)).contains(14))
     }
 
-    test fun sortForMutableIterable() {
-        val list: MutableIterable<Int> = arrayListOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
-    test fun sortForIterable() {
-        val list: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
     test fun min() {
         expect(null, { listOf<Int>().min() })
         expect(1, { listOf(1).min() })
@@ -571,28 +559,42 @@ class CollectionTest {
         expect(listOf(1)) { listOf(1) take 10 }
     }
 
-    test fun sortBy() {
-        expect(listOf("two" to 2, "three" to 3)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.second }
-        }
-        expect(listOf("three" to 3, "two" to 2)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.first }
-        }
-        expect(listOf("two" to 2, "three" to 3)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.first.length() }
+    test fun sorted() {
+        assertEquals(listOf(1, 3, 7), listOf(3, 7, 1).sorted())
+        assertEquals(listOf(7, 3, 1), listOf(3, 7, 1).sortedDescending())
+    }
+
+    test fun sortedBy() {
+        assertEquals(listOf("two" to 2, "three" to 3), listOf("three" to 3, "two" to 2).sortedBy { it.second })
+        assertEquals(listOf("three" to 3, "two" to 2), listOf("three" to 3, "two" to 2).sortedBy { it.first })
+        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length() })
+    }
+
+    test fun sortedNullableBy() {
+        fun String.nullIfEmpty() = if (isEmpty()) null else this
+        listOf(null, "", "a").let {
+            expect(listOf(null, "", "a")) { it.sortedWith(nullsFirst(compareBy { it })) }
+            expect(listOf("a", "", null)) { it.sortedWith(nullsLast(compareByDescending { it })) }
+            expect(listOf(null, "a", "")) { it.sortedWith(nullsFirst(compareByDescending { it.nullIfEmpty() })) }
         }
     }
 
-    test fun sortFunctionShouldReturnSortedCopyForList() {
-        val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
+    test fun sortedByNullable() {
+        fun String.nonEmptyLength() = if (isEmpty()) null else length()
+        listOf("", "sort", "abc").let {
+            assertEquals(listOf("", "abc", "sort"), it.sortedBy { it.nonEmptyLength() })
+            assertEquals(listOf("sort", "abc", ""), it.sortedByDescending { it.nonEmptyLength() })
+            assertEquals(listOf("abc", "sort", ""), it.sortedWith(compareBy(nullsLast<Int>()) { it.nonEmptyLength()}))
+        }
     }
 
-    test fun sortFunctionShouldReturnSortedCopyForIterable() {
-        val list: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
+    test fun sortedWith() {
+        val comparator = compareBy<String> { it.toUpperCase().reversed() }
+        val data = listOf("cat", "dad", "BAD")
+
+        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator) }
+        expect(listOf("cat", "dad", "BAD")) { data.sortedWith(comparator.reversed()) }
+        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator.reversed().reversed()) }
     }
 
     test fun decomposeFirst() {
@@ -670,4 +672,3 @@ class CollectionTest {
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
     }
 }
-

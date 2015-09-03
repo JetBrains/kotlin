@@ -50,8 +50,9 @@ public class ConfigureKotlinNotification extends Notification {
                     if (configurator == null) {
                         throw new AssertionError("Missed action: " + event.getDescription());
                     }
-                    configurator.configure(project);
                     notification.expire();
+
+                    configurator.configure(project);
                 }
             }
         });

@@ -1,44 +1,18 @@
 package test
 
 internal final enum class En : kotlin.Enum<test.En> {
-    public enum entry E1 : test.En {
-        /*primary*/ private constructor E1()
-        internal final override /*1*/ /*fake_override*/ val b: kotlin.Boolean
-            internal final override /*1*/ /*fake_override*/ fun <get-b>(): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun <get-i>(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.En): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry E1
 
-    public enum entry E2 : test.En {
-        /*primary*/ private constructor E2()
-        internal final override /*1*/ /*fake_override*/ val b: kotlin.Boolean
-            internal final override /*1*/ /*fake_override*/ fun <get-b>(): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun <get-i>(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.En): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry E2
 
-    public enum entry E3 : test.En {
-        /*primary*/ private constructor E3()
-        internal final override /*1*/ /*fake_override*/ val b: kotlin.Boolean
-            internal final override /*1*/ /*fake_override*/ fun <get-b>(): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun <get-i>(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.En): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    }
+    enum entry E3
 
     /*primary*/ private constructor En(/*0*/ b: kotlin.Boolean = ..., /*1*/ i: kotlin.Int = ...)
     internal final val b: kotlin.Boolean
         internal final fun <get-b>(): kotlin.Boolean
     internal final val i: kotlin.Int
         internal final fun <get-i>(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.En): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

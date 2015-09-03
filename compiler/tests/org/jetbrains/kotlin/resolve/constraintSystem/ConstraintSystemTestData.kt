@@ -29,6 +29,7 @@ import java.util.regex.Pattern
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
 public class ConstraintSystemTestData(
         context: BindingContext,
@@ -36,14 +37,14 @@ public class ConstraintSystemTestData(
         private val typeResolver: TypeResolver
 ) {
     private val functionFoo: FunctionDescriptor
-    private val scopeToResolveTypeParameters: JetScope
+    private val scopeToResolveTypeParameters: LexicalScope
 
     init {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
         functionFoo = findFunctionByName(functions.values(), "foo")
         val function = DescriptorToSourceUtils.descriptorToDeclaration(functionFoo) as JetFunction
         val fooBody = function.getBodyExpression()
-        scopeToResolveTypeParameters = context.get(BindingContext.RESOLUTION_SCOPE, fooBody)!!
+        scopeToResolveTypeParameters = context.get(BindingContext.LEXICAL_SCOPE, fooBody)!!
     }
 
     private fun findFunctionByName(functions: Collection<FunctionDescriptor>, name: String): FunctionDescriptor {

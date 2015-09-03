@@ -1,6 +1,6 @@
 package test
 
-test.Anno(t = {"prosper"}) internal val bar: kotlin.Int = 42
+@field:test.Anno(t = {"prosper"}) internal val bar: kotlin.Int = 42
     internal fun <get-bar>(): kotlin.Int
 test.Anno(t = {}) internal fun baz(): kotlin.Unit
 test.Anno(t = {"live", "long"}) internal fun foo(): kotlin.Unit

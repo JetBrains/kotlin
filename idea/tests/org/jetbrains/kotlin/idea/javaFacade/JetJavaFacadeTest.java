@@ -241,11 +241,8 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         // Should not fail!
         LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetProperty);
 
-        JetPropertyAccessor getter = jetProperty.getGetter();
-        JetPropertyAccessor setter = jetProperty.getSetter();
-
-        checkDeclarationMethodWrapped(shouldWrapGetter, getter != null ? getter : jetProperty, propertyAccessors.getGetter());
-        checkDeclarationMethodWrapped(shouldWrapSetter, setter != null ? setter : jetProperty, propertyAccessors.getSetter());
+        checkDeclarationMethodWrapped(shouldWrapGetter, jetProperty, propertyAccessors.getGetter());
+        checkDeclarationMethodWrapped(shouldWrapSetter, jetProperty, propertyAccessors.getSetter());
     }
 
     private void doTestWrapPropertyAccessor(boolean shouldWrapAccessor) {
@@ -253,7 +250,9 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
 
         // Should not fail!
         PsiMethod propertyAccessors = LightClassUtil.getLightClassAccessorMethod(jetPropertyAccessor);
-        checkDeclarationMethodWrapped(shouldWrapAccessor, jetPropertyAccessor, propertyAccessors);
+        checkDeclarationMethodWrapped(shouldWrapAccessor,
+                                      PsiTreeUtil.getParentOfType(jetPropertyAccessor, JetProperty.class),
+                                      propertyAccessors);
     }
 
     @NotNull

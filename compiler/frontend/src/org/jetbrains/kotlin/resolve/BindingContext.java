@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
@@ -140,7 +141,8 @@ public interface BindingContext {
      * A scope where type of expression has been resolved
      */
     WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
+    @Deprecated WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
+    WritableSlice<JetExpression, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
 
     WritableSlice<ScriptDescriptor, JetScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
 

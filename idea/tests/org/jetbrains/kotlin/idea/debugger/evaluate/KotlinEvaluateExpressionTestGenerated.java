@@ -211,6 +211,18 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("parametersOfInlineFun.kt")
+        public void testParametersOfInlineFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/parametersOfInlineFun.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("parametersOfInlineFunSeveralOnLine.kt")
+        public void testParametersOfInlineFunSeveralOnLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/parametersOfInlineFunSeveralOnLine.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privateMember.kt");
@@ -549,6 +561,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("lSimple.kt")
             public void testLSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lSimple.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ldifferentTypes.kt")
+            public void testLdifferentTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/ldifferentTypes.kt");
                 doSingleBreakpointTest(fileName);
             }
         }

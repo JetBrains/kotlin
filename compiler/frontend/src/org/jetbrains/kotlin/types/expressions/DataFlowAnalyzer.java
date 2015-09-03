@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
@@ -167,24 +164,13 @@ public class DataFlowAnalyzer {
         return typeInfo.replaceType(checkType(typeInfo.getType(), expression, context));
     }
 
-    @Nullable
-    public JetType checkType(
-            @Nullable JetType expressionType,
-            @NotNull JetExpression expressionToCheck,
+    @NotNull
+    private JetType checkTypeInternal(
+            @NotNull JetType expressionType,
+            @NotNull JetExpression expression,
             @NotNull ResolutionContext c,
-            @Nullable Ref<Boolean> hasError
+            @NotNull Ref<Boolean> hasError
     ) {
-        if (hasError != null) hasError.set(false);
-
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
-        recordExpectedType(c.trace, expression, c.expectedType);
-
-        if (expressionType == null) return null;
-
-        for (AdditionalTypeChecker checker : additionalTypeCheckers) {
-            checker.checkType(expression, expressionType, c);
-        }
-
         if (noExpectedType(c.expectedType) || !c.expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, c.expectedType)) {
             return expressionType;
@@ -212,6 +198,35 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
+    public JetType checkType(
+            @Nullable JetType expressionType,
+            @NotNull JetExpression expressionToCheck,
+            @NotNull ResolutionContext c,
+            @Nullable Ref<Boolean> hasError
+    ) {
+        if (hasError == null) {
+            hasError = Ref.create(false);
+        }
+        else {
+            hasError.set(false);
+        }
+
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
+        recordExpectedType(c.trace, expression, c.expectedType);
+
+        if (expressionType == null) return null;
+
+        JetType result = checkTypeInternal(expressionType, expression, c, hasError);
+        if (Boolean.FALSE.equals(hasError.get())) {
+            for (AdditionalTypeChecker checker : additionalTypeCheckers) {
+                checker.checkType(expression, expressionType, result, c);
+            }
+        }
+
+        return result;
+    }
+
+    @Nullable
     public JetType checkPossibleCast(
             @NotNull JetType expressionType,
             @NotNull JetExpression expression,
@@ -219,14 +234,8 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, c.expectedType)) {
-                smartCastManager.recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), false);
-                return possibleType;
-            }
-        }
-
-        return null;
+        SmartCastResult result = smartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
+        return result != null ? result.getResultType() : null;
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {

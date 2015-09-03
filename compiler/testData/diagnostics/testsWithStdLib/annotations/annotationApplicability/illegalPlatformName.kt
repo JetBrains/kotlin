@@ -1,14 +1,12 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-import kotlin.platform.*
-
-<!ILLEGAL_PLATFORM_NAME!>@platformName("")<!>
+<!ILLEGAL_JVM_NAME!>@jvmName("")<!>
 fun foo(a: Any) {}
 
-<!ILLEGAL_PLATFORM_NAME!>@platformName(".")<!>
+<!ILLEGAL_JVM_NAME!>@jvmName(".")<!>
 fun foo() {}
 
-<!ILLEGAL_PLATFORM_NAME!>@platformName("/")<!>
+<!ILLEGAL_JVM_NAME!>@jvmName("/")<!>
 fun fooSlash() {}
 
-<!ILLEGAL_PLATFORM_NAME!>@platformName("<")<!>
+<!ILLEGAL_JVM_NAME!>@jvmName("<")<!>
 fun fooLT() {}

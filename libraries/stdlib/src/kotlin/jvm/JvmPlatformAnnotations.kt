@@ -31,11 +31,21 @@ public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = tru
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
  * for more information.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmStatic
+
+/**
+ * Specifies the name for the Java class or method
+ * which is generated from this element.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname)
+ * for more information.
+ * @property name the name of the element.
+ */
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmName(public val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
-target(AnnotationTarget.PROPERTY)
+target(AnnotationTarget.FIELD)
 public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class publicField

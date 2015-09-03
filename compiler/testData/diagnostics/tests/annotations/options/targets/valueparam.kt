@@ -3,7 +3,7 @@ target(AnnotationTarget.VALUE_PARAMETER) annotation class base
 
 <!WRONG_ANNOTATION_TARGET!>base<!> annotation class derived
 
-<!WRONG_ANNOTATION_TARGET!>base<!> class correct(<!WRONG_ANNOTATION_TARGET!>base<!> val x: Int, base w: Int) {
+<!WRONG_ANNOTATION_TARGET!>base<!> class correct(base val x: Int, base w: Int) {
     <!WRONG_ANNOTATION_TARGET!>base<!> constructor(): this(0, 0)
 }
 

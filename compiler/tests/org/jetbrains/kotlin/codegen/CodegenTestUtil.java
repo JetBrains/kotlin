@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
@@ -59,17 +58,14 @@ public class CodegenTestUtil {
         CompilerConfiguration configuration = environment.getConfiguration();
         BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
         GenerationState state = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+                environment.getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                null,
-                null,
-                forExtraDiagnostics,
-                null
+                forExtraDiagnostics
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
@@ -111,24 +107,30 @@ public class CodegenTestUtil {
 
     @NotNull
     public static File compileJava(@NotNull String filename, @NotNull String... additionalClasspath) {
-        return compileJava(Collections.singletonList(filename), additionalClasspath);
+        return compileJava(Collections.singletonList(filename), Arrays.asList(additionalClasspath), Collections.<String>emptyList());
     }
 
     @NotNull
-    public static File compileJava(@NotNull List<String> filenames, @NotNull String... additionalClasspath) {
+    public static File compileJava(
+            @NotNull List<String> fileNames,
+            @NotNull List<String> additionalClasspath,
+            @NotNull List<String> additionalOptions
+    ) {
         try {
             File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
             List<String> classpath = new ArrayList<String>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
             classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
             classpath.add(JetTestUtils.getAnnotationsJar().getPath());
-            classpath.addAll(Arrays.asList(additionalClasspath));
-            List<String> options = Arrays.asList(
+            classpath.addAll(additionalClasspath);
+
+            List<String> options = new ArrayList<String>(Arrays.asList(
                     "-classpath", KotlinPackage.join(classpath, File.pathSeparator, "", "", -1, ""),
                     "-d", javaClassesTempDirectory.getPath()
-            );
+            ));
+            options.addAll(additionalOptions);
 
-            List<File> fileList = Lists.transform(filenames, new Function<String, File>() {
+            List<File> fileList = Lists.transform(fileNames, new Function<String, File>() {
                 @Override
                 public File apply(@Nullable String input) {
                     return new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + input);

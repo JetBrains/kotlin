@@ -21,7 +21,7 @@ public class AnnotationTargets {
     }
 
     @Target(ElementType.FIELD)
-    public @interface field {
+    public @interface fieldann {
 
     }
 
@@ -62,18 +62,18 @@ import test.AnnotationTargets.*
 base meta type <!WRONG_ANNOTATION_TARGET!>konstructor<!> annotation class KMeta
 
 base <!WRONG_ANNOTATION_TARGET!>meta<!> type <!WRONG_ANNOTATION_TARGET!>method<!> <!WRONG_ANNOTATION_TARGET!>multiple<!> class KClass(
-        @base @field <!WRONG_ANNOTATION_TARGET!>@parameter<!> val y:
-            <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@type<!> Int) {
+        @base @fieldann @parameter val y:
+        <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@type<!> Int) {
 
-    base multiple field <!WRONG_ANNOTATION_TARGET!>local<!> val x = 0
-        @method <!WRONG_ANNOTATION_TARGET!>@konstructor<!> <!WRONG_ANNOTATION_TARGET!>@type<!> get
-    
+    base multiple fieldann <!WRONG_ANNOTATION_TARGET!>local<!> val x = 0
+    @method <!WRONG_ANNOTATION_TARGET!>@konstructor<!> <!WRONG_ANNOTATION_TARGET!>@type<!> get
+
     base method multiple <!WRONG_ANNOTATION_TARGET!>konstructor<!>
     fun foo(@parameter <!WRONG_ANNOTATION_TARGET!>@type<!> i:
-                <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> Int
-    ): <!WRONG_ANNOTATION_TARGET!>@field<!> <!WRONG_ANNOTATION_TARGET!>@parameter<!> Int {
+    <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> Int
+    ): <!WRONG_ANNOTATION_TARGET!>@fieldann<!> <!WRONG_ANNOTATION_TARGET!>@parameter<!> Int {
 
-        @local @base <!WRONG_ANNOTATION_TARGET!>@multiple<!> <!WRONG_ANNOTATION_TARGET!>@field<!> val j = i + 1
+        @local @base <!WRONG_ANNOTATION_TARGET!>@multiple<!> <!WRONG_ANNOTATION_TARGET!>@fieldann<!> val j = i + 1
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j
     }
 

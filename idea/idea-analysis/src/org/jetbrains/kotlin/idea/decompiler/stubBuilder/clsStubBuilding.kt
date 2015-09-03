@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -170,8 +171,12 @@ fun createModifierListStub(
     )
 }
 
-fun createAnnotationStubs(
-        annotationIds: List<ClassId>,
+fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>, needWrappingAnnotationEntries: Boolean = false) {
+    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent, needWrappingAnnotationEntries)
+}
+
+fun createTargetedAnnotationStubs(
+        annotationIds: List<ClassIdWithTarget>,
         parent: KotlinStubBaseImpl<*>,
         needWrappingAnnotationEntries: Boolean = false
 ) {
@@ -181,13 +186,16 @@ fun createAnnotationStubs(
             if (needWrappingAnnotationEntries) KotlinPlaceHolderStubImpl<JetAnnotation>(parent, JetStubElementTypes.ANNOTATION)
             else parent
 
-    annotationIds.forEach {
-        annotationClassId ->
+    annotationIds.forEach { annotation ->
+        val (annotationClassId, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
                 entriesParent,
                 shortName = annotationClassId.getShortClassName().ref(),
                 hasValueArguments = false
         )
+        if (target != null) {
+            KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name())!!)
+        }
         val constructorCallee = KotlinPlaceHolderStubImpl<JetConstructorCalleeExpression>(annotationEntryStubImpl, JetStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<JetTypeReference>(constructorCallee, JetStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationClassId, typeReference)

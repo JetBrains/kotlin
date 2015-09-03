@@ -4,6 +4,6 @@ annotation class Anno
 
 class Class {
     companion object {
-        @[Anno] var property: Int = 42
+        @field:Anno var property: Int = 42
     }
 }

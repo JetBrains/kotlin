@@ -21,41 +21,15 @@ package kt1185 {
     }
 
     internal final enum class Color : kotlin.Enum<kt1185.Color> {
-        public enum entry RED : kt1185.Color {
-            private constructor RED()
-            internal final override /*1*/ /*fake_override*/ val rgb: kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry RED
 
-        public enum entry GREEN : kt1185.Color {
-            private constructor GREEN()
-            internal final override /*1*/ /*fake_override*/ val rgb: kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry GREEN
 
-        public enum entry BLUE : kt1185.Color {
-            private constructor BLUE()
-            internal final override /*1*/ /*fake_override*/ val rgb: kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry BLUE
 
         private constructor Color(/*0*/ rgb: kotlin.Int)
         internal final val rgb: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -69,47 +43,16 @@ package kt1185 {
     }
 
     internal final enum class Direction : kotlin.Enum<kt1185.Direction> {
-        public enum entry NORTH : kt1185.Direction {
-            private constructor NORTH()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry NORTH
 
-        public enum entry SOUTH : kt1185.Direction {
-            private constructor SOUTH()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry SOUTH
 
-        public enum entry WEST : kt1185.Direction {
-            private constructor WEST()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry WEST
 
-        public enum entry EAST : kt1185.Direction {
-            private constructor EAST()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+        enum entry EAST
 
         private constructor Direction()
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

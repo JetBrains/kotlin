@@ -5,4 +5,4 @@ public class Impl : ArrayFactory {
     <caret>
 }
 
-val array: Array<String>
+val array: Array<String> = emptyArray()

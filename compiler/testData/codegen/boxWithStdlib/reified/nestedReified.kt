@@ -1,8 +1,8 @@
 import kotlin.test.assertEquals
 
-inline fun <reified T, reified R> foo(): Array<String> {
+inline fun <reified T : Any, reified R : Any> foo(): Array<String> {
     val x = object {
-        inline fun <reified T1, reified T> bar(): Array<String> = array(
+        inline fun <reified T1 : Any, reified T : Any> bar(): Array<String> = array(
                 javaClass<T1>().getName(), javaClass<T>().getName(), javaClass<R>().getName()
         )
         fun f1() = bar<T, R>()

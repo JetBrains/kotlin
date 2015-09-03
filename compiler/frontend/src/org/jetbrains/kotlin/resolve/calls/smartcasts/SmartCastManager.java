@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ public class SmartCastManager {
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
     ) {
-        return getSmartCastVariants(receiverToCast, context.trace.getBindingContext(), context.scope.getContainingDeclaration(), context.dataFlowInfo);
+        return getSmartCastVariants(receiverToCast, context.trace.getBindingContext(), context.scope.getOwnerDescriptor(), context.dataFlowInfo);
     }
 
     @NotNull
@@ -103,7 +102,7 @@ public class SmartCastManager {
             @NotNull ReceiverValue receiverToCast
     ) {
         return getSmartCastVariantsExcludingReceiver(context.trace.getBindingContext(),
-                                                     context.scope.getContainingDeclaration(),
+                                                     context.scope.getOwnerDescriptor(),
                                                      context.dataFlowInfo,
                                                      receiverToCast);
     }
@@ -118,18 +117,11 @@ public class SmartCastManager {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
     ) {
-        if (receiverToCast instanceof ThisReceiver) {
-            ThisReceiver receiver = (ThisReceiver) receiverToCast;
-            assert receiver.exists();
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver);
-            return dataFlowInfo.getPossibleTypes(dataFlowValue);
-        }
-        else if (receiverToCast instanceof ExpressionReceiver) {
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                    receiverToCast, bindingContext, containingDeclarationOrModule);
-            return dataFlowInfo.getPossibleTypes(dataFlowValue);
-        }
-        return Collections.emptyList();
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
+                receiverToCast, bindingContext, containingDeclarationOrModule
+        );
+
+        return dataFlowInfo.getPossibleTypes(dataFlowValue);
     }
 
     public boolean isSubTypeBySmartCastIgnoringNullability(
@@ -161,31 +153,7 @@ public class SmartCastManager {
         return intersection;
     }
 
-    // Returns false when we need smart cast but cannot do it, otherwise true
-    public boolean recordSmartCastIfNecessary(
-            @NotNull ReceiverValue receiver,
-            @NotNull JetType receiverParameterType,
-            @NotNull ResolutionContext context,
-            boolean safeAccess
-    ) {
-        if (!(receiver instanceof ExpressionReceiver)) return true;
-
-        receiverParameterType = safeAccess ? TypeUtils.makeNullable(receiverParameterType) : receiverParameterType;
-        if (ArgumentTypeResolver.isSubtypeOfForArgumentType(receiver.getType(), receiverParameterType)) {
-            return true;
-        }
-
-        Collection<JetType> smartCastTypesExcludingReceiver = getSmartCastVariantsExcludingReceiver(context, receiver);
-        JetType smartCastSubType = getSmartCastSubType(receiverParameterType, smartCastTypesExcludingReceiver);
-        if (smartCastSubType == null) return true;
-
-        JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
-
-        return recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isPredictable(), true);
-    }
-
-    public boolean recordCastOrError(
+    private static void recordCastOrError(
             @NotNull JetExpression expression,
             @NotNull JetType type,
             @NotNull BindingTrace trace,
@@ -203,19 +171,55 @@ public class SmartCastManager {
         else {
             trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.getText()));
         }
-        return canBeCast;
     }
 
-    public boolean canBeSmartCast(
-            @NotNull ReceiverParameterDescriptor receiverParameter,
-            @NotNull ReceiverValue receiver,
-            @NotNull ResolutionContext context) {
-        if (!receiver.getType().isMarkedNullable()) return true;
-
-        List<JetType> smartCastVariants = getSmartCastVariants(receiver, context);
-        for (JetType smartCastVariant : smartCastVariants) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(smartCastVariant, receiverParameter.getType())) return true;
+    @Nullable
+    public SmartCastResult checkAndRecordPossibleCast(
+            @NotNull DataFlowValue dataFlowValue,
+            @NotNull JetType expectedType,
+            @Nullable JetExpression expression,
+            @NotNull ResolutionContext c,
+            boolean recordExpressionType
+    ) {
+        for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
+            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
+                if (expression != null) {
+                    recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), recordExpressionType);
+                }
+                return new SmartCastResult(possibleType, dataFlowValue.isPredictable());
+            }
         }
-        return false;
+
+        if (!c.dataFlowInfo.getNullability(dataFlowValue).canBeNull() && !expectedType.isMarkedNullable()) {
+            // Handling cases like:
+            // fun bar(x: Any) {}
+            // fun <T : Any?> foo(x: T) {
+            //      if (x != null) {
+            //          bar(x) // Should be allowed with smart cast
+            //      }
+            // }
+            //
+            // It doesn't handled by lower code with getPossibleTypes because smart cast of T after `x != null` is still has same type T.
+            // But at the same time we're sure that `x` can't be null and just check for such cases manually
+
+            // E.g. in case x!! when x has type of T where T is type parameter with nullable upper bounds
+            // x!! is immanently not null (see DataFlowValueFactory.createDataFlowValue for expression)
+            boolean immanentlyNotNull = !dataFlowValue.getImmanentNullability().canBeNull();
+            JetType nullableExpectedType = TypeUtils.makeNullable(expectedType);
+
+            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.getType(), nullableExpectedType)) {
+                if (!immanentlyNotNull) {
+                    if (expression != null) {
+                        recordCastOrError(expression, dataFlowValue.getType(), c.trace, dataFlowValue.isPredictable(),
+                                          recordExpressionType);
+                    }
+                }
+
+                return new SmartCastResult(dataFlowValue.getType(), immanentlyNotNull || dataFlowValue.isPredictable());
+            }
+            return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, recordExpressionType);
+        }
+
+        return null;
     }
 }

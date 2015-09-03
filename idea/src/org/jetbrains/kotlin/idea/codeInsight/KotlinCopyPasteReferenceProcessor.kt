@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
 import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.idea.references.JetReference
@@ -65,7 +64,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
-import java.util.ArrayList
+import java.util.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
@@ -162,7 +161,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 }
 
                 val fqName = descriptor.importableFqName ?: continue
-                if (!descriptor.canBeReferencedViaImport()) continue
 
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
                 add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))

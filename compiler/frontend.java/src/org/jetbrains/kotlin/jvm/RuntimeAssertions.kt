@@ -84,7 +84,7 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
 }
 
 public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
-    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
+    override fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>) {
         if (TypeUtils.noExpectedType(c.expectedType)) return
 
         val assertionInfo = RuntimeAssertionInfo.create(

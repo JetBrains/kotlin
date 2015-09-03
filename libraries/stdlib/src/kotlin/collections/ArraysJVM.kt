@@ -96,3 +96,7 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
 
+/** Internal unsafe construction of array based on reference array type */
+private fun <T, A: Array<out T>> arrayOfNulls(reference: A, size: Int): A {
+    return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as A
+}

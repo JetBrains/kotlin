@@ -199,6 +199,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeOtherNamed.kt")
+        public void testBeforeOtherNamed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/beforeOtherNamed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionLiteralArgument.kt")
         public void testFunctionLiteralArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/functionLiteralArgument.kt");
@@ -6011,6 +6017,82 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/typesAlreadyImplicit.kt");
             doTest(fileName);
         }
+    }
+
+    @TestMetadata("idea/testData/intentions/removeExplicitSuperQualifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveExplicitSuperQualifier extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveExplicitSuperQualifier() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitSuperQualifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("AmbiguousSuperMethod.kt")
+        public void testAmbiguousSuperMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/AmbiguousSuperMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AmbiguousSuperProperty.kt")
+        public void testAmbiguousSuperProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/AmbiguousSuperProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataFlowInfoUsed.kt")
+        public void testDataFlowInfoUsed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/DataFlowInfoUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IncompleteCall.kt")
+        public void testIncompleteCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/IncompleteCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IncompleteCallAmbiguous.kt")
+        public void testIncompleteCallAmbiguous() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/IncompleteCallAmbiguous.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SingleSuper.kt")
+        public void testSingleSuper() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/SingleSuper.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SuperWithLabel.kt")
+        public void testSuperWithLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/SuperWithLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnambiguousSuperMethod.kt")
+        public void testUnambiguousSuperMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/UnambiguousSuperMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnambiguousSuperProperty.kt")
+        public void testUnambiguousSuperProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/UnambiguousSuperProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WrongOffset1.kt")
+        public void testWrongOffset1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/WrongOffset1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WrongOffset2.kt")
+        public void testWrongOffset2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/WrongOffset2.kt");
+            doTest(fileName);
+        }
+
     }
 
     @TestMetadata("idea/testData/intentions/removeExplicitType")

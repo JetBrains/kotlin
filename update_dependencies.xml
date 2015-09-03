@@ -1,7 +1,12 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <!--
+
+
     <property name="ideaVersion" value="142.4083.2"/>
+
+
     -->
+
 
     <property name="ideaVersion" value="141.1531.2"/>
 
@@ -12,15 +17,15 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <condition property="os.tag" value="win.zip">
+    <condition property="isWindows">
         <os family="windows"/>
     </condition>
 
-    <condition property="os.tag" value="mac.zip">
+    <condition property="isMac">
         <os family="mac"/>
     </condition>
 
-    <condition property="os.tag" value="tar.gz">
+    <condition property="isLinux">
         <and>
             <os family="unix"/>
             <not>
@@ -46,58 +51,34 @@
             idea.maven.version="${ideaVersion}"/>
     </target>
 
-    <!-- deprecated -->
-    <target name="jb_update" depends="fetch-third-party,fetch-annotations">
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
         <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
+            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/releases/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
 
-    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
+    <target name="update_continuous_141" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
             idea.maven.version="141-SNAPSHOT"/>
     </target>
 
-    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
+    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="141-SNAPSHOT"/>
+    </target>
+
+    <target name="update_continuous_142" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
             idea.maven.version="142-SNAPSHOT"/>
     </target>
 
-    <!-- deprecated -->
-    <target name="update_old" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_id_resolve
-            teamcity.server.url="https://teamcity.jetbrains.com"
-            build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}"/>
-    </target>
-
-    <!-- deprecated -->
-    <target name="jb_update_old" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_id_resolve
-            teamcity.server.url="http://buildserver.labs.intellij.net"
-            build.locator.request="buildType:bt3498,status:SUCCESS,branch:/idea/${ideaVersion}"/>
-    </target>
-
-    <!-- deprecated -->
-    <target name="jb_update_continuous_139_old" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_id_resolve
-            teamcity.server.url="http://buildserver.labs.intellij.net"
-            build.locator.request="buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
-    </target>
-
-    <!-- deprecated -->
-    <target name="jb_update_continuous_141_old" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_id_resolve
-            teamcity.server.url="http://buildserver.labs.intellij.net"
-            build.locator.request="buildType:ijplatform_IjPlatform141_IdeaTrunk_CommunityDist,status:SUCCESS"/>
-    </target>
-
-    <!-- deprecated -->
-    <target name="jb_update_continuous_142_old" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_id_resolve
-            teamcity.server.url="http://buildserver.labs.intellij.net"
-            build.locator.request="buildType:bt662,status:SUCCESS"/>
+    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="142-SNAPSHOT"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -268,7 +249,10 @@
 
         <local name="bootstrap.need.chmod"/>
         <condition property="bootstrap.need.chmod">
-            <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
+            <or>
+                <isset property="isMac" />
+                <isset property="isLinux" />
+            </or>
         </condition>
 
         <!-- Java can't manipulate permissions -->
@@ -465,40 +449,6 @@
         </sequential>
     </macrodef>
 
-    <!-- deprecated -->
-    <macrodef name="execute_update_with_id_resolve">
-        <attribute name="teamcity.server.url"/>
-        <attribute name="build.locator.request"/>
-
-        <sequential>
-            <loadresource property="execute.build.id">
-                <url url="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request},count:1"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <local name="idea.already.downloaded"/>
-            <condition property="idea.already.downloaded">
-                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
-            </condition>
-
-            <echo message="IDEA build id: ${execute.build.id}. Already downloaded." if:set="idea.already.downloaded"/>
-
-            <sequential unless:set="idea.already.downloaded">
-                <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
-                <execute_update base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
-
-                <propertyfile file="${dependencies.info.file}">
-                    <entry key="idea.build.id" value="${execute.build.id}"/>
-                </propertyfile>
-            </sequential>
-        </sequential>
-    </macrodef>
-
     <macrodef name="download_teamcity_artifact">
         <attribute name="teamcity.server.url"/>
         <attribute name="build.locator.request"/>
@@ -562,7 +512,6 @@
         <attribute name="download.dir.jps-standalone"/>
 
         <attribute name="download.file.archive.idea"/>
-        <attribute name="download.file.archive.idea.win.only"/>
 
         <attribute name="download.file.archive.sources"/>
         <attribute name="download.file.archive.jps-build-test"/>
@@ -580,59 +529,25 @@
                     <exclude name="system-idea/**"/>
                 </delete>
 
-                <local name="unpack.idea.sdk.windows"/>
-                <condition property="unpack.idea.sdk.windows">
-                    <or>
-                        <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
-                        <istrue value="@{download.file.archive.idea.win.only}"/>
-                    </or>
-                </condition>
+                <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}" />
 
-                <local name="unpack.idea.sdk.mac"/>
-                <condition property="unpack.idea.sdk.mac">
-                    <and>
-                        <not>
-                            <isset property="unpack.idea.sdk.windows"/>
-                        </not>
-                        <matches pattern=".+\.mac\.zip" string="${idea.archive.name}"/>
-                    </and>
-                </condition>
-
-                <local name="unpack.idea.sdk.unix"/>
-                <condition property="unpack.idea.sdk.unix">
-                    <not>
-                        <or>
-                            <isset property="unpack.idea.sdk.windows"/>
-                            <isset property="unpack.idea.sdk.mac"/>
-                        </or>
-                    </not>
-                </condition>
-
-                <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}" if:set="unpack.idea.sdk.windows"/>
-
-                <sequential if:set="unpack.idea.sdk.mac">
-                    <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}">
-                        <cutdirsmapper dirs="2"/>
-                    </unzip>
+                <sequential if:set="isMac">
                     <!-- Java can't manipulate permissions -->
                     <exec executable="chmod">
                         <arg value="a+x"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier"/>
+                        <arg path="@{idea.dir}/bin/mac/fsnotifier"/>
                         <arg path="@{idea.dir}/bin/inspect.sh"/>
                         <arg path="@{idea.dir}/bin/printenv.py"/>
                         <arg path="@{idea.dir}/bin/restarter"/>
                     </exec>
                 </sequential>
 
-                <sequential if:set="unpack.idea.sdk.unix">
-                    <untar src="@{download.file.archive.idea}" dest="@{idea.dir}" compression="gzip">
-                        <cutdirsmapper dirs="1"/>
-                    </untar>
+                <sequential if:set="isLinux">
                     <!-- Java can't manipulate permissions -->
                     <exec executable="chmod">
                         <arg value="a+x"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier"/>
-                        <arg path="@{idea.dir}/bin/fsnotifier64"/>
+                        <arg path="@{idea.dir}/bin/linux/fsnotifier"/>
+                        <arg path="@{idea.dir}/bin/linux/fsnotifier64"/>
                         <arg path="@{idea.dir}/bin/inspect.sh"/>
                         <arg path="@{idea.dir}/bin/idea.sh"/>
                     </exec>
@@ -752,7 +667,6 @@
                 download.dir.intellij-core="@{download.dir}/intellij-core-@{idea.maven.version}"
                 download.dir.jps-standalone="@{download.dir}/jps-standalone-@{idea.maven.version}"
                 download.file.archive.idea="@{download.dir}/ideaIC-@{idea.maven.version}.zip"
-                download.file.archive.idea.win.only="true"
                 download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar"
                 download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
         </sequential>
@@ -775,75 +689,6 @@
 
             <unzip src="@{dir}.zip" dest="@{dir}" if:set="need.unpack"/>
             <echo message="Folder exist - so not unpacked @{dir}" unless:set="need.unpack"/>
-        </sequential>
-    </macrodef>
-
-    <!-- deprecated -->
-    <macrodef name="execute_update">
-        <attribute name="base.url"/>
-
-        <sequential>
-            <loadresource property="idea.build.number">
-                <url url="@{base.url}/artifacts/children"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-
-                        <replaceregex pattern="^(.*)ideaIC-([\w\.]+)\.win\.zip(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
-
-            <echo message="IDEA build number: ${idea.build.number}"/>
-            <echo message="IDEA archive file: ${idea.archive.name}"/>
-
-            <property name="content.base.url" value="@{base.url}/artifacts/content"/>
-            <property name="idea.download.dir" value="dependencies/idea" />
-            <property name="jps.extracted.dir" value="${idea.download.dir}/standalone-jps"/>
-            <property name="core.dir" value="${idea.download.dir}/core"/>
-
-            <sequential if:true="${idea.sdk.fetch.needed}">
-                <delete dir="${idea.download.dir}"/>
-                <mkdir dir="${idea.download.dir}"/>
-
-                <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
-                     dest="${idea.download.dir}/standalone-jps.zip"/>
-                <unzip src="${idea.download.dir}/standalone-jps.zip"
-                       dest="${jps.extracted.dir}"/>
-
-                <delete file="${idea.download.dir}/${idea.archive.name}" failonerror="false"/>
-                <get src="${content.base.url}/${idea.archive.name}"
-                     dest="${idea.download.dir}/${idea.archive.name}"/>
-
-                <get src="${content.base.url}/jps/jps-build-test-IC-${idea.build.number}.jar"
-                     dest="${idea.download.dir}/jps-build-test.jar"
-                     usetimestamp="true"/>
-
-                <mkdir dir="${core.dir}"/>
-                <get src="${content.base.url}/core/intellij-core.jar" dest="${core.dir}/intellij-core.jar"/>
-                <get src="${content.base.url}/core/annotations.jar" dest="${core.dir}/annotations.jar"/>
-                <get src="${content.base.url}/core/guava-17.0.jar" dest="${core.dir}/guava-17.0.jar"/>
-                <get src="${content.base.url}/core/picocontainer.jar" dest="${core.dir}/picocontainer.jar"/>
-                <get src="${content.base.url}/core/trove4j.jar" dest="${core.dir}/trove4j.jar"/>
-
-                <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core.dir}/intellij-core-analysis.jar"/>
-
-                <delete file="${idea.download.dir}/idea-sdk-sources.jar" failonerror="false"/>
-                <get src="${content.base.url}/sources.jar" dest="${idea.download.dir}/idea-sdk-sources.jar"/>
-            </sequential>
-
-            <configure_idea_sdk_dir
-                idea.dir="${idea.dir}"
-                idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
-
-                download.dir.intellij-core="${core.dir}"
-                download.dir.jps-standalone="${jps.extracted.dir}"
-                download.file.archive.idea="${idea.download.dir}/${idea.archive.name}"
-                download.file.archive.idea.win.only="false"
-                download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.jar"
-                download.file.archive.jps-build-test="${idea.download.dir}/jps-build-test.jar"/>
         </sequential>
     </macrodef>
 

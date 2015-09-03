@@ -1,3 +1,4 @@
+target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 annotation class a
 interface A
 interface B

@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -57,7 +57,7 @@ public class LocalClassifierAnalyzer(
         private val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
-            scope: WritableScope?,
+            scope: LexicalWritableScope?,
             context: ExpressionTypingContext,
             containingDeclaration: DeclarationDescriptor,
             classOrObject: JetClassOrObject
@@ -91,7 +91,7 @@ public class LocalClassifierAnalyzer(
 }
 
 class LocalClassDescriptorHolder(
-        val writableScope: WritableScope?,
+        val writableScope: LexicalWritableScope?,
         val myClass: JetClassOrObject,
         val containingDeclaration: DeclarationDescriptor,
         val storageManager: StorageManager,
@@ -144,7 +144,7 @@ class LocalClassDescriptorHolder(
         return classDescriptor!!
     }
 
-    fun getResolutionScopeForClass(classOrObject: JetClassOrObject): JetScope {
+    fun getResolutionScopeForClass(classOrObject: JetClassOrObject): LexicalScope {
         assert (isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
         return expressionTypingContext.scope
     }
@@ -171,7 +171,7 @@ class DeclarationScopeProviderForLocalClassifierAnalyzer(
         fileScopeProvider: FileScopeProvider,
         private val localClassDescriptorManager: LocalClassDescriptorHolder
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
-    override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope {
+    override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): LexicalScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {
             return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as JetClassOrObject)
         }

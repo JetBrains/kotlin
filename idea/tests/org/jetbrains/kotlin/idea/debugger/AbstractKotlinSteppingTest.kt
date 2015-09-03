@@ -65,6 +65,8 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
             }
         }
 
+        // doStepping(path)
+
         finish()
     }
 

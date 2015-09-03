@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.configuration.MainFunctionGutterVisitor
-import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -240,9 +238,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),
                 VariablesHighlightingVisitor(holder, bindingContext),
-                TypeKindHighlightingVisitor(holder, bindingContext),
+                TypeKindHighlightingVisitor(holder, bindingContext)
                 //DeprecatedAnnotationVisitor(holder, bindingContext)
-                MainFunctionGutterVisitor(holder, bindingContext)
         )
 
         public fun createQuickfixes(diagnostic: Diagnostic): Collection<IntentionAction> {

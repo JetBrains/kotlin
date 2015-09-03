@@ -121,9 +121,16 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(INAPPLICABLE_PLATFORM_NAME, "platformName annotation is not applicable to this declaration");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
+        MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
+
+        MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}'' annotations could be applied only to property declarations", TO_STRING);
+        MAP.put(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD, "Property has neither a backing field nor a delegate");
+        MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "Property must be mutable");
+        MAP.put(INAPPLICABLE_RECEIVER_TARGET, "''@receiver:'' annotations could be applied only to extension function or extension property declarations");
+        MAP.put(INAPPLICABLE_PARAM_TARGET, "''@param:'' annotations could be applied only to primary constructor parameters");
+        MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
@@ -514,7 +521,6 @@ public class DefaultErrorMessages {
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
-        MAP.put(ILLEGAL_PLATFORM_NAME, "Illegal platform name: ''{0}''", STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorConventions.INVOKE.asString() + "()' is not found",

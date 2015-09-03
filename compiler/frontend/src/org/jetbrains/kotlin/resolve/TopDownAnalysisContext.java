@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -130,7 +130,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @Nullable
     @Override
-    public JetScope getDeclaringScope(@NotNull JetDeclaration declaration) {
+    public LexicalScope getDeclaringScope(@NotNull JetDeclaration declaration) {
         return declarationScopeProvider.getResolutionScopeForDeclaration(declaration);
     }
 

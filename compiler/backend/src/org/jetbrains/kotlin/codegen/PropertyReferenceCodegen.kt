@@ -114,7 +114,7 @@ public class PropertyReferenceCodegen(
             target as PropertyDescriptor
 
             val getter = target.getGetter() ?: run {
-                val defaultGetter = DescriptorFactory.createDefaultGetter(target)
+                val defaultGetter = DescriptorFactory.createDefaultGetter(target, Annotations.EMPTY)
                 defaultGetter.initialize(target.getType())
                 defaultGetter
             }
@@ -182,7 +182,7 @@ public class PropertyReferenceCodegen(
     private fun generateMethod(debugString: String, access: Int, method: Method, generate: InstructionAdapter.() -> Unit) {
         val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, method.getName(), method.getDescriptor(), null, null)
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.classBuilderMode == ClassBuilderMode.FULL) {
             val iv = InstructionAdapter(mv)
             iv.visitCode()
             iv.generate()

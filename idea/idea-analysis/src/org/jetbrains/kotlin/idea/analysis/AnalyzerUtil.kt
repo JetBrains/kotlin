@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -39,7 +40,7 @@ public fun JetExpression.computeTypeInfoInContext(
         isStatement: Boolean = false
 ): JetTypeInfo {
     return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
+            .getTypeInfo(scope.asLexicalScope(), this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
 jvmOverloads

@@ -114,8 +114,8 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> REDUNDANT_MODIFIER_FOR_TARGET = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_CONTAINING_DECLARATION = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory0<PsiElement> INAPPLICABLE_PLATFORM_NAME = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<JetAnnotationEntry, String, String> WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<JetAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     // Annotations
@@ -131,6 +131,13 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_ON_PROPERTY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_RECEIVER_TARGET = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
 
     // Classes and traits
 
@@ -243,8 +250,6 @@ public interface Errors {
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
-    DiagnosticFactory1<JetAnnotationEntry, String> ILLEGAL_PLATFORM_NAME = DiagnosticFactory1.create(ERROR);
-
     DiagnosticFactory0<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
             JetTokens.OPEN_KEYWORD));
 
@@ -284,7 +289,7 @@ public interface Errors {
 
     // Property-specific
 
-    DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
+    DiagnosticFactory2<JetNamedDeclaration, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
             DiagnosticFactory2.create(ERROR, VAL_OR_VAR_NODE);
 
     DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);

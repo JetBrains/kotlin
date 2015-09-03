@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
+import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.Collections
 import java.util.HashSet
@@ -77,7 +80,7 @@ public class NewDeclarationNameValidator(
         if (visibleDeclarationsContext != null) {
             val bindingContext = visibleDeclarationsContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             val resolutionScope = visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
-            if (resolutionScope.hasConflict(identifier)) return false
+            if (resolutionScope.asJetScope().hasConflict(identifier)) return false
         }
 
         return checkDeclarationsIn.none {
@@ -97,10 +100,9 @@ public class NewDeclarationNameValidator(
 
         return when(target) {
             Target.VARIABLES ->
-                getProperties(name, NoLookupLocation.FROM_IDE).any { !it.isExtension && it.isVisible() } ||
-                getLocalVariable(name) != null
+                getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() }
             Target.FUNCTIONS_AND_CLASSES ->
-                getFunctions(name, NoLookupLocation.FROM_IDE).any { !it.isExtension && it.isVisible() } ||
+                getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() } ||
                 getClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
         }
     }

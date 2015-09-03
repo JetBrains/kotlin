@@ -143,7 +143,7 @@ public class CompileTimeConstantChecker {
     }
 
     private boolean checkNullValue(@NotNull JetType expectedType, @NotNull JetConstantExpression expression) {
-        if (!noExpectedTypeOrError(expectedType) && !TypeUtils.isNullableType(expectedType)) {
+        if (!noExpectedTypeOrError(expectedType) && !TypeUtils.acceptsNullable(expectedType)) {
             return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
         }
         return false;

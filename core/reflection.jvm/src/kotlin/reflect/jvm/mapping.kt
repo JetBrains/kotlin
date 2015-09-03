@@ -17,18 +17,14 @@
 package kotlin.reflect.jvm
 
 import java.lang.reflect.*
-import kotlin.jvm.internal.Intrinsic
+import java.util.*
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.jvm.internal.KCallableImpl
+import kotlin.reflect.jvm.internal.KPackageImpl
+import kotlin.reflect.jvm.internal.KPropertyImpl
+import kotlin.reflect.jvm.internal.KTypeImpl
 
 // Kotlin reflection -> Java reflection
-
-/**
- * Returns a Java [Class] instance corresponding to the given [KClass] instance.
- */
-@Intrinsic("kotlin.KClass.java.property")
-public val <T> KClass<T>.java: Class<T>
-    get() = (this as KClassImpl<T>).jClass
 
 /**
  * Returns a Java [Class] instance that represents a Kotlin package.
@@ -90,13 +86,6 @@ public val KType.javaType: Type
 
 // Java reflection -> Kotlin reflection
 
-// TODO: getstatic $kotlinClass or go to foreignKClasses
-/**
- * Returns a [KClass] instance corresponding to the given Java [Class] instance.
- */
-public val <T> Class<T>.kotlin: KClass<T>
-    get() = KClassImpl(this)
-
 /**
  * Returns a [KPackage] instance corresponding to the Java [Class] instance.
  * The given class is generated from top level functions and properties in the Kotlin package.
@@ -130,15 +119,26 @@ public val Field.kotlinProperty: KProperty<*>?
  */
 public val Method.kotlinFunction: KFunction<*>?
     get() {
-        if (isSynthetic()) return null
+        if (isSynthetic) return null
 
-        if (Modifier.isStatic(getModifiers())) {
-            getDeclaringClass().kotlinPackage?.let { pkg ->
-                return pkg.functions.firstOrNull { it.javaMethod == this }
+        if (Modifier.isStatic(modifiers)) {
+            val kotlinPackage = declaringClass.kotlinPackage
+            if (kotlinPackage != null) {
+                return kotlinPackage.functions.firstOrNull { it.javaMethod == this }
+            }
+
+            // For static bridge method generated for a jvmStatic function in the companion object, also try to find the latter
+            val companion = declaringClass.kotlin.companionObject
+            if (companion != null) {
+                companion.functions.firstOrNull {
+                    val m = it.javaMethod
+                    m != null && m.name == this.name &&
+                    Arrays.equals(m.parameterTypes, this.parameterTypes) && m.returnType == this.returnType
+                }?.let { return it }
             }
         }
 
-        return getDeclaringClass().kotlin.functions.firstOrNull { it.javaMethod == this }
+        return declaringClass.kotlin.functions.firstOrNull { it.javaMethod == this }
     }
 
 /**
@@ -146,7 +146,7 @@ public val Method.kotlinFunction: KFunction<*>?
  * or `null` if this constructor cannot be represented by a Kotlin function
  * (for example, if it is a synthetic constructor).
  */
-public val <T> Constructor<T>.kotlinFunction: KFunction<T>?
+public val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
         if (isSynthetic()) return null
 

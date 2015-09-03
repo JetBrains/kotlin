@@ -3415,6 +3415,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyConstructor.kt")
+        public void testEmptyConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/emptyConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyEnumValuesValueOf.kt")
         public void testEmptyEnumValuesValueOf() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/emptyEnumValuesValueOf.kt");

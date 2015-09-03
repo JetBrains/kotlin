@@ -26,12 +26,15 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetAnnotationEntry;
+import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
@@ -124,11 +127,21 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
             public String fun(JetAnnotationEntry annotationEntry) {
                 AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                 assertNotNull(annotationDescriptor);
-                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
+
+                JetAnnotationUseSiteTarget target = annotationEntry.getUseSiteTarget();
+
+                if (target != null) {
+                    return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(
+                            annotationDescriptor, target.getAnnotationUseSiteTarget());
+                }
+
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor, null);
             }
         }, " ");
 
-        assertEquals(expectedAnnotation, actualAnnotation);
+        String expectedAnnotationWithTarget = "@" + AnnotationUseSiteTarget.FILE.getRenderName() + ":" + expectedAnnotation;
+
+        assertEquals(expectedAnnotationWithTarget, actualAnnotation);
     }
 
     private void checkAnnotationOnLocalDeclarations(String expectedAnnotation) {
@@ -139,7 +152,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
-        checkDescriptor(expectedAnnotation, prop);
+        checkDescriptorWithTarget(expectedAnnotation, prop, AnnotationUseSiteTarget.FIELD);
         checkDescriptor(expectedAnnotation, prop.getGetter());
         PropertySetterDescriptor propSetter = prop.getSetter();
         assertNotNull(propSetter);
@@ -353,11 +366,16 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         return JetTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
-    private static String renderAnnotations(Annotations annotations) {
-        return StringUtil.join(annotations, new Function<AnnotationDescriptor, String>() {
+    private static String renderAnnotations(Annotations annotations, @Nullable final AnnotationUseSiteTarget defaultTarget) {
+        return StringUtil.join(annotations.getAllAnnotations(), new Function<AnnotationWithTarget, String>() {
             @Override
-            public String fun(AnnotationDescriptor annotationDescriptor) {
-                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
+            public String fun(AnnotationWithTarget annotationWithTarget) {
+                AnnotationUseSiteTarget targetToRender = annotationWithTarget.getTarget();
+                if (targetToRender == defaultTarget) {
+                    targetToRender = null;
+                }
+
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationWithTarget.getAnnotation(), targetToRender);
             }
         }, " ");
     }
@@ -367,9 +385,14 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
     }
 
+    private static void checkDescriptorWithTarget(String expectedAnnotation, DeclarationDescriptor member, AnnotationUseSiteTarget target) {
+        String actual = renderAnnotations(member.getAnnotations(), target);
+        assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
+    }
+
     @NotNull
     protected static String getAnnotations(DeclarationDescriptor member) {
-        return renderAnnotations(member.getAnnotations());
+        return renderAnnotations(member.getAnnotations(), null);
     }
 
     @Override

@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider
+import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.RefactoringActionHandler
-import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHandler
 import org.jetbrains.kotlin.idea.refactoring.pushDown.KotlinPushDownHandler
-import org.jetbrains.kotlin.idea.refactoring.safeDelete.*
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.canDeleteElement
 import org.jetbrains.kotlin.psi.*
 
 public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
@@ -55,7 +56,7 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
             }
             is JetMultiDeclarationEntry -> return true
             is JetFunction -> {
-                if (element.isLocal()) return true
+                if (element.isLocal() && element.nameIdentifier != null) return true
             }
             is JetParameter -> {
                 val parent = element.getParent()
@@ -77,3 +78,8 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
 
     override fun getPushDownHandler() = KotlinPushDownHandler()
 }
+
+class KotlinVetoRenameCondition: Condition<PsiElement> {
+    override fun value(t: PsiElement?): Boolean = t is JetElement && t is PsiNameIdentifierOwner && t.nameIdentifier == null
+}
+

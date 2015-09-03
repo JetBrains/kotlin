@@ -111,10 +111,10 @@ public fun StorageComponentContainer.registerInstance(instance: Any): StorageCom
     return registerDescriptors(listOf(InstanceComponentDescriptor(instance)))
 }
 
-public inline fun <reified T> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
+public inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
     return resolve(javaClass<T>(), context)
 }
 
-public inline fun <reified T> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
+public inline fun <reified T : Any> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
     return resolveMultiple(javaClass<T>(), context)
 }

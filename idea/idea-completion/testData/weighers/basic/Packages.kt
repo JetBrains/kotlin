@@ -5,6 +5,6 @@ class A {
 }
 
 // INVOCATION_COUNT: 2
-// ORDER: kokoFun
 // ORDER: koza
 // ORDER: kotlin
+// ORDER: kokoFun

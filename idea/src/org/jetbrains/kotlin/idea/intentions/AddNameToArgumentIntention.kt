@@ -62,7 +62,7 @@ public class AddNameToArgumentIntention
         if (argument is JetFunctionLiteralArgument) return null
 
         val argumentList = argument.getParent() as? JetValueArgumentList ?: return null
-        if (argument != argumentList.getArguments().last()) return null
+        if (argument != argumentList.arguments.last { !it.isNamed() }) return null
 
         val callExpr = argumentList.getParent() as? JetExpression ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null

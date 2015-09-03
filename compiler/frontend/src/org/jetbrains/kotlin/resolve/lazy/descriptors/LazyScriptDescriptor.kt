@@ -90,19 +90,13 @@ public class LazyScriptDescriptor(
 
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
-    override fun getScopeForBodyResolution(): JetScope {
-        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of $this", implicitReceiver)
-        for (valueParameterDescriptor in getScriptCodeDescriptor().getValueParameters()) {
-            parametersScope.addVariableDescriptor(valueParameterDescriptor)
+    override fun getScopeForBodyResolution(): LexicalScope {
+        return LexicalScopeImpl(resolveSession.fileScopeProvider.getFileScope(jetScript.getContainingJetFile()),
+                                this, false, implicitReceiver, "Scope for body resolution for " + this) {
+            for (valueParameterDescriptor in getScriptCodeDescriptor().valueParameters) {
+                addVariableDescriptor(valueParameterDescriptor)
+            }
         }
-        parametersScope.changeLockLevel(WritableScope.LockLevel.READING)
-
-        return ChainedScope(
-                this,
-                "Scope for body resolution for " + this,
-                resolveSession.getFileScopeProvider().getFileScope(jetScript.getContainingJetFile()),
-                parametersScope
-        )
     }
 
     override fun forceResolveAllContents() {

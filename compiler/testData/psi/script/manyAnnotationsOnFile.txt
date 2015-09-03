@@ -2,7 +2,8 @@ JetFile: manyAnnotationsOnFile.kts
   FILE_ANNOTATION_LIST
     ANNOTATION
       PsiElement(AT)('@')
-      PsiElement(file)('file')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
       PsiElement(COLON)(':')
       PsiElement(LBRACKET)('[')
       PsiWhiteSpace(' ')
@@ -16,7 +17,8 @@ JetFile: manyAnnotationsOnFile.kts
     PsiWhiteSpace('\n')
     ANNOTATION
       PsiElement(AT)('@')
-      PsiElement(file)('file')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
       PsiElement(COLON)(':')
       PsiElement(LBRACKET)('[')
       ANNOTATION_ENTRY

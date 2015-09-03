@@ -50,15 +50,14 @@ import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.Progress
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
@@ -81,8 +80,7 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -93,28 +91,28 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
-        val file = position.getFile()
+        val file = position.file
         if (file !is JetFile) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
         }
 
-        if (position.getLine() < 0) {
+        if (position.line < 0) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression at $position")
         }
 
-        val document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file)
-        if (document == null || document.getLineCount() < position.getLine()) {
+        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+        if (document == null || document.lineCount < position.line) {
             throw EvaluateExceptionUtil.createEvaluateException(
                     "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
                     "It may happen when you've changed source file after starting a debug process.")
         }
 
-        if (codeFragment.getContext() !is JetElement) {
-            val attachments = arrayOf(attachmentByPsiFile(position.getFile()),
+        if (codeFragment.context !is JetElement) {
+            val attachments = arrayOf(attachmentByPsiFile(position.file),
                                       attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${position.getLine()}"))
+                                      Attachment("breakpoint.info", "line: ${position.line}"))
 
-            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", mergeAttachments(*attachments))
+            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
@@ -128,8 +126,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
-        if (codeFragment.getText().isEmpty()) {
-            return context.getDebugProcess().getVirtualMachineProxy().mirrorOf()
+        if (codeFragment.text.isEmpty()) {
+            return context.debugProcess.virtualMachineProxy.mirrorOf()
         }
 
         var isCompiledDataFromCache = true
@@ -141,7 +139,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }
             val result = runEval4j(context, compiledData)
 
-            val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+            val virtualMachine = context.debugProcess.virtualMachineProxy.virtualMachine
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
@@ -160,9 +158,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             exception(DebuggerBundle.message("error.vm.disconnected"))
         }
         catch (e: Exception) {
-            val attachments = arrayOf(attachmentByPsiFile(sourcePosition.getFile()),
+            val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${sourcePosition.getLine()}"))
+                                      Attachment("breakpoint.info", "line: ${sourcePosition.line}"))
             logger.error(LogMessageEx.createEvent(
                                 "Couldn't evaluate expression",
                                 ExceptionUtil.getThrowableText(e),
@@ -181,7 +179,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
             codeFragment.checkForErrors(false)
 
-            val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
+            val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
             if (extractionResult == null) {
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
@@ -194,9 +192,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                     .filter { it.relativePath != "$packageInternalName.class" }
                                     .sortBy { it.relativePath.length() }
 
-            val funName = extractedFunction.getName()
+            val funName = extractedFunction.name
             if (funName == null) {
-                throw IllegalStateException("Extracted function should have a name: ${extractedFunction.getText()}")
+                throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
             }
 
             val additionalFiles = if (outputFiles.size() < 2) emptyList()
@@ -215,7 +213,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
 
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
-            val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+            val virtualMachine = context.debugProcess.virtualMachineProxy.virtualMachine
 
             if (compiledData.additionalClasses.isNotEmpty()) {
                 loadClasses(context, compiledData.additionalClasses)
@@ -235,9 +233,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                 allRequests.forEach { it.disable() }
 
                                 val eval = JDIEval(virtualMachine,
-                                                   context.getClassLoader(),
-                                                   context.getSuspendContext().getThread()?.getThreadReference()!!,
-                                                   context.getSuspendContext().getInvokePolicy())
+                                                   context.classLoader,
+                                                   context.suspendContext.thread?.threadReference!!,
+                                                   context.suspendContext.getInvokePolicy())
 
                                 resultValue = interpreterLoop(
                                         this,
@@ -301,13 +299,13 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return runReadAction {
                 val valuesForLabels = HashMap<String, Value>()
 
-                val contextElementFile = fragment.getContext()?.getContainingFile()
+                val contextElementFile = fragment.context?.containingFile
                 if (contextElementFile is JetCodeFragment) {
                     contextElementFile.accept(object: JetTreeVisitorVoid() {
                         override fun visitProperty(property: JetProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
-                                valuesForLabels.put(property.getName()!!, value.asValue())
+                                valuesForLabels.put(property.name?.quoteIfNeeded()!!, value.asValue())
                             }
                         }
                     })
@@ -362,26 +360,20 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 }
 
                 val state = GenerationState(
-                        jetFile.getProject(),
+                        jetFile.project,
                         ClassBuilderFactories.BINARIES,
-                        Progress.DEAF,
                         moduleDescriptor,
                         bindingContext,
                         files,
-                        true, true,
-                        generateClassFilter,
-                        false, false,
-                        null, null,
-                        DiagnosticSink.DO_NOTHING,
-                        null)
+                        generateDeclaredClassFilter = generateClassFilter)
 
                 val frameVisitor = FrameVisitor(context)
 
-                extractedFunction.getReceiverTypeReference()?.let {
-                    state.getBindingTrace().recordAnonymousType(it, THIS_NAME, frameVisitor)
+                extractedFunction.receiverTypeReference?.let {
+                    state.bindingTrace.recordAnonymousType(it, THIS_NAME, frameVisitor)
                 }
 
-                val valueParameters = extractedFunction.getValueParameters()
+                val valueParameters = extractedFunction.valueParameters
                 var paramIndex = 0
                 for (param in parameters) {
 
@@ -389,28 +381,28 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                     val valueParameter = valueParameters[paramIndex++]
 
-                    val paramRef = valueParameter.getTypeReference()
+                    val paramRef = valueParameter.typeReference
                     if (paramRef == null) {
                         logger.error("Each parameter for extracted function should have a type reference",
-                                     Attachment("codeFragment.txt", codeFragment.getText()),
-                                     Attachment("extractedFunction.txt", extractedFunction.getText()))
+                                     Attachment("codeFragment.txt", codeFragment.text),
+                                     Attachment("extractedFunction.txt", extractedFunction.text))
 
                         exception("An exception occurs during Evaluate Expression Action")
                     }
 
-                    state.getBindingTrace().recordAnonymousType(paramRef, param.callText, frameVisitor)
+                    state.bindingTrace.recordAnonymousType(paramRef, param.callText, frameVisitor)
                 }
 
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
 
-                state.getFactory()
+                state.factory
             }
         }
 
         private fun BindingTrace.recordAnonymousType(typeReference: JetTypeReference, localVariableName: String, visitor: FrameVisitor) {
             val paramAnonymousType = typeReference.debugTypeInfo
             if (paramAnonymousType != null) {
-                val declarationDescriptor = paramAnonymousType.getConstructor().getDeclarationDescriptor()
+                val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
                 if (declarationDescriptor is ClassDescriptor) {
                     val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
                     if (localVariable == null) {
@@ -440,14 +432,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
-                val resolutionFacade = KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this, createFlexibleTypesFile()))
+                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this, createFlexibleTypesFile()))
                 val analysisResult = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(this))
                 if (analysisResult.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
                 }
 
                 val bindingContext = analysisResult.bindingContext
-                bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
+                bindingContext.diagnostics.firstOrNull { it.severity == Severity.ERROR }?.let {
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.render(it))
                 }
 
@@ -483,23 +475,23 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                             .split(JetCodeFragment.IMPORT_SEPARATOR)
                                             .joinToString("\n"))
 
-    val extractedFunctionText = extractedFunction.getText()
+    val extractedFunctionText = extractedFunction.text
     assert(extractedFunctionText != null, "Text of extracted function shouldn't be null")
-    fileText = fileText.replace("!FUNCTION!", extractedFunction.getText()!!)
+    fileText = fileText.replace("!FUNCTION!", extractedFunction.text!!)
 
     val jetFile = codeFragment.createJetFile("debugFile.kt", fileText)
     jetFile.suppressDiagnosticsInDebugMode = true
 
-    val list = jetFile.getDeclarations()
+    val list = jetFile.declarations
     val function = list.get(0) as JetNamedFunction
 
-    function.getReceiverTypeReference()?.debugTypeInfo = extractedFunction.getReceiverTypeReference()?.debugTypeInfo
+    function.receiverTypeReference?.debugTypeInfo = extractedFunction.receiverTypeReference?.debugTypeInfo
 
-    for ((newParam, oldParam) in function.getValueParameters().zip(extractedFunction.getValueParameters())) {
-        newParam.getTypeReference()?.debugTypeInfo = oldParam.getTypeReference()?.debugTypeInfo
+    for ((newParam, oldParam) in function.valueParameters.zip(extractedFunction.valueParameters)) {
+        newParam.typeReference?.debugTypeInfo = oldParam.typeReference?.debugTypeInfo
     }
 
-    function.getTypeReference()?.debugTypeInfo = extractedFunction.getTypeReference()?.debugTypeInfo
+    function.typeReference?.debugTypeInfo = extractedFunction.typeReference?.debugTypeInfo
 
     return jetFile
 }
@@ -508,8 +500,8 @@ private fun PsiElement.createFlexibleTypesFile(): JetFile {
     return createJetFile(
             "FLEXIBLE_TYPES.kt",
             """
-                package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName()}
-                public class ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName()}<L, U>
+                package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName}
+                public class ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName}<L, U>
             """
     )
 }
@@ -517,21 +509,21 @@ private fun PsiElement.createFlexibleTypesFile(): JetFile {
 private fun PsiElement.createJetFile(fileName: String, fileText: String): JetFile {
     // Not using JetPsiFactory because we need a virtual file attached to the JetFile
     val virtualFile = LightVirtualFile(fileName, JetLanguage.INSTANCE, fileText)
-    virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
-    val jetFile = (PsiFileFactory.getInstance(getProject()) as PsiFileFactoryImpl)
+    virtualFile.charset = CharsetToolkit.UTF8_CHARSET
+    val jetFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl)
             .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
     jetFile.analysisContext = this
     return jetFile
 }
 
 private fun SuspendContext.getInvokePolicy(): Int {
-    return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
+    return if (suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
 }
 
 fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
     if (AsmUtil.isPrimitive(this)) return null
 
-    val jvmName = JvmClassName.byInternalName(getInternalName()).getFqNameForClassNameWithoutDollars()
+    val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
 
     val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName)
     if (platformClasses.isNotEmpty()) return platformClasses.first()

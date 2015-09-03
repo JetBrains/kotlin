@@ -20,18 +20,22 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeTag
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationMethodCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.annotations.findPublicFieldAnnotation
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.jvm.calls.checkers.JavaClassOnCompanionChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.ReflectionAPICallChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.TraitDefaultMethodCallChecker
@@ -61,6 +66,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
                 PlatformStaticAnnotationChecker(),
+                JvmNameAnnotationChecker(),
                 LocalFunInlineChecker(),
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
@@ -72,12 +78,14 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 NeedSyntheticChecker(),
                 JavaAnnotationCallChecker(),
                 JavaAnnotationMethodCallChecker(),
-                TraitDefaultMethodCallChecker()
+                TraitDefaultMethodCallChecker(),
+                JavaClassOnCompanionChecker()
         ),
 
         additionalTypeCheckers = listOf(
                 JavaNullabilityWarningsChecker(),
-                RuntimeAssertionsTypeChecker
+                RuntimeAssertionsTypeChecker,
+                JavaGenericVarianceViolationTypeChecker
         ),
 
         additionalSymbolUsageValidators = listOf(),
@@ -94,15 +102,24 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
 public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
     override fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
-        val entryTypes: MutableSet<JetType> = hashSetOf()
+        val entryTypesWithAnnotations = hashMapOf<JetType, MutableList<AnnotationUseSiteTarget?>>()
+
         for (entry in entries) {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
-            if (!entryTypes.add(descriptor.type)
+
+            val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+            val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
+            val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
+                                      || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
+
+            if (duplicateAnnotation
                 && classDescriptor.isRepeatableAnnotation()
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
                 trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry));
             }
+
+            existingTargetsForAnnotation.add(useSiteTarget)
         }
     }
 }
@@ -163,6 +180,44 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
         }
     }
 }
+
+public class JvmNameAnnotationChecker : DeclarationChecker {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+        val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
+        if (platformNameAnnotation != null) {
+            checkDeclaration(descriptor, platformNameAnnotation, diagnosticHolder)
+        }
+    }
+
+    private fun checkDeclaration(descriptor: DeclarationDescriptor,
+                                 annotation: AnnotationDescriptor,
+                                 diagnosticHolder: DiagnosticSink) {
+        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
+
+        if (descriptor is FunctionDescriptor && !isRenamableFunction(descriptor)) {
+            diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+        }
+
+        val value = DescriptorUtils.getJvmName(descriptor)
+        if (value == null || !Name.isValidIdentifier(value)) {
+            diagnosticHolder.report(ErrorsJvm.ILLEGAL_JVM_NAME.on(annotationEntry, value))
+        }
+
+        if (descriptor is CallableMemberDescriptor) {
+            val callableMemberDescriptor = descriptor
+            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.modality.isOverridable) {
+                diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+            }
+        }
+    }
+
+    private fun isRenamableFunction(descriptor: FunctionDescriptor): Boolean {
+        val containingDescriptor = descriptor.containingDeclaration
+
+        return containingDescriptor is PackageFragmentDescriptor || containingDescriptor is ClassDescriptor
+    }
+}
+
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
@@ -293,7 +348,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
     }
 
-    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
+    override fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>) {
         doCheckType(
                 expressionType,
                 c.expectedType,

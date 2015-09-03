@@ -295,6 +295,31 @@ JetFile: SoftKeywords.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('internal')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('field')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('property')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('receiver')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('param')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('sparam')
         PsiWhiteSpace('\n      ')
         PROPERTY_ACCESSOR
           PsiElement(get)('get')
@@ -701,6 +726,86 @@ JetFile: SoftKeywords.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('internal')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('field')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('field')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('property')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('property')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('receiver')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('receiver')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('param')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('param')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('sparam')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('sparam')
       PsiWhiteSpace('\n\n    ')
       FUN
         PsiElement(fun)('fun')
@@ -954,6 +1059,61 @@ JetFile: SoftKeywords.kt
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('internal')
             PsiWhiteSpace('  ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('field')
+            PsiWhiteSpace('     ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('property')
+            PsiWhiteSpace('  ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('receiver')
+            PsiWhiteSpace('  ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('param')
+            PsiWhiteSpace('     ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('sparam')
+            PsiWhiteSpace('    ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
@@ -1279,6 +1439,61 @@ JetFile: SoftKeywords.kt
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('internal')
           PsiWhiteSpace('  ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('field')
+          PsiWhiteSpace('     ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('property')
+          PsiWhiteSpace('  ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('receiver')
+          PsiWhiteSpace('  ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('param')
+          PsiWhiteSpace('     ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('sparam')
+          PsiWhiteSpace('    ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

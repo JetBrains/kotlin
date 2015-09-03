@@ -3,29 +3,12 @@ package
 internal fun box(): kotlin.String
 
 internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
-    public enum entry WAITING : ProtocolState {
-        private constructor WAITING()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        internal open override /*1*/ fun signal(): ProtocolState
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry WAITING
 
-    public enum entry TALKING : ProtocolState {
-        private constructor TALKING()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        internal open override /*1*/ fun signal(): ProtocolState
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    enum entry TALKING
 
     private constructor ProtocolState()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

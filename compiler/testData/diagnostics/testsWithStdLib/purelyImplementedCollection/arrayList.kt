@@ -5,8 +5,8 @@ fun bar(): String? = null
 
 fun foo() {
     var x = ArrayList<String>()
-    x.<!NONE_APPLICABLE!>add<!>(null)
-    x.<!NONE_APPLICABLE!>add<!>(bar())
+    x.add(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.add(<!TYPE_MISMATCH!>bar()<!>)
     x.add("")
 
     x[0] = <!NULL_FOR_NONNULL_TYPE!>null<!>

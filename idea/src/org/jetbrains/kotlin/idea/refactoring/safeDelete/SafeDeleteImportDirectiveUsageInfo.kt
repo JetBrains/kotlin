@@ -17,31 +17,16 @@
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.targetDescriptors
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetImportDirective
 
 public class SafeDeleteImportDirectiveUsageInfo(
         importDirective: JetImportDirective, declaration: JetDeclaration
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(importDirective, declaration, importDirective.isSafeToDelete(declaration))
 
-fun JetImportDirective.isSafeToDelete(declaration: JetDeclaration): Boolean {
-    val importExpr = getImportedReference()
-    val importReference: JetReferenceExpression? = when (importExpr) {
-        is JetSimpleNameExpression ->
-            importExpr
-        is JetDotQualifiedExpression ->
-            importExpr.getSelectorExpression()?.let { selector ->
-                if (selector is JetSimpleNameExpression) selector else null
-            }
-        else -> null
-    }
-
-    if (importReference != null) {
-        val bindingContext = importReference.analyze()
-        val referenceDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, importReference)
-        val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
-        return referenceDescriptor == declarationDescriptor
-    }
-    return false
+private fun JetImportDirective.isSafeToDelete(declaration: JetDeclaration): Boolean {
+    val referencedDescriptor = targetDescriptors().singleOrNull() ?: return false
+    return referencedDescriptor == declaration.resolveToDescriptor()
 }

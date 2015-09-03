@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -42,6 +41,8 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,13 +63,12 @@ public enum TopDownAnalyzerFacadeForJVM {
         list.add(new ImportPath("kotlin.annotation.*"));
         list.add(new ImportPath("kotlin.jvm.*"));
         list.add(new ImportPath("kotlin.io.*"));
-        // all classes from package "kotlin" mapped to java classes are imported explicitly so that they take priority over classes from java.lang
-        for (ClassDescriptor descriptor : JavaToKotlinClassMap.INSTANCE.allKotlinClasses()) {
-            FqName fqName = DescriptorUtils.getFqNameSafe(descriptor);
-            if (fqName.parent().equals(new FqName("kotlin"))) {
-                list.add(new ImportPath(fqName, false));
-            }
+
+        JetScope builtInsScope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
+        for (DeclarationDescriptor descriptor : builtInsScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
+            list.add(new ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false));
         }
+
         return list;
     }
 

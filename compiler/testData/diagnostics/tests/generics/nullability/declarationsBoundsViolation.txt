@@ -1,0 +1,38 @@
+package
+
+internal fun </*0*/ X : kotlin.CharSequence, /*1*/ Y1 : X, /*2*/ Y2 : Y1?> foo(/*0*/ a: A<X>, /*1*/ b: A<Y1>, /*2*/ c: A<Y2>): kotlin.Unit
+internal fun </*0*/ S : kotlin.CharSequence?> foo1(/*0*/ a: A<S>): kotlin.Unit
+
+internal interface A</*0*/ T : kotlin.CharSequence> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B1</*0*/ E : kotlin.String?> : A<E> {
+    public constructor B1</*0*/ E : kotlin.String?>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B2</*0*/ E : kotlin.CharSequence?> : A<E> {
+    public constructor B2</*0*/ E : kotlin.CharSequence?>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B3</*0*/ E> : A<E> {
+    public constructor B3</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B4</*0*/ E : kotlin.CharSequence> : A<E> {
+    public constructor B4</*0*/ E : kotlin.CharSequence>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

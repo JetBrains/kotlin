@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
+
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
@@ -50,6 +52,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''jvmOverloads'' annotation has no effect for methods without default arguments");
         MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''jvmOverloads'' annotation cannot be used on abstract methods");
         MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''jvmOverloads'' annotation has no effect on private and local declarations");
+        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''jvmName'' annotation is not applicable to this declaration");
+        MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name: ''{0}''", STRING);
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of interfaces can not be native");
@@ -71,6 +75,14 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
 
         MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
+
+        MAP.put(ErrorsJvm.JAVA_CLASS_ON_COMPANION,
+                "The resulting type of this ''javaClass'' call is {0} and not {1}. " +
+                "Please use the more clear ''::class.java'' syntax to avoid confusion",
+                Renderers.RENDER_TYPE, Renderers.RENDER_TYPE
+        );
+        MAP.put(ErrorsJvm.JAVA_TYPE_MISMATCH,
+                "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
     }
 
     @NotNull

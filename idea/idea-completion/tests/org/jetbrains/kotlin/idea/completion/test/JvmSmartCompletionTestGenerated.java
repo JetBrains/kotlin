@@ -143,6 +143,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("HighOrderFunction.kt")
+    public void testHighOrderFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/HighOrderFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfCondition.kt")
     public void testIfCondition() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/IfCondition.kt");
@@ -422,6 +428,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMExpected1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SAMExpected2.kt")
+    public void testSAMExpected2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMExpected2.kt");
         doTest(fileName);
     }
 

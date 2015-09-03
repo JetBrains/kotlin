@@ -1,16 +1,15 @@
 import kotlin.test.*
-import kotlin.reflect.jvm.java
 
 class Klass
 class Other
 
-inline fun <reified T> simpleName(): String =
+inline fun <reified T : Any> simpleName(): String =
         T::class.simpleName!!
 
-inline fun <reified T1, reified T2> twoReifiedParams(): String =
+inline fun <reified T1 : Any, reified T2 : Any> twoReifiedParams(): String =
         "${T1::class.simpleName!!}, ${T2::class.simpleName!!}"
 
-inline fun <reified T> myJavaClass(): Class<T> =
+inline fun <reified T : Any> myJavaClass(): Class<T> =
         T::class.java
 
 fun box(): String {

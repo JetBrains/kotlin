@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
@@ -114,7 +116,7 @@ public class BodyResolver {
 
     private void resolveSecondaryConstructors(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
-            JetScope declaringScope = c.getDeclaringScope(entry.getKey());
+            LexicalScope declaringScope = c.getDeclaringScope(entry.getKey());
             assert declaringScope != null : "Declaring scope should be registered before body resolve";
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
@@ -130,15 +132,15 @@ public class BodyResolver {
             @NotNull final BindingTrace trace,
             @NotNull final JetSecondaryConstructor constructor,
             @NotNull final ConstructorDescriptor descriptor,
-            @NotNull JetScope declaringScope
+            @NotNull LexicalScope declaringScope
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
         final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor);
         resolveFunctionBody(outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
-                            new Function1<JetScope, DataFlowInfo>() {
+                            new Function1<LexicalScope, DataFlowInfo>() {
                                 @Override
-                                public DataFlowInfo invoke(@NotNull JetScope headerInnerScope) {
+                                public DataFlowInfo invoke(@NotNull LexicalScope headerInnerScope) {
                                     return resolveSecondaryConstructorDelegationCall(outerDataFlowInfo, trace, headerInnerScope, constructor, descriptor,
                                                                                      callChecker);
                                 }
@@ -150,7 +152,7 @@ public class BodyResolver {
     private DataFlowInfo resolveSecondaryConstructorDelegationCall(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull JetSecondaryConstructor constructor,
             @NotNull ConstructorDescriptor descriptor,
             @NotNull CallChecker callChecker
@@ -246,10 +248,10 @@ public class BodyResolver {
             @NotNull JetClassOrObject jetClass,
             @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
-            @NotNull JetScope scopeForSupertypeResolution,
-            @NotNull final JetScope scopeForMemberResolution
+            @NotNull LexicalScope scopeForSupertypeResolution,
+            @NotNull final LexicalScope scopeForMemberResolution
     ) {
-        final JetScope scopeForConstructor = primaryConstructor == null
+        final LexicalScope scopeForConstructor = primaryConstructor == null
                 ? null
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
@@ -280,7 +282,7 @@ public class BodyResolver {
                 }
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
-                    JetScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
+                    LexicalScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
                     JetType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, outerDataFlowInfo, trace);
                 }
@@ -491,7 +493,7 @@ public class BodyResolver {
             @NotNull JetClassInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
-        JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
+        LexicalScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         if (!classDescriptor.getConstructors().isEmpty()) {
             JetExpression body = anonymousInitializer.getBody();
             if (body != null) {
@@ -505,7 +507,7 @@ public class BodyResolver {
         }
     }
 
-    private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull JetScope scope) {
+    private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull LexicalScope scope) {
         annotationChecker.check(owner, trace, null);
         ModifierCheckerCore.INSTANCE$.check(owner, trace, null);
         JetModifierList modifierList = owner.getModifierList();
@@ -522,8 +524,8 @@ public class BodyResolver {
             if (unsubstitutedPrimaryConstructor != null) {
                 ForceResolveUtil.forceResolveAllContents(unsubstitutedPrimaryConstructor.getAnnotations());
 
-                JetScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
-                                                                                    unsubstitutedPrimaryConstructor);
+                LexicalScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
+                                                                                   unsubstitutedPrimaryConstructor);
                 valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
                                                               unsubstitutedPrimaryConstructor.getValueParameters(),
                                                               parameterScope, c.getOuterDataFlowInfo(), trace);
@@ -531,32 +533,33 @@ public class BodyResolver {
         }
     }
 
-    private static JetScope getPrimaryConstructorParametersScope(
-            JetScope originalScope,
-            ConstructorDescriptor unsubstitutedPrimaryConstructor
+    private static LexicalScope getPrimaryConstructorParametersScope(
+            LexicalScope originalScope,
+            final ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
-        WritableScope parameterScope = new WritableScopeImpl(
-                originalScope,
-                unsubstitutedPrimaryConstructor,
-                RedeclarationHandler.DO_NOTHING, "Scope with value parameters of a constructor"
-        );
-        for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
-            parameterScope.addVariableDescriptor(valueParameterDescriptor);
-        }
-        parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
-        return parameterScope;
+        return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
+                                    "Scope with value parameters of a constructor", RedeclarationHandler.DO_NOTHING,
+                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                        @Override
+                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                                            for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
+                                                handler.addVariableDescriptor(valueParameterDescriptor);
+                                            }
+                                            return Unit.INSTANCE$;
+                                        }
+                                    });
     }
 
     private void resolveProperty(
             @NotNull BodiesResolveContext c,
-            @Nullable JetScope parentScope,
+            @Nullable LexicalScope parentScope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         computeDeferredType(propertyDescriptor.getReturnType());
 
         JetExpression initializer = property.getInitializer();
-        JetScope propertyScope = getScopeForProperty(c, property);
+        LexicalScope propertyScope = getScopeForProperty(c, property);
         if (parentScope == null) {
             parentScope = propertyScope;
         }
@@ -602,8 +605,10 @@ public class BodyResolver {
         }
     }
 
-    private JetScope makeScopeForPropertyAccessor(@NotNull BodiesResolveContext c, @NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor) {
-        JetScope accessorDeclaringScope = c.getDeclaringScope(accessor);
+    private LexicalScope makeScopeForPropertyAccessor(
+            @NotNull BodiesResolveContext c, @NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor
+    ) {
+        LexicalScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
         return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, trace);
     }
@@ -618,7 +623,7 @@ public class BodyResolver {
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
-            JetScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
+            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
             ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
             resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
@@ -626,7 +631,7 @@ public class BodyResolver {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
-            JetScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
+            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
             ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
             resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
@@ -654,8 +659,8 @@ public class BodyResolver {
             @NotNull JetProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
-            @NotNull JetScope parentScopeForAccessor,
-            @NotNull JetScope propertyScope
+            @NotNull LexicalScope parentScopeForAccessor,
+            @NotNull LexicalScope propertyScope
     ) {
         JetPropertyAccessor getter = jetProperty.getGetter();
         if (getter != null && getter.hasBody()) {
@@ -667,9 +672,9 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
+        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyDescriptor, propertyScope, propertyDescriptor.getTypeParameters(), null, trace);
-        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
+        LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
                 propertyDescriptor, parentScopeForAccessor, trace);
 
         JetType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
@@ -693,9 +698,9 @@ public class BodyResolver {
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression initializer,
-            @NotNull JetScope scope
+            @NotNull LexicalScope scope
     ) {
-        JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
+        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), null, trace);
         JetType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
@@ -705,8 +710,8 @@ public class BodyResolver {
     }
 
     @NotNull
-    private static JetScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
-        JetScope scope = c.getDeclaringScope(property);
+    private static LexicalScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
+        LexicalScope scope = c.getDeclaringScope(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
         return scope;
     }
@@ -715,7 +720,7 @@ public class BodyResolver {
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
 
-            JetScope scope = c.getDeclaringScope(declaration);
+            LexicalScope scope = c.getDeclaringScope(declaration);
             assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
 
             if (!c.getTopDownAnalysisMode().getIsLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
@@ -733,7 +738,7 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetScope declaringScope
+            @NotNull LexicalScope declaringScope
     ) {
         computeDeferredType(functionDescriptor.getReturnType());
 
@@ -747,11 +752,11 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetScope scope,
-            @Nullable Function1<JetScope, DataFlowInfo> beforeBlockBody,
+            @NotNull LexicalScope scope,
+            @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
             @NotNull CallChecker callChecker
     ) {
-        JetScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
+        LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
@@ -780,12 +785,12 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetClass klass,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull JetScope declaringScope
+            @NotNull LexicalScope declaringScope
     ) {
         List<JetParameter> valueParameters = klass.getPrimaryConstructorParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
 
-        JetScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
+        LexicalScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
 
         valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope, outerDataFlowInfo, trace);
     }

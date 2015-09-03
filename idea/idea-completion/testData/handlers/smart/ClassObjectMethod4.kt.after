@@ -11,3 +11,4 @@ fun foo(){
 }
 
 // ELEMENT: bar
+// TAIL_TEXT: "(p: (Int, String) -> Unit) (sample)"

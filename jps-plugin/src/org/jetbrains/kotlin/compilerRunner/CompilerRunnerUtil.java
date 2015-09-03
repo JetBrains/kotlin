@@ -56,7 +56,7 @@ public class CompilerRunnerUtil {
     }
 
     @Nullable
-    private static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
+    public static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
         File libs = paths.getLibPath();
         if (libs.exists() && !libs.isFile()) return libs;
 
@@ -70,7 +70,7 @@ public class CompilerRunnerUtil {
     }
 
     @Nullable
-    public static Object invokeExecMethod(
+    public synchronized static Object invokeExecMethod(
             @NotNull String compilerClassName,
             @NotNull String[] arguments,
             @NotNull CompilerEnvironment environment,

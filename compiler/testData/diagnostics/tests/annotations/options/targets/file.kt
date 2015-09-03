@@ -8,7 +8,7 @@ annotation class common
 
 // FILE: other.kt
 
-@file:special 
+@file:special
 
 package test
 
@@ -16,7 +16,7 @@ package test
 
 // FILE: another.kt
 
-<!WRONG_ANNOTATION_TARGET!>@file:common<!>
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:common<!>
 
 package test
 

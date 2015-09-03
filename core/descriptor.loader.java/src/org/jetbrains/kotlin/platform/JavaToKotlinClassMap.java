@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
@@ -214,24 +213,5 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             throw new IllegalArgumentException("Given class " + readOnly + " is not a read-only collection");
         }
         return mutable;
-    }
-
-    // TODO: get rid of this method, it's unclear what it does
-    @NotNull
-    public List<ClassDescriptor> allKotlinClasses() {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-
-        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
-        result.addAll(javaToKotlin.values());
-        result.addAll(readOnlyToMutable.values());
-
-        for (PrimitiveType type : PrimitiveType.values()) {
-            result.add(builtIns.getPrimitiveArrayClassDescriptor(type));
-        }
-
-        result.add(builtIns.getUnit());
-        result.add(builtIns.getNothing());
-
-        return result;
     }
 }

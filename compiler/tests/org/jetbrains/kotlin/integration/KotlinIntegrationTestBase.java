@@ -133,7 +133,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         return runtime;
     }
 
-    protected static File getCompilerLib() {
+    public static File getCompilerLib() {
         File file = PathUtil.getKotlinPathsForDistDirectory().getLibPath().getAbsoluteFile();
         assertTrue("Lib directory doesn't exist. Run 'ant dist'", file.isDirectory());
         return file;

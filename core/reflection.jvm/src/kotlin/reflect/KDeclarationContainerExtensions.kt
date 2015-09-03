@@ -16,15 +16,10 @@
 
 package kotlin.reflect
 
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
-
 /**
  * Returns all functions declared in this container.
  * If this container is a Java class, it includes all non-static methods declared in the class
  * and the superclasses, as well as static methods declared in the class.
  */
 public val KDeclarationContainer.functions: Collection<KFunction<*>>
-    get() = (this as KDeclarationContainerImpl)
-            .getMembers(declaredOnly = false, nonExtensions = true, extensions = true)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = members.filterIsInstance<KFunction<*>>()

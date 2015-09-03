@@ -21,13 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetModifierList;
-import org.jetbrains.kotlin.psi.JetTypeParameter;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -38,13 +36,15 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
@@ -74,7 +74,7 @@ public class AnnotationResolver {
 
     @NotNull
     public Annotations resolveAnnotationsWithoutArguments(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
     ) {
@@ -83,7 +83,7 @@ public class AnnotationResolver {
 
     @NotNull
     public Annotations resolveAnnotationsWithArguments(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
     ) {
@@ -92,7 +92,7 @@ public class AnnotationResolver {
 
     @NotNull
     public Annotations resolveAnnotationsWithoutArguments(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,
             @NotNull BindingTrace trace
     ) {
@@ -101,7 +101,7 @@ public class AnnotationResolver {
 
     @NotNull
     public Annotations resolveAnnotationsWithArguments(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,
             @NotNull BindingTrace trace
     ) {
@@ -109,7 +109,7 @@ public class AnnotationResolver {
     }
 
     private Annotations resolveAnnotations(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
@@ -124,13 +124,14 @@ public class AnnotationResolver {
     }
 
     private Annotations resolveAnnotationEntries(
-            @NotNull JetScope scope,
+            @NotNull LexicalScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntryElements,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
         if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
-        List<AnnotationDescriptor> result = Lists.newArrayList();
+        List<AnnotationWithTarget> result = new ArrayList<AnnotationWithTarget>(0);
+
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
@@ -140,13 +141,19 @@ public class AnnotationResolver {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
             }
 
-            result.add(descriptor);
+            JetAnnotationUseSiteTarget target = entryElement.getUseSiteTarget();
+            if (target != null) {
+                result.add(new AnnotationWithTarget(descriptor, target.getAnnotationUseSiteTarget()));
+            }
+            else {
+                result.add(new AnnotationWithTarget(descriptor, null));
+            }
         }
-        return new AnnotationsImpl(result);
+        return AnnotationsImpl.create(result);
     }
 
     @NotNull
-    public JetType resolveAnnotationType(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement) {
+    public JetType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull JetAnnotationEntry entryElement) {
         JetTypeReference typeReference = entryElement.getTypeReference();
         if (typeReference == null) {
             return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
@@ -183,7 +190,7 @@ public class AnnotationResolver {
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveAnnotationCall(
             JetAnnotationEntry annotationEntry,
-            JetScope scope,
+            LexicalScope scope,
             BindingTrace trace
     ) {
         return callResolver.resolveFunctionCall(

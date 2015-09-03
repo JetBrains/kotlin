@@ -1,5 +1,6 @@
 package test.collections
 
+import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 
@@ -386,26 +387,37 @@ class ArraysTest {
     }
 
     test fun slice() {
-        val iter = listOf(3, 1, 2)
+        val iter: Iterable<Int> = listOf(3, 1, 2)
 
         assertEquals(listOf("B"), arrayOf("A", "B", "C").slice(1..1))
         assertEquals(listOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').slice(iter))
 
         assertEquals(listOf<Int>(), arrayOf<Int>().slice(5..4))
-        assertEquals(listOf<Int>(), arrayOf(1, 2, 3).slice(5..1))
-        assertEquals(listOf(2, 3, 9), arrayOf(2, 3, 9, 2, 3, 9).slice(iter))
-        assertEquals(listOf(2.0, 3.0), arrayOf(2.0, 3.0, 9.0).slice(0..1))
-        assertEquals(listOf(2f, 3f), arrayOf(2f, 3f, 9f).slice(0..1))
-        assertEquals(listOf<Byte>(127, 100), arrayOf<Byte>(50, 100, 127).slice(2 downTo 1))
-        assertEquals(listOf<Short>(200, 100), arrayOf<Short>(50, 100, 200).slice(2 downTo 1))
-        assertEquals(listOf(100L, 200L, 30L), arrayOf(50L, 100L, 200L, 30L).slice(1..3))
-        assertEquals(listOf(true, false, true), arrayOf(true, false, true, true).slice(iter))
+        assertEquals(listOf<Int>(), intArrayOf(1, 2, 3).slice(5..1))
+        assertEquals(listOf(2, 3, 9), intArrayOf(2, 3, 9, 2, 3, 9).slice(iter))
+        assertEquals(listOf(2.0, 3.0), doubleArrayOf(2.0, 3.0, 9.0).slice(0..1))
+        assertEquals(listOf(2f, 3f), floatArrayOf(2f, 3f, 9f).slice(0..1))
+        assertEquals(listOf<Byte>(127, 100), byteArrayOf(50, 100, 127).slice(2 downTo 1))
+        assertEquals(listOf<Short>(200, 100), shortArrayOf(50, 100, 200).slice(2 downTo 1))
+        assertEquals(listOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).slice(1..3))
+        assertEquals(listOf(true, false, true), booleanArrayOf(true, false, true, true).slice(iter))
     }
 
-    test fun toSortedList() {
-        assertTrue(arrayOf<Long>().toSortedList().none())
-        assertEquals(listOf(1), arrayOf(1).toSortedList())
-        assertEquals(listOf("aab", "aba", "ac"), arrayOf("ac", "aab", "aba").toSortedList())
+    test fun sliceArray() {
+        val coll: Collection<Int> = listOf(3, 1, 2)
+
+        assertArrayNotSameButEquals(arrayOf("B"), arrayOf("A", "B", "C").sliceArray(1..1))
+        assertArrayNotSameButEquals(arrayOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').sliceArray(coll))
+
+        assertArrayNotSameButEquals(arrayOf<Int>(), arrayOf<Int>().sliceArray(5..4))
+        assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).sliceArray(5..1))
+        assertArrayNotSameButEquals(intArrayOf(2, 3, 9), intArrayOf(2, 3, 9, 2, 3, 9).sliceArray(coll))
+        assertArrayNotSameButEquals(doubleArrayOf(2.0, 3.0), doubleArrayOf(2.0, 3.0, 9.0).sliceArray(0..1))
+        assertArrayNotSameButEquals(floatArrayOf(2f, 3f), floatArrayOf(2f, 3f, 9f).sliceArray(0..1))
+//        assertArrayNotSameButEquals(byteArrayOf(127, 100), byteArrayOf(50, 100, 127).sliceArray(2 downTo 1))
+//        assertArrayNotSameButEquals(shortArrayOf(200, 100), shortArrayOf(50, 100, 200).sliceArray(2 downTo 1))
+        assertArrayNotSameButEquals(longArrayOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).sliceArray(1..3))
+        assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).sliceArray(coll))
     }
 
     test fun asIterable() {
@@ -534,15 +546,26 @@ class ArraysTest {
         } is UnsupportedOperationException)
     }
 
-    test fun reverse() {
-        expect(listOf(3, 2, 1)) { intArrayOf(1, 2, 3).reverse() }
-        expect(listOf<Byte>(3, 2, 1)) { byteArrayOf(1, 2, 3).reverse() }
-        expect(listOf<Short>(3, 2, 1)) { shortArrayOf(1, 2, 3).reverse() }
-        expect(listOf<Long>(3, 2, 1)) { longArrayOf(1, 2, 3).reverse() }
-        expect(listOf(3F, 2F, 1F)) { floatArrayOf(1F, 2F, 3F).reverse() }
-        expect(listOf(3.0, 2.0, 1.0)) { doubleArrayOf(1.0, 2.0, 3.0).reverse() }
-        expect(listOf('3', '2', '1')) { charArrayOf('1', '2', '3').reverse() }
-        expect(listOf(false, false, true)) { booleanArrayOf(true, false, false).reverse() }
+    test fun reversed() {
+        expect(listOf(3, 2, 1)) { intArrayOf(1, 2, 3).reversed() }
+        expect(listOf<Byte>(3, 2, 1)) { byteArrayOf(1, 2, 3).reversed() }
+        expect(listOf<Short>(3, 2, 1)) { shortArrayOf(1, 2, 3).reversed() }
+        expect(listOf<Long>(3, 2, 1)) { longArrayOf(1, 2, 3).reversed() }
+        expect(listOf(3F, 2F, 1F)) { floatArrayOf(1F, 2F, 3F).reversed() }
+        expect(listOf(3.0, 2.0, 1.0)) { doubleArrayOf(1.0, 2.0, 3.0).reversed() }
+        expect(listOf('3', '2', '1')) { charArrayOf('1', '2', '3').reversed() }
+        expect(listOf(false, false, true)) { booleanArrayOf(true, false, false).reversed() }
+    }
+
+    test fun reversedArray() {
+        assertArrayNotSameButEquals(intArrayOf(3, 2, 1), intArrayOf(1, 2, 3).reversedArray())
+        assertArrayNotSameButEquals(byteArrayOf(3, 2, 1), byteArrayOf(1, 2, 3).reversedArray())
+        assertArrayNotSameButEquals(shortArrayOf(3, 2, 1), shortArrayOf(1, 2, 3).reversedArray())
+        assertArrayNotSameButEquals(longArrayOf(3, 2, 1), longArrayOf(1, 2, 3).reversedArray())
+        assertArrayNotSameButEquals(floatArrayOf(3F, 2F, 1F), floatArrayOf(1F, 2F, 3F).reversedArray())
+        assertArrayNotSameButEquals(doubleArrayOf(3.0, 2.0, 1.0), doubleArrayOf(1.0, 2.0, 3.0).reversedArray())
+        assertArrayNotSameButEquals(charArrayOf('3', '2', '1'), charArrayOf('1', '2', '3').reversedArray())
+        assertArrayNotSameButEquals(booleanArrayOf(false, false, true), booleanArrayOf(true, false, false).reversedArray())
     }
 
     test fun drop() {
@@ -768,5 +791,95 @@ class ArraysTest {
         assertEquals(list, arr.toList())
 
         assertEquals(Array(0, { "" }).asList(), emptyList<String>())
+    }
+
+    test fun sort() {
+        val intArr = intArrayOf(5, 2, 1, 9, 80, Int.MIN_VALUE, Int.MAX_VALUE)
+        intArr.sort()
+        assertArrayNotSameButEquals(intArrayOf(Int.MIN_VALUE, 1, 2, 5, 9, 80, Int.MAX_VALUE), intArr)
+
+        val longArr = longArrayOf(200, 2, 1, 4, 3, Long.MIN_VALUE, Long.MAX_VALUE)
+        longArr.sort()
+        assertArrayNotSameButEquals(longArrayOf(Long.MIN_VALUE, 1, 2, 3, 4, 200, Long.MAX_VALUE), longArr)
+
+        val charArr = charArrayOf('d', 'c', 'E', 'a', '\u0000', '\uFFFF')
+        charArr.sort()
+        assertArrayNotSameButEquals(charArrayOf('\u0000', 'E', 'a', 'c', 'd', '\uFFFF'), charArr)
+
+        val strArr = arrayOf("9", "80", "all", "Foo")
+        strArr.sort()
+        assertArrayNotSameButEquals(arrayOf("80", "9", "Foo", "all"), strArr)
+    }
+
+    test fun sorted() {
+        assertTrue(arrayOf<Long>().sorted().none())
+        assertEquals(listOf(1), arrayOf(1).sorted())
+
+        fun arrayData<A, T: Comparable<T>>(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), comparator { a, b -> a.compareTo(b) })
+
+        with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {
+            checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
+        }
+
+        with (arrayData(3, 7, 1) { toIntArray() }) {
+            checkSorted<List<Int>>( { sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<IntArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
+        }
+
+
+        with (arrayData(1L, Long.MIN_VALUE, Long.MAX_VALUE) { toLongArray() }) {
+            checkSorted<List<Long>>( { sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<LongArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
+        }
+
+        with (arrayData('a', 'D', 'c') { toCharArray() }) {
+            checkSorted<List<Char>>( { sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<CharArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
+        }
+
+        with (arrayData(1.toByte(), Byte.MAX_VALUE, Byte.MIN_VALUE) { toByteArray() }) {
+            checkSorted<List<Byte>>( { sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<ByteArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
+        }
+
+        with(arrayData(Double.POSITIVE_INFINITY, 1.0, Double.MAX_VALUE) { toDoubleArray() }) {
+            checkSorted<List<Double>>( { sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<DoubleArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
+        }
+    }
+
+    test fun sortedBy() {
+        val values = arrayOf("ac", "aD", "aba")
+        val indices = values.indices.toList().toIntArray()
+
+        assertEquals(listOf(1, 2, 0), indices.sortedBy { values[it] })
+    }
+
+    test fun sortedNullableBy() {
+        fun String.nullIfEmpty() = if (isEmpty()) null else this
+        arrayOf(null, "").let {
+            expect(listOf(null, "")) { it.sortedWith(nullsFirst(compareBy { it })) }
+            expect(listOf("", null)) { it.sortedWith(nullsLast(compareByDescending { it })) }
+            expect(listOf("", null)) { it.sortedWith(nullsLast(compareByDescending { it.nullIfEmpty() })) }
+        }
+    }
+
+    test fun sortedWith() {
+        val comparator = compareBy { it: Int -> it % 3 }.thenByDescending { it }
+        fun arrayData<A, T>(array: A, comparator: Comparator<T>) = ArraySortedChecker<A, T>(array, comparator)
+
+        arrayData(intArrayOf(0, 1, 2, 3, 4, 5), comparator)
+                .checkSorted<List<Int>>( { sortedWith(comparator) }, { sortedWith(comparator.reversed()) }, { iterator() })
+
+        arrayData(arrayOf(0, 1, 2, 3, 4, 5), comparator)
+                .checkSorted<Array<Int>>( { sortedArrayWith(comparator) }, { sortedArrayWith(comparator.reversed()) }, { iterator() })
+    }
+}
+
+private class ArraySortedChecker<A, T>(val array: A, val comparator: Comparator<in T>) {
+    public fun checkSorted<R>(sorted: A.() -> R, sortedDescending: A.() -> R, iterator: R.() -> Iterator<T>) {
+        array.sorted().iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
+        array.sortedDescending().iterator().assertSorted { a, b -> comparator.compare(a, b) >= 0 }
     }
 }

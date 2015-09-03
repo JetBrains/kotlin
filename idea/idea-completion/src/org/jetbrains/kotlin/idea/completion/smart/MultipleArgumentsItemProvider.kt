@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.renderer.render
@@ -31,8 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                                     val smartCastCalculator: SmartCastCalculator) {
@@ -90,7 +90,8 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: JetScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
-        val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull() ?: return null
+        val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull() ?:
+                       scope.getVariableFromImplicitReceivers(name) ?: return null
         return if (smartCastCalculator.types(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else

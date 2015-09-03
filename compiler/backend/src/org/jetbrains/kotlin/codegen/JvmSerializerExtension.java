@@ -140,7 +140,7 @@ public class JvmSerializerExtension extends SerializerExtension {
                 fieldType = field.first;
                 fieldName = field.second;
                 isStaticInOuter = bindings.get(STATIC_FIELD_IN_OUTER_CLASS, property);
-                syntheticMethod = null;
+                syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, property);
             }
             else {
                 fieldType = null;

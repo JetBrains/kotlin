@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -63,8 +63,8 @@ public class ForceResolveUtil {
 
     public static void forceResolveAllContents(@NotNull Annotations annotations) {
         doForceResolveAllContents(annotations);
-        for (AnnotationDescriptor annotation : annotations) {
-            doForceResolveAllContents(annotation);
+        for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
+            doForceResolveAllContents(annotationWithTarget.getAnnotation());
         }
     }
 
@@ -94,6 +94,7 @@ public class ForceResolveUtil {
     public static JetType forceResolveAllContents(@Nullable JetType type) {
         if (type == null) return null;
 
+        forceResolveAllContents(type.getAnnotations());
         if (TypesPackage.isFlexible(type)) {
             forceResolveAllContents(TypesPackage.flexibility(type).getLowerBound());
             forceResolveAllContents(TypesPackage.flexibility(type).getUpperBound());

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import java.util.Collection;
 import java.util.Map;
@@ -47,7 +47,7 @@ public interface BodiesResolveContext {
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
 
     @Nullable
-    JetScope getDeclaringScope(@NotNull JetDeclaration declaration);
+    LexicalScope getDeclaringScope(@NotNull JetDeclaration declaration);
 
     @NotNull
     DataFlowInfo getOuterDataFlowInfo();

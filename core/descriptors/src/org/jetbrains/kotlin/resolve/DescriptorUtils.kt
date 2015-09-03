@@ -198,3 +198,8 @@ public val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor
 
 public val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
     get() = parentsWithSelf.drop(1)
+
+private val HIDDEN_ANNOTATION_FQ_NAME = FqName("kotlin.HiddenDeclaration") /*TODO*/
+
+public fun DeclarationDescriptor.isAnnotatedAsHidden(): Boolean = annotations.findAnnotation(HIDDEN_ANNOTATION_FQ_NAME) != null
+

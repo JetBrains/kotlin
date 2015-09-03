@@ -1,5 +1,3 @@
-import kotlin.reflect.jvm.*
-
 class A
 
 fun box(): String {

@@ -16,14 +16,23 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
+import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
@@ -43,9 +52,14 @@ class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainer
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-    override val scope: JetScope get() = ChainedScope(
-            descriptor, "KClassImpl scope", descriptor.getDefaultType().getMemberScope(), descriptor.getStaticScope()
-    )
+    internal val memberScope: JetScope get() = descriptor.defaultType.memberScope
+
+    internal val staticScope: JetScope get() = descriptor.staticScope
+
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = true)
+                .plus(getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = true))
+                .toList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
@@ -55,6 +69,15 @@ class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainer
             }
             return emptyList()
         }
+
+    @suppress("UNCHECKED_CAST")
+    override fun getProperties(name: Name): Collection<PropertyDescriptor> =
+            (memberScope.getProperties(name, NoLookupLocation.FROM_REFLECTION) +
+             staticScope.getProperties(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
+
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
+            memberScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION) +
+            staticScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override val simpleName: String? get() {
         if (jClass.isAnonymousClass()) return null
@@ -92,6 +115,27 @@ class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainer
         get() = constructorDescriptors.map {
             KFunctionImpl(this, it) as KFunction<T>
         }
+
+    override val nestedClasses: Collection<KClass<*>>
+        get() = descriptor.unsubstitutedInnerClassesScope.getAllDescriptors().map { nestedClass ->
+            val source = (nestedClass as DeclarationDescriptorWithSource).source
+            when (source) {
+                is KotlinJvmBinarySourceElement ->
+                    (source.binaryClass as ReflectKotlinClass).klass
+                is JavaSourceElement ->
+                    (source.javaElement as ReflectJavaClass).element
+                SourceElement.NO_SOURCE -> {
+                    // If neither a Kotlin class nor a Java class, it must be a built-in
+                    val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(nestedClass))
+                                  ?: throw KotlinReflectionInternalError("Class with no source must be a built-in: $nestedClass")
+                    val packageName = classId.packageFqName.asString()
+                    val className = classId.relativeClassName.asString().replace('.', '$')
+                    // All pseudo-classes like String.Companion must be accessible from the current class loader
+                    javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
+                }
+                else -> throw KotlinReflectionInternalError("Unsupported class: $nestedClass (source = $source)")
+            }
+        }.filterNotNull().map { KClassImpl(it) }
 
     @suppress("UNCHECKED_CAST")
     override val objectInstance: T? by ReflectProperties.lazy {
