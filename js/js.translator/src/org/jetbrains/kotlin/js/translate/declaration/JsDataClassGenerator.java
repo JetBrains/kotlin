@@ -155,6 +155,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsExpression referenceEqual = JsAstUtils.equality(JsLiteral.THIS, new JsNameRef(paramName));
         JsExpression isNotNull = JsAstUtils.inequality(new JsNameRef(paramName), JsLiteral.NULL);
+        JsExpression otherIsObject = JsAstUtils.typeof(paramName.makeRef(), context.program().getStringLiteral("object"));
         JsExpression prototypeEqual =
                 JsAstUtils.equality(new JsInvocation(new JsNameRef("getPrototypeOf", new JsNameRef("Object")), JsLiteral.THIS),
                                     new JsInvocation(new JsNameRef("getPrototypeOf", new JsNameRef("Object")), new JsNameRef(paramName)));
@@ -175,7 +176,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert fieldChain != null;
 
         JsExpression returnExpression =
-                JsAstUtils.or(referenceEqual, JsAstUtils.and(isNotNull, JsAstUtils.and(prototypeEqual, fieldChain)));
+                JsAstUtils.or(referenceEqual, JsAstUtils.and(isNotNull, JsAstUtils.and(otherIsObject, JsAstUtils.and(prototypeEqual, fieldChain))));
         functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
     }
 
