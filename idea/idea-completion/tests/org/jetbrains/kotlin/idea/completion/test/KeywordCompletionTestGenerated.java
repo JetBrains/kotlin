@@ -407,9 +407,27 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnCollection.kt")
+    public void testReturnCollection() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnCollection.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnIterable.kt")
+    public void testReturnIterable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnIterable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnKeywordName.kt")
     public void testReturnKeywordName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnKeywordName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnList.kt")
+    public void testReturnList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnList.kt");
         doTest(fileName);
     }
 
@@ -428,6 +446,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("ReturnNullableBoolean.kt")
     public void testReturnNullableBoolean() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnNullableBoolean.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnSet.kt")
+    public void testReturnSet() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnSet.kt");
         doTest(fileName);
     }
 

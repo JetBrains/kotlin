@@ -169,6 +169,11 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe _float = fqNameUnsafe("Float");
         public final FqNameUnsafe _double = fqNameUnsafe("Double");
 
+        public final FqNameUnsafe _collection = fqNameUnsafe("Collection");
+        public final FqNameUnsafe _list = fqNameUnsafe("List");
+        public final FqNameUnsafe _set = fqNameUnsafe("Set");
+        public final FqNameUnsafe _iterable = fqNameUnsafe("Iterable");
+
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("Deprecated");
         public final FqName tailRecursive = fqName("tailrec");
@@ -1004,6 +1009,22 @@ public class KotlinBuiltIns {
 
     public static boolean isString(@Nullable JetType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
+    }
+
+    public static boolean isCollectionOrNullableCollection(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._collection);
+    }
+
+    public static boolean isListOrNullableList(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._list);
+    }
+
+    public static boolean isSetOrNullableSet(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._set);
+    }
+
+    public static boolean isIterableOrNullableIterable(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._iterable);
     }
 
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
