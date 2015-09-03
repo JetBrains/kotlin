@@ -163,7 +163,7 @@ public interface JetTokens {
     JetModifierKeywordToken COMPANION_KEYWORD = JetModifierKeywordToken.softKeywordModifier("companion");
     JetModifierKeywordToken SEALED_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("sealed");
 
-    JetModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = INTERNAL_KEYWORD;
+    JetModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = PUBLIC_KEYWORD;
 
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
