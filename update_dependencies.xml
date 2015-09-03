@@ -418,9 +418,8 @@
         <attribute name="idea.maven.version"/>
 
         <sequential>
-            <loadresource property="execute.build.id">
-                <url url="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt"/>
-            </loadresource>
+            <get src="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt" dest="dependencies/version.txt"/>
+            <loadfile property="execute.build.id" srcFile="dependencies/version.txt"/>
 
             <local name="idea.already.downloaded"/>
             <condition property="idea.already.downloaded">
