@@ -61,6 +61,6 @@ public class JetAnnotationEntryElementType extends JetStubElementType<KotlinAnno
 
     @Override
     public void indexStub(@NotNull KotlinAnnotationEntryStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexAnnotation(stub, sink);
+        StubIndexService.getInstance().indexAnnotation(stub, sink);
     }
 }

@@ -103,7 +103,7 @@ public class JetClassElementType extends JetStubElementType<KotlinClassStub, Jet
 
     @Override
     public void indexStub(@NotNull KotlinClassStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexClass(stub, sink);
+        StubIndexService.getInstance().indexClass(stub, sink);
     }
 
     public static JetClassElementType getStubType(boolean isEnumEntry) {

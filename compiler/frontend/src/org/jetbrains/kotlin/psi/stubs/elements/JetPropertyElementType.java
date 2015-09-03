@@ -89,6 +89,6 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
 
     @Override
     public void indexStub(@NotNull KotlinPropertyStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexProperty(stub, sink);
+        StubIndexService.getInstance().indexProperty(stub, sink);
     }
 }

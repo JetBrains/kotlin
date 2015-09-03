@@ -31,7 +31,6 @@ public class JetFileStubBuilder extends DefaultStubBuilder {
             return super.createStubForFile(file);
         }
 
-        JetFile jetFile = (JetFile) file;
-        return new KotlinFileStubImpl(jetFile, jetFile.getPackageFqNameByTree().asString(), jetFile.isScriptByTree());
+        return StubIndexService.getInstance().createFileStub((JetFile) file);
     }
 }

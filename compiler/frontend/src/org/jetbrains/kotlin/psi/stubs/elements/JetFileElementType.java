@@ -94,6 +94,6 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
 
     @Override
     public void indexStub(@NotNull KotlinFileStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexFile(stub, sink);
+        StubIndexService.getInstance().indexFile(stub, sink);
     }
 }
