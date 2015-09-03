@@ -49,23 +49,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         createAdditionalBreakpoints(fileText)
         createDebugProcess(path)
 
-        fun repeat(indexPrefix: String, f: SuspendContextImpl.() -> Unit) {
-            for (i in 1..(getPrefixedInt(fileText, indexPrefix) ?: 1)) {
-                doOnBreakpoint(f)
-            }
-        }
-
-        File(path).readLines().forEach {
-            when {
-                it.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(false, null) }
-                it.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
-                it.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { smartStepInto(getPrefixedInt(it, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
-                it.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
-                it.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
-            }
-        }
-
-        // doStepping(path)
+        doStepping(path)
 
         finish()
     }
@@ -88,47 +72,5 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         }
 
         finish()
-    }
-
-    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int = 0) {
-        this.smartStepInto(chooseFromList, false)
-    }
-
-    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
-        val filters = createSmartStepIntoFilters()
-        if (chooseFromList == 0) {
-            filters.forEach {
-                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
-            }
-        }
-        else {
-            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList)))
-        }
-    }
-
-    private fun createSmartStepIntoFilters(): List<MethodFilter> {
-        val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
-        val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
-
-        val line = (breakpoint as LineBreakpoint).getLineIndex()
-
-        return runReadAction {
-            val containingFile = breakpoint.getPsiFile()
-            if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
-
-            val position = MockSourcePosition(_file = containingFile, _line = line)
-
-            val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
-
-            stepTargets.filterIsInstance<SmartStepTarget>().map {
-                stepTarget ->
-                when (stepTarget) {
-                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!)
-                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
-                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
-                    else -> null
-                }
-            }
-        }.filterNotNull()
     }
 }

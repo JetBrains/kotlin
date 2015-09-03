@@ -150,7 +150,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         file.readLines().forEach {
             val line = it.trim()
             when {
-                line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
+                line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(false, null) }
                 line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
                 line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { smartStepInto(InTextDirectivesUtils.getPrefixedInt(it, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
                 line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
