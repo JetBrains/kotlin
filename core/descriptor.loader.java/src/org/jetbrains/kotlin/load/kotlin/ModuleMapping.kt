@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.Writer
 
-public class ModuleMapping(val proto: ByteArray? = null) {
+public class ModuleMapping(proto: ByteArray? = null) {
 
     val packageFqName2Parts = hashMapOf<String, PackageParts>()
 
