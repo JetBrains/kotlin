@@ -562,6 +562,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("UninferredTypeArgs.kt")
+        public void testUninferredTypeArgs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/UninferredTypeArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("WithPrefix.kt")
         public void testWithPrefix() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/WithPrefix.kt");
@@ -1166,6 +1172,42 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         public void testAllFilesPresentInInheritors() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/inheritors"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("GenericClass1.kt")
+        public void testGenericClass1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericClass2.kt")
+        public void testGenericClass2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericClass3.kt")
+        public void testGenericClass3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericClass4.kt")
+        public void testGenericClass4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericClass5.kt")
+        public void testGenericClass5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericClass6.kt")
+        public void testGenericClass6() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass6.kt");
+            doTest(fileName);
         }
     }
 
