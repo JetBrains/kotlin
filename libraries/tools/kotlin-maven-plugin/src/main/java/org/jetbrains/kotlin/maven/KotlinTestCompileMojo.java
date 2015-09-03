@@ -87,6 +87,7 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
         module = testModule;
         classpath = testClasspath;
         output = testOutput;
+        moduleName = testModuleName;
 
         super.configureSpecificCompilerArguments(arguments);
     }

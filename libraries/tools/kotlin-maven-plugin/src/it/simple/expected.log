@@ -2,6 +2,7 @@
 [INFO] Compiling Kotlin sources from [/src/main/kotlin]
 [INFO] Classes directory is /target/classes
 [INFO] Using kotlin annotations from /local-repo/org/jetbrains/kotlin/kotlin-jdk-annotations/0.1-SNAPSHOT/kotlin-jdk-annotations-0.1-SNAPSHOT.jar
+[INFO] ModuleName is test-project
 [INFO] PERF: INIT: Compiler initialized in LLL ms
 [INFO] PERF: ANALYZE: 1 files (2 lines) in LLL ms
 [INFO] PERF: GENERATE: 1 files (2 lines) in LLL ms

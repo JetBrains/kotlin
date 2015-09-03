@@ -499,7 +499,7 @@
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}"/>
+            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-compiler"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
@@ -526,8 +526,8 @@
         <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
             <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
-            <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
-            <zipfileset src="${bootstrap.reflect}" includes="**" excludes="META-INF/**"/>
+            <zipfileset src="${bootstrap.runtime}" includes="**" />
+            <zipfileset src="${bootstrap.reflect}" includes="**" />
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
