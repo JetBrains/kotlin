@@ -1,4 +1,6 @@
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class Ann(val i: IntArray)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class Ann(val i: IntArray)
 
 Ann(intArrayOf(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i<!>))
 Ann(intArrayOf(i2))
@@ -13,7 +15,9 @@ val i3 = foo()
 
 fun foo(): Int = 1
 
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class AnnAnn(val i: Array<Ann>)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class AnnAnn(val i: Array<Ann>)
 AnnAnn(arrayOf(Ann(intArrayOf(1))))
 AnnAnn(arrayOf(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>iAnn<!>))
 class TestAnn

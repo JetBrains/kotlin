@@ -1,4 +1,5 @@
-annotation(retention = AnnotationRetention.RUNTIME) class Simple(val value: String)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Simple(val value: String)
 
 fun test(@Simple("OK") x: Int) {}
 

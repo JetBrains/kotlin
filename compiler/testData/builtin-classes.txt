@@ -283,7 +283,7 @@ public interface Comparable</*0*/ in T> {
     public abstract fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class Deprecated : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
     internal final val replaceWith: kotlin.ReplaceWith
         internal final fun <get-replaceWith>(): kotlin.ReplaceWith
@@ -435,7 +435,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation(mustBeDocumented = true) public final class Extension : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class Extension : kotlin.Annotation {
     /*primary*/ public constructor Extension()
 }
 
@@ -587,7 +587,7 @@ public interface FloatingPointConstants</*0*/ T> {
 public interface Function</*0*/ out R> {
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.BINARY) public final class HiddenDeclaration : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) kotlin.annotation.Retention(value = AnnotationRetention.BINARY) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
     /*primary*/ public constructor HiddenDeclaration()
 }
 
@@ -1092,7 +1092,7 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
     public open fun isEmpty(): kotlin.Boolean
 }
 
-kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.BINARY) public final class ReplaceWith : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.Retention(value = AnnotationRetention.BINARY) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class ReplaceWith : kotlin.Annotation {
     /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val expression: kotlin.String
         internal final fun <get-expression>(): kotlin.String
@@ -1251,7 +1251,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class Suppress : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class Suppress : kotlin.Annotation {
     /*primary*/ public constructor Suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val names: kotlin.Array<out kotlin.String>
         internal final fun <get-names>(): kotlin.Array<out kotlin.String>
@@ -1268,34 +1268,34 @@ public object Unit {
     /*primary*/ private constructor Unit()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class data : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class data : kotlin.Annotation {
     /*primary*/ public constructor data()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.SOURCE) public final class external : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class external : kotlin.Annotation {
     /*primary*/ public constructor external()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
         public final fun <get-strategy>(): kotlin.InlineStrategy
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inlineOptions : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
     /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
     internal final val value: kotlin.Array<out kotlin.InlineOption>
         internal final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailRecursive : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailrec : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailrec : kotlin.Annotation {
     /*primary*/ public constructor tailrec()
 }

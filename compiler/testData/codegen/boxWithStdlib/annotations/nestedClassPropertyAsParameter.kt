@@ -7,7 +7,8 @@ fun box(): String {
     return "OK"
 }
 
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(val i: Int)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(val i: Int)
 
 class A {
    class B {

@@ -1,5 +1,6 @@
 Ann class MyClass
 
-annotation(retention = AnnotationRetention.SOURCE) class Ann
+@Retention(AnnotationRetention.SOURCE)
+annotation class Ann
 
 // 0 @LAnn;()

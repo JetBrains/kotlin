@@ -1,7 +1,7 @@
 import kotlin.reflect.KClass
 
-annotation(retention = AnnotationRetention.RUNTIME)
-class Ann(val args: Array<KClass<*>>)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(val args: Array<KClass<*>>)
 
 class O
 class K

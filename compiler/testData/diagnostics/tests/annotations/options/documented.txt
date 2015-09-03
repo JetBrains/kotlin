@@ -1,6 +1,6 @@
 package
 
-kotlin.annotation.annotation(mustBeDocumented = true) internal final class DocAnn : kotlin.Annotation {
+kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() internal final class DocAnn : kotlin.Annotation {
     public constructor DocAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

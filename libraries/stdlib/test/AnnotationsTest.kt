@@ -4,7 +4,8 @@ import kotlin.*
 import kotlin.test.assertTrue
 import org.junit.Test as test
 
-annotation(retention = AnnotationRetention.RUNTIME) class MyAnno
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MyAnno
 
 @MyAnno
 @java.lang.Deprecated

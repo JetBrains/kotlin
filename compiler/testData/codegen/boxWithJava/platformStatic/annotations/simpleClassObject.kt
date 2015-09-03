@@ -1,6 +1,7 @@
 import kotlin.jvm.JvmStatic
 
-annotation(retention = AnnotationRetention.RUNTIME) class testAnnotation
+@Retention(AnnotationRetention.RUNTIME)
+annotation class testAnnotation
 
 class A {
 

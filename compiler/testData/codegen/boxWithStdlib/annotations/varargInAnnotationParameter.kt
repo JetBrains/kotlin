@@ -1,4 +1,5 @@
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(vararg val p: Int)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(vararg val p: Int)
 
 Ann() class MyClass1
 Ann(1) class MyClass2

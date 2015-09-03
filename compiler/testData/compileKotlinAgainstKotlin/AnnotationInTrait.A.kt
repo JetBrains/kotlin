@@ -1,6 +1,7 @@
 package a
 
-annotation(retention = AnnotationRetention.RUNTIME) class Ann
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann
 
 interface Tr {
     Ann

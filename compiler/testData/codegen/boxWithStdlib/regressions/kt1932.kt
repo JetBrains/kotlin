@@ -1,6 +1,7 @@
 import java.lang.annotation.Annotation
 
-annotation(retention = AnnotationRetention.RUNTIME) class foo(val name : String)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class foo(val name : String)
 
 class Test() {
     foo("OK") fun hello(input : String) {
