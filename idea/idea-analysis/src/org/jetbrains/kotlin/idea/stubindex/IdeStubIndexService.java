@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.util.UtilPackage;
 
 import java.util.List;
 
-public class StubIndexServiceImpl extends StubIndexService {
+public class IdeStubIndexService extends StubIndexService {
 
     @Override
     public void indexFile(KotlinFileStub stub, IndexSink sink) {

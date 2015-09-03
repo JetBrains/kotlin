@@ -151,7 +151,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
-                        serviceImplementation="org.jetbrains.kotlin.idea.stubindex.StubIndexServiceImpl"/>
+                        serviceImplementation="org.jetbrains.kotlin.idea.stubindex.IdeStubIndexService"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
