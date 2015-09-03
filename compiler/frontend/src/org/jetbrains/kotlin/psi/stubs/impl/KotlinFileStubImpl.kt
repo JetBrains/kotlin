@@ -59,7 +59,7 @@ public class KotlinFileStubImpl(
     }
 
     companion object {
-        public fun forPackageStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl =
+        public fun forFile(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl =
                 KotlinFileStubImpl(jetFile = null,
                                    packageName = StringRef.fromString(packageFqName.asString())!!,
                                    facadeSimpleName = null,
