@@ -4,4 +4,4 @@ fun foo(p : Any){
     var a : Foo<String> = <caret>
 }
 
-// EXIST: { lookupString:"Foo", itemText:"Foo<String>", tailText:"() (<root>)" }
+// EXIST: { lookupString:"Foo", itemText:"Foo", tailText:"() (<root>)" }

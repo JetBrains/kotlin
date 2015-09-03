@@ -1,11 +1,10 @@
-import java.io.File
 import java.util.HashMap
 
 class X<T> {
     fun foo(p: java.util.HashMap<java.io.File, T>){}
 
     fun f(){
-        foo(HashMap<File, T>(<caret>))
+        foo(HashMap(<caret>))
     }
 }
 

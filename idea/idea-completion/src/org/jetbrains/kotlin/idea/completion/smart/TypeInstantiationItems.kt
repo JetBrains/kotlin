@@ -146,19 +146,20 @@ class TypeInstantiationItems(
 
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
-
-        // drop "in" and "out" from type arguments - they cannot be used in constructor call
-        val typeArgsToUse = typeArgs.map { TypeProjectionImpl(Variance.INVARIANT, it.getType()) }
-
-        var itemText = lookupString + IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
+        var itemText = lookupString
         var signatureText: String? = null
+        var typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
         if (isAbstract) {
+            // drop "in" and "out" from type arguments - they cannot be used in constructor call
+            val typeArgsToUse = typeArgs.map { TypeProjectionImpl(Variance.INVARIANT, it.getType()) }
+            itemText += IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
+            typeText += IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
+
             val constructorParenthesis = if (classifier.getKind() != ClassKind.INTERFACE) "()" else ""
             itemText += constructorParenthesis
-            itemText = "object: " + itemText + "{...}"
+            itemText = "object: $itemText{...}"
             lookupString = "object"
             allLookupStrings = setOf(lookupString, lookupElement.getLookupString())
             insertHandler = InsertHandler<LookupElement> { context, item ->

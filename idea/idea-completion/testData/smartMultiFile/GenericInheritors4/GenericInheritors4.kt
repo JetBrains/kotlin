@@ -5,4 +5,4 @@ fun foo(): KotlinTrait<I1<I2>> {
 }
 
 // EXIST: { lookupString: "object", itemText: "object: KotlinTrait<I1<I2>>{...}" }
-// EXIST: { lookupString: "KotlinInheritor", itemText: "KotlinInheritor<I2>", tailText: "() (p)" }
+// EXIST: { lookupString: "KotlinInheritor", itemText: "KotlinInheritor", tailText: "() (p)" }
