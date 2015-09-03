@@ -25,16 +25,15 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.io.IOException
 
-public abstract class BasicMap<V>(
+public abstract class BasicMap<K : Comparable<K>, V>(
         private val storageFile: File,
         private val valueExternalizer: DataExternalizer<V>
 ) {
-    protected open val keyDescriptor: KeyDescriptor<String>
-        get() = EnumeratorStringDescriptor()
+    protected abstract val keyDescriptor: KeyDescriptor<K>
 
-    protected var storage: PersistentHashMap<String, V> = createMap()
+    protected var storage: PersistentHashMap<K, V> = createMap()
 
-    public fun contains(key: String): Boolean = storage.containsMapping(key)
+    public fun contains(key: K): Boolean = storage.containsMapping(key)
 
     public open fun clean() {
         try {
@@ -74,7 +73,7 @@ public abstract class BasicMap<V>(
                 pushIndent()
 
                 for (key in storage.getAllKeysWithExistingMapping().sort()) {
-                    println("$key -> ${dumpValue(storage[key])}")
+                    println("${dumpKey(key)} -> ${dumpValue(storage[key])}")
                 }
 
                 popIndent()
@@ -84,8 +83,19 @@ public abstract class BasicMap<V>(
         }.toString()
     }
 
+    protected abstract fun dumpKey(key: K): String
     protected abstract fun dumpValue(value: V): String
 
-    private fun createMap(): PersistentHashMap<String, V> =
+    private fun createMap(): PersistentHashMap<K, V> =
             PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+}
+
+public abstract class BasicStringMap<V>(
+        private val storageFile: File,
+        private val valueExternalizer: DataExternalizer<V>
+) : BasicMap<String, V>(storageFile, valueExternalizer) {
+    override val keyDescriptor: KeyDescriptor<String>
+        get() = EnumeratorStringDescriptor()
+
+    override fun dumpKey(key: String): String = key
 }

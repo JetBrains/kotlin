@@ -21,7 +21,6 @@ import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
+import org.jetbrains.kotlin.jps.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
@@ -321,7 +321,7 @@ public class IncrementalCacheImpl(
         maps.forEach { it.close () }
     }
 
-    private inner class ProtoMap(storageFile: File) : BasicMap<ByteArray>(storageFile, ByteArrayExternalizer) {
+    private inner class ProtoMap(storageFile: File) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer) {
 
         public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
             val header = kotlinClass.classHeader
@@ -406,7 +406,7 @@ public class IncrementalCacheImpl(
         }
     }
 
-    private inner class ConstantsMap(storageFile: File) : BasicMap<Map<String, Any>>(storageFile, ConstantsMapExternalizer) {
+    private inner class ConstantsMap(storageFile: File) : BasicStringMap<Map<String, Any>>(storageFile, ConstantsMapExternalizer) {
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
@@ -509,7 +509,7 @@ public class IncrementalCacheImpl(
         }
     }
 
-    private inner class InlineFunctionsMap(storageFile: File) : BasicMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
@@ -585,7 +585,7 @@ public class IncrementalCacheImpl(
                 value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
-    private inner class PackagePartMap(storageFile: File) : BasicMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
+    private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun addPackagePart(className: JvmClassName) {
             storage.put(className.getInternalName(), true)
         }
@@ -601,7 +601,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicMap<List<String>>(storageFile, StringListExternalizer) {
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         override val keyDescriptor: KeyDescriptor<String>
             get() = PathStringDescriptor.INSTANCE
 
@@ -620,7 +620,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: List<String>) = value.toString()
     }
 
-    private inner class ClassToSourcesMap(storageFile: File) : BasicMap<Collection<String>>(storageFile, PathCollectionExternalizer) {
+    private inner class ClassToSourcesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathCollectionExternalizer) {
         public fun get(className: JvmClassName): Collection<String> =
                 storage[className.internalName] ?: emptySet()
 
@@ -638,7 +638,7 @@ public class IncrementalCacheImpl(
                 value.dumpCollection()
     }
 
-    private inner class DirtyOutputClassesMap(storageFile: File) : BasicMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
+    private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun markDirty(className: String) {
             storage.put(className, true)
         }
@@ -654,7 +654,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicMap<List<String>>(storageFile, StringListExternalizer) {
+    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
             storage.allKeysWithExistingMapping
                    .toMap(JvmClassName::byInternalName) { storage[it] }
@@ -667,65 +667,36 @@ public class IncrementalCacheImpl(
                 value.dumpCollection()
     }
 
+
     /**
-     * Mapping: sourceFile->{inlineFunction->...targetFiles}
+     * Mapping: (sourceFile+inlineFunction)->(targetFiles)
      *
      * Where:
      *  * sourceFile - path to some kotlin source
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<Map<String, Collection<String>>>(storageFile, StringToPathsMapExternalizer) {
-        override val keyDescriptor: KeyDescriptor<String>
-            get() = PathStringDescriptor()
-
-        private val cache = THashMap<String, MutableMap<String, MutableCollection<String>>>(FileUtil.PATH_HASHING_STRATEGY)
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathCollectionExternalizer) {
+        override val keyDescriptor: KeyDescriptor<PathFunctionPair>
+            get() = PathFunctionPairKeyDescriptor
 
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
-            val mapping = getMappingFromCache(sourcePath.normalizedPath)
-            val paths = mapping.getOrPut(jvmSignature) { THashSet(FileUtil.PATH_HASHING_STRATEGY) }
-            paths.add(targetPath.normalizedPath)
-        }
-
-        public fun get(sourceFile: String, jvmSignature: String): Collection<String> {
-            val normalizedPath = sourceFile.normalizedPath
-            if (normalizedPath !in cache && !storage.containsMapping(normalizedPath)) return emptySet()
-
-            val mapping = getMappingFromCache(normalizedPath)
-            return mapping[jvmSignature] ?: emptySet()
-        }
-
-        override fun clean() {
-            cache.clear()
-            super.clean()
-        }
-
-        override fun flush(memoryCachesOnly: Boolean) {
-            for ((k, v) in cache) {
-                storage.put(k, v)
+            val key = PathFunctionPair(sourcePath, jvmSignature)
+            storage.appendData(key) { out ->
+                IOUtil.writeUTF(out, targetPath)
             }
-
-            super.flush(memoryCachesOnly)
         }
 
-        override fun dumpValue(value: Map<String, Collection<String>>) =
-                value.dumpMap { it.dumpCollection() }
-
-        private fun getMappingFromCache(sourcePath: String): MutableMap<String, MutableCollection<String>> {
-            val cachedValue = cache[sourcePath]
-            if (cachedValue != null) return cachedValue
-
-            val mapping = storage[sourcePath] ?: emptyMap()
-            val mutableMapping = hashMapOf<String, MutableCollection<String>>()
-
-            for ((k, v) in mapping) {
-                val paths = THashSet(v, FileUtil.PATH_HASHING_STRATEGY)
-                mutableMapping[k] = paths
-            }
-
-            cache[sourcePath] = mutableMapping
-            return mutableMapping
+        public fun get(sourcePath: String, jvmSignature: String): Collection<String> {
+            val key = PathFunctionPair(sourcePath, jvmSignature)
+            return storage[key] ?: emptySet()
         }
+
+        override fun dumpKey(key: PathFunctionPair): String =
+            "(${key.path}, ${key.function})"
+
+        override fun dumpValue(value: Collection<String>) =
+            value.dumpCollection()
     }
 }
 
@@ -821,27 +792,6 @@ private object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
-private object StringToPathsMapExternalizer : StringMapExternalizer<Collection<String>>() {
-    override fun readValue(input: DataInput): Collection<String> {
-        val size = input.readInt()
-        val paths = THashSet(size, FileUtil.PATH_HASHING_STRATEGY)
-
-        repeat(size) {
-            paths.add(IOUtil.readUTF(input))
-        }
-
-        return paths
-    }
-
-    override fun writeValue(output: DataOutput, value: Collection<String>) {
-        output.writeInt(value.size())
-
-        for (path in value) {
-            IOUtil.writeUTF(output, path)
-        }
-    }
-}
-
 private object StringListExternalizer : DataExternalizer<List<String>> {
     override fun save(out: DataOutput, value: List<String>) {
         value.forEach { IOUtil.writeUTF(out, it) }
@@ -877,9 +827,6 @@ private object PathCollectionExternalizer : DataExternalizer<Collection<String>>
 private val File.normalizedPath: String
     get() = FileUtil.toSystemIndependentName(canonicalPath)
 
-private val String.normalizedPath: String
-    get() = FileUtil.toSystemIndependentName(this)
-
 TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
         StringBuilder {
@@ -898,3 +845,46 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
 TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
         "[${sort().map(Any::toString).join(", ")}]"
+
+private class PathFunctionPair(
+        public val path: String,
+        public val function: String
+): Comparable<PathFunctionPair> {
+    override fun compareTo(other: PathFunctionPair): Int {
+        val pathComp = FileUtil.comparePaths(path, other.path)
+
+        if (pathComp != 0) return pathComp
+
+        return function.compareTo(other.function)
+    }
+
+    override fun equals(other: Any?): Boolean =
+        when (other) {
+            is PathFunctionPair ->
+                FileUtil.pathsEqual(path, other.path) && function == other.function
+            else ->
+                false
+        }
+
+    override fun hashCode(): Int = 31 * FileUtil.pathHashCode(path) + function.hashCode()
+}
+
+private object PathFunctionPairKeyDescriptor : KeyDescriptor<PathFunctionPair> {
+    override fun getHashCode(value: PathFunctionPair): Int =
+            value.hashCode()
+
+    override fun isEqual(val1: PathFunctionPair, val2: PathFunctionPair): Boolean =
+            val1 == val2
+
+    override fun read(`in`: DataInput): PathFunctionPair {
+        val path = IOUtil.readUTF(`in`)
+        val function = IOUtil.readUTF(`in`)
+        return PathFunctionPair(path, function)
+    }
+
+    override fun save(out: DataOutput, value: PathFunctionPair) {
+        IOUtil.writeUTF(out, value.path)
+        IOUtil.writeUTF(out, value.function)
+    }
+
+}
