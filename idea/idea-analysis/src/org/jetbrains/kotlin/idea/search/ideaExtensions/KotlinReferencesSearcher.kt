@@ -62,8 +62,10 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         val unwrappedElement = element.namedUnwrappedElement ?: return
 
         val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-        val words = unwrappedElement.getSpecialNamesToSearch() +
-                    (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+        val words = runReadAction {
+            unwrappedElement.getSpecialNamesToSearch() +
+                (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+        }
 
         val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 
