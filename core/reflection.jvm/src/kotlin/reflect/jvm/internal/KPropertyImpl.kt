@@ -25,10 +25,10 @@ import java.lang.reflect.Modifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
-interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
-    val javaField: Field?
+internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
+    internal val javaField: Field?
 
-    val container: KDeclarationContainerImpl
+    internal val container: KDeclarationContainerImpl
 
     override val getter: Getter<R>
 
@@ -63,7 +63,7 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 }
 
 
-interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
+internal interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
     override val setter: Setter<R>
 
     abstract class Setter<R> : KPropertyImpl.Accessor<R>(), KMutableProperty.Setter<R>, KCallableImpl<Unit> {

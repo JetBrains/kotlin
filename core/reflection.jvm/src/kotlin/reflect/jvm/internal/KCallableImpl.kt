@@ -26,7 +26,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.javaType
 
-interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
+internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     val descriptor: CallableMemberDescriptor
 
     val caller: FunctionCaller<*>

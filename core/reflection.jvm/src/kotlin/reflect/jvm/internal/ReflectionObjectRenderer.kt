@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.JetType
 import kotlin.reflect.KParameter
 
-object ReflectionObjectRenderer {
+internal object ReflectionObjectRenderer {
     private val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
     private fun StringBuilder.appendReceiverType(receiver: ReceiverParameterDescriptor?) {

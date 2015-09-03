@@ -27,7 +27,7 @@ import kotlin.jvm.internal.KotlinPackage
 import kotlin.reflect.KCallable
 import kotlin.reflect.KPackage
 
-class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl(), KPackage {
+internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl(), KPackage {
     val descriptor by ReflectProperties.lazySoft {
         val moduleData = jClass.getOrCreateModule()
         moduleData.packageFacadeProvider.registerModule(moduleName)

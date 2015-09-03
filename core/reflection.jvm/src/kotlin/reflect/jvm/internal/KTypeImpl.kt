@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.JetType
 import java.lang.reflect.Type
 import kotlin.reflect.KType
 
-class KTypeImpl(
+internal class KTypeImpl(
         val type: JetType,
         computeJavaType: () -> Type
 ) : KType {

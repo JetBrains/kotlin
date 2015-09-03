@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-class KParameterImpl(
+internal class KParameterImpl(
         val callable: KCallableImpl<*>,
         override val index: Int,
         override val kind: KParameter.Kind,
