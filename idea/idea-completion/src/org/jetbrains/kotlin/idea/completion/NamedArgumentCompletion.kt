@@ -48,7 +48,7 @@ object NamedArgumentCompletion {
         val nameToParameterType = HashMap<Name, MutableSet<JetType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
-            argumentData.namedArgumentCandidates?.forEach { parameter ->
+            for (parameter in argumentData.namedArgumentCandidates) {
                 nameToParameterType.getOrPut(parameter.name) { HashSet() }.add(parameter.type)
             }
         }

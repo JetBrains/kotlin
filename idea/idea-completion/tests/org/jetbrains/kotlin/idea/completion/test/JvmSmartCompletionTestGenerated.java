@@ -419,6 +419,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("PreviousArgMismatchedType.kt")
+    public void testPreviousArgMismatchedType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/PreviousArgMismatchedType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("QualifiedOverloadedMethodCallArgument1.kt")
     public void testQualifiedOverloadedMethodCallArgument1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument1.kt");
