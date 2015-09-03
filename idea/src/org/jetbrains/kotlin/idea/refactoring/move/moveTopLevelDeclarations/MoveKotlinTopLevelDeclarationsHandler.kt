@@ -34,24 +34,29 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
-import java.util.LinkedHashSet
+import java.util.*
 
 public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun getSourceDirectories(elements: Array<out PsiElement>) = elements.mapTo(LinkedHashSet()) { it.containingFile?.parent }
 
     private fun doMoveWithCheck(
-            project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?
+            project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
         if (getSourceDirectories(elements).singleOrNull() == null) {
-            CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("move.title"),
-                                                   "All declarations must belong to the same directory",
-                                                   null,
-                                                   project)
+            CommonRefactoringUtil.showErrorHint(
+                    project, editor, "All declarations must belong to the same directory", MOVE_DECLARATIONS, null
+            )
             return false
         }
 
         val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as JetNamedDeclaration }
+
+        if (elementsToSearch.any { it.parent !is JetFile }) {
+            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations")
+            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            return true
+        }
 
         val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
@@ -67,17 +72,21 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         return true
     }
 
-    override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?): Boolean {
+    private fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, editorMode: Boolean): Boolean {
         if (!super.canMove(elements, targetContainer)) return false
         if (getSourceDirectories(elements).singleOrNull() == null) return false
 
         return elements.all { e ->
             if (e is JetClass || (e is JetObjectDeclaration && !e.isObjectLiteral()) || e is JetNamedFunction || e is JetProperty) {
                 val parent = e.parent
-                parent is JetFile && parent.isInJavaSourceRoot()
+                (editorMode || parent is JetFile) && parent.isInJavaSourceRoot()
             }
             else false
         }
+    }
+
+    override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?): Boolean {
+        return canMove(elements, targetContainer, false)
     }
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
@@ -85,7 +94,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
-        doMoveWithCheck(project, elements, targetContainer, callback)
+        doMoveWithCheck(project, elements, targetContainer, callback, null)
     }
 
     override fun tryToMove(
@@ -93,7 +102,8 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     ): Boolean {
         val elementsToMove = arrayOf(element)
         val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
-
-        return canMove(elementsToMove, targetContainer) && doMoveWithCheck(project, elementsToMove, targetContainer, null)
+        return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
     }
 }
+
+private val MOVE_DECLARATIONS = "Move Declarations"
