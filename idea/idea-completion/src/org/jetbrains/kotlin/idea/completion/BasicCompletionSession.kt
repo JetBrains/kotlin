@@ -165,12 +165,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     public fun shouldDisableAutoPopup(): Boolean {
-        if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
-            return true
-        }
-
         if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
             if (!shouldCompleteParameterNameAndType() || TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) {
+                return true
+            }
+
+            if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
                 return true
             }
         }
