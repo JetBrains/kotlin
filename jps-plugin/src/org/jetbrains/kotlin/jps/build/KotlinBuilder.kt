@@ -329,23 +329,18 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val representativeTarget = chunk.representativeTarget()
         for (outputItem in outputItemCollector.getOutputs()) {
-            var target: ModuleBuildTarget? = null
-            val sourceFiles = outputItem.getSourceFiles()
-            val outputFile = outputItem.getOutputFile()
-
-            if (!sourceFiles.isEmpty()) {
-                target = sourceToTarget[sourceFiles.iterator().next()]
-            }
-
-            if (target == null) {
-                target = representativeTarget
-            }
+            val sourceFiles = outputItem.sourceFiles
+            val outputFile = outputItem.outputFile
+            val target =
+                    sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
+                    chunk.targets.filter { it.outputDir?.let { outputFile.startsWith(it) } ?: false }.singleOrNull() ?:
+                    representativeTarget
 
             if (outputFile.getName().endsWith(".class")) {
-                result.add(GeneratedJvmClass(target!!, sourceFiles, outputFile))
+                result.add(GeneratedJvmClass(target, sourceFiles, outputFile))
             }
             else {
-                result.add(GeneratedFile(target!!, sourceFiles, outputFile))
+                result.add(GeneratedFile(target, sourceFiles, outputFile))
             }
         }
         return result
