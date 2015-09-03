@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cli.common.modules
 
 import org.jetbrains.kotlin.modules.Module
-import java.util.ArrayList
+import java.util.*
 
 public class ModuleBuilder(
         private val name: String,
@@ -53,4 +53,3 @@ public class ModuleBuilder(
     override fun getModuleName(): String = name
     override fun getModuleType(): String = type
 }
-

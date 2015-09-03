@@ -1,6 +1,6 @@
 <modules>
     <!-- Module script for production -->
-    <module name="name" outputDir="output">
+    <module name="name" type="java-production" outputDir="output">
         <sources path="s1"/>
         <sources path="s2"/>
         <!-- Java source roots -->
@@ -12,7 +12,7 @@
         <externalAnnotations path="a2"/>
     </module>
     <!-- Module script for tests -->
-    <module name="name2" outputDir="output2">
+    <module name="name2" type="java-test" outputDir="output2">
         <sources path="s12"/>
         <sources path="s22"/>
         <!-- Java source roots -->

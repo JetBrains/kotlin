@@ -1,6 +1,6 @@
 name
-	type=java-production
+	type=java-test
 	outputDir=out
-	sources=[foo]
+	sources=[]
 	classpath=[]
 	annotations=[]

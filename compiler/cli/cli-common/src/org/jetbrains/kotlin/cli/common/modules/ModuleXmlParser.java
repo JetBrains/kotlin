@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cli.common.modules;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
@@ -43,6 +42,8 @@ public class ModuleXmlParser {
     public static final String MODULE = "module";
     public static final String NAME = "name";
     public static final String TYPE = "type";
+    public static final String TYPE_PRODUCTION = "java-production";
+    public static final String TYPE_TEST = "java-test";
     public static final String OUTPUT_DIR = "outputDir";
     public static final String SOURCES = "sources";
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
@@ -127,22 +128,13 @@ public class ModuleXmlParser {
                 throw createError(qName);
             }
 
+            String moduleType = getAttribute(attributes, TYPE, qName);
+            assert(TYPE_PRODUCTION.equals(moduleType) || TYPE_TEST.equals(moduleType)): "Unknown module type: " + moduleType;
             setCurrentState(new InsideModule(
                     getAttribute(attributes, NAME, qName),
                     getAttribute(attributes, OUTPUT_DIR, qName),
-                    getType(attributes, qName)
+                    moduleType
             ));
-        }
-
-        @NotNull
-        private String getType(@NotNull Attributes attributes, @NotNull String tag) {
-            String value = attributes.getValue(TYPE);
-
-            assert value != null &&
-                   (JavaModuleBuildTargetType.PRODUCTION.getTypeId().equals(value) ||
-                    JavaModuleBuildTargetType.TEST.getTypeId().equals(value)): "Unknown value of module type: " + value;
-
-            return value;
         }
 
         @Override

@@ -76,4 +76,10 @@ public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/twoModules.xml");
         doTest(fileName);
     }
+
+    @TestMetadata("typeTestModule.xml")
+    public void testTypeTestModule() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/typeTestModule.xml");
+        doTest(fileName);
+    }
 }
