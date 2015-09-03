@@ -386,7 +386,7 @@ public class DescriptorUtils {
             return Visibilities.PRIVATE;
         }
         if (isAnonymousObject(classDescriptor)) {
-            return Visibilities.INTERNAL;
+            return Visibilities.DEFAULT_VISIBILITY;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS;
         return Visibilities.PUBLIC;

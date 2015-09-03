@@ -413,7 +413,7 @@ internal class DescriptorRendererImpl(
         if (normalizedVisibilities) {
             visibility = visibility.normalize()
         }
-        if (!showInternalKeyword && visibility == Visibilities.INTERNAL) return
+        if (!showInternalKeyword && visibility == Visibilities.DEFAULT_VISIBILITY) return
         builder.append(renderKeyword(visibility.displayName)).append(" ")
     }
 

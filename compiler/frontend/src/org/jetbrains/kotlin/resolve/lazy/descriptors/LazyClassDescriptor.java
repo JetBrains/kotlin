@@ -139,7 +139,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             defaultVisibility = Visibilities.PUBLIC;
         }
         else {
-            defaultVisibility = Visibilities.INTERNAL;
+            defaultVisibility = Visibilities.DEFAULT_VISIBILITY;
         }
         this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, defaultVisibility);
 

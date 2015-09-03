@@ -258,6 +258,8 @@ public class Visibilities {
         return null;
     }
 
+    public static final Visibility DEFAULT_VISIBILITY = INTERNAL;
+
     public static boolean isPrivate(@NotNull Visibility visibility) {
         return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
     }

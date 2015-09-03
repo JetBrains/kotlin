@@ -429,7 +429,7 @@ public class JetChangeSignatureDialog(
                                  methodName,
                                  returnType,
                                  returnTypeText,
-                                 visibility ?: Visibilities.INTERNAL,
+                                 visibility ?: Visibilities.DEFAULT_VISIBILITY,
                                  parameters,
                                  parametersModel.getReceiver(),
                                  defaultValueContext)

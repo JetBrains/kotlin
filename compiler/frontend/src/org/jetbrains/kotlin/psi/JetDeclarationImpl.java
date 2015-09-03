@@ -48,7 +48,7 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
 
     @Override
     public void addModifier(@NotNull JetModifierKeywordToken modifier) {
-        AddRemoveModifierPackage.addModifier(this, modifier, JetTokens.INTERNAL_KEYWORD);
+        AddRemoveModifierPackage.addModifier(this, modifier, JetTokens.DEFAULT_VISIBILITY_KEYWORD);
     }
 
     @Override

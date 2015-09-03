@@ -467,7 +467,7 @@ public class OverridingUtil {
     @Nullable
     private static Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         if (descriptors.isEmpty()) {
-            return Visibilities.INTERNAL;
+            return Visibilities.DEFAULT_VISIBILITY;
         }
         Visibility maxVisibility = null;
         for (CallableMemberDescriptor descriptor : descriptors) {
