@@ -59,8 +59,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
-import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -498,18 +499,23 @@ private class MutableParameter(
         override val argumentText: String,
         override val originalDescriptor: DeclarationDescriptor,
         override val receiverCandidate: Boolean,
-        private val targetScope: LexicalScope?
+        private val targetScope: LexicalScope?,
+        private val originalType: JetType,
+        private val possibleTypes: Set<JetType>
 ): Parameter {
     // All modifications happen in the same thread
     private var writable: Boolean = true
-    private val defaultTypes = HashSet<JetType>()
+    private val defaultTypes = LinkedHashSet<JetType>()
     private val typePredicates = HashSet<TypePredicate>()
 
     var refCount: Int = 0
 
     fun addDefaultType(jetType: JetType) {
         assert(writable) { "Can't add type to non-writable parameter $currentName" }
-        defaultTypes.add(jetType)
+
+        if (jetType in possibleTypes) {
+            defaultTypes.add(jetType)
+        }
     }
 
     fun addTypePredicate(predicate: TypePredicate) {
@@ -524,7 +530,10 @@ private class MutableParameter(
 
     private val defaultType: JetType by lazy {
         writable = false
-        TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
+        if (defaultTypes.isNotEmpty()) {
+            TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
+        }
+        else originalType
     }
 
     private val parameterTypeCandidates: List<JetType> by lazy {
@@ -594,6 +603,44 @@ private fun ExtractionData.inferParametersInfo(
     val info = ParametersInfo()
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
+
+    fun suggestParameterType(
+            extractFunctionRef: Boolean,
+            originalDescriptor: DeclarationDescriptor,
+            parameterExpression: JetExpression?,
+            receiverToExtract: ReceiverValue,
+            resolvedCall: ResolvedCall<*>?,
+            useSmartCastsIfPossible: Boolean
+    ): JetType {
+        return when {
+                   extractFunctionRef -> {
+                       originalDescriptor as FunctionDescriptor
+                       KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
+                                                                    originalDescriptor.getExtensionReceiverParameter()?.getType(),
+                                                                    originalDescriptor.getValueParameters().map { it.getType() },
+                                                                    originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
+                   }
+                   parameterExpression != null ->
+                       (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression] else null)
+                       ?: bindingContext.getType(parameterExpression)
+                       ?: (parameterExpression as? JetReferenceExpression)?.let {
+                           (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
+                       }
+                       ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
+                   receiverToExtract is ThisReceiver -> {
+                       val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
+                       val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
+                           bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
+                               val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
+                               if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
+                           }
+                       } else null
+                       typeByDataFlowInfo ?: receiverToExtract.getType()
+                   }
+                   receiverToExtract.exists() -> receiverToExtract.getType()
+                   else -> null
+               } ?: DEFAULT_PARAMETER_TYPE
+    }
 
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
@@ -671,31 +718,7 @@ private fun ExtractionData.inferParametersInfo(
                     else -> (originalRef.getParent() as? JetThisExpression) ?: originalRef
                 }
 
-                val parameterType = when {
-                    extractFunctionRef -> {
-                        originalDescriptor as FunctionDescriptor
-                        KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
-                                                                     originalDescriptor.getExtensionReceiverParameter()?.getType(),
-                                                                     originalDescriptor.getValueParameters().map { it.getType() },
-                                                                     originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
-                    }
-                    parameterExpression != null ->
-                        bindingContext[BindingContext.SMARTCAST, parameterExpression]
-                        ?: bindingContext.getType(parameterExpression)
-                        ?: (parameterExpression as? JetReferenceExpression)?.let {
-                            (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
-                        }
-                        ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
-                    receiverToExtract is ThisReceiver -> {
-                        val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
-                        bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
-                            val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
-                            if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
-                        } ?: receiverToExtract.getType()
-                    }
-                    receiverToExtract.exists() -> receiverToExtract.getType()
-                    else -> null
-                } ?: DEFAULT_PARAMETER_TYPE
+                val parameterType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, true)
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     var argumentText =
@@ -720,7 +743,9 @@ private fun ExtractionData.inferParametersInfo(
                         argumentText = "$receiverTypeText::$argumentText"
                     }
 
-                    MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope)
+                    val originalType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, false)
+
+                    MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope, originalType, refInfo.possibleTypes)
                 }
 
                 if (!extractThis) {

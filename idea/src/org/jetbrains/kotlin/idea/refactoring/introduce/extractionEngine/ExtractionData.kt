@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.JetType
-import java.util.ArrayList
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean = true,
@@ -69,7 +69,8 @@ data class ResolvedReferenceInfo(
         val refExpr: JetSimpleNameExpression,
         val offsetInBody: Int,
         val resolveResult: ResolveResult,
-        val smartCast: JetType?
+        val smartCast: JetType?,
+        val possibleTypes: Set<JetType>
 )
 
 data class ExtractionData(
@@ -160,6 +161,19 @@ data class ExtractionData(
         else Collections.emptyMap<Int, ResolveResult>()
     }
 
+    fun getPossibleTypes(expression: JetExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<JetType> {
+        val typeInfo = context[BindingContext.EXPRESSION_TYPE_INFO, expression] ?: return emptySet()
+
+        (resolvedCall?.getImplicitReceiverValue() as? ThisReceiver)?.let {
+            return typeInfo.dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(it))
+        }
+
+        val type = resolvedCall?.resultingDescriptor?.returnType ?: return emptySet()
+        val containingDescriptor = context[BindingContext.LEXICAL_SCOPE, expression]?.ownerDescriptor ?: return emptySet()
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context, containingDescriptor)
+        return typeInfo.dataFlowInfo.getPossibleTypes(dataFlowValue)
+    }
+
     fun getBrokenReferencesInfo(body: JetBlockExpression): List<ResolvedReferenceInfo> {
         val originalContext = bindingContext ?: return listOf()
 
@@ -174,11 +188,14 @@ data class ExtractionData(
             val originalResolveResult = refOffsetToDeclaration[offset] ?: continue
 
             val smartCast: JetType?
+            val possibleTypes: Set<JetType>
 
             // Qualified property reference: a.b
             val qualifiedExpression = ref.getQualifiedExpressionForSelector()
             if (qualifiedExpression != null) {
-                smartCast = originalContext[BindingContext.SMARTCAST, originalResolveResult.originalRefExpr.getParent() as JetExpression]
+                val smartCastTarget = originalResolveResult.originalRefExpr.getParent() as JetExpression
+                smartCast = originalContext[BindingContext.SMARTCAST, smartCastTarget]
+                possibleTypes = getPossibleTypes(smartCastTarget, originalResolveResult.resolvedCall, originalContext)
                 val receiverDescriptor =
                         (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
                 if (smartCast == null
@@ -187,6 +204,7 @@ data class ExtractionData(
             }
             else {
                 smartCast = originalContext[BindingContext.SMARTCAST, originalResolveResult.originalRefExpr]
+                possibleTypes = getPossibleTypes(originalResolveResult.originalRefExpr, originalResolveResult.resolvedCall, originalContext)
             }
 
             val parent = ref.getParent()
@@ -207,11 +225,11 @@ data class ExtractionData(
                     val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
                                                                            descriptor = originalFunctionCall.getResultingDescriptor(),
                                                                            declaration = synthesizedInvokeDeclaration)
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, variableResolveResult, smartCast))
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, functionResolveResult, smartCast))
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, variableResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, functionResolveResult, smartCast, possibleTypes))
                 }
                 else {
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult, smartCast))
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult, smartCast, possibleTypes))
                 }
             }
         }
