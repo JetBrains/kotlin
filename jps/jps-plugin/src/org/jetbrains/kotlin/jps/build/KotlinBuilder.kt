@@ -427,7 +427,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         ic.saveFileToCache(generatedFile.sourceFiles, generatedFile.outputClass)
                     }
                     else if (generatedFile.outputFile.isModuleMappingFile()) {
-                        ic.saveModuleMappingToCache(generatedFile.outputFile)
+                        ic.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
                     }
                     else {
                         continue
