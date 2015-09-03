@@ -21,13 +21,13 @@ import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.requests.ClassPrepareRequestor
-import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
-import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -466,19 +464,15 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             if (psiElement is JetNamedFunction &&
                 InlineUtil.isInline(typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
             ) {
-                val project = myDebugProcess.getProject()
-                val options = FindUsagesOptions(project)
-                options.isSearchForTextOccurrences = false
-                val usagesSearchTarget = options.toSearchTarget(psiElement, true)
-
-                val usagesSearchRequest = FunctionUsagesSearchHelper(skipImports = true).newRequest(usagesSearchTarget)
-                usagesSearchRequest.search().forEach {
-                    val psiElement = it.getElement()
-                    if (psiElement is JetElement) {
-                        //TODO recursive search
-                        val name = classNameForPosition(psiElement)
-                        if (name != null) {
-                            result.add(name)
+                ReferencesSearch.search(psiElement).forEach {
+                    if (!it.isImportUsage()) {
+                        val psiElement = it.getElement()
+                        if (psiElement is JetElement) {
+                            //TODO recursive search
+                            val name = classNameForPosition(psiElement)
+                            if (name != null) {
+                                result.add(name)
+                            }
                         }
                     }
                 }
