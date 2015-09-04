@@ -277,11 +277,11 @@ public class DebuggerUtils {
             List<BindingContext> innerContexts = new ArrayList<BindingContext>();
             for (JetNamedFunction inlineFunctions : collectedElements) {
                 JetExpression body = inlineFunctions.getBodyExpression();
-                assert body != null : "Inline function should have a body: " + inlineFunctions.getText();
-
-                BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
-                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
-                                                           analyzedElements, analyzeInlineFunctions));
+                if (body != null) {
+                    BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
+                    innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
+                                                               analyzedElements, analyzeInlineFunctions));
+                }
             }
 
             innerContexts.add(bindingContext);
