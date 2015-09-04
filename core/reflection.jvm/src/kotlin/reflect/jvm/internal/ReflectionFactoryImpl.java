@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 
 /**
  * @suppress
@@ -32,7 +33,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KPackage createKotlinPackage(Class javaClass) {
-        return createKotlinPackage(javaClass, "main");
+        return createKotlinPackage(javaClass, JvmAbi.DEFAULT_MODULE_NAME);
     }
 
     @Override
