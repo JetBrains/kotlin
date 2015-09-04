@@ -1,4 +1,5 @@
 Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
 out/production/module/b/B2Kt.class
 out/production/module/b/BPackage.class
 End of files
@@ -6,6 +7,7 @@ Compiling files:
 src/a2.kt
 End of files
 Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
 out/production/module/a/A1Kt.class
 out/production/module/a/APackage.class
 out/production/module/b/B1Kt.class

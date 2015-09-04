@@ -1,5 +1,6 @@
 Cleaning output files:
 out/production/module/B.class
+out/production/module/META-INF/module.kotlin_module
 out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
@@ -17,6 +18,7 @@ src/usage.kt
 End of files
 Cleaning output files:
 out/production/module/A.class
+out/production/module/META-INF/module.kotlin_module
 out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 out/production/module/new/LikePartKt.class

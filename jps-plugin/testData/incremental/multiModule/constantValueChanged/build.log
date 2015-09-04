@@ -1,4 +1,5 @@
 Cleaning output files:
+out/production/module1/META-INF/module1.kotlin_module
 out/production/module1/test/Module1_constKt.class
 out/production/module1/test/TestPackage.class
 End of files

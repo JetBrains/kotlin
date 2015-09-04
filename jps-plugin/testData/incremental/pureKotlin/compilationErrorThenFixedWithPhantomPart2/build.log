@@ -1,4 +1,5 @@
 Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
 out/production/module/OtherKt.class
 out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
@@ -21,6 +22,7 @@ src/usage.kt
 End of files
 Cleaning output files:
 out/production/module/FunKt.class
+out/production/module/META-INF/module.kotlin_module
 out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 out/production/module/new/NewPackage.class
