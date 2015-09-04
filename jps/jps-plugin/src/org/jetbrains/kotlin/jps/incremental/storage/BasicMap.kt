@@ -35,7 +35,7 @@ public abstract class BasicMap<K : Comparable<K>, V>(
 
     public fun contains(key: K): Boolean = storage.containsMapping(key)
 
-    public open fun clean() {
+    public fun clean() {
         try {
             storage.close()
         }
@@ -50,7 +50,7 @@ public abstract class BasicMap<K : Comparable<K>, V>(
         }
     }
 
-    public open fun flush(memoryCachesOnly: Boolean) {
+    public fun flush(memoryCachesOnly: Boolean) {
         if (memoryCachesOnly) {
             if (storage.isDirty()) {
                 storage.dropMemoryCaches()
