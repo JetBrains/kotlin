@@ -25,9 +25,7 @@ class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartPro
 
     val module2Mapping = ConcurrentHashMap<String, Lazy<ModuleMapping>>()
 
-    fun registerModule(moduleName: String?) {
-        if (moduleName == null) return
-
+    fun registerModule(moduleName: String) {
         module2Mapping.putIfAbsent(moduleName, lazy {
            val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}") ?: return@lazy ModuleMapping()
 
