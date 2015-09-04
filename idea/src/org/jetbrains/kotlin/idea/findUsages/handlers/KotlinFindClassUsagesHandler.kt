@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.findUsages.handlers
 
-import com.intellij.find.findUsages.AbstractFindUsagesDialog
-import com.intellij.find.findUsages.FindUsagesOptions
-import com.intellij.find.findUsages.JavaFindUsagesHandler
-import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.find.findUsages.*
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -47,6 +44,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.isConstructorUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -110,13 +108,15 @@ public class KotlinFindClassUsagesHandler(
         }
 
         if (kotlinOptions.searchConstructorUsages) {
-            val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
-            for (constructor in constructors) {
-                if (constructor !is KotlinLightMethod) continue
-                constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
-                    it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) }
+            val result = runReadAction {
+                val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
+                constructors.filterIsInstance<KotlinLightMethod>().all { constructor ->
+                    constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
+                        it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) } ?: false
+                    }
                 }
             }
+            if (!result) return false
         }
 
         if (options.isDerivedClasses || options.isDerivedInterfaces) {
@@ -148,27 +148,29 @@ public class KotlinFindClassUsagesHandler(
 
     private fun processCompanionObjectInternalReferences(companionObject: JetObjectDeclaration,
                                                          processor: Processor<PsiReference>): Boolean {
-        val klass = companionObject.getStrictParentOfType<JetClass>() ?: return true
-        val companionObjectDescriptor = companionObject.descriptor
         var stop: Boolean = false
-        klass.acceptChildren(object : JetVisitorVoid() {
-            override fun visitJetElement(element: JetElement) {
-                if (element == companionObject) return // skip companion object itself
-                if (stop) return
-                element.acceptChildren(this)
+        runReadAction {
+            val klass = companionObject.getStrictParentOfType<JetClass>() ?: return@runReadAction
+            val companionObjectDescriptor = companionObject.descriptor
+            klass.acceptChildren(object : JetVisitorVoid() {
+                override fun visitJetElement(element: JetElement) {
+                    if (element == companionObject) return // skip companion object itself
+                    if (stop) return
+                    element.acceptChildren(this)
 
-                val bindingContext = element.analyze()
-                val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
-                if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
-                    || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
-                    element.getReferences().forEach {
-                        if (!stop && !processor.process(it)) {
-                            stop = true
+                    val bindingContext = element.analyze()
+                    val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
+                    if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
+                        || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
+                        element.getReferences().forEach {
+                            if (!stop && !processor.process(it)) {
+                                stop = true
+                            }
                         }
                     }
                 }
-            }
-        })
+            })
+        }
         return !stop
     }
 
@@ -191,15 +193,7 @@ public class KotlinFindClassUsagesHandler(
                            else -> null
                        } ?: return Collections.emptyList()
 
-        // Work around the protected method in JavaFindUsagesHandler
-        // todo: Use JavaFindUsagesHelper.getElementNames() when it becomes public in IDEA
-        var stringsToSearch: Collection<String>
-        object: JavaFindUsagesHandler(psiClass, JavaFindUsagesHandlerFactory.getInstance(element.getProject())) {
-            init {
-                stringsToSearch = getStringsToSearch(psiClass)!!
-            }
-        }
-        return stringsToSearch
+        return JavaFindUsagesHelper.getElementNames(psiClass)
     }
 
     protected override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {

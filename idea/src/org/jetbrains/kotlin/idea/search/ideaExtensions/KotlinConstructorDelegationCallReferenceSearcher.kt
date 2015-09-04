@@ -28,7 +28,7 @@ public class KotlinConstructorDelegationCallReferenceSearcher() : QueryExecutorB
         if (!method.isConstructor()) return
 
         method.processDelegationCallConstructorUsages(method.getUseScope()) {
-            it.getCalleeExpression()?.getReference()?.let { consumer.process(it) }
+            it.getCalleeExpression()?.getReference()?.let { consumer.process(it) } ?: true
         }
     }
 }

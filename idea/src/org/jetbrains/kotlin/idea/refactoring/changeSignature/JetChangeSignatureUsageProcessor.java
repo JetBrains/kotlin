@@ -39,7 +39,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
 import kotlin.KotlinPackage;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -330,9 +329,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         UsagesSearchPackage.processDelegationCallConstructorUsages(
                 functionPsi,
                 functionPsi.getUseScope(),
-                new Function1<JetCallElement, Unit>() {
+                new Function1<JetCallElement, Boolean>() {
                     @Override
-                    public Unit invoke(JetCallElement element) {
+                    public Boolean invoke(JetCallElement element) {
                         if (element instanceof JetConstructorDelegationCall) {
                             result.add(new JetConstructorDelegationCallUsage((JetConstructorDelegationCall) element, changeInfo));
                         }
@@ -340,7 +339,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                             result.add(new JetFunctionCallUsage(element, functionUsageInfo));
 
                         }
-                        return null;
+                        return true;
                     }
                 }
         );
@@ -481,13 +480,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         UsagesSearchPackage.processDelegationCallConstructorUsages(
                 psiMethod,
                 psiMethod.getUseScope(),
-                new Function1<JetCallElement, Unit>() {
+                new Function1<JetCallElement, Boolean>() {
                     @Override
-                    public Unit invoke(JetCallElement element) {
+                    public Boolean invoke(JetCallElement element) {
                         if (element instanceof JetConstructorDelegationCall) {
                             result.add(new JavaConstructorDeferredUsageInDelegationCall((JetConstructorDelegationCall) element));
                         }
-                        return null;
+                        return true;
                     }
                 }
         );
