@@ -1,7 +1,7 @@
 // See also KT-6299
 public open class Outer private constructor() {
     companion object {
-        inline fun foo() = Outer()
+        internal inline fun foo() = Outer()
     }
 }
 
