@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -105,7 +106,7 @@ public class IncrementalPackageFragmentProvider(
                     JetScope.Empty
                 }
                 else {
-                    IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(packageDataBytes))
+                    DecapitalizedAnnotationScope.wrapIfNeeded(IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(packageDataBytes)), fqName)
                 }
             }
         }

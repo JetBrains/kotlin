@@ -22,12 +22,16 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
-    private val scope by lazy { LazyJavaPackageScope(c, jPackage, this) }
+    val scope: LazyJavaPackageScope by lazy { LazyJavaPackageScope(c, jPackage, this) }
+    // Just a temporary hack to inject deprecated decapitalized annotation
+    private val wrappedScope by lazy { DecapitalizedAnnotationScope.wrapIfNeeded(scope, jPackage.getFqName()) }
 
     private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         javaClass: JavaClass ->
@@ -36,7 +40,7 @@ class LazyJavaPackageFragment(
 
     internal fun resolveTopLevelClass(javaClass: JavaClass) = topLevelClasses(javaClass)
 
-    override fun getMemberScope() = scope
+    override fun getMemberScope(): JetScope = wrappedScope
 
     override fun toString() = "lazy java package fragment: $fqName"
 
