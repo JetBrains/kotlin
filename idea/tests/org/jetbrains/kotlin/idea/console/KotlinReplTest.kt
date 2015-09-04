@@ -42,6 +42,19 @@ public class KotlinReplTest : PlatformTestCase() {
         super.tearDown()
     }
 
+    private fun sendCommand(command: String) {
+        consoleRunner.consoleView.editorDocument.setText(command)
+        consoleRunner.executor.executeCommand()
+    }
+
+    private fun waitForExpectedOutput(expectedOutput: String) {
+        val endsWithPredicate = { x: String -> x.trim().endsWith(expectedOutput) }
+
+        val historyText = checkHistoryUpdate { endsWithPredicate(it) }
+
+        assertTrue(endsWithPredicate(historyText), "'$expectedOutput' should be printed but document text is:\n$historyText")
+    }
+
     private fun checkHistoryUpdate(maxIterations: Int = 20, sleepTime: Long = 500, stopPredicate: (String) -> Boolean): String {
         val consoleView = consoleRunner.consoleView as LanguageConsoleImpl
 
@@ -59,14 +72,8 @@ public class KotlinReplTest : PlatformTestCase() {
     }
 
     private fun testSimpleCommand(command: String, expectedOutput: String) {
-        consoleRunner.consoleView.editorDocument.setText(command)
-        consoleRunner.executor.executeCommand()
-
-        val endsWithTwo = { x: String -> x.trim().endsWith(expectedOutput) }
-
-        val historyText = checkHistoryUpdate { endsWithTwo(it) }
-
-        assertTrue(endsWithTwo(historyText), "'$expectedOutput' should be printed but document text is:\n$historyText")
+        sendCommand(command)
+        waitForExpectedOutput(expectedOutput)
     }
 
     @Test fun testRunPossibility() {
@@ -83,4 +90,28 @@ public class KotlinReplTest : PlatformTestCase() {
     @Test fun testOnePlusOne() = testSimpleCommand("1 + 1", "2")
     @Test fun testPrintlnText() = "Hello, console world!" let { testSimpleCommand("println(\"$it\")", it) }
     @Test fun testDivisionByZeroException() = testSimpleCommand("1 / 0", "java.lang.ArithmeticException: / by zero")
+
+    @Test fun testReadLineSingle() {
+        val readLineText = "ReadMe!"
+
+        sendCommand("val a = readLine()")
+        sendCommand(readLineText)
+        sendCommand("a")
+        waitForExpectedOutput(readLineText)
+    }
+
+    @Test fun testReadLineMultiple() {
+        val readLineTextA = "ReadMe A!"
+        val readLineTextB = "ReadMe B!"
+
+        sendCommand("val a = readLine()\n" +
+                    "val b = readLine()")
+        sendCommand(readLineTextA)
+        sendCommand(readLineTextB)
+
+        sendCommand("a")
+        waitForExpectedOutput(readLineTextA)
+        sendCommand("b")
+        waitForExpectedOutput(readLineTextB)
+    }
 }
