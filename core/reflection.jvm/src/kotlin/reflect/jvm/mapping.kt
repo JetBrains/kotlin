@@ -98,7 +98,7 @@ public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
                 getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
         try {
-            val field = this.getField(JvmAbi.KOTLIN_MODULE_FIELD_NAME)
+            val field = this.getField(JvmAbi.MODULE_NAME_FIELD)
             if (field != null) {
                 KPackageImpl(this, field.get(null) as String)
             }

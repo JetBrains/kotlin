@@ -58,7 +58,7 @@ public class LazyResolveTestUtil {
             @NotNull List<JetFile> sourceFiles,
             @NotNull KotlinCoreEnvironment environment
     ) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test");
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME);
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,

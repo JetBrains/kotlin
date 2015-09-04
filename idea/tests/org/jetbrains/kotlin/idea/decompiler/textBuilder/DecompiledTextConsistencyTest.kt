@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
@@ -48,7 +49,7 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test"),
+                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME),
                     listOf(), BindingTraceContext(), null, null,
                     IDEPackagePartProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor
