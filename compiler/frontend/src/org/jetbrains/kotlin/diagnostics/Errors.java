@@ -551,8 +551,10 @@ public interface Errors {
     DiagnosticFactory3<JetExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<JetBinaryExpression, JetType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
+    DiagnosticFactory0<PsiElement> USELESS_ELVIS_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
     // Compile-time values
 

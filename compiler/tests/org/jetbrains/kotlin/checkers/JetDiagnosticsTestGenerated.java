@@ -3114,6 +3114,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lambdasInExclExclAndElvis.kt")
+            public void testLambdasInExclExclAndElvis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/lambdasInExclExclAndElvis.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("tryReturnType.kt")
             public void testTryReturnType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/tryReturnType.kt");
