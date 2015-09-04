@@ -13,9 +13,15 @@ public class A {
         if (!Modifier.isProtected(clazz.getDeclaredField("protectedField").modifiers)) cond += "NOT_PROTECTED"
         if (!Modifier.isPublic(clazz.getDeclaredField("publicField").modifiers)) cond += "NOT_PUBLIC"
 
-        if (Modifier.isPrivate(clazz.getDeclaredField("privateField").modifiers)) cond += "FINAL"
+        if (Modifier.isFinal(clazz.getDeclaredField("privateField").modifiers)) cond += "FINAL"
 
-        return if (cond.isEmpty()) "OK" else cond.joinToString()
+        try {
+            val a = privateField
+        } catch (e: UninitializedPropertyAccessException) {
+            return if (cond.isEmpty()) "OK" else cond.joinToString()
+        }
+
+        return "EXCEPTION WAS NOT CATCHED"
     }
 }
 

@@ -3,7 +3,7 @@ public class A {
     fun getMyStr(): String {
         try {
             val a = str
-        } catch (e: NullPointerException) {
+        } catch (e: RuntimeException) {
             return "OK"
         }
 

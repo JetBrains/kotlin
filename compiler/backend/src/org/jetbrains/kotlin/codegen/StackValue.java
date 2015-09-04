@@ -1042,7 +1042,8 @@ public abstract class StackValue {
             v.dup();
             Label ok = new Label();
             v.ifnonnull(ok);
-            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false);
+            v.visitLdcInsn(descriptor.getName().asString());
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwUninitializedPropertyAccessException", "(Ljava/lang/String;)V", false);
             v.mark(ok);
         }
 

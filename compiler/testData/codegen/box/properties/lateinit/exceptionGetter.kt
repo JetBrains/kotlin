@@ -6,7 +6,7 @@ fun box(): String {
     val a = A()
     try {
         a.str
-    } catch (e: NullPointerException) {
+    } catch (e: RuntimeException) {
         return "OK"
     }
     return "FAIL"
