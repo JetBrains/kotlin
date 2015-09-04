@@ -6537,6 +6537,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportFromObject.kt")
+            public void testImportFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportFromRootPackage.kt")
             public void testImportFromRootPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromRootPackage.kt");
