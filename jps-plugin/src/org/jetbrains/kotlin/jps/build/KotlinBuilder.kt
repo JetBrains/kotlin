@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDe
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -198,7 +199,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
         else {
             val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
-            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedClasses)
+            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
             updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
         }
 
@@ -410,7 +411,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
-            generatedClasses: List<GeneratedJvmClass>
+            generatedFiles: List<GeneratedFile>
     ): IncrementalCacheImpl.RecompilationDecision {
         incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
 
@@ -419,8 +420,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         var recompilationDecision = DO_NOTHING
-        for (generatedClass in generatedClasses) {
-            val newDecision = incrementalCaches[generatedClass.target]!!.saveFileToCache(generatedClass.sourceFiles, generatedClass.outputClass)
+        for (generatedFile in generatedFiles) {
+            val ic = incrementalCaches[generatedFile.target]!!
+            val newDecision =
+                    if (generatedFile is GeneratedJvmClass) {
+                        ic.saveFileToCache(generatedFile.sourceFiles, generatedFile.outputClass)
+                    }
+                    else if (generatedFile.outputFile.isModuleMappingFile()) {
+                        ic.saveModuleMappingToCache(generatedFile.outputFile)
+                    }
+                    else {
+                        continue
+                    }
+
             recompilationDecision = recompilationDecision.merge(newDecision)
         }
 
@@ -433,6 +445,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         return recompilationDecision
     }
+
+    private fun File.isModuleMappingFile() = extension == ModuleMapping.MAPPING_FILE_EXT && parentFile.name == "META-INF"
 
     // if null is returned, nothing was done
     private fun compileToJs(chunk: ModuleChunk,

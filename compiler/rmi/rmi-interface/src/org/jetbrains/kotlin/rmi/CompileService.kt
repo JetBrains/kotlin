@@ -31,7 +31,10 @@ public interface CompileService : Remote {
         public fun getObsoletePackageParts(): Collection<String>
 
         throws(RemoteException::class)
-        public fun getPackageData(fqName: String): ByteArray?
+        public fun getPackagePartData(fqName: String): ByteArray?
+
+        throws(RemoteException::class)
+        public fun getModuleMappingData(): ByteArray?
 
         throws(RemoteException::class)
         public fun close()

@@ -33,25 +33,22 @@ import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDe
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.visibility
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.serialization.deserialization.visibility
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.*
 import java.io.*
 import java.security.MessageDigest
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.HashMap
+import java.util.*
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -105,6 +102,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val PACKAGE_PARTS = "package-parts.tab"
         val SOURCE_TO_CLASSES = "source-to-classes.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
+
+        private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
@@ -145,6 +144,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         cacheFormatVersion.saveIfNeeded()
     }
 
+    public fun saveModuleMappingToCache(file: File): RecompilationDecision {
+        protoMap.put(JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME), file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
+        dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
+        return DO_NOTHING
+    }
+
     public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
         val fileBytes = kotlinClass.getFileContents()
         val className = JvmClassName.byClassId(kotlinClass.getClassId())
@@ -160,6 +165,15 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                         constantsChanged = false,
                         inlinesChanged = false
                 )
+            header.isCompatibleFileFacadeKind() -> {
+                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+                packagePartMap.addPackagePart(className)
+                getRecompilationDecision(
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
+                        constantsChanged = constantsMap.process(className, fileBytes),
+                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                )
+            }
             header.isCompatibleClassKind() ->
                 when (header.classKind!!) {
                     JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
@@ -170,7 +184,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
                     JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
                 }
-            header.isCompatibleFileFacadeKind() ||
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
@@ -217,15 +230,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         return recompilationDecision
     }
 
-    public override fun getObsoletePackageParts(): Collection<String> {
+    override fun getObsoletePackageParts(): Collection<String> {
         val obsoletePackageParts =
                 dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
         KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
         return obsoletePackageParts
     }
 
-    public override fun getPackageData(fqName: String): ByteArray? {
-        return protoMap[JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(FqName(fqName)))]
+    override fun getPackagePartData(fqName: String): ByteArray? {
+        return protoMap[JvmClassName.byInternalName(fqName)]
+    }
+
+    override fun getModuleMappingData(): ByteArray? {
+        return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]
     }
 
     override fun flush(memoryCachesOnly: Boolean) {
@@ -306,7 +323,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 ByteArrayExternalizer
         )
 
-        public fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean): Boolean {
+        public fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): Boolean {
             val key = className.getInternalName()
             val oldData = storage[key]
             if (Arrays.equals(data, oldData)) {
@@ -314,7 +331,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             }
             storage.put(key, data)
 
-            if (oldData != null && isOpenPartNotChanged(oldData, data, isPackage)) {
+            if (oldData != null && checkChangesIsOpenPart && isOpenPartNotChanged(oldData, data, isPackage)) {
                 return false
             }
 

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
-import java.io.File
-
 public interface IncrementalCache {
     public fun getObsoletePackageParts(): Collection<String>
 
-    public fun getPackageData(fqName: String): ByteArray?
+    public fun getPackagePartData(fqName: String): ByteArray?
+
+    public fun getModuleMappingData(): ByteArray?
 
     public fun close()
 }

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.rmi.CompileService
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import java.rmi.server.UnicastRemoteObject
 
 
@@ -29,7 +29,9 @@ public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : Compile
 
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
-    override fun getPackageData(fqName: String): ByteArray? = cache.getPackageData(fqName)
+    override fun getPackagePartData(fqName: String): ByteArray? = cache.getPackagePartData(fqName)
+
+    override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
 
     override fun close() {
         cache.close()
