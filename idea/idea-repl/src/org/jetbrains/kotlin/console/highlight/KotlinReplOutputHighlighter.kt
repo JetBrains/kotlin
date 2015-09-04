@@ -31,11 +31,11 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.console.KotlinConsoleHistoryManager
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.console.SeverityDetails
+import org.jetbrains.kotlin.console.gutter.IconPack
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
-import javax.swing.Icon
 
 public class KotlinReplOutputHighlighter(
         private val runner: KotlinConsoleRunner,
@@ -57,17 +57,17 @@ public class KotlinReplOutputHighlighter(
         return Pair(oldLen, newLen)
     }
 
-    private fun printOutput(output: String, contentType: ConsoleViewContentType, icon: Icon? = null) {
+    private fun printOutput(output: String, contentType: ConsoleViewContentType, iconPack: IconPack? = null) {
         val (startOffset, endOffset) = textOffsets(output)
 
         consoleView.print(output, contentType)
         consoleView.flushDeferredText()
 
-        if (icon == null) return
+        if (iconPack == null) return
 
         historyMarkup.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
-        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(icon) }
+        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(iconPack) }
     }
 
     private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {

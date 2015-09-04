@@ -20,17 +20,19 @@ import com.intellij.icons.AllIcons
 import org.jetbrains.kotlin.idea.JetIcons
 import javax.swing.Icon
 
+public data class IconPack(val icon: Icon, val tooltip: String)
+
 public object ReplIcons {
-    public val BUILD_WARNING_INDICATOR: Icon = AllIcons.Ide.Warning_notifications
-    public val HISTORY_INDICATOR: Icon = AllIcons.General.MessageHistory
-    public val EDITOR_INDICATOR: Icon = JetIcons.LAUNCH
-    public val EDITOR_READLINE_INDICATOR: Icon = AllIcons.General.Balloon
-    public val COMMAND_MARKER: Icon = AllIcons.General.Run
-    public val READLINE_MARKER: Icon = AllIcons.Icons.Ide.SpeedSearchPrompt
+    public val BUILD_WARNING_INDICATOR: IconPack = IconPack(AllIcons.Ide.Warning_notifications, "Some issues with module <make>")
+    public val HISTORY_INDICATOR: IconPack = IconPack(AllIcons.General.MessageHistory, "History of executed commands")
+    public val EDITOR_INDICATOR: IconPack = IconPack(JetIcons.LAUNCH, "Write your commands here")
+    public val EDITOR_READLINE_INDICATOR: IconPack = IconPack(AllIcons.General.Balloon, "Waiting for input...")
+    public val COMMAND_MARKER: IconPack = IconPack(AllIcons.General.Run, "Executed command")
+    public val READLINE_MARKER: IconPack = IconPack(AllIcons.Icons.Ide.SpeedSearchPrompt, "Input line")
 
     // command result icons
-    public val SYSTEM_HELP: Icon = AllIcons.Actions.Menu_help
-    public val RESULT: Icon = AllIcons.Vcs.Equal
+    public val SYSTEM_HELP: IconPack = IconPack(AllIcons.Actions.Menu_help, "System help")
+    public val RESULT: IconPack = IconPack(AllIcons.Vcs.Equal, "Result")
     public val COMPILER_ERROR: Icon = AllIcons.General.Error
-    public val RUNTIME_EXCEPTION: Icon = AllIcons.General.BalloonWarning
+    public val RUNTIME_EXCEPTION: IconPack = IconPack(AllIcons.General.BalloonWarning, "Runtime exception")
 }

@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.openapi.editor.markup.GutterIconRenderer
-import javax.swing.Icon
 
-public class KotlinConsoleIndicatorRenderer(private val indicatorIcon: Icon) : GutterIconRenderer() {
-    override fun getIcon() = indicatorIcon
-    override fun hashCode() = indicatorIcon.hashCode()
-    override fun equals(other: Any?) = indicatorIcon == (other as? KotlinConsoleIndicatorRenderer)?.indicatorIcon ?: null
+public class KotlinConsoleIndicatorRenderer(iconPack: IconPack) : GutterIconRenderer() {
+    private val icon = iconPack.icon
+    private val tooltip = iconPack.tooltip
+
+    override fun getIcon() = icon
+    override fun getTooltipText() = tooltip
+
+    override fun hashCode() = icon.hashCode()
+    override fun equals(other: Any?) = icon == (other as? KotlinConsoleIndicatorRenderer)?.icon ?: null
 }

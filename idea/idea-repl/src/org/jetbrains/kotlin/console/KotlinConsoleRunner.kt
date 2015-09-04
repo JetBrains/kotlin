@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
+import org.jetbrains.kotlin.console.gutter.IconPack
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.idea.JetLanguage
 import java.awt.Color
 import java.awt.Font
 import java.util.concurrent.ConcurrentHashMap
-import javax.swing.Icon
 import kotlin.properties.Delegates
 
 public class KotlinConsoleRunner(
@@ -137,7 +137,7 @@ public class KotlinConsoleRunner(
     }
 
     fun setupGutters() {
-        fun configureEditorGutter(editor: EditorEx, color: Color, icon: Icon) {
+        fun configureEditorGutter(editor: EditorEx, color: Color, iconPack: IconPack) {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
             editor.gutterComponentEx.setPaintBackground(true)
@@ -145,7 +145,7 @@ public class KotlinConsoleRunner(
             editorColorScheme.setColor(EditorColors.GUTTER_BACKGROUND, color)
             editor.colorsScheme = editorColorScheme
 
-            addGutterIndicator(editor, icon)
+            addGutterIndicator(editor, iconPack)
         }
 
         val historyEditor = consoleView.historyViewer
@@ -162,8 +162,8 @@ public class KotlinConsoleRunner(
         consoleEditor.settings.additionalLinesCount = 2
     }
 
-    fun addGutterIndicator(editor: EditorEx, icon: Icon) {
-        val indicator = KotlinConsoleIndicatorRenderer(icon)
+    fun addGutterIndicator(editor: EditorEx, iconPack: IconPack) {
+        val indicator = KotlinConsoleIndicatorRenderer(iconPack)
         val editorMarkup = editor.markupModel
         val indicatorHighlighter = editorMarkup.addRangeHighlighter(
                 0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE
@@ -173,9 +173,9 @@ public class KotlinConsoleRunner(
         indicatorHighlighter.gutterIconRenderer = indicator
     }
 
-    fun changeConsoleEditorIndicator(newIcon: Icon) {
+    fun changeConsoleEditorIndicator(newIconPack: IconPack) {
         val editorHighlighter = editorToHighlighter[consoleView.consoleEditor]
-        editorHighlighter?.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIcon)
+        editorHighlighter?.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIconPack)
     }
 
     // this method shouldn't be called in normal usage; it is for test purpose only
