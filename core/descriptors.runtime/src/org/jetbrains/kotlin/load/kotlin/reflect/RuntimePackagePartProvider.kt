@@ -29,7 +29,7 @@ class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartPro
         if (moduleName == null) return
 
         module2Mapping.putIfAbsent(moduleName, lazy {
-            val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.kotlin_module") ?: return@lazy ModuleMapping()
+           val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}") ?: return@lazy ModuleMapping()
 
             try {
                 return@lazy ModuleMapping(resourceAsStream.readBytes())

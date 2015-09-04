@@ -24,6 +24,6 @@ import org.jetbrains.annotations.NotNull;
 public class KotlinModuleFileFactory extends FileTypeFactory {
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(KotlinModuleFileType.INSTANCE, "kotlin_module");
+        consumer.consume(KotlinModuleFileType.INSTANCE, KotlinModuleFileType.EXTENSION);
     }
 }

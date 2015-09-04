@@ -49,7 +49,7 @@ public class KotlinModuleFileType implements FileType {
     @Override
     @NotNull
     public String getDescription() {
-        return getName();
+        return "Kotlin module info: contains package part mappings";
     }
 
     @Override
