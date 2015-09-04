@@ -94,12 +94,12 @@ fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
 fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile? =
         (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? JetFile
 
-fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
-    val packageName = targetDir.getPackage()?.getQualifiedName()
-
+fun createKotlinFile(fileName: String,
+                     targetDir: PsiDirectory,
+                     packageName: String? = targetDir.getPackage()?.qualifiedName): JetFile {
     targetDir.checkCreateFile(fileName)
     val file = PsiFileFactory.getInstance(targetDir.getProject()).createFileFromText(
-            fileName, JetFileType.INSTANCE, if (packageName != null && packageName.isNotEmpty()) "package $packageName \n\n" else ""
+            fileName, JetFileType.INSTANCE, if (!packageName.isNullOrBlank()) "package $packageName \n\n" else ""
     )
 
     return targetDir.add(file) as JetFile

@@ -18,25 +18,20 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
-import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.util.PathUtil
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.refactoring.move.MoveAction
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.junit.Assert
 import java.io.File
@@ -55,6 +50,7 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
 
         doTest({ rootDir, rootAfter ->
                    val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
+                   val conflictFile = rootDir.findFileByRelativePath("$mainFilePath.conflicts")
                    val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
                    val editor = EditorFactory.getInstance()!!.createEditor(document, getProject()!!)!!
                    editor.getCaretModel().moveToOffset(extractCaretOffset(document))
@@ -72,6 +68,11 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
                                intentionAction.invoke(getProject(), editor, mainPsiFile)
                            }
                        }
+
+                       assert(conflictFile == null) { "Conflict file $conflictFile should not exist" }
+                   }
+                   catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+                       JetTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.getMessage()!!)
                    }
                    finally {
                        PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()

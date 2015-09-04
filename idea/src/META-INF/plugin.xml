@@ -953,6 +953,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDeclarationToSeparateFileIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ChangeVisibilityModifierIntention$Public</className>
       <category>Kotlin</category>
     </intentionAction>
