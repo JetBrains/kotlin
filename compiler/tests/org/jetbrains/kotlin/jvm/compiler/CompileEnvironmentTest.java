@@ -21,18 +21,12 @@ import junit.framework.TestCase;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.util.Arrays;
 
 public class CompileEnvironmentTest extends TestCase {
 
@@ -52,9 +46,11 @@ public class CompileEnvironmentTest extends TestCase {
                     "-annotations", jdkAnnotations.getAbsolutePath()
             );
             Assert.assertEquals(ExitCode.OK, exitCode);
-            assertEquals(2, out.listFiles().length);
-            assertEquals(1, out.listFiles()[0].listFiles().length);//META-INF
-            assertEquals(2, out.listFiles()[1].listFiles().length);//Smoke package
+            File[] files = out.listFiles();
+            Arrays.sort(files);
+            assertEquals(2, files.length);
+            assertEquals(1, files[0].listFiles().length);//META-INF
+            assertEquals(2, files[1].listFiles().length);//Smoke package
         }
         finally {
             FileUtil.delete(tempDir);
