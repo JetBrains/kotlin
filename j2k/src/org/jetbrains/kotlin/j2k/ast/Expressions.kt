@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
 
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
@@ -54,9 +54,9 @@ class BinaryExpression(val left: Expression, val right: Expression, val op: Stri
     }
 }
 
-class IsOperator(val expression: Expression, val typeElement: TypeElement) : Expression() {
+class IsOperator(val expression: Expression, val type: Type) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.appendOperand(this, expression).append(" is ").append(typeElement.type.toNotNullType())
+        builder.appendOperand(this, expression).append(" is ").append(type)
     }
 }
 

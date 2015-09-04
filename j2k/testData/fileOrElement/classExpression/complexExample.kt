@@ -1,1 +1,1 @@
-val constrArgTypes = arrayOf(javaClass<Array<String>>(), javaClass<String>())
+val constrArgTypes = arrayOf(Array<String>::class.java, String::class.java)
