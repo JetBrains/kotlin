@@ -31,6 +31,7 @@ import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
@@ -78,8 +79,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
 
         return elements.all { e ->
             if (e is JetClass || (e is JetObjectDeclaration && !e.isObjectLiteral()) || e is JetNamedFunction || e is JetProperty) {
-                val parent = e.parent
-                (editorMode || parent is JetFile) && parent.isInJavaSourceRoot()
+                (editorMode || e.parent is JetFile) && e.canRefactor()
             }
             else false
         }
