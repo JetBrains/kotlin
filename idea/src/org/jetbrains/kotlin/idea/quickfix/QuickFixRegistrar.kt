@@ -81,7 +81,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         NON_VARARG_SPREAD.registerFactory(RemovePsiElementSimpleFix.createRemoveSpreadFactory())
 
-        MIXING_NAMED_AND_POSITIONED_ARGUMENTS.registerFactory(AddNameToArgumentFix.createFactory())
+        MIXING_NAMED_AND_POSITIONED_ARGUMENTS.registerFactory(AddNameToArgumentFix)
 
         NON_MEMBER_FUNCTION_NO_BODY.registerFactory(addFunctionBodyFactory)
 
