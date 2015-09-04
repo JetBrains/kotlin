@@ -22,7 +22,7 @@ Deprecated("") fun deprecatedFun()
 //package rendererTest
 //public fun pub(): kotlin.Unit defined in rendererTest
 //internal fun int(): kotlin.String defined in rendererTest
-//internal fun int2(vararg ints: kotlin.Int): kotlin.Int defined in rendererTest
+//public fun int2(vararg ints: kotlin.Int): kotlin.Int defined in rendererTest
 //value-parameter vararg val ints: kotlin.Int defined in rendererTest.int2
 //private fun prv(a: kotlin.String, b: kotlin.Int = ...): kotlin.Int defined in rendererTest
 //value-parameter val a: kotlin.String defined in rendererTest.prv
@@ -31,8 +31,8 @@ Deprecated("") fun deprecatedFun()
 //public fun <out T> withTypeParam(a: kotlin.Array<T>): kotlin.Int defined in rendererTest
 //<out T> defined in rendererTest.withTypeParam
 //value-parameter val a: kotlin.Array<T> defined in rendererTest.withTypeParam
-//internal interface Foo defined in rendererTest
-//internal interface Bar defined in rendererTest
-//internal fun <P : rendererTest.Foo> funTypeParameterWithTwoUpperBounds(): kotlin.Int where P : rendererTest.Bar defined in rendererTest
+//public interface Foo defined in rendererTest
+//public interface Bar defined in rendererTest
+//public fun <P : rendererTest.Foo> funTypeParameterWithTwoUpperBounds(): kotlin.Int where P : rendererTest.Bar defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
-//kotlin.Deprecated internal fun deprecatedFun(): kotlin.Unit defined in rendererTest
+//kotlin.Deprecated public fun deprecatedFun(): kotlin.Unit defined in rendererTest

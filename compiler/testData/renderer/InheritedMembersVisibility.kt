@@ -15,16 +15,16 @@ class B : A {
         get
 }
 
-//internal interface A defined in root package
-//internal abstract val v: kotlin.Int defined in A
+//public interface A defined in root package
+//public abstract val v: kotlin.Int defined in A
 //public abstract var int: kotlin.Int defined in A
 //private abstract fun <set-int>(<set-?>: kotlin.Int): kotlin.Unit defined in A
 //protected abstract fun f(): kotlin.Int defined in A
-//internal final class B : A defined in root package
+//public final class B : A defined in root package
 //public constructor B() defined in B
 //public open var int: kotlin.Int defined in B
 //public open fun <get-int>(): kotlin.Int defined in B
 //private open fun <set-int>(<set-?>: kotlin.Int): kotlin.Unit defined in B
 //protected open fun f(): kotlin.Int defined in B
-//internal open val v: kotlin.Int defined in B
-//internal open fun <get-v>(): kotlin.Int defined in B
+//public open val v: kotlin.Int defined in B
+//public open fun <get-v>(): kotlin.Int defined in B
