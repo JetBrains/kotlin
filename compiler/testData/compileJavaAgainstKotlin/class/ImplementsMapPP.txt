@@ -4,7 +4,7 @@ public/*package*/ open class ImplementsMapPP {
     public/*package*/ constructor ImplementsMapPP()
 }
 
-internal abstract class Mine</*0*/ P1, /*1*/ P2> : java.util.Map<P2, P1> {
+public abstract class Mine</*0*/ P1, /*1*/ P2> : java.util.Map<P2, P1> {
     public constructor Mine</*0*/ P1, /*1*/ P2>()
     public abstract /*fake_override*/ fun clear(): kotlin.Unit
     public abstract /*fake_override*/ fun containsKey(/*0*/ kotlin.Any!): kotlin.Boolean

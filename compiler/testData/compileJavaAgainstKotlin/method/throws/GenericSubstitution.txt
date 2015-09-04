@@ -1,15 +1,15 @@
 package test
 
-internal interface Base</*0*/ T> {
-    internal open fun one(/*0*/ T): kotlin.Unit
+public interface Base</*0*/ T> {
+    public open fun one(/*0*/ T): kotlin.Unit
 }
 
-internal final class Derived : test.Base<kotlin.String> {
+public final class Derived : test.Base<kotlin.String> {
     public constructor Derived()
-    internal open /*fake_override*/ fun one(/*0*/ kotlin.String): kotlin.Unit
+    public open /*fake_override*/ fun one(/*0*/ kotlin.String): kotlin.Unit
 }
 
-internal final class E1 : java.lang.Exception {
+public final class E1 : java.lang.Exception {
     public constructor E1()
     public final /*fake_override*/ fun getCause(): kotlin.Throwable?
     public final /*fake_override*/ fun getMessage(): kotlin.String?

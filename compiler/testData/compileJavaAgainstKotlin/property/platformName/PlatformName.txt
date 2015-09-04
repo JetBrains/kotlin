@@ -1,6 +1,6 @@
 package test
 
-internal var v: kotlin.Int
+public var v: kotlin.Int
 
 public open class PlatformName {
     public constructor PlatformName()

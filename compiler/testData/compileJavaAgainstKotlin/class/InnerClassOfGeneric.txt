@@ -7,14 +7,14 @@ public/*package*/ open class InnerClassOfGeneric {
     public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
 }
 
-internal final class Outer</*0*/ T> {
+public final class Outer</*0*/ T> {
     public constructor Outer</*0*/ T>()
 
-    internal final inner class Inner {
+    public final inner class Inner {
         public constructor Inner(/*0*/ kotlin.List<T>)
     }
 
-    internal final inner class InnerSimple {
+    public final inner class InnerSimple {
         public constructor InnerSimple()
     }
 }

@@ -1,22 +1,22 @@
 package test
 
-internal interface A</*0*/ T> {
-    internal abstract fun foo(): T
+public interface A</*0*/ T> {
+    public abstract fun foo(): T
 }
 
-internal open class B : test.A<kotlin.Int?> {
+public open class B : test.A<kotlin.Int?> {
     public constructor B()
-    internal open fun foo(): kotlin.Int?
+    public open fun foo(): kotlin.Int?
 }
 
-internal abstract class C : test.A<kotlin.Int?> {
+public abstract class C : test.A<kotlin.Int?> {
     public constructor C()
-    internal abstract /*fake_override*/ fun foo(): kotlin.Int?
+    public abstract /*fake_override*/ fun foo(): kotlin.Int?
 }
 
 public/*package*/ open class ExtendsB : test.B {
     public/*package*/ constructor ExtendsB()
-    internal open /*fake_override*/ fun foo(): kotlin.Int?
+    public open /*fake_override*/ fun foo(): kotlin.Int?
     public/*package*/ open fun test(): kotlin.Unit
 }
 

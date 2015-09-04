@@ -1,6 +1,6 @@
 package test
 
-internal fun doNothing(/*0*/ kotlin.IntArray, /*1*/ java.util.List<kotlin.String>): kotlin.IntArray
+public fun doNothing(/*0*/ kotlin.IntArray, /*1*/ java.util.List<kotlin.String>): kotlin.IntArray
 
 public/*package*/ open class IntArray {
     public/*package*/ constructor IntArray()

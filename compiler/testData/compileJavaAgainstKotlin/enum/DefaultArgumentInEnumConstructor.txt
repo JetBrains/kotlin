@@ -7,7 +7,7 @@ public open class DefaultArgumentInEnumConstructor {
     public/*package*/ final var entry: test.K!
 }
 
-internal final enum class K : kotlin.Enum<test.K> {
+public final enum class K : kotlin.Enum<test.K> {
     enum entry ENTRY
 
     private constructor K(/*0*/ kotlin.String = ...)

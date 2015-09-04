@@ -1,12 +1,12 @@
 package test
 
-internal interface A</*0*/ T> {
-    internal abstract fun foo(): T
+public interface A</*0*/ T> {
+    public abstract fun foo(): T
 }
 
-internal final class B : test.A<kotlin.Int> {
+public final class B : test.A<kotlin.Int> {
     public constructor B()
-    internal final fun foo(): kotlin.Int
+    public final fun foo(): kotlin.Int
 }
 
 public/*package*/ open class Test {
