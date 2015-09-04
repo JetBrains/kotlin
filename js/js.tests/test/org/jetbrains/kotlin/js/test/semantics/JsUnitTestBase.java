@@ -59,7 +59,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     @NotNull
     @Override
     protected List<String> additionalKotlinFiles() {
-        List<String> result = Lists.newArrayList(super.additionalKotlinFiles());
+        List<String> result = StdLibTestBase.removeAdHocAssertions(super.additionalKotlinFiles());
         result.add(JS_TESTS_KT);
         return result;
     }
