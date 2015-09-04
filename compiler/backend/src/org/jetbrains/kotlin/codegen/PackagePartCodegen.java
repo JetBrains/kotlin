@@ -115,17 +115,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         JvmSerializationBindings bindings = v.getSerializationBindings();
 
         DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings, state.getTypeMapper()));
-        Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
-        //ContainerUtil.addIfNotNull(packageFragments, packageFragment);
-        //ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);
-
-        ProtoBuf.Package packageProto = serializer.packagePartProto(members, new Function1<DeclarationDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(DeclarationDescriptor descriptor) {
-                //return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
-                return false;
-            }
-        }).build();
+        ProtoBuf.Package packageProto = serializer.packagePartProto(members).build();
 
         if (packageProto.getMemberCount() == 0) return;
 
