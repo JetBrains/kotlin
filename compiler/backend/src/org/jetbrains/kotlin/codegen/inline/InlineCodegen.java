@@ -755,9 +755,6 @@ public class InlineCodegen extends CallGenerator {
         IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
         String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
         String targetFile = getSourceFilePath(targetDescriptor);
-        assert sourceFile != null: "No source file for inline fun: " + jvmSignature;
-        assert targetFile != null: "No target file for inline fun: " + jvmSignature;
-
         InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
         inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }

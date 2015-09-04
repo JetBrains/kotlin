@@ -20,34 +20,32 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
-import org.jetbrains.kotlin.load.kotlin.incremental.FileSourceElement
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
-public val FunctionDescriptor.sourceFilePath: String?
+public val FunctionDescriptor.sourceFilePath: String
     get() {
-        val source = source as? PsiSourceElement
-        val containingFile = source?.psi?.containingFile
-        return containingFile?.virtualFile?.canonicalPath
+        val source = source as PsiSourceElement
+        val containingFile = source.psi?.containingFile
+        return containingFile?.virtualFile?.canonicalPath!!
     }
 
-public fun FunctionDescriptor.getClassFilePath(cache: IncrementalCache): String? {
+public fun FunctionDescriptor.getClassFilePath(cache: IncrementalCache): String {
     val container = containingDeclaration as? DeclarationDescriptorWithSource
     val source = container?.source
 
     return when (source) {
-        is FileSourceElement ->
-            source.file.canonicalPath
         is KotlinJvmBinarySourceElement -> {
-            val kotlinClass = source.binaryClass as? VirtualFileKotlinClass
-            kotlinClass?.file?.canonicalPath
+            assert(this is DeserializedSimpleFunctionDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
+            val kotlinClass = source.binaryClass as VirtualFileKotlinClass
+            kotlinClass.file.canonicalPath!!
         }
         else -> {
-            val classId = InlineCodegenUtil.getContainerClassId(this)
-            val className = classId?.let { JvmClassName.byClassId(it) }?.internalName
-
-            if (className != null) cache.getClassFilePath(className) else null
+            val classId = InlineCodegenUtil.getContainerClassId(this)!!
+            val className = JvmClassName.byClassId(classId).internalName
+            cache.getClassFilePath(className)
         }
     }
 }
