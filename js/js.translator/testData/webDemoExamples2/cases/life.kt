@@ -4,7 +4,7 @@
  */
 
 import java.util.*
-import java.util.Collections.max
+import java.util.Collections
 
 /*
  * A field where cells live. Effectively immutable
@@ -132,7 +132,7 @@ fun <T, C : MutableCollection<T>> Array<T>.to(result: C): C {
 fun makeField(s: String): Field {
     val lines: List<String> = s.splitBy("\n")
 
-    val w = max<String>(lines.toList(), comparator<String> { o1, o2 ->
+    val w = Collections.max<String>(lines.toList(), comparator<String> { o1, o2 ->
         val l1: Int = o1.size
         val l2 = o2.size
         l1 - l2
