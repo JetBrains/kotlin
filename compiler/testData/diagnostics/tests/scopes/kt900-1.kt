@@ -6,7 +6,7 @@ import c.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>M<!>.*
 
 fun foo() {
     val <!UNUSED_VARIABLE!>b<!>: B = B()
-    var <!UNUSED_VARIABLE!>r<!>: <!UNRESOLVED_REFERENCE!>R<!> = <!UNRESOLVED_REFERENCE!>R<!>()
+    var <!UNUSED_VARIABLE!>r<!>: R = R()
 }
 
 class A() {
