@@ -27,7 +27,6 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallElement
@@ -36,11 +35,10 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.*
 
-public class AddNameToArgumentFix(argument: JetValueArgument, private val possibleNames: List<String>) : JetIntentionAction<JetValueArgument>(argument) {
+public class AddNameToArgumentFix(argument: JetValueArgument, private val possibleNames: List<Name>) : JetIntentionAction<JetValueArgument>(argument) {
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         if (possibleNames.size() == 1 || editor == null || !editor.component.isShowing) {
@@ -55,18 +53,18 @@ public class AddNameToArgumentFix(argument: JetValueArgument, private val possib
         JBPopupFactory.getInstance().createListPopup(getNamePopup(project)).showInBestPositionFor(editor)
     }
 
-    private fun getNamePopup(project: Project): ListPopupStep<String> {
-        return object : BaseListPopupStep<String>("Choose parameter name", possibleNames) {
-            override fun onChosen(selectedName: String, finalChoice: Boolean): PopupStep<Any> {
+    private fun getNamePopup(project: Project): ListPopupStep<Name> {
+        return object : BaseListPopupStep<Name>("Choose parameter name", possibleNames) {
+            override fun onChosen(selectedValue: Name, finalChoice: Boolean): PopupStep<*>? {
                 if (finalChoice) {
-                    addName(project, element, selectedName)
+                    addName(project, element, selectedValue)
                 }
                 return PopupStep.FINAL_CHOICE
             }
 
-            override fun getIconFor(name: String) = JetIcons.PARAMETER
+            override fun getIconFor(name: Name) = JetIcons.PARAMETER
 
-            override fun getTextFor(name: String) = getParsedArgumentWithName(name, element).text
+            override fun getTextFor(name: Name) = getParsedArgumentWithName(name, element).text
         }
     }
 
@@ -87,26 +85,27 @@ public class AddNameToArgumentFix(argument: JetValueArgument, private val possib
             return AddNameToArgumentFix(argument, possibleNames)
         }
 
-        private fun generatePossibleNames(argument: JetValueArgument): List<String> {
+        private fun generatePossibleNames(argument: JetValueArgument): List<Name> {
             val callElement = argument.getParentOfType<JetCallElement>(true) ?: return emptyList()
 
             val context = argument.analyze(BodyResolveMode.PARTIAL)
             val resolvedCall = callElement.getResolvedCall(context) ?: return emptyList()
 
-            val callableDescriptor = resolvedCall.resultingDescriptor
-            val argumentExpression = argument.getArgumentExpression()
-            val argumentType = argumentExpression?.let { context.getType(it) }
-            val usedParameters = resolvedCall.call.mapArgumentsToParameters(callableDescriptor).values().toSet()
-            val names = ArrayList<String>()
-            for (parameter in callableDescriptor.valueParameters) {
-                if (parameter !in usedParameters && (argumentType == null || JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type))) {
-                    names.add(parameter.name.asString())
-                }
-            }
-            return names
+            val argumentType = argument.getArgumentExpression()?.let { context.getType(it) }
+
+            val usedParameters = resolvedCall.call.valueArguments
+                    .map { resolvedCall.getArgumentMapping(it) }
+                    .filterIsInstance<ArgumentMatch>()
+                    .filter { argumentMatch -> argumentType == null || argumentType.isError || !argumentMatch.isError() }
+                    .map { it.valueParameter }
+                    .toSet()
+
+            return resolvedCall.resultingDescriptor.valueParameters
+                    .filter { it !in usedParameters }
+                    .map { it.name }
         }
 
-        private fun addName(project: Project, argument: JetValueArgument, name: String) {
+        private fun addName(project: Project, argument: JetValueArgument, name: Name) {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             project.executeWriteCommand("Add name to argument...") {
@@ -115,10 +114,10 @@ public class AddNameToArgumentFix(argument: JetValueArgument, private val possib
             }
         }
 
-        private fun getParsedArgumentWithName(name: String, argument: JetValueArgument): JetValueArgument {
+        private fun getParsedArgumentWithName(name: Name, argument: JetValueArgument): JetValueArgument {
             val argumentExpression = argument.getArgumentExpression()
                                      ?: error("Argument should be already parsed.")
-            return JetPsiFactory(argument).createArgument(argumentExpression, Name.identifier(name), argument.getSpreadElement() != null)
+            return JetPsiFactory(argument).createArgument(argumentExpression, name, argument.getSpreadElement() != null)
         }
     }
 }
