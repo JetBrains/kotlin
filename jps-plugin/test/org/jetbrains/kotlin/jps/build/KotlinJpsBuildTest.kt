@@ -41,6 +41,7 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -166,6 +167,10 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private fun klass(moduleName: String, classFqName: String): String {
             val outputDirPrefix = "out/production/$moduleName/"
             return outputDirPrefix + classFqName.replace('.', '/') + ".class"
+        }
+
+        private fun module(moduleName: String): String {
+            return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
         }
 
         public fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
@@ -390,13 +395,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
 
         checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
         assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
     }
 
     public fun testKotlinProjectTwoFilesInOnePackage() {
@@ -405,7 +410,11 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
         checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
 
-        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING, arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"), packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"), klass("kotlinProject", "_DefaultPackage")))
+        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
+                  arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
+                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
+                          klass("kotlinProject", "_DefaultPackage"),
+                          module("kotlinProject")))
 
         assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class")
     }
@@ -689,7 +698,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     private fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
-        return arrayOf(klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
+        return arrayOf(module(moduleName), klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
     }
 
     private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
