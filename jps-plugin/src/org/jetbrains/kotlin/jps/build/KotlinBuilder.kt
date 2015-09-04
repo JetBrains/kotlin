@@ -32,6 +32,7 @@ import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
@@ -101,8 +102,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
         val messageCollector = MessageCollectorAdapter(context)
+        val dataManager = context.projectDescriptor.dataManager
+        val targets = chunk.targets
+        val incrementalCaches = targets.keysToMap { dataManager.getKotlinCache(it) }
+
         try {
-            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, incrementalCaches)
         }
         catch (e: StopBuildException) {
             throw e
@@ -121,7 +126,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             chunk: ModuleChunk,
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer
+            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer,
+            incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
@@ -135,7 +141,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
             LOG.info("Clearing caches for " + chunk.getTargets().map { it.getPresentableName() }.join())
-            chunk.getTargets().forEach { dataManager.getKotlinCache(it).clean() }
+            incrementalCaches.values().forEach(StorageOwner::clean)
             return CHUNK_REBUILD_REQUIRED
         }
 
@@ -145,8 +151,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION)
-
-        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
 
         val project = projectDescriptor.project
 
