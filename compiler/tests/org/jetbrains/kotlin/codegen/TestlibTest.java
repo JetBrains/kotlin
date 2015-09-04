@@ -100,7 +100,7 @@ public class TestlibTest extends UsefulTestCase {
             throw new RuntimeException("There were compilation errors");
         }
 
-        classLoader = new GeneratedClassLoader(generationState.getFactory(), ForTestCompileRuntime.runtimeJarClassLoader()) {
+        classLoader = new GeneratedClassLoader(generationState.getFactory(), ForTestCompileRuntime.runtimeAndReflectJarClassLoader()) {
             @Override
             public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {

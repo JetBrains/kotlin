@@ -13,12 +13,12 @@ fun box(): String {
 
     assertEquals("Klass", jClass.getSimpleName())
     assertEquals("Klass", kjClass.getSimpleName())
-    assertEquals("Klass", kkClass.simpleName)
+    assertEquals("Klass", kkClass.java.simpleName)
     assertEquals(kjClass, jjClass)
 
-    failsWith(Error::class.java) { kClass.simpleName!! }
-    failsWith(Error::class.java) { kClass.qualifiedName!! }
-    failsWith(Error::class.java) { kClass.members }
+    try { kClass.simpleName; return "Fail 1" } catch (e: Error) {}
+    try { kClass.qualifiedName; return "Fail 2" } catch (e: Error) {}
+    try { kClass.members; return "Fail 3" } catch (e: Error) {}
 
     val jlError = Error::class.java
     val kljError = Error::class
@@ -27,7 +27,7 @@ fun box(): String {
 
     assertEquals("Error", jlError.getSimpleName())
     assertEquals("Error", jljError.getSimpleName())
-    assertEquals("Error", jlkError.simpleName)
+    assertEquals("Error", jlkError.java.simpleName)
 
     return "OK"
 }

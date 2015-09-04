@@ -57,6 +57,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected CodegenTestFiles myFiles;
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
+    protected ConfigurationKind configurationKind;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
         if (myEnvironment != null) {
@@ -143,7 +144,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected GeneratedClassLoader createClassLoader() {
-        return new GeneratedClassLoader(generateClassesInFile(), ForTestCompileRuntime.runtimeJarClassLoader(), getClassPathURLs());
+        return new GeneratedClassLoader(
+                generateClassesInFile(),
+                configurationKind == ConfigurationKind.NO_KOTLIN_REFLECT ?
+                ForTestCompileRuntime.runtimeJarClassLoader() :
+                ForTestCompileRuntime.runtimeAndReflectJarClassLoader(),
+                getClassPathURLs()
+        );
     }
 
     @NotNull

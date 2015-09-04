@@ -41,7 +41,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val classNameSuffix = InTextDirectivesUtils.findStringWithPrefixes(source.readText(), "// CLASS_NAME_SUFFIX: ")
                               ?: error("CLASS_NAME_SUFFIX directive not found in test data")
 
-        val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+        val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
         val classFile = tmpdir.listFiles().singleOrNull { it.getPath().endsWith("$classNameSuffix.class") }
                         ?: error("Local class with suffix `$classNameSuffix` is not found in: ${tmpdir.listFiles().toList()}")
