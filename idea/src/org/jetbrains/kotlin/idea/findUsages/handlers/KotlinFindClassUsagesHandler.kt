@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import java.util.*
 
@@ -103,7 +104,7 @@ public class KotlinFindClassUsagesHandler(
         }
 
         if (kotlinOptions.isUsages && classOrObject is JetObjectDeclaration && classOrObject.isCompanion()) {
-            if (!processClassObjectInternalReferences(classOrObject, referenceProcessor)) {
+            if (!processCompanionObjectInternalReferences(classOrObject, referenceProcessor)) {
                 return false
             }
         }
@@ -145,20 +146,19 @@ public class KotlinFindClassUsagesHandler(
         return usagesQuery.forEach(processor)
     }
 
-    private fun processClassObjectInternalReferences(classObject: JetObjectDeclaration,
-                                                     processor: Processor<PsiReference>): Boolean {
-        val klass = classObject.getStrictParentOfType<JetClass>() ?: return true
-        val companionObjectDescriptor = classObject.descriptor
+    private fun processCompanionObjectInternalReferences(companionObject: JetObjectDeclaration,
+                                                         processor: Processor<PsiReference>): Boolean {
+        val klass = companionObject.getStrictParentOfType<JetClass>() ?: return true
+        val companionObjectDescriptor = companionObject.descriptor
         var stop: Boolean = false
         klass.acceptChildren(object : JetVisitorVoid() {
             override fun visitJetElement(element: JetElement) {
-                if (element == classObject) return // skip companion object itself
+                if (element == companionObject) return // skip companion object itself
                 if (stop) return
                 element.acceptChildren(this)
 
                 val bindingContext = element.analyze()
-                val call = bindingContext[BindingContext.CALL, element] ?: return
-                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
+                val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
                 if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
                     || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
                     element.getReferences().forEach {

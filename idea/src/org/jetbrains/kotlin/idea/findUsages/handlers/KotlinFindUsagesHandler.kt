@@ -102,11 +102,7 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         protected fun createReferenceProcessor(usageInfoProcessor: Processor<UsageInfo>): Processor<PsiReference> {
             val uniqueProcessor = CommonProcessors.UniqueProcessor(usageInfoProcessor)
 
-            return object: Processor<PsiReference> {
-                override fun process(t: PsiReference): Boolean {
-                    return KotlinFindUsagesHandler.processUsage(uniqueProcessor, t)
-                }
-            }
+            return Processor { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
         }
     }
 }
