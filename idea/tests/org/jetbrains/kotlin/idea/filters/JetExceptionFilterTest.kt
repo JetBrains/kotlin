@@ -155,5 +155,6 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
         doTest("src/lib.kt", 4, { "test.Foo" }, libRootUrl = libRootUrl)
         doTest("src/lib.kt", 9, { "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, it) }, libRootUrl = libRootUrl)
         doTest("src/other.kt", 4, { "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, it) }, libRootUrl = libRootUrl)
+        doTest("src/jvmClassNameSingleFile.kt", 4, { "renamed.NewName" }, libRootUrl = libRootUrl)
     }
 }
