@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.*
 import java.util.*
 import kotlin.reflect.*
@@ -96,7 +97,7 @@ public val KType.javaType: Type
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
                 getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
-        val field = this.getField("\$moduleName")
+        val field = this.getField(JvmAbi.KOTLIN_MODULE_FIELD_NAME)
         if (field != null) {
             KPackageImpl(this, field.get(null) as String)
         } else {

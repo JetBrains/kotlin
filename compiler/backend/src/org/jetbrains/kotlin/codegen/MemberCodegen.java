@@ -479,7 +479,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             @NotNull GenerationState state,
             @NotNull ClassBuilder classBuilder
     ) {
-        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$moduleName",
+        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.KOTLIN_MODULE_FIELD_NAME,
                               AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, state.getModuleName());
     }
 
