@@ -16,7 +16,7 @@ private @ @[Ann1(1)] Ann3("2") class A(
         @[Ann]
         private
         @
-        @volatile var x = 1
+        @Volatile var x = 1
 
         foo(fun(@ @ann(1) x: Int) {})
 

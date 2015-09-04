@@ -26,7 +26,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
@@ -199,7 +199,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
@@ -231,7 +231,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -269,7 +269,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -286,7 +286,7 @@ JetFile: forParameters.kt
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('volatile')
+                        PsiElement(IDENTIFIER)('Volatile')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('y')
           PsiElement(RPAR)(')')
@@ -319,7 +319,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
           MULTI_VARIABLE_DECLARATION_ENTRY
@@ -333,7 +333,7 @@ JetFile: forParameters.kt
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('volatile')
+                        PsiElement(IDENTIFIER)('Volatile')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('y')
           PsiElement(RPAR)(')')
@@ -366,7 +366,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
           PsiWhiteSpace(' ')
@@ -400,7 +400,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
@@ -416,7 +416,7 @@ JetFile: forParameters.kt
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('volatile')
+                        PsiElement(IDENTIFIER)('Volatile')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('y')
           PsiElement(RPAR)(')')
@@ -451,7 +451,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
           PsiWhiteSpace(' ')
@@ -487,7 +487,7 @@ JetFile: forParameters.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
           PsiWhiteSpace(' ')
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
@@ -503,7 +503,7 @@ JetFile: forParameters.kt
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('volatile')
+                        PsiElement(IDENTIFIER)('Volatile')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('y')
           PsiElement(RPAR)(')')

@@ -1,10 +1,10 @@
-volatile var vol = 1
-transient val tra = 1
+@Volatile var vol = 1
+@Transient val tra = 1
 
-strictfp fun str() {}
-synchronized fun sync() {}
+@Strictfp fun str() {}
+@Synchronized fun sync() {}
 
-// 0 kotlin/jvm/volatile
-// 0 kotlin/jvm/transient
-// 0 kotlin/jvm/strictfp
-// 0 kotlin/jvm/synchronized
+// 0 kotlin/jvm/Volatile
+// 0 kotlin/jvm/Transient
+// 0 kotlin/jvm/Strictfp
+// 0 kotlin/jvm/Synchronized

@@ -60,13 +60,13 @@ public abstract class AnnotationCodegen {
     }
 
     public static final List<JvmFlagAnnotation> FIELD_FLAGS = Arrays.asList(
-            new JvmFlagAnnotation("kotlin.jvm.volatile", Opcodes.ACC_VOLATILE),
-            new JvmFlagAnnotation("kotlin.jvm.transient", Opcodes.ACC_TRANSIENT)
+            new JvmFlagAnnotation("kotlin.jvm.Volatile", Opcodes.ACC_VOLATILE),
+            new JvmFlagAnnotation("kotlin.jvm.Transient", Opcodes.ACC_TRANSIENT)
     );
 
     public static final List<JvmFlagAnnotation> METHOD_FLAGS = Arrays.asList(
-            new JvmFlagAnnotation("kotlin.jvm.strictfp", Opcodes.ACC_STRICT),
-            new JvmFlagAnnotation("kotlin.jvm.synchronized", Opcodes.ACC_SYNCHRONIZED),
+            new JvmFlagAnnotation("kotlin.jvm.Strictfp", Opcodes.ACC_STRICT),
+            new JvmFlagAnnotation("kotlin.jvm.Synchronized", Opcodes.ACC_SYNCHRONIZED),
             new JvmFlagAnnotation("kotlin.jvm.native", Opcodes.ACC_NATIVE)
     );
 

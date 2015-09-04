@@ -90,10 +90,10 @@ class AnnotationConverter(private val converter: Converter) {
     }
 
     private val MODIFIER_TO_ANNOTATION = listOf(
-            PsiModifier.SYNCHRONIZED to "synchronized",
-            PsiModifier.VOLATILE to "volatile",
-            PsiModifier.STRICTFP to "strictfp",
-            PsiModifier.TRANSIENT to "transient"
+            PsiModifier.SYNCHRONIZED to "Synchronized",
+            PsiModifier.VOLATILE to "Volatile",
+            PsiModifier.STRICTFP to "Strictfp",
+            PsiModifier.TRANSIENT to "Transient"
     )
 
     private fun mapTargetByName(expr: PsiReferenceExpression): Set<KotlinTarget> {
