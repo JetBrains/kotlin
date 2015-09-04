@@ -7,10 +7,10 @@ fun init() {
 }
 
 public class JsTestsAsserter() : Asserter {
-    public override fun fail(message: String) {
+    public override fun fail(message: String?) {
         assert(false, message)
     }
 }
 
 native("JsTests.assert")
-public fun assert(value: Boolean, message: String): Unit = noImpl
+public fun assert(value: Boolean, message: String?): Unit = noImpl
