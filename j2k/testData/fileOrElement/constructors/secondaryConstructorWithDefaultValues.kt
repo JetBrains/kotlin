@@ -7,7 +7,7 @@ class A {
     public constructor() {
     }
 
-    jvmOverloads public constructor(p: Int, s: String, x: Int = 1) {
+    JvmOverloads public constructor(p: Int, s: String, x: Int = 1) {
         this.s = s
         this.x = x
     }

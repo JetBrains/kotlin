@@ -423,7 +423,7 @@ class Converter private constructor(
         if (function == null) return null
 
         if (PsiMethodUtil.isMainMethod(method)) {
-            val fqName = FqName("kotlin.jvm.jvmStatic")
+            val fqName = FqName("kotlin.jvm.JvmStatic")
             val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
 
             function.annotations += Annotations(
@@ -435,7 +435,7 @@ class Converter private constructor(
 
         if (function.parameterList.parameters.any { it is FunctionParameter && it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(
-                    listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
+                    listOf(Annotation(Identifier("JvmOverloads").assignNoPrototype(),
                                       listOf(),
                                       withAt = false,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()

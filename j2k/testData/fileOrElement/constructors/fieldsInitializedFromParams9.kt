@@ -1,1 +1,1 @@
-class C jvmOverloads constructor(private val string: String, a: Int = string.length())
+class C JvmOverloads constructor(private val string: String, a: Int = string.length())

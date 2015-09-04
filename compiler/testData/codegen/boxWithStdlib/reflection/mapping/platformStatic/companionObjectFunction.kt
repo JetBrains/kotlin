@@ -21,7 +21,7 @@ fun box(): String {
 
     val staticMethod = javaClass<C>().getDeclaredMethod("foo", javaClass<String>())
     val k2 = staticMethod.kotlinFunction ?:
-             return "Fail: no Kotlin function found for static bridge for @jvmStatic method in companion object C::foo"
+             return "Fail: no Kotlin function found for static bridge for @JvmStatic method in companion object C::foo"
     assertEquals(3, k2.call(C, "ghi"))
 
     failsWith(javaClass<NullPointerException>()) { k2.call(null, "")!! }

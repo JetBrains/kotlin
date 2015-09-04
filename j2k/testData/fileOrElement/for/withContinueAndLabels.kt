@@ -1,5 +1,5 @@
 public object TestClass {
-    jvmStatic public fun main(args: Array<String>) {
+    JvmStatic public fun main(args: Array<String>) {
         var i = 1
         OuterLoop1@ OuterLoop2@ while (i < 1000) {
             var j = 1

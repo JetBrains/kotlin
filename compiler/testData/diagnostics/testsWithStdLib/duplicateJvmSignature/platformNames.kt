@@ -1,20 +1,20 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-@jvmName("bar")
+@JvmName("bar")
 fun foo(a: Any) {}
 
 fun Any.foo() {}
 
-@jvmName("barInt")
+@JvmName("barInt")
 fun bar(x: List<Int>) {}
 
-@jvmName("barStr")
+@JvmName("barStr")
 fun bar(x: List<String>) {}
 
 class C {
     var rwProp: Int
-        @jvmName("get_rwProp")
+        @JvmName("get_rwProp")
         get() = 0
-        @jvmName("set_rwProp")
+        @JvmName("set_rwProp")
         set(v) {}
 
     fun getRwProp(): Int = 123

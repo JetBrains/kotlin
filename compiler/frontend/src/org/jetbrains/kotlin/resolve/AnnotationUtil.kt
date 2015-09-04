@@ -29,7 +29,7 @@ public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
 
 public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null ||
-           getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmStatic")) != null
+           getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
 }
 
 public fun DeclarationDescriptor.findPublicFieldAnnotation(): AnnotationDescriptor? {

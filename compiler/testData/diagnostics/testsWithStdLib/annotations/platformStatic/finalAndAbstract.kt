@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.jvm.jvmStatic
+import kotlin.jvm.JvmStatic
 
 abstract class A {
 
@@ -12,24 +12,24 @@ abstract class A {
 
 object B: A() {
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@jvmStatic override fun a()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun a()<!> {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@jvmStatic override fun b()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun b()<!> {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@jvmStatic final override fun c()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic final override fun c()<!> {}
 
-    @jvmStatic open fun d() {}
+    @JvmStatic open fun d() {}
 }
 
 class C {
 
     companion object: A() {
-        @jvmStatic override fun a() {}
+        @JvmStatic override fun a() {}
 
-        @jvmStatic override fun b() {}
+        @JvmStatic override fun b() {}
 
-        @jvmStatic final override fun c() {}
+        @JvmStatic final override fun c() {}
 
-        @jvmStatic open fun d() {}
+        @JvmStatic open fun d() {}
     }
 }

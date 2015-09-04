@@ -1,4 +1,4 @@
 package test
 
-@jvmName("bar")
+@JvmName("bar")
 fun foo() {}

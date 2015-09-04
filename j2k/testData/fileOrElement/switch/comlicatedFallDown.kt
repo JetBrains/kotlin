@@ -76,7 +76,7 @@ public object SwitchDemo {
         println(monthString)
     }
 
-    jvmStatic public fun main(args: Array<String>) {
+    JvmStatic public fun main(args: Array<String>) {
         for (i in 1..12)
             test(i)
     }

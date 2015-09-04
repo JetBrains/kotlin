@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -75,7 +75,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                   delegateFunctionDescriptor: FunctionDescriptor,
                                   owner: CodegenContext<*>,
                                   classBuilder: ClassBuilder): Boolean {
-        if (functionDescriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) == null) {
+        if (!functionDescriptor.hasJvmOverloadsAnnotation()) {
             return false
         }
 
