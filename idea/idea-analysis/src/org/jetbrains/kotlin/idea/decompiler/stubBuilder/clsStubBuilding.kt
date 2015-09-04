@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.getPackageFqName())
@@ -67,6 +68,25 @@ fun createFileFacadeStub(
     val container = ProtoContainer(null, facadeFqName.parent())
     for (callableProto in packageProto.getMemberList()) {
         createCallableStub(fileStub, callableProto, c, container)
+    }
+    return fileStub
+}
+
+fun createMultifileClassStub(
+        partHeaders: List<KotlinClassHeader>,
+        facadeFqName: FqName,
+        c: ClsStubBuilderContext
+): KotlinFileStubImpl {
+    val packageFqName = facadeFqName.parent()
+    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    setupFileStub(fileStub, packageFqName)
+    val multifileClassContainer = ProtoContainer(null, facadeFqName.parent())
+    for (partHeader in partHeaders) {
+        val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!)
+        val partContext = c.child(partData.nameResolver)
+        for (partMember in partData.packageProto.memberList) {
+            createCallableStub(fileStub, partMember, partContext, multifileClassContainer)
+        }
     }
     return fileStub
 }

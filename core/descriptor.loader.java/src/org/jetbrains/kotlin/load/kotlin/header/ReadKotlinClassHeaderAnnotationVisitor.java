@@ -37,11 +37,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private static final Map<JvmClassName, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
     private static final Map<JvmClassName, KotlinClassHeader.Kind> OLD_DEPRECATED_ANNOTATIONS_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
 
-    private int version = AbiVersionUtil.INVALID_VERSION;
     static {
         HEADER_KINDS.put(KotlinClass.CLASS_NAME, CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_FILE_FACADE), FILE_FACADE);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS), MULTIFILE_CLASS);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS_PART), MULTIFILE_CLASS_PART);
         HEADER_KINDS.put(KotlinSyntheticClass.CLASS_NAME, SYNTHETIC_CLASS);
 
         initOldAnnotations();
@@ -58,6 +59,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_TRAIT_IMPL), SYNTHETIC_CLASS);
     }
 
+    private int version = AbiVersionUtil.INVALID_VERSION;
+    private String multifileClassName = null;
+    private String[] filePartClassNames = null;
     private String[] annotationData = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinClass.Kind classKind = null;
@@ -75,16 +79,24 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind);
+            return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind, null, null);
         }
 
-        if ((headerKind == CLASS || headerKind == PACKAGE_FACADE || headerKind == FILE_FACADE) && annotationData == null) {
+        if (shouldHaveData() && annotationData == null) {
             // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
             // We tell the outside world that there's really no annotation at all
             return null;
         }
 
-        return new KotlinClassHeader(headerKind, version, annotationData, classKind, syntheticClassKind);
+        return new KotlinClassHeader(headerKind, version, annotationData, classKind, syntheticClassKind, filePartClassNames, multifileClassName);
+    }
+
+    private boolean shouldHaveData() {
+        return headerKind == CLASS ||
+               headerKind == PACKAGE_FACADE ||
+               headerKind == FILE_FACADE ||
+               headerKind == MULTIFILE_CLASS ||
+               headerKind == MULTIFILE_CLASS_PART;
     }
 
     @Nullable
@@ -136,15 +148,38 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
-            if (name != null && name.asString().equals(ABI_VERSION_FIELD_NAME)) {
-                version = value instanceof Integer ? (Integer) value : AbiVersionUtil.INVALID_VERSION;
+            if (name != null) {
+                if (name.asString().equals(ABI_VERSION_FIELD_NAME)) {
+                    version = value instanceof Integer ? (Integer) value : AbiVersionUtil.INVALID_VERSION;
+                }
+                else if (name.asString().equals(MULTIFILE_CLASS_NAME_FIELD_NAME)) {
+                    multifileClassName = value instanceof String ? (String) value : null;
+                }
             }
         }
 
         @Override
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            return name.asString().equals(DATA_FIELD_NAME) ? stringArrayVisitor() : null;
+            if (name.asString().equals(DATA_FIELD_NAME)) {
+                return dataArrayVisitor();
+            }
+            else if (name.asString().equals(FILE_PART_CLASS_NAMES_FIELD_NAME)) {
+                return filePartClassNamesVisitor();
+            }
+            else {
+                return null;
+            }
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor filePartClassNamesVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(String[] data) {
+                    filePartClassNames = data;
+                }
+            };
         }
 
         @Override
@@ -158,30 +193,44 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @NotNull
-        private AnnotationArrayArgumentVisitor stringArrayVisitor() {
-            final List<String> strings = new ArrayList<String>(1);
-            return new AnnotationArrayArgumentVisitor() {
+        private AnnotationArrayArgumentVisitor dataArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
                 @Override
-                public void visit(@Nullable Object value) {
-                    if (value instanceof String) {
-                        strings.add((String) value);
-                    }
-                }
-
-                @Override
-                public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-                }
-
-                @Override
-                public void visitEnd() {
-                    //noinspection SSBasedInspection
-                    annotationData = strings.toArray(new String[strings.size()]);
+                protected void visitEnd(String[] data) {
+                    annotationData = data;
                 }
             };
         }
 
         @Override
         public void visitEnd() {
+        }
+
+        private abstract class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
+            private final List<String> strings;
+
+            public CollectStringArrayAnnotationVisitor() {
+                this.strings = new ArrayList<String>();
+            }
+
+            @Override
+            public void visit(@Nullable Object value) {
+                if (value instanceof String) {
+                    strings.add((String) value);
+                }
+            }
+
+            @Override
+            public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+            }
+
+            @Override
+            public void visitEnd() {
+                //noinspection SSBasedInspection
+                visitEnd(strings.toArray(new String[strings.size()]));
+            }
+
+            protected abstract void visitEnd(String[] data);
         }
     }
 

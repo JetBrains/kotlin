@@ -50,6 +50,7 @@ public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
     private final Map<FqName, PackageCodegen> package2codegen = new HashMap<FqName, PackageCodegen>();
+    private final Map<FqName, MultifileClassCodegen> multifileClass2codegen = new HashMap<FqName, MultifileClassCodegen>();
     private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<String, OutAndSourceFileList>();
 
     private boolean isDone = false;
@@ -189,7 +190,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public PackageCodegen forFacade(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
+    public PackageCodegen forFacadeLightClass(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
         assert !isDone : "Already done!";
         PackageCodegen codegen = package2codegen.get(facadeFqName);
         if (codegen == null) {
@@ -197,6 +198,17 @@ public class ClassFileFactory implements OutputFileCollection {
             package2codegen.put(facadeFqName, codegen);
         }
 
+        return codegen;
+    }
+
+    @NotNull
+    public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
+        assert !isDone : "Already done!";
+        MultifileClassCodegen codegen = multifileClass2codegen.get(facadeFqName);
+        if (codegen == null) {
+            codegen = new MultifileClassCodegen(state, files, facadeFqName);
+            multifileClass2codegen.put(facadeFqName, codegen);
+        }
         return codegen;
     }
 

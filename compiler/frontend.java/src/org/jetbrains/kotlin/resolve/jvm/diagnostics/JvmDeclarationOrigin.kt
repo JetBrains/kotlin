@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 public enum class MemberKind { FIELD, METHOD }
@@ -39,13 +40,16 @@ public enum class JvmDeclarationOriginKind {
     DELEGATION_TO_TRAIT_IMPL,
     DELEGATION,
     BRIDGE,
+    MULTIFILE_CLASS,
+    MULTIFILE_CLASS_PART,
     SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 
 public class JvmDeclarationOrigin(
         public val originKind: JvmDeclarationOriginKind,
         public val element: PsiElement?,
-        public val descriptor: DeclarationDescriptor?
+        public val descriptor: DeclarationDescriptor?,
+        public val multifileClassFqName: FqName? = null
 ) {
     companion object {
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
@@ -66,6 +70,11 @@ public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = Desc
 
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
+
+public fun MultifileClass(descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS, null, descriptor, multifileClassFqName)
+public fun MultifileClassPart(file: JetFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor, multifileClassFqName)
 
 public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
 public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =

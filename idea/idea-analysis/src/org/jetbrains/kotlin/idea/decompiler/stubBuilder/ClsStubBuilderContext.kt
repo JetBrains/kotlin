@@ -83,7 +83,7 @@ private fun ClsStubBuilderContext.child(typeParameterList: List<ProtoBuf.TypePar
     )
 }
 
-private fun ClsStubBuilderContext.child(nameResolver: NameResolver): ClsStubBuilderContext {
+internal fun ClsStubBuilderContext.child(nameResolver: NameResolver): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
             nameResolver,

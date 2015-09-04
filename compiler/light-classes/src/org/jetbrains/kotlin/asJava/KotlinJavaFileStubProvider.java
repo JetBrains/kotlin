@@ -214,7 +214,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        PackageCodegen codegen = state.getFactory().forFacade(facadeFqName, files);
+                        PackageCodegen codegen = state.getFactory().forFacadeLightClass(facadeFqName, files);
                         codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                         state.getFactory().asList();
                     }
@@ -415,6 +415,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
+                    /*packageFacadesAsMultifileClasses=*/false,
                     forExtraDiagnostics
             );
             KotlinCodegenFacade.prepareForCompilation(state);

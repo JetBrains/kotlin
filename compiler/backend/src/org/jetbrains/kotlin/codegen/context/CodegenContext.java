@@ -190,6 +190,24 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
+    public FieldOwnerContext<PackageFragmentDescriptor> intoMultifileClassPart(
+            @NotNull PackageFragmentDescriptor descriptor,
+            @NotNull Type multifileClassType,
+            @NotNull Type filePartType
+    ) {
+        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType);
+    }
+
+    @NotNull
+    public FieldOwnerContext<PackageFragmentDescriptor> intoMultifileClass(
+            @NotNull PackageFragmentDescriptor descriptor,
+            @NotNull Type multifileClassType,
+            @NotNull Type filePartType
+    ) {
+        return new MultifileClassContext(descriptor, this, multifileClassType, filePartType);
+    }
+
+    @NotNull
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
         return new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
     }
