@@ -108,7 +108,7 @@ fun filtering(): List<GenericFunction> {
 
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            require(n >= 0, "Requested element count $n is less than zero.")
+            require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             if (n >= size()) return toList()
             var count = 0

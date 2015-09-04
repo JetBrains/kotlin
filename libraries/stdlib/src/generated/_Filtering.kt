@@ -1411,7 +1411,7 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
  * Returns a list containing first [n] elements.
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1428,7 +1428,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
  * Returns a list containing first [n] elements.
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1445,7 +1445,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
  * Returns a list containing first [n] elements.
  */
 public fun ByteArray.take(n: Int): List<Byte> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1462,7 +1462,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
  * Returns a list containing first [n] elements.
  */
 public fun CharArray.take(n: Int): List<Char> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1479,7 +1479,7 @@ public fun CharArray.take(n: Int): List<Char> {
  * Returns a list containing first [n] elements.
  */
 public fun DoubleArray.take(n: Int): List<Double> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1496,7 +1496,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
  * Returns a list containing first [n] elements.
  */
 public fun FloatArray.take(n: Int): List<Float> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1513,7 +1513,7 @@ public fun FloatArray.take(n: Int): List<Float> {
  * Returns a list containing first [n] elements.
  */
 public fun IntArray.take(n: Int): List<Int> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1530,7 +1530,7 @@ public fun IntArray.take(n: Int): List<Int> {
  * Returns a list containing first [n] elements.
  */
 public fun LongArray.take(n: Int): List<Long> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
@@ -1547,7 +1547,7 @@ public fun LongArray.take(n: Int): List<Long> {
  * Returns a list containing first [n] elements.
  */
 public fun ShortArray.take(n: Int): List<Short> {
-    require(n >= 0, "Requested element count $n is less than zero.")
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (n >= size()) return toList()
     var count = 0
