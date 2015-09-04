@@ -11,7 +11,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       REFERENCE_EXPRESSION:[referencedName=enum]
   IMPORT_LIST:
   CLASS:[fqName=a.b.c.test.enum.Enum, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
-    MODIFIER_LIST:[enum internal final]
+    MODIFIER_LIST:[enum public final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[private]
       VALUE_PARAMETER_LIST:
@@ -48,14 +48,14 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
         MODIFIER_LIST:[public companion]
         CLASS_BODY:
           PROPERTY:[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-            MODIFIER_LIST:[internal final]
+            MODIFIER_LIST:[public final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
-        MODIFIER_LIST:[open internal]
+        MODIFIER_LIST:[open public]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]

@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
           REFERENCE_EXPRESSION:[referencedName=kotlin]
         REFERENCE_EXPRESSION:[referencedName=String]
   FUN:[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=funWithBlockBody]
-    MODIFIER_LIST:[internal]
+    MODIFIER_LIST:[public]
     VALUE_PARAMETER_LIST:
     TYPE_REFERENCE:
       USER_TYPE:[isAbsoluteInRootPackage=false]
