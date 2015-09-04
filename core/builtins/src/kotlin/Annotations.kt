@@ -76,6 +76,7 @@ public annotation(retention = SOURCE) class Suppress(vararg val names: String)
  * backend.
  */
 target(FUNCTION)
+// @deprecated("Use kotlin.tailrec instead", ReplaceWith("kotlin.tailrec"))
 public annotation(retention = SOURCE) class tailRecursive
 
 target(FUNCTION)
