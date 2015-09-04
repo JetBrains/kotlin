@@ -139,6 +139,7 @@ public abstract class AbstractIncrementalJpsTest(
                 return MakeResult(logger.log, false, createMappingsDump(descriptor))
             }
         } finally {
+            descriptor.dataManager.flush(false)
             descriptor.release()
         }
     }
