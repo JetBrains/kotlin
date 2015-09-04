@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.visibility
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.org.objectweb.asm.*
@@ -399,7 +399,7 @@ public class IncrementalCacheImpl(
                     return true
                 }
 
-                private fun ProtoBuf.Callable.isPrivate(): Boolean = Visibilities.isPrivate(visibility(Flags.VISIBILITY.get(flags)))
+                private fun ProtoBuf.Callable.isPrivate(): Boolean = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
             }
 
             return compareObject.checkEquals(oldClassData.classProto, newClassData.classProto)

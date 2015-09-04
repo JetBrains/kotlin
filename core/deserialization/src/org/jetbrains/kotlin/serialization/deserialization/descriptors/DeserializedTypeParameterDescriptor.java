@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage;
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer;
@@ -40,7 +41,7 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
         super(c.getStorageManager(),
               c.getContainingDeclaration(),
               c.getNameResolver().getName(proto.getName()),
-              DeserializationPackage.variance(proto.getVariance()),
+              Deserialization.variance(proto.getVariance()),
               proto.getReified(),
               index,
               SourceElement.NO_SOURCE);

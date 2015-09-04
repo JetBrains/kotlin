@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -51,10 +51,10 @@ public class DeserializedClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.getFqName()).getShortClassName()
 ) {
-    private val modality = deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
-    private val visibility = deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
+    private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
+    private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
-    private val kind = deserialization.classKind(kindFromProto)
+    private val kind = Deserialization.classKind(kindFromProto)
     private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
     private val isInner = Flags.INNER.get(classProto.getFlags())
 

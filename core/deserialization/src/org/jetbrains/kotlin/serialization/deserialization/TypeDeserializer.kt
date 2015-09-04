@@ -130,7 +130,7 @@ public class TypeDeserializer(
                 TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.getNullableAnyType())
             else
                 StarProjectionImpl(parameter)
-        else TypeProjectionImpl(variance(typeArgumentProto.getProjection()), type(typeArgumentProto.getType()))
+        else TypeProjectionImpl(Deserialization.variance(typeArgumentProto.getProjection()), type(typeArgumentProto.getType()))
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")

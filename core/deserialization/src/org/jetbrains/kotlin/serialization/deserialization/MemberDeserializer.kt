@@ -50,11 +50,11 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
-                modality(Flags.MODALITY.get(flags)),
-                visibility(Flags.VISIBILITY.get(flags)),
+                Deserialization.modality(Flags.MODALITY.get(flags)),
+                Deserialization.visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
                 c.nameResolver.getName(proto.getName()),
-                memberKind(Flags.MEMBER_KIND.get(flags)),
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
                 c.nameResolver,
                 Flags.LATE_INIT.get(flags)
@@ -82,8 +82,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 PropertyGetterDescriptorImpl(
                         property,
                         getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
-                        modality(Flags.MODALITY.get(getterFlags)),
-                        visibility(Flags.VISIBILITY.get(getterFlags)),
+                        Deserialization.modality(Flags.MODALITY.get(getterFlags)),
+                        Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
                         /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
                         property.getKind(), null, SourceElement.NO_SOURCE
@@ -106,8 +106,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 val setter = PropertySetterDescriptorImpl(
                         property,
                         getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
-                        modality(Flags.MODALITY.get(setterFlags)),
-                        visibility(Flags.VISIBILITY.get(setterFlags)),
+                        Deserialization.modality(Flags.MODALITY.get(setterFlags)),
+                        Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
                         /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
                         property.getKind(), null, SourceElement.NO_SOURCE
@@ -150,8 +150,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.getReturnType()),
-                modality(Flags.MODALITY.get(proto.getFlags())),
-                visibility(Flags.VISIBILITY.get(proto.getFlags()))
+                Deserialization.modality(Flags.MODALITY.get(proto.getFlags())),
+                Deserialization.visibility(Flags.VISIBILITY.get(proto.getFlags()))
         )
         return function
     }
@@ -170,7 +170,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
-                visibility(Flags.VISIBILITY.get(proto.getFlags()))
+                Deserialization.visibility(Flags.VISIBILITY.get(proto.getFlags()))
         )
         descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()))
         return descriptor
