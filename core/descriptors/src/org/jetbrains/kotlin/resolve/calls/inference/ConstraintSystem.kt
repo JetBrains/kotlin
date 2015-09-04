@@ -82,4 +82,9 @@ public interface ConstraintSystem {
      * If there is no information for type parameter, returns type projection for DONT_CARE type.
      */
     public fun getCurrentSubstitutor(): TypeSubstitutor
+
+    /**
+     * Returns a substitution only for type parameters that have result values, otherwise returns a type parameter itself.
+     */
+    public fun getPartialSubstitutor(): TypeSubstitutor
 }

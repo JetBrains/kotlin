@@ -108,16 +108,17 @@ public class ConstraintSystemImpl : ConstraintSystem {
             substituteOriginal: Boolean
     ): Map<TypeParameterDescriptor, TypeProjection> {
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
-        for ((typeParameter, typeBounds) in typeParameterBounds) {
+        for ((variable, typeBounds) in typeParameterBounds) {
             val typeProjection: TypeProjection
             val value = typeBounds.value
+            val typeParameter = if (substituteOriginal) variablesToOriginal[variable]!! else variable
             if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) {
                 typeProjection = TypeProjectionImpl(value)
             }
             else {
                 typeProjection = getDefaultTypeProjection(typeParameter)
             }
-            substitutionContext.put(if (substituteOriginal) variablesToOriginal[typeParameter]!! else typeParameter, typeProjection)
+            substitutionContext.put(typeParameter, typeProjection)
         }
         return substitutionContext
     }
@@ -448,6 +449,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     override fun getCurrentSubstitutor() =
             getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
+
+    override fun getPartialSubstitutor() =
+            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(it.correspondingType) }
 
     private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
             replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
