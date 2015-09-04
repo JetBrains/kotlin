@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.resolve.validation.AccessToPrivateTopLevelSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -40,7 +41,7 @@ public abstract class TargetPlatform(
 private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
-private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator())
+private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), AccessToPrivateTopLevelSymbolValidator())
 
 
 public open class PlatformConfigurator(

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTa
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
@@ -86,6 +87,8 @@ public object Renderers {
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
     public val RENDER_TYPE: Renderer<JetType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
+
+    public val RENDER_FILE: Renderer<JetFile> = Renderer { it.name }
 
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
         variance: Variance ->
