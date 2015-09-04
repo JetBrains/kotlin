@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -186,7 +184,7 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 
 class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, val labelName: Name?) : KeywordLookupObject()
 
-fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.toTail(), lookupObject = this)
+fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
         .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
 
 fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String): Collection<ThisItemLookupObject> {
@@ -213,7 +211,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
             if (parent is JetFunctionLiteral) {
                 val (label, call) = parent.findLabelAndCall()
                 if (label != null) {
-                    result.add(createKeywordElementWithSpace("return", tail = label.toTail(), addSpaceAfter = !isUnit))
+                    result.add(createKeywordElementWithSpace("return", tail = label.labelNameToTail(), addSpaceAfter = !isUnit))
                 }
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
@@ -253,7 +251,7 @@ private fun JetDeclarationWithBody.returnType(bindingContext: BindingContext): J
     return callable.getReturnType()
 }
 
-private fun Name?.toTail(): String = if (this != null) "@" + render() else ""
+private fun Name?.labelNameToTail(): String = if (this != null) "@" + render() else ""
 
 private fun createKeywordElementWithSpace(
         keyword: String,
@@ -301,7 +299,7 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
 
                 val label = (parent.getParent() as? JetLabeledExpression)?.getLabelNameAsName()
                 if (label != null) {
-                    result.add(createKeywordElement(breakOrContinue, tail = "@$label"))
+                    result.add(createKeywordElement(breakOrContinue, tail = label.labelNameToTail()))
                 }
             }
 
