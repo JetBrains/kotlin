@@ -4,6 +4,6 @@ interface ParseResult<out T> {
     public val value : T
 }
 
-class Success<T>(<caret>public override val value : T) : ParseResult<T> {
+class Success<T>(override val value : T) : ParseResult<T> {
     public override val success : Boolean = true
 }

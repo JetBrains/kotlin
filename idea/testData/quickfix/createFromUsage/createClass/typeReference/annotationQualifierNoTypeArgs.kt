@@ -8,4 +8,4 @@
 // ERROR: Unresolved reference: A
 package p
 
-fun foo(): <caret>A.B = throw Throwable("")
+internal fun foo(): <caret>A.B = throw Throwable("")

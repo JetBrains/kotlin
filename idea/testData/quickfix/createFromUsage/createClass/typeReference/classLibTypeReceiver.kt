@@ -4,4 +4,4 @@
 // ERROR: Unresolved reference: A
 package p
 
-fun foo(): Int.<caret>A = throw Throwable("")
+internal fun foo(): Int.<caret>A = throw Throwable("")

@@ -1,5 +1,5 @@
 // "Change function signature..." "true"
-// ERROR: <html>Class 'B' must be declared abstract or implement abstract member<br/><b>internal</b> <b>abstract</b> <b>fun</b> f(a: kotlin.String): kotlin.Unit <i>defined in</i> A</html>
+// ERROR: <html>Class 'B' must be declared abstract or implement abstract member<br/><b>public</b> <b>abstract</b> <b>fun</b> f(a: kotlin.String): kotlin.Unit <i>defined in</i> A</html>
 interface A {
     fun f(a: Int)
     fun f(a: String)

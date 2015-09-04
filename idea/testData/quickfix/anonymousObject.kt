@@ -1,7 +1,7 @@
 // "Make 'object : T {}' abstract" "false"
 // ACTION: Implement members
 // ACTION: Split property declaration
-// ERROR: <html>Object must be declared abstract or implement abstract member<br/><b>internal</b> <b>abstract</b> <b>fun</b> foo(): kotlin.Unit <i>defined in</i> T</html>
+// ERROR: <html>Object must be declared abstract or implement abstract member<br/><b>public</b> <b>abstract</b> <b>fun</b> foo(): kotlin.Unit <i>defined in</i> T</html>
 interface T {
     fun foo()
 }

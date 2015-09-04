@@ -6,4 +6,4 @@
 // ERROR: Unresolved reference: A
 package p
 
-fun foo(): <caret>A<Int, String> = throw Throwable("")
+internal fun foo(): <caret>A<Int, String> = throw Throwable("")
