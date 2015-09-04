@@ -601,10 +601,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
-        override val keyDescriptor: KeyDescriptor<String>
-            get() = PathStringDescriptor.INSTANCE
-
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
         public fun clearOutputsForSource(sourceFile: File) {
             storage.remove(sourceFile.getAbsolutePath())
         }
@@ -676,10 +673,7 @@ public class IncrementalCacheImpl(
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathCollectionExternalizer) {
-        override val keyDescriptor: KeyDescriptor<PathFunctionPair>
-            get() = PathFunctionPairKeyDescriptor
-
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             storage.appendData(key) { out ->

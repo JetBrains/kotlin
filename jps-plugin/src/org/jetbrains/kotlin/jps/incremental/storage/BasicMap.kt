@@ -27,10 +27,9 @@ import java.io.IOException
 
 public abstract class BasicMap<K : Comparable<K>, V>(
         private val storageFile: File,
+        private val keyDescriptor: KeyDescriptor<K>,
         private val valueExternalizer: DataExternalizer<V>
 ) {
-    protected abstract val keyDescriptor: KeyDescriptor<K>
-
     protected var storage: PersistentHashMap<K, V> = createMap()
 
     public fun contains(key: K): Boolean = storage.containsMapping(key)
@@ -92,10 +91,13 @@ public abstract class BasicMap<K : Comparable<K>, V>(
 
 public abstract class BasicStringMap<V>(
         storageFile: File,
+        keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>
-) : BasicMap<String, V>(storageFile, valueExternalizer) {
-    override val keyDescriptor: KeyDescriptor<String>
-        get() = EnumeratorStringDescriptor()
+) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
+    public constructor(
+            storageFile: File,
+            valueExternalizer: DataExternalizer<V>
+    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
 
     override fun dumpKey(key: String): String = key
 }
