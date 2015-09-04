@@ -300,7 +300,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         return classNameForPositionAndInlinedOnes(position).map {
             className -> myDebugProcess.getRequestsManager().createClassPrepareRequest(requestor, className.replace('/', '.'))
-        }
+        }.filterNotNull()
     }
 
     TestOnly
