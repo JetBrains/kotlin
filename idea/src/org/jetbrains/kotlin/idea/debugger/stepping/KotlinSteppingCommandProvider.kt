@@ -45,7 +45,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             ignoreBreakpoints: Boolean,
             stepSize: Int
     ): DebugProcessImpl.ResumeCommand? {
-        if (suspendContext == null) return null
+        if (suspendContext == null || suspendContext.isResumed) return null
 
         val location = computeInManagerThread(suspendContext) {
             it.frameProxy?.location()
@@ -80,7 +80,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     }
 
     override fun getStepOutCommand(suspendContext: SuspendContextImpl?, stepSize: Int): DebugProcessImpl.ResumeCommand? {
-        if (suspendContext == null) return null
+        if (suspendContext == null || suspendContext.isResumed) return null
 
         val location = computeInManagerThread(suspendContext) {
             it.frameProxy?.location()
