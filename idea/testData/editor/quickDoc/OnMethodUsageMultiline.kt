@@ -10,4 +10,4 @@ fun test() {
     <caret>testMethod()
 }
 
-//INFO: <b>internal</b> <b>fun</b> testMethod(): Unit <i>defined in</i> root package<p>Some documentation on two lines.</p>
+//INFO: <b>public</b> <b>fun</b> testMethod(): Unit <i>defined in</i> root package<p>Some documentation on two lines.</p>

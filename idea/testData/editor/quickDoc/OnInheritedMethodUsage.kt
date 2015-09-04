@@ -14,4 +14,4 @@ fun test() {
     D().f<caret>oo()
 }
 
-//INFO: <b>internal</b> <b>open</b> <b>fun</b> foo(): Int <i>defined in</i> D<p>This method returns zero.</p>
+//INFO: <b>public</b> <b>open</b> <b>fun</b> foo(): Int <i>defined in</i> D<p>This method returns zero.</p>
