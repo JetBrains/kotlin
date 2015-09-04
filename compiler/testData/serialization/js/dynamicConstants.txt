@@ -1,35 +1,35 @@
 package test
 
-internal val arrayConst: dynamic = {1.toByte(), 2.toByte()}
-internal val booleanConst: dynamic = true
-internal val byteConst: dynamic = 10.toByte()
-internal val charConst: dynamic = \u0041 ('A')
-internal val doubleConst: dynamic = 3.0.toDouble()
-internal val dynamicConst: dynamic = 100
-internal val enumConst: dynamic = Weapon.ROCK
-internal val floatConst: dynamic = 2.0.toFloat()
-internal val intConst: dynamic = 30
-internal val longConst: dynamic = 40.toLong()
-internal val shortConst: dynamic = 20.toShort()
-internal val stringConst: dynamic = "abcd"
+public val arrayConst: dynamic = {1.toByte(), 2.toByte()}
+public val booleanConst: dynamic = true
+public val byteConst: dynamic = 10.toByte()
+public val charConst: dynamic = \u0041 ('A')
+public val doubleConst: dynamic = 3.0.toDouble()
+public val dynamicConst: dynamic = 100
+public val enumConst: dynamic = Weapon.ROCK
+public val floatConst: dynamic = 2.0.toFloat()
+public val intConst: dynamic = 30
+public val longConst: dynamic = 40.toLong()
+public val shortConst: dynamic = 20.toShort()
+public val stringConst: dynamic = "abcd"
 
-internal final class Class {
+public final class Class {
     public constructor Class()
-    internal final val arrayConst: dynamic = {1.toByte(), 2.toByte()}
-    internal final val booleanConst: dynamic = true
-    internal final val byteConst: dynamic = 10.toByte()
-    internal final val charConst: dynamic = \u0041 ('A')
-    internal final val doubleConst: dynamic = 3.0.toDouble()
-    internal final val dynamicConst: dynamic = 100
-    internal final val enumConst: dynamic = Weapon.ROCK
-    internal final val floatConst: dynamic = 2.0.toFloat()
-    internal final val intConst: dynamic = 30
-    internal final val longConst: dynamic = 40.toLong()
-    internal final val shortConst: dynamic = 20.toShort()
-    internal final val stringConst: dynamic = "abcd"
+    public final val arrayConst: dynamic = {1.toByte(), 2.toByte()}
+    public final val booleanConst: dynamic = true
+    public final val byteConst: dynamic = 10.toByte()
+    public final val charConst: dynamic = \u0041 ('A')
+    public final val doubleConst: dynamic = 3.0.toDouble()
+    public final val dynamicConst: dynamic = 100
+    public final val enumConst: dynamic = Weapon.ROCK
+    public final val floatConst: dynamic = 2.0.toFloat()
+    public final val intConst: dynamic = 30
+    public final val longConst: dynamic = 40.toLong()
+    public final val shortConst: dynamic = 20.toShort()
+    public final val stringConst: dynamic = "abcd"
 }
 
-internal final enum class Weapon : kotlin.Enum<test.Weapon> {
+public final enum class Weapon : kotlin.Enum<test.Weapon> {
     enum entry ROCK
 
     enum entry PAPER
