@@ -97,13 +97,18 @@ public val KType.javaType: Type
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
                 getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
-        val field = this.getField(JvmAbi.KOTLIN_MODULE_FIELD_NAME)
-        if (field != null) {
-            KPackageImpl(this, field.get(null) as String)
-        } else {
+        try {
+            val field = this.getField(JvmAbi.KOTLIN_MODULE_FIELD_NAME)
+            if (field != null) {
+                KPackageImpl(this, field.get(null) as String)
+            }
+            else {
+                null
+            }
+        }
+        catch(e: NoSuchFieldException) {
             null
         }
-
     } else null
 
 
