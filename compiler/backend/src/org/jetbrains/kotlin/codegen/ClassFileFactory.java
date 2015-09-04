@@ -21,12 +21,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -92,14 +94,23 @@ public class ClassFileFactory implements OutputFileCollection {
         final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
+        List<PackageParts> parts = ContainerUtil.newArrayList();
+        Set<File> sourceFiles = new HashSet<File>();
+
         for (PackageCodegen codegen : values) {
-            PackageParts.Companion.serialize(codegen.getPackageParts(), builder);
+            parts.add(codegen.getPackageParts());
+
+            // TODO extract common logic
+            sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
+        }
+
+        for (PackageParts part : CodegenPackage.addCompiledPartsAndSort(parts, state)) {
+            PackageParts.Companion.serialize(part, builder);
         }
 
         if (builder.getPackagePartsCount() != 0) {
-            state.getProgress().reportOutput(Collections.<File>emptyList(), new File(outputFilePath));
-            //TODO: source files?
-            generators.put(outputFilePath, new OutAndSourceFileList(Collections.<File>emptyList()) {
+            state.getProgress().reportOutput(sourceFiles, new File(outputFilePath));
+            generators.put(outputFilePath, new OutAndSourceFileList(KotlinPackage.toList(sourceFiles)) {
                 @Override
                 public byte[] asBytes(ClassBuilderFactory factory) {
                     try {
