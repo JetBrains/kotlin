@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.PackageData;
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedNewPackageMemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 
@@ -68,7 +68,7 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
+    public JetScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, KotlinClassHeader.Kind.FILE_FACADE);
         if (data != null) {
             //all classes are included in java scope
@@ -87,10 +87,10 @@ public final class DeserializedDescriptorResolver {
     }
 
     @NotNull
-    public JetScope createKotlinNewPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
+    public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
         List<JetScope> list = new ArrayList<JetScope>();
         for (KotlinJvmBinaryClass callable : packageParts) {
-            JetScope scope = createKotlinPackageScope(descriptor, callable);
+            JetScope scope = createKotlinPackagePartScope(descriptor, callable);
             if (scope != null) {
                 list.add(scope);
             }
@@ -98,7 +98,7 @@ public final class DeserializedDescriptorResolver {
         if (list.isEmpty()) {
             return JetScope.Empty.INSTANCE$;
         }
-        return new DeserializedNewPackageMemberScope(descriptor, list);
+        return new ChainedScope(descriptor, "Member scope for union of package parts data", list.toArray(new JetScope[list.size()]));
     }
 
     @Nullable

@@ -62,7 +62,7 @@ public class LazyJavaPackageScope(
         if (kotlinBinaryClasses().isEmpty())
             JetScope.Empty
         else {
-            c.components.deserializedDescriptorResolver.createKotlinNewPackageScope(packageFragment, kotlinBinaryClasses())
+            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClasses())
         }
     }
 
