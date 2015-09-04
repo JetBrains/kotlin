@@ -1,4 +1,4 @@
-tailRecursive fun test(x : Int = 0, e : Any = "a") {
+tailrec fun test(x : Int = 0, e : Any = "a") {
     if (!e.equals("a")) {
         throw IllegalArgumentException()
     }

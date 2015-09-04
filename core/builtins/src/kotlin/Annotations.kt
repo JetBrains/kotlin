@@ -78,6 +78,9 @@ public annotation(retention = SOURCE) class Suppress(vararg val names: String)
 target(FUNCTION)
 public annotation(retention = SOURCE) class tailRecursive
 
+target(FUNCTION)
+public annotation(retention = SOURCE) class tailrec
+
 /**
  * Hides the annotated function, property or constructor from the overload resolution,
  * thus preventing its usages from newly compiled code, but keeps compiling it

@@ -1249,6 +1249,10 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, Annotati
         internal final fun <get-names>(): kotlin.Array<out kotlin.String>
 }
 
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class TailRecursive : kotlin.Annotation {
+    /*primary*/ public constructor TailRecursive()
+}
+
 public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String? = ..., /*1*/ cause: kotlin.Throwable? = ...)
     public final fun getCause(): kotlin.Throwable?
@@ -1286,7 +1290,4 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
 
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
-}
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailRecursive : kotlin.Annotation {
-    /*primary*/ public constructor tailRecursive()
 }

@@ -1,4 +1,4 @@
-tailRecursive fun test(x : Int) : Int {
+tailrec fun test(x : Int) : Int {
     if (x == 0) {
         return 0
     } else if (x == 10) {

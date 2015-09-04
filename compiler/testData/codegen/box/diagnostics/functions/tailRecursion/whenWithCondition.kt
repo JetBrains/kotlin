@@ -1,4 +1,4 @@
-tailRecursive fun withWhen(counter : Int) : Int =
+tailrec fun withWhen(counter : Int) : Int =
         when (counter) {
             0 -> counter
             50 -> 1 + <!NON_TAIL_RECURSIVE_CALL!>withWhen<!>(counter - 1)

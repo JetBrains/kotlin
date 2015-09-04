@@ -1,4 +1,4 @@
-tailRecursive fun test(x : Int) : Unit {
+tailrec fun test(x : Int) : Unit {
     if (x == 1) {
         test(x - 1)
     } else if (x == 2) {

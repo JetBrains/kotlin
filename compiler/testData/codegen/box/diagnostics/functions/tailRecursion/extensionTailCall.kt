@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-tailRecursive fun Int.foo(x: Int) {
+tailrec fun Int.foo(x: Int) {
     if (x == 0) return
     return 1.foo(x - 1)
 }

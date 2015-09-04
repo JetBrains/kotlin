@@ -1,4 +1,4 @@
-<!NO_TAIL_CALLS_FOUND!>tailRecursive fun noTails()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec fun noTails()<!> {
     // nothing here
 }
 

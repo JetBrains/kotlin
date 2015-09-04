@@ -1,4 +1,4 @@
-tailRecursive fun foo() {
+tailrec fun foo() {
     try {
         return foo()
     }

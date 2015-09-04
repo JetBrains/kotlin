@@ -1,4 +1,4 @@
-tailRecursive fun test() : Int {
+tailrec fun test() : Int {
     try {
         // do nothing
     } finally {

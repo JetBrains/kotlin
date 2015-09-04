@@ -2,13 +2,13 @@
 
 class B {
     inner class C {
-        tailRecursive fun h(counter : Int) {
+        tailrec fun h(counter : Int) {
             if (counter > 0) {
                 this@C.h(counter - 1)
             }
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailRecursive fun h2(x : Any)<!> {
+        <!NO_TAIL_CALLS_FOUND!>tailrec fun h2(x : Any)<!> {
             this@B.h2("no recursion") // keep vigilance
         }
 

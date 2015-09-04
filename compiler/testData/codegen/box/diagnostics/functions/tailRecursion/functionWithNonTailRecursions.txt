@@ -1,4 +1,4 @@
 package
 
-kotlin.tailRecursive() internal fun badTails(/*0*/ x: kotlin.Int): kotlin.Int
+kotlin.tailrec() internal fun badTails(/*0*/ x: kotlin.Int): kotlin.Int
 internal fun box(): kotlin.String

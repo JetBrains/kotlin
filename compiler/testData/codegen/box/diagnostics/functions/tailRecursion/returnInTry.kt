@@ -1,4 +1,4 @@
-<!NO_TAIL_CALLS_FOUND!>tailRecursive fun test(counter : Int) : Int<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec fun test(counter : Int) : Int<!> {
     if (counter == 0) return 0
 
     try {

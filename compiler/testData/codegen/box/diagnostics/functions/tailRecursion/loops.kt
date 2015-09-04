@@ -1,4 +1,4 @@
-tailRecursive fun test(x : Int) : Int {
+tailrec fun test(x : Int) : Int {
     var z = if (x > 3) 3 else x
     while (z > 0) {
         if (z > 10) {

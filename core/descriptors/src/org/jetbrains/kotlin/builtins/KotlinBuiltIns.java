@@ -171,7 +171,8 @@ public class KotlinBuiltIns {
 
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("deprecated");
-        public final FqName tailRecursive = fqName("tailRecursive");
+        public final FqName tailRecursive = fqName("tailrec");
+        public final FqName tailRecursiveDeprecated = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
         public final FqName inlineOptions = fqName("inlineOptions");
@@ -1031,7 +1032,8 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive)
+               || containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursiveDeprecated);
     }
 
     /** Checks that the symbol represented by the descriptor is annotated with the {@code kotlin.noinline} annotation */
