@@ -469,7 +469,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         v.aconst(thisAsmType);
         if (factory.getArgumentTypes().length == 2) {
-            v.aconst(JvmCodegenUtil.getModuleName(state.getModule()));
+            v.aconst(state.getModuleName());
         }
         v.invokestatic(REFLECTION, factory.getName(), factory.getDescriptor(), false);
         v.putstatic(thisAsmType.getInternalName(), fieldName, type);

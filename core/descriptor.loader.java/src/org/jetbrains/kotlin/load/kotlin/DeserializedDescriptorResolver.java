@@ -69,7 +69,6 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        //TODO add assertion from readData(kotlinClass, CLASS);
         String[] data = readData(kotlinClass, KotlinClassHeader.Kind.FILE_FACADE);
         if (data != null) {
             //all classes are included in java scope

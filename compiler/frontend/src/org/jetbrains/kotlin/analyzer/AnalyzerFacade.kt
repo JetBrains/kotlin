@@ -130,7 +130,7 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             platformParameters: P,
             targetEnvironment: TargetEnvironment,
             delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-            packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { (m, c) -> PackagePartProvider.EMPTY }
+            packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { module, content -> PackagePartProvider.EMPTY }
     ): ResolverForProject<M> {
         val storageManager = projectContext.storageManager
         fun createResolverForProject(): ResolverForProjectImpl<M> {

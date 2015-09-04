@@ -44,13 +44,13 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(`in`: DataInput): PackageParts? {
             val packageFqName = `in`.readUTF()
-            val facades = PackageParts(packageFqName)
+            val parts = PackageParts(packageFqName)
             val size = `in`.readInt()
             (1..size).forEach {
-                facades.parts.add(`in`.readUTF())
+                parts.parts.add(`in`.readUTF())
             }
 
-            return facades
+            return parts
         }
 
         override fun save(out: DataOutput, value: PackageParts?) {

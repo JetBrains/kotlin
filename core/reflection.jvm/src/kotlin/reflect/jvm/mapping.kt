@@ -92,7 +92,7 @@ public val KType.javaType: Type
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
  * for more information.
  */
-@deprecated("After package refactoring it would be impossible to retrieve package by class")
+@deprecated("After dropping old package facades it would be impossible to retrieve package by java class")
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
                 getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {

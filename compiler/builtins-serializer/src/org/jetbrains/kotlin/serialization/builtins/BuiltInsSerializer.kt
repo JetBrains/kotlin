@@ -92,7 +92,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
                 JvmPlatformParameters { throw IllegalStateException() },
                 CompilerEnvironment,
-                packagePartProviderFactory = { a, b -> JvmPackagePartProvider(environment) }
+                packagePartProviderFactory = { module, content -> JvmPackagePartProvider(environment) }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(builtInModule)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors
 interface PackagePartProvider {
 
     /**
-     * return packagepart simple names
+     * return package part simple names
      */
     fun findPackageParts(packageFqName: String): List<String>
 

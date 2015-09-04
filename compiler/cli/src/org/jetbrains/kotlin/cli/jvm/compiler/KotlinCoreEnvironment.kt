@@ -242,10 +242,6 @@ public class KotlinCoreEnvironment private constructor(
         messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
     }
 
-    public fun getJavaRoots() : List<JavaRoot> {
-        return javaRoots
-    }
-
     companion object {
 
         private val APPLICATION_LOCK = Object()

@@ -51,31 +51,11 @@ public class PackageParts(val packageFqName: String) {
 
     val parts = linkedSetOf<String>()
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is PackageParts) {
-            return false;
-        }
+    override fun equals(other: Any?) =
+            other is PackageParts && other.packageFqName == packageFqName && other.parts == parts
 
-        if (other.packageFqName != packageFqName) {
-            return false;
-        }
-
-        if (other.parts.size() != parts.size()) {
-            return false;
-        }
-
-        for (part in other.parts) {
-            if (!parts.contains(part)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    override fun hashCode(): Int {
-        return packageFqName.hashCode() / 3 + parts.size() / 3 + (parts.firstOrNull()?.hashCode() ?: 0) / 3
-    }
+    override fun hashCode() =
+            packageFqName.hashCode() * 31 + parts.hashCode()
 
     companion object {
         @jvmStatic public fun PackageParts.serialize(builder : JvmPackageTable.PackageTable.Builder) {

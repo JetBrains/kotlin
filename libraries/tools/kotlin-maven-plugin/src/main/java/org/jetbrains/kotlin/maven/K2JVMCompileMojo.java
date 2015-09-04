@@ -119,7 +119,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         getLog().info("Using kotlin annotations from " + arguments.annotations);
 
         arguments.moduleName = moduleName;
-        getLog().info("ModuleName is " + moduleName);
+        getLog().info("Module name is " + moduleName);
 
         try {
             Args.parse(arguments, ArrayUtil.toStringArray(args));

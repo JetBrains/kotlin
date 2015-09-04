@@ -55,7 +55,6 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
 
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE.asString());
         assertTrue(aClass.isAnnotationPresent(annotationClass));
-        assertTrue(aClass.isAnnotationPresent(annotationClass));
 
         Annotation kotlinPackage = aClass.getAnnotation(annotationClass);
 
@@ -79,7 +78,6 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
         Class aClass = generateClass(PackagePartClassUtils.getPackagePartFqName(PACKAGE_NAME, DEFAULT_TEST_FILE_NAME).asString());
 
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_FILE_FACADE.asString());
-        assertTrue(aClass.isAnnotationPresent(annotationClass));
         assertTrue(aClass.isAnnotationPresent(annotationClass));
 
         Annotation kotlinPackage = aClass.getAnnotation(annotationClass);
