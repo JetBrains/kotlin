@@ -283,6 +283,14 @@ public interface Comparable</*0*/ in T> {
     public abstract fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class Deprecated : kotlin.Annotation {
+    /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
+    internal final val replaceWith: kotlin.ReplaceWith
+        internal final fun <get-replaceWith>(): kotlin.ReplaceWith
+    internal final val value: kotlin.String
+        internal final fun <get-value>(): kotlin.String
+}
+
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     /*primary*/ private constructor Double()
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
@@ -1249,10 +1257,6 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, Annotati
         internal final fun <get-names>(): kotlin.Array<out kotlin.String>
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class TailRecursive : kotlin.Annotation {
-    /*primary*/ public constructor TailRecursive()
-}
-
 public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String? = ..., /*1*/ cause: kotlin.Throwable? = ...)
     public final fun getCause(): kotlin.Throwable?
@@ -1268,12 +1272,8 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.
     /*primary*/ public constructor data()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class deprecated : kotlin.Annotation {
-    /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
-    internal final val replaceWith: kotlin.ReplaceWith
-        internal final fun <get-replaceWith>(): kotlin.ReplaceWith
-    internal final val value: kotlin.String
-        internal final fun <get-value>(): kotlin.String
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.SOURCE) public final class external : kotlin.Annotation {
+    /*primary*/ public constructor external()
 }
 
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {
@@ -1290,4 +1290,12 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
 
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailRecursive : kotlin.Annotation {
+    /*primary*/ public constructor tailRecursive()
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) public final class tailrec : kotlin.Annotation {
+    /*primary*/ public constructor tailrec()
 }
