@@ -1,5 +1,5 @@
 // PARAM_TYPES: kotlin.String
-// PARAM_DESCRIPTOR: internal final fun kotlin.String.foo(): kotlin.Unit defined in X
+// PARAM_DESCRIPTOR: public final fun kotlin.String.foo(): kotlin.Unit defined in X
 
 fun print(a: Any) {
 

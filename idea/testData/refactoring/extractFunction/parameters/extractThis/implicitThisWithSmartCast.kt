@@ -1,5 +1,5 @@
 // SUGGESTED_NAMES: i, getB
-// PARAM_DESCRIPTOR: internal fun A.ext(): kotlin.Unit defined in root package
+// PARAM_DESCRIPTOR: public fun A.ext(): kotlin.Unit defined in root package
 // PARAM_TYPES: B
 fun main(args: Array<String>) {
     val a: A = B()
