@@ -34,11 +34,15 @@ import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
+private val EXTERNAL_ANNOTATION_CLASS_NAME = FqName("kotlin.external")
+
 
 public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
+    return getAnnotations().findAnnotation(EXTERNAL_ANNOTATION_CLASS_NAME) != null
+           || annotations.findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
 }
 
+public class SuppressNoBodyErrorsForExternalDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, EXTERNAL_ANNOTATION_CLASS_NAME)
 public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
 public class NativeFunChecker : DeclarationChecker {
@@ -51,19 +55,19 @@ public class NativeFunChecker : DeclarationChecker {
         if (!descriptor.hasNativeAnnotation()) return
 
         if (DescriptorUtils.isTrait(descriptor.getContainingDeclaration())) {
-            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_TRAIT.on(declaration))
         }
         else if (descriptor is CallableMemberDescriptor &&
             descriptor.getModality() == Modality.ABSTRACT) {
-            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 
         if (descriptor !is ConstructorDescriptor && declaration is JetDeclarationWithBody && declaration.hasBody()) {
-            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 
         if (descriptor.hasInlineAnnotation()) {
-            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED.on(declaration))
         }
 
     }

@@ -1,17 +1,17 @@
 package
 
 internal interface Tr {
-    kotlin.jvm.native() internal open fun bar(): kotlin.Unit
+    kotlin.external() internal open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.jvm.native() internal abstract fun foo(): kotlin.Unit
+    kotlin.external() internal abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        kotlin.jvm.native() internal final fun bar(): kotlin.Unit
+        kotlin.external() internal final fun bar(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        kotlin.jvm.native() internal final fun foo(): kotlin.Unit
+        kotlin.external() internal final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

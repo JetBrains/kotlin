@@ -5,12 +5,12 @@ import kotlin.platform.*
 
 class WithNative {
     companion object {
-        platformStatic native fun bar(l: Long, s: String): Double
+        platformStatic external fun bar(l: Long, s: String): Double
     }
 }
 
 object ObjWithNative {
-    platformStatic native fun bar(l: Long, s: String): Double
+    platformStatic external fun bar(l: Long, s: String): Double
 }
 
 fun box(): String {

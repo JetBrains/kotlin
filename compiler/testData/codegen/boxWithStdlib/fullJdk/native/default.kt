@@ -4,12 +4,12 @@ import kotlin.jvm.*
 import kotlin.platform.*
 
 object ObjWithNative {
-    native fun foo(x: Int = 1): Double
+    external fun foo(x: Int = 1): Double
 
-    platformStatic native fun bar(l: Long, s: String = ""): Double
+    platformStatic external fun bar(l: Long, s: String = ""): Double
 }
 
-native fun topLevel(x: Int = 1): Double
+external fun topLevel(x: Int = 1): Double
 
 fun box(): String {
     var d = 0.0

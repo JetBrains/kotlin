@@ -53,4 +53,5 @@ public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = tru
  * in Java but rather in a different language (for example, in C/C++ using JNI).
  */
 target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
+@deprecated("Use kotlin.external instead", ReplaceWith("kotlin.external"))
 public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class native

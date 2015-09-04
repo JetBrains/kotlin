@@ -1,27 +1,27 @@
 class C {
     companion object {
         val defaultGetter: Int = 1
-            @native get
+            @external get
 
         var defaultSetter: Int = 1
-            @native get
-            @native set
+            @external get
+            @external set
     }
 
     val defaultGetter: Int = 1
-        @native get
+        @external get
 
     var defaultSetter: Int = 1
-        @native get
-        @native set
+        @external get
+        @external set
 }
 
 val defaultGetter: Int = 1
-    @native get
+    @external get
 
 var defaultSetter: Int = 1
-    @native get
-    @native set
+    @external get
+    @external set
 
 fun check(body: () -> Unit, signature: String): String? {
     try {

@@ -89,3 +89,10 @@ public annotation(retention = SOURCE) class tailrec
 target(FUNCTION, PROPERTY, CONSTRUCTOR)
 annotation(retention = BINARY, mustBeDocumented = true)
 public class HiddenDeclaration
+
+/**
+ * Marks annotated function as `external`, meaning that it's not implemented
+ * in Kotlin but rather in a different language (for example, in C/C++ using JNI or JavaScript).
+ */
+target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
+public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class external

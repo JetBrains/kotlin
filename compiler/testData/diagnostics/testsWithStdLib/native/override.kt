@@ -5,5 +5,5 @@ interface Base {
 }
 
 class Derived : Base {
-    override native fun foo()
+    override external fun foo()
 }
