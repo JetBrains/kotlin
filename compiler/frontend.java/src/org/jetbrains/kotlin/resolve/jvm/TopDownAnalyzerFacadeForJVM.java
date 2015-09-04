@@ -24,14 +24,12 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.frontend.java.di.DiPackage;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.name.Name;
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
-import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -130,6 +127,8 @@ public enum TopDownAnalyzerFacadeForJVM {
 
         LookupTracker lookupTracker =
                 incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.DO_NOTHING;
+
+        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, moduleIds, incrementalCompilationComponents, moduleContext.getStorageManager());
 
         ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,

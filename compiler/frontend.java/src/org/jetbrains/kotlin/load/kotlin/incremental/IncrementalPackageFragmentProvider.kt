@@ -52,14 +52,18 @@ public class IncrementalPackageFragmentProvider(
         val moduleId: String
 ) : PackageFragmentProvider {
 
-    private companion object {
+    companion object {
         private val LOG = Logger.getLogger(IncrementalPackageFragmentProvider::class.java)
+
+        public fun fqNamesToLoad(obsoletePackageParts: Collection<String>, sourceFiles: Collection<JetFile>): Set<FqName> =
+                (obsoletePackageParts.map { JvmClassName.byInternalName(it).packageFqName }
+                 + PackagePartClassUtils.getFilesWithCallables(sourceFiles).map { it.packageFqName }).toSet()
     }
 
     val obsoletePackageParts = incrementalCache.getObsoletePackageParts().toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
-    val fqNamesToLoad: Set<FqName>
+    val fqNamesToLoad: Set<FqName> = fqNamesToLoad(obsoletePackageParts, sourceFiles)
 
     init {
         fun createPackageFragment(fqName: FqName) {
@@ -75,11 +79,6 @@ public class IncrementalPackageFragmentProvider(
 
             fqNameToPackageFragment[fqName] = IncrementalPackageFragment(fqName)
         }
-
-        fqNamesToLoad = (
-                obsoletePackageParts.map { JvmClassName.byInternalName(it).getPackageFqName() }
-                + PackagePartClassUtils.getFilesWithCallables(sourceFiles).map { it.getPackageFqName() }
-        ).toSet()
 
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
@@ -159,4 +158,3 @@ public class IncrementalPackageFragmentProvider(
         }
     }
 }
-
