@@ -7,10 +7,4 @@ plugin\:org.jetbrains.kotlin.android\:androidManifest=$TESTDATA_DIR$/androidPlug
 -P
 plugin\:org.jetbrains.kotlin.android\:androidRes=$TESTDATA_DIR$/androidPlugin/res
 $TESTDATA_DIR$/pluginSimple.kt
-$TESTDATA_DIR$/androidPlugin/androidApp.kt
-$TESTDATA_DIR$/androidPlugin/androidView.kt
-$TESTDATA_DIR$/androidPlugin/androidWidget.kt
-$TESTDATA_DIR$/androidPlugin/fakeAppwidgetPackage.kt
-$TESTDATA_DIR$/androidPlugin/fakeInputMethodServicePackage.kt
-$TESTDATA_DIR$/androidPlugin/fakeOpenglPackage.kt
-$TESTDATA_DIR$/androidPlugin/fakeWebkitPackage.kt
+$TESTDATA_DIR$/androidPlugin
