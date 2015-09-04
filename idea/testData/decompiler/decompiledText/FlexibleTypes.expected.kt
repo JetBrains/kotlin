@@ -3,10 +3,10 @@
 
 package test
 
-internal abstract class FlexibleTypes public constructor() {
-    internal abstract val p: kotlin.Int /* platform type */
+public abstract class FlexibleTypes public constructor() {
+    public abstract val p: kotlin.Int /* platform type */
 
-    internal abstract fun collection(): kotlin.List<kotlin.Int> /* platform type */
+    public abstract fun collection(): kotlin.List<kotlin.Int> /* platform type */
 
-    internal final fun withBody(): kotlin.Int /* platform type */ { /* compiled code */ }
+    public final fun withBody(): kotlin.Int /* platform type */ { /* compiled code */ }
 }

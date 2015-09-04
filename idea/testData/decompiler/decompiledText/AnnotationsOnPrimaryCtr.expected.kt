@@ -3,6 +3,5 @@
 
 package test
 
-internal final class AnnotationsOnPrimaryCtr @[dependency.A dependency.B dependency.C] private constructor() {
+public final class AnnotationsOnPrimaryCtr @[dependency.A dependency.B dependency.C] private constructor() {
 }
-
