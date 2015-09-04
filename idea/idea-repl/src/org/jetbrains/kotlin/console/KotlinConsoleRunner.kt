@@ -34,11 +34,13 @@ import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
+import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.JetLanguage
 import java.awt.Color
 import java.awt.Font
+import java.util.concurrent.ConcurrentHashMap
 import javax.swing.Icon
 import kotlin.properties.Delegates
 
@@ -51,10 +53,12 @@ public class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
+    private val editorToHighlighter = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
+    private val historyHighlighter = KotlinHistoryHighlighter(this)
     private var disposableDescriptor: RunContentDescriptor by Delegates.notNull()
 
-    val executor = KotlinConsoleExecutor(this, historyManager)
+    val executor = KotlinConsoleExecutor(this, historyManager, historyHighlighter)
     var compilerHelper: KotlinConsoleCompilerHelper by Delegates.notNull()
 
     override fun createProcess() = cmdLine.createProcess()
@@ -79,7 +83,10 @@ public class KotlinConsoleRunner(
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
         val processHandler = KotlinReplOutputHandler(
-                KotlinReplOutputHighlighter(this, historyManager, testMode, previousCompilationFailed), process, cmdLine.commandLineString
+                historyHighlighter,
+                KotlinReplOutputHighlighter(this, historyManager, testMode, previousCompilationFailed),
+                process,
+                cmdLine.commandLineString
         )
         val consoleFile = consoleView.virtualFile
         val keeper = KotlinConsoleKeeper.getInstance(project)
@@ -162,7 +169,13 @@ public class KotlinConsoleRunner(
                 0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE
         )
 
+        editorToHighlighter[editor] = indicatorHighlighter
         indicatorHighlighter.gutterIconRenderer = indicator
+    }
+
+    fun changeConsoleEditorIndicator(newIcon: Icon) {
+        val editorHighlighter = editorToHighlighter[consoleView.consoleEditor]
+        editorHighlighter?.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIcon)
     }
 
     // this method shouldn't be called in normal usage; it is for test purpose only

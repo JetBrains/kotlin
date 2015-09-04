@@ -54,10 +54,16 @@ public class ReplFromTerminal {
         String replIdeMode = System.getProperty("repl.ideMode");
         ideMode = replIdeMode != null && replIdeMode.equals("true");
 
+        // wrapper for `out` is required to escape every input in [ideMode];
+        // if [ideMode == false] then just redirects all input to [System.out]
+        // if user calls [System.setOut(...)] then undefined behaviour
+        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
+        System.setOut(replWriter);
+
         // wrapper for `in` is required to give user possibility of calling
         // [readLine] from ide-console repl
         if (ideMode) {
-            replReader = new ReplSystemInWrapper(System.in);
+            replReader = new ReplSystemInWrapper(System.in, replWriter);
             System.setIn(replReader);
         }
 
@@ -75,12 +81,6 @@ public class ReplFromTerminal {
                 }
             }
         }.start();
-
-        // wrapper for `out` is required to escape every input in [ideMode];
-        // if [ideMode == false] then just redirects all input to [System.out]
-        // if user calls [System.setOut(...)] then undefined behaviour
-        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
-        System.setOut(replWriter);
 
         try {
             OutputStream outStream = System.out;

@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.idea.JetIcons
 import javax.swing.Icon
 
 public object ReplIcons {
-    public val BUILD_WARNING_INDICATOR: Icon = AllIcons.General.Information
+    public val BUILD_WARNING_INDICATOR: Icon = AllIcons.Ide.Warning_notifications
     public val HISTORY_INDICATOR: Icon = AllIcons.General.MessageHistory
     public val EDITOR_INDICATOR: Icon = JetIcons.LAUNCH
-    public val INCOMPLETE_INDICATOR: Icon = AllIcons.Nodes.Desktop
+    public val EDITOR_READLINE_INDICATOR: Icon = AllIcons.General.Balloon
     public val COMMAND_MARKER: Icon = AllIcons.General.Run
+    public val READLINE_MARKER: Icon = AllIcons.Icons.Ide.SpeedSearchPrompt
 
     // command result icons
     public val SYSTEM_HELP: Icon = AllIcons.Actions.Menu_help

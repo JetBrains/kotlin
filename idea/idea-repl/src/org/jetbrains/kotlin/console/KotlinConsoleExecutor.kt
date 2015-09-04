@@ -26,10 +26,9 @@ private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 public class KotlinConsoleExecutor(
         private val runner: KotlinConsoleRunner,
-        private val historyManager: KotlinConsoleHistoryManager
+        private val historyManager: KotlinConsoleHistoryManager,
+        private val historyHighlighter: KotlinHistoryHighlighter
 ) {
-    private val historyHighlighter = KotlinHistoryHighlighter(runner)
-
     fun executeCommand() = WriteCommandAction.runWriteCommandAction(runner.project) {
         val consoleView = runner.consoleView
         val document = consoleView.editorDocument

@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-public class ReplSystemInWrapper(private val stdin: InputStream) : InputStream() {
+public class ReplSystemInWrapper(
+        private val stdin: InputStream,
+        private val replWriter: ReplSystemOutWrapper
+) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastScriptByteProcessed = false
     private var byteBuilder = ByteArrayOutputStream()
@@ -30,6 +33,14 @@ public class ReplSystemInWrapper(private val stdin: InputStream) : InputStream()
         get() = curBytePos == inputByteArray.size()
 
     var isReplScriptExecuting = false
+        set(value) {
+            if (value)
+                replWriter.printlnReadLineStart()
+            else
+                replWriter.printlnReadLineEnd()
+
+            $isReplScriptExecuting = value
+        }
 
     override synchronized fun read(): Int {
         if (isLastScriptByteProcessed && isReplScriptExecuting) {

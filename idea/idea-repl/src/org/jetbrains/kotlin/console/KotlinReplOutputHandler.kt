@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.console.actions.logError
+import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.w3c.dom.Element
@@ -37,6 +38,7 @@ public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 
 public class KotlinReplOutputHandler(
+        private val historyHighlighter: KotlinHistoryHighlighter,
         private val outputHighlighter: KotlinReplOutputHighlighter,
         process: Process,
         commandLine: String
@@ -61,6 +63,8 @@ public class KotlinReplOutputHandler(
             "HELP_PROMPT"     -> outputHighlighter.printHelp(content)
             "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
             "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
+            "READLINE_START"  -> historyHighlighter.isReadLineMode = true
+            "READLINE_END"    -> historyHighlighter.isReadLineMode = false
             "REPL_INCOMPLETE",
             "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
             "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError(content)
