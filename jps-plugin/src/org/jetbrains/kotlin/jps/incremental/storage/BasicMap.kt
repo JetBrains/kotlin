@@ -91,8 +91,8 @@ public abstract class BasicMap<K : Comparable<K>, V>(
 }
 
 public abstract class BasicStringMap<V>(
-        private val storageFile: File,
-        private val valueExternalizer: DataExternalizer<V>
+        storageFile: File,
+        valueExternalizer: DataExternalizer<V>
 ) : BasicMap<String, V>(storageFile, valueExternalizer) {
     override val keyDescriptor: KeyDescriptor<String>
         get() = EnumeratorStringDescriptor()
