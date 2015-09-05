@@ -27,13 +27,13 @@ class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartPro
 
     fun registerModule(moduleName: String) {
         module2Mapping.putIfAbsent(moduleName, lazy {
-           val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}") ?: return@lazy ModuleMapping()
+           val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}") ?: return@lazy ModuleMapping.create()
 
             try {
-                return@lazy ModuleMapping(resourceAsStream.readBytes())
+                return@lazy ModuleMapping.create(resourceAsStream.readBytes())
             }
             catch (e: Exception) {
-                return@lazy ModuleMapping()
+                return@lazy ModuleMapping.create()
             }
         })
     }

@@ -16,27 +16,12 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
-import java.io.Writer
+import java.io.ByteArrayInputStream
+import java.io.DataInputStream
 
-public class ModuleMapping(proto: ByteArray? = null) {
-
-    val packageFqName2Parts = hashMapOf<String, PackageParts>()
-
-    init {
-        if (proto != null) {
-            val parseFrom: JvmPackageTable.PackageTable? = JvmPackageTable.PackageTable.parseFrom(proto)
-            if (parseFrom != null) {
-                parseFrom.packagePartsList.map {
-                    val packageParts = PackageParts(it.packageFqName)
-                    packageFqName2Parts.put(it.packageFqName, packageParts)
-                    it.classNameList.map {
-                        packageParts.parts.add(it)
-                    }
-                }
-            }
-        }
-    }
+public class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
 
     fun findPackageParts(packageFqName: String): PackageParts? {
         return packageFqName2Parts[packageFqName]
@@ -44,6 +29,34 @@ public class ModuleMapping(proto: ByteArray? = null) {
 
     companion object {
         public val MAPPING_FILE_EXT: String = "kotlin_module";
+
+        public val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
+
+        fun create(protoWithAbi: ByteArray? = null): ModuleMapping {
+            if (protoWithAbi == null) {
+                return EMPTY
+            }
+
+            val inputStream = DataInputStream(ByteArrayInputStream(protoWithAbi))
+            val intCount = inputStream.readInt()
+            assert(intCount == 1, {"Expected one int value for abi version, but: $intCount"})
+            val abiVersion = Integer.valueOf(inputStream.readInt());
+            if (AbiVersionUtil.isAbiVersionCompatible(abiVersion)) {
+                val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
+                if (parseFrom != null) {
+                    val packageFqNameParts = hashMapOf<String, PackageParts>()
+                    parseFrom.packagePartsList.forEach {
+                        val packageParts = PackageParts(it.packageFqName)
+                        packageFqNameParts.put(it.packageFqName, packageParts)
+                        it.classNameList.forEach {
+                            packageParts.parts.add(it)
+                        }
+                    }
+                    return ModuleMapping(packageFqNameParts)
+                }
+            }
+            return EMPTY
+        }
     }
 }
 
@@ -58,7 +71,7 @@ public class PackageParts(val packageFqName: String) {
             packageFqName.hashCode() * 31 + parts.hashCode()
 
     companion object {
-        @jvmStatic public fun PackageParts.serialize(builder : JvmPackageTable.PackageTable.Builder) {
+        @jvmStatic public fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
             if (this.parts.isNotEmpty()) {
                 val packageParts = JvmPackageTable.PackageParts.newBuilder()
                 packageParts.setPackageFqName(this.packageFqName)

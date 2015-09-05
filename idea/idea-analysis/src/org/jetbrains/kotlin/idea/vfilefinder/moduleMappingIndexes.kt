@@ -78,9 +78,9 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
 
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return object : DataIndexer<String, PackageParts, FileContent> {
-            override fun map(inputData: FileContent): MutableMap<String, PackageParts> {
+            override fun map(inputData: FileContent): Map<String, PackageParts> {
                 val content = inputData.getContent()
-                val moduleMapping = ModuleMapping(content)
+                val moduleMapping = ModuleMapping.create(content)
                 return moduleMapping.packageFqName2Parts
             }
         }

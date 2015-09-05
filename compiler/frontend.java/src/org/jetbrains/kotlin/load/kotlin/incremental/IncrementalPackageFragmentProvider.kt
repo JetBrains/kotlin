@@ -101,7 +101,7 @@ public class IncrementalPackageFragmentProvider(
                 JetScope.Empty
             }
             else {
-                val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping(it) }
+                val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
 
                 val actualPackagePartFiles =
                         moduleMapping?.findPackageParts(fqName.asString())?.let {

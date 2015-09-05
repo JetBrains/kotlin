@@ -47,7 +47,7 @@ public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePar
         }.filterNotNull().flatMap {
             it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }.toList<VirtualFile>()
         }.map {
-            ModuleMapping(it.contentsToByteArray())
+            ModuleMapping.create(it.contentsToByteArray())
         }
 
         return mappings.map { it.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
