@@ -16,15 +16,23 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TagsTestDataUtil;
+import org.testng.collections.Lists;
 
 import java.io.File;
 
 public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
+    private static final String TEST_RELATIVE_DIR = "wordSelection";
+
     public void testStatements() { doTest(); }
 
     public void testWhenEntries() { doTest(); }
@@ -74,7 +82,20 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
             afterFiles[i - 1] = dirName + File.separator + i + ".kt";
         }
 
-        CodeInsightTestUtil.doWordSelectionTest(myFixture, dirName + File.separator + "0.kt", afterFiles);
+        try {
+            CodeInsightTestUtil.doWordSelectionTest(myFixture,  dirName + File.separator + "0.kt", afterFiles);
+        }
+        catch (FileComparisonFailure error) {
+            wrapToFileComparisonFailure(error.getFilePath());
+        }
+        catch (AssertionError error) {
+            String message = error.getMessage();
+            String path = message.substring(0, message.indexOf(":"));
+
+            String fullPath = new File(new File(PluginTestCaseBase.getTestDataPathBase(), TEST_RELATIVE_DIR), path).getPath();
+
+            wrapToFileComparisonFailure(fullPath);
+        }
     }
 
     @NotNull
@@ -86,9 +107,26 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     @Override
     public void setUp() {
         super.setUp();
-        String testRelativeDir = "wordSelection";
-        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +
+        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), TEST_RELATIVE_DIR).getPath() +
                                   File.separator);
+    }
+
+    private void wrapToFileComparisonFailure(String failedFilePath) {
+        Editor editor = myFixture.getEditor();
+
+        Caret caret = editor.getCaretModel().getCurrentCaret();
+        int selectionStart = caret.getSelectionStart();
+        int selectionEnd = caret.getSelectionEnd();
+
+        String actualText = TagsTestDataUtil.insertTagsInText(
+                Lists.<TagsTestDataUtil.TagInfo>newArrayList(
+                        new TagsTestDataUtil.TagInfo<String>(caret.getOffset(), true, "caret"),
+                        new TagsTestDataUtil.TagInfo<String>(selectionStart, true, "selection"),
+                        new TagsTestDataUtil.TagInfo<String>(selectionEnd, false, "selection")),
+                editor.getDocument().getText()
+        );
+
+        JetTestUtils.assertEqualsToFile(new File(failedFilePath), actualText);
     }
 
 }
