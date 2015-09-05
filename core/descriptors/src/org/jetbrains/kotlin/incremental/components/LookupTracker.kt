@@ -31,7 +31,7 @@ public interface LookupTracker {
     )
 
     companion object {
-        val DO_NOTHING = object : LookupTracker {
+        val DO_NOTHING: LookupTracker = object : LookupTracker {
             override fun record(
                     lookupContainingFile: String,
                     lookupLine: Int?,
