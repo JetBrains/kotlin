@@ -27,12 +27,17 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.rmi.*;
+import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportCategory;
+import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportMessage;
+import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -89,6 +94,24 @@ public class KotlinCompilerRunner {
                     incrementalCaches);
     }
 
+    private static void ProcessCompilerOutput(
+            MessageCollector messageCollector,
+            OutputItemsCollector collector,
+            ByteArrayOutputStream stream,
+            String exitCode
+    ) {
+        BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
+        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector);
+
+        if (INTERNAL_ERROR.equals(exitCode)) {
+            reportInternalCompilerError(messageCollector);
+        }
+    }
+
+    private static void reportInternalCompilerError(MessageCollector messageCollector) {
+        messageCollector.report(ERROR, "Compiler terminated with internal error", NO_LOCATION);
+    }
+
     private static void runCompiler(
             String compilerClassName,
             CommonCompilerArguments arguments,
@@ -98,29 +121,6 @@ public class KotlinCompilerRunner {
             CompilerEnvironment environment,
             Map<TargetId, IncrementalCache> incrementalCaches
     ) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(stream);
-
-        String exitCode = execCompiler(compilerClassName, arguments, additionalArguments, environment, incrementalCaches, out, messageCollector);
-
-        BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
-        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector);
-
-        if (INTERNAL_ERROR.equals(exitCode)) {
-            messageCollector.report(ERROR, "Compiler terminated with internal error", NO_LOCATION);
-        }
-    }
-
-    @NotNull
-    private static String execCompiler(
-            String compilerClassName,
-            CommonCompilerArguments arguments,
-            String additionalArguments,
-            CompilerEnvironment environment,
-            Map<TargetId, IncrementalCache> incrementalCaches,
-            PrintStream out,
-            MessageCollector messageCollector
-    ) {
         try {
             messageCollector.report(INFO, "Using kotlin-home = " + environment.getKotlinPaths().getHomePath(), NO_LOCATION);
 
@@ -129,36 +129,71 @@ public class KotlinCompilerRunner {
 
             String[] argsArray = ArrayUtil.toStringArray(argumentsList);
 
-            // trying the daemon first
-            if (incrementalCaches != null && RmiPackage.isDaemonEnabled()) {
-                File libPath = CompilerRunnerUtil.getLibPath(environment.getKotlinPaths(), messageCollector);
-                // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
-                //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
-                CompilerId compilerId = CompilerId.makeCompilerId(new File(libPath, "kotlin-compiler.jar"));
-                DaemonOptions daemonOptions = RmiPackage.configureDaemonOptions();
-                DaemonJVMOptions daemonJVMOptions = RmiPackage.configureDaemonLaunchingOptions(true);
-                // TODO: find proper stream to report daemon connection progress
-                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, System.out, true, true);
-                if (daemon != null) {
-                    Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, out);
-                    return res.toString();
-                }
+            if (!tryCompileWithDaemon(messageCollector, collector, environment, incrementalCaches, argsArray)) {
+                // otherwise fallback to in-process
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                PrintStream out = new PrintStream(stream);
+
+                Object rc = CompilerRunnerUtil.invokeExecMethod( compilerClassName, argsArray, environment, messageCollector, out);
+
+                // exec() returns an ExitCode object, class of which is loaded with a different class loader,
+                // so we take it's contents through reflection
+                ProcessCompilerOutput(messageCollector, collector, stream, getReturnCodeFromObject(rc));
             }
-
-            // otherwise fallback to in-process
-
-            Object rc = CompilerRunnerUtil.invokeExecMethod(
-                    compilerClassName, argsArray, environment, messageCollector, out
-            );
-
-            // exec() returns an ExitCode object, class of which is loaded with a different class loader,
-            // so we take it's contents through reflection
-            return getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
             MessageCollectorUtil.reportException(messageCollector, e);
-            return INTERNAL_ERROR;
+            reportInternalCompilerError(messageCollector);
         }
+    }
+
+    private static boolean tryCompileWithDaemon(
+            MessageCollector messageCollector,
+            OutputItemsCollector collector,
+            CompilerEnvironment environment,
+            Map<TargetId, IncrementalCache> incrementalCaches,
+            String[] argsArray
+    ) throws IOException {
+        if (incrementalCaches != null && RmiPackage.isDaemonEnabled()) {
+            File libPath = CompilerRunnerUtil.getLibPath(environment.getKotlinPaths(), messageCollector);
+            // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
+            //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
+            CompilerId compilerId = CompilerId.makeCompilerId(new File(libPath, "kotlin-compiler.jar"));
+            DaemonOptions daemonOptions = RmiPackage.configureDaemonOptions();
+            DaemonJVMOptions daemonJVMOptions = RmiPackage.configureDaemonJVMOptions(true);
+
+            ArrayList<DaemonReportMessage> daemonReportMessages = new ArrayList<DaemonReportMessage>();
+
+            CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, new DaemonReportingTargets(null, daemonReportMessages), true, true);
+
+            for (DaemonReportMessage msg: daemonReportMessages) {
+                if (msg.getCategory() == DaemonReportCategory.EXCEPTION && daemon == null) {
+                    messageCollector.report(CompilerMessageSeverity.INFO,
+                                            "Falling  back to compilation without daemon due to error: " + msg.getMessage(),
+                                            CompilerMessageLocation.NO_LOCATION);
+                }
+                else {
+                    messageCollector.report(CompilerMessageSeverity.INFO, msg.getMessage(), CompilerMessageLocation.NO_LOCATION);
+                }
+            }
+
+            if (daemon != null) {
+                ByteArrayOutputStream compilerOut = new ByteArrayOutputStream();
+                ByteArrayOutputStream daemonOut = new ByteArrayOutputStream();
+
+                Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, compilerOut, daemonOut);
+
+                ProcessCompilerOutput(messageCollector, collector, compilerOut, res.toString());
+                BufferedReader reader = new BufferedReader(new StringReader(daemonOut.toString()));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    messageCollector.report(CompilerMessageSeverity.INFO, line, CompilerMessageLocation.NO_LOCATION);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
