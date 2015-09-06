@@ -47,7 +47,8 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         val registry: Registry,
         val compiler: Compiler,
         val selfCompilerId: CompilerId,
-        val daemonOptions: DaemonOptions
+        val daemonOptions: DaemonOptions,
+        port: Int
 ) : CompileService, UnicastRemoteObject() {
 
     // RMI-exposed API
@@ -123,7 +124,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             // ignoring if object already exported
         }
 
-        val stub = UnicastRemoteObject.exportObject(this, 0) as CompileService
+        val stub = UnicastRemoteObject.exportObject(this, port, clientLoopbackSocketFactory, serverLoopbackSocketFactory) as CompileService
         registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
         alive = true
     }
