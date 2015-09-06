@@ -44,6 +44,7 @@ public data class DaemonReportMessage(public val category: DaemonReportCategory,
 
 public class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
 
+
 public class KotlinCompilerClient {
 
     companion object {
@@ -85,7 +86,7 @@ public class KotlinCompilerClient {
 
         private fun tryConnectToDaemon(port: Int, reportingTargets: DaemonReportingTargets): CompileService? {
             try {
-                val daemon = LocateRegistry.getRegistry("localhost", port)
+                val daemon = LocateRegistry.getRegistry(loopbackAddrName, port)
                         ?.lookup(COMPILER_SERVICE_RMI_NAME)
                 if (daemon != null)
                     return daemon as? CompileService ?:

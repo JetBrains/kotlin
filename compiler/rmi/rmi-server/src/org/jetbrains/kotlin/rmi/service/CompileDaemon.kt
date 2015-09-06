@@ -114,6 +114,7 @@ public class CompileDaemon {
                 log.info("starting daemon")
 
                 // TODO: find minimal set of permissions and restore security management
+                // note: may be not needed anymore since (hopefully) server is now loopback-only
                 //            if (System.getSecurityManager() == null)
                 //                System.setSecurityManager (RMISecurityManager())
                 //
@@ -132,7 +133,7 @@ public class CompileDaemon {
                 runFile.deleteOnExit()
 
                 val compiler = K2JVMCompiler()
-                val compilerService = CompileServiceImpl(registry, compiler, compilerId, daemonOptions)
+                val compilerService = CompileServiceImpl(registry, compiler, compilerId, daemonOptions, port)
 
                 if (daemonOptions.runFilesPath.isNotEmpty())
                     println(daemonOptions.runFilesPath)
@@ -189,10 +190,11 @@ public class CompileDaemon {
         private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
             var i = 0
             var lastException: RemoteException? = null
+
             while (i++ < attempts) {
                 val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
                 try {
-                    return Pair(LocateRegistry.createRegistry(port), port)
+                    return Pair(LocateRegistry.createRegistry(port, clientLoopbackSocketFactory, serverLoopbackSocketFactory), port)
                 }
                 catch (e: RemoteException) {
                     // assuming that the port is already taken
