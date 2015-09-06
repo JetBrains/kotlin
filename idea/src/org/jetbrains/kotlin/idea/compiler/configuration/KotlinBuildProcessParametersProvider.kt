@@ -17,12 +17,22 @@
 package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.compiler.server.BuildProcessParametersProvider
+import org.jetbrains.kotlin.idea.PluginStartupComponent
 
-public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings: KotlinCompilerWorkspaceSettings): BuildProcessParametersProvider() {
+public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings: KotlinCompilerWorkspaceSettings,
+                                                  private val kotlinPluginStartupComponent: PluginStartupComponent
+): BuildProcessParametersProvider() {
     override fun getVMArguments(): MutableList<String> {
-        return if (compilerWorkspaceSettings.incrementalCompilationEnabled)
-            arrayListOf()
-        else
-            arrayListOf("-Dkotlin.incremental.compilation=false")
+        val res = arrayListOf<String>()
+        if (compilerWorkspaceSettings.incrementalCompilationEnabled) {
+            res.add("-Dkotlin.incremental.compilation=false")
+        }
+        kotlinPluginStartupComponent.aliveFlagPath.let {
+            if (!it.isBlank()) {
+                // TODO: cosider taking the property name from compiler/rmi-interface (check whether dependency will be not too heavy)
+                res.add("-Dkotlin.daemon.client.alive.path=$it")
+            }
+        }
+        return res
     }
 }

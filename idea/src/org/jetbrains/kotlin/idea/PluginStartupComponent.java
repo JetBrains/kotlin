@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.PathUtil;
 
+import java.io.File;
+import java.io.IOException;
+
 public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
 
@@ -48,6 +51,22 @@ public class PluginStartupComponent implements ApplicationComponent {
     private static void registerPathVariable() {
         PathMacros macros = PathMacros.getInstance();
         macros.setMacro(KOTLIN_BUNDLED, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
+    }
+
+    private String aliveFlagPath;
+
+    public String getAliveFlagPath() {
+        if (aliveFlagPath == null) {
+            try {
+                File flagFile = File.createTempFile("kotlin-idea-", "-is-running");
+                flagFile.deleteOnExit();
+                aliveFlagPath = flagFile.getAbsolutePath();
+            }
+            catch (IOException e) {
+                aliveFlagPath = "";
+            }
+        }
+        return this.aliveFlagPath;
     }
 
     @Override
