@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.daemon
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.CliBaseTest
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.rmi.CompilerId
 import org.jetbrains.kotlin.rmi.DaemonJVMOptions
 import org.jetbrains.kotlin.rmi.DaemonOptions
+import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.ByteArrayOutputStream
@@ -40,7 +42,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }
 
     private fun compileOnDaemon(args: Array<out String>): CompilerResults {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, System.err, autostart = true, checkId = true)
+        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
         TestCase.assertNotNull("failed to connect daemon", daemon)
         val strm = ByteArrayOutputStream()
         val code = KotlinCompilerClient.compile(daemon!!, args, strm)

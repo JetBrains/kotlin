@@ -57,12 +57,19 @@ public interface CompileService : Remote {
     public fun shutdown()
 
     throws(RemoteException::class)
-    public fun remoteCompile(args: Array<out String>, errStream: RemoteOutputStream, outputFormat: OutputFormat): Int
+    public fun remoteCompile(
+            args: Array<out String>,
+            compilerOutputStream: RemoteOutputStream,
+            outputFormat: OutputFormat,
+            serviceOutputStream: RemoteOutputStream
+    ): Int
 
     throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
             caches: Map<TargetId, RemoteIncrementalCache>,
-            outputStream: RemoteOutputStream,
-            outputFormat: OutputFormat): Int
+            compilerOutputStream: RemoteOutputStream,
+            compilerOutputFormat: OutputFormat,
+            serviceOutputStream: RemoteOutputStream
+    ): Int
 }
