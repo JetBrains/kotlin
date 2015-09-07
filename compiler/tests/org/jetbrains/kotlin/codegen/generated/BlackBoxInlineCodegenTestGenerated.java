@@ -481,6 +481,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTestMultiFileWithInlineCheck(fileName);
         }
 
+        @TestMetadata("kt8948.1.kt")
+        public void testKt8948() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt8948v2.1.kt")
+        public void testKt8948v2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("nestedNonLocals.1.kt")
         public void testNestedNonLocals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.1.kt");

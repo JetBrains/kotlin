@@ -143,7 +143,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
             AbstractInsnNode markedReturn = curIns;
             AbstractInsnNode instrInsertFinallyBefore = markedReturn.getPrevious();
-            AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious().getPrevious();
+            AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious();
             assert markedReturn.getNext() instanceof LabelNode : "Label should be occurred after non-local return";
             LabelNode newFinallyEnd = (LabelNode) markedReturn.getNext();
             Type nonLocalReturnType = InlineCodegenUtil.getReturnType(markedReturn.getOpcode());
@@ -166,15 +166,14 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 List<TryCatchBlockNodeInfo> clusterBlocks = clusterToFindFinally.getBlocks();
                 TryCatchBlockNodeInfo nodeWithDefaultHandlerIfExists = clusterBlocks.get(clusterBlocks.size() - 1);
 
+                FinallyBlockInfo finallyInfo = findFinallyBlockBody(nodeWithDefaultHandlerIfExists, getTryBlocksMetaInfo().getAllIntervals());
+                if (finallyInfo == null) continue;
 
                 if (nodeWithDefaultHandlerIfExists.getOnlyCopyNotProcess()) {
                     //lambdas finally generated before non-local return instruction,
                     //so it's a gap in try/catch handlers
                     throw new RuntimeException("Lambda try blocks should be skipped");
                 }
-
-                FinallyBlockInfo finallyInfo = findFinallyBlockBody(nodeWithDefaultHandlerIfExists, getTryBlocksMetaInfo().getAllIntervals());
-                if (finallyInfo == null) continue;
 
                 originalDepthIndex++;
 
