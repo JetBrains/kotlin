@@ -3070,12 +3070,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localVar.kt")
-        public void testLocalVar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/localVar.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("memberFunction.kt")
         public void testMemberFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunction.kt");

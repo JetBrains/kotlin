@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
@@ -95,7 +93,7 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope) + additionalScopes.scopes)
+                                       listOf(explicitImportsScope) + additionalScopes.scopes) ?: return null
 
         var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
 
@@ -178,7 +176,7 @@ object ReplaceWithAnnotationAnalyzer {
         val module = symbolDescriptor.module
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope))
+        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope)) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()
@@ -229,7 +227,7 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<JetScope>): LexicalScope {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<JetScope>): LexicalScope? {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.containingDeclaration
@@ -240,28 +238,21 @@ object ReplaceWithAnnotationAnalyzer {
                 ChainedScope(ownerDescriptor, "ReplaceWith resolution scope", descriptor.memberScope, *additionalScopes.toTypedArray()).asLexicalScope()
 
             is ClassDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes)
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
                 ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
             }
 
             is FunctionDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes)
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
                 FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, RedeclarationHandler.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes)
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
                 JetScopeUtils.getPropertyDeclarationInnerScope(descriptor, outerScope, RedeclarationHandler.DO_NOTHING)
             }
 
-            //TODO: it's not correct (it does not use additionalScopes!), drop this branch
-            is LocalVariableDescriptor -> {
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
-                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!.asLexicalScope()
-            }
-
-            //TODO?
-            else -> throw IllegalArgumentException("Cannot find resolution scope for $descriptor")
+            else -> return null // something local, should not work with ReplaceWith
         }
     }
 }
