@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.StringValue
 
 public object JvmFileClassUtil {
-    public val JVM_NAME: FqName = FqName("kotlin.jvm.jvmName")
+    public val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
     public val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
 
     // TODO @JvmMultifileClass

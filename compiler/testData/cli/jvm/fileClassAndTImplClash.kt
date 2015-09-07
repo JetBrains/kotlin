@@ -1,4 +1,4 @@
-@file:jvmName("XXX\$\$TImpl")
+@file:JvmName("XXX\$\$TImpl")
 package test
 
 interface XXX
