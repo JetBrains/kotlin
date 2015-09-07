@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.findUsages.handlers
 
-import com.intellij.find.findUsages.*
+import com.intellij.find.findUsages.AbstractFindUsagesDialog
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaFindUsagesHelper
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -130,6 +132,7 @@ public class KotlinFindClassUsagesHandler(
                                        options: KotlinClassFindUsagesOptions,
                                        processor: Processor<PsiReference>): Boolean {
         val searchParameters = KotlinReferencesSearchParameters(classOrObject,
+                                                                scope = options.searchScope,
                                                                 kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
         var usagesQuery = ReferencesSearch.search(searchParameters)
 
@@ -180,7 +183,7 @@ public class KotlinFindClassUsagesHandler(
         for (decl in classOrObject.effectiveDeclarations()) {
             if ((decl is JetNamedFunction && options.isMethodsUsages) ||
                 ((decl is JetProperty || decl is JetParameter) && options.isFieldsUsages)) {
-                if (!ReferencesSearch.search(decl).forEach(processor)) return false
+                if (!ReferencesSearch.search(decl, options.searchScope).forEach(processor)) return false
             }
         }
         return true

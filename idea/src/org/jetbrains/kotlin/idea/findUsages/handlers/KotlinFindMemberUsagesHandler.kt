@@ -125,6 +125,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
         if (options.isUsages) {
             val searchParameters = KotlinReferencesSearchParameters(element,
+                                                                    scope = options.searchScope,
                                                                     kotlinOptions = createKotlinReferencesSearchOptions(options))
 
             val query = applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))
