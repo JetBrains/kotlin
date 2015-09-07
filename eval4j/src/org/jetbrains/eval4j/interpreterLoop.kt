@@ -182,6 +182,7 @@ public fun interpreterLoop(
                                     Type.BYTE -> byte(value.int.toByte())
                                     Type.SHORT -> short(value.int.toShort())
                                     Type.CHAR -> char(value.int.toChar())
+                                    Type.INT -> int(value.int)
                                     else -> throw UnsupportedByteCodeException("Should not be coerced: $expectedType")
                                 }
                                 return ValueReturned(coerced)
