@@ -243,7 +243,8 @@ public class IncrementalCacheImpl(
                 packagePartMap.addPackagePart(className)
 
                 protoMap.process(kotlinClass, isPackage = true) +
-                constantsMap.process(kotlinClass)
+                constantsMap.process(kotlinClass) +
+                inlineFunctionsMap.process(kotlinClass)
             }
             header.isCompatibleClassKind() && JvmAnnotationNames.KotlinClass.Kind.CLASS == header.classKind ->
                 protoMap.process(kotlinClass, isPackage = false) +
