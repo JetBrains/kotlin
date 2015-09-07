@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -46,11 +46,11 @@ import java.util.*
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
-        val module: ModuleDescriptor,
+        val moduleDescriptor: ModuleDescriptor,
         val storageManager: StorageManager,
         val deserializationComponents: DeserializationComponents,
         val incrementalCache: IncrementalCache,
-        val target: Module
+        val target: TargetId
 ) : PackageFragmentProvider {
 
     companion object {
@@ -93,8 +93,8 @@ public class IncrementalPackageFragmentProvider(
     }
 
 
-    public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(module, fqName) {
-        public val target: Module
+    public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
+        public val target: TargetId
             get() = this@IncrementalPackageFragmentProvider.target
 
         val memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {

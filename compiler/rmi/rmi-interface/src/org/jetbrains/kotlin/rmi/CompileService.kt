@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.rmi
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
-import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -63,7 +63,7 @@ public interface CompileService : Remote {
     throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
-            caches: Map<Module, RemoteIncrementalCache>,
+            caches: Map<TargetId, RemoteIncrementalCache>,
             outputStream: RemoteOutputStream,
             outputFormat: OutputFormat): Int
 }

@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.components
+package org.jetbrains.kotlin.modules
 
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 
-public interface IncrementalCompilationComponents {
-    public fun getIncrementalCache(target: TargetId): IncrementalCache
-    public fun getLookupTracker(): LookupTracker
-}
+public fun TargetId(moduleBuildTarget: ModuleBuildTarget): TargetId =
+        TargetId(moduleBuildTarget.id, moduleBuildTarget.targetType.typeId)

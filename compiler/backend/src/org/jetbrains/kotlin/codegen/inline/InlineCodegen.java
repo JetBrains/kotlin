@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
-import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -748,11 +747,11 @@ public class InlineCodegen extends CallGenerator {
             @NotNull FunctionDescriptor targetDescriptor
     ) {
         IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
-        Module target = state.getTarget();
+        TargetId targetId = state.getTargetId();
 
-        if (incrementalCompilationComponents == null || target == null) return;
+        if (incrementalCompilationComponents == null || targetId == null) return;
 
-        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
         String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
         String targetFile = getSourceFilePath(targetDescriptor);
         InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();

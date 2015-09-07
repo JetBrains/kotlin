@@ -30,15 +30,4 @@ public interface Module {
     public fun getAnnotationsRoots(): List<String>
 
     public fun getJavaSourceRoots(): List<String>
-
-    override fun equals(other: Any?): Boolean =
-        when {
-            this === other -> true
-            other !is Module -> false
-            else -> getModuleName() == other.getModuleName() &&
-                    getModuleType() == other.getModuleType()
-        }
-
-    override fun hashCode(): Int =
-            31 * getModuleName().hashCode() + getModuleType().hashCode()
 }

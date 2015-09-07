@@ -143,7 +143,7 @@ public class PackageCodegen {
         // TODO rewrite it to something more robust when module system is implemented
         for (PackageFragmentDescriptor fragment : state.getModule().getPackage(fqName).getFragments()) {
             if (fragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
-                ((IncrementalPackageFragmentProvider.IncrementalPackageFragment) fragment).getTarget().equals(state.getTarget())) {
+                ((IncrementalPackageFragmentProvider.IncrementalPackageFragment) fragment).getTarget().equals(state.getTargetId())) {
                 return fragment;
             }
         }

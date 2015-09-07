@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
@@ -46,6 +45,9 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.modules.ModulesPackage;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
@@ -357,7 +359,7 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull KotlinCoreEnvironment environment,
             @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
-            @Nullable Module target,
+            @Nullable Module module,
             File outputDirectory,
             String moduleName
     ) {
@@ -365,11 +367,14 @@ public class KotlinToJVMBytecodeCompiler {
         IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
 
         Collection<FqName> packagesWithObsoleteParts;
-        if (target == null || incrementalCompilationComponents == null) {
+        TargetId targetId = null;
+
+        if (module == null || incrementalCompilationComponents == null) {
             packagesWithObsoleteParts = Collections.emptySet();
         }
         else {
-            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
+            targetId = ModulesPackage.TargetId(module);
+            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
             packagesWithObsoleteParts = new HashSet<FqName>();
             for (String internalName : incrementalCache.getObsoletePackageParts()) {
                 packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
@@ -389,7 +394,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,
-                target,
+                targetId,
                 moduleName,
                 outputDirectory,
                 incrementalCompilationComponents
@@ -401,7 +406,7 @@ public class KotlinToJVMBytecodeCompiler {
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         long generationNanos = PerformanceCounter.Companion.currentTime() - generationStart;
-        String desc = target != null ? "target " + target.getModuleName() + "-" + target.getModuleType() + " " : "";
+        String desc = module != null ? "target " + module.getModuleName() + "-" + module.getModuleType() + " " : "";
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
