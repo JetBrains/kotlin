@@ -73,12 +73,17 @@ public abstract class LightClassGenerationSupport {
     @NotNull
     public abstract Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 
-
     @Nullable
     public abstract ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject);
 
     @NotNull
     public abstract Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
+
+    @NotNull
+    public abstract Collection<PsiClass> getFacadeClassesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
+
+    @NotNull
+    public abstract Collection<String> getFacadeNames(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 
     @NotNull
     public abstract Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
