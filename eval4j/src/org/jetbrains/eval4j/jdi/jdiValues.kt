@@ -16,12 +16,25 @@
 
 package org.jetbrains.eval4j.jdi
 
-import com.sun.jdi
+import com.sun.jdi.ClassObjectReference
+import com.sun.jdi.VirtualMachine
 import org.jetbrains.eval4j.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import com.sun.jdi.BooleanValue as jdi_BooleanValue
+import com.sun.jdi.ByteValue as jdi_ByteValue
+import com.sun.jdi.CharValue as jdi_CharValue
+import com.sun.jdi.DoubleValue as jdi_DoubleValue
+import com.sun.jdi.FloatValue as jdi_FloatValue
+import com.sun.jdi.IntegerValue as jdi_IntegerValue
+import com.sun.jdi.LongValue as jdi_LongValue
+import com.sun.jdi.ObjectReference as jdi_ObjectReference
+import com.sun.jdi.ShortValue as jdi_ShortValue
+import com.sun.jdi.Type as jdi_Type
+import com.sun.jdi.Value as jdi_Value
+import com.sun.jdi.VoidValue as jdi_VoidValue
 
 public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
     val isStatic = (methodNode.access and ACC_STATIC) != 0
@@ -51,39 +64,39 @@ public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Fra
 
 class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeException(message, cause)
 
-public fun jdi.ObjectReference?.asValue(): ObjectValue {
+public fun jdi_ObjectReference?.asValue(): ObjectValue {
     return when (this) {
         null -> NULL_VALUE
         else -> ObjectValue(this, type().asType())
     }
 }
 
-public fun jdi.Value?.asValue(): Value {
+public fun jdi_Value?.asValue(): Value {
     return when (this) {
         null -> NULL_VALUE
-        is jdi.VoidValue -> VOID_VALUE
-        is jdi.BooleanValue -> IntValue(intValue(), Type.BOOLEAN_TYPE)
-        is jdi.ByteValue -> IntValue(intValue(), Type.BYTE_TYPE)
-        is jdi.ShortValue -> IntValue(intValue(), Type.SHORT_TYPE)
-        is jdi.CharValue -> IntValue(intValue(), Type.CHAR_TYPE)
-        is jdi.IntegerValue -> IntValue(intValue(), Type.INT_TYPE)
-        is jdi.LongValue -> LongValue(longValue())
-        is jdi.FloatValue -> FloatValue(floatValue())
-        is jdi.DoubleValue -> DoubleValue(doubleValue())
-        is jdi.ObjectReference -> this.asValue()
+        is jdi_VoidValue -> VOID_VALUE
+        is jdi_BooleanValue -> IntValue(intValue(), Type.BOOLEAN_TYPE)
+        is jdi_ByteValue -> IntValue(intValue(), Type.BYTE_TYPE)
+        is jdi_ShortValue -> IntValue(intValue(), Type.SHORT_TYPE)
+        is jdi_CharValue -> IntValue(intValue(), Type.CHAR_TYPE)
+        is jdi_IntegerValue -> IntValue(intValue(), Type.INT_TYPE)
+        is jdi_LongValue -> LongValue(longValue())
+        is jdi_FloatValue -> FloatValue(floatValue())
+        is jdi_DoubleValue -> DoubleValue(doubleValue())
+        is jdi_ObjectReference -> this.asValue()
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }
 
-fun jdi.Type.asType(): Type = Type.getType(this.signature())
+fun jdi_Type.asType(): Type = Type.getType(this.signature())
 
-val Value.jdiObj: jdi.ObjectReference?
-    get() = this.obj() as jdi.ObjectReference?
+val Value.jdiObj: jdi_ObjectReference?
+    get() = this.obj() as jdi_ObjectReference?
 
-val Value.jdiClass: jdi.ClassObjectReference?
-    get() = this.jdiObj as jdi.ClassObjectReference?
+val Value.jdiClass: ClassObjectReference?
+    get() = this.jdiObj as ClassObjectReference?
 
-public fun Value.asJdiValue(vm: jdi.VirtualMachine, expectedType: Type): jdi.Value? {
+public fun Value.asJdiValue(vm: VirtualMachine, expectedType: Type): jdi_Value? {
     return when (this) {
         NULL_VALUE -> null
         VOID_VALUE -> vm.mirrorOfVoid()
@@ -98,8 +111,8 @@ public fun Value.asJdiValue(vm: jdi.VirtualMachine, expectedType: Type): jdi.Val
         is LongValue -> vm.mirrorOf(value)
         is FloatValue -> vm.mirrorOf(value)
         is DoubleValue -> vm.mirrorOf(value)
-        is ObjectValue -> value as jdi.ObjectReference
-        is NewObjectValue -> this.obj() as jdi.ObjectReference
+        is ObjectValue -> value as jdi_ObjectReference
+        is NewObjectValue -> this.obj() as jdi_ObjectReference
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }

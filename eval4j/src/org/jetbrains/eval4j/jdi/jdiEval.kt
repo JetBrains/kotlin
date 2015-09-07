@@ -16,20 +16,23 @@
 
 package org.jetbrains.eval4j.jdi
 
-import com.sun.jdi
+import com.sun.jdi.*
+import com.sun.jdi.Value as jdi_Value
+import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.ClassNotLoadedException
 import com.sun.jdi.Method
 import com.sun.jdi.ObjectReference
 import org.jetbrains.eval4j.*
+import org.jetbrains.eval4j.Value
 import org.jetbrains.org.objectweb.asm.Type
 
 val CLASS = Type.getType(javaClass<Class<*>>())
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 public class JDIEval(
-        private val vm: jdi.VirtualMachine,
-        private val classLoader: jdi.ClassLoaderReference?,
-        private val thread: jdi.ThreadReference,
+        private val vm: VirtualMachine,
+        private val classLoader: ClassLoaderReference?,
+        private val thread: ThreadReference,
         private val invokePolicy: Int
 ) : Eval {
 
@@ -103,8 +106,8 @@ public class JDIEval(
                 listOf(value)).boolean
     }
 
-    fun Type.asReferenceType(): jdi.ReferenceType = loadClass(this).jdiClass!!.reflectedType()
-    fun Type.asArrayType(): jdi.ArrayType = asReferenceType() as jdi.ArrayType
+    fun Type.asReferenceType(): ReferenceType = loadClass(this).jdiClass!!.reflectedType()
+    fun Type.asArrayType(): ArrayType = asReferenceType() as ArrayType
 
     override fun newArray(arrayType: Type, size: Int): Value {
         val jdiArrayType = arrayType.asArrayType()
@@ -134,7 +137,7 @@ public class JDIEval(
         return fillArray(arrayType.arrayElementType, dimensionSizes[0], dimensionSizes.drop(1))
     }
 
-    private fun Value.array() = jdiObj.checkNull() as jdi.ArrayReference
+    private fun Value.array() = jdiObj.checkNull() as ArrayReference
 
     override fun getArrayLength(array: Value): Value {
         return int(array.array().length())
@@ -158,7 +161,7 @@ public class JDIEval(
         }
     }
 
-    private fun findField(fieldDesc: FieldDescription): jdi.Field {
+    private fun findField(fieldDesc: FieldDescription): Field {
         val _class = fieldDesc.ownerType.asReferenceType()
         val field = _class.fieldByName(fieldDesc.name)
         if (field == null) {
@@ -167,7 +170,7 @@ public class JDIEval(
         return field
     }
 
-    private fun findStaticField(fieldDesc: FieldDescription): jdi.Field {
+    private fun findStaticField(fieldDesc: FieldDescription): Field {
         val field = findField(fieldDesc)
         if (!field.isStatic()) {
             throwBrokenCodeException(NoSuchFieldError("Field is not static: $fieldDesc"))
@@ -188,7 +191,7 @@ public class JDIEval(
         }
 
         val _class = field.declaringType()
-        if (_class !is jdi.ClassType) {
+        if (_class !is ClassType) {
             throwBrokenCodeException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
@@ -196,9 +199,9 @@ public class JDIEval(
         mayThrow { _class.setValue(field, jdiValue) }
     }
 
-    private fun findMethod(methodDesc: MethodDescription, _class: jdi.ReferenceType = methodDesc.ownerType.asReferenceType()): jdi.Method {
+    private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
         val method = when (_class) {
-            is jdi.ClassType -> {
+            is ClassType -> {
                 val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
                 if (m == null) listOf() else listOf(m)
             }
@@ -216,7 +219,7 @@ public class JDIEval(
             throwBrokenCodeException(NoSuchMethodError("Method is not static: $methodDesc"))
         }
         val _class = method.declaringType()
-        if (_class !is jdi.ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
+        if (_class !is ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
         args.disableCollection()
@@ -274,7 +277,7 @@ public class JDIEval(
         if (invokespecial && methodDesc.name == "<init>") {
             // Constructor call
             val ctor = findMethod(methodDesc)
-            val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
+            val _class = (instance as NewObjectValue).asmType.asReferenceType() as ClassType
             val args = mapArguments(arguments, ctor.safeArgumentTypes())
             args.disableCollection()
             val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
@@ -302,23 +305,23 @@ public class JDIEval(
         }
     }
 
-    private fun List<jdi.Value?>.disableCollection() {
+    private fun List<jdi_Value?>.disableCollection() {
         forEach { (it as? ObjectReference)?.disableCollection() }
     }
 
-    private fun List<jdi.Value?>.enableCollection() {
+    private fun List<jdi_Value?>.enableCollection() {
         forEach { (it as? ObjectReference)?.enableCollection() }
     }
 
 
-    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi.Type>): List<jdi.Value?> {
+    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi_Type>): List<jdi_Value?> {
         return arguments.zip(expecetedTypes).map {
             val (arg, expectedType) = it
             arg.asJdiValue(vm, expectedType.asType())
         }
     }
 
-    private fun jdi.Method.safeArgumentTypes(): List<jdi.Type> {
+    private fun Method.safeArgumentTypes(): List<jdi_Type> {
         try {
             return argumentTypes()
         }
@@ -343,7 +346,7 @@ fun <T> mayThrow(f: () -> T): T {
     try {
         return f()
     }
-    catch (e: jdi.InvocationException) {
+    catch (e: InvocationException) {
         throw ThrownFromEvaluatedCodeException(e.exception().asValue())
     }
 }
