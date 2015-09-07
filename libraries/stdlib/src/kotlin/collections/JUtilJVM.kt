@@ -29,7 +29,7 @@ public fun sortedSetOf<T>(vararg values: T): TreeSet<T> = values.toCollection(Tr
 /**
  * Returns a new [SortedSet] with the given [comparator] and elements.
  */
-public fun sortedSetOf<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
+public fun sortedSetOf<T>(comparator: Comparator<in T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 
 /**
  * Returns a list containing the elements returned by this enumeration

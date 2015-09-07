@@ -190,7 +190,7 @@ public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int 
  *
  * If the list contains multiple elements equal to the specified object, there is no guarantee which one will be found.
  */
-public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
     rangeCheck(size(), fromIndex, toIndex)
 
     var low = fromIndex
