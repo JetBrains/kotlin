@@ -46,6 +46,7 @@ public class IdeStubIndexService extends StubIndexService {
         FqName facadeFqName = ((KotlinFileStubForIde) stub).getFacadeFqName();
         if (facadeFqName != null) {
             sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), facadeFqName.asString());
+            sink.occurrence(JetFileFacadeClassByPackageIndex.INSTANCE.getKey(), packageFqName.asString());
         }
 
         FqName partFqName = ((KotlinFileStubForIde) stub).getPartFqName();
