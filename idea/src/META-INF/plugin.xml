@@ -1,4 +1,4 @@
-<idea-plugin version="2" url="http://kotlinlang.org" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin version="2" url="http://kotlinlang.org" xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
     <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
