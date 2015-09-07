@@ -3682,6 +3682,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("genericReceiver.kt")
+        public void testGenericReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/genericReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/localFun.kt");

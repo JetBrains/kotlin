@@ -45,7 +45,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -460,7 +463,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         JetElement newElement = element;
         if (newReceiverInfo != originalReceiverInfo) {
-            PsiElement replacingElement = element;
+            PsiElement replacingElement;
             if (newReceiverInfo != null) {
                 ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
                 JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
@@ -471,6 +474,9 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                         : psiFactory.createExpression("_");
 
                 replacingElement = PsiPackage.createExpressionByPattern(psiFactory, "$0.$1", receiver, element);
+            }
+            else {
+                replacingElement = psiFactory.createExpression(element.getText());
             }
 
             newElement = (JetElement) elementToReplace.replace(replacingElement);
