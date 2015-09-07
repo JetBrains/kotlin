@@ -1,6 +1,6 @@
 var sideEffects: String = ""
 
-abstract class B {
+internal abstract class B {
     val parentProp: String
     init {
         sideEffects += "minus-one#"
@@ -18,7 +18,7 @@ abstract class B {
     }
 }
 
-class A : B {
+internal class A : B {
     var prop: String = ""
     init {
         sideEffects += prop + "first"
