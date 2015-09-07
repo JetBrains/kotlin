@@ -1,0 +1,32 @@
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/inline/InlineGetKt.class
+out/production/module/inline/InlinePackage.class
+End of files
+Compiling files:
+src/inlineGet.kt
+End of files
+Cleaning output files:
+out/production/module/usage/UsageVal.class
+out/production/module/usage/UsageVar.class
+End of files
+Compiling files:
+src/UsageVal.kt
+src/UsageVar.kt
+End of files
+
+
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/inline/InlinePackage.class
+out/production/module/inline/InlineSetKt.class
+End of files
+Compiling files:
+src/inlineSet.kt
+End of files
+Cleaning output files:
+out/production/module/usage/UsageVar.class
+End of files
+Compiling files:
+src/UsageVar.kt
+End of files

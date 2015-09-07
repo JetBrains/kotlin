@@ -1,0 +1,28 @@
+Cleaning output files:
+out/production/module/inline/Inline.class
+End of files
+Compiling files:
+src/inline.kt
+End of files
+Cleaning output files:
+out/production/module/usage/UsageVal.class
+out/production/module/usage/UsageVar.class
+End of files
+Compiling files:
+src/UsageVal.kt
+src/UsageVar.kt
+End of files
+
+
+Cleaning output files:
+out/production/module/inline/Inline.class
+End of files
+Compiling files:
+src/inline.kt
+End of files
+Cleaning output files:
+out/production/module/usage/UsageVar.class
+End of files
+Compiling files:
+src/UsageVar.kt
+End of files
