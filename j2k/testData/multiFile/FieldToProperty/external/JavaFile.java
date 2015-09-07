@@ -8,5 +8,6 @@ class C extends JavaClass {
         javaClass.field -= field;
         field = myProperty;
         field *= 2;
+        field = field * 2;
     }
 }
