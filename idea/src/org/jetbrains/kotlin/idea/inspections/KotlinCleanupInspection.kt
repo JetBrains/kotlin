@@ -29,16 +29,15 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.highlighter.JetPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
-import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
+import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
@@ -57,17 +56,13 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
         val diagnostics = analysisResult.bindingContext.getDiagnostics()
 
-        class ProblemData(val problemDescriptor: ProblemDescriptor, elementToBeInvalidated: PsiElement) {
-            val depth = elementToBeInvalidated.parentsWithSelf.takeWhile { it !is PsiFile }.count()
-        }
-
-        val problems = arrayListOf<ProblemData>()
+        val problemDescriptors = arrayListOf<ProblemDescriptor>()
 
         val importsToRemove = file.importDirectives.filter { DeprecatedSymbolUsageFix.isImportToBeRemoved(it) }
         for (import in importsToRemove) {
             val removeImportFix = RemoveImportFix(import)
             val problemDescriptor = createProblemDescriptor(import, removeImportFix.text, listOf(removeImportFix), file, manager)
-            problems.add(ProblemData(problemDescriptor, import))
+            problemDescriptors.add(problemDescriptor)
         }
 
         file.forEachDescendantOfType<PsiElement> { element ->
@@ -75,16 +70,13 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
                 if (diagnostic.isCleanup()) {
                     val fixes = diagnostic.toCleanupFixes()
                     if (fixes.isNotEmpty()) {
-                        val problemDescriptor = diagnostic.toProblemDescriptor(fixes, file, manager)
-                        //TODO: not quite correct for multiple
-                        val elementToBeInvalidated = fixes.map { it.elementToBeInvalidated() }.filterNotNull().firstOrNull() ?: element
-                        problems.add(ProblemData(problemDescriptor, elementToBeInvalidated))
+                        problemDescriptors.add(diagnostic.toProblemDescriptor(fixes, file, manager))
                     }
                 }
             }
         }
 
-        return problems.sortBy { it.depth }.map { it.problemDescriptor }.toTypedArray()
+        return problemDescriptors.toTypedArray()
     }
 
     private fun Diagnostic.isCleanup() = getFactory() in cleanupDiagnosticsFactories || isObsoleteLabel()

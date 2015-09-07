@@ -91,12 +91,5 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
             }
         };
     }
-
-    // TODO: drop it when converted to Kotlin
-    @Nullable
-    @Override
-    public PsiElement elementToBeInvalidated() {
-        return null;
-    }
 }
 

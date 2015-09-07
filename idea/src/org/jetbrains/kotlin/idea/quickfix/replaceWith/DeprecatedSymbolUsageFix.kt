@@ -20,13 +20,13 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 public class DeprecatedSymbolUsageFix(
@@ -42,19 +42,6 @@ public class DeprecatedSymbolUsageFix(
         val result = replacementStrategy.createReplacer(element)!!.invoke()
         val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
         editor?.moveCaret(offset)
-    }
-
-    override fun elementToBeInvalidated(): PsiElement? {
-        val parent = element.parent
-        return when (parent) {
-            is JetCallExpression -> {
-                val qualified = parent.parent as? JetQualifiedExpression
-                if (parent == qualified?.selectorExpression) qualified else parent
-            }
-            is JetQualifiedExpression -> if (element == parent.selectorExpression) parent else element
-            is JetOperationExpression -> if (element == parent.operationReference) parent else element
-            else -> element
-        }
     }
 
     companion object : JetSingleIntentionActionFactory() {
