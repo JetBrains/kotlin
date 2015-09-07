@@ -1,9 +1,13 @@
 package test
 
+@kotlin.annotation.annotation() public final class AAA : kotlin.Annotation {
+    public constructor AAA()
+}
+
 public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
-    private constructor MyEnum(/*0*/ @kotlin.Deprecated(value = "") kotlin.Int)
+    private constructor MyEnum(/*0*/ @test.AAA() kotlin.Int)
     @kotlin.Deprecated(value = "") public final val ord: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int

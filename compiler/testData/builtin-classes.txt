@@ -283,7 +283,7 @@ public interface Comparable</*0*/ in T> {
     public abstract fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
     public final val replaceWith: kotlin.ReplaceWith
         public final fun <get-replaceWith>(): kotlin.ReplaceWith

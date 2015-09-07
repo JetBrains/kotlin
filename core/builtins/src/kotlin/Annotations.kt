@@ -36,8 +36,7 @@ public annotation class data
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
-@Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
-        LOCAL_VARIABLE, VALUE_PARAMETER)
+@Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER)
 @MustBeDocumented
 public annotation class Deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
