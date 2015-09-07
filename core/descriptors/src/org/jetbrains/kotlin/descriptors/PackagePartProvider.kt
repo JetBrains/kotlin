@@ -24,7 +24,7 @@ interface PackagePartProvider {
     fun findPackageParts(packageFqName: String): List<String>
 
     companion object {
-        val EMPTY = object : PackagePartProvider {
+        val EMPTY: PackagePartProvider = object : PackagePartProvider {
             override fun findPackageParts(packageFqName: String): List<String> {
                 return emptyList()
             }
