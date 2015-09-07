@@ -813,6 +813,7 @@ fun main(args: Array<String>) {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
+            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
         }
         testClass(javaClass<AbstractLookupTrackerTest>()) {
             model("incremental/lookupTracker", extension = null, excludeParentDirs = true)
