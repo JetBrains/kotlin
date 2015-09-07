@@ -22,37 +22,50 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.cache.CacheManager
 import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.asJava.KotlinLightParameter
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
-import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
-import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
+import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
+
+data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
+                                         val acceptOverloads: Boolean = false,
+                                         val acceptExtensionsOfDeclarationClass: Boolean = false,
+                                         val acceptCompanionObjectMembers: Boolean = false) {
+    fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
+
+    companion object {
+        val Empty = KotlinReferencesSearchOptions(false, false, false)
+    }
+}
+
+public class KotlinReferencesSearchParameters(elementToSearch: PsiElement,
+                                              scope: SearchScope = elementToSearch.project.allScope(),
+                                              ignoreAccessScope: Boolean = false,
+                                              optimizer: SearchRequestCollector? = null,
+                                              val kotlinOptions: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty)
+        : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer) {
+}
 
 public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
 
     override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
         val element = queryParameters.getElementToSearch()
 
-        val unwrappedElement = element.namedUnwrappedElement
-        if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return
+        val unwrappedElement = element.namedUnwrappedElement ?: return
 
         val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-        val words = unwrappedElement.getSpecialNamesToSearch() +
-                    (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+        val words = runReadAction {
+            unwrappedElement.getSpecialNamesToSearch() +
+                (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+        }
 
         val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 
@@ -61,10 +74,22 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         else
             ({true})
 
+
+        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                            ?: KotlinReferencesSearchOptions.Empty
+        val resultProcessor = MyRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
+
+        if (kotlinOptions.anyEnabled()) {
+            val name = unwrappedElement.name
+            if (name != null) {
+                queryParameters.optimizer.searchWord(name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement,
+                                                     resultProcessor)
+            }
+        }
         words.forEach { word ->
             queryParameters.optimizer.searchWord(word, effectiveSearchScope,
-                                                 UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
-                                                 MyRequestResultProcessor(unwrappedElement, refFilter))
+                                                 UsageSearchContext.ANY, true, unwrappedElement,
+                                                 resultProcessor)
         }
 
         if (unwrappedElement is JetParameter) {
@@ -91,12 +116,13 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
         }
 
+        val processor = MyRequestResultProcessor(parameter, filter = { it.isNamedArgumentReference() })
         queryParameters.optimizer.searchWord(parameterName,
                                              namedArgsScope,
                                              KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
                                              true,
                                              parameter,
-                                             MyRequestResultProcessor(parameter) { it.isNamedArgumentReference() })
+                                             processor)
     }
 
     private fun PsiReference.isNamedArgumentReference(): Boolean {
@@ -105,8 +131,10 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
     private class MyRequestResultProcessor(
             private val unwrappedElement: PsiElement,
-            private val filter: (PsiReference) -> Boolean
-    ) : RequestResultProcessor() {
+            private val originalElement: PsiElement = unwrappedElement,
+            private val filter: (PsiReference) -> Boolean = { true },
+            private val options: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty
+    ) : RequestResultProcessor(unwrappedElement, originalElement, filter, options) {
         private val referenceService = PsiReferenceService.getService()
 
         override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
@@ -116,10 +144,28 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 when {
                     !filter(ref) -> true
                     !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
-                    !ref.isReferenceTo(unwrappedElement) -> true
+                    !ref.isReferenceToTarget(unwrappedElement) -> true
                     else -> consumer.process(ref)
                 }
             }
+        }
+
+        private fun PsiReference.isReferenceToTarget(element: PsiElement): Boolean {
+            if (isReferenceTo(element)) {
+                return true
+            }
+            if (originalElement is JetNamedDeclaration) {
+                if (options.acceptCallableOverrides && isCallableOverrideUsage(originalElement)) {
+                    return true
+                }
+                if (options.acceptOverloads && isUsageInContainingDeclaration(originalElement)) {
+                    return true
+                }
+                if (options.acceptExtensionsOfDeclarationClass && isExtensionOfDeclarationClassUsage(originalElement)) {
+                    return true
+                }
+            }
+            return false
         }
     }
 
@@ -135,6 +181,24 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         val fieldForCompanionObject = runReadAction { LightClassUtil.getLightFieldForCompanionObject(element) }
                         if (fieldForCompanionObject != null) {
                             searchNamedElement(queryParameters, fieldForCompanionObject)
+                        }
+
+                        val kotlinReferencesSearchOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                        if (kotlinReferencesSearchOptions?.acceptCompanionObjectMembers == true) {
+                            val originClass = element.getStrictParentOfType<JetClass>()
+                            val originLightClass = LightClassUtil.getPsiClass(originClass)
+                            if (originLightClass != null) {
+                                val lightDeclarations: List<KotlinLightElement<*, *>?> =
+                                        originLightClass.methods.map { it as? KotlinLightMethod } +
+                                        originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+
+                                for (declaration in element.declarations) {
+                                    val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
+                                    if (lightDeclaration != null) {
+                                        searchNamedElement(queryParameters, lightDeclaration)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -194,7 +258,8 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         searchNamedElement(queryParameters, declaration as PsiNamedElement)
                     }
                     else if (declaration is JetPropertyAccessor) {
-                        searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                        val property = declaration.getStrictParentOfType<JetProperty>()
+                        searchNamedElement(queryParameters, property)
                     }
                     else if (declaration is JetFunction) {
                         val staticFromCompanionObject = findStaticMethodFromCompanionObject(declaration)
@@ -225,11 +290,19 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         private fun isOnlyKotlinSearch(searchScope: SearchScope) =
                 searchScope is LocalSearchScope && searchScope.getScope().all { it.getContainingFile().getFileType() == JetFileType.INSTANCE }
 
-        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement?,
+        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters,
+                                       element: PsiNamedElement?,
                                        name: String? = element?.getName()) {
             if (name != null && element != null) {
                 val scope = runReadAction { queryParameters.getEffectiveSearchScope() }
-                queryParameters.getOptimizer().searchWord(name, scope, true, element)
+                val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
+                val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                                    ?: KotlinReferencesSearchOptions.Empty
+                val resultProcessor = MyRequestResultProcessor(element,
+                                                               queryParameters.getElementToSearch().namedUnwrappedElement ?: element,
+                                                               options = kotlinOptions)
+                queryParameters.getOptimizer().searchWord(name, scope, context.toShort(), true, element,
+                                                          resultProcessor)
             }
         }
     }

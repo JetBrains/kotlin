@@ -31,7 +31,7 @@ public open class AnnotationTargets {
         public constructor multiple()
     }
 
-    kotlin.annotation.target(allowedTargets = {AnnotationTarget.PACKAGE}) public final class packag : kotlin.Annotation {
+    kotlin.annotation.target(allowedTargets = {}) public final class packag : kotlin.Annotation {
         public constructor packag()
     }
 
@@ -39,7 +39,7 @@ public open class AnnotationTargets {
         public constructor parameter()
     }
 
-    kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) public final class type : kotlin.Annotation {
+    kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FILE}) public final class type : kotlin.Annotation {
         public constructor type()
     }
 }

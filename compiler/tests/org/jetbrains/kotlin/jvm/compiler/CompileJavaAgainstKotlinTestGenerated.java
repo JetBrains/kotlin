@@ -622,12 +622,6 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest(fileName);
         }
 
-        @TestMetadata("package-info.kt")
-        public void testPackage_info() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/package-info.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("parameter.kt")
         public void testParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/parameter.kt");

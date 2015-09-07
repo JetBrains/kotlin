@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
-import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaClassFindUsagesOptions
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.*
 
 public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {
     public var searchConstructorUsages: Boolean = true
@@ -81,44 +77,3 @@ public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFi
     override var searchOverrides: Boolean = false
 }
 
-fun KotlinClassFindUsagesOptions.toClassHelper(): ClassUsagesSearchHelper =
-        ClassUsagesSearchHelper(
-            constructorUsages = searchConstructorUsages,
-            nonConstructorUsages = isUsages,
-            skipImports = isSkipImportStatements
-        )
-
-fun KotlinClassFindUsagesOptions.toClassDeclarationsHelper(): ClassDeclarationsUsagesSearchHelper =
-        ClassDeclarationsUsagesSearchHelper(
-            functionUsages = isMethodsUsages,
-            propertyUsages = isFieldsUsages,
-            skipImports = isSkipImportStatements
-        )
-
-fun KotlinFunctionFindUsagesOptions.toHelper(): FunctionUsagesSearchHelper =
-        FunctionUsagesSearchHelper(
-            selfUsages = isUsages,
-            overrideUsages = isUsages,
-            overloadUsages = isIncludeOverloadUsages,
-            extensionUsages = isIncludeOverloadUsages,
-            skipImports = isSkipImportStatements
-        )
-
-fun KotlinPropertyFindUsagesOptions.toHelper(): PropertyUsagesSearchHelper =
-        PropertyUsagesSearchHelper(
-            selfUsages = isUsages,
-            overrideUsages = isUsages,
-            namedArgumentUsages = isUsages,
-            readUsages = isReadAccess,
-            writeUsages = isWriteAccess,
-            skipImports = isSkipImportStatements
-        )
-
-fun <T : PsiNamedElement> FindUsagesOptions.toSearchTarget(element: T, restrictByTarget: Boolean): UsagesSearchTarget<T> {
-    val location = if (isSearchForTextOccurrences && searchScope is GlobalSearchScope)
-        UsagesSearchLocation.EVERYWHERE
-    else
-        UsagesSearchLocation.DEFAULT
-
-    return UsagesSearchTarget(element, searchScope, location, restrictByTarget)
-}

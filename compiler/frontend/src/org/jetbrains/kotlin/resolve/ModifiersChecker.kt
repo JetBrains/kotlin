@@ -168,7 +168,7 @@ public object ModifierCheckerCore {
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
             is FunctionDescriptor -> listOf(FUNCTION)
-            else -> listOf(PACKAGE)
+            else -> listOf(FILE)
         }
         val possibleParents = possibleParentTargetMap[modifier] ?: return true
         if (possibleParents == KotlinTarget.ALL_TARGET_SET) return true

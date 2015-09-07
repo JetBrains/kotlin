@@ -165,7 +165,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                         TargetLists.T_TOP_LEVEL_FUNCTION
                 }
                 is JetPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
-                is JetPackageDirective -> TargetLists.T_PACKAGE
                 is JetTypeReference -> TargetLists.T_TYPE_REFERENCE
                 is JetFile -> TargetLists.T_FILE
                 is JetTypeParameter -> TargetLists.T_TYPE_PARAMETER
@@ -205,7 +204,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }
 
             val T_FILE = targetList(FILE)
-            val T_PACKAGE = targetList(PACKAGE)
 
             val T_CONSTRUCTOR = targetList(CONSTRUCTOR)
 

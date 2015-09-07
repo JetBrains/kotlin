@@ -55,6 +55,7 @@ public class AnnotationTargets {
 
 // FILE: test/AnnotationTargets.kt
 
+@file:AnnotationTargets.type
 package test
 
 import test.AnnotationTargets.*

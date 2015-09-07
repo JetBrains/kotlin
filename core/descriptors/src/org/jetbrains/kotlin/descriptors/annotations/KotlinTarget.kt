@@ -24,7 +24,6 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    PACKAGE("package"),
     CLASSIFIER("classifier"),                  // includes CLASS, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),

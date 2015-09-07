@@ -1,4 +1,4 @@
-<!UNRESOLVED_REFERENCE!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
+<!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
 
 abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
