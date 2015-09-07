@@ -82,7 +82,7 @@ public annotation class Suppress(vararg val names: String)
  * backend.
  */
 @Target(FUNCTION)
-// @deprecated("Use kotlin.tailrec instead", ReplaceWith("kotlin.tailrec"))
+@Deprecated("Use kotlin.tailrec instead", ReplaceWith("kotlin.tailrec"))
 @Retention(SOURCE)
 public annotation class tailRecursive
 

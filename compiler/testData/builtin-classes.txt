@@ -1274,7 +1274,7 @@ kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
     /*primary*/ public constructor noinline()
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.Deprecated(replaceWith = kotlin.ReplaceWith(expression = "kotlin.tailrec", imports = {}), value = "Use kotlin.tailrec instead") kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
 }
 
