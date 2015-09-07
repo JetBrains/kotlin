@@ -31,11 +31,12 @@ class ClassBody (
         val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
         val rBrace: RBrace,
-        val isEnumBody: Boolean) {
+        val isEnumBody: Boolean,
+        val isAnonymousClassBody: Boolean) {
 
     fun appendTo(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }
-        if (membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
+        if (!isAnonymousClassBody && membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 

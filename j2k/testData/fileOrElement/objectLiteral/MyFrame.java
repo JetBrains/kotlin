@@ -5,6 +5,11 @@ interface WindowListener {
   void windowClosing ();
 }
 
+interface EmptyWindowListener {
+}
+
+open class EmptyWindowAdapter : EmptyWindowListener {}
+
 class WindowAdapter implements WindowListener {
   public void windowClosing () {
   }
@@ -29,5 +34,8 @@ public final class Client extends Frame {
       public void windowClosing () {
       }
     });
+
+    EmptyWindowListener b = new EmptyWindowListener() {};
+    EmptyWindowAdapter c = new EmptyWindowAdapter() {};
   }
 }

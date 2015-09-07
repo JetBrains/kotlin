@@ -42,7 +42,8 @@ enum class AccessorKind {
 class ClassBodyConverter(private val psiClass: PsiClass,
                          private val converter: Converter,
                          private val isOpenClass: Boolean,
-                         private val isObject: Boolean) {
+                         private val isObject: Boolean,
+                         private val isAnonymousObject: Boolean = false) {
     private val membersToRemove = HashSet<PsiMember>()
     private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
 
@@ -93,7 +94,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, false)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, false, false)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -120,6 +121,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
 
         if (primaryConstructorSignature != null
+            && !isAnonymousObject
             && primaryConstructorSignature.annotations.isEmpty
             && primaryConstructorSignature.accessModifier == null
             && primaryConstructorSignature.parameterList.parameters.isEmpty()
@@ -128,7 +130,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, psiClass.isEnum())
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, psiClass.isEnum(), isAnonymousObject)
     }
 
     private fun Converter.convertMember(member: PsiMember,

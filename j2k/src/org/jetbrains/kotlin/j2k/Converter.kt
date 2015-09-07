@@ -278,7 +278,7 @@ class Converter private constructor(
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
         var classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members,
-                              classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.isEnumBody)
+                              classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.isEnumBody, classBody.isAnonymousClassBody)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),
@@ -564,7 +564,7 @@ class Converter private constructor(
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this, isOpenClass = false, isObject = false).convertBody(),
+        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this, isOpenClass = false, isObject = false, isAnonymousObject = true).convertBody(),
                                   anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
     }
 
