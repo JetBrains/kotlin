@@ -607,22 +607,6 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
     public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
 }
 
-public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
-    enum entry AS_FUNCTION
-
-    enum entry IN_PLACE
-
-    /*primary*/ private constructor InlineStrategy()
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
-    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
-}
-
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
@@ -1277,9 +1261,7 @@ kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, Annotation
 }
 
 kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class inline : kotlin.Annotation {
-    /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
-    public final val strategy: kotlin.InlineStrategy
-        public final fun <get-strategy>(): kotlin.InlineStrategy
+    /*primary*/ public constructor inline()
 }
 
 kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
