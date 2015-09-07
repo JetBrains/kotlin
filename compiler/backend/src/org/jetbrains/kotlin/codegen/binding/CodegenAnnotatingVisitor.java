@@ -75,14 +75,14 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private final BindingContext bindingContext;
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
-    private final JvmFileClassesProvider fileClassesManager;
+    private final JvmFileClassesProvider fileClassesProvider;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
         this.bindingContext = state.getBindingContext();
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
-        this.fileClassesManager = state.getFileClassesManager();
+        this.fileClassesProvider = state.getFileClassesProvider();
     }
 
     @NotNull
@@ -335,7 +335,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     private void recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name), fileClassesManager);
+        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name),
+                                     fileClassesProvider);
     }
 
     @Override
@@ -393,7 +394,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             JetFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return fileClassesManager.getFileClassInternalName(containingFile) + '$' + name;
+            return fileClassesProvider.getFileClassInternalName(containingFile) + '$' + name;
         }
 
         return null;
@@ -574,7 +575,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             }
         }
 
-        return fileClassesManager.getFileClassInternalName(file);
+        return fileClassesProvider.getFileClassInternalName(file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

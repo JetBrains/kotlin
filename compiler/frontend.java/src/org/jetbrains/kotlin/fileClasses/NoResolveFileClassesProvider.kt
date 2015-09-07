@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 
 
-public object NoResolveFileClassesProvider : JvmFileClassesProvider() {
+public object NoResolveFileClassesProvider : JvmFileClassesProvider {
     override fun getFileClassFqName(file: JetFile): FqName =
             JvmFileClassUtil.getFileClassInfo(file, JvmFileClassUtil.parseJvmNameOnFileNoResolve(file)).fileClassFqName
 }

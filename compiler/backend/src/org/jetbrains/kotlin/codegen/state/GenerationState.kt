@@ -82,7 +82,7 @@ public class GenerationState jvmOverloads constructor(
         }
     }
 
-    public val fileClassesManager: CodegenFileClassesProvider =
+    public val fileClassesProvider: CodegenFileClassesProvider =
             CodegenFileClassesProvider.createForCodegenTask(bindingContext, files, packagesWithObsoleteParts,
                                                            /* TODO */ multifileFacadesWithObsoleteParts = emptySet())
 
@@ -90,7 +90,7 @@ public class GenerationState jvmOverloads constructor(
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     public val bindingContext: BindingContext = bindingTrace.getBindingContext()
     public val typeMapper: JetTypeMapper =
-            JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, fileClassesManager, outDirectory)
+            JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, fileClassesProvider, outDirectory)
     public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
@@ -114,7 +114,7 @@ public class GenerationState jvmOverloads constructor(
     init {
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
         var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
-                optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesManager)
+                optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesProvider)
 
         interceptedBuilderFactory = BuilderFactoryForDuplicateClassNameDiagnostics(interceptedBuilderFactory, diagnostics);
 

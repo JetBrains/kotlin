@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-public abstract class JvmFileClassesProvider {
-    public abstract fun getFileClassFqName(file: JetFile): FqName
+public interface JvmFileClassesProvider {
+    public fun getFileClassFqName(file: JetFile): FqName
 
     public fun getFileClassInternalName(file: JetFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getFileClassFqName(file)).internalName
@@ -30,3 +30,4 @@ public abstract class JvmFileClassesProvider {
     public fun getFileClassType(file: JetFile): Type =
             Type.getObjectType(getFileClassInternalName(file))
 }
+

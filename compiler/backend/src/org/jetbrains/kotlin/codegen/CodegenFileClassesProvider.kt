@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-public class CodegenFileClassesProvider private constructor(private val bindingContext: BindingContext) : JvmFileClassesProvider() {
+public class CodegenFileClassesProvider private constructor(private val bindingContext: BindingContext) : JvmFileClassesProvider {
     private val fileParts = hashMapOf<JetFile, JvmFileClassInfo>()
 
     override fun getFileClassFqName(file: JetFile): FqName =
@@ -68,5 +68,3 @@ public class CodegenFileClassesProvider private constructor(private val bindingC
         }
     }
 }
-
-public class JvmMultifileFacadeClassInfo(public val facadeFqName: FqName, public val fileParts: List<JvmFileClassInfo>)

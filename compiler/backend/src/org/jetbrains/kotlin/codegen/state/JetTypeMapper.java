@@ -82,16 +82,16 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class JetTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
-    private final JvmFileClassesProvider fileClassesManager;
+    private final JvmFileClassesProvider fileClassesProvider;
 
     public JetTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
-            @NotNull JvmFileClassesProvider fileClassesManager
+            @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
-        this.fileClassesManager = fileClassesManager;
+        this.fileClassesProvider = fileClassesProvider;
     }
 
     @NotNull
@@ -168,7 +168,7 @@ public class JetTypeMapper {
         ///if (insideModule) {
             JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
             if (file != null) {
-                return fileClassesManager.getFileClassInternalName(file);
+                return fileClassesProvider.getFileClassInternalName(file);
             }
 
             CallableMemberDescriptor directMember = getDirectMember(descriptor);
@@ -402,7 +402,7 @@ public class JetTypeMapper {
         }
 
         Type asmType = Type.getObjectType(computeAsmTypeImpl(klass));
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType, fileClassesManager);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType, fileClassesProvider);
         return asmType;
     }
 
