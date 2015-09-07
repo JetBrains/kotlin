@@ -67,7 +67,7 @@ class PlatformStaticGenerator(
                         }
 
                         val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
-                                codegen.getContext().accessibleFunctionDescriptor(descriptor),
+                                codegen.getContext().accessibleDescriptor(descriptor),
                                 false,
                                 codegen.getContext()
                         )

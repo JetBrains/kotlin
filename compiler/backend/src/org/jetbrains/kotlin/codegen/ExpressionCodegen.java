@@ -2007,7 +2007,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
-            propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
+            propertyDescriptor = context.accessibleDescriptor(propertyDescriptor);
 
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
@@ -2196,7 +2196,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     }
                 }
 
-                propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
+                propertyDescriptor = context.accessibleDescriptor(propertyDescriptor);
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null) {
@@ -2322,11 +2322,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private PropertyDescriptor accessiblePropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        return context.accessiblePropertyDescriptor(propertyDescriptor);
-    }
-
-    @NotNull
     private FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         FunctionDescriptor originalIfSamAdapter = SamCodegenUtil.getOriginalIfSamAdapter(descriptor);
@@ -2334,7 +2329,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             descriptor = originalIfSamAdapter;
         }
         // $default method is not private, so you need no accessor to call it
-        return usesDefaultArguments(resolvedCall) ? descriptor : context.accessibleFunctionDescriptor(descriptor);
+        return usesDefaultArguments(resolvedCall) ? descriptor : context.accessibleDescriptor(descriptor);
     }
 
     private static boolean usesDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
