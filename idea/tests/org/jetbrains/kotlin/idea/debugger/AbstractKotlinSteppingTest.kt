@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
 
@@ -28,10 +27,6 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
     protected fun doStepOutTest(path: String) {
         doTest(path, "STEP_OUT")
-    }
-
-    protected fun doStepOverTest(path: String) {
-        doTest(path, "STEP_OVER")
     }
 
     protected fun doSmartStepIntoTest(path: String) {
@@ -56,9 +51,15 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
-        val prefix = "// $command: "
-        val count = InTextDirectivesUtils.getPrefixedInt(fileText, prefix) ?: "1"
-        processSteppingInstruction("$prefix$count")
+        for (i in 1..(getPrefixedInt(fileText, "// $command: ") ?: 1)) {
+            doOnBreakpoint {
+                when(command) {
+                    "STEP_INTO" -> stepInto(this)
+                    "STEP_OUT" -> stepOut()
+                    "SMART_STEP_INTO" -> smartStepInto()
+                }
+            }
+        }
 
         finish()
     }

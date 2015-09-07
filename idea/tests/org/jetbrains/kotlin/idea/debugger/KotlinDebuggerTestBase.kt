@@ -43,7 +43,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpointType
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
-import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
@@ -137,12 +136,6 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun SuspendContextImpl.stepOut() {
         dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
-    }
-
-    protected fun SuspendContextImpl.stepOver() {
-        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, StepRequest.STEP_LINE) }
-                              ?: dp.createStepOverCommand(this, false)
-        dp.getManagerThread()!!.schedule(stepOverCommand)
     }
 
     protected fun doStepping(path: String) {

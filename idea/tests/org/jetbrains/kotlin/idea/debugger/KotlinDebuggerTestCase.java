@@ -205,7 +205,6 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @SuppressWarnings("MethodMayBeStatic")
     protected void createDebugProcess(@NotNull String path) throws Exception {
-        VfsUtil.markDirty(true, true, VfsUtil.findFileByIoFile(new File(TINY_APP), true));
         File file = new File(path);
         String packageName = file.getName().replace(".kt", "");
         createLocalProcess(PackageClassUtils.getPackageClassFqName(new FqName(packageName)).asString());
