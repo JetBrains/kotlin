@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-tailRecursive fun withWhen(counter : Int, d : Any) : Int =
+tailrec fun withWhen(counter : Int, d : Any) : Int =
         when (counter) {
             0 -> counter
             1, 2 -> withWhen(counter - 1, "1,2")

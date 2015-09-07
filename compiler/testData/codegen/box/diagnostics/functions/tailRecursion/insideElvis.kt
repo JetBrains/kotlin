@@ -1,4 +1,4 @@
-tailRecursive fun test(counter : Int) : Int? {
+tailrec fun test(counter : Int) : Int? {
     if (counter < 0) return null
     if (counter == 0) return 777
 

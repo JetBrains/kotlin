@@ -1,6 +1,6 @@
 // "Replace with 'newFun()'" "true"
 
-@deprecated("", ReplaceWith("newFun()"))
+@Deprecated("", ReplaceWith("newFun()"))
 fun Int.oldFun(): Int = this
 
 fun Int.newFun(): Int = this

@@ -1,6 +1,6 @@
 // "Replace with 'newFun(*elements)'" "true"
 
-@deprecated("", ReplaceWith("newFun(*elements)"))
+@Deprecated("", ReplaceWith("newFun(*elements)"))
 fun oldFun(vararg elements: java.io.File?) {
     newFun(*elements)
 }

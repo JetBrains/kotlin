@@ -2,7 +2,7 @@
 /**
  * <caret>This is a doc-comment
  */
-@deprecated("")
+@Deprecated("")
 fun foo() {
     bar()
 }

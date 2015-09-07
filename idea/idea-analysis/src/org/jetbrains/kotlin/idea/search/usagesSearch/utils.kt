@@ -106,34 +106,34 @@ private fun JetElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     return null
 }
 
-public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Unit) {
-    processDelegationCallKotlinConstructorUsages(scope, process)
-    processDelegationCallJavaConstructorUsages(scope, process)
+public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
+    if (!processDelegationCallKotlinConstructorUsages(scope, process)) return false
+    return processDelegationCallJavaConstructorUsages(scope, process)
 }
 
-private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Unit) {
+private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
     val element = unwrapped
     val klass = when (element) {
         is JetConstructor<*> -> element.getContainingClassOrObject()
         is JetClass -> element
-        else -> return
+        else -> return true
     }
 
-    if (klass !is JetClass || element !is JetDeclaration) return
-    val descriptor = element.constructor ?: return
+    if (klass !is JetClass || element !is JetDeclaration) return true
+    val descriptor = element.constructor ?: return true
 
-    processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)
-    processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
+    if (!processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)) return false
+    return processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
 }
 
-private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Unit) {
-    if (this is KotlinLightElement<*, *>) return
+private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
+    if (this is KotlinLightElement<*, *>) return true
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
-    if (this is KotlinNoOriginLightMethod) return
-    if (!(this is PsiMethod && isConstructor())) return
-    val klass = getContainingClass() ?: return
-    val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return
-    processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
+    if (this is KotlinNoOriginLightMethod) return true
+    if (!(this is PsiMethod && isConstructor())) return true
+    val klass = getContainingClass() ?: return true
+    val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return true
+    return processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
 }
 
 
@@ -141,34 +141,36 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
         klass: PsiElement,
         scope: SearchScope,
         descriptor: ConstructorDescriptor,
-        process: (JetCallElement) -> Unit
-) {
-    HierarchySearchRequest(klass, scope, false).searchInheritors().forEach() {
+        process: (JetCallElement) -> Boolean
+): Boolean {
+    return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         val unwrapped = it.unwrapped
         if (unwrapped is JetClass) {
             processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
-        }
+        } else
+            true
     }
 }
 
 private fun processClassDelegationCallsToSpecifiedConstructor(
-        klass: JetClass, constructor: DeclarationDescriptor, process: (JetCallElement) -> Unit
-) {
+        klass: JetClass, constructor: DeclarationDescriptor, process: (JetCallElement) -> Boolean
+): Boolean {
     for (secondaryConstructor in klass.getSecondaryConstructors()) {
         val delegationCallDescriptor = secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
         if (constructor == delegationCallDescriptor) {
-            process(secondaryConstructor.getDelegationCall())
+            if (!process(secondaryConstructor.getDelegationCall())) return false
         }
     }
-    if (!klass.isEnum()) return
+    if (!klass.isEnum()) return true
     for (declaration in klass.declarations) {
         if (declaration is JetEnumEntry) {
             val delegationCall = declaration.getDelegationSpecifiers().firstOrNull()
             if (delegationCall is JetDelegatorToSuperCall && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
-                process(delegationCall)
+                if (!process(delegationCall)) return false
             }
         }
     }
+    return true
 }
 
 // Check if reference resolves to extension function whose receiver is the same as declaration's parent (or its superclass)

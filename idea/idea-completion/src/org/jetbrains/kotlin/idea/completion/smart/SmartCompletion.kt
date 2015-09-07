@@ -53,7 +53,6 @@ class SmartCompletion(
         private val resolutionFacade: ResolutionFacade,
         private val bindingContext: BindingContext,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-        private val inDescriptor: DeclarationDescriptor,
         private val prefixMatcher: PrefixMatcher,
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,

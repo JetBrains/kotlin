@@ -1,6 +1,6 @@
 // "Replace with 'newFun(p, this)'" "true"
 
-@deprecated("", ReplaceWith("newFun(p, this)"))
+@Deprecated("", ReplaceWith("newFun(p, this)"))
 fun String.oldFun(p: Int) {
     newFun(p, this)
 }

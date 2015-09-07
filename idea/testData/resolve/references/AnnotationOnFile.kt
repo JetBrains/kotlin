@@ -1,5 +1,5 @@
-@file:[kotlin.<caret>deprecated("message")]
+@file:[kotlin.<caret>Deprecated("message")]
 
 package foo
 
-// REF: (in kotlin.deprecated).deprecated(kotlin.String,kotlin.ReplaceWith)
+// REF: (in kotlin.Deprecated).Deprecated(kotlin.String,kotlin.ReplaceWith)

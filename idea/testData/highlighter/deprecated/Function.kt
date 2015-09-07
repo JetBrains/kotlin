@@ -6,14 +6,14 @@ fun test() {
     <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test4(Int, Int): Unit' is deprecated. Use A instead">test4</warning>(1, 2)
 }
 
-deprecated("Use A instead") fun test1() { }
-deprecated("Use A instead") fun test4(x: Int, y: Int) { x + y }
+Deprecated("Use A instead") fun test1() { }
+Deprecated("Use A instead") fun test4(x: Int, y: Int) { x + y }
 
 class MyClass() {
-    deprecated("Use A instead") fun test2() {}
+    Deprecated("Use A instead") fun test2() {}
 
     companion object {
-        deprecated("Use A instead") fun test3() {}
+        Deprecated("Use A instead") fun test3() {}
     }
 }
 

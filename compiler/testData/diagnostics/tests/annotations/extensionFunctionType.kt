@@ -4,7 +4,7 @@ annotation class ann
 
 interface Some {
     fun f1(): String.() -> Int
-    fun f2(): @extension String.() -> Int
+    fun f2(): @Extension String.() -> Int
     fun f3(): @ann String.() -> Int
-    fun f4(): @extension @ann String.() -> Int
+    fun f4(): @Extension @ann String.() -> Int
 }

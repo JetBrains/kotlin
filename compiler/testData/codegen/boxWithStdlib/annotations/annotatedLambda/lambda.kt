@@ -2,7 +2,8 @@ import java.lang.reflect.Method
 import kotlin.test.assertEquals
 
 target(AnnotationTarget.EXPRESSION)
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(val x: String)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(val x: String)
 
 fun foo0(block: () -> Unit) = block.javaClass
 

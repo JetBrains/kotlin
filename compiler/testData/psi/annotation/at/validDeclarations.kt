@@ -1,5 +1,5 @@
 private @open @[Ann1(1)] @Ann2("1") Ann3("2") class A(
-        @volatile(1) private val x: @AnnType("3") @open Int,
+        @Volatile(1) private val x: @AnnType("3") @open Int,
         @private var y: Int,
         @open z: Int
 ) {
@@ -16,7 +16,7 @@ private @open @[Ann1(1)] @Ann2("1") Ann3("2") class A(
         @[Ann]
         private
         @abstract
-        @volatile var x = 1
+        @Volatile var x = 1
 
         foo(fun(@vararg @ann(1) x: Int) {})
     }
@@ -43,5 +43,5 @@ private @open @[Ann1(1)] @Ann2("1") Ann3("2") class A(
 
 fun bar() {
     try {}
-    catch (@volatile e: Exception) {}
+    catch (@Volatile e: Exception) {}
 }

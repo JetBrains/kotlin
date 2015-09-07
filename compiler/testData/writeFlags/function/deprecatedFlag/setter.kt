@@ -1,6 +1,6 @@
 class MyClass() {
     var test = 1
-        @deprecated("") set(i: Int) { test = i }
+        @Deprecated("") set(i: Int) { test = i }
 }
 
 

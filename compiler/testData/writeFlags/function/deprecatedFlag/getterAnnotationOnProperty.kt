@@ -1,5 +1,5 @@
 class MyClass() {
-    deprecated("") val test = ""
+    Deprecated("") val test = ""
 }
 
 

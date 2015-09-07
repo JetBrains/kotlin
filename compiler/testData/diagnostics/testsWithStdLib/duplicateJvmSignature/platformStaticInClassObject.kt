@@ -1,4 +1,4 @@
-import kotlin.jvm.jvmStatic
+import kotlin.jvm.JvmStatic
 
 open class Base {
     fun foo() {}
@@ -6,6 +6,6 @@ open class Base {
 
 class Derived : Base() {
     companion object {
-        <!ACCIDENTAL_OVERRIDE!>jvmStatic fun foo()<!> {}
+        <!ACCIDENTAL_OVERRIDE!>JvmStatic fun foo()<!> {}
     }
 }

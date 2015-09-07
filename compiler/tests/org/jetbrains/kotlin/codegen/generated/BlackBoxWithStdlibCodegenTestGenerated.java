@@ -1510,6 +1510,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("lateinitVisibility.kt")
+        public void testLateinitVisibility() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/lateinitVisibility.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("platformTypeAssertionStackTrace.kt")
         public void testPlatformTypeAssertionStackTrace() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/platformTypeAssertionStackTrace.kt");

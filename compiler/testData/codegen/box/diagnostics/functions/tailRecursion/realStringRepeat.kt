@@ -1,4 +1,4 @@
-tailRecursive fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
+tailrec fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
         if (num == 0) acc.toString()
         else repeat(num - 1, acc.append(this))
 

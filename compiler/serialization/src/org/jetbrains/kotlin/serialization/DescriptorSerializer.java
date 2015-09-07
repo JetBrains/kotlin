@@ -154,8 +154,11 @@ public class DescriptorSerializer {
         boolean hasGetter = false;
         boolean hasSetter = false;
         boolean hasConstant = false;
+        boolean lateInit = false;
+
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            lateInit = propertyDescriptor.isLateInit();
 
             int propertyFlags = Flags.getAccessorFlags(
                     hasAnnotations(propertyDescriptor),
@@ -204,7 +207,8 @@ public class DescriptorSerializer {
                 callableKind(descriptor),
                 hasGetter,
                 hasSetter,
-                hasConstant
+                hasConstant,
+                lateInit
         ));
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {

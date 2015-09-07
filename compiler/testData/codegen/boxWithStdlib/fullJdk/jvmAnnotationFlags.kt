@@ -1,11 +1,11 @@
 import java.lang.reflect.Modifier
 
 class C {
-    volatile var vol = 1
-    transient val tra = 1
+    @Volatile var vol = 1
+    @Transient val tra = 1
 
-    strictfp fun str() {}
-    synchronized fun sync() {}
+    @Strictfp fun str() {}
+    @Synchronized fun sync() {}
 }
 
 fun box(): String {

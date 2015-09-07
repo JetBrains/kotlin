@@ -1,6 +1,6 @@
 package dependency
 
-@deprecated("", ReplaceWith("newFun()"))
+@Deprecated("", ReplaceWith("newFun()"))
 fun oldFun() {}
 
 fun newFun() {}

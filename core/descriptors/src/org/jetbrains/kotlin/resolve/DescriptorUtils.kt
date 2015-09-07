@@ -173,30 +173,16 @@ public fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return handler.result()
 }
 
-private fun Annotated.isAnnotationPropertyTrue(name: String, defaultValue: Boolean = false): Boolean {
-    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return defaultValue
-    val repeatableArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
-        name == it.key.name.asString()
-    }?.getValue() as? BooleanValue ?: return defaultValue
-    return repeatableArgumentValue.value
-}
-
 public fun Annotated.isRepeatableAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.repeatable) != null
-        // deprecated
-        || isAnnotationPropertyTrue("repeatable")
 
 public fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
-        // deprecated
-        || isAnnotationPropertyTrue("mustBeDocumented")
 
 public fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention) ?:
-                                    // deprecated
-                                    annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return null
+    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention) ?: return null
     val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
-        it.key.name.asString() in setOf("value", "retention")
+        it.key.name.asString() == "value"
     }?.getValue() as? EnumValue ?: return null
     return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }

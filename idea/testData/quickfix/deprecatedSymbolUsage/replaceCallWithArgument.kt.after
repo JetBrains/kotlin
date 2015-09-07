@@ -1,5 +1,5 @@
 // "Replace with 'p'" "true"
-deprecated("", ReplaceWith("p"))
+@Deprecated("", ReplaceWith("p"))
 fun oldFun(p: Int): Int = p
 
 fun foo() {

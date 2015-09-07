@@ -47,17 +47,17 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'");
-        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be 'jvmStatic' in object");
-        MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''jvmOverloads'' annotation has no effect for methods without default arguments");
-        MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''jvmOverloads'' annotation cannot be used on abstract methods");
-        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''jvmOverloads'' annotation has no effect on private and local declarations");
-        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''jvmName'' annotation is not applicable to this declaration");
+        MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'");
+        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be 'JvmStatic' in object");
+        MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''JvmOverloads'' annotation has no effect for methods without default arguments");
+        MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''JvmOverloads'' annotation cannot be used on abstract methods");
+        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''JvmOverloads'' annotation has no effect on private and local declarations");
+        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''JvmName'' annotation is not applicable to this declaration");
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name: ''{0}''", STRING);
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of interfaces can not be native");
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of interfaces can not be inlined");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_TRAIT, "Members of interfaces can not be external");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Members of interfaces can not be external");
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");

@@ -77,7 +77,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     private Class<?> generatedClass() throws Exception {
         URLClassLoader classLoader = new URLClassLoader(
                 new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL() },
-                ForTestCompileRuntime.runtimeJarClassLoader()
+                ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
         );
         return classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
     }

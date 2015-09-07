@@ -2,7 +2,7 @@
 
 package test
 
-@deprecated("Replace with bar", ReplaceWith("test.Bar"))
+@Deprecated("Replace with bar", ReplaceWith("test.Bar"))
 annotation class Foo
 
 annotation class Bar

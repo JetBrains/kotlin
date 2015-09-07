@@ -1,16 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class PropertyHolder {
-    deprecated("")
+    Deprecated("")
     val a1 = 1
 
-    @property:deprecated("")
+    @property:Deprecated("")
     var a2 = ""
 
-    @get:deprecated("")
+    @get:Deprecated("")
     public val withGetter: String = ""
 
-    @set:deprecated("")
+    @set:Deprecated("")
     public var withSetter: String = ""
 }
 

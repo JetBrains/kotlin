@@ -1,10 +1,10 @@
-deprecated("Class")
+Deprecated("Class")
 open class Obsolete {
     fun use() {}
 }
 
-deprecated("Class")
-open class Obsolete2 deprecated("Constructor") constructor() {
+Deprecated("Class")
+open class Obsolete2 Deprecated("Constructor") constructor() {
     fun use() {}
 }
 

@@ -1,25 +1,25 @@
 import kotlin.jvm.*
 
-native fun foo()
+external fun foo()
 
 class C {
-    native fun foo()
+    external fun foo()
 
     companion object {
-        native fun foo()
+        external fun foo()
     }
 }
 
 object O {
-    native fun foo()
+    external fun foo()
 }
 
 fun test() {
     class Local {
-        native fun foo()
+        external fun foo()
     }
 
     object {
-        native fun foo()
+        external fun foo()
     }
 }

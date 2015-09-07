@@ -26,7 +26,7 @@ JetFile: fqName.kt
                       PsiElement(IDENTIFIER)('kotlin')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('deprecated')
+                    PsiElement(IDENTIFIER)('Deprecated')
         PsiWhiteSpace('\n    ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')

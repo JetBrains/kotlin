@@ -1,2 +1,2 @@
-class C deprecated("")
+class C Deprecated("")
 constructor()

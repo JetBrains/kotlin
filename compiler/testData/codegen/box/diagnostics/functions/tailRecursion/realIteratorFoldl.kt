@@ -1,4 +1,4 @@
-tailRecursive fun <T, A> Iterator<T>.foldl(acc : A, foldFunction : (e : T, acc : A) -> A) : A =
+tailrec fun <T, A> Iterator<T>.foldl(acc : A, foldFunction : (e : T, acc : A) -> A) : A =
         if (!hasNext()) acc
         else foldl(foldFunction(next(), acc), foldFunction)
 

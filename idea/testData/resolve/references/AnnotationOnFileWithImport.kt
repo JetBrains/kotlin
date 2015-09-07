@@ -2,6 +2,6 @@
 
 package foo
 
-import kotlin.deprecated as D
+import kotlin.Deprecated as D
 
-// REF: (in kotlin.deprecated).deprecated(kotlin.String,kotlin.ReplaceWith)
+// REF: (in kotlin.Deprecated).Deprecated(kotlin.String,kotlin.ReplaceWith)

@@ -22,7 +22,7 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import java.util.ArrayList
+import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
 
@@ -33,10 +33,28 @@ public val PsiElement.allChildren: PsiChildRange
         val first = getFirstChild()
         return if (first != null) PsiChildRange(first, getLastChild()) else PsiChildRange.EMPTY
     }
+
 public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<PsiElement> {
-    val stepFun = if (forward) { e: PsiElement -> e.getNextSibling() } else { e: PsiElement -> e.getPrevSibling() }
-    val sequence = sequence(this, stepFun)
-    return if (withItself) sequence else sequence.drop(1)
+    return object : Sequence<PsiElement> {
+        override fun iterator(): Iterator<PsiElement> {
+            var next: PsiElement? = this@siblings
+            return object : Iterator<PsiElement> {
+                init {
+                    if (!withItself) next()
+                }
+
+                override fun hasNext(): Boolean = next != null
+                override fun next(): PsiElement {
+                    val result = next ?: throw NoSuchElementException()
+                    if (forward)
+                        next = result.nextSibling
+                    else
+                        next = result.prevSibling
+                    return result
+                }
+            }
+        }
+    }
 }
 
 public val PsiElement.parentsWithSelf: Sequence<PsiElement>
@@ -67,14 +85,14 @@ public fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     return leaf
 }
 
-public fun PsiElement.getParentOfTypesAndPredicate<T: PsiElement>(
-        strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
-) : T? {
+public fun PsiElement.getParentOfTypesAndPredicate<T : PsiElement>(
+        strict: Boolean = false, vararg parentClasses: Class<T>, predicate: (T) -> Boolean
+): T? {
     var element = if (strict) getParent() else this
     while (element != null) {
         @suppress("UNCHECKED_CAST")
         when {
-            (parentClasses.isEmpty() || parentClasses.any {parentClass -> parentClass.isInstance(element)}) && predicate(element!! as T) ->
+            (parentClasses.isEmpty() || parentClasses.any { parentClass -> parentClass.isInstance(element) }) && predicate(element!! as T) ->
                 return element as T
             element is PsiFile ->
                 return null
@@ -86,27 +104,27 @@ public fun PsiElement.getParentOfTypesAndPredicate<T: PsiElement>(
     return null
 }
 
-public fun PsiElement.getNonStrictParentOfType<T: PsiElement>(parentClass : Class<T>) : T? {
+public fun PsiElement.getNonStrictParentOfType<T : PsiElement>(parentClass: Class<T>): T? {
     return PsiTreeUtil.getParentOfType(this, parentClass, false)
 }
 
-inline public fun PsiElement.getParentOfType<reified T: PsiElement>(strict: Boolean): T? {
+inline public fun PsiElement.getParentOfType<reified T : PsiElement>(strict: Boolean): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), strict)
 }
 
-inline public fun PsiElement.getStrictParentOfType<reified T: PsiElement>(): T? {
+inline public fun PsiElement.getStrictParentOfType<reified T : PsiElement>(): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), true)
 }
 
-inline public fun PsiElement.getNonStrictParentOfType<reified T: PsiElement>(): T? {
+inline public fun PsiElement.getNonStrictParentOfType<reified T : PsiElement>(): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
 }
 
-inline public fun PsiElement.getChildOfType<reified T: PsiElement>(): T? {
+inline public fun PsiElement.getChildOfType<reified T : PsiElement>(): T? {
     return PsiTreeUtil.getChildOfType(this, javaClass<T>())
 }
 
-inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T> {
+inline public fun PsiElement.getChildrenOfType<reified T : PsiElement>(): Array<T> {
     return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: arrayOf()
 }
 
@@ -118,11 +136,11 @@ public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false):
     return PsiTreeUtil.isAncestor(this, element, strict)
 }
 
-public fun <T: PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: T.() -> PsiElement?): T? {
+public fun <T : PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: T.() -> PsiElement?): T? {
     return if (branch().isAncestor(element)) this else null
 }
 
-public inline fun PsiElement.getParentOfTypeAndBranch<reified T: PsiElement>(strict: Boolean = false, noinline branch: T.() -> PsiElement?) : T? {
+public inline fun PsiElement.getParentOfTypeAndBranch<reified T : PsiElement>(strict: Boolean = false, noinline branch: T.() -> PsiElement?): T? {
     return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
 }
 
@@ -136,11 +154,11 @@ public fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elem
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
 public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
-    forEachDescendantOfType<T>({true}, action)
+    forEachDescendantOfType<T>({ true }, action)
 }
 
 public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline action: (T) -> Unit) {
-    this.accept(object : PsiRecursiveElementVisitor(){
+    this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (canGoInside(element)) {
                 super.visitElement(element)
@@ -162,12 +180,12 @@ public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(inline
 }
 
 public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
-    return findDescendantOfType<T>({ true}, predicate)
+    return findDescendantOfType<T>({ true }, predicate)
 }
 
 public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
     var result: T? = null
-    this.accept(object : PsiRecursiveElementVisitor(){
+    this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (result != null) return
 
@@ -291,5 +309,5 @@ public fun PsiElement.getTextWithLocation(): String = "'${this.getText()}' at ${
 
 public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
-public fun <E: PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
+public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)

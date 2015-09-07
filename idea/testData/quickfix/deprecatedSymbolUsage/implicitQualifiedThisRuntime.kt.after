@@ -1,7 +1,7 @@
 // "Replace with 'newFun(this, s)'" "true"
 
 interface I {
-    @deprecated("", ReplaceWith("newFun(this, s)"))
+    @Deprecated("", ReplaceWith("newFun(this, s)"))
     fun oldFun(s: String)
 }
 

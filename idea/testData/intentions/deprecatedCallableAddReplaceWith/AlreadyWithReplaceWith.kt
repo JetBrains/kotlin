@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-<caret>@deprecated("", ReplaceWith("bar()"))
+<caret>@Deprecated("", ReplaceWith("bar()"))
 fun foo() {
     bar()
 }

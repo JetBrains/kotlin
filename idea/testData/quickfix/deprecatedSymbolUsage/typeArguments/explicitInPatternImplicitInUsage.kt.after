@@ -1,6 +1,6 @@
 // "Replace with 'newFun<T>()'" "true"
 
-@deprecated("", ReplaceWith("newFun<T>()"))
+@Deprecated("", ReplaceWith("newFun<T>()"))
 fun <T : Any> oldFun(): T? {
     return newFun<T>()
 }

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationMethodCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.JavaClassOnCompanionChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.ReflectionAPICallChecker
@@ -226,7 +226,7 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) != null) {
+        if (descriptor.hasJvmOverloadsAnnotation()) {
             checkDeclaration(declaration, descriptor, diagnosticHolder)
         }
     }

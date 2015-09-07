@@ -2,7 +2,7 @@
 
 package ppp
 
-@deprecated("", ReplaceWith("NewClass"))
+@Deprecated("", ReplaceWith("NewClass"))
 open class OldClass(val p: Int) {
     constructor() : this(0)
 }

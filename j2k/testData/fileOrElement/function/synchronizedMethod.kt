@@ -1,5 +1,5 @@
 class A {
-    synchronized fun foo() {
+    Synchronized fun foo() {
         bar()
     }
 

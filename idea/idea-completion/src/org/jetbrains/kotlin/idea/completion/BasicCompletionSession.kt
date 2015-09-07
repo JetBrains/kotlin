@@ -100,7 +100,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
+                it, resolutionFacade, bindingContext, isVisibleFilter, prefixMatcher,
                 GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true
         )
     }
@@ -109,7 +109,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     private fun calcCompletionKind(): CompletionKind {
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
+        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
             return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
@@ -165,12 +165,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     public fun shouldDisableAutoPopup(): Boolean {
-        if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
-            return true
-        }
-
         if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
             if (!shouldCompleteParameterNameAndType() || TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) {
+                return true
+            }
+
+            if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
                 return true
             }
         }
@@ -296,7 +296,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        NamedArgumentCompletion.complete(position, collector, bindingContext)
+        NamedArgumentCompletion.complete(collector, expectedInfos)
     }
 
     private fun addNonImported(completionKind: CompletionKind) {

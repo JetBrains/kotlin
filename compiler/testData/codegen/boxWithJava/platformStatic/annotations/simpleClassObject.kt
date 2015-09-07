@@ -1,20 +1,21 @@
-import kotlin.jvm.jvmStatic
+import kotlin.jvm.JvmStatic
 
-annotation(retention = AnnotationRetention.RUNTIME) class testAnnotation
+@Retention(AnnotationRetention.RUNTIME)
+annotation class testAnnotation
 
 class A {
 
     companion object {
         val b: String = "OK"
 
-        jvmStatic testAnnotation fun test1() = b
+        JvmStatic testAnnotation fun test1() = b
     }
 }
 
 object B {
     val b: String = "OK"
 
-    jvmStatic testAnnotation fun test1() = b
+    JvmStatic testAnnotation fun test1() = b
 }
 
 fun box(): String {

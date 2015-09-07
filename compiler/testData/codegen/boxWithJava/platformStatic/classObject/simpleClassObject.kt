@@ -1,17 +1,17 @@
-import kotlin.jvm.jvmStatic
+import kotlin.jvm.JvmStatic
 
 class A {
 
     companion object {
         val b: String = "OK"
 
-        jvmStatic val c: String = "OK"
+        JvmStatic val c: String = "OK"
 
-        jvmStatic fun test1() = b
+        JvmStatic fun test1() = b
 
-        jvmStatic fun test2() = b
+        JvmStatic fun test2() = b
 
-        jvmStatic fun String.test3() = this + b
+        JvmStatic fun String.test3() = this + b
     }
 }
 

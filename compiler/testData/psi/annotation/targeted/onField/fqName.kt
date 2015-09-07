@@ -1,6 +1,6 @@
 class A {
 
-    @field:kotlin.deprecated
+    @field:kotlin.Deprecated
     val a = "String"
 
 }

@@ -15,7 +15,8 @@ fun box(): String {
     return "OK"
 }
 
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(
         val i: Int,
         val s: Short,
         val f: Float,

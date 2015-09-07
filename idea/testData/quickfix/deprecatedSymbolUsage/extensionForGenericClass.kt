@@ -2,7 +2,7 @@
 
 class C<T>
 
-@deprecated("", ReplaceWith("newFun(t)"))
+@Deprecated("", ReplaceWith("newFun(t)"))
 fun <T> C<T>.oldFun(t: T){}
 
 fun <T> C<T>.newFun(t: T){}

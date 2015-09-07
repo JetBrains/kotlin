@@ -260,7 +260,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             name: Name,
             kind: CallableMemberDescriptor.Kind,
             source: SourceElement
-    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source) {
+    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(containingDeclaration, original, annotations,
+                                                                modality, visibility, isVar, name, kind, source, false) {
 
         override var getMethod: FunctionDescriptor by Delegates.notNull()
             private set

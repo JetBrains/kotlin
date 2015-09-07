@@ -1,7 +1,7 @@
 // "Replace with 'x'" "true"
 
 trait X {
-    @deprecated("", ReplaceWith("x"))
+    @Deprecated("", ReplaceWith("x"))
     fun getX(): String
 
     val x: String

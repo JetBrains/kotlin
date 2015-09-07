@@ -17,6 +17,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.KotlinNullPointerException;
+import kotlin.UninitializedPropertyAccessException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,10 @@ public class Intrinsics {
 
     public static void throwNpe() {
         throw sanitizeStackTrace(new KotlinNullPointerException());
+    }
+
+    public static void throwUninitializedPropertyAccessException(String propertyName) {
+        throw sanitizeStackTrace(new UninitializedPropertyAccessException(propertyName));
     }
 
     public static void checkExpressionValueIsNotNull(Object value, String message) {

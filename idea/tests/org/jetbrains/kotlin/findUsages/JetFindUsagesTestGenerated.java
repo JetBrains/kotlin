@@ -735,6 +735,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findParameterUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("kotlinComponentFunctionParameterUsages.0.kt")
+            public void testKotlinComponentFunctionParameterUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinComponentFunctionParameterUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinConstructorParameterUsages.0.kt")
             public void testKotlinConstructorParameterUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinConstructorParameterUsages.0.kt");

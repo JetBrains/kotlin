@@ -1,6 +1,6 @@
-deprecated(<error>)</error>
+Deprecated(<error>)</error>
 fun foo() {}
-deprecated(<error>false</error>)
+Deprecated(<error>false</error>)
 fun boo() {}
 
 fun far() = <warning descr="[DEPRECATED_SYMBOL] 'foo(): Unit' is deprecated.">foo</warning>()

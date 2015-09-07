@@ -1,7 +1,7 @@
 import kotlin.reflect.KClass
 
-annotation(retention = AnnotationRetention.RUNTIME)
-class Ann(val arg: KClass<*>)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(val arg: KClass<*>)
 
 class OK
 

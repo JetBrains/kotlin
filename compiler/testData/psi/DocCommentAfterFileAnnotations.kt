@@ -1,4 +1,4 @@
-@file:[volatile]
+@file:[Volatile]
 /**
  * Doc comment
  */

@@ -2,7 +2,7 @@ package pack
 
 import dependency.D
 
-@deprecated("", ReplaceWith("bar(D.value)", "dependency.D"))
+@Deprecated("", ReplaceWith("bar(D.value)", "dependency.D"))
 fun foo() {
     bar(D.value)
 }

@@ -1,4 +1,4 @@
 fun foo(): Any? {
-    @suppress("REDUNDANT_NULLABLE")
+    @Suppress("REDUNDANT_NULLABLE")
     return null <!USELESS_CAST!>as Nothing??<!>
 }

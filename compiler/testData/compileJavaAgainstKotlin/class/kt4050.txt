@@ -3,8 +3,8 @@ package test
 internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
-    private constructor MyEnum(/*0*/ kotlin.deprecated(value = "") kotlin.Int)
-    kotlin.deprecated(value = "") internal final val ord: kotlin.Int
+    private constructor MyEnum(/*0*/ kotlin.Deprecated(value = "") kotlin.Int)
+    kotlin.Deprecated(value = "") internal final val ord: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
     internal final fun f(/*0*/ java.lang.Deprecated() kotlin.Int): kotlin.Unit

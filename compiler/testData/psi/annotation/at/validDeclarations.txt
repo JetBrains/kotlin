@@ -74,7 +74,7 @@ JetFile: validDeclarations.kt
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('volatile')
+                      PsiElement(IDENTIFIER)('Volatile')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -292,7 +292,7 @@ JetFile: validDeclarations.kt
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('volatile')
+                        PsiElement(IDENTIFIER)('Volatile')
             PsiWhiteSpace(' ')
             PsiElement(var)('var')
             PsiWhiteSpace(' ')
@@ -570,7 +570,7 @@ JetFile: validDeclarations.kt
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('volatile')
+                          PsiElement(IDENTIFIER)('Volatile')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('e')
               PsiElement(COLON)(':')

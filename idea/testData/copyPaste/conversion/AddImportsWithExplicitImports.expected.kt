@@ -5,7 +5,7 @@ class C {
     }
 
     companion object {
-        jvmStatic public fun main(args: Array<String>) {
+        JvmStatic public fun main(args: Array<String>) {
         }
     }
 }

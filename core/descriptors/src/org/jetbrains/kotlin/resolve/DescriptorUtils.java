@@ -51,7 +51,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
-    public static final FqName JVM_NAME = new FqName("kotlin.jvm.jvmName");
+    public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
     public static final FqName PLATFORM_NAME = new FqName("kotlin.platform.platformName");
 
     private DescriptorUtils() {

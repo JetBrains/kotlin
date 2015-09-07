@@ -1,5 +1,7 @@
 target(AnnotationTarget.EXPRESSION)
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class Ann(val x: Int = 1)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class Ann(val x: Int = 1)
 
 inline fun bar(block: () -> Int): Int = block()
 

@@ -138,7 +138,7 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        KotlinJvmBinaryClass binaryClass = ((LazyJavaPackageFragment) packageFragment).getMemberScope().getKotlinBinaryClass();
+        KotlinJvmBinaryClass binaryClass = ((LazyJavaPackageFragment) packageFragment).getScope().getKotlinBinaryClass();
         if (binaryClass instanceof VirtualFileKotlinClass) {
             VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
             if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {

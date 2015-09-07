@@ -1,12 +1,21 @@
-annotation(repeatable = true) class repann
+@Repeatable
+annotation class repann
 
-annotation(retention = AnnotationRetention.SOURCE, repeatable = true) class repann1(val x: Int)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class repann1(val x: Int)
 
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class repann2(val f: Boolean)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class repann2(val f: Boolean)
 
-annotation(repeatable = true, retention = AnnotationRetention.BINARY) class binrepann
+@Retention(AnnotationRetention.BINARY)
+@Repeatable
+annotation class binrepann
 
-target(AnnotationTarget.EXPRESSION) annotation(repeatable = true) class repexpr
+target(AnnotationTarget.EXPRESSION)
+@Repeatable
+annotation class repexpr
 
 repann <!NON_SOURCE_REPEATED_ANNOTATION!>repann<!> class DoubleAnnotated
 

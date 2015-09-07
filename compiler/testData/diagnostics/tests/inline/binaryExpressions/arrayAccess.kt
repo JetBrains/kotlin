@@ -12,7 +12,7 @@ fun <T, U, V> Function2<T, U, V>.get(index : Int) {
 
 }
 
-fun <T, U, V, W> @extension Function3<T, U, V, W>.get(index : Int) {
+fun <T, U, V, W> @Extension Function3<T, U, V, W>.get(index : Int) {
 
 }
 

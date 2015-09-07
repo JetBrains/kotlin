@@ -36,4 +36,5 @@ public class Test {
 /*why?*/
 // EXIST:  companion object
 // EXIST:  sealed
+// EXIST:  lateinit
 // NOTHING_ELSE

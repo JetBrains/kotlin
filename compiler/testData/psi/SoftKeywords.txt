@@ -320,6 +320,11 @@ JetFile: SoftKeywords.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('sparam')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lateinit')
         PsiWhiteSpace('\n      ')
         PROPERTY_ACCESSOR
           PsiElement(get)('get')
@@ -806,6 +811,22 @@ JetFile: SoftKeywords.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('sparam')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lateinit')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('lateinit')
       PsiWhiteSpace('\n\n    ')
       FUN
         PsiElement(fun)('fun')
@@ -1114,6 +1135,17 @@ JetFile: SoftKeywords.kt
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('sparam')
             PsiWhiteSpace('    ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('lateinit')
+            PsiWhiteSpace('  ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
@@ -1494,6 +1526,17 @@ JetFile: SoftKeywords.kt
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('sparam')
           PsiWhiteSpace('    ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('lateinit')
+          PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

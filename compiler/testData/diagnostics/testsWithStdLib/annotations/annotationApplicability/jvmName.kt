@@ -1,89 +1,89 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
-@jvmName("a")
+@JvmName("a")
 fun foo() {}
 
-@jvmName("b")
+@JvmName("b")
 fun Any.foo() {}
 
-@jvmName("c")
+@JvmName("c")
 val px = 1
 
-@jvmName("d")
+@JvmName("d")
 val Any.px : Int
     get() = 1
 
 val valx: Int
-    @jvmName("e")
+    @JvmName("e")
     get() = 1
 
 var varx: Int
-    @jvmName("f")
+    @JvmName("f")
     get() = 1
-    @jvmName("g")
+    @JvmName("g")
     set(v) {}
 
 var vardef: Int = 1
-    @jvmName("h")
+    @JvmName("h")
     get
-    @jvmName("i")
+    @JvmName("i")
     set
 
-<!WRONG_ANNOTATION_TARGET!>@jvmName("C")<!>
-class C <!WRONG_ANNOTATION_TARGET!>jvmName("primary")<!> constructor() {
-    <!WRONG_ANNOTATION_TARGET!>jvmName("ctr")<!> constructor(x: Int): this() {}
+<!WRONG_ANNOTATION_TARGET!>@JvmName("C")<!>
+class C <!WRONG_ANNOTATION_TARGET!>JvmName("primary")<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>JvmName("ctr")<!> constructor(x: Int): this() {}
 
-    @jvmName("a")
+    @JvmName("a")
     fun foo() {}
 
-    @jvmName("b")
+    @JvmName("b")
     fun Any.foo() {}
 
-    @jvmName("c")
+    @JvmName("c")
     val px = 1
 
-    @jvmName("d")
+    @JvmName("d")
     val Any.px : Int
     get() = 1
 
     val valx: Int
-    @jvmName("e")
+    @JvmName("e")
     get() = 1
 
     var varx: Int
-    @jvmName("f")
+    @JvmName("f")
     get() = 1
-    @jvmName("g")
+    @JvmName("g")
     set(v) {}
 }
 
 fun foo1() {
-    <!INAPPLICABLE_JVM_NAME!>@jvmName("a")<!>
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("a")<!>
     fun foo() {}
 
-    <!WRONG_ANNOTATION_TARGET!>@jvmName("a")<!>
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("a")<!>
     val x = 1
 }
 
 abstract class AB {
-    <!INAPPLICABLE_JVM_NAME!>@jvmName("AB_absFun1")<!>
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_absFun1")<!>
     abstract fun absFun1()
 
     abstract fun absFun2()
 
-    <!INAPPLICABLE_JVM_NAME!>@jvmName("AB_openFun")<!>
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_openFun")<!>
     open fun openFun() {}
 }
 
 class D: AB() {
     override fun absFun1() {}
 
-    <!INAPPLICABLE_JVM_NAME!>@jvmName("D_absFun2")<!>
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_absFun2")<!>
     override fun absFun2() {}
 
-    <!INAPPLICABLE_JVM_NAME!>@jvmName("D_openFun")<!>
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_openFun")<!>
     final override fun openFun() {}
 
-    @jvmName("D_finalFun")
+    @JvmName("D_finalFun")
     fun finalFun() {}
 }

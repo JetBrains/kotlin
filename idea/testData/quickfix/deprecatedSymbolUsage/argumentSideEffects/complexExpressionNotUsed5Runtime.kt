@@ -1,6 +1,6 @@
 // "Replace with 'newFun(p2)'" "true"
 
-@deprecated("", ReplaceWith("newFun(p2)"))
+@Deprecated("", ReplaceWith("newFun(p2)"))
 fun oldFun(p1: Int, p2: Int): Boolean {
     return newFun(p2)
 }

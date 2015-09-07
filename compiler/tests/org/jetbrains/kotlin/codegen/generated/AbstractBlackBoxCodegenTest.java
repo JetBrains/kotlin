@@ -66,16 +66,15 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     public void doTestWithStdlib(@NotNull String filename) {
-        myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), getTestConfigurationKind(filename), getTestJdkKind(filename)
-        );
-        blackBoxFileByFullPath(filename);
-    }
-
-    private static ConfigurationKind getTestConfigurationKind(String filename) {
-        return InTextDirectivesUtils.isDirectiveDefined(
+        configurationKind = InTextDirectivesUtils.isDirectiveDefined(
                 IoPackage.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
         ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
+
+        myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                getTestRootDisposable(), configurationKind, getTestJdkKind(filename)
+        );
+
+        blackBoxFileByFullPath(filename);
     }
 
     public void doTestMultiFile(@NotNull String folderName) {

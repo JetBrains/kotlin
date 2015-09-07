@@ -41,7 +41,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private val smartCompletion by lazy {
         expression?.let {
             SmartCompletion(it, resolutionFacade,
-                            bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
+                            bindingContext, isVisibleFilter, prefixMatcher, originalSearchScope,
                             toFromOriginalFileMapper, lookupElementFactory)
         }
     }
@@ -50,8 +50,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     override fun doComplete() {
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
-            NamedArgumentCompletion.complete(position, collector, bindingContext)
+        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+            NamedArgumentCompletion.complete(collector, expectedInfos)
             return
         }
 

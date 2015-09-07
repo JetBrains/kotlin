@@ -2,4 +2,5 @@
 //SKIP_IN_RUNTIME_TEST
 package test
 
-annotation(retention = AnnotationRetention.RUNTIME) class Anno
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Anno

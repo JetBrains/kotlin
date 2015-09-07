@@ -1,4 +1,6 @@
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class RepeatableAnn
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class RepeatableAnn
 annotation class Ann
 
 public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn @Ann val y: Int) {

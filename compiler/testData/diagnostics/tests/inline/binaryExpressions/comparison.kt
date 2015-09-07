@@ -11,7 +11,7 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
 
 //noinline
 fun <T, U, V> Function2<T, U, V>.compareTo(index : Function2<T, U, V>) = 1
-fun <T, U, V, W> @extension Function3<T, U, V, W>.compareTo(index : @extension Function3<T, U, V, W>) = 1
+fun <T, U, V, W> @Extension Function3<T, U, V, W>.compareTo(index : @Extension Function3<T, U, V, W>) = 1
 
 inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
     <!USAGE_IS_NOT_INLINABLE!>s<!> < <!USAGE_IS_NOT_INLINABLE!>s<!>

@@ -21,7 +21,9 @@ package kotlin
  * function literals passed as arguments for this parameter.
  */
 target(AnnotationTarget.VALUE_PARAMETER)
-public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class noinline
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class noinline
 
 /**
  * Enables inlining of the annotated function and the function literals that it takes as parameters into the
@@ -35,7 +37,9 @@ public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = tr
  * @see inlineOptions
  */
 target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
 
 /**
  * Specifies the strategy for code generation for an inline function.
@@ -64,7 +68,9 @@ public enum class InlineStrategy {
  * @property value the inlining options selected for the annotated function parameter.
  */
 target(AnnotationTarget.VALUE_PARAMETER)
-public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class inlineOptions(vararg val value: InlineOption)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class inlineOptions(vararg val value: InlineOption)
 
 /**
  * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda

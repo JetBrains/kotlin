@@ -2,7 +2,7 @@
 
 fun foo(vararg s: String) = s.joinToString()
 
-@deprecated("", ReplaceWith("newFun(p)"))
+@Deprecated("", ReplaceWith("newFun(p)"))
 fun oldFun(p: String){
     newFun(p)
 }

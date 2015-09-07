@@ -1,2 +1,2 @@
-@[Deprecated Override] fun foo() {
+@[java.lang.Deprecated Override] fun foo() {
 }

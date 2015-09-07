@@ -1,4 +1,5 @@
-annotation(mustBeDocumented = true) class DocAnn
+@MustBeDocumented
+annotation class DocAnn
 
 annotation class NotDocAnn
 

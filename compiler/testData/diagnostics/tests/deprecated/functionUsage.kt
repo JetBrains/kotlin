@@ -4,15 +4,15 @@ class UsefulClass(val param: Int = 2) {
     fun get(instance: Any, property: PropertyMetadata) : Int = 1
     fun set(instance: Any, property: PropertyMetadata, value: Int) {}
 
-    deprecated("message")
+    Deprecated("message")
     fun member() {}
 }
 
-deprecated("message")
+Deprecated("message")
 fun Obsolete(param: Int = 1): UsefulClass = UsefulClass(param)
 
 class Invocable {
-    deprecated("message")
+    Deprecated("message")
     fun invoke() {}
 }
 
@@ -40,7 +40,7 @@ class Initializer {
     val x = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
 }
 
-deprecated("does nothing good")
+Deprecated("does nothing good")
 fun Any.doNothing() = this.toString()  // "this" should not be marked as deprecated despite it referes to deprecated function
 
 class Delegation {

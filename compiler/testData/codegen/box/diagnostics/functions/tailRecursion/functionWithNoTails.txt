@@ -1,4 +1,4 @@
 package
 
 internal fun box(): kotlin.String
-kotlin.tailRecursive() internal fun noTails(): kotlin.Unit
+kotlin.tailrec() internal fun noTails(): kotlin.Unit

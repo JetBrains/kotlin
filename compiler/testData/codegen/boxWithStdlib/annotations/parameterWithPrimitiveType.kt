@@ -1,4 +1,5 @@
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(
         val b: Byte,
         val s: Short,
         val i: Int,

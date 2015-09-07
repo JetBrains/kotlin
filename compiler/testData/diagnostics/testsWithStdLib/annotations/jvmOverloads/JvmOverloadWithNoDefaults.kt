@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class C {
-    @kotlin.jvm.jvmOverloads <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS!>constructor()<!> {
+    @kotlin.jvm.JvmOverloads <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS!>constructor()<!> {
     }
 
-    <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS!>@kotlin.jvm.jvmOverloads fun foo(s: String)<!> {}
+    <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS!>@kotlin.jvm.JvmOverloads fun foo(s: String)<!> {}
 }

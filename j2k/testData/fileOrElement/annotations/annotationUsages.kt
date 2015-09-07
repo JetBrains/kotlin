@@ -9,7 +9,7 @@ Anon6("x", "y")
 Anon7(String::class, StringBuilder::class)
 Anon8(classes = arrayOf(String::class, StringBuilder::class))
 class C {
-    Anon5(1) deprecated("") private val field1 = 0
+    Anon5(1) Deprecated("") private val field1 = 0
 
     Anon5(1)
     private val field2 = 0
@@ -20,8 +20,8 @@ class C {
     var field4 = 0
 
     Anon6
-    fun foo(deprecated("") p1: Int, deprecated("") Anon5(2) p2: Char) {
-        @deprecated("") @Anon5(3) val c = 'a'
+    fun foo(Deprecated("") p1: Int, Deprecated("") Anon5(2) p2: Char) {
+        @Deprecated("") @Anon5(3) val c = 'a'
     }
 
     Anon5(1) fun bar() {

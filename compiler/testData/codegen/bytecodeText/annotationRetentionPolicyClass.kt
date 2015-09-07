@@ -1,6 +1,7 @@
 Ann class MyClass
 
-annotation(retention = AnnotationRetention.BINARY) class Ann
+@Retention(AnnotationRetention.BINARY)
+annotation class Ann
 
 // 1 @LAnn;()
 // 1 invisible

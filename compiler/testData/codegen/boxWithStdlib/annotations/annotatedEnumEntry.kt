@@ -1,8 +1,10 @@
 // KT-5665
 
-annotation(retention = AnnotationRetention.RUNTIME) class First
+@Retention(AnnotationRetention.RUNTIME)
+annotation class First
 
-annotation(retention = AnnotationRetention.RUNTIME) class Second(val value: String)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Second(val value: String)
 
 enum class E {
     @First

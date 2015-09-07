@@ -9,12 +9,12 @@ interface T2 {
     }
 }
 
-suppress("UNRESOLVED_REFERENCE")
+@Suppress"UNRESOLVED_REFERENCE")
 class Invalid: I
 
 class A(val i: Int)
 
-suppress("FINAL_SUPERTYPE")
+@Suppress"FINAL_SUPERTYPE")
 class B: A(1) {
 }
 

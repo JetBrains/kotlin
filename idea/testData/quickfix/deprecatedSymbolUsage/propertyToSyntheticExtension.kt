@@ -1,7 +1,7 @@
 // "Replace with 'absolutePath'" "true"
 import java.io.File
 
-@deprecated("", ReplaceWith("absolutePath"))
+@Deprecated("", ReplaceWith("absolutePath"))
 val File.prop: String
     get() = absolutePath
 

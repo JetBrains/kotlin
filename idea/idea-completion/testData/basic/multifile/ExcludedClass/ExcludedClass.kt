@@ -1,4 +1,4 @@
-val x = Ex<caret>
+val x = Exc<caret>
 
 // ABSENT: ExcludedClass
-// EXIST: ExtraClass
+// EXIST: ExctraClass

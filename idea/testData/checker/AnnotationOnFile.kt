@@ -1,10 +1,10 @@
-<error>@file:kotlin.deprecated("message")</error>
-@file:suppress(<error>BAR</error>)
-<error>@file:suppress(BAZ)</error>
+<error>@file:kotlin.Deprecated("message")</error>
+@file:Suppress(<error>BAR</error>)
+<error>@file:Suppress(BAZ)</error>
 
-<error><error>@<error>k</error>otlin.deprecated("message")</error></error>
-<error>@<error>s</error>uppress(<error>BAR</error>)</error>
-<error>@<error>s</error>uppress(BAZ)</error>
+<error><error>@<error>k</error>otlin.Deprecated("message")</error></error>
+<error>@<error>S</error>uppress(<error>BAR</error>)</error>
+<error>@<error>S</error>uppress(BAZ)</error>
 
 @file:myAnnotation(1, "string")
 @file:boo.myAnnotation(1, <error>BAR</error>)
@@ -20,4 +20,6 @@ val BAZ = "baz"
 val N = 0
 
 target(AnnotationTarget.FILE)
-annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class myAnnotation(val i: Int, val s: String)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class myAnnotation(val i: Int, val s: String)

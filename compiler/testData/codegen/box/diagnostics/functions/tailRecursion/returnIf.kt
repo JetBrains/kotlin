@@ -1,4 +1,4 @@
-tailRecursive fun test(x : Int) : Int {
+tailrec fun test(x : Int) : Int {
     return if (x == 1) {
         <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1)
         1 + <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1)

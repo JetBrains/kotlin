@@ -1,4 +1,5 @@
-annotation(retention = AnnotationRetention.RUNTIME) class First
+@Retention(AnnotationRetention.RUNTIME)
+annotation class First
 
 class MyClass() {
     public var x: String by Delegate()

@@ -2,7 +2,7 @@ package pack
 
 import dependency.D
 
-<caret>@deprecated("")
+<caret>@Deprecated("")
 fun foo() {
     bar(D.value)
 }

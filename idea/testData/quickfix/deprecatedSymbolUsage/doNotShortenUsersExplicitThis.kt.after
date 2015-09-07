@@ -1,7 +1,7 @@
 // "Replace with 'newFun(p)'" "true"
 
 class X {
-    @deprecated("", ReplaceWith("newFun(p)"))
+    @Deprecated("", ReplaceWith("newFun(p)"))
     fun oldFun(p: Any) {
         newFun(p)
     }

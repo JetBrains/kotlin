@@ -56,7 +56,8 @@ public object ModifierCheckerCore {
             OUT_KEYWORD       to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
-            COMPANION_KEYWORD to EnumSet.of(OBJECT)
+            COMPANION_KEYWORD to EnumSet.of(OBJECT),
+            LATE_INIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY)
     )
 
     // NOTE: redundant targets must be possible!

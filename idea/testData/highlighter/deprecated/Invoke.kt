@@ -1,6 +1,6 @@
 class MyRunnable() {}
 
-deprecated("Use A instead") fun MyRunnable.invoke() {
+Deprecated("Use A instead") fun MyRunnable.invoke() {
 }
 
 fun test() {

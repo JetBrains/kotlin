@@ -1,6 +1,6 @@
 class MyClass() {
     val test: Int
-        @deprecated("") get(): Int { return 0 }
+        @Deprecated("") get(): Int { return 0 }
 }
 
 

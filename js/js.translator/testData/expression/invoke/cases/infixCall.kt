@@ -15,13 +15,13 @@ fun test1(): String {
 }
 
 fun test2(): String {
-    val a: (@extension Function2<*, *, *>).(@extension Function2<*, *, *>)->String = { "a" }
-    val b: (@extension Function2<*, *, *>).(@extension Function2<*, *, *>)->String = {
-        val aa = this as @extension Function2<Any?, Any?, Any?>;
-        val cc = it as @extension Function2<Any?, Any?, Any?>;
+    val a: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->String = { "a" }
+    val b: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->String = {
+        val aa = this as @Extension Function2<Any?, Any?, Any?>;
+        val cc = it as @Extension Function2<Any?, Any?, Any?>;
         "${null.aa(null)} b ${null.cc(null)}"
     }
-    val c: (@extension Function2<*, *, *>).(@extension Function2<*, *, *>)->String = { "c" }
+    val c: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->String = { "c" }
 
     val f = a.b(c) // works
     val s = a b c  //compiler crashes

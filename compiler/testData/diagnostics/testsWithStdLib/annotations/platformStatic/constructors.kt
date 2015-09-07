@@ -1,9 +1,9 @@
-import kotlin.jvm.jvmStatic
+import kotlin.jvm.JvmStatic
 class A {
-    <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor() {}
+    <!WRONG_ANNOTATION_TARGET!>JvmStatic<!> constructor() {}
     inner class B {
-        <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor() {}
+        <!WRONG_ANNOTATION_TARGET!>JvmStatic<!> constructor() {}
     }
 }
 
-class C <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor()
+class C <!WRONG_ANNOTATION_TARGET!>JvmStatic<!> constructor()

@@ -1,6 +1,6 @@
 class A {
 
-    @field:deprecated
+    @field:Deprecated
     val a = "String"
 
 }

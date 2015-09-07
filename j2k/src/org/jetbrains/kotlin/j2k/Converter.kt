@@ -423,7 +423,7 @@ class Converter private constructor(
         if (function == null) return null
 
         if (PsiMethodUtil.isMainMethod(method)) {
-            val fqName = FqName("kotlin.jvm.jvmStatic")
+            val fqName = FqName("kotlin.jvm.JvmStatic")
             val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
 
             function.annotations += Annotations(
@@ -435,7 +435,7 @@ class Converter private constructor(
 
         if (function.parameterList.parameters.any { it is FunctionParameter && it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(
-                    listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
+                    listOf(Annotation(Identifier("JvmOverloads").assignNoPrototype(),
                                       listOf(),
                                       withAt = false,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
@@ -587,7 +587,7 @@ class Converter private constructor(
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
-        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
+        val annotation = Annotation(Identifier("Throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 

@@ -1,6 +1,6 @@
 // "class org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix" "false"
 
-@deprecated("", ReplaceWith("="))
+@Deprecated("", ReplaceWith("="))
 fun oldFun() {
 }
 

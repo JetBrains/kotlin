@@ -2,7 +2,7 @@
 
 import java.math.BigInteger
 
-@deprecated("", ReplaceWith("newFun(n + java.math.BigInteger(s))", "kotlin.math.plus"))
+@Deprecated("", ReplaceWith("newFun(n + java.math.BigInteger(s))", "kotlin.math.plus"))
 fun oldFun(n: BigInteger, s: String) {}
 
 fun newFun(n: BigInteger) {}

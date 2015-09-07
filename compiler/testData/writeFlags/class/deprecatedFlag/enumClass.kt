@@ -1,4 +1,4 @@
-deprecated("") enum class MyEnum {
+Deprecated("") enum class MyEnum {
     FIRST
 }
 

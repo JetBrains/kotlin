@@ -83,6 +83,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnEmptyList.kt")
+    public void testReturnEmptyList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnEmptyList.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnInEmptyType.kt")
     public void testReturnInEmptyType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInEmptyType.kt");

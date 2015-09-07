@@ -1,7 +1,7 @@
 // "Replace with 'newFun(this, p1, p2)'" "true"
 
 interface X {
-    @deprecated("", ReplaceWith("newFun(this, p1, p2)"))
+    @Deprecated("", ReplaceWith("newFun(this, p1, p2)"))
     fun oldFun(p1: Int, p2: Int)
 }
 

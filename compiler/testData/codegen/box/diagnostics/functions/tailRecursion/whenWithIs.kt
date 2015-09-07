@@ -1,4 +1,4 @@
-tailRecursive fun withWhen(counter : Int, d : Any) : Int =
+tailrec fun withWhen(counter : Int, d : Any) : Int =
     if (counter == 0) {
         0
     }

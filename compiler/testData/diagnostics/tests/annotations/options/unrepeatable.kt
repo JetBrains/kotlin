@@ -1,4 +1,4 @@
-annotation(repeatable = false) class unrepann(val x: Int)
+annotation class unrepann(val x: Int)
 
 annotation class ann(val y: Int)
 

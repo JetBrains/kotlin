@@ -1,7 +1,7 @@
 // ERROR: Type mismatch: inferred type is kotlin.Any? but kotlin.Any was expected
 // ERROR: Type mismatch: inferred type is kotlin.Any? but kotlin.Any was expected
 class A {
-    jvmOverloads fun foo(s: String? = null): Any {
+    JvmOverloads fun foo(s: String? = null): Any {
         println("s = " + s!!)
         return ""
     }
@@ -24,7 +24,7 @@ class A {
         return bar1(null)
     }
 
-    deprecated("")
+    Deprecated("")
     public fun f() {
         f(1)
     }

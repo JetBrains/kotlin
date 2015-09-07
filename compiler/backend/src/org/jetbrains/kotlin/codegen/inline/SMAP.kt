@@ -16,16 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Label
-import java.util
-import java.util.LinkedHashMap
-import java.util.Collections
-import java.util.ArrayList
-import org.jetbrains.kotlin.codegen.SourceInfo
+import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import kotlin.properties.Delegates
+import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import java.util
+import java.util.*
 
 //TODO join parameter
 public class SMAPBuilder(val source: String,
@@ -194,23 +191,24 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 
     var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
 
-    protected var origin: RawFileMapping by Delegates.notNull()
+    protected val origin: RawFileMapping
 
     init {
-        visitSource(sourceInfo.source, sourceInfo.pathOrCleanFQN)
-        //map interval
-        (1..maxUsedValue).forEach {origin.mapLine(it, it - 1, true) }
+        val name = sourceInfo.source
+        val path = sourceInfo.pathOrCleanFQN
+        origin = RawFileMapping(name, path)
+        origin.initRange(1, maxUsedValue)
+        fileMappings.put(createKey(name, path), origin)
+        lastVisited = origin
     }
+
+    private fun createKey(name: String, path: String) = "$name#$path"
 
     override val resultMappings: List<FileMapping>
         get() = fileMappings.values().map { it.toFileMapping() }
 
     override fun visitSource(name: String, path: String) {
-        lastVisited = fileMappings.getOrPut("$name#$path", { RawFileMapping(name, path) })
-        //TEMPORARY HACK
-        if (fileMappings.size() == 1) {
-            origin = lastVisited!!
-        }
+        lastVisited = fileMappings.getOrPut(createKey(name, path), { RawFileMapping(name, path) })
     }
 
     override fun visitOrigin() {
@@ -264,7 +262,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
 }
 
 class RawFileMapping(val name: String, val path: String) {
-    private val lineMappings = linkedMapOf<Int, Int>()
+    private val lineMappings = TIntIntHashMap()
     private val rangeMappings = arrayListOf<RangeMapping>()
 
     private var lastMappedWithNewIndex = -1000;
@@ -277,14 +275,23 @@ class RawFileMapping(val name: String, val path: String) {
         return fileMapping
     }
 
+    fun initRange(start: Int, end: Int) {
+        assert(lineMappings.isEmpty(), "initRange should only be called for empty mapping")
+        for (index in start..end) {
+            lineMappings.put(index, index)
+        }
+        rangeMappings.add(RangeMapping(start, start, end - start + 1))
+        lastMappedWithNewIndex = end
+    }
+
     fun mapLine(source: Int, currentIndex: Int, isLastMapped: Boolean): Int {
         var dest = lineMappings[source]
-        if (dest == null) {
+        if (dest == 0) { // line numbers are 1-based, so 0 is ok to indicate missing value
             val rangeMapping: RangeMapping
             if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
                 rangeMapping = rangeMappings.last()
                 rangeMapping.range += source - lastMappedWithNewIndex
-                dest = lineMappings[lastMappedWithNewIndex]!! + source - lastMappedWithNewIndex
+                dest = lineMappings[lastMappedWithNewIndex] + source - lastMappedWithNewIndex
             }
             else {
                 dest = currentIndex + 1

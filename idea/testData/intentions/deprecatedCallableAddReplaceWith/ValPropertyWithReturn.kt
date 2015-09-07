@@ -1,5 +1,5 @@
 class C {
-    <caret>@deprecated("")
+    <caret>@Deprecated("")
     val foo: String
         get() {
             return bar()

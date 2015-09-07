@@ -1,8 +1,13 @@
 import kotlin.test.assertEquals
 
-annotation(retention = AnnotationRetention.SOURCE) class SourceAnno
-annotation(retention = AnnotationRetention.BINARY) class BinaryAnno
-annotation(retention = AnnotationRetention.RUNTIME) class RuntimeAnno
+@Retention(AnnotationRetention.SOURCE)
+annotation class SourceAnno
+
+@Retention(AnnotationRetention.BINARY)
+annotation class BinaryAnno
+
+@Retention(AnnotationRetention.RUNTIME)
+annotation class RuntimeAnno
 
 @SourceAnno
 @BinaryAnno

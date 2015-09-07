@@ -11,4 +11,5 @@ public val c: Char = '\u03c0' // pi symbol
 
 public val str: String = ":)"
 
-public annotation(retention = AnnotationRetention.RUNTIME) class AnnotationClass(public val value: String)
+@Retention(AnnotationRetention.RUNTIME)
+public annotation class AnnotationClass(public val value: String)

@@ -1,6 +1,6 @@
 // "Suppress 'REDUNDANT_NULLABLE' for interface C" "true"
 
-@suppress("REDUNDANT_NULLABLE")
+@Suppress("REDUNDANT_NULLABLE")
 interface C {
     var foo: String?<caret>?
 }

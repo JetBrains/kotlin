@@ -16,7 +16,7 @@ fun <T, U, V> Function2<T, U, V>.rangeTo(p: Function2<T, U, V>): Range<Int> {
     return 1..2
 }
 
-fun <T, U, V, W> @extension Function3<T, U, V, W>.rangeTo(ext: @extension Function3<T, U, V, W>): Range<Int> {
+fun <T, U, V, W> @Extension Function3<T, U, V, W>.rangeTo(ext: @Extension Function3<T, U, V, W>): Range<Int> {
     return 1..2
 }
 

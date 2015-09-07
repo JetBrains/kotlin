@@ -1,6 +1,6 @@
 // "Replace with 'newFun(*p, 1)'" "true"
 
-@deprecated("", ReplaceWith("newFun(*p, 1)"))
+@Deprecated("", ReplaceWith("newFun(*p, 1)"))
 fun oldFun(vararg p: Int){
     newFun(*p, 1)
 }

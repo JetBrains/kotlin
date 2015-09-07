@@ -23,14 +23,18 @@ import kotlin.annotation.AnnotationTarget.*
  * are immediately made visible to other threads.
  */
 target(FIELD)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class volatile
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class Volatile
 
 /**
  * Marks the JVM backing field of the annotated property as `transient`, meaning that it is not
  * part of the default serialized form of the object.
  */
 target(FIELD)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class transient
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class Transient
 
 /**
  * Marks the JVM method generated from the annotated function as `strictfp`, meaning that the precision
@@ -38,7 +42,9 @@ public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = tru
  * achieve better portability.
  */
 target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASSIFIER)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class strictfp
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class Strictfp
 
 /**
  * Marks the JVM method generated from the annotated function as `synchronized`, meaning that the method
@@ -46,11 +52,16 @@ public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = tru
  * for static methods, the class) on which the method is defined.
  */
 target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class synchronized
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class Synchronized
 
 /**
  * Marks the JVM method generated from the annotated function as `native`, meaning that it's not implemented
  * in Java but rather in a different language (for example, in C/C++ using JNI).
  */
 target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class native
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@deprecated("Use kotlin.external instead", ReplaceWith("kotlin.external"))
+public annotation class native

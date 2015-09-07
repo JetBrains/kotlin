@@ -23,10 +23,13 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jetbrains.kotlin.utils.UtilsPackage.rethrow;
 
 public class ForTestCompileRuntime {
+    private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<ClassLoader>(null);
     private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<ClassLoader>(null);
 
     @NotNull
@@ -48,21 +51,36 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
+        ClassLoader loader = reflectJarClassLoader.get();
+        if (loader == null) {
+            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests());
+            reflectJarClassLoader = new SoftReference<ClassLoader>(loader);
+        }
+        return loader;
+    }
+
+    @NotNull
     public static synchronized ClassLoader runtimeJarClassLoader() {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
-            try {
-                loader = new URLClassLoader(new URL[] {
-                        runtimeJarForTests().toURI().toURL(),
-                        reflectJarForTests().toURI().toURL()
-                }, null);
-            }
-            catch (MalformedURLException e) {
-                throw rethrow(e);
-            }
+            loader = createClassLoader(runtimeJarForTests());
             runtimeJarClassLoader = new SoftReference<ClassLoader>(loader);
         }
-
         return loader;
+    }
+
+    @NotNull
+    private static ClassLoader createClassLoader(@NotNull File... files) {
+        try {
+            List<URL> urls = new ArrayList<URL>(2);
+            for (File file : files) {
+                urls.add(file.toURI().toURL());
+            }
+            return new URLClassLoader(urls.toArray(new URL[urls.size()]), null);
+        }
+        catch (MalformedURLException e) {
+            throw rethrow(e);
+        }
     }
 }

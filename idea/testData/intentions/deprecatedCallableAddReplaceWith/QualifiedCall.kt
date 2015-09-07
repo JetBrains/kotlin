@@ -1,4 +1,4 @@
-<caret>@deprecated("")
+<caret>@Deprecated("")
 fun foo(s: String) {
     s.bar()
 }

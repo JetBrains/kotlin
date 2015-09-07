@@ -1,5 +1,5 @@
 class A// this is a primary constructor
-jvmOverloads constructor(p: Int = 1) {
+JvmOverloads constructor(p: Int = 1) {
     private val v: Int
 
     init {

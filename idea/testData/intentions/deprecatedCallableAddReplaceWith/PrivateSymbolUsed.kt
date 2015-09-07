@@ -2,7 +2,7 @@
 class C {
     private val v = 1
 
-    <caret>@deprecated("")
+    <caret>@Deprecated("")
     fun foo() {
         bar(v)
     }

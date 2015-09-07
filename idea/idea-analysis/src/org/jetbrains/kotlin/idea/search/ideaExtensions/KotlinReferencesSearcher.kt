@@ -24,6 +24,7 @@ import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
@@ -47,7 +48,7 @@ data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = 
 }
 
 public class KotlinReferencesSearchParameters(elementToSearch: PsiElement,
-                                              scope: SearchScope = elementToSearch.project.allScope(),
+                                              scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
                                               ignoreAccessScope: Boolean = false,
                                               optimizer: SearchRequestCollector? = null,
                                               val kotlinOptions: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty)
@@ -61,8 +62,8 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         val unwrappedElement = element.namedUnwrappedElement ?: return
 
-        val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
         val words = runReadAction {
+            val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
             unwrappedElement.getSpecialNamesToSearch() +
                 (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
@@ -185,17 +186,19 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
                         val kotlinReferencesSearchOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                         if (kotlinReferencesSearchOptions?.acceptCompanionObjectMembers == true) {
-                            val originClass = element.getStrictParentOfType<JetClass>()
-                            val originLightClass = LightClassUtil.getPsiClass(originClass)
-                            if (originLightClass != null) {
-                                val lightDeclarations: List<KotlinLightElement<*, *>?> =
-                                        originLightClass.methods.map { it as? KotlinLightMethod } +
-                                        originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+                            runReadAction {
+                                val originClass = element.getStrictParentOfType<JetClass>()
+                                val originLightClass = LightClassUtil.getPsiClass(originClass)
+                                if (originLightClass != null) {
+                                    val lightDeclarations: List<KotlinLightElement<*, *>?> =
+                                            originLightClass.methods.map { it as? KotlinLightMethod } +
+                                            originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
 
-                                for (declaration in element.declarations) {
-                                    val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
-                                    if (lightDeclaration != null) {
-                                        searchNamedElement(queryParameters, lightDeclaration)
+                                    for (declaration in element.declarations) {
+                                        val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
+                                        if (lightDeclaration != null) {
+                                            searchNamedElement(queryParameters, lightDeclaration)
+                                        }
                                     }
                                 }
                             }
@@ -224,6 +227,17 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             searchNamedElement(queryParameters, propertyMethods.setter)
         }
 
+        private fun searchDataClassComponentUsages(queryParameters: ReferencesSearch.SearchParameters,
+                                                   containingClass: PsiClass?,
+                                                   componentFunctionDescriptor: FunctionDescriptor) {
+            val componentFunction = containingClass?.methods?.find {
+                it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
+            }
+            if (componentFunction != null) {
+                searchNamedElement(queryParameters, componentFunction)
+            }
+        }
+
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
             when (element) {
                 is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
@@ -235,7 +249,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         searchNamedElement(queryParameters, method)
                     }
 
-                    val staticFromCompanionObject = findStaticMethodFromCompanionObject(element)
+                    val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(element) }
                     if (staticFromCompanionObject != null) {
                         searchNamedElement(queryParameters, staticFromCompanionObject)
                     }
@@ -246,10 +260,18 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     searchNamedElement(queryParameters, propertyMethods.getter)
                     searchNamedElement(queryParameters, propertyMethods.setter)
                     searchNamedElement(queryParameters, propertyMethods.backingField)
+
                 }
 
                 is JetParameter -> {
                     searchPropertyMethods(queryParameters, element)
+                    runReadAction {
+                        val componentFunctionDescriptor = element.dataClassComponentFunction()
+                        if (componentFunctionDescriptor != null) {
+                            val containingClass = LightClassUtil.getPsiClass(element.getStrictParentOfType<JetClassOrObject>())
+                            searchDataClassComponentUsages(queryParameters, containingClass, componentFunctionDescriptor)
+                        }
+                    }
                 }
 
                 is KotlinLightMethod -> {
@@ -262,7 +284,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                         searchNamedElement(queryParameters, property)
                     }
                     else if (declaration is JetFunction) {
-                        val staticFromCompanionObject = findStaticMethodFromCompanionObject(declaration)
+                        val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(declaration) }
                         if (staticFromCompanionObject != null) {
                             searchNamedElement(queryParameters, staticFromCompanionObject)
                         }
@@ -271,24 +293,21 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
                 is KotlinLightParameter -> {
                     val origin = element.getOrigin() ?: return
-                    val componentFunctionDescriptor = origin.dataClassComponentFunction()
-                    if (componentFunctionDescriptor != null) {
-                        val containingClass = element.method.containingClass
-                        val componentFunction = containingClass?.methods?.find {
-                            it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
-                        }
-                        if (componentFunction != null) {
-                            searchNamedElement(queryParameters, componentFunction)
+                    runReadAction {
+                        val componentFunctionDescriptor = origin.dataClassComponentFunction()
+                        if (componentFunctionDescriptor != null) {
+                            searchDataClassComponentUsages(queryParameters, element.method.containingClass, componentFunctionDescriptor)
                         }
                     }
-
                     searchPropertyMethods(queryParameters, origin)
                 }
             }
         }
 
         private fun isOnlyKotlinSearch(searchScope: SearchScope) =
-                searchScope is LocalSearchScope && searchScope.getScope().all { it.getContainingFile().getFileType() == JetFileType.INSTANCE }
+                searchScope is LocalSearchScope && runReadAction {
+                    searchScope.getScope().all { it.getContainingFile().getFileType() == JetFileType.INSTANCE }
+                }
 
         private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters,
                                        element: PsiNamedElement?,

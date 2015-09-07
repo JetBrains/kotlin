@@ -1784,6 +1784,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("multipleTypes2.kt")
+                public void testMultipleTypes2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/multipleTypes2.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("multipleTypes3.kt")
+                public void testMultipleTypes3() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/multipleTypes3.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("multipleTypes4.kt")
+                public void testMultipleTypes4() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/multipleTypes4.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("nonNullableTypes.kt")
                 public void testNonNullableTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");
@@ -1958,6 +1976,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("implicitThisWithSmartCast.kt")
                 public void testImplicitThisWithSmartCast() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisWithSmartCast.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("missingReceiver.kt")
+                public void testMissingReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/missingReceiver.kt");
                     doExtractFunctionTest(fileName);
                 }
 

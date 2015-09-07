@@ -1,6 +1,6 @@
 // "Replace with '"p = $p"'" "true"
 
-@deprecated("", ReplaceWith("\"p = \$p\""))
+@Deprecated("", ReplaceWith("\"p = \$p\""))
 fun oldFun(p: Int) = "p = $p"
 
 fun foo(p: Int) {

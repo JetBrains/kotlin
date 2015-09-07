@@ -2,7 +2,7 @@
 
 interface I
 
-@deprecated("", ReplaceWith("newFun(p, this)"))
+@Deprecated("", ReplaceWith("newFun(p, this)"))
 fun I.plus(p: Int) {
     newFun(p, this)
 }

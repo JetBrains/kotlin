@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.load.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 import static org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
@@ -109,7 +108,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 case SYNTHETIC_CLASS:
                     return new SyntheticClassHeaderReader();
                 default:
-                    throw new IllegalStateException("Unknown kind: " + newKind);
+                    return null;
             }
         }
 
@@ -135,24 +134,18 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
             if (name != null && name.asString().equals(ABI_VERSION_FIELD_NAME)) {
-                version = value == null ? AbiVersionUtil.INVALID_VERSION : (Integer) value;
-            }
-            else {
-                unexpectedArgument(name);
+                version = value instanceof Integer ? (Integer) value : AbiVersionUtil.INVALID_VERSION;
             }
         }
 
         @Override
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            if (name.asString().equals(DATA_FIELD_NAME)) {
-                return stringArrayVisitor();
-            }
-            else if (isAbiVersionCompatible(version)) {
-                throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + annotationClassName);
-            }
+            return name.asString().equals(DATA_FIELD_NAME) ? stringArrayVisitor() : null;
+        }
 
-            return null;
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
         }
 
         @Nullable
@@ -167,16 +160,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new AnnotationArrayArgumentVisitor() {
                 @Override
                 public void visit(@Nullable Object value) {
-                    if (!(value instanceof String)) {
-                        throw new IllegalStateException("Unexpected argument value: " + value);
+                    if (value instanceof String) {
+                        strings.add((String) value);
                     }
-
-                    strings.add((String) value);
                 }
 
                 @Override
                 public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-                    unexpectedArgument(null);
                 }
 
                 @Override
@@ -185,21 +175,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     annotationData = strings.toArray(new String[strings.size()]);
                 }
             };
-        }
-
-        @Nullable
-        protected AnnotationArrayArgumentVisitor unexpectedArgument(@Nullable Name name) {
-            if (isAbiVersionCompatible(version)) {
-                throw new IllegalStateException("Unexpected argument " + name + " for annotation " + annotationClassName);
-            }
-            return null;
-        }
-
-        protected void unexpectedEnumArgument(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if (isAbiVersionCompatible(version)) {
-                throw new IllegalStateException("Unexpected enum entry for class annotation " + annotationClassName + ": " +
-                                                name + "=" + enumClassId + "." + enumEntryName);
-            }
         }
 
         @Override
@@ -216,20 +191,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
             if (KotlinClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
                 classKind = valueOfOrNull(KotlinClass.Kind.class, enumEntryName.asString());
-                if (classKind != null) return;
             }
-            unexpectedEnumArgument(name, enumClassId, enumEntryName);
         }
     }
 
     private class PackageHeaderReader extends HeaderAnnotationArgumentVisitor {
         public PackageHeaderReader() {
             super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE));
-        }
-
-        @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            unexpectedEnumArgument(name, enumClassId, enumEntryName);
         }
     }
 
@@ -242,9 +210,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
             if (KotlinSyntheticClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
                 syntheticClassKind = valueOfOrNull(KotlinSyntheticClass.Kind.class, enumEntryName.asString());
-                if (syntheticClassKind != null) return;
             }
-            unexpectedEnumArgument(name, enumClassId, enumEntryName);
         }
     }
 

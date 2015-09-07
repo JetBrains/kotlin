@@ -1,5 +1,5 @@
 package somePackage
 
 class ExcludedClass
-
-class ExtraClass
+// Such strange name here needed to make completion prefix not intersecting with kotlin.Extension
+class ExctraClass

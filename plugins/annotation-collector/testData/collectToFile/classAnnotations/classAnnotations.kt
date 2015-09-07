@@ -1,5 +1,5 @@
 package org.test
 
-Deprecated public class SomeClass
+java.lang.Deprecated public class SomeClass
 
-Deprecated public object SomeObject
+java.lang.Deprecated public object SomeObject

@@ -3,7 +3,7 @@ class A {
         println("p = [$p]")
     }
 
-    synchronized public fun foo() {
+    Synchronized public fun foo() {
         foo(calcSomething())
     }
 

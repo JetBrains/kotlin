@@ -1,7 +1,7 @@
 package dependency
 
 class C {
-    @deprecated("", ReplaceWith("newFun(this)"))
+    @Deprecated("", ReplaceWith("newFun(this)"))
     fun oldFun() {}
 
     companion object {

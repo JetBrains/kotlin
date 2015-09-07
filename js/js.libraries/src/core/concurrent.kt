@@ -25,10 +25,12 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 native
 target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
-public annotation(retention = AnnotationRetention.SOURCE) class volatile
+@Retention(AnnotationRetention.SOURCE)
+public annotation class volatile
 
 native
 target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.SOURCE) class synchronized
+@Retention(AnnotationRetention.SOURCE)
+public annotation class synchronized
 
 public inline fun <R> synchronized(lock: Any, @inlineOptions(ONLY_LOCAL_RETURN) block: () -> R): R = block()

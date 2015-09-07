@@ -40,7 +40,7 @@ public object JavaAnnotationMapper {
 
     private val JAVA_TARGET_FQ_NAME = FqName(Target::class.java.canonicalName)
     private val JAVA_RETENTION_FQ_NAME = FqName(Retention::class.java.canonicalName)
-    private val JAVA_DEPRECATED_FQ_NAME = FqName(Deprecated::class.java.canonicalName)
+    private val JAVA_DEPRECATED_FQ_NAME = FqName(java.lang.Deprecated::class.java.canonicalName)
     private val JAVA_DOCUMENTED_FQ_NAME = FqName(Documented::class.java.canonicalName)
     // Java8-specific thing
     private val JAVA_REPEATABLE_FQ_NAME = FqName("java.lang.annotation.Repeatable")

@@ -1,6 +1,6 @@
 class MyClass() {
     companion object {
-        deprecated("") fun test() {}
+        Deprecated("") fun test() {}
     }
 }
 

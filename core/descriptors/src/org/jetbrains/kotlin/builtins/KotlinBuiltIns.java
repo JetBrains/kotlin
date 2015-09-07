@@ -155,7 +155,7 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe any = fqNameUnsafe("Any");
         public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
         public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");
-        public final FqNameUnsafe suppress = fqNameUnsafe("suppress");
+        public final FqNameUnsafe suppress = fqNameUnsafe("Suppress");
         public final FqNameUnsafe unit = fqNameUnsafe("Unit");
         public final FqNameUnsafe string = fqNameUnsafe("String");
         public final FqNameUnsafe array = fqNameUnsafe("Array");
@@ -169,13 +169,19 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe _float = fqNameUnsafe("Float");
         public final FqNameUnsafe _double = fqNameUnsafe("Double");
 
+        public final FqNameUnsafe _collection = fqNameUnsafe("Collection");
+        public final FqNameUnsafe _list = fqNameUnsafe("List");
+        public final FqNameUnsafe _set = fqNameUnsafe("Set");
+        public final FqNameUnsafe _iterable = fqNameUnsafe("Iterable");
+
         public final FqName data = fqName("data");
-        public final FqName deprecated = fqName("deprecated");
-        public final FqName tailRecursive = fqName("tailRecursive");
+        public final FqName deprecated = fqName("Deprecated");
+        public final FqName tailRecursive = fqName("tailrec");
+        public final FqName tailRecursiveDeprecated = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
         public final FqName inlineOptions = fqName("inlineOptions");
-        public final FqName extension = fqName("extension");
+        public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("target");
         public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
@@ -388,7 +394,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
-        return getBuiltInClassByName("deprecated");
+        return getBuiltInClassByName(FQ_NAMES.deprecated.shortName());
     }
 
     @NotNull
@@ -721,7 +727,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
-        return new AnnotationDescriptorImpl(getBuiltInClassByName("extension").getDefaultType(),
+        return new AnnotationDescriptorImpl(getBuiltInClassByName(FQ_NAMES.extension.shortName()).getDefaultType(),
                                             Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
@@ -1005,6 +1011,22 @@ public class KotlinBuiltIns {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
+    public static boolean isCollectionOrNullableCollection(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._collection);
+    }
+
+    public static boolean isListOrNullableList(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._list);
+    }
+
+    public static boolean isSetOrNullableSet(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._set);
+    }
+
+    public static boolean isIterableOrNullableIterable(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._iterable);
+    }
+
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.kClass.equals(getFqName(descriptor));
     }
@@ -1031,7 +1053,8 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive)
+               || containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursiveDeprecated);
     }
 
     /** Checks that the symbol represented by the descriptor is annotated with the {@code kotlin.noinline} annotation */

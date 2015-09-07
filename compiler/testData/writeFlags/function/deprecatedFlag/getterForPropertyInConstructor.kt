@@ -1,4 +1,4 @@
-class MyClass(@get:deprecated("") val test: Int) {}
+class MyClass(@get:Deprecated("") val test: Int) {}
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: MyClass, getTest

@@ -1,4 +1,4 @@
-tailRecursive fun Int.test(x : Int) : Int {
+tailrec fun Int.test(x : Int) : Int {
     if (this > 1) {
         return (this - 1) test x
     }

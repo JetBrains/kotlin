@@ -97,7 +97,7 @@ JetFile: multiDeclaration.kt
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('volatile')
+                    PsiElement(IDENTIFIER)('Volatile')
         PsiWhiteSpace(' ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
@@ -132,7 +132,7 @@ JetFile: multiDeclaration.kt
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('volatile')
+                    PsiElement(IDENTIFIER)('Volatile')
         PsiWhiteSpace(' ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')

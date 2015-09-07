@@ -23,7 +23,9 @@ package kotlin.jvm
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
 target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
-public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = true) class jvmOverloads
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+public annotation class JvmOverloads
 
 
 /**
@@ -32,7 +34,9 @@ public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = tru
  * for more information.
  */
 target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmStatic
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method
@@ -42,10 +46,14 @@ public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = tr
  * @property name the name of the element.
  */
 target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmName(public val name: String)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class JvmName(public val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
 target(AnnotationTarget.FIELD)
-public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class publicField
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class publicField

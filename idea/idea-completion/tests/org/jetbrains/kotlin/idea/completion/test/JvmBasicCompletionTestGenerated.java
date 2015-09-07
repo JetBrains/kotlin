@@ -717,12 +717,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
-            @TestMetadata("AnnotationArguments.kt")
-            public void testAnnotationArguments() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationArguments.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("AnnotationTarget.kt")
             public void testAnnotationTarget() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationTarget.kt");
@@ -1488,6 +1482,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("NamedArgumentsFromOverloads.kt")
             public void testNamedArgumentsFromOverloads() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentsFromOverloads.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NamedArgumentsFromOverloads2.kt")
+            public void testNamedArgumentsFromOverloads2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentsFromOverloads2.kt");
                 doTest(fileName);
             }
 

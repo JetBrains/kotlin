@@ -1,6 +1,7 @@
 package test
 
-annotation(retention = AnnotationRetention.RUNTIME) class Ann(val c1: Int)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Ann(val c1: Int)
 
 Ann('a' - 'a') class MyClass
 

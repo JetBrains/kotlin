@@ -3,7 +3,7 @@ package foo
 import kotlin.jvm.*
 import kotlin.platform.*
 
-native fun bar(l: Long, s: String): Double
+external fun bar(l: Long, s: String): Double
 
 fun box(): String {
     var d = 0.0

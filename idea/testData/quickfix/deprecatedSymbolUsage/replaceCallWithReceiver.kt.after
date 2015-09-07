@@ -1,6 +1,6 @@
 // "Replace with 'this'" "true"
 class C {
-    deprecated("", ReplaceWith("this"))
+    @Deprecated("", ReplaceWith("this"))
     fun oldFun(): C = this
 }
 
