@@ -1230,23 +1230,6 @@ public class DescriptorResolver {
         return getParentOfType(scope.getOwnerDescriptor(), ClassDescriptor.class, false);
     }
 
-    public static void resolvePackageHeader(
-            @NotNull JetPackageDirective packageDirective,
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingTrace trace
-    ) {
-        for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
-            FqName fqName = packageDirective.getFqName(nameExpression);
-
-            PackageViewDescriptor packageView = module.getPackage(fqName);
-            trace.record(REFERENCE_TARGET, nameExpression, packageView);
-
-            PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
-            assert parentPackageView != null : "Should not be null since " + fqName + " should not be root";
-            trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
-        }
-    }
-
     public static void registerFileInPackage(@NotNull BindingTrace trace, @NotNull JetFile file) {
         // Register files corresponding to this package
         // The trace currently does not support bi-di multimaps that would handle this task nicer

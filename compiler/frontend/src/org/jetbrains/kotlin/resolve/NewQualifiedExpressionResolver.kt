@@ -32,6 +32,17 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
 
+
+    public fun resolvePackageHeader(
+            packageDirective: JetPackageDirective,
+            module: ModuleDescriptor,
+            trace: BindingTrace
+    ) {
+        for (nameExpression in packageDirective.packageNames) {
+            storageResult(trace, nameExpression, listOf(module.getPackage(packageDirective.getFqName(nameExpression))), null)
+        }
+    }
+
     public fun processImportReference(
             importDirective: JetImportDirective,
             moduleDescriptor: ModuleDescriptor,
@@ -74,7 +85,7 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
                 // todo assert?
                 else -> return JetScope.Empty
             }
-            storageResult(trace, lastPart, descriptors, shouldBeVisibleFrom)
+            storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom)
 
             val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return JetScope.Empty
             return SingleImportScope(aliasName, descriptors)
@@ -126,7 +137,7 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
 
         val (currentDescriptor, currentIndex) = firstPartResolver(path.first())?.let {
             Pair(it, 1)
-        } ?: moduleDescriptor.quickResolveToPackage(path, trace, shouldBeVisibleFrom)
+        } ?: moduleDescriptor.quickResolveToPackage(path, trace)
         return path.subList(currentIndex, path.size()).fold<QualifierPart, DeclarationDescriptor?>(currentDescriptor) {
             descriptor, qualifierPart ->
             val nextDescriptor = when (descriptor) {
@@ -147,15 +158,14 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
                 }
                 else -> null
             }
-            storageResult(trace, qualifierPart, listOfNotNull(nextDescriptor), shouldBeVisibleFrom)
+            storageResult(trace, qualifierPart.expression, listOfNotNull(nextDescriptor), shouldBeVisibleFrom)
             nextDescriptor
         }
     }
 
     private fun ModuleDescriptor.quickResolveToPackage(
             path: List<QualifierPart>,
-            trace: BindingTrace,
-            shouldBeVisibleFrom: DeclarationDescriptor
+            trace: BindingTrace
     ): Pair<PackageViewDescriptor, Int> {
         val possiblePackagePrefixSize = path.indexOfFirst { it.typeArguments != null }.let { if (it == -1) path.size() else it + 1 }
         var fqName = path.subList(0, possiblePackagePrefixSize).fold(FqName.ROOT) { fqName, qualifierPart ->
@@ -165,7 +175,7 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
         while (!fqName.isRoot) {
             val packageDescriptor = getPackage(fqName)
             if (!packageDescriptor.isEmpty()) {
-                recordPackageViews(path.subList(0, prefixSize), packageDescriptor, trace, shouldBeVisibleFrom)
+                recordPackageViews(path.subList(0, prefixSize), packageDescriptor, trace)
                 return Pair(packageDescriptor, prefixSize)
             }
             fqName = fqName.parent()
@@ -177,11 +187,10 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
     private fun recordPackageViews(
             path: List<QualifierPart>,
             packageView: PackageViewDescriptor,
-            trace: BindingTrace,
-            shouldBeVisibleFrom: DeclarationDescriptor
+            trace: BindingTrace
     ) {
         path.foldRight(packageView) { qualifierPart, currentView ->
-            storageResult(trace, qualifierPart, listOfNotNull(currentView), shouldBeVisibleFrom)
+            storageResult(trace, qualifierPart.expression, listOfNotNull(currentView), null)
             val parentView = currentView.containingDeclaration
             assert(parentView != null) {
                 "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
@@ -193,12 +202,10 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
 
     private fun storageResult(
             trace: BindingTrace,
-            qualifierPart: QualifierPart,
+            referenceExpression: JetSimpleNameExpression,
             descriptors: Collection<DeclarationDescriptor>,
-            shouldBeVisibleFrom: DeclarationDescriptor
+            shouldBeVisibleFrom: DeclarationDescriptor?
     ) {
-
-        val referenceExpression = qualifierPart.expression
         if (descriptors.isEmpty()) {
             trace.report(Errors.UNRESOLVED_REFERENCE.on(referenceExpression, referenceExpression))
         }
@@ -212,11 +219,11 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
             if (descriptor is ClassifierDescriptor) {
                 symbolUsageValidator.validateTypeUsage(descriptor, trace, referenceExpression)
             }
-            if (descriptor is DeclarationDescriptorWithVisibility) {
+            if (descriptor is DeclarationDescriptorWithVisibility && shouldBeVisibleFrom != null) {
                 checkVisibility(descriptor, trace, referenceExpression, shouldBeVisibleFrom)
             }
 
-            storageQualifier(trace, qualifierPart.expression, descriptor)
+            storageQualifier(trace, referenceExpression, descriptor)
         }
     }
 
