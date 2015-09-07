@@ -75,6 +75,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleFile.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("SingleJvmClassName.kt")
+        public void testSingleJvmClassName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleJvmClassName.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations")
