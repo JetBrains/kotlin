@@ -1,0 +1,1 @@
+class <caret>X private constructor(n: Int)

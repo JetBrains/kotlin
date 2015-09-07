@@ -194,7 +194,7 @@ public open class JetChangeInfo(
             buffer.append(name)
 
             if (newVisibility != defaultVisibility) {
-                buffer.append(' ').append(newVisibility).append(' ')
+                buffer.append(' ').append(newVisibility).append(" constructor ")
             }
         }
         else {

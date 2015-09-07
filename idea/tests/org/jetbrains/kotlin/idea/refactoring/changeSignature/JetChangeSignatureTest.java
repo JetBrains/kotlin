@@ -1306,6 +1306,18 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testMakePrimaryConstructorPrivateNoParams() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewVisibility(Visibilities.PRIVATE);
+        doTest(changeInfo);
+    }
+
+    public void testMakePrimaryConstructorPublic() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewVisibility(Visibilities.PUBLIC);
+        doTest(changeInfo);
+    }
+
     private List<Editor> editors = null;
 
     private static final String[] EXTENSIONS = {".kt", ".java"};

@@ -293,18 +293,10 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
         else {
             if (element instanceof JetClass) {
-                PsiElement anchor = ((JetClass) element).getTypeParameterList();
-
-                if (anchor == null) {
-                    anchor = ((JetClass) element).getNameIdentifier();
-                }
-                if (anchor != null) {
-                    JetPrimaryConstructor constructor =
-                            (JetPrimaryConstructor) element.addAfter(psiFactory.createPrimaryConstructor(), anchor);
-                    JetParameterList oldParameterList = constructor.getValueParameterList();
-                    assert oldParameterList != null : "primary constructor from factory has parameter list";
-                    newParameterList = (JetParameterList) oldParameterList.replace(newParameterList);
-                }
+                JetPrimaryConstructor constructor = ((JetClass) element).createPrimaryConstructorIfAbsent();
+                JetParameterList oldParameterList = constructor.getValueParameterList();
+                assert oldParameterList != null : "primary constructor from factory has parameter list";
+                newParameterList = (JetParameterList) oldParameterList.replace(newParameterList);
             }
             else if (isLambda) {
                 //noinspection ConstantConditions
@@ -357,9 +349,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             ((JetCallableDeclaration)element).addModifier(newVisibilityToken);
         }
         else if (element instanceof JetClass) {
-            JetPrimaryConstructor constructor = ((JetClass) element).getPrimaryConstructor();
-            assert constructor != null : "Primary constructor should be created before changing visibility";
-            constructor.addModifier(newVisibilityToken);
+            ((JetClass) element).createPrimaryConstructorIfAbsent().addModifier(newVisibilityToken);
         }
         else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
     }
