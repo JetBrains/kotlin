@@ -360,8 +360,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER,
-                                                                             StackValue.LOCAL_0);
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, true, StackValue.LOCAL_0);
 
         propValue.store(codegen.gen(initializer), codegen.v);
 

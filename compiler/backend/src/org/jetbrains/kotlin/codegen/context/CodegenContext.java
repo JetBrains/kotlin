@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.JetSuperExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -47,8 +48,38 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private final LocalLookup enclosingLocalLookup;
     private final NullableLazyValue<StackValue.Field> outerExpression;
 
-    private Map<DeclarationDescriptor, DeclarationDescriptor> accessors;
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
+    private Map<AccessorKey, AccessorForCallableDescriptor<?>> accessors;
+
+    private static class AccessorKey {
+        public final DeclarationDescriptor descriptor;
+        public final ClassDescriptor superCallLabelTarget;
+
+        public AccessorKey(@NotNull DeclarationDescriptor descriptor, @Nullable ClassDescriptor superCallLabelTarget) {
+            this.descriptor = descriptor;
+            this.superCallLabelTarget = superCallLabelTarget;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof AccessorKey)) return false;
+            AccessorKey other = (AccessorKey) obj;
+            return descriptor.equals(other.descriptor) &&
+                   (superCallLabelTarget == null
+                    ? other.superCallLabelTarget == null
+                    : superCallLabelTarget.equals(other.superCallLabelTarget));
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * descriptor.hashCode() + (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
+        }
+
+        @Override
+        public String toString() {
+            return descriptor.toString();
+        }
+    }
 
     public CodegenContext(
             @NotNull T contextDescriptor,
@@ -227,20 +258,28 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor) {
-        return getAccessor(descriptor, false, null);
+    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable JetSuperExpression superCallExpression) {
+        return getAccessor(descriptor, false, null, superCallExpression);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(
-            @NotNull D descriptor, boolean isForBackingFieldInOuterClass, @Nullable JetType delegateType
+            @NotNull D possiblySubstitutedDescriptor,
+            boolean isForBackingFieldInOuterClass,
+            @Nullable JetType delegateType,
+            @Nullable JetSuperExpression superCallExpression
     ) {
         if (accessors == null) {
-            accessors = new LinkedHashMap<DeclarationDescriptor, DeclarationDescriptor>();
+            accessors = new LinkedHashMap<AccessorKey, AccessorForCallableDescriptor<?>>();
         }
-        descriptor = (D) descriptor.getOriginal();
-        DeclarationDescriptor accessor = accessors.get(descriptor);
+
+        D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
+        AccessorKey key = new AccessorKey(
+                descriptor, superCallExpression == null ? null : ExpressionCodegen.getSuperCallLabelTarget(this, superCallExpression)
+        );
+
+        AccessorForCallableDescriptor<?> accessor = accessors.get(key);
         if (accessor != null) {
             assert !isForBackingFieldInOuterClass ||
                    accessor instanceof AccessorForPropertyBackingFieldInOuterClass : "There is already exists accessor with isForBackingFieldInOuterClass = false in this context";
@@ -249,10 +288,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
         int accessorIndex = accessors.size();
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, accessorIndex);
+            accessor = new AccessorForFunctionDescriptor(
+                    (FunctionDescriptor) descriptor, contextDescriptor, accessorIndex, superCallExpression
+            );
         }
         else if (descriptor instanceof ConstructorDescriptor) {
-            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor);
+            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor, superCallExpression);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             if (isForBackingFieldInOuterClass) {
@@ -260,13 +301,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                                                                            accessorIndex, delegateType);
             }
             else {
-                accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessorIndex);
+                accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor,
+                                                             accessorIndex, superCallExpression);
             }
         }
         else {
             throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);
         }
-        accessors.put(descriptor, accessor);
+
+        accessors.put(key, accessor);
+
         return (D) accessor;
     }
 
@@ -314,25 +358,29 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public Map<DeclarationDescriptor, DeclarationDescriptor> getAccessors() {
-        return accessors == null ? Collections.<DeclarationDescriptor, DeclarationDescriptor>emptyMap() : accessors;
+    public Collection<? extends AccessorForCallableDescriptor<?>> getAccessors() {
+        return accessors == null ? Collections.<AccessorForCallableDescriptor<CallableMemberDescriptor>>emptySet() : accessors.values();
     }
 
     @NotNull
-    public <D extends CallableMemberDescriptor> D accessibleDescriptor(D descriptor) {
+    public <D extends CallableMemberDescriptor> D accessibleDescriptor(
+            @NotNull D descriptor,
+            @Nullable JetSuperExpression superCallExpression
+    ) {
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         if (!hasThisDescriptor() || enclosing == getThisDescriptor() ||
             enclosing == getClassOrPackageParentContext().getContextDescriptor()) {
             return descriptor;
         }
 
-        return accessibleDescriptorIfNeeded(descriptor);
+        return accessibleDescriptorIfNeeded(descriptor, superCallExpression);
     }
 
     public void recordSyntheticAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BindingContext bindingContext) {
         if (hasThisDescriptor() &&
             (descriptor instanceof ConstructorDescriptor || Boolean.TRUE.equals(bindingContext.get(NEED_SYNTHETIC_ACCESSOR, descriptor)))) {
-            accessibleDescriptorIfNeeded(descriptor);
+            // Not a super call because neither constructors nor private members can be targets of super calls
+            accessibleDescriptorIfNeeded(descriptor, /* superCallExpression = */ null);
         }
     }
 
@@ -352,7 +400,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(@NotNull D descriptor) {
+    private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(
+            @NotNull D descriptor,
+            @Nullable JetSuperExpression superCallExpression
+    ) {
         CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
         int flag = getAccessFlags(unwrappedDescriptor);
         if ((flag & ACC_PRIVATE) == 0 && (flag & ACC_PROTECTED) == 0) {
@@ -385,7 +436,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
         }
 
-        return (D) descriptorContext.getAccessor(descriptor);
+        return (D) descriptorContext.getAccessor(descriptor, superCallExpression);
     }
 
     private void addChild(@NotNull CodegenContext child) {

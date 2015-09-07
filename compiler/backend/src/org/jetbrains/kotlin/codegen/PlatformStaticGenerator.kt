@@ -23,20 +23,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import kotlin.platform.platformStatic
 
 class PlatformStaticGenerator(
         val descriptor: FunctionDescriptor,
         val declarationOrigin: JvmDeclarationOrigin,
         val state: GenerationState
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
+    private val typeMapper = state.typeMapper
 
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
@@ -51,32 +50,29 @@ class PlatformStaticGenerator(
                             frameMap: FrameMap,
                             signature: JvmMethodSignature,
                             context: MethodContext,
-                            parentCodegen: MemberCodegen<out JetElement>
+                            parentCodegen: MemberCodegen<*>
                     ) {
-                        val typeMapper = parentCodegen.typeMapper
-
                         val iv = InstructionAdapter(mv)
-                        val classDescriptor = descriptor.getContainingDeclaration() as ClassDescriptor
+                        val classDescriptor = descriptor.containingDeclaration as ClassDescriptor
                         val singletonValue = StackValue.singleton(classDescriptor, typeMapper)
-                        singletonValue.put(singletonValue.type, iv);
-                        var index = 0;
-                        val asmMethod = signature.getAsmMethod()
-                        for (paramType in asmMethod.getArgumentTypes()) {
-                            iv.load(index, paramType);
-                            index += paramType.getSize();
+                        singletonValue.put(singletonValue.type, iv)
+                        var index = 0
+                        val asmMethod = signature.asmMethod
+                        for (paramType in asmMethod.argumentTypes) {
+                            iv.load(index, paramType)
+                            index += paramType.size
                         }
 
                         val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
-                                codegen.getContext().accessibleDescriptor(descriptor),
+                                codegen.getContext().accessibleDescriptor(descriptor, /* superCallExpression = */ null),
                                 false,
                                 codegen.getContext()
                         )
                         syntheticOrOriginalMethod.genInvokeInstruction(iv)
-                        iv.areturn(asmMethod.getReturnType());
+                        iv.areturn(asmMethod.returnType)
                     }
                 }
         )
-
 
         if (originElement is JetNamedFunction) {
             codegen.functionCodegen.generateOverloadsWithDefaultValues(originElement, staticFunctionDescriptor, descriptor)
@@ -84,7 +80,7 @@ class PlatformStaticGenerator(
     }
 
     companion object {
-        @platformStatic
+        @JvmStatic
         public fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
             val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor
             val copies = CodegenUtil.copyFunctions(

@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 
 public class AccessorForPropertyBackingFieldInOuterClass extends AccessorForPropertyDescriptor {
-
     public AccessorForPropertyBackingFieldInOuterClass(
-            @NotNull PropertyDescriptor pd,
+            @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
             @Nullable JetType delegationType
     ) {
-        super(pd, delegationType != null ? delegationType :  pd.getType(), null, null, containingDeclaration, index);
+        super(property, delegationType != null ? delegationType : property.getType(), null, null, containingDeclaration, index, null);
     }
 }

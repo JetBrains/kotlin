@@ -210,7 +210,7 @@ public class FunctionCodegen {
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =
-                    typeMapper.mapSignature(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor));
+                    typeMapper.mapSignature(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
             generateDelegateToMethodBody(false, mv, jvmMethodSignature.getAsmMethod(), owningType.getInternalName());
         }

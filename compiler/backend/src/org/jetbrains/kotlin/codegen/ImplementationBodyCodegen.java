@@ -857,32 +857,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateSyntheticAccessors() {
-        Map<DeclarationDescriptor, DeclarationDescriptor> accessors = ((CodegenContext<?>) context).getAccessors();
-        for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : accessors.entrySet()) {
-            generateSyntheticAccessor(entry);
+        for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
+            generateSyntheticAccessor(accessor);
         }
     }
 
-    private void generateSyntheticAccessor(Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry) {
-        if (entry.getValue() instanceof FunctionDescriptor) {
-            final FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
-            final FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
+    private void generateSyntheticAccessor(@NotNull AccessorForCallableDescriptor<?> accessorForCallableDescriptor) {
+        if (accessorForCallableDescriptor instanceof FunctionDescriptor) {
+            final FunctionDescriptor accessor = (FunctionDescriptor) accessorForCallableDescriptor;
+            final FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
             functionCodegen.generateMethod(
-                    Synthetic(null, original), bridge,
-                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, bridge) {
+                    Synthetic(null, original), accessor,
+                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForSyntheticFunction(descriptor, codegen.v);
 
-                            generateMethodCallTo(original, bridge, codegen.v);
+                            generateMethodCallTo(original, accessor, codegen.v);
                             codegen.v.areturn(signature.getReturnType());
                         }
                     }
             );
         }
-        else if (entry.getValue() instanceof PropertyDescriptor) {
-            final PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
-            final PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
+        else if (accessorForCallableDescriptor instanceof AccessorForPropertyDescriptor) {
+            final AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
+            final PropertyDescriptor original = accessor.getCalleeDescriptor();
 
             class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
                 public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
@@ -892,10 +891,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isCompanionObject(bridge.getContainingDeclaration());
-                    StackValue property =
-                            codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR,
-                                                                 StackValue.none());
+                                         !isCompanionObject(accessor.getContainingDeclaration());
+                    StackValue property = codegen.intermediateValueForProperty(
+                            original, forceField, accessor.getSuperCallExpression(), true, StackValue.none()
+                    );
 
                     InstructionAdapter iv = codegen.v;
 
@@ -920,14 +919,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            PropertyGetterDescriptor getter = bridge.getGetter();
+            PropertyGetterDescriptor getter = accessor.getGetter();
             assert getter != null;
             functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
                                            getter, new PropertyAccessorStrategy(getter));
 
 
-            if (bridge.isVar()) {
-                PropertySetterDescriptor setter = bridge.getSetter();
+            if (accessor.isVar()) {
+                PropertySetterDescriptor setter = accessor.getSetter();
                 assert setter != null;
 
                 functionCodegen.generateMethod(Synthetic(null, original.getSetter() != null ? original.getSetter() : original),
@@ -957,24 +956,25 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateMethodCallTo(
             @NotNull FunctionDescriptor functionDescriptor,
-            @Nullable FunctionDescriptor bridgeDescriptor,
+            @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
     ) {
         boolean isConstructor = functionDescriptor instanceof ConstructorDescriptor;
-        boolean bridgeIsAccessorConstructor = bridgeDescriptor instanceof AccessorForConstructorDescriptor;
-        boolean callFromAccessor = bridgeIsAccessorConstructor
-                                   || (bridgeDescriptor != null && JetTypeMapper.isAccessor(bridgeDescriptor));
+        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+
+        boolean superCall = accessorDescriptor instanceof AccessorForCallableDescriptor &&
+                            ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null;
         CallableMethod callableMethod = isConstructor ?
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
-                                        typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor, context);
+                                        typeMapper.mapToCallableMethod(functionDescriptor, superCall, context);
 
         int reg = 1;
-        if (isConstructor && !bridgeIsAccessorConstructor) {
+        if (isConstructor && !accessorIsConstructor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
         }
-        else if (callFromAccessor) {
+        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor))) {
             if (!AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }
@@ -989,6 +989,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 reg += argType.getSize();
             }
         }
+
         callableMethod.genInvokeInstruction(iv);
     }
 
@@ -1074,8 +1075,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor =
-                (FunctionDescriptor) context.accessibleDescriptor(KotlinPackage.single(companionObject.getConstructors()));
+        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
+                KotlinPackage.single(companionObject.getConstructors()), /* superCallExpression = */ null
+        );
         generateMethodCallTo(constructor, null, codegen.v);
         codegen.v.dup();
         StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));

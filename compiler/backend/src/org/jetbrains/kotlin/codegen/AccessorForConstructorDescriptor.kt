@@ -17,37 +17,35 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetSuperExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.JetType
-import java.util.*
 
 public class AccessorForConstructorDescriptor(
         private val calleeDescriptor: ConstructorDescriptor,
-        containingDeclaration: DeclarationDescriptor
-) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>"))
-    , ConstructorDescriptor
-    , AccessorForCallableDescriptor<ConstructorDescriptor> {
-
+        containingDeclaration: DeclarationDescriptor,
+        private val superCallExpression: JetSuperExpression?
+) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>")),
+        ConstructorDescriptor,
+        AccessorForCallableDescriptor<ConstructorDescriptor> {
     override fun getCalleeDescriptor(): ConstructorDescriptor = calleeDescriptor
 
-    override fun getContainingDeclaration(): ClassDescriptor = calleeDescriptor.getContainingDeclaration()
+    override fun getContainingDeclaration(): ClassDescriptor = calleeDescriptor.containingDeclaration
 
     override fun isPrimary(): Boolean = false
 
-    override fun getReturnType(): JetType = super<AbstractAccessorForFunctionDescriptor>.getReturnType()!!
+    override fun getReturnType(): JetType = super.getReturnType()!!
+
+    override fun getSuperCallExpression(): JetSuperExpression? = superCallExpression
 
     init {
         initialize(
-                DescriptorUtils.getReceiverParameterType(getExtensionReceiverParameter()),
-                calleeDescriptor.getDispatchReceiverParameter(),
+                DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
+                calleeDescriptor.dispatchReceiverParameter,
                 copyTypeParameters(calleeDescriptor),
                 copyValueParameters(calleeDescriptor),
-                calleeDescriptor.getReturnType(),
+                calleeDescriptor.returnType,
                 Modality.FINAL,
                 Visibilities.INTERNAL
         )
