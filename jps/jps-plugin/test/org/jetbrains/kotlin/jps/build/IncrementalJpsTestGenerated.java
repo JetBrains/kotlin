@@ -239,6 +239,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegatedPropertyInlineExtensionAccessor")
+        public void testDelegatedPropertyInlineExtensionAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineExtensionAccessor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedPropertyInlineMethodAccessor")
+        public void testDelegatedPropertyInlineMethodAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineMethodAccessor/");
+            doTest(fileName);
+        }
+
         @TestMetadata("dependencyClassReferenced")
         public void testDependencyClassReferenced() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
