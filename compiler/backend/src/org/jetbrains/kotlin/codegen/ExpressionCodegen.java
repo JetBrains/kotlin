@@ -2005,15 +2005,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             boolean directToField =
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
-            JetExpression r = getReceiverForSelector(expression);
-            boolean isSuper = r instanceof JetSuperExpression;
+            JetSuperExpression superExpression =
+                    resolvedCall == null ? null : CallResolverUtilPackage.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor);
 
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
 
-            return intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null, receiver);
+            return intermediateValueForProperty(propertyDescriptor, directToField, superExpression, receiver);
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -2555,15 +2555,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    @Nullable
-    private static JetExpression getReceiverForSelector(PsiElement expression) {
-        if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
-            JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
-            return parent.getReceiverExpression();
-        }
-        return null;
-    }
-
     @NotNull
     private StackValue generateReceiver(@NotNull CallableDescriptor descriptor) {
         return context.generateReceiver(descriptor, state, false);
@@ -2662,15 +2653,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return cur;
     }
 
-
-    private static boolean isReceiver(PsiElement expression) {
-        PsiElement parent = expression.getParent();
-        if (parent instanceof JetQualifiedExpression) {
-            JetExpression receiverExpression = ((JetQualifiedExpression) parent).getReceiverExpression();
-            return expression == receiverExpression;
-        }
-        return false;
-    }
 
     public void genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull JetType outType) {
         Type type = asmType(outType);
