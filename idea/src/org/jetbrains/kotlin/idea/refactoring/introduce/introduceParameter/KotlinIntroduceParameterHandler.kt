@@ -209,7 +209,12 @@ public open class KotlinIntroduceParameterHandler(
     open fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val context = expression.analyze()
 
-        val expressionType = context.getType(expression)!!
+        val expressionType = context.getType(expression)
+        if (expressionType == null) {
+            showErrorHint(project, editor, "Expression has no type", INTRODUCE_PARAMETER)
+            return
+        }
+
         if (expressionType.isUnit() || expressionType.isNothing()) {
             val message = JetRefactoringBundle.message(
                     "cannot.introduce.parameter.of.0.type",

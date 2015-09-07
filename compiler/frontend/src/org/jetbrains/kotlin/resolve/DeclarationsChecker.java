@@ -327,22 +327,6 @@ public class DeclarationsChecker {
         }
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
-        checkDeclaredTypeInPublicMember(property, propertyDescriptor);
-    }
-
-    private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
-        boolean hasDeferredType;
-        if (member instanceof JetProperty) {
-            hasDeferredType = ((JetProperty) member).getTypeReference() == null && DescriptorResolver.hasBody((JetProperty) member);
-        }
-        else {
-            assert member instanceof JetFunction;
-            JetFunction function = (JetFunction) member;
-            hasDeferredType = function.getTypeReference() == null && function.hasBody() && !function.hasBlockBody();
-        }
-        if ((memberDescriptor.getVisibility().getIsPublicAPI()) && memberDescriptor.getOverriddenDescriptors().size() == 0 && hasDeferredType) {
-            trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
-        }
     }
 
     private void checkPropertyAbstractness(
@@ -449,7 +433,6 @@ public class DeclarationsChecker {
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        checkDeclaredTypeInPublicMember(function, functionDescriptor);
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getKind() == ClassKind.INTERFACE;

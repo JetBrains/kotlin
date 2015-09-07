@@ -44,6 +44,8 @@ public class SimpleTestClassModel implements TestClassModel {
     private final boolean excludeParentDirs;
     @NotNull
     private final Pattern filenamePattern;
+    @Nullable
+    private final Boolean checkFilenameStartsLowerCase;
     @NotNull
     private final String doTestMethodName;
     @NotNull
@@ -62,6 +64,7 @@ public class SimpleTestClassModel implements TestClassModel {
             boolean recursive,
             boolean excludeParentDirs,
             @NotNull Pattern filenamePattern,
+            @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
             @NotNull TargetBackend targetBackend,
@@ -74,6 +77,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
+        this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
         this.excludeDirs = excludeDirs.isEmpty() ? Collections.<String>emptySet() : new LinkedHashSet<String>(excludeDirs);
     }
 
@@ -91,8 +95,10 @@ public class SimpleTestClassModel implements TestClassModel {
                 for (File file : files) {
                     if (file.isDirectory() && dirHasFilesInside(file) && !excludeDirs.contains(file.getName())) {
                         String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
-                        children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName,
-                                                              innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName())));
+                        children.add(new SimpleTestClassModel(
+                                             file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
+                                             doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()))
+                        );
                     }
                 }
             }
@@ -144,7 +150,8 @@ public class SimpleTestClassModel implements TestClassModel {
     public Collection<TestMethodModel> getTestMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName, filenamePattern,
+                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName,
+                                                                                                   filenamePattern, checkFilenameStartsLowerCase,
                                                                                                    targetBackend));
             }
             else {
@@ -161,7 +168,7 @@ public class SimpleTestClassModel implements TestClassModel {
                                 continue;
                             }
 
-                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern, targetBackend));
+                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern, checkFilenameStartsLowerCase, targetBackend));
                         }
                     }
                 }

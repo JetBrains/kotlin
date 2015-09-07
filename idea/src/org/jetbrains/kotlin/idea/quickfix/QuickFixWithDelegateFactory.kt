@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.NotNull
 
-public class QuickFixWithDelegateFactory(
+public open class QuickFixWithDelegateFactory(
         private val delegateFactory: () -> IntentionAction
 ) : IntentionAction {
     private val familyName: String
@@ -49,3 +50,7 @@ public class QuickFixWithDelegateFactory(
         delegateFactory().invoke(project, editor, file)
     }
 }
+
+public class LowPriorityQuickFixWithDelegateFactory(
+        delegateFactory: () -> IntentionAction
+): QuickFixWithDelegateFactory(delegateFactory), LowPriorityAction

@@ -16,22 +16,26 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage;
 
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.*
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.JetPackageDirective
 
 public class ChangePackageIntention: JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(javaClass(), "Change package") {
+    companion object {
+        private val PACKAGE_NAME_VAR = "PACKAGE_NAME"
+    }
+
     override fun isApplicableTo(element: JetPackageDirective) = element.getPackageNameExpression() != null
 
     override fun applyTo(element: JetPackageDirective, editor: Editor) {
@@ -48,25 +52,47 @@ public class ChangePackageIntention: JetSelfTargetingOffsetIndependentIntention<
         val builder = TemplateBuilderImpl(file)
         builder.replaceElement(
                 nameExpression,
+                PACKAGE_NAME_VAR,
                 object: Expression() {
                     override fun calculateQuickResult(context: ExpressionContext?) = TextResult(currentName)
                     override fun calculateResult(context: ExpressionContext?) = TextResult(currentName)
                     override fun calculateLookupItems(context: ExpressionContext?) = arrayOf(LookupElementBuilder.create(currentName))
-                }
+                },
+                true
         )
+
+        var enteredName: String? = null
+        var affectedRange: TextRange? = null
+
         editor.getCaretModel().moveToOffset(0)
         TemplateManager.getInstance(project).startTemplate(
                 editor,
                 builder.buildInlineTemplate(),
                 object: TemplateEditingAdapter() {
+                    override fun beforeTemplateFinished(state: TemplateState?, template: Template?) {
+                        if (state == null) return
+                        enteredName = state.getVariableValue(PACKAGE_NAME_VAR)!!.text
+                        affectedRange = state.getSegmentRange(0)
+                    }
+
                     override fun templateFinished(template: Template?, brokenOff: Boolean) {
-                        if (!brokenOff) {
-                            // Restore original name and run refactoring
-                            val packageDirective = file.getPackageDirective()!!
-                            val newFqName = packageDirective.getFqName()
-                            packageDirective.setFqName(FqName(currentName))
-                            KotlinChangePackageRefactoring(file).run(newFqName)
+                        if (brokenOff || enteredName == null || affectedRange == null) return
+
+                        // Restore original name and run refactoring
+
+                        val document = editor.document
+                        project.executeWriteCommand(text) {
+                            document.replaceString(affectedRange!!.startOffset, affectedRange!!.endOffset, currentName)
                         }
+                        PsiDocumentManager.getInstance(project).commitDocument(document)
+                        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
+
+                        if (!FqNameUnsafe(enteredName!!).hasIdentifiersOnly()) {
+                            CodeInsightUtils.showErrorHint(project, editor, "$enteredName is not a valid package name", "Change package", null)
+                            return
+                        }
+
+                        KotlinChangePackageRefactoring(file).run(FqName(enteredName!!))
                     }
                 }
         )

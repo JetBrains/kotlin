@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun fn(index : Int, list: List<()->Unit>) {
+    when  {
+        index in list.indices -> {
+            val function = list[index]
+            function()
+        }
+    }
+}

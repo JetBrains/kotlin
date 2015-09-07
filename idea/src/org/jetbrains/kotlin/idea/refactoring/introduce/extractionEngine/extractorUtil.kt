@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.core.appendElement
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
-import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
-import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
@@ -46,9 +44,9 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.types.isNullabilityFlexible
 import java.util.ArrayList
 import java.util.Collections
 import java.util.HashMap
@@ -226,6 +224,20 @@ private fun makeCall(
             functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
             return
         }
+
+        if (anchor is JetOperationReferenceExpression) {
+            val operationExpression = anchor.parent as? JetOperationExpression ?: return
+            val newNameExpression = when (operationExpression) {
+                is JetUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
+                is JetBinaryExpression -> {
+                    InfixCallToOrdinaryIntention.convert(operationExpression).getCalleeExpressionIfAny()
+                }
+                else -> null
+            }
+            newNameExpression?.replace(wrappedCall)
+            return
+        }
+
         anchor.replace(wrappedCall)
     }
 

@@ -33,14 +33,22 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.SerializationUtil;
+import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -219,6 +227,23 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     @Override
     protected void generateKotlinAnnotation() {
         writeKotlinSyntheticClassAnnotation(v, syntheticClassKind);
+
+        DescriptorSerializer serializer =
+                DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
+
+        ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
+
+        StringTable strings = serializer.getStringTable();
+        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
+
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
+        for (String string : BitEncoding.encodeBytes(SerializationUtil.serializeCallableData(nameResolver, callableProto))) {
+            array.visit(null, string);
+        }
+        array.visitEnd();
+        av.visitEnd();
     }
 
     @Override

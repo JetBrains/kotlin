@@ -164,9 +164,9 @@ fun f(): Int {
 
 fun f1(): Int = if (1 < 2) 1 else returnNothing()
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public fun f2()<!> = 1
+public fun f2() = 1
 class B() {
-   <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>protected fun f()<!> = "ss"
+   protected fun f() = "ss"
 }
 
 fun testFunctionLiterals() {

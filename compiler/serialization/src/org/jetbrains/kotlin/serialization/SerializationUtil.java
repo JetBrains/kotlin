@@ -54,6 +54,19 @@ public class SerializationUtil {
         }
     }
 
+    @NotNull
+    public static byte[] serializeCallableData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Callable callableProto) {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            serializeNameResolver(result, nameResolver);
+            callableProto.writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
     private static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
         serializeStringTable(out, nameResolver.getStringTable(), nameResolver.getQualifiedNameTable());
     }

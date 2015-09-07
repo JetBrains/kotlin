@@ -4245,12 +4245,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("publicDelegatedProperty.kt")
-            public void testPublicDelegatedProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/publicDelegatedProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("recursiveType.kt")
             public void testRecursiveType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/recursiveType.kt");
@@ -14624,6 +14618,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("GenericClass.kt")
                 public void testGenericClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/GenericClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("GetA.kt")
+                public void testGetA() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/GetA.kt");
                     doTest(fileName);
                 }
 

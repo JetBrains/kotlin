@@ -245,8 +245,6 @@ public interface Errors {
 
     // Members
 
-    DiagnosticFactory0<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 

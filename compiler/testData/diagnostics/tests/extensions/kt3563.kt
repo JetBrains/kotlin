@@ -4,14 +4,13 @@ package bar
 
 import java.io.File
 
-class Customer(<!UNUSED_PARAMETER!>name<!>: String)
+class Customer(<!UNUSED_PARAMETER!>name1<!>: String)
 
 fun foo(f: File, c: Customer) {
-    f.name
+    f.name1
 
-    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name<!> // name should be unresolved here
+    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name1<!> // name1 should be unresolved here
 }
 
-//from standard library
-val File.name: String
+val File.name1: String
     get() = getName()

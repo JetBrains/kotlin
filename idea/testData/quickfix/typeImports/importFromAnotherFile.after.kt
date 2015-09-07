@@ -1,5 +1,4 @@
 // "Specify type explicitly" "true"
-// ERROR: Public or protected member should have specified type
 
 package a
 

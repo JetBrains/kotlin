@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -43,46 +42,53 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
 
     override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<PsiModifierListOwner>): Boolean {
-        val annClass = p.getAnnotationClass()
-        assert(annClass.isAnnotationType(), "Annotation type should be passed to annotated members search")
-
-        val annotationFQN = annClass.getQualifiedName()
-        assert(annotationFQN != null)
-
-        val useScope = p.getScope()
-
-        for (elt in getJetAnnotationCandidates(annClass, useScope)) {
-            if (notJetAnnotationEntry(elt)) continue
-
-            val result = runReadAction(fun(): Boolean {
-                val parentOfType = elt.getStrictParentOfType<JetDeclaration>() ?: return true
-
-                val annotationEntry = elt as JetAnnotationEntry
-
-                val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
-                val annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry) ?: return true
-
-                val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor() ?: return true
-                if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
-
-                if (parentOfType is JetClass) {
-                    val lightClass = LightClassUtil.getPsiClass(parentOfType as JetClass?)
-                    if (!consumer.process(lightClass)) return false
+        return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
+            when (declaration) {
+                is JetClass -> {
+                    val lightClass = LightClassUtil.getPsiClass(declaration)
+                    consumer.process(lightClass)
                 }
-                else if (parentOfType is JetNamedFunction || parentOfType is JetSecondaryConstructor) {
-                    val wrappedMethod = LightClassUtil.getLightClassMethod(parentOfType as JetFunction)
-                    if (!consumer.process(wrappedMethod)) return false
+                is JetNamedFunction, is JetSecondaryConstructor -> {
+                    val wrappedMethod = LightClassUtil.getLightClassMethod(declaration as JetFunction)
+                    consumer.process(wrappedMethod)
                 }
-                return true
-            })
-            if (!result) return false
+                else -> true
+            }
         }
-
-        return true
     }
 
     companion object {
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
+
+        public fun processAnnotatedMembers(annClass: PsiClass, useScope: SearchScope, consumer: (JetDeclaration) -> Boolean): Boolean {
+            assert(annClass.isAnnotationType(), "Annotation type should be passed to annotated members search")
+
+            val annotationFQN = annClass.getQualifiedName()
+            assert(annotationFQN != null)
+
+            for (elt in getJetAnnotationCandidates(annClass, useScope)) {
+                if (notJetAnnotationEntry(elt)) continue
+
+                val result = runReadAction(fun(): Boolean {
+                    val declaration = elt.getStrictParentOfType<JetDeclaration>() ?: return true
+
+                    val annotationEntry = elt as JetAnnotationEntry
+
+                    val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
+                    val annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry) ?: return true
+
+                    val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor() ?: return true
+                    if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
+
+                    if (!consumer(declaration)) return false
+
+                    return true
+                })
+                if (!result) return false
+            }
+
+            return true
+        }
 
         /* Return all elements annotated with given annotation name. Aliases don't work now. */
         private fun getJetAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {

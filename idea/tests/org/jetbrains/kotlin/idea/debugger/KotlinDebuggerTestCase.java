@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
+import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -212,5 +213,17 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     @Override
     protected Sdk getTestProjectJdk() {
         return PluginTestCaseBase.fullJdk();
+    }
+
+    @Override
+    protected void checkTestOutput() throws Exception {
+        try {
+            super.checkTestOutput();
+        }
+        catch (ComparisonFailure e) {
+            JetTestUtils.assertEqualsToFile(
+                    new File(getTestAppPath() + File.separator + "outs" + File.separator + getTestName(true) + ".out"),
+                    e.getActual());
+        }
     }
 }

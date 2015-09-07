@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
@@ -30,14 +31,16 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
 ) : CreateFromUsageFactory<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
+            lowPriority: Boolean,
             quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?,
             quickFixFactory: (E, List<CallableInfo>) -> CreateCallableFromUsageFixBase<E>
     ): QuickFixWithDelegateFactory {
-        return QuickFixWithDelegateFactory {
+        val delegateFactory = {
             val data = quickFixDataFactory(originalElementPointer).orEmpty()
             val originalElement = originalElementPointer.element
             if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else NullQuickFix
         }
+        return if (lowPriority) LowPriorityQuickFixWithDelegateFactory(delegateFactory) else QuickFixWithDelegateFactory(delegateFactory)
     }
 
     protected open fun createCallableInfo(element: E, diagnostic: Diagnostic): CallableInfo? = null
@@ -50,12 +53,12 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
             diagnostic: Diagnostic,
             quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?
     ): List<QuickFixWithDelegateFactory> {
-        val memberFix = newCallableQuickFix(originalElementPointer, quickFixDataFactory) { element, data ->
+        val memberFix = newCallableQuickFix(originalElementPointer, false, quickFixDataFactory) { element, data ->
             CreateCallableFromUsageFix(element, data)
         }
         if (!extensionsSupported) return listOf(memberFix)
 
-        val extensionFix = newCallableQuickFix(originalElementPointer, quickFixDataFactory) { element, data ->
+        val extensionFix = newCallableQuickFix(originalElementPointer, true, quickFixDataFactory) { element, data ->
             CreateExtensionCallableFromUsageFix(element, data)
         }
         return listOf(memberFix, extensionFix)

@@ -78,7 +78,8 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extend
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetPsiFactory(this).createNameIdentifier(name));
+        PsiElement identifier = getNameIdentifier();
+        return identifier != null ? identifier.replace(JetPsiFactory(this).createNameIdentifier(name)) : null;
     }
 
     @Override

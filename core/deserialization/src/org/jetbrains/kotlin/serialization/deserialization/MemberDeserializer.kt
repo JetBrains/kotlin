@@ -125,7 +125,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
-                        val container = c.containingDeclaration.asProtoContainer()
+                        val container = c.containingDeclaration.asProtoContainer()!!
                         c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
                     }
             )
@@ -178,9 +178,11 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             return Annotations.EMPTY
         }
         return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
-            c.components.annotationAndConstantLoader.loadCallableAnnotations(
-                    c.containingDeclaration.asProtoContainer(), proto, c.nameResolver, kind
-            )
+            c.containingDeclaration.asProtoContainer()?.let {
+                c.components.annotationAndConstantLoader.loadCallableAnnotations(
+                        it, proto, c.nameResolver, kind
+                )
+            }.orEmpty()
         }
     }
 
@@ -191,11 +193,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     ): Annotations {
         return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
             if (proto.hasReceiverType()) {
-                val container = c.containingDeclaration.asProtoContainer()
-                c.components.annotationAndConstantLoader
-                        .loadExtensionReceiverParameterAnnotations(container, proto, c.nameResolver, receiverTargetedKind)
-                        .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
-            } else emptyList()
+                c.containingDeclaration.asProtoContainer()?.let {
+                    c.components.annotationAndConstantLoader
+                            .loadExtensionReceiverParameterAnnotations(it, proto, c.nameResolver, receiverTargetedKind)
+                            .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+                }.orEmpty()
+            }
+            else emptyList()
         }
     }
 
@@ -206,7 +210,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return callable.getValueParameterList().mapIndexed { i, proto ->
             ValueParameterDescriptorImpl(
                     callableDescriptor, null, i,
-                    getParameterAnnotations(containerOfCallable, callable, kind, proto),
+                    containerOfCallable?.let { getParameterAnnotations(it, callable, kind, proto) } ?: Annotations.EMPTY,
                     c.nameResolver.getName(proto.getName()),
                     c.typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
@@ -227,9 +231,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
     }
 
-    private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer = when(this) {
+    private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when(this) {
         is PackageFragmentDescriptor -> ProtoContainer(null, fqName)
         is DeserializedClassDescriptor -> ProtoContainer(classProto, null)
-        else -> error("Only members in classes or package fragments should be serialized: $this")
+        else -> null // TODO: support annotations on lambdas and their parameters
     }
 }

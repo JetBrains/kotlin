@@ -1,0 +1,10 @@
+class A {
+    fun bar() {
+
+    }
+
+    fun foo() {
+        val a = this
+        a.foo()
+    }
+}

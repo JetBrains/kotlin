@@ -27,8 +27,14 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
@@ -42,10 +48,12 @@ public class CodeInsightUtils {
     @Nullable
     public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
         PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
-        if (element == null) {
-            return null;
-        }
-        else if (!(element instanceof JetExpression)) {
+        if (element == null) return null;
+
+        // TODO: Support binary operations in "Introduce..." refactorings
+        if (element instanceof JetOperationReferenceExpression
+            && ((JetOperationReferenceExpression) element).getReferencedNameElementType() != JetTokens.IDENTIFIER
+            && element.getParent() instanceof JetBinaryExpression) {
             return null;
         }
 
@@ -63,7 +71,18 @@ public class CodeInsightUtils {
                 }
             }
         }
-        return (JetExpression) element;
+
+        JetExpression expression = (JetExpression) element;
+
+        BindingContext context = ResolvePackage.analyze(expression);
+
+        Qualifier qualifier = context.get(BindingContext.QUALIFIER, expression);
+        if (qualifier != null) {
+            ClassifierDescriptor classifier = qualifier.getClassifier();
+            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) return null;
+        }
+
+        return expression;
     }
 
     @NotNull

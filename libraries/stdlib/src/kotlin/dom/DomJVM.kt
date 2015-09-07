@@ -3,6 +3,8 @@
  */
 package kotlin.dom
 
+import org.w3c.dom.*
+import org.xml.sax.InputSource
 import java.io.File
 import java.io.InputStream
 import java.io.StringWriter
@@ -16,79 +18,115 @@ import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
-import org.w3c.dom.*
-import org.xml.sax.InputSource
 
 // JavaScript style properties - TODO could auto-generate these
+@deprecated("Use getNodeName()", ReplaceWith("getNodeName() ?: \"\""))
 public val Node.nodeName: String
     get() = getNodeName() ?: ""
 
+@deprecated("Use getNodeValue()", ReplaceWith("getNodeValue() ?: \"\""))
 public val Node.nodeValue: String
     get() = getNodeValue() ?: ""
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nodeType"))
 public val Node.nodeType: Short
     get() = getNodeType()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("parentNode"))
 public val Node.parentNode: Node?
     get() = getParentNode()
 
+@deprecated("Use getChildNodes()", ReplaceWith("getChildNodes()!!"))
 public val Node.childNodes: NodeList
     get() = getChildNodes()!!
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("firstChild"))
 public val Node.firstChild: Node?
     get() = getFirstChild()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("lastChild"))
 public val Node.lastChild: Node?
     get() = getLastChild()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nextSibling"))
 public val Node.nextSibling: Node?
     get() = getNextSibling()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("previousSibling"))
 public val Node.previousSibling: Node?
     get() = getPreviousSibling()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("attributes"))
 public val Node.attributes: NamedNodeMap?
     get() = getAttributes()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("ownerDocument"))
 public val Node.ownerDocument: Document?
     get() = getOwnerDocument()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("documentElement"))
 public val Document.documentElement: Element?
     get() = this.getDocumentElement()
 
+@deprecated("Use getNamespaceURI()", ReplaceWith("getNamespaceURI() ?: \"\""))
 public val Node.namespaceURI: String
     get() = getNamespaceURI() ?: ""
 
+@deprecated("Use getPrefix()", ReplaceWith("getPrefix() ?: \"\""))
 public val Node.prefix: String
     get() = getPrefix() ?: ""
 
+@deprecated("Use getLocalName()", ReplaceWith("getLocalName() ?: \"\""))
 public val Node.localName: String
     get() = getLocalName() ?: ""
 
+@deprecated("Use getBaseURI", ReplaceWith("getBaseURI() ?: \"\""))
 public val Node.baseURI: String
     get() = getBaseURI() ?: ""
 
+@deprecated("Use getTextContent()/setTextContent()")
 public var Node.textContent: String
     get() = getTextContent() ?: ""
     set(value) {
         setTextContent(value)
     }
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val DOMStringList.length: Int
     get() = this.getLength()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val NameList.length: Int
     get() = this.getLength()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val DOMImplementationList.length: Int
     get() = this.getLength()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val NodeList.length: Int
     get() = this.getLength()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val CharacterData.length: Int
     get() = this.getLength()
 
+@HiddenDeclaration
+@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
 public val NamedNodeMap.length: Int
     get() = this.getLength()
 

@@ -245,6 +245,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveFile/invalidTargetPackage/moveFileToInvalidPackage.test")
+    public void testKotlin_moveFile_invalidTargetPackage_MoveFileToInvalidPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/invalidTargetPackage/moveFileToInvalidPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveFile/moveFileToFile/moveFileToFile.test")
     public void testKotlin_moveFile_moveFileToFile_MoveFileToFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/moveFileToFile/moveFileToFile.test");

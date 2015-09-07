@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix" "false"
 
 @deprecated("")
 class C(p: Int)

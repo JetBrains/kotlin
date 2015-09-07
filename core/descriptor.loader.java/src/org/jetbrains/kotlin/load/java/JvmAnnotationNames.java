@@ -30,6 +30,7 @@ import java.util.Set;
 public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = KotlinClass.CLASS_NAME.getFqNameForClassNameWithoutDollars();
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
+    public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
 
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");

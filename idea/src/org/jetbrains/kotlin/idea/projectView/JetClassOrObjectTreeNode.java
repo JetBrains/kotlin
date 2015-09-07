@@ -48,7 +48,10 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
     }
 
     private void update(AbstractTreeNode node) {
-        ProjectView.getInstance(getProject()).getCurrentProjectViewPane().getTreeBuilder().addSubtreeToUpdateByElement(node);
+        Project project = getProject();
+        if (project != null) {
+            ProjectView.getInstance(project).getCurrentProjectViewPane().getTreeBuilder().addSubtreeToUpdateByElement(node);
+        }
     }
 
     @Override

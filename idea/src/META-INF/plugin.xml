@@ -8,11 +8,9 @@
 
   <!--
 
-  <idea-version since-build="142.3553.1" until-build="142.9999"/>
+  <idea-version since-build="142.4465.2" until-build="142.9999"/>
 
   -->
-
-  <idea-version since-build="141.1009.5" until-build="141.9999"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
@@ -22,6 +20,8 @@
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
+
+  <idea-version since-build="141.1009.5" until-build="141.9999"/>
 
   <project-components>
     <component>
@@ -517,6 +517,7 @@
     <overridingMethodsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodsWithGenericsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
+    <classesWithAnnotatedMembersSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinClassesWithAnnotatedMembersSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinPropertyAccessorsReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodReferenceSearcher"/>
@@ -1139,6 +1140,13 @@
                      enabledByDefault="true"
                      level="WARNING"
     />
+
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
+                       displayName="Extension property conflicts with synthetic one"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="WARNING"
+      />
 
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 

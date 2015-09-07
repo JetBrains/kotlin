@@ -13,7 +13,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
  * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
- * [Follow Kotlin on Twitter](http://twitter.com/#!/project_kotlin)
+ * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
 
 ## Editing Kotlin
@@ -116,7 +116,7 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IntelliJ IDEA plugin is
 
-* download a clean [IDEA 14 EAP build](http://confluence.jetbrains.com/display/IDEADEV/IDEA+14+EAP)
+* download a clean [IDEA 15 EAP build](https://confluence.jetbrains.com/display/IDEADEV/IDEA+15+EAP)
 * [install the Kotlin plugin](#pre-built-plugin)
 * open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
 
@@ -129,7 +129,7 @@ You can now run the various Run/Debug Configurations such as
 
 ## If you want to work on the Kotlin libraries
 
-* download a clean [IDEA 14 EAP build](http://confluence.jetbrains.com/display/IDEADEV/IDEA+14+EAP)
+* download a clean [IDEA 15 EAP build](https://confluence.jetbrains.com/display/IDEADEV/IDEA+15+EAP)
 * [install the Kotlin plugin](#pre-built-plugin)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
 

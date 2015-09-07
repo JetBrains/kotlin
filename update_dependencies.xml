@@ -2,13 +2,10 @@
     <!--
 
 
-    <property name="ideaVersion" value="142.4245.2"/>
+    <property name="ideaVersion" value="142.4465.2"/>
 
 
     -->
-
-
-    <property name="ideaVersion" value="141.1531.2"/>
 
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
@@ -16,6 +13,8 @@
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 
     <property name="bootstrap.build.no.tests" value="false"/>
+
+    <property name="ideaVersion" value="141.1531.2"/>
 
     <condition property="isWindows">
         <os family="windows"/>
@@ -427,9 +426,8 @@
         <attribute name="idea.maven.version"/>
 
         <sequential>
-            <loadresource property="execute.build.id">
-                <url url="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt"/>
-            </loadresource>
+            <get src="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt" dest="dependencies/version.txt"/>
+            <loadfile property="execute.build.id" srcFile="dependencies/version.txt"/>
 
             <local name="idea.already.downloaded"/>
             <condition property="idea.already.downloaded">

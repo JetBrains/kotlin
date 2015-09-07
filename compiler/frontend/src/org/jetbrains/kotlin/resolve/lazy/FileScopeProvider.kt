@@ -29,7 +29,7 @@ public interface FileScopeProvider {
     }
 
     public interface AdditionalScopes {
-        public fun scopes(file: JetFile): List<JetScope>
+        public val scopes: List<JetScope>
     }
 }
 

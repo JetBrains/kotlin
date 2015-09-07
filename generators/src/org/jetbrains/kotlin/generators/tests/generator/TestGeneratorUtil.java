@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.generators.tests.generator;
 
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -42,5 +43,8 @@ public class TestGeneratorUtil {
     @NotNull
     public static String fileNameToJavaIdentifier(@NotNull File file) {
         return StringUtil.capitalize(escapeForJavaIdentifier(file.getName()));
+    }
+
+    public static void checkCase(@NotNull File file, @Nullable Boolean shouldStartLowerCase) {
     }
 }

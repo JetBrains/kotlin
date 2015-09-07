@@ -80,7 +80,7 @@ public class FileScopeProviderImpl(
         scopeChain.add(LazyImportScope(packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES, "All under imports in $debugName (visible classes)"))
         scopeChain.add(LazyImportScope(packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES, "Default all under imports in $debugName (visible classes)"))
 
-        scopeChain.addAll(additionalScopes.flatMap { it.scopes(file) })
+        scopeChain.addAll(additionalScopes.flatMap { it.scopes })
 
         scopeChain.add(LazyImportScope(packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "All under imports in $debugName (invisible classes only)"))
         scopeChain.add(LazyImportScope(packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "Default all under imports in $debugName (invisible classes only)"))

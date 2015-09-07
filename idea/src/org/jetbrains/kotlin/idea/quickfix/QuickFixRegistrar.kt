@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
+import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
+import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -170,7 +172,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix)
 
-        PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.registerActions(SpecifyTypeExplicitlyFix())
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
 
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix.createFactory())
@@ -311,7 +312,7 @@ public class QuickFixRegistrar : QuickFixContributor {
                                         ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
 
         DEPRECATED_SYMBOL_WITH_MESSAGE.registerFactory(DeprecatedSymbolUsageFix,
-                                                  DeprecatedSymbolUsageInWholeProjectFix)
+                                                       DeprecatedSymbolUsageInWholeProjectFix)
 
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
 

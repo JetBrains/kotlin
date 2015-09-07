@@ -306,11 +306,16 @@ public class JetPsiUnifier(
         private val JetElement.bindingContext: BindingContext get() = if (this in originalPattern) patternContext else targetContext
 
         private fun JetElement.getAdjustedResolvedCall(): ResolvedCall<*>? {
-            val rc = getResolvedCall(bindingContext)?.let {
-                when {
-                    it !is VariableAsFunctionResolvedCall -> it
-                    this is JetSimpleNameExpression -> it.variableCall
-                    else -> it.functionCall
+            val rc = if (this is JetArrayAccessExpression) {
+                bindingContext[BindingContext.INDEXED_LVALUE_GET, this]
+            }
+            else {
+                getResolvedCall(bindingContext)?.let {
+                    when {
+                        it !is VariableAsFunctionResolvedCall -> it
+                        this is JetSimpleNameExpression -> it.variableCall
+                        else -> it.functionCall
+                    }
                 }
             }
 

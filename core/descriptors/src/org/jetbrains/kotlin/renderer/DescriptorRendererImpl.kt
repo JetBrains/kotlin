@@ -327,12 +327,12 @@ internal class DescriptorRendererImpl(
             builder.append(" is a module")
             return
         }
-        builder.append(" ").append(renderMessage("defined in")).append(" ")
 
-        val containingDeclaration = descriptor.getContainingDeclaration()
-        if (containingDeclaration != null) {
+        val containingDeclaration = descriptor.containingDeclaration
+        if (containingDeclaration != null && containingDeclaration !is ModuleDescriptor) {
+            builder.append(" ").append(renderMessage("defined in")).append(" ")
             val fqName = DescriptorUtils.getFqName(containingDeclaration)
-            builder.append(if (FqName.ROOT.equalsTo(fqName)) "root package" else renderFqName(fqName))
+            builder.append(if (fqName.isRoot) "root package" else renderFqName(fqName))
         }
     }
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {

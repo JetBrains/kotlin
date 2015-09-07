@@ -3121,6 +3121,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyToSyntheticExtension.kt")
+        public void testPropertyToSyntheticExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyToSyntheticExtension.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("replaceCallWithArgument.kt")
         public void testReplaceCallWithArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/replaceCallWithArgument.kt");
@@ -3306,10 +3312,91 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotation1.kt")
+            public void testAnnotation1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/annotation1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("annotation2.kt")
+            public void testAnnotation2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/annotation2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorUsage1.kt")
+            public void testConstructorUsage1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorUsage2.kt")
+            public void testConstructorUsage2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorUsage3.kt")
+            public void testConstructorUsage3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("imports.kt")
+            public void testImports() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/imports.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inTypeArgument.kt")
+            public void testInTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inTypeArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedClassToNestedClass.kt")
+            public void testNestedClassToNestedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/nestedClassToNestedClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noAnnotationConstructorUsage.kt")
             public void testNoAnnotationConstructorUsage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/noAnnotationConstructorUsage.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("qualifiedClassName.kt")
+            public void testQualifiedClassName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/qualifiedClassName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifiedClassNameInPattern.kt")
+            public void testQualifiedClassNameInPattern() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/qualifiedClassNameInPattern.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WholeProject extends AbstractQuickFixTest {
+                public void testAllFilesPresentInWholeProject() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("inheritance.kt")
+                public void testInheritance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject/inheritance.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -3921,6 +4008,99 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConflictingExtension extends AbstractQuickFixTest {
+            public void testAllFilesPresentInConflictingExtension() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/conflictingExtension"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("explicitThis.kt")
+            public void testExplicitThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/explicitThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("markHiddenAndDeprecated.kt")
+            public void testMarkHiddenAndDeprecated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/markHiddenAndDeprecated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("memberExtension.kt")
+            public void testMemberExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/memberExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("returnInGetter.kt")
+            public void testReturnInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/returnInGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setterWithExpressionBody.kt")
+            public void testSetterWithExpressionBody() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/setterWithExpressionBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valInsteadOfVar.kt")
+            public void testValInsteadOfVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/valInsteadOfVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInsteadOfVal.kt")
+            public void testVarInsteadOfVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/varInsteadOfVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withSetter.kt")
+            public void testWithSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/withSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongExplicitThis.kt")
+            public void testWrongExplicitThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongExplicitThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongExplicitThis2.kt")
+            public void testWrongExplicitThis2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongExplicitThis2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongGetter.kt")
+            public void testWrongGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongGetter2.kt")
+            public void testWrongGetter2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongGetter2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrongSetter.kt")
+            public void testWrongSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongSetter.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")

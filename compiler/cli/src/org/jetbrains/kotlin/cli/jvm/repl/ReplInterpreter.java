@@ -114,7 +114,7 @@ public class ReplInterpreter {
         FileScopeProvider.AdditionalScopes scopeProvider = new FileScopeProvider.AdditionalScopes() {
             @NotNull
             @Override
-            public List<JetScope> scopes(@NotNull JetFile file) {
+            public List<JetScope> getScopes() {
                 return lastLineScope != null ? new SmartList<JetScope>(lastLineScope) : Collections.<JetScope>emptyList();
             }
         };

@@ -76,5 +76,6 @@ object EmptyContainerForLocal : KDeclarationContainerImpl() {
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = fail()
 
-    private fun fail() = throw KotlinReflectionInternalError("Introspecting local functions is not yet supported in Kotlin reflection")
+    private fun fail() = throw KotlinReflectionInternalError("Introspecting local functions, lambdas and function expressions " +
+                                                             "is not yet fully supported in Kotlin reflection")
 }

@@ -217,8 +217,6 @@ public class DefaultErrorMessages {
         MAP.put(FUNCTION_EXPRESSION_WITH_NAME, "Function expressions with names are deprecated");
         MAP.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "\"open\" has no effect in a final class");
 
-        MAP.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, "Public or protected member should have specified type");
-
         MAP.put(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE, "A function expression is not allowed to specify default values for its parameters");
         MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
         MAP.put(DEPRECATED_LAMBDA_SYNTAX,

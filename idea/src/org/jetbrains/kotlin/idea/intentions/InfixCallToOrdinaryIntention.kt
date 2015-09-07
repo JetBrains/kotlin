@@ -27,12 +27,18 @@ public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<JetBinaryE
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val argument = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
-        val pattern = "$0.$1" + when (argument) {
-            is JetFunctionLiteralExpression -> " $2:'{}'"
-            else -> "($2)"
+        convert(element)
+    }
+
+    companion object {
+        public fun convert(element: JetBinaryExpression): JetExpression {
+            val argument = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
+            val pattern = "$0.$1" + when (argument) {
+                is JetFunctionLiteralExpression -> " $2:'{}'"
+                else -> "($2)"
+            }
+            val replacement = JetPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
+            return element.replace(replacement) as JetExpression
         }
-        val replacement = JetPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
-        element.replace(replacement)
     }
 }

@@ -3421,6 +3421,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/lambdaClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaClasses extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLambdaClasses() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/lambdaClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("parameterNamesAndNullability.kt")
+            public void testParameterNamesAndNullability() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/lambdaClasses/parameterNamesAndNullability.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

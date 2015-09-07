@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.synthetic
 
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.storage.StorageManager
 
 class AdditionalScopesWithJavaSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes {
-    private val scopes = listOf(JavaSyntheticPropertiesScope(storageManager), SamAdapterFunctionsScope(storageManager))
-
-    override fun scopes(file: JetFile) = scopes
+    override val scopes = listOf(JavaSyntheticPropertiesScope(storageManager), SamAdapterFunctionsScope(storageManager))
 }
