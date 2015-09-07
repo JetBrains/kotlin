@@ -2,7 +2,6 @@ package iterators
 
 import kotlin.test.assertEquals
 import org.junit.Test as test
-import kotlin.test.failsWith
 
 class IteratorsJVMTest {
 

@@ -14,7 +14,7 @@ class PreconditionsTest() {
     }
 
     test fun failingRequire() {
-        val error = failsWith(javaClass<IllegalArgumentException>()) {
+        val error = assertFailsWith(IllegalArgumentException::class) {
             require(false)
         }
         assertNotNull(error.getMessage())
@@ -25,14 +25,14 @@ class PreconditionsTest() {
     }
 
     test fun failingRequireWithMessage() {
-        val error = failsWith(javaClass<IllegalArgumentException>()) {
+        val error = assertFailsWith(IllegalArgumentException::class) {
             require(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
     test fun failingRequireWithLazyMessage() {
-        val error = failsWith(javaClass<IllegalArgumentException>()) {
+        val error = assertFailsWith(IllegalArgumentException::class) {
             require(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
@@ -47,7 +47,7 @@ class PreconditionsTest() {
     }
 
     test fun failingCheck() {
-        val error = failsWith(javaClass<IllegalStateException>()) {
+        val error = assertFailsWith(IllegalStateException::class) {
             check(false)
         }
         assertNotNull(error.getMessage())
@@ -58,14 +58,14 @@ class PreconditionsTest() {
     }
 
     test fun failingCheckWithMessage() {
-        val error = failsWith(javaClass<IllegalStateException>()) {
+        val error = assertFailsWith(IllegalStateException::class) {
             check(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
     test fun failingCheckWithLazyMessage() {
-        val error = failsWith(javaClass<IllegalStateException>()) {
+        val error = assertFailsWith(IllegalStateException::class) {
             check(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
@@ -78,14 +78,14 @@ class PreconditionsTest() {
     }
 
     test fun requireNotNullFails() {
-        failsWith(javaClass<IllegalArgumentException>()) {
+        assertFailsWith(IllegalArgumentException::class) {
             val s2: String? = null
             requireNotNull(s2)
         }
     }
 
     test fun requireNotNullWithLazyMessage() {
-        val error = failsWith(javaClass<IllegalArgumentException>()) {
+        val error = assertFailsWith(IllegalArgumentException::class) {
             val obj: Any? = null
             requireNotNull(obj) { "Message" }
         }
@@ -106,7 +106,7 @@ class PreconditionsTest() {
     }
 
     test fun checkNotNullFails() {
-        failsWith(javaClass<IllegalStateException>()) {
+        assertFailsWith(IllegalStateException::class) {
             val s2: String? = null
             checkNotNull(s2)
         }
@@ -122,7 +122,7 @@ class PreconditionsTest() {
 
 
     test fun failingAssert() {
-        val error = fails {
+        val error = assertFails {
             assert(false)
         }
         if (error is AssertionError) {
@@ -133,7 +133,7 @@ class PreconditionsTest() {
     }
 
     test fun error() {
-        val error = fails {
+        val error = assertFails {
             error("There was a problem")
         }
         if (error is IllegalStateException) {
@@ -148,7 +148,7 @@ class PreconditionsTest() {
     }
 
     test fun failingAssertWithMessage() {
-        val error = fails {
+        val error = assertFails {
             assert(false, "Hello")
         }
         if (error is AssertionError) {
@@ -159,7 +159,7 @@ class PreconditionsTest() {
     }
 
     test fun failingAssertWithLazyMessage() {
-        val error = fails {
+        val error = assertFails {
             assert(false) { "Hello" }
         }
         if (error is AssertionError) {
