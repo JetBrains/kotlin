@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.Flags
@@ -149,13 +148,9 @@ public class IncrementalCacheImpl(
     private val dependents = arrayListOf<IncrementalCacheImpl>()
     private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
 
-    private val inlineRegistering = object : InlineRegistering {
-        override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-            inlinedTo.add(fromPath, jvmSignature, toPath)
-        }
+    override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
+        inlinedTo.add(fromPath, jvmSignature, toPath)
     }
-
-    override fun getInlineRegistering(): InlineRegistering = inlineRegistering
 
     public fun addDependentCache(cache: IncrementalCacheImpl) {
         dependents.add(cache)

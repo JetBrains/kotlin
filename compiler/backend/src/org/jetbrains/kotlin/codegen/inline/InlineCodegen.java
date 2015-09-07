@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
@@ -754,7 +753,6 @@ public class InlineCodegen extends CallGenerator {
         IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
         String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
         String targetFile = getSourceFilePath(targetDescriptor);
-        InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
-        inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
+        incrementalCache.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }
 }

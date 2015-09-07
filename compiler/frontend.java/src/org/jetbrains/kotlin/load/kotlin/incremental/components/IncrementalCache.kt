@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
 public interface IncrementalCache {
-    public fun getInlineRegistering(): InlineRegistering
-
     public fun getObsoletePackageParts(): Collection<String>
 
     public fun getPackagePartData(fqName: String): ByteArray?
 
     public fun getModuleMappingData(): ByteArray?
+
+    public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
 
     public fun getClassFilePath(internalClassName: String): String
 
