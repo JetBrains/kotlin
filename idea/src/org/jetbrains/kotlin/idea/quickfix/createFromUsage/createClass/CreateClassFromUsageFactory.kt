@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetUserType
 
-abstract class CreateClassFromUsageFactory<E : JetElement>(
-        val createPackageIsAvailable: Boolean = false
-) : CreateFromUsageFactory<E, ClassInfo>() {
+abstract class CreateClassFromUsageFactory<E : JetElement> : CreateFromUsageFactory<E, ClassInfo>() {
     protected abstract fun getPossibleClassKinds(element: E, diagnostic: Diagnostic): List<ClassKind>
 
     override fun createQuickFixes(
@@ -46,14 +43,6 @@ abstract class CreateClassFromUsageFactory<E : JetElement>(
             }
         }
 
-        if (!createPackageIsAvailable) return classFixes
-        val refExpr = (originalElement as? JetUserType)?.referenceExpression ?: return classFixes
-        val packageFix = QuickFixWithDelegateFactory {
-            quickFixDataFactory(originalElementPointer)?.let {
-                refExpr.getCreatePackageFixIfApplicable(it.targetParent)
-            } ?: NullQuickFix
-        }
-
-        return classFixes + packageFix
+        return classFixes
     }
 }
