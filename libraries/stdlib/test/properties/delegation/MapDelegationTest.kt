@@ -125,12 +125,13 @@ class MapPropertyFunctionTest() {
     }
 }
 
-val mapVal = object: MapVal<MapPropertyCustomTest, String, String>() {
+// TODO Remove explicit types when KT-9072 will be fixed
+val mapVal: MapVal<MapPropertyCustomTest, String, String> = object: MapVal<MapPropertyCustomTest, String, String>() {
     override fun map(ref: MapPropertyCustomTest) = ref.map
     override fun key(desc: PropertyMetadata) = "${desc.name}Desc"
 }
 
-val mapVar = object : MapVar<MapPropertyCustomTest, String, String>() {
+val mapVar: MapVar<MapPropertyCustomTest, String, String> = object : MapVar<MapPropertyCustomTest, String, String>() {
     override fun map(ref: MapPropertyCustomTest) = ref.map
     override fun key(desc: PropertyMetadata) = "${desc.name}Desc"
 }
@@ -147,14 +148,14 @@ class MapPropertyCustomTest() {
     }
 }
 
-val mapValWithDefault = object : MapVal<MapPropertyCustomWithDefaultTest, String, String>() {
+val mapValWithDefault: MapVal<MapPropertyCustomWithDefaultTest, String, String> = object : MapVal<MapPropertyCustomWithDefaultTest, String, String>() {
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
     override fun key(desc: PropertyMetadata) = desc.name
 
     override fun default(ref: MapPropertyCustomWithDefaultTest, key: PropertyMetadata) = "default"
 }
 
-val mapVarWithDefault = object : MapVar<MapPropertyCustomWithDefaultTest, String, String>() {
+val mapVarWithDefault: MapVar<MapPropertyCustomWithDefaultTest, String, String> = object : MapVar<MapPropertyCustomWithDefaultTest, String, String>() {
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
     override fun key(desc: PropertyMetadata) = desc.name
 
