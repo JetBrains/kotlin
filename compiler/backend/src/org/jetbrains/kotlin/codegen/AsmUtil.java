@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
@@ -218,6 +219,11 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
+        if (DescriptorUtilPackage.isAnnotatedAsHidden(functionDescriptor)
+            || functionDescriptor instanceof PropertyAccessorDescriptor
+               && DescriptorUtilPackage.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+            flags |= ACC_SYNTHETIC;
+        }
         return flags;
     }
 

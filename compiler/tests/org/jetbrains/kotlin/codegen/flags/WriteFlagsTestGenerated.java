@@ -518,6 +518,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/hidden")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Hidden extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInHidden() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyGetter.kt")
+        public void testPropertyGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/propertyGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertySetter.kt")
+        public void testPropertySetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/propertySetter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
