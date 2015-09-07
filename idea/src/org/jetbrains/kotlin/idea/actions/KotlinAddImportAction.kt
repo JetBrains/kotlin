@@ -149,8 +149,10 @@ public class KotlinAddImportAction(
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid()) return@executeWriteCommand
 
-            val location = ProximityLocation(file, ModuleUtilCore.findModuleForPsiElement(file))
-            StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, selectedVariant.declarationToImport, location)
+            selectedVariant.declarationToImport?.let {
+                val location = ProximityLocation(file, ModuleUtilCore.findModuleForPsiElement(file))
+                StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, it, location)
+            }
 
             val descriptor = selectedVariant.descriptorToImport
             // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
