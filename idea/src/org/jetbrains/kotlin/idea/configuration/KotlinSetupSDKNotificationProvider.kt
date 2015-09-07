@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.ProjectTopics
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
@@ -36,6 +35,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 // Code is very same to com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 public class KotlinSetupSDKNotificationProvider(
