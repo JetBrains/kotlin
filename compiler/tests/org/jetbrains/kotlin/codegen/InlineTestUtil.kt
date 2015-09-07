@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 import kotlin.properties.Delegates
 
 public object InlineTestUtil {

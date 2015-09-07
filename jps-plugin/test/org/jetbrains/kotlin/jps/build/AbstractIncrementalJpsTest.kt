@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.diagnostic
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.TestLoggerFactory
@@ -77,7 +76,7 @@ public abstract class AbstractIncrementalJpsTest(
     protected var workDir: File by Delegates.notNull()
 
     private fun enableDebugLogging() {
-        diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
+        com.intellij.openapi.diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
         TestLoggerFactory.dumpLogToStdout("")
         TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
 

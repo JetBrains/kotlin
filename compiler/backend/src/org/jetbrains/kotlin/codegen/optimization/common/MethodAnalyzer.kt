@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen.optimization.common
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis
-import org.jetbrains.org.objectweb.asm.tree.analysis.*
-import org.jetbrains.org.objectweb.asm.util.Printer
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 import java.util.*
-import kotlin.properties.Delegates
 
 public open class MethodAnalyzer<V : Value>(
         public val owner: String,
