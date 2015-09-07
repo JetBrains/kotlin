@@ -4,5 +4,5 @@ fun foo() {
     @ann ""<caret>!!
 }
 
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 annotation class ann

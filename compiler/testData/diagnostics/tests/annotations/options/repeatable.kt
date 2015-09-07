@@ -13,7 +13,7 @@ annotation class repann2(val f: Boolean)
 @Repeatable
 annotation class binrepann
 
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 @Repeatable
 annotation class repexpr
 

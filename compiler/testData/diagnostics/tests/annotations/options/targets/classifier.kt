@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target(AnnotationTarget.CLASSIFIER) annotation class base
+@Target(AnnotationTarget.CLASSIFIER) annotation class base
 
 base annotation class derived
 

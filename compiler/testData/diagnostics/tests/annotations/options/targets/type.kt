@@ -1,4 +1,4 @@
-target(AnnotationTarget.TYPE) annotation class base
+@Target(AnnotationTarget.TYPE) annotation class base
 
 <!WRONG_ANNOTATION_TARGET!>base<!> annotation class derived
 

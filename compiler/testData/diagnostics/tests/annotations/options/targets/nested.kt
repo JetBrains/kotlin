@@ -1,7 +1,7 @@
-target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASSIFIER)
 annotation class base
 
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class meta
 
 base class Outer {

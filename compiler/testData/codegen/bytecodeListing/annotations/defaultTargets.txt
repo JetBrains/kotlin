@@ -10,20 +10,20 @@
     method <init>(@AnnParameterProperty p0: int): void
 }
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnFieldProperty
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnFieldProperty
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnGetterSetter
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnGetterSetter
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterField
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterField
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterProperty
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterProperty
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnProperty
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnProperty
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnPropertySetter
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnPropertySetter
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeField
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeField
 
-@kotlin.annotation.target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeGetter
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeGetter

@@ -1,4 +1,4 @@
-target(AnnotationTarget.FUNCTION) annotation class base
+@Target(AnnotationTarget.FUNCTION) annotation class base
 
 <!WRONG_ANNOTATION_TARGET!>base<!> annotation class derived
 

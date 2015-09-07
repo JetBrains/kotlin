@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.PROPERTY_GETTER)
+@Target(AnnotationTarget.PROPERTY_GETTER)
 annotation class getter

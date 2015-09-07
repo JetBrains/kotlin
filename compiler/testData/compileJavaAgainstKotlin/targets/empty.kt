@@ -1,4 +1,4 @@
 package test
 
-target()
+@Target()
 annotation class empty

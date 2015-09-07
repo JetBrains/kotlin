@@ -129,8 +129,8 @@ class AnnotationConverter(private val converter: Converter) {
                                         Identifier(name, false).assignNoPrototype())
                 }
             }
-            return Annotation(Identifier("target").assignNoPrototype(),
-                              deferredExpressionList, withAt, newLineAfter).assignPrototype(annotation)
+            return Annotation(Identifier("Target").assignNoPrototype(),
+                              deferredExpressionList, true, newLineAfter).assignPrototype(annotation)
         }
 
         val nameRef = annotation.getNameReferenceElement()

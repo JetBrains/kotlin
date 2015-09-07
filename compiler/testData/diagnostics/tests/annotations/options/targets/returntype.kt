@@ -1,6 +1,6 @@
 annotation class base
 
-target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.TYPE)
 annotation class typed
 
 base class My(val x: <!WRONG_ANNOTATION_TARGET!>@base<!> @typed Int, y: <!WRONG_ANNOTATION_TARGET!>@base<!> @typed Int) {

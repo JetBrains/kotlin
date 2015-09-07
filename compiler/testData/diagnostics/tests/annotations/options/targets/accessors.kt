@@ -1,10 +1,10 @@
-target(AnnotationTarget.PROPERTY_GETTER)
+@Target(AnnotationTarget.PROPERTY_GETTER)
 annotation class smartget
 
-target(AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.PROPERTY_SETTER)
 annotation class smartset
 
-target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION)
 annotation class base
 
 class My(x: Int) {

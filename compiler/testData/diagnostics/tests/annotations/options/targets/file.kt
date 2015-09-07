@@ -2,7 +2,7 @@
 
 package test
 
-target(AnnotationTarget.FILE) annotation class special
+@Target(AnnotationTarget.FILE) annotation class special
 
 annotation class common
 

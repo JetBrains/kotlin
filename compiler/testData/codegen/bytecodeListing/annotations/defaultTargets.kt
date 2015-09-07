@@ -1,28 +1,28 @@
-target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.PROPERTY)
 annotation class AnnProperty
 
-target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD)
 annotation class AnnField
 
-target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class AnnFieldProperty
 
-target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
 annotation class AnnParameterProperty
 
-target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 annotation class AnnParameterField
 
-target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 annotation class AnnGetterSetter
 
-target(AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY)
 annotation class AnnPropertySetter
 
-target(AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER)
 annotation class AnnTypeGetter
 
-target(AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 annotation class AnnTypeField
 
 public class A(

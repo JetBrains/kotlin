@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target(AnnotationTarget.<!UNRESOLVED_REFERENCE!>INIT<!>) annotation class incorrect
+@Target(AnnotationTarget.<!UNRESOLVED_REFERENCE!>INIT<!>) annotation class incorrect
 
 <!WRONG_ANNOTATION_TARGET!>incorrect<!> annotation class derived
 

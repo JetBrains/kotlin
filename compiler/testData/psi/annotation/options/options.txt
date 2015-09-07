@@ -117,11 +117,12 @@ JetFile: options.kt
   CLASS
     MODIFIER_LIST
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('target')
+                PsiElement(IDENTIFIER)('Target')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT

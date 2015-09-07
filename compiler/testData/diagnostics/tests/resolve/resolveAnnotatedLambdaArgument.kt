@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann

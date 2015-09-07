@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
-       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
-       AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
+        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
+        AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val x: Int = 6)

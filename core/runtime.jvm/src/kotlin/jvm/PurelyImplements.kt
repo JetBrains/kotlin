@@ -34,7 +34,7 @@ package kotlin.jvm
  *  MyList<Int>().add(null) // Error
  *  MyList<Int?>().add(null) // Ok
  */
-target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASSIFIER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class PurelyImplements(public val value: String)

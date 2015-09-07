@@ -16,6 +16,6 @@
 
 package kotlin.jvm.internal
 
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 public annotation class Intrinsic(val value: String)

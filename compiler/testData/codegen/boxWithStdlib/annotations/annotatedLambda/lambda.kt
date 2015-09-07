@@ -1,7 +1,7 @@
 import java.lang.reflect.Method
 import kotlin.test.assertEquals
 
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(val x: String)
 

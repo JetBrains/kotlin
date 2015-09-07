@@ -2,7 +2,7 @@
 
 package test
 
-target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.TYPE)
 annotation class A
 
 class SimpleTypeAnnotation {

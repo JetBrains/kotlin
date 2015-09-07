@@ -1,4 +1,4 @@
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val x: Int = 1)

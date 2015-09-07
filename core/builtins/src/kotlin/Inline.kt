@@ -20,7 +20,7 @@ package kotlin
  * Annotates the parameter of a function annotated as [inline] and forbids inlining of
  * function literals passed as arguments for this parameter.
  */
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class noinline
@@ -36,7 +36,7 @@ public annotation class noinline
  * @see noinline
  * @see inlineOptions
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
@@ -67,7 +67,7 @@ public enum class InlineStrategy {
  *
  * @property value the inlining options selected for the annotated function parameter.
  */
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class inlineOptions(vararg val value: InlineOption)

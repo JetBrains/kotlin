@@ -25,13 +25,13 @@ a public class Annotations private @a constructor(private @property:a @param:a v
     fun types(param: @a @b(E.E1) DoubleRange): @a @b(E.E2) Unit {}
 }
 
-target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
-       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
-       AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
+        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
+        AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER)
 annotation class a
 
-target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASSIFIER,
-       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASSIFIER,
+        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class b(val e: E)

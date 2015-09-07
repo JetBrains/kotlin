@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.LOCAL_VARIABLE)
+@Target(AnnotationTarget.LOCAL_VARIABLE)
 annotation class local

@@ -24,12 +24,12 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
 // They was reserved word in ECMAScript 2, but is not since ECMAScript 5.
 
 native
-target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class volatile
 
 native
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class synchronized
 

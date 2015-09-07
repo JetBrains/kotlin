@@ -60,7 +60,7 @@ kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotatio
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.EXPRESSION}) kotlin.annotation.Repeatable() kotlin.annotation.annotation() internal final class repexpr : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) kotlin.annotation.Repeatable() kotlin.annotation.annotation() internal final class repexpr : kotlin.Annotation {
     public constructor repexpr()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

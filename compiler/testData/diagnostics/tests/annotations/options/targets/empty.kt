@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target() annotation class empty
+@Target() annotation class empty
 
 <!WRONG_ANNOTATION_TARGET!>empty<!> annotation class derived
 
