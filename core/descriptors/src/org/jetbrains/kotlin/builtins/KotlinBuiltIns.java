@@ -247,7 +247,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
+    public ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
         ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName,
                                                                                                    NoLookupLocation.FROM_BUILTINS);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +

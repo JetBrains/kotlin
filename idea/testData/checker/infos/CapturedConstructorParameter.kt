@@ -1,7 +1,7 @@
 interface T
 class T1(<warning>t</warning>: Int): T
 
-inline fun <T> run(f: () -> T) = f()
+<info descr="null">inline</info> fun <T> run(f: () -> T) = f()
 
 
 class Delegate(<warning>d</warning>: Int) {

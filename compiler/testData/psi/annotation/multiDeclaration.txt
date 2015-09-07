@@ -26,12 +26,7 @@ JetFile: multiDeclaration.kt
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('data')
+            PsiElement(data)('data')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               PsiElement(AT)('@')

@@ -1004,12 +1004,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
-                @TestMetadata("annotation.kt")
-                public void testAnnotation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotation.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("annotationAsArg.kt")
                 public void testAnnotationAsArg() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotationAsArg.kt");
@@ -1019,12 +1013,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("annotationAsArgComplex.kt")
                 public void testAnnotationAsArgComplex() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotationAsArgComplex.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("brackets.kt")
-                public void testBrackets() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/brackets.kt");
                     doTest(fileName);
                 }
 

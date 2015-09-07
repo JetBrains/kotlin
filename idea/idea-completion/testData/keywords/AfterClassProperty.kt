@@ -36,4 +36,10 @@ class MouseMovedEventArgs
 // EXIST:  companion object
 // EXIST:  sealed
 // EXIST:  lateinit
+// EXIST:  data
+// EXIST:  inline
+// EXIST:  noinline
+// EXIST:  tailrec
+// EXIST:  external
+// EXIST:  annotation
 // NOTHING_ELSE

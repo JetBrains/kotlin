@@ -1,6 +1,6 @@
 // FILE: a.kt
 
-<!NOT_AN_ANNOTATION_CLASS!>annotation<!> class annotation
+annotation class annotation
 
 // FILE: test/b.kt
 

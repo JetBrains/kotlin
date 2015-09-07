@@ -29,6 +29,7 @@ import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Severity;
@@ -203,28 +204,42 @@ public class DiagnosticsWithSuppression implements Diagnostics {
 
     private Set<String> getSuppressingStrings(@NotNull JetAnnotated annotated) {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (JetAnnotationEntry annotationEntry : annotated.getAnnotationEntries()) {
-            AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
-            if (annotationDescriptor == null) continue;
 
-            for (SuppressStringProvider suppressStringProvider : ADDITIONAL_SUPPRESS_STRING_PROVIDERS.get()) {
-                builder.addAll(suppressStringProvider.get(annotationDescriptor));
+        DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated);
+
+        if (descriptor != null) {
+            for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
+                processAnnotation(builder, annotationDescriptor);
             }
+        }
+        else {
+            for (JetAnnotationEntry annotationEntry : annotated.getAnnotationEntries()) {
+                AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
+                processAnnotation(builder, annotationDescriptor);
+            }
+        }
+        return builder.build();
+    }
 
-            if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) continue;
+    private void processAnnotation(ImmutableSet.Builder<String> builder, AnnotationDescriptor annotationDescriptor) {
+        if (annotationDescriptor == null) return;
 
-            // We only add strings and skip other values to facilitate recovery in presence of erroneous code
-            for (ConstantValue<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {
-                if ((arrayValue instanceof ArrayValue)) {
-                    for (ConstantValue<?> value : ((ArrayValue) arrayValue).getValue()) {
-                        if (value instanceof StringValue) {
-                            builder.add(String.valueOf(((StringValue) value).getValue()).toLowerCase());
-                        }
+        for (SuppressStringProvider suppressStringProvider : ADDITIONAL_SUPPRESS_STRING_PROVIDERS.get()) {
+            builder.addAll(suppressStringProvider.get(annotationDescriptor));
+        }
+
+        if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) return;
+
+        // We only add strings and skip other values to facilitate recovery in presence of erroneous code
+        for (ConstantValue<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {
+            if ((arrayValue instanceof ArrayValue)) {
+                for (ConstantValue<?> value : ((ArrayValue) arrayValue).getValue()) {
+                    if (value instanceof StringValue) {
+                        builder.add(String.valueOf(((StringValue) value).getValue()).toLowerCase());
                     }
                 }
             }
         }
-        return builder.build();
     }
 
     public static boolean isSuppressedByStrings(@NotNull Diagnostic diagnostic, @NotNull Set<String> strings) {

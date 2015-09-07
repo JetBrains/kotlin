@@ -97,7 +97,7 @@ abstract class IllegalModifiers6() {
 class IllegalModifiers7() {
     <!WRONG_MODIFIER_TARGET!>enum<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
-    <!WRONG_ANNOTATION_TARGET!>annotation<!>
+    <!WRONG_MODIFIER_TARGET!>annotation<!>
     <!WRONG_MODIFIER_TARGET!>out<!>
     <!INCOMPATIBLE_MODIFIERS!>in<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
@@ -105,7 +105,7 @@ class IllegalModifiers7() {
     val x = 1
     <!WRONG_MODIFIER_TARGET!>enum<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
-    <!WRONG_ANNOTATION_TARGET!>annotation<!>
+    <!WRONG_MODIFIER_TARGET!>annotation<!>
     <!WRONG_MODIFIER_TARGET!>out<!>
     <!INCOMPATIBLE_MODIFIERS!>in<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
@@ -119,7 +119,7 @@ class IllegalModifiers8 {
     <!WRONG_MODIFIER_TARGET!>enum<!>
     <!REDUNDANT_MODIFIER!>open<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
-    <!WRONG_ANNOTATION_TARGET!>annotation<!>
+    <!WRONG_MODIFIER_TARGET!>annotation<!>
     <!WRONG_MODIFIER_TARGET!>override<!>
     <!WRONG_MODIFIER_TARGET!>out<!>
     <!INCOMPATIBLE_MODIFIERS!>in<!>
@@ -143,7 +143,7 @@ class IllegalModifiers10
 <!WRONG_MODIFIER_TARGET!>enum<!>
 <!REDUNDANT_MODIFIER!>open<!>
 <!WRONG_MODIFIER_TARGET!>inner<!>
-<!WRONG_ANNOTATION_TARGET!>annotation<!>
+<!WRONG_MODIFIER_TARGET!>annotation<!>
 <!WRONG_MODIFIER_TARGET!>override<!>
 <!WRONG_MODIFIER_TARGET!>out<!>
 <!INCOMPATIBLE_MODIFIERS!>in<!>

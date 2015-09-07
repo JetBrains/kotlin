@@ -20,12 +20,7 @@ JetFile: java.kt
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('annotation')
+      PsiElement(annotation)('annotation')
       PsiWhiteSpace(' \n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -63,12 +58,7 @@ JetFile: java.kt
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('annotation')
+      PsiElement(annotation)('annotation')
       PsiWhiteSpace(' \n')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
