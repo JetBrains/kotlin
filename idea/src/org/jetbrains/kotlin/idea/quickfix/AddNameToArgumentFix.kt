@@ -87,7 +87,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : JetIntentionActi
     }
 
     private fun addName(project: Project, argument: JetValueArgument, name: Name) {
-        project.executeWriteCommand("Add name to argument...") {
+        project.executeWriteCommand("Add name to argument") {
             argument.replace(createArgumentWithName(name))
         }
     }
@@ -105,9 +105,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : JetIntentionActi
     private fun getNamePopup(project: Project, names: List<Name>): ListPopupStep<Name> {
         return object : BaseListPopupStep<Name>("Choose parameter name", names) {
             override fun onChosen(selectedValue: Name, finalChoice: Boolean): PopupStep<*>? {
-                if (finalChoice) {
-                    addName(project, element, selectedValue)
-                }
+                addName(project, element, selectedValue)
                 return PopupStep.FINAL_CHOICE
             }
 
