@@ -44,6 +44,9 @@ fun suite(): TestSuite {
     println("Debugee name: $debugeeName")
     connectorArgs["main"]!!.setValue(debugeeName)
     connectorArgs["options"]!!.setValue("-classpath out/production/eval4j${File.pathSeparator}out/test/eval4j")
+    connectorArgs["vmexec"]!!.setValue(connectorArgs["home"]!!.value() + File.separator + "bin" + File.separator + connectorArgs["vmexec"]!!.value())
+    connectorArgs["home"]!!.setValue("")
+
     val vm = connector.launch(connectorArgs)!!
 
     val req = vm.eventRequestManager().createClassPrepareRequest()
