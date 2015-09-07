@@ -30,7 +30,6 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.Consumer
-import com.intellij.util.containers
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
@@ -56,7 +55,7 @@ public class KotlinCallerChooser(
         previousTree: Tree?,
         callback: Consumer<Set<PsiElement>>
 ): CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + JetFileType.EXTENSION, callback) {
-    override fun createTreeNode(method: PsiElement?, called: containers.HashSet<PsiElement>, cancelCallback: Runnable): KotlinMethodNode {
+    override fun createTreeNode(method: PsiElement?, called: com.intellij.util.containers.HashSet<PsiElement>, cancelCallback: Runnable): KotlinMethodNode {
         return KotlinMethodNode(method, called, myProject, cancelCallback)
     }
 

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
-import org.jetbrains.kotlin.psi.stubs.impl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
 public class KotlinFileStubForIde(

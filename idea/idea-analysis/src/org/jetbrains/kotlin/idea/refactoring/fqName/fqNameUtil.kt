@@ -23,7 +23,6 @@ import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -54,7 +53,7 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
     assert(!fqName.isRoot()) { "Can't set empty FqName for element $this" }
 
     val shortName = fqName.shortName().asString()
-    val psiFactory = psi.JetPsiFactory(this)
+    val psiFactory = JetPsiFactory(this)
     val fqNameBase = (getParent() as? JetCallExpression)?.let { parent ->
         val callCopy = parent.copy() as JetCallExpression
         callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()

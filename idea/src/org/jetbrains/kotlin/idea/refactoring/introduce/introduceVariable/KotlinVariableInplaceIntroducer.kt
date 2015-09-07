@@ -20,7 +20,7 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
@@ -115,7 +115,7 @@ public class KotlinVariableInplaceIntroducer(
     }
 
     override fun buildTemplateAndStart(refs: Collection<PsiReference>,
-                                       stringUsages: Collection<util.Pair<PsiElement, TextRange>>,
+                                       stringUsages: Collection<Pair<PsiElement, TextRange>>,
                                        scope: PsiElement,
                                        containingFile: PsiFile): Boolean {
         myEditor.getCaretModel().moveToOffset(getNameIdentifier()!!.startOffset)
