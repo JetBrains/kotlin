@@ -310,9 +310,7 @@ class TypeInstantiationItems(
                     val substitutor = inheritorFuzzyType.checkIsSubtypeOf(expectedFuzzyType) ?: continue
                     if (!substitutor.isEmpty) {
                         val inheritorTypeSubstituted = substitutor.substitute(inheritorFuzzyType.type, Variance.INVARIANT)!!
-                        if (!ErrorUtils.containsUninferredParameter(inheritorTypeSubstituted)) {
-                            inheritorFuzzyType = FuzzyType(inheritorTypeSubstituted, freeParameters + inheritorFuzzyType.freeParameters)
-                        }
+                        inheritorFuzzyType = FuzzyType(inheritorTypeSubstituted, freeParameters + inheritorFuzzyType.freeParameters)
                     }
                 }
 

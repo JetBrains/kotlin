@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.*
-import java.util.HashSet
+import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {
     val returnType = getReturnType() ?: return null
@@ -133,7 +133,7 @@ class FuzzyType(
             val substitutedType = substitutor.substitute(type, Variance.INVARIANT)
             val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT)
             return if (substitutedType != null && otherSubstitutedType != null && substitutedType.checkInheritance(otherSubstitutedType))
-                substitutor
+                constraintSystem.getPartialSubstitutor()
             else
                 null
         }
