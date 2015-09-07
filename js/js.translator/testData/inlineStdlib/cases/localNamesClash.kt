@@ -2,7 +2,7 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 
-fun test(x: Int, y: Int): Int =
+internal fun test(x: Int, y: Int): Int =
         with (x + x) {
             val xx = this
 

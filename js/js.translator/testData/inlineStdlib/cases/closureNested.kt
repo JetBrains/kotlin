@@ -2,7 +2,7 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 
-fun test(a: Int, b: Int): Int {
+internal fun test(a: Int, b: Int): Int {
     var res = 0
 
     with (a + b) {

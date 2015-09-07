@@ -2,9 +2,9 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 
-var counter = 0
+internal var counter = 0
 
-fun test(a: Int) {
+internal fun test(a: Int) {
     a.times {
         counter += 1
     }

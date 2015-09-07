@@ -3,15 +3,15 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: doNothingInt
 // CHECK_CONTAINS_NO_CALLS: doNothingStr
 
-inline fun <T> doNothing(a: T): T {
+internal inline fun <T> doNothing(a: T): T {
     return a
 }
 
-fun doNothingInt(a: Int): Int {
+internal fun doNothingInt(a: Int): Int {
     return doNothing(a)
 }
 
-fun doNothingStr(a: String): String {
+internal fun doNothingStr(a: String): String {
     return doNothing(a)
 }
 

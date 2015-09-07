@@ -7,24 +7,24 @@ package foo
 
 var log = ""
 
-inline fun run1(fn: ()->Int): Int {
+internal inline fun run1(fn: ()->Int): Int {
     log += "1;"
     return 1 + fn()
 }
 
-inline fun run2(fn: ()->Int): Int {
+internal inline fun run2(fn: ()->Int): Int {
     log += "2;"
     return 2 + run1(fn)
 }
 
-inline fun run3(fn: ()->Int): Int {
+internal inline fun run3(fn: ()->Int): Int {
     log += "3;"
     return 3 + run2(fn)
 }
 
-fun test1(x: Int): Int = run3 { x }
+internal fun test1(x: Int): Int = run3 { x }
 
-fun test2(x: Int): Int {
+internal fun test2(x: Int): Int {
     val result = 1 + run3 { x }
     return result
 }

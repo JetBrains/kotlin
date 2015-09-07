@@ -2,9 +2,9 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 
-inline fun sum(x: Int, y: Int): Int = js("var a = x; a + y")
+internal inline fun sum(x: Int, y: Int): Int = js("var a = x; a + y")
 
-fun test(x: Int, y: Int): Int {
+internal fun test(x: Int, y: Int): Int {
     val xx = sum(x, x)
     js("var a = 0;")
     val yy = sum(y, y)

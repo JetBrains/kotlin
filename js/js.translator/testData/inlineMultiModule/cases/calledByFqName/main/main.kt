@@ -1,6 +1,6 @@
 // CHECK_CONTAINS_NO_CALLS: test
 
-fun test(x: Int, y: Int): Int = utils.sum(x, y)
+internal fun test(x: Int, y: Int): Int = utils.sum(x, y)
 
 fun box(): String {
     assertEquals(3, test(1, 2))

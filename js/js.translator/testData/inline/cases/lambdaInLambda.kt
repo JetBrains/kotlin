@@ -4,11 +4,11 @@ package foo
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$f_0
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
 
-inline fun runLambdaInLambda<T>(noinline inner: (T) -> T, outer: ((T) -> T, T) -> T, arg: T): T {
+internal inline fun runLambdaInLambda<T>(noinline inner: (T) -> T, outer: ((T) -> T, T) -> T, arg: T): T {
     return outer(inner, arg)
 }
 
-fun multiplyBy2(x: Int): Int {
+internal fun multiplyBy2(x: Int): Int {
     return runLambdaInLambda({ it * 2  }, { f, x -> f(x) }, x)
 }
 

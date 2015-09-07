@@ -1,7 +1,7 @@
 package foo
 
 native
-open class A(val a: Int) {
+internal open class A(val a: Int) {
     fun g(): Int = noImpl
     fun m(): Int = noImpl
 
@@ -11,7 +11,7 @@ open class A(val a: Int) {
     open fun baz(i: Int): String = noImpl
 }
 
-class B(val b: Int) : A(b / 2) {
+internal class B(val b: Int) : A(b / 2) {
     override fun foo(i: Int): String = "B.foo($i: Int)"
 
     fun boo(): String = "B.boo()"

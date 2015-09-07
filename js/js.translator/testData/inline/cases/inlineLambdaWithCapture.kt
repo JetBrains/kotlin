@@ -2,9 +2,9 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: maxBySquare
 
-data class Result(var value: Int = 0, var invocationCount: Int = 0)
+internal data class Result(var value: Int = 0, var invocationCount: Int = 0)
 
-inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
+internal inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     var maxVal = a[0]
     var maxKey = keyFun(maxVal)
 
@@ -20,7 +20,7 @@ inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     return maxVal
 }
 
-fun maxBySquare(a: Array<Int>, r: Result): Result {
+internal fun maxBySquare(a: Array<Int>, r: Result): Result {
     var invocationCount = 0
     val maxVal = maxBy(a, { x -> invocationCount++; x * x;})
 

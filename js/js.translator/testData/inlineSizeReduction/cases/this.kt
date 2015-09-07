@@ -3,13 +3,13 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: test
 // CHECK_VARS_COUNT: function=test count=0
 
-class A(val x: Int) {
+internal class A(val x: Int) {
     inline fun f(): Int = x
 
     inline fun ff(): Int = f()
 }
 
-fun test(a: A): Int = a.ff()
+internal fun test(a: A): Int = a.ff()
 
 fun box(): String {
     assertEquals(1, test(A(1)))

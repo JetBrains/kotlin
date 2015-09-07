@@ -5,9 +5,9 @@ public fun public_baz(i: Int) {
 native public fun public_baz(a: String) {
 }
 
-fun internal_baz(i: Int) {
+internal fun internal_baz(i: Int) {
 }
-native fun internal_baz(a: String) {
+internal native fun internal_baz(a: String) {
 }
 
 private fun private_baz(i: Int) {
@@ -21,9 +21,9 @@ public class PublicClass {
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
@@ -35,15 +35,15 @@ public class PublicClass {
     val call_private_native_baz = { private_baz("native") }
 }
 
-class InternalClass {
+internal class InternalClass {
     public fun public_baz(i: Int) {
     }
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
@@ -61,9 +61,9 @@ private class PrivateClass {
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
@@ -81,9 +81,9 @@ open public class OpenPublicClass {
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
@@ -95,15 +95,15 @@ open public class OpenPublicClass {
     val call_private_native_baz = { private_baz("native") }
 }
 
-open class OpenInternalClass {
+internal open class OpenInternalClass {
     public fun public_baz(i: Int) {
     }
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
@@ -121,9 +121,9 @@ open private class OpenPrivateClass {
     native public fun public_baz(a: String) {
     }
 
-    fun internal_baz(i: Int) {
+    internal fun internal_baz(i: Int) {
     }
-    native fun internal_baz(a: String) {
+    native internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {

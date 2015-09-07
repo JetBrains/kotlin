@@ -6,9 +6,9 @@ package foo
 // A copy of stdlib run function.
 // Copied to not to depend on run implementation.
 // It's important, that the body is just `return fn()`.
-inline fun evaluate<T>(fn: ()->T): T = fn()
+internal inline fun evaluate<T>(fn: ()->T): T = fn()
 
-fun test(x: Int): Int =
+internal fun test(x: Int): Int =
         evaluate {
             evaluate { 2 } * evaluate { x }
         }
