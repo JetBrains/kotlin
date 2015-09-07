@@ -170,7 +170,7 @@ fun objects() {
     }
 }
 
-val obj = object: BaseObject() { }
+internal val obj = object: BaseObject() { }
 
 open class BaseObject {
     fun test() = 1
