@@ -81,23 +81,21 @@ public class DataFlowValueFactory {
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
             return new DataFlowValue(expression,
                                      type,
-                                     /* stableIdentifier  = */false,
-                                     /* uncapturedLocalVariable = */false,
+                                     DataFlowValue.Kind.OTHER,
                                      Nullability.NOT_NULL);
         }
 
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule);
         return new DataFlowValue(result == NO_IDENTIFIER_INFO ? expression : result.id,
                                  type,
-                                 result.isStable,
-                                 result.isLocal,
+                                 result.kind,
                                  getImmanentNullability(type));
     }
 
     @NotNull
     public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
         JetType type = receiver.getType();
-        return new DataFlowValue(receiver, type, true, false, getImmanentNullability(type));
+        return new DataFlowValue(receiver, type, DataFlowValue.Kind.STABLE_VALUE, getImmanentNullability(type));
     }
 
     @NotNull
@@ -118,7 +116,7 @@ public class DataFlowValueFactory {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
             JetType type = receiverValue.getType();
-            return new DataFlowValue(receiverValue, type, true, false, getImmanentNullability(type));
+            return new DataFlowValue(receiverValue, type, DataFlowValue.Kind.STABLE_VALUE, getImmanentNullability(type));
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
             return createDataFlowValue((ThisReceiver) receiverValue);
@@ -145,8 +143,7 @@ public class DataFlowValueFactory {
     ) {
         JetType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type,
-                                 isStableVariable(variableDescriptor, usageContainingModule),
-                                 isUncapturedLocalVariable(variableDescriptor, bindingContext),
+                                 variableKind(variableDescriptor, usageContainingModule, bindingContext),
                                  getImmanentNullability(type));
     }
 
@@ -157,20 +154,17 @@ public class DataFlowValueFactory {
 
     private static class IdentifierInfo {
         public final Object id;
-        public final boolean isStable;
-        public final boolean isLocal;
+        public final DataFlowValue.Kind kind;
         public final boolean isPackage;
 
-        private IdentifierInfo(Object id, boolean isStable, boolean isLocal, boolean isPackage) {
-            assert !isStable || !isLocal : "Identifier info for object " + id + " cannot be stable and local at one time";
+        private IdentifierInfo(Object id, DataFlowValue.Kind kind, boolean isPackage) {
             this.id = id;
-            this.isStable = isStable;
-            this.isLocal = isLocal;
+            this.kind = kind;
             this.isPackage = isPackage;
         }
     }
 
-    private static final IdentifierInfo NO_IDENTIFIER_INFO = new IdentifierInfo(null, false, false, false) {
+    private static final IdentifierInfo NO_IDENTIFIER_INFO = new IdentifierInfo(null, DataFlowValue.Kind.OTHER, false) {
         @Override
         public String toString() {
             return "NO_IDENTIFIER_INFO";
@@ -178,18 +172,18 @@ public class DataFlowValueFactory {
     };
 
     @NotNull
-    private static IdentifierInfo createInfo(Object id, boolean isStable, boolean isLocal) {
-        return new IdentifierInfo(id, isStable, isLocal, false);
+    private static IdentifierInfo createInfo(Object id, DataFlowValue.Kind kind) {
+        return new IdentifierInfo(id, kind, false);
     }
 
     @NotNull
     private static IdentifierInfo createStableInfo(Object id) {
-        return createInfo(id, true, false);
+        return createInfo(id, DataFlowValue.Kind.STABLE_VALUE);
     }
 
     @NotNull
     private static IdentifierInfo createPackageOrClassInfo(Object id) {
-        return new IdentifierInfo(id, true, false, true);
+        return new IdentifierInfo(id, DataFlowValue.Kind.STABLE_VALUE, true);
     }
 
     @NotNull
@@ -201,9 +195,10 @@ public class DataFlowValueFactory {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id),
-                          receiverInfo.isStable && selectorInfo.isStable,
+                          receiverInfo.kind.isStable() && selectorInfo.kind.isStable()
+                          ? DataFlowValue.Kind.STABLE_VALUE
                           // x.y can never be a local variable
-                          false);
+                          : DataFlowValue.Kind.OTHER);
     }
 
     @NotNull
@@ -211,7 +206,7 @@ public class DataFlowValueFactory {
         if (argumentInfo == NO_IDENTIFIER_INFO) {
             return NO_IDENTIFIER_INFO;
         }
-        return createInfo(Pair.create(expression, argumentInfo.id), argumentInfo.isStable, argumentInfo.isLocal);
+        return createInfo(Pair.create(expression, argumentInfo.id), argumentInfo.kind);
     }
 
     @NotNull
@@ -278,8 +273,7 @@ public class DataFlowValueFactory {
 
             VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
             return combineInfo(receiverInfo, createInfo(variableDescriptor,
-                                                        isStableVariable(variableDescriptor, usageModuleDescriptor),
-                                                        isUncapturedLocalVariable(variableDescriptor, bindingContext)));
+                                                        variableKind(variableDescriptor, usageModuleDescriptor, bindingContext)));
         }
         if (declarationDescriptor instanceof PackageViewDescriptor || declarationDescriptor instanceof ClassDescriptor) {
             return createPackageOrClassInfo(declarationDescriptor);
@@ -314,10 +308,18 @@ public class DataFlowValueFactory {
         return NO_IDENTIFIER_INFO;
     }
 
-    public static boolean isUncapturedLocalVariable(@NotNull VariableDescriptor variableDescriptor, @NotNull BindingContext bindingContext) {
-        return variableDescriptor.isVar()
-               && variableDescriptor instanceof LocalVariableDescriptor
-               && !BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor);
+    public static DataFlowValue.Kind variableKind(
+            @NotNull VariableDescriptor variableDescriptor,
+            @Nullable ModuleDescriptor usageModule,
+            @NotNull BindingContext bindingContext
+    ) {
+        if (isStableVariable(variableDescriptor, usageModule)) return DataFlowValue.Kind.STABLE_VALUE;
+        boolean isLocalVar = variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor;
+        if (!isLocalVar) return DataFlowValue.Kind.OTHER;
+        if (BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor)) {
+            return DataFlowValue.Kind.UNPREDICTABLE_VARIABLE;
+        }
+        return DataFlowValue.Kind.PREDICTABLE_VARIABLE;
     }
 
     /**

@@ -43,8 +43,8 @@ class PreliminaryLoopVisitor extends AssignedVariablesSearcher {
         Map<DataFlowValue, Nullability> nullabilityMap = dataFlowInfo.getCompleteNullabilityInfo();
         Set<DataFlowValue> valueSetToClear = new LinkedHashSet<DataFlowValue>();
         for (DataFlowValue value: nullabilityMap.keySet()) {
-            // Only uncaptured local variables are under interest here
-            if (value.isUncapturedLocalVariable() && value.getId() instanceof LocalVariableDescriptor) {
+            // Only predictable variables are under interest here
+            if (value.getKind() == DataFlowValue.Kind.PREDICTABLE_VARIABLE && value.getId() instanceof LocalVariableDescriptor) {
                 LocalVariableDescriptor descriptor = (LocalVariableDescriptor)value.getId();
                 if (getAssignedNames().contains(descriptor.getName())) {
                     valueSetToClear.add(value);

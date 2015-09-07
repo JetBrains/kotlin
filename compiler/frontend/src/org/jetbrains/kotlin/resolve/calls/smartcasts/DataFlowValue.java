@@ -27,23 +27,40 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
  * In general case it's some r-value.
  */
 public class DataFlowValue {
-    
-    public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), false, false, Nullability.NULL);
-    public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableAnyType(), false, false, Nullability.UNKNOWN);
-    public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, false, Nullability.IMPOSSIBLE);
 
-    private final boolean stableIdentifier;
-    private final boolean uncapturedLocalVariable;
+    public enum Kind {
+        STABLE_VALUE("stable"),
+        PREDICTABLE_VARIABLE("predictable"),
+        UNPREDICTABLE_VARIABLE("unpredictable"),
+        OTHER("other");
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        Kind(String name) {
+            this.name = name;
+        }
+
+        private final String name;
+
+        public boolean isStable() {
+            return this == STABLE_VALUE;
+        }
+    }
+    
+    public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), Kind.OTHER, Nullability.NULL);
+    public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), Kind.OTHER, Nullability.IMPOSSIBLE);
+
+    private final Kind kind;
     private final JetType type;
     private final Object id;
     private final Nullability immanentNullability;
 
     // Use DataFlowValueFactory
-    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean uncapturedLocalVariable, Nullability immanentNullability) {
-        assert !stableIdentifier || !uncapturedLocalVariable :
-                "data flow value for object " + id + " cannot be together a stable identifier and an uncaptured local variable";
-        this.stableIdentifier = stableIdentifier;
-        this.uncapturedLocalVariable = uncapturedLocalVariable;
+    /*package*/ DataFlowValue(Object id, JetType type, Kind kind, Nullability immanentNullability) {
+        this.kind = kind;
         this.type = type;
         this.id = id;
         this.immanentNullability = immanentNullability;
@@ -59,30 +76,17 @@ public class DataFlowValue {
         return immanentNullability;
     }
 
-    /**
-     * Stable identifier is a non-literal value that is statically known to be immutable
-     *
-     * NB: this function is no longer public!
-     * If you are checking for a possible smart cast, probably you need isPredictable() instead
-     */
-    private boolean isStableIdentifier() {
-        return stableIdentifier;
+    public Kind getKind() {
+        return kind;
     }
 
     /**
-     * Identifier is considered a local variable here if it's mutable (var), local and not captured in a closure
-     */
-    public boolean isUncapturedLocalVariable() {
-        return uncapturedLocalVariable;
-    }
-
-    /**
-     * Both stable identifiers and uncaptured local variables are considered "predictable".
+     * Both stable values and local variables (regardless captured or not) are considered "predictable".
      * Predictable means here we do not expect some sudden change of their values,
-     * like accessing mutable properties in another thread or mutable variables from closures.
+     * like accessing mutable properties in another thread.
      */
     public boolean isPredictable() {
-        return stableIdentifier || uncapturedLocalVariable;
+        return kind == Kind.STABLE_VALUE || kind == Kind.PREDICTABLE_VARIABLE;
     }
 
     @NotNull
@@ -97,7 +101,7 @@ public class DataFlowValue {
 
         DataFlowValue that = (DataFlowValue) o;
 
-        if (stableIdentifier != that.stableIdentifier) return false;
+        if (kind.isStable() != that.kind.isStable()) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
 
@@ -106,12 +110,12 @@ public class DataFlowValue {
 
     @Override
     public String toString() {
-        return (stableIdentifier ? "stable " : "unstable ") + (id == null ? null : id.toString()) + " " + immanentNullability;
+        return kind.toString() + (id == null ? null : id.toString()) + " " + immanentNullability;
     }
 
     @Override
     public int hashCode() {
-        int result = (stableIdentifier ? 1 : 0);
+        int result = kind.isStable() ? 1 : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
