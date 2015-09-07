@@ -16,17 +16,8 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.DebuggerManagerEx
-import com.intellij.debugger.actions.MethodSmartStepTarget
-import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.debugger.engine.BasicStepMethodFilter
-import com.intellij.debugger.engine.MethodFilter
-import com.intellij.debugger.engine.NamedMethodFilter
-import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.debugger.stepping.*
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
 
@@ -37,6 +28,10 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
     protected fun doStepOutTest(path: String) {
         doTest(path, "STEP_OUT")
+    }
+
+    protected fun doStepOverTest(path: String) {
+        doTest(path, "STEP_OVER")
     }
 
     protected fun doSmartStepIntoTest(path: String) {
@@ -61,15 +56,9 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
-        for (i in 1..(getPrefixedInt(fileText, "// $command: ") ?: 1)) {
-            doOnBreakpoint {
-                when(command) {
-                    "STEP_INTO" -> stepInto(false, null)
-                    "STEP_OUT" -> stepOut()
-                    "SMART_STEP_INTO" -> smartStepInto()
-                }
-            }
-        }
+        val prefix = "// $command: "
+        val count = InTextDirectivesUtils.getPrefixedInt(fileText, prefix) ?: "1"
+        processSteppingInstruction("$prefix$count")
 
         finish()
     }

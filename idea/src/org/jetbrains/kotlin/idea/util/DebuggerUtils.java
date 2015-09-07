@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
+import org.jetbrains.kotlin.idea.resolve.ResolvePackage;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.psi.*;
@@ -175,6 +176,18 @@ public class DebuggerUtils {
         }
 
         return new Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
+    }
+
+    @NotNull
+    public static Collection<JetElement> analyzeElementWithInline(
+            @NotNull ResolutionFacade resolutionFacade,
+            @NotNull BindingContext bindingContext,
+            @NotNull JetNamedFunction function,
+            boolean analyzeInlineFunctions
+    ) {
+        Set<JetElement> analyzedElements = new HashSet<JetElement>();
+        analyzeElementWithInline(resolutionFacade, bindingContext, function, 1, analyzedElements, !analyzeInlineFunctions);
+        return analyzedElements;
     }
 
     @NotNull

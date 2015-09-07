@@ -57,47 +57,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
     }
 
     override fun canPutAt(file: VirtualFile, line: Int, project: Project): Boolean {
-        val psiFile = PsiManager.getInstance(project).findFile(file)
-
-        if (psiFile == null || psiFile.getVirtualFile().getFileType() != JetFileType.INSTANCE) {
-            return false
-        }
-
-        val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
-
-        var canPutAt = false
-        XDebuggerUtil.getInstance().iterateLine(project, document, line, fun (el: PsiElement): Boolean {
-            // avoid comments
-            if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, javaClass<PsiComment>(), false) != null) {
-                return true
-            }
-
-            var element = el
-            var parent = element.getParent()
-            while (parent != null) {
-                val offset = parent.getTextOffset()
-                if (offset >= 0 && document.getLineNumber(offset) != line) break
-
-                element = parent
-                parent = element.getParent()
-            }
-
-            if (element is JetProperty || element is JetParameter) {
-                val bindingContext = (element as JetElement).analyze()
-                var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-                if (descriptor is ValueParameterDescriptor) {
-                    descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
-                }
-                if (descriptor is PropertyDescriptor) {
-                    canPutAt = true
-                }
-                return false
-            }
-
-            return true
-        })
-
-        return canPutAt
+        return canPutAt(file, line, project, javaClass)
     }
 
     override fun getPriority() = 120
