@@ -6,11 +6,9 @@ src/inline.kt
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/inline/Klass.class
 out/production/module/usage/UsageKt.class
 out/production/module/usage/UsagePackage.class
 End of files
 Compiling files:
-src/inline.kt
 src/usage.kt
 End of files
