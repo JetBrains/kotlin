@@ -434,6 +434,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement method = changeInfo.getMethod();
         if (!RefactoringPackage.isTrueJavaMethod(method)) return;
 
+        if (((PsiMethod) method).getContainingClass() == null) return;
+
         FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
         assert methodDescriptor != null;
 
