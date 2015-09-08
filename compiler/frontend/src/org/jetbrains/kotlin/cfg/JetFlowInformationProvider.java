@@ -587,6 +587,7 @@ public class JetFlowInformationProvider {
             @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializersMap
     ) {
         Edges<Map<VariableDescriptor, VariableControlFlowState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        if (initializers == null) return;
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
             if (variable instanceof PropertyDescriptor) {
