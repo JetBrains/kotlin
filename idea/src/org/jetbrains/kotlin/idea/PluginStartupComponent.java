@@ -70,7 +70,5 @@ public class PluginStartupComponent implements ApplicationComponent {
     }
 
     @Override
-    public void disposeComponent() {
-        KotlinCompilerClient.Companion.shutdownCompileService();
-    }
+    public void disposeComponent() {}
 }
