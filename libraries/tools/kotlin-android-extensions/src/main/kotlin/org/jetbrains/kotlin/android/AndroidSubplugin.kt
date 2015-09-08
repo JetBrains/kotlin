@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.android
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
-import org.gradle.api
+import org.gradle.api.Project
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 public class AndroidSubplugin : KotlinGradleSubplugin {
 
-    override fun getExtraArguments(project: api.Project, task: AbstractCompile): List<SubpluginOption>? {
+    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption>? {
         val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return null
 
         val sourceSets = androidExtension.sourceSets
