@@ -95,7 +95,9 @@ public class AddFunctionParametersFix(
 
                         if (i < parameters.size()) {
                             validator.addName(parameters.get(i).name.asString())
-                            val argumentType = expression?.let { bindingContext.getType(it) }
+                            val argumentType = expression?.let {
+                                bindingContext[BindingContext.SMARTCAST, it] ?: bindingContext.getType(it)
+                            }
                             val parameterType = parameters.get(i).type
 
                             if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
