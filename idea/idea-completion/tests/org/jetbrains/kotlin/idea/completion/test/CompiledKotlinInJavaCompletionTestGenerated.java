@@ -125,6 +125,12 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("SingleFileFacadeNoImport.java")
+    public void testSingleFileFacadeNoImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/SingleFileFacadeNoImport.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Subpackage.java")
     public void testSubpackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/Subpackage.java");
