@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 
 public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
@@ -103,5 +106,19 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         addKotlinRuntimeDependency()
         rebuildAll()
+    }
+
+    public fun testThreeModulesNoReexportWithDaemon() {
+        System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
+        val flagFile = File.createTempFile("kotlin-jps-tests-", "-is-running");
+        try {
+            System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
+            testThreeModulesNoReexport()
+        }
+        finally {
+            flagFile.delete()
+            System.clearProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
+            System.clearProperty(COMPILE_DAEMON_ENABLED_PROPERTY)
+        }
     }
 }
