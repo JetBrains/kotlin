@@ -1,0 +1,8 @@
+// "Replace with 'tailrec'" "true"
+
+tailrec
+fun foo() {
+    if (1 > 2) {
+        foo()
+    }
+}
