@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
-import com.intellij.psi.PsiElement
 
 public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
@@ -49,28 +49,27 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
     public fun getSubjectLink(): KDocLink? {
         val children = childrenAfterTagName()
         if (hasSubject(children)) {
-            return children.firstOrNull()?.getPsi() as? KDocLink
+            return children.firstOrNull()?.psi as? KDocLink
         }
         return null
     }
 
     public val knownTag: KDocKnownTag?
         get() {
-            val name = getName()
             return if (name != null) KDocKnownTag.findByTagName(name) else null
         }
 
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
         if (knownTag?.isReferenceRequired() ?: false) {
-            return contentChildren.firstOrNull()?.getElementType() == KDocTokens.MARKDOWN_LINK
+            return contentChildren.firstOrNull()?.elementType == KDocTokens.MARKDOWN_LINK
         }
         return false
     }
 
     private fun childrenAfterTagName(): List<ASTNode> =
         getNode().getChildren(null)
-                .dropWhile { it.getElementType() == KDocTokens.TAG_NAME }
-                .dropWhile { it.getElementType() == TokenType.WHITE_SPACE }
+                .dropWhile { it.elementType == KDocTokens.TAG_NAME }
+                .dropWhile { it.elementType == TokenType.WHITE_SPACE }
 
     /**
      * Returns the content of this tag (all text following the tag name and the subject if present,
@@ -87,23 +86,23 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
             children = children.drop(1)
         }
         for (node in children) {
-            val type = node.getElementType()
+            val type = node.elementType
             if (KDocTokens.CONTENT_TOKENS.contains(type)) {
+                builder.append(if (!contentStarted || afterAsterisk) node.text.trimStart() else node.text)
                 contentStarted = true
-                builder.append(if (afterAsterisk) StringUtil.trimLeading(node.getText()) else node.getText())
                 afterAsterisk = false
             }
             if (type == KDocTokens.LEADING_ASTERISK) {
                 afterAsterisk = true
             }
             if (type == TokenType.WHITE_SPACE && contentStarted) {
-                builder.append(StringUtil.repeat("\n", StringUtil.countNewLines(node.getText())))
+                builder.append("\n".repeat(StringUtil.countNewLines(node.text)))
             }
             if (type == KDocElementTypes.KDOC_TAG) {
                 break
             }
         }
 
-        return builder.toString()
+        return builder.toString().trimEnd(' ', '\t')
     }
 }
