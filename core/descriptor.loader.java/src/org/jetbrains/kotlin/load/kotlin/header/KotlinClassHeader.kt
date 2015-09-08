@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.load.kotlin.header
 
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 
 public class KotlinClassHeader(
         public val kind: KotlinClassHeader.Kind,
-        public val version: Int,
+        public val version: BinaryVersion,
         public val annotationData: Array<String>?,
         public val classKind: KotlinClass.Kind?,
         public val syntheticClassKind: KotlinSyntheticClass.Kind?,

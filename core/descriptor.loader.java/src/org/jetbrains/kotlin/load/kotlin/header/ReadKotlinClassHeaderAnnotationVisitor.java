@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_TRAIT_IMPL), SYNTHETIC_CLASS);
     }
 
-    private int version = AbiVersionUtil.INVALID_VERSION;
+    private BinaryVersion version = AbiVersionUtil.INVALID_VERSION;
     private String multifileClassName = null;
     private String[] filePartClassNames = null;
     private String[] annotationData = null;
@@ -151,12 +152,18 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
-            if (name != null) {
-                if (name.asString().equals(ABI_VERSION_FIELD_NAME)) {
-                    version = value instanceof Integer ? (Integer) value : AbiVersionUtil.INVALID_VERSION;
-                }
-                else if (name.asString().equals(MULTIFILE_CLASS_NAME_FIELD_NAME)) {
-                    multifileClassName = value instanceof String ? (String) value : null;
+            if (name == null) return;
+
+            String string = name.asString();
+            if (VERSION_FIELD_NAME.equals(string)) {
+                version = value instanceof int[] ? BinaryVersion.create((int[]) value) : AbiVersionUtil.INVALID_VERSION;
+            }
+            else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+                multifileClassName = value instanceof String ? (String) value : null;
+            }
+            else if (OLD_ABI_VERSION_FIELD_NAME.equals(string)) {
+                if (version == AbiVersionUtil.INVALID_VERSION && value instanceof Integer && (Integer) value > 0) {
+                    version = BinaryVersion.create(0, (Integer) value, 0);
                 }
             }
         }

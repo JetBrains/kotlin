@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
 class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
     override fun reportLoadingError(message: String, exception: Exception?) {
@@ -35,7 +36,7 @@ class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
         log.error("Could not infer visibility for $descriptor")
     }
 
-    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: Int) {
+    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
         log.error("Incompatible ABI version for class $classId, actual version: $actualVersion")
     }
 }

@@ -264,7 +264,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(nameResolver, classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        JvmCodegenUtil.writeAbiVersion(av);
         //noinspection ConstantConditions
         if (kind != null) {
             av.visitEnum(

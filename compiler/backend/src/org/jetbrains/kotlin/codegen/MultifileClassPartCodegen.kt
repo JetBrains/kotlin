@@ -20,7 +20,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
-
 
 public class MultifileClassPartCodegen(
         v: ClassBuilder,
@@ -60,12 +58,12 @@ public class MultifileClassPartCodegen(
     override fun generateBody() {
         for (declaration in element.declarations) {
             if (declaration is JetNamedFunction || declaration is JetProperty) {
-                genFunctionOrProperty(declaration);
+                genFunctionOrProperty(declaration)
             }
         }
 
         if (state.classBuilderMode == ClassBuilderMode.FULL) {
-            generateInitializers({ createOrGetClInitCodegen(); });
+            generateInitializers { createOrGetClInitCodegen() }
         }
     }
 
@@ -100,7 +98,7 @@ public class MultifileClassPartCodegen(
         val data = PackageData(nameResolver, packageProto)
 
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION)
+        JvmCodegenUtil.writeAbiVersion(av)
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassFqName.shortName().asString())
         val dataArray = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME)
         for (string in BitEncoding.encodeBytes(SerializationUtil.serializePackageData(data))) {

@@ -20,16 +20,37 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
 import com.intellij.util.indexing.ScalarIndexExtension
-import com.intellij.util.io.ExternalIntegerKeyDescriptor
+import com.intellij.util.io.DataInputOutputUtil
+import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import java.io.DataInput
+import java.io.DataOutput
 
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<Int>() {
+abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<BinaryVersion>() {
 
-    override fun getName() = ID.create<Int, Void>(classOfIndex.getCanonicalName())
+    override fun getName() = ID.create<BinaryVersion, Void>(classOfIndex.canonicalName)
 
-    override fun getKeyDescriptor() = ExternalIntegerKeyDescriptor()
+    override fun getKeyDescriptor(): KeyDescriptor<BinaryVersion> = object : KeyDescriptor<BinaryVersion> {
+        override fun isEqual(val1: BinaryVersion, val2: BinaryVersion): Boolean = val1 == val2
+
+        override fun getHashCode(value: BinaryVersion): Int = value.hashCode()
+
+        override fun read(input: DataInput): BinaryVersion {
+            val size = DataInputOutputUtil.readINT(input)
+            return BinaryVersion.create((0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray())
+        }
+
+        override fun save(output: DataOutput, value: BinaryVersion) {
+            val array = value.toArray()
+            DataInputOutputUtil.writeINT(output, array.size())
+            for (number in array) {
+                DataInputOutputUtil.writeINT(output, number)
+            }
+        }
+    }
 
     override fun dependsOnFileContent() = true
 
@@ -40,7 +61,7 @@ abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) 
             body()
         }
         catch (e: Throwable) {
-            LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage())
+            LOG.warn("Could not index ABI version for file " + inputData.file + ": " + e.getMessage())
         }
     }
 }

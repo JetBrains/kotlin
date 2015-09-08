@@ -23,21 +23,23 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(javaClass<KotlinAbiVersionIndex>()) {
+public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(KotlinAbiVersionIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.getFileType() == StdFileTypes.CLASS }
+    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.fileType == StdFileTypes.CLASS }
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 1
+    private val VERSION = 2
 
+    @Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
     private val kotlinAnnotationsDesc = setOf(
             OLD_JET_CLASS_ANNOTATION,
             OLD_JET_PACKAGE_CLASS_ANNOTATION,
@@ -48,12 +50,12 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
             KOTLIN_FILE_FACADE)
             .map { asmDescByFqNameWithoutInnerClasses(it) }
 
-    private val INDEXER = DataIndexer<Int, Void, FileContent>() { inputData: FileContent ->
-        var version: Int? = null
+    private val INDEXER = DataIndexer<BinaryVersion, Void, FileContent>() { inputData: FileContent ->
+        var version: BinaryVersion? = null
         var annotationPresent = false
 
         tryBlock(inputData) {
-            val classReader = ClassReader(inputData.getContent())
+            val classReader = ClassReader(inputData.content)
             classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     if (!kotlinAnnotationsDesc.contains(desc)) {
@@ -62,13 +64,12 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
                     annotationPresent = true
                     return object : AnnotationVisitor(Opcodes.ASM5) {
                         override fun visit(name: String, value: Any) {
-                            if (ABI_VERSION_FIELD_NAME == name) {
-                                if (value is Int) {
-                                    version = value
+                            when (name) {
+                                VERSION_FIELD_NAME -> if (value is IntArray) {
+                                    version = BinaryVersion.create(value)
                                 }
-                                else {
-                                    // Version is set to something weird
-                                    version = AbiVersionUtil.INVALID_VERSION
+                                OLD_ABI_VERSION_FIELD_NAME -> if (version == null && value is Int) {
+                                    version = BinaryVersion.create(0, value, 0)
                                 }
                             }
                         }
@@ -78,10 +79,10 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
         }
 
         if (annotationPresent && version == null) {
-            // No version at all: the class is too old
+            // No version at all because the class is too old, or version is set to something weird
             version = AbiVersionUtil.INVALID_VERSION
         }
 
-        if (version != null) mapOf<Int, Void?>(version!! to null) else mapOf()
+        if (version != null) mapOf(version!! to null) else mapOf()
     }
 }

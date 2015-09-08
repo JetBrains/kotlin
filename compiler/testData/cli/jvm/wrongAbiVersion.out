@@ -1,5 +1,5 @@
-compiler/testData/cli/jvm/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
-compiler/testData/cli/jvm/wrongAbiVersionLib/bin/wrong/Wrong_packageKt.class: error: class 'wrong/Wrong_packageKt' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
+compiler/testData/cli/jvm/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. Its ABI version is unknown, expected ABI version is $ABI_VERSION$
+compiler/testData/cli/jvm/wrongAbiVersionLib/bin/wrong/Wrong_packageKt.class: error: class 'wrong/Wrong_packageKt' was compiled with an incompatible version of Kotlin. Its ABI version is unknown, expected ABI version is $ABI_VERSION$
 compiler/testData/cli/jvm/wrongAbiVersion.kt:4:3: error: unresolved reference: bar
   bar()
   ^

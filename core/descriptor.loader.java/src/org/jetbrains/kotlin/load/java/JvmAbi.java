@@ -21,13 +21,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
 public final class JvmAbi {
     /**
      * This constant is used to identify binary format (class file) versions
-     * If you change class file metadata format and/or naming conventions, please increase this number
+     * If you change class file metadata format and/or naming conventions, please change this version.
+     * - Major version should be increased only when the new binary format is neither forward- nor backward compatible.
+     *   This shouldn't really ever happen at all.
+     * - Minor version should be increased when the new format is backward compatible,
+     *   i.e. the new compiler can process old class files, but the old compiler will not be able to process new class files.
+     * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
+     *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
      */
-    public static final int VERSION = 24;
+    public static final BinaryVersion VERSION = BinaryVersion.create(0, 24, 0);
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;

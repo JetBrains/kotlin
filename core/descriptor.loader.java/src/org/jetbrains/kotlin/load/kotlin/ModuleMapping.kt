@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
@@ -28,19 +29,27 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
     }
 
     companion object {
-        public val MAPPING_FILE_EXT: String = "kotlin_module";
+        public val MAPPING_FILE_EXT: String = "kotlin_module"
 
         public val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
 
-        fun create(protoWithAbi: ByteArray? = null): ModuleMapping {
-            if (protoWithAbi == null) {
+        fun create(proto: ByteArray? = null): ModuleMapping {
+            if (proto == null) {
                 return EMPTY
             }
 
-            val inputStream = DataInputStream(ByteArrayInputStream(protoWithAbi))
-            val intCount = inputStream.readInt()
-            assert(intCount == 1, {"Expected one int value for abi version, but: $intCount"})
-            val abiVersion = Integer.valueOf(inputStream.readInt());
+            val inputStream = DataInputStream(ByteArrayInputStream(proto))
+            val size = inputStream.readInt()
+
+            val abiVersion =
+                    if (size == 1) {
+                        // TODO: this is a temporary workaround, drop after M13
+                        BinaryVersion.create(0, inputStream.readInt(), 0)
+                    }
+                    else {
+                        BinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
+                    }
+
             if (AbiVersionUtil.isAbiVersionCompatible(abiVersion)) {
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
                 if (parseFrom != null) {
@@ -55,6 +64,7 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
                     return ModuleMapping(packageFqNameParts)
                 }
             }
+
             return EMPTY
         }
     }

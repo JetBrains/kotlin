@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -76,10 +77,10 @@ public class KotlinRuntimeLibraryUtil {
                         return module != null && ProjectStructureUtil.isJavaKotlinModule(module);
                     }
                 },
-                new Function1<Integer, Boolean>() {
+                new Function1<BinaryVersion, Boolean>() {
                     @Override
-                    public Boolean invoke(Integer abiVersion) {
-                        return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
+                    public Boolean invoke(@NotNull BinaryVersion version) {
+                        return !AbiVersionUtil.isAbiVersionCompatible(version);
                     }
                 });
     }
@@ -94,10 +95,11 @@ public class KotlinRuntimeLibraryUtil {
                         return module != null && ProjectStructureUtil.isJsKotlinModule(module);
                     }
                 },
-                new Function1<Integer, Boolean>() {
+                new Function1<BinaryVersion, Boolean>() {
                     @Override
-                    public Boolean invoke(Integer abiVersion) {
-                        return !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion);
+                    public Boolean invoke(@NotNull BinaryVersion version) {
+                        // TODO: support major.minor.patch version in JS metadata
+                        return !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.getMinor());
                     }
                 });
     }
@@ -328,23 +330,23 @@ public class KotlinRuntimeLibraryUtil {
     @NotNull
     private static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleVersion(
             @NotNull Project project,
-            @NotNull ScalarIndexExtension<Integer> index,
+            @NotNull ScalarIndexExtension<BinaryVersion> index,
             @NotNull Function1<Module, Boolean> checkModule,
-            @NotNull Function1<Integer, Boolean> checkAbiVersion
+            @NotNull Function1<BinaryVersion, Boolean> checkVersion
     ) {
-        ID<Integer, Void> id = index.getName();
+        ID<BinaryVersion, Void> id = index.getName();
 
         Module[] modules = ModuleManager.getInstance(project).getModules();
 
         List<Module> modulesToCheck = KotlinPackage.filter(modules, checkModule);
         if (modulesToCheck.isEmpty()) return Collections.emptyList();
 
-        Collection<Integer> abiVersions = collectAllKeys(id, modulesToCheck);
-        Set<Integer> badAbiVersions = Sets.newHashSet(KotlinPackage.filter(abiVersions, checkAbiVersion));
+        Collection<BinaryVersion> versions = collectAllKeys(id, modulesToCheck);
+        Set<BinaryVersion> badVersions = Sets.newHashSet(KotlinPackage.filter(versions, checkVersion));
         Set<VirtualFile> badRoots = Sets.newHashSet();
         ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
-        for (Integer version : badAbiVersions) {
+        for (BinaryVersion version : badVersions) {
             Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
                     id, version, ProjectScope.getLibrariesScope(project));
 
@@ -361,12 +363,12 @@ public class KotlinRuntimeLibraryUtil {
     }
 
     @NotNull
-    private static Collection<Integer> collectAllKeys(@NotNull ID<Integer, Void> id, @NotNull List<Module> modules) {
-        Set<Integer> allKeys = new HashSet<Integer>();
+    private static <T> Collection<T> collectAllKeys(@NotNull ID<T, Void> id, @NotNull List<Module> modules) {
+        Set<T> allKeys = new HashSet<T>();
 
         for (Module module : modules) {
             GlobalSearchScope scope = GlobalSearchScope.moduleWithLibrariesScope(module);
-            FileBasedIndex.getInstance().processAllKeys(id, new CommonProcessors.CollectProcessor<Integer>(allKeys), scope, null);
+            FileBasedIndex.getInstance().processAllKeys(id, new CommonProcessors.CollectProcessor<T>(allKeys), scope, null);
         }
 
         return allKeys;

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<TraceBasedErrorReporter>())
+        private val LOG = Logger.getInstance(TraceBasedErrorReporter::class.java)
 
         public val ABI_VERSION_ERRORS: WritableSlice<String, AbiVersionErrorData> = Slices.createCollectiveSlice()
         // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
@@ -37,11 +38,11 @@ public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorRep
     }
 
     public data class AbiVersionErrorData(
-            public val actualVersion: Int,
+            public val actualVersion: BinaryVersion,
             public val classId: ClassId
     )
 
-    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: Int) {
+    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
         trace.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, classId))
     }
 
