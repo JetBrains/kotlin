@@ -166,7 +166,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     
     public void testAnnotationWithParamForParamInFunction() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("import java.lang.annotation.*\n" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
+                 "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
                  "fun x(A(\"239\") i: Int) {}");
         Class<?> packageClass = getPackageSrcClass(loader);
         Method packageClassMethod = packageClass.getMethod("x", int.class);
@@ -246,7 +246,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
+                 "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
                  "" +
                  "A(\"239\") class B()");
         Class aClass = generateClass("A");
@@ -280,7 +280,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         loadText("import java.lang.annotation.*\n" +
                  "" +
                  "annotation class C(val c: String)\n" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: C)\n" +
+                 "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: C)\n" +
                  "" +
                  "A(C(\"239\")) class B()");
         Class aClass = generateClass("A");
@@ -317,7 +317,7 @@ public class AnnotationGenTest extends CodegenTestCase {
             InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<String>)\n" +
+                 "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<String>)\n" +
                  "" +
                  "A(array(\"239\",\"932\")) class B()");
         Class aClass = generateClass("A");
@@ -352,7 +352,7 @@ public class AnnotationGenTest extends CodegenTestCase {
             InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: IntArray)\n" +
+                 "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: IntArray)\n" +
                  "" +
                  "A(intArray(239,932)) class B()");
         Class aClass = generateClass("A");
@@ -387,7 +387,7 @@ public class AnnotationGenTest extends CodegenTestCase {
             InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
-                 "Target(ElementType.TYPE, ElementType.METHOD) annotation class A");
+                 "@java.lang.annotation.Target(ElementType.TYPE, ElementType.METHOD) annotation class A");
         Class aClass = generateClass("A");
 
         Target annotation = (Target)aClass.getAnnotation(Target.class);
@@ -407,8 +407,9 @@ public class AnnotationGenTest extends CodegenTestCase {
             InstantiationException,
             InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
+                 "import java.lang.annotation.Retention\n" +
                  "" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<Retention>)\n" +
+                 "@Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<Retention>)\n" +
                  "" +
                  "A(array(Retention(RetentionPolicy.RUNTIME),Retention(RetentionPolicy.SOURCE))) class B()");
         Class aClass = generateClass("A");

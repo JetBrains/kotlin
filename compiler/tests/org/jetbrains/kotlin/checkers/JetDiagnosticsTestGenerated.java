@@ -1049,6 +1049,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("javaKotlinTargetRetention.kt")
+                public void testJavaKotlinTargetRetention() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/javaKotlinTargetRetention.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("javaretention.kt")
                 public void testJavaretention() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/javaretention.kt");
