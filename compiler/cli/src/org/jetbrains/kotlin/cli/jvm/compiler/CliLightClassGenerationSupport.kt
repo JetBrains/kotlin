@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -165,10 +166,9 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<JetFile> {
-        // TODO We need a way to plug some platform-dependent stuff into LazyTopDownAnalyzer.
-        // It already performs some ad hoc stuff for packages->files mapping, anyway.
-        val filesInPackage = findFilesForPackage(facadeFqName.parent(), scope)
-        return PackagePartClassUtils.getFilesForPart(facadeFqName, filesInPackage)
+        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(facadeFqName.parent(), scope)).filter {
+            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName == facadeFqName
+        }
     }
 
     override fun getContextForFacade(files: Collection<JetFile>): LightClassConstructionContext {
@@ -219,6 +219,18 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
             }
 
             return value
+        }
+    }
+
+    override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).groupBy {
+            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName
+        }.map { KotlinLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }.filterNotNull()
+    }
+
+    override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
+        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).map {
+            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName.shortName().asString()
         }
     }
 }
