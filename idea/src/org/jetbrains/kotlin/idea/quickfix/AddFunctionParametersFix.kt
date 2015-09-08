@@ -75,8 +75,6 @@ public class AddFunctionParametersFix(
         return newParametersCnt > 0
     }
 
-    override fun startInWriteAction() = true
-
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement.analyzeFully(), callElement, text)
     }

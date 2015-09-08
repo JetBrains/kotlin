@@ -41,6 +41,8 @@ public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndepen
         }
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: JetTypeReference, editor: Editor) {
         val function = element.getParent() as? JetNamedFunction ?: return
         val context = function.analyze()
