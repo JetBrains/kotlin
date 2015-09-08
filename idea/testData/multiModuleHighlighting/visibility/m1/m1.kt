@@ -1,12 +1,12 @@
 package m1
 
 public class PublicClassInM1
-class InternalClassInM1
+internal class InternalClassInM1
 private class PrivateClassInM1
 
 public fun publicFunInM1() {
 }
-fun internalFunInM1() {
+internal fun internalFunInM1() {
 }
 private fun privateFunInM1() {
 }
@@ -18,7 +18,7 @@ fun testVisibility() {
 public open class A internal constructor() {
     private fun pri() {
     }
-    fun int() {
+    internal fun int() {
     }
     protected fun pro() {
     }

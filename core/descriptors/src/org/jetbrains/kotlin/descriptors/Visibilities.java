@@ -120,8 +120,8 @@ public class Visibilities {
 
         @Override
         public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            //NOTE: supposedly temporarily
-            return PUBLIC.isVisible(receiver, what, from);
+            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
+            return isInFriendModule(what, fromOrModule);
         }
     };
 
