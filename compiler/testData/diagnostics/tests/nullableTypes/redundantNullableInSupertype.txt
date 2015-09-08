@@ -1,14 +1,14 @@
 package
 
-internal fun </*0*/ T> interaction(/*0*/ t: T): kotlin.Unit
+public fun </*0*/ T> interaction(/*0*/ t: T): kotlin.Unit
 
-internal interface A {
+public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface X : A? {
+public interface X : A? {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

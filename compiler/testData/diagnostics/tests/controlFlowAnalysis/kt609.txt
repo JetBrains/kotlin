@@ -1,28 +1,28 @@
 package
 
 package kt609 {
-    internal fun test(/*0*/ a: kotlin.Int): kotlin.Unit
+    public fun test(/*0*/ a: kotlin.Int): kotlin.Unit
 
-    internal open class A {
+    public open class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal open fun foo(/*0*/ s: kotlin.String): kotlin.Unit
+        public open fun foo(/*0*/ s: kotlin.String): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class B : kt609.A {
+    public final class B : kt609.A {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final override /*1*/ fun foo(/*0*/ s: kotlin.String): kotlin.Unit
+        public final override /*1*/ fun foo(/*0*/ s: kotlin.String): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class C {
+    public final class C {
         public constructor C()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(/*0*/ s: kotlin.String): kotlin.Unit
+        public final fun foo(/*0*/ s: kotlin.String): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

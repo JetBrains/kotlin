@@ -1,6 +1,6 @@
 package
 
-internal fun ff(): kotlin.Unit
+public fun ff(): kotlin.Unit
 
 public open class Test {
     public constructor Test()
@@ -13,5 +13,5 @@ public open class Test {
 }
 
 package foo {
-    internal val s: kotlin.String = "test"
+    public val s: kotlin.String = "test"
 }

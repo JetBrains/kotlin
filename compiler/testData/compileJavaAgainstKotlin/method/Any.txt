@@ -1,6 +1,6 @@
 package test
 
-internal fun anyany(/*0*/ kotlin.Any, /*1*/ java.util.List<kotlin.String>): kotlin.Any
+public fun anyany(/*0*/ kotlin.Any, /*1*/ java.util.List<kotlin.String>): kotlin.Any
 
 public/*package*/ open class Any {
     public/*package*/ constructor Any()

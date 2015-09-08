@@ -1,16 +1,16 @@
 package
 
-internal val property: kotlin.String = ""
-internal fun foo(): Klass
-internal fun function(): kotlin.String
+public val property: kotlin.String = ""
+public fun foo(): Klass
+public fun function(): kotlin.String
 
-internal final class Klass {
+public final class Klass {
     public constructor Klass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class Nested {
+    public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -18,7 +18,7 @@ internal final class Klass {
     }
 }
 
-internal final class NotImported {
+public final class NotImported {
     public constructor NotImported()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -26,7 +26,7 @@ internal final class NotImported {
 }
 
 package pkg {
-    internal val v: Klass.Nested
-    internal val x: [ERROR : NotImported]
-    internal fun foo(): Klass
+    public val v: Klass.Nested
+    public val x: [ERROR : NotImported]
+    public fun foo(): Klass
 }

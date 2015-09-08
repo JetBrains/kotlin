@@ -1,27 +1,27 @@
 package test
 
-internal final class O {
+public final class O {
     /*primary*/ public constructor O()
 
-    internal final class A1 {
+    public final class A1 {
         /*primary*/ public constructor A1()
     }
 
-    internal final inner class A2 {
+    public final inner class A2 {
         /*primary*/ public constructor A2()
     }
 
-    internal final class B1 {
+    public final class B1 {
         /*primary*/ public constructor B1()
     }
 
-    internal final inner class B2 {
+    public final inner class B2 {
         /*primary*/ public constructor B2()
     }
 
-    internal interface C1 {
+    public interface C1 {
     }
 
-    internal interface C2 {
+    public interface C2 {
     }
 }

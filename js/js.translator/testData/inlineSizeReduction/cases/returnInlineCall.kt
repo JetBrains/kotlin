@@ -3,7 +3,7 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: test
 // CHECK_VARS_COUNT: function=test count=0
 
-inline fun sign(x: Int): Int {
+internal inline fun sign(x: Int): Int {
     if (x < 0) return -1
 
     if (x == 0) return 0
@@ -11,7 +11,7 @@ inline fun sign(x: Int): Int {
     return 1
 }
 
-fun test(x: Int, y: Int): Int {
+internal fun test(x: Int, y: Int): Int {
     if (x != 0) {
         return sign(x)
     }

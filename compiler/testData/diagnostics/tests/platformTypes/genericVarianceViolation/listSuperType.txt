@@ -1,6 +1,6 @@
 package
 
-internal fun main(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
+public fun main(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
 
 public open class A {
     public constructor A()
@@ -10,7 +10,7 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal abstract class B : kotlin.MutableList<kotlin.String> {
+public abstract class B : kotlin.MutableList<kotlin.String> {
     public constructor B()
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: kotlin.String): kotlin.Boolean

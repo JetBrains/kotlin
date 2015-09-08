@@ -1,6 +1,6 @@
 package
 
-internal fun </*0*/ T> getJavaClass(): java.lang.Class<T>
+public fun </*0*/ T> getJavaClass(): java.lang.Class<T>
 
 public final class Throwables {
     public constructor Throwables()

@@ -1,4 +1,4 @@
 package
 
-internal fun box(): kotlin.String
-internal fun new(): kotlin.String
+public fun box(): kotlin.String
+public fun new(): kotlin.String

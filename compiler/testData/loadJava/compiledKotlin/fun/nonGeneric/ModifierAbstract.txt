@@ -1,6 +1,6 @@
 package test
 
-internal abstract class ModifierAbstract {
+public abstract class ModifierAbstract {
     /*primary*/ public constructor ModifierAbstract()
-    internal abstract fun abs(): kotlin.Int
+    public abstract fun abs(): kotlin.Int
 }

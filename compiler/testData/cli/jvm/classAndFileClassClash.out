@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/classAndFileClassClash.kt:1:1: error: duplicate JVM class name 'test/Foo' generated from: package-fragment test, Foo
+@file:JvmName("Foo")
+^
+compiler/testData/cli/jvm/classAndFileClassClash.kt:6:1: error: duplicate JVM class name 'test/Foo' generated from: package-fragment test, Foo
+class Foo {}
+^
+COMPILATION_ERROR

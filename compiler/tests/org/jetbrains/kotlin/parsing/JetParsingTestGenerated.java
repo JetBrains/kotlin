@@ -891,24 +891,33 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/psi/annotation/modifiersMigration")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ModifiersMigration extends AbstractJetParsingTest {
+                public void testAllFilesPresentInModifiersMigration() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/modifiersMigration"), Pattern.compile("^(.*)\\.kts?$"), true);
+                }
+
+                @TestMetadata("newModifiers.kt")
+                public void testNewModifiers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/modifiersMigration/newModifiers.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("oldUsages.kt")
+                public void testOldUsages() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/modifiersMigration/oldUsages.kt");
+                    doParsingTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/psi/annotation/options")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Options extends AbstractJetParsingTest {
                 public void testAllFilesPresentInOptions() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/options"), Pattern.compile("^(.*)\\.kts?$"), true);
-                }
-
-                @TestMetadata("annotAsArgComplex.kt")
-                public void testAnnotAsArgComplex() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotAsArgComplex.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("annotation.kt")
-                public void testAnnotation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotation.kt");
-                    doParsingTest(fileName);
                 }
 
                 @TestMetadata("annotationAsArg.kt")
@@ -932,12 +941,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 @TestMetadata("local.kt")
                 public void testLocal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/local.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("options.kt")
-                public void testOptions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/options.kt");
                     doParsingTest(fileName);
                 }
             }

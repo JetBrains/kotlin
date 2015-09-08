@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
 import org.jetbrains.kotlin.util.PerformanceCounter
@@ -133,6 +134,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             CommandLineScriptUtils.scriptParameters()
         else
             emptyList<AnalyzerScriptParameter>())
+
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         putAdvancedOptions(configuration, arguments)
 

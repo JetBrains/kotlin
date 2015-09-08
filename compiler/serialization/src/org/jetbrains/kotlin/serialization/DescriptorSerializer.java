@@ -433,6 +433,19 @@ public class DescriptorSerializer {
     }
 
     @NotNull
+    public ProtoBuf.Package.Builder packagePartProto(@NotNull Collection<DeclarationDescriptor> members) {
+        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
+
+        for (DeclarationDescriptor declaration : sort(members)) {
+            if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
+                builder.addMember(callableProto((CallableMemberDescriptor) declaration));
+            }
+        }
+
+        return builder;
+    }
+
+    @NotNull
     private static ProtoBuf.Type.Argument.Projection projection(@NotNull Variance projectionKind) {
         switch (projectionKind) {
             case INVARIANT:

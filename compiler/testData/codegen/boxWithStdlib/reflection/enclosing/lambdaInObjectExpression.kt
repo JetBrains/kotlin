@@ -13,10 +13,10 @@ fun box(): String {
 
     val javaClass = l.a.javaClass
     val enclosingMethod = javaClass.getEnclosingConstructor()!!.getName()
-    if (!enclosingMethod.startsWith("_DefaultPackage\$") || !enclosingMethod.endsWith("\$box\$l\$1")) return "ctor: $enclosingMethod"
+    if (enclosingMethod != "LambdaInObjectExpressionKt\$box\$l\$1") return "ctor: $enclosingMethod"
 
     val enclosingClass = javaClass.getEnclosingClass()!!.getName()
-    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$l\$1")) return "enclosing class: $enclosingClass"
+    if (enclosingClass != "LambdaInObjectExpressionKt\$box\$l\$1") return "enclosing class: $enclosingClass"
 
     if (enclosingMethod != enclosingClass) return "$enclosingClass != $enclosingMethod"
 

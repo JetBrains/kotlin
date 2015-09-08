@@ -81,9 +81,12 @@ class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
 class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
 class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
 class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
-public class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
-class NewObjectValue(asmType: Type): AbstractValueBase<Any?>(asmType) {
+public open class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
+class NewObjectValue(asmType: Type): ObjectValue(null, asmType) {
     override var value: Any? = null
+        get(): Any? {
+            return $value ?: throw IllegalStateException("Trying to access an unitialized object: $this")
+        }
 }
 
 class LabelValue(value: LabelNode): AbstractValue<LabelNode>(value, Type.VOID_TYPE)
@@ -106,11 +109,6 @@ val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
 val Value.double: Double get() = (this as DoubleValue).value
 fun Value.obj(expectedType: Type = asmType): Any? {
-    if (this is NewObjectValue) {
-        val v = value
-        if (v == null) throw IllegalStateException("Trying to access an unitialized object: $this")
-        return v
-    }
     return when {
         expectedType == Type.BOOLEAN_TYPE -> this.boolean
         expectedType == Type.SHORT_TYPE -> (this as IntValue).int.toShort()

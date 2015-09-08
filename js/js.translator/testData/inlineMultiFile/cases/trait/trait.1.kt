@@ -11,15 +11,15 @@ import test.*
 // CHECK_CONTAINS_NO_CALLS: testFinalInline2
 // CHECK_CONTAINS_NO_CALLS: testClassObject
 
-fun testFinalInline(): String {
+internal fun testFinalInline(): String {
     return Z().finalInline({"final"})
 }
 
-fun testFinalInline2(instance: InlineTrait): String {
+internal fun testFinalInline2(instance: InlineTrait): String {
     return instance.finalInline({"final2"})
 }
 
-fun testClassObject(): String {
+internal fun testClassObject(): String {
     return InlineTrait.finalInline({"classobject"})
 }
 

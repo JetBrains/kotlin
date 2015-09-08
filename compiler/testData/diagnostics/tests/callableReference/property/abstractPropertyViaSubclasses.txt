@@ -1,33 +1,33 @@
 package
 
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
-internal final class A : Base {
+public final class A : Base {
     public constructor A()
-    internal open override /*1*/ val x: kotlin.String = ""
+    public open override /*1*/ val x: kotlin.String = ""
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class B : Base {
+public open class B : Base {
     public constructor B()
-    internal open override /*1*/ val x: kotlin.Number = 1.0.toDouble()
+    public open override /*1*/ val x: kotlin.Number = 1.0.toDouble()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Base {
-    internal abstract val x: kotlin.Any
+public interface Base {
+    public abstract val x: kotlin.Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C : B {
+public final class C : B {
     public constructor C()
-    internal open override /*1*/ val x: kotlin.Int = 42
+    public open override /*1*/ val x: kotlin.Int = 42
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

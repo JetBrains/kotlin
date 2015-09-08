@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
@@ -69,8 +70,13 @@ public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentS
 
 public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver, targetEnvironment: TargetEnvironment = CompilerEnvironment
+        moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver,
+        targetEnvironment: TargetEnvironment = CompilerEnvironment,
+        packagePartProvider: PackagePartProvider
 ): ComponentProvider = createContainer("LazyResolveWithJava") {
+    //TODO: idea specific code
+    useInstance(packagePartProvider)
+
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
 
@@ -92,8 +98,11 @@ public fun createContainerForTopDownAnalyzerForJvm(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
-        lookupTracker: LookupTracker
+        lookupTracker: LookupTracker,
+        packagePartProvider: PackagePartProvider
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
+    useInstance(packagePartProvider)
+
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
 

@@ -7,27 +7,27 @@ public/*package*/ open class ClassObject {
     public/*package*/ open fun accessToPackageObject(): kotlin.Unit
 }
 
-internal object PackageInner {
+public object PackageInner {
     private constructor PackageInner()
-    internal final val value: kotlin.Int
-    internal final fun foo(): kotlin.Unit
+    public final val value: kotlin.Int
+    public final fun foo(): kotlin.Unit
 }
 
-internal final class WithClassObject {
+public final class WithClassObject {
     public constructor WithClassObject()
 
     public companion object Companion {
         private constructor Companion()
-        internal final val value: kotlin.Int
-        internal final val valueWithGetter: kotlin.Int
-        internal final var variable: kotlin.Int
-        internal final var variableWithAccessors: kotlin.Int
-        internal final fun foo(): kotlin.Unit
+        public final val value: kotlin.Int
+        public final val valueWithGetter: kotlin.Int
+        public final var variable: kotlin.Int
+        public final var variableWithAccessors: kotlin.Int
+        public final fun foo(): kotlin.Unit
     }
 
-    internal final class MyInner {
+    public final class MyInner {
         public constructor MyInner()
-        internal final val value: kotlin.Int
-        internal final fun foo(): kotlin.Unit
+        public final val value: kotlin.Int
+        public final fun foo(): kotlin.Unit
     }
 }

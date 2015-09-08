@@ -31,7 +31,7 @@ class A {
 
         <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override val base1: Int<!> = 0
 
-        JvmStatic open fun f() {}
+        @JvmStatic open fun f() {}
 
         override val base2: Int = 0
             <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic get<!>

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.config;
 
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
@@ -48,6 +49,10 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<CompilerJarLocator> COMPILER_JAR_LOCATOR =
             CompilerConfigurationKey.create("Compiler jar locator");
 
-    public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
-            CompilerConfigurationKey.create("module id strings");
+    public static final CompilerConfigurationKey<List<Module>> MODULES =
+            CompilerConfigurationKey.create("module data");
+
+    public static final CompilerConfigurationKey<String> MODULE_NAME =
+            CompilerConfigurationKey.create("module name");
+
 }

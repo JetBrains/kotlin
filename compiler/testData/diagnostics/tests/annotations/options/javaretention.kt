@@ -26,10 +26,10 @@ public class AnnotationRetentions {
 
 // FILE: AnnotationRetentions.kt
 
-AnnotationRetentions.BaseAnnotation class BaseClass
+@AnnotationRetentions.BaseAnnotation class BaseClass
 
-AnnotationRetentions.SourceAnnotation class SourceClass
+@AnnotationRetentions.SourceAnnotation class SourceClass
 
-AnnotationRetentions.BinaryAnnotation class BinaryClass
+@AnnotationRetentions.BinaryAnnotation class BinaryClass
 
-AnnotationRetentions.RuntimeAnnotation class RuntimeClass
+@AnnotationRetentions.RuntimeAnnotation class RuntimeClass

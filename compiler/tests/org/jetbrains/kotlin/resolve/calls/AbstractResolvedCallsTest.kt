@@ -51,7 +51,7 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
         val text = JetTestUtils.doLoadFile(File(filePath))!!
 
         val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
-        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).bindingContext
+        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile, environment).bindingContext
 
         val (element, cachedCall) = buildCachedCall(bindingContext, jetFile, text)
 

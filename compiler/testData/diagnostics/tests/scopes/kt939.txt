@@ -1,6 +1,6 @@
 package
 
 package kt939 {
-    internal fun compare(/*0*/ o1: kotlin.String?, /*1*/ o2: kotlin.String?): kotlin.Int
-    internal fun test(): kotlin.Unit
+    public fun compare(/*0*/ o1: kotlin.String?, /*1*/ o2: kotlin.String?): kotlin.Int
+    public fun test(): kotlin.Unit
 }

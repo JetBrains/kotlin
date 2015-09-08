@@ -1,4 +1,4 @@
 package
 
-internal fun foo(/*0*/ x: kotlin.Unit): kotlin.Unit
-internal fun test(): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -1,15 +1,15 @@
 package test
 
-internal final class A {
+public final class A {
     /*primary*/ public constructor A()
 
-    internal final class B {
+    public final class B {
         /*primary*/ public constructor B()
 
         public companion object Companion {
             /*primary*/ private constructor Companion()
-            internal final val TEST: kotlin.Int = 1
-                internal final fun <get-TEST>(): kotlin.Int
+            public final val TEST: kotlin.Int = 1
+                public final fun <get-TEST>(): kotlin.Int
         }
     }
 }

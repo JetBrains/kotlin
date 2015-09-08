@@ -17,7 +17,7 @@ public/*package*/ interface B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C1 : A, B {
+public final class C1 : A, B {
     public constructor C1()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ x: kotlin.String): kotlin.Unit
@@ -26,7 +26,7 @@ internal final class C1 : A, B {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C2 : A, B {
+public final class C2 : A, B {
     public constructor C2()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ org.jetbrains.annotations.NotNull() x: kotlin.String): kotlin.Unit
@@ -35,7 +35,7 @@ internal final class C2 : A, B {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C3 : I {
+public final class C3 : I {
     public constructor C3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ x: kotlin.String): kotlin.Unit
@@ -44,7 +44,7 @@ internal final class C3 : I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C4 : I {
+public final class C4 : I {
     public constructor C4()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ org.jetbrains.annotations.NotNull() x: kotlin.String): kotlin.Unit
@@ -53,7 +53,7 @@ internal final class C4 : I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface I : A, B {
+public interface I : A, B {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ org.jetbrains.annotations.NotNull() x: kotlin.String): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ org.jetbrains.annotations.Nullable() x: kotlin.String?): kotlin.Unit

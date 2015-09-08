@@ -1,9 +1,9 @@
 package test
 
-internal final class Outer {
+public final class Outer {
     /*primary*/ public constructor Outer()
 
-    internal final inner class Inner {
+    public final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 }

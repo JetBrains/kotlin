@@ -5,7 +5,7 @@ public @interface A {
 }
 
 // FILE: b.kt
-A(value = "a", arg = 1) class MyClass
+@A(value = "a", arg = 1) class MyClass
 
 fun foo(ann: A) {
     ann.<!DEPRECATED_ANNOTATION_METHOD_CALL!>value()<!>

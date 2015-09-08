@@ -1,9 +1,9 @@
 package test
 
-@field:test.Anno() internal var property: kotlin.Int
-    internal fun <get-property>(): kotlin.Int
-    internal fun <set-property>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+@field:test.Anno() public var property: kotlin.Int
+    public fun <get-property>(): kotlin.Int
+    public fun <set-property>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 
-kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

@@ -1,16 +1,16 @@
 package
 
-internal final enum class EnumClass : kotlin.Enum<EnumClass> {
+public final enum class EnumClass : kotlin.Enum<EnumClass> {
     enum entry E1
 
     enum entry E2
 
     private constructor EnumClass()
-    internal abstract val bar: kotlin.String
+    public abstract val bar: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumClass): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun foo(): kotlin.Int
+    public abstract fun foo(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

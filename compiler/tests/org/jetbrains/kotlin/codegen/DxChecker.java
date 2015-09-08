@@ -44,7 +44,7 @@ public class DxChecker {
         array[0] = "testArgs";
         arguments.parse(array);
 
-        for (OutputFile file : outputFiles.asList()) {
+        for (OutputFile file : CodegenPackage.getClassFiles(outputFiles)) {
             try {
                 byte[] bytes = file.asByteArray();
                 checkFileWithDx(bytes, file.getRelativePath(), arguments);

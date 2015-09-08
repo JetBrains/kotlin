@@ -1,4 +1,4 @@
 package
 
-internal fun foo(): p.J?
-internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun foo(): p.J?
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

@@ -39,6 +39,6 @@ fun <R> fun4ValueArgument(p: () -> R) {
 }
 
 
-inline fun <R> inlineFun(inlineOptions(ONLY_LOCAL_RETURN) p: () -> R) {
+inline fun <R> inlineFun(@inlineOptions(ONLY_LOCAL_RETURN) p: () -> R) {
     p()
 }

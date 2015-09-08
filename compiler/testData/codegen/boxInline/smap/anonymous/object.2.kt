@@ -15,7 +15,7 @@ inline fun call(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) init: () -> Unit) 
 //*S Kotlin
 //*F
 //+ 1 object.2.kt
-//builders/BuildersPackage$object_2$HASH$call$1
+//builders/Object_2Kt$call$1
 //*L
 //1#1,21:1
 //*E

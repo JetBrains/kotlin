@@ -1,6 +1,6 @@
 package
 
-internal final class A : kotlin.List<kotlin.String> {
+public final class A : kotlin.List<kotlin.String> {
     public constructor A()
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
@@ -18,7 +18,7 @@ internal final class A : kotlin.List<kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B : kotlin.List<kotlin.String> {
+public final class B : kotlin.List<kotlin.String> {
     public constructor B()
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
@@ -36,7 +36,7 @@ internal final class B : kotlin.List<kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C : kotlin.List<kotlin.String> {
+public final class C : kotlin.List<kotlin.String> {
     public constructor C()
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean

@@ -1,4 +1,4 @@
 package
 
-internal val x: kotlin.Int
-internal fun getX(): kotlin.Int
+public val x: kotlin.Int
+public fun getX(): kotlin.Int

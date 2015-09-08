@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.*
 import java.util.*
 import kotlin.reflect.*
@@ -92,9 +93,23 @@ public val KType.javaType: Type
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
  * for more information.
  */
+@deprecated("After dropping old package facades it would be impossible to retrieve package by java class")
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
-                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) KPackageImpl(this) else null
+                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
+        try {
+            val field = this.getField(JvmAbi.MODULE_NAME_FIELD)
+            if (field != null) {
+                KPackageImpl(this, field.get(null) as String)
+            }
+            else {
+                null
+            }
+        }
+        catch(e: NoSuchFieldException) {
+            null
+        }
+    } else null
 
 
 /**

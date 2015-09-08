@@ -1,11 +1,11 @@
 package test
 
-internal final class KotlinClass {
+public final class KotlinClass {
     public constructor KotlinClass()
 
     public companion object Companion {
         private constructor Companion()
-        internal final val FOO: kotlin.Int
+        public final val FOO: kotlin.Int
     }
 }
 

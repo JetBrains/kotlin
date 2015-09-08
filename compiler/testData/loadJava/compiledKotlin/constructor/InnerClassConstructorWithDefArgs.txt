@@ -1,9 +1,9 @@
 package test
 
-internal final class A {
+public final class A {
     /*primary*/ public constructor A()
 
-    internal final class TestConstructor {
+    public final class TestConstructor {
         /*primary*/ public constructor TestConstructor(/*0*/ p: kotlin.Int = ...)
     }
 }

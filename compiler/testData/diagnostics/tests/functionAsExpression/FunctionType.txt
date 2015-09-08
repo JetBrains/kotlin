@@ -1,5 +1,5 @@
 package
 
-internal fun testParamType(): kotlin.Unit
-internal fun testReceiverType(): kotlin.Unit
-internal fun testReturnType(/*0*/ foo: kotlin.String): kotlin.Unit
+public fun testParamType(): kotlin.Unit
+public fun testReceiverType(): kotlin.Unit
+public fun testReturnType(/*0*/ foo: kotlin.String): kotlin.Unit

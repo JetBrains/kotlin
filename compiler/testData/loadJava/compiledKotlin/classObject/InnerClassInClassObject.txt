@@ -1,19 +1,19 @@
 package test
 
-internal final class TestFirst {
+public final class TestFirst {
     /*primary*/ public constructor TestFirst()
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        internal final fun testing(/*0*/ a: test.TestFirst.InnerClass): kotlin.Int
-        internal final fun testing(/*0*/ a: test.TestFirst.NotInnerClass): kotlin.Int
+        public final fun testing(/*0*/ a: test.TestFirst.InnerClass): kotlin.Int
+        public final fun testing(/*0*/ a: test.TestFirst.NotInnerClass): kotlin.Int
     }
 
-    internal final inner class InnerClass {
+    public final inner class InnerClass {
         /*primary*/ public constructor InnerClass()
     }
 
-    internal final inner class NotInnerClass {
+    public final inner class NotInnerClass {
         /*primary*/ public constructor NotInnerClass()
     }
 }

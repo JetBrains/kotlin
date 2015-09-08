@@ -26,7 +26,7 @@ import kotlin.annotation.AnnotationTarget.*
  * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
  * for more information.
  */
-target(CLASSIFIER)
+@Target(CLASSIFIER)
 @MustBeDocumented
 public annotation class data
 
@@ -36,8 +36,8 @@ public annotation class data
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
-target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
-       LOCAL_VARIABLE, VALUE_PARAMETER)
+@Target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
+        LOCAL_VARIABLE, VALUE_PARAMETER)
 @MustBeDocumented
 public annotation class Deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
@@ -54,7 +54,7 @@ public annotation class Deprecated(val value: String, val replaceWith: ReplaceWi
  * @property imports the qualified names that need to be imported in order for the references in the
  *     replacement expression to be resolved correctly.
  */
-target()
+@Target()
 @Retention(BINARY)
 @MustBeDocumented
 public annotation class ReplaceWith(val expression: String, vararg val imports: String)
@@ -62,7 +62,7 @@ public annotation class ReplaceWith(val expression: String, vararg val imports: 
 /**
  * Signifies that the annotated functional type represents an extension function.
  */
-target(TYPE)
+@Target(TYPE)
 @MustBeDocumented
 public annotation class Extension
 
@@ -70,8 +70,8 @@ public annotation class Extension
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */
-target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
-       CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
+@Target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
+        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
 @Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)
 
@@ -81,12 +81,12 @@ public annotation class Suppress(vararg val names: String)
  * growing the stack depth. Tail call optimization is currently only supported by the JVM
  * backend.
  */
-target(FUNCTION)
-// @deprecated("Use kotlin.tailrec instead", ReplaceWith("kotlin.tailrec"))
+@Target(FUNCTION)
+@Deprecated("Use kotlin.tailrec instead", ReplaceWith("kotlin.tailrec"))
 @Retention(SOURCE)
 public annotation class tailRecursive
 
-target(FUNCTION)
+@Target(FUNCTION)
 @Retention(SOURCE)
 public annotation class tailrec
 
@@ -95,7 +95,7 @@ public annotation class tailrec
  * thus preventing its usages from newly compiled code, but keeps compiling it
  * to retain binary compatibility with the code compiled against it before.
  */
-target(FUNCTION, PROPERTY, CONSTRUCTOR)
+@Target(FUNCTION, PROPERTY, CONSTRUCTOR)
 @Retention(BINARY)
 @MustBeDocumented
 public annotation class HiddenDeclaration
@@ -104,7 +104,7 @@ public annotation class HiddenDeclaration
  * Marks annotated function as `external`, meaning that it's not implemented
  * in Kotlin but rather in a different language (for example, in C/C++ using JNI or JavaScript).
  */
-target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(SOURCE)
 @MustBeDocumented
 public annotation class external

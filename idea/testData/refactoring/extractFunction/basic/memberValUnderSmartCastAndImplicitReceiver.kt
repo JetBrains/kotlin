@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // SUGGESTED_NAMES: i, getKm
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: internal final val meters: kotlin.Int? defined in A
+// PARAM_DESCRIPTOR: public final val meters: kotlin.Int? defined in A
 class A {
     val meters: Int? = 1
 }

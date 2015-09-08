@@ -5,4 +5,4 @@ public @interface A {
 }
 
 // FILE: b.kt
-A(arg1 = String::class, arg2 = Int::class) class MyClass
+@A(arg1 = String::class, arg2 = Int::class) class MyClass

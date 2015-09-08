@@ -1,11 +1,11 @@
 package
 
 package baz {
-    internal fun test(): kotlin.Unit
+    public fun test(): kotlin.Unit
 
-    internal final class C : foo.Bar {
+    public final class C : foo.Bar {
         public constructor C()
-        internal final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -14,9 +14,9 @@ package baz {
 
 package foo {
 
-    internal object Bar {
+    public object Bar {
         private constructor Bar()
-        internal final fun bar(): kotlin.Unit
+        public final fun bar(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

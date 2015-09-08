@@ -172,7 +172,7 @@ public object JavaAnnotationTargetMapper {
     public fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
 
     public fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*>? {
-        // Map arguments: java.lang.annotation.Target -> kotlin.annotation.target
+        // Map arguments: java.lang.annotation.Target -> kotlin.annotation.Target
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
                 .flatMap { mapJavaTargetArgumentByName(it.resolve()?.name?.asString()) }
                 .map { builtIns.getAnnotationTargetEnumEntry(it) }

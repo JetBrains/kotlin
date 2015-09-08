@@ -652,52 +652,61 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("invokeOnString.kt")
-        public void testInvokeOnString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/invokeOnString.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArguments.kt")
-        public void testMixedNamedAndPositionalArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArgumentsConstructor.kt")
-        public void testMixedNamedAndPositionalArgumentsConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArgumentsConstructor.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArgumentsMultiple.kt")
-        public void testMixedNamedAndPositionalArgumentsMultiple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArgumentsMultiple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArgumentsSubtype.kt")
-        public void testMixedNamedAndPositionalArgumentsSubtype() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArgumentsSubtype.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArgumentsUsedNamed.kt")
-        public void testMixedNamedAndPositionalArgumentsUsedNamed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArgumentsUsedNamed.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedNamedAndPositionalArgumentsUsedPositional.kt")
-        public void testMixedNamedAndPositionalArgumentsUsedPositional() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/mixedNamedAndPositionalArgumentsUsedPositional.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("nonVarargSpread.kt")
         public void testNonVarargSpread() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/nonVarargSpread.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/quickfix/checkArguments/addNameToArgument")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AddNameToArgument extends AbstractQuickFixTest {
+            public void testAllFilesPresentInAddNameToArgument() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments/addNameToArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("invokeOnString.kt")
+            public void testInvokeOnString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/invokeOnString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArguments.kt")
+            public void testMixedNamedAndPositionalArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArgumentsConstructor.kt")
+            public void testMixedNamedAndPositionalArgumentsConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArgumentsConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArgumentsMultiple.kt")
+            public void testMixedNamedAndPositionalArgumentsMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArgumentsMultiple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArgumentsSubtype.kt")
+            public void testMixedNamedAndPositionalArgumentsSubtype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArgumentsSubtype.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArgumentsUsedNamed.kt")
+            public void testMixedNamedAndPositionalArgumentsUsedNamed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArgumentsUsedNamed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixedNamedAndPositionalArgumentsUsedPositional.kt")
+            public void testMixedNamedAndPositionalArgumentsUsedPositional() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/checkArguments/addNameToArgument/mixedNamedAndPositionalArgumentsUsedPositional.kt");
+                doTest(fileName);
+            }
         }
     }
 

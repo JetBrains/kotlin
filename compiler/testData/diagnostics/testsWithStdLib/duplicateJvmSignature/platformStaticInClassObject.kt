@@ -6,6 +6,6 @@ open class Base {
 
 class Derived : Base() {
     companion object {
-        <!ACCIDENTAL_OVERRIDE!>JvmStatic fun foo()<!> {}
+        <!ACCIDENTAL_OVERRIDE!>@JvmStatic fun foo()<!> {}
     }
 }

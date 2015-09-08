@@ -1,8 +1,8 @@
 package
 
-internal fun </*0*/ T : kotlin.Any> T.getJavaClass(): java.lang.Class<T>
+public fun </*0*/ T : kotlin.Any> T.getJavaClass(): java.lang.Class<T>
 
-internal final class IdUnavailableException : java.lang.Exception {
+public final class IdUnavailableException : java.lang.Exception {
     public constructor IdUnavailableException()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun getCause(): kotlin.Throwable?

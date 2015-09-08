@@ -188,7 +188,9 @@ abstract class BaseGradleIT {
             f.listFiles()?.forEach { deleteRecursively(it) }
             val fileList = f.listFiles()
             if (fileList != null) {
-                assertTrue(fileList.isEmpty())
+                if (!fileList.isEmpty()) {
+                    fail("Expected $f to be empty but it has files: ${fileList.joinToString { it.name }}")
+                }
             } else {
                 fail("Error listing directory content")
             }

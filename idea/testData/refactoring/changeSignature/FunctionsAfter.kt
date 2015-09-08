@@ -1,4 +1,4 @@
-public fun foo(_x1: Int = 1, _x2: Float?, _x3: ((Int) -> Int)?) {
+fun foo(_x1: Int = 1, _x2: Float?, _x3: ((Int) -> Int)?) {
     foo(2, 3.5, null);
     val y1 = _x1;
     val y2 = _x2;

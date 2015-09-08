@@ -380,7 +380,8 @@ public class ControlStructureTypingUtils {
                     return;
                 }
                 JetExpression expression = (JetExpression) call.getCallElement();
-                if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
+                if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
+                        || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }

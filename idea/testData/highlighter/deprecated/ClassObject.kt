@@ -13,13 +13,13 @@ fun test() {
 }
 
 class MyClass(): MyTrait {
-    Deprecated("Use A instead") companion object {
+    @Deprecated("Use A instead") companion object {
         val test: String = ""
     }
 }
 
 interface MyTrait {
-    Deprecated("Use A instead") companion object {
+    @Deprecated("Use A instead") companion object {
         val test: String = ""
     }
 }

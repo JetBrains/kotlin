@@ -7,5 +7,5 @@ public open class Sub : test.Super {
 
 public final class Super {
     public constructor Super()
-    internal final fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
+    public final fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
 }

@@ -1,6 +1,6 @@
 package
 
-internal final class Test : java.lang.Thread {
+public final class Test : java.lang.Thread {
     public constructor Test()
     invisible_fake final override /*1*/ /*fake_override*/ var blocker: [ERROR : Unresolved java classifier: Interruptible]!
     invisible_fake final override /*1*/ /*fake_override*/ val blockerLock: kotlin.Any!
@@ -73,7 +73,7 @@ internal final class Test : java.lang.Thread {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun init2(): kotlin.Unit
+        public final fun init2(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

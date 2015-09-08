@@ -1,10 +1,10 @@
 package
 
-internal fun test(): kotlin.Unit
-internal fun C.plus(/*0*/ a: kotlin.Any): C
-internal fun C.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun C.plus(/*0*/ a: kotlin.Any): C
+public fun C.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
 
-internal final class C {
+public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

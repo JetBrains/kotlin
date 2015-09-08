@@ -1,6 +1,6 @@
 package test
 
-internal object SomeObject {
+public object SomeObject {
     /*primary*/ private constructor SomeObject()
-    internal final fun test(/*0*/ a: kotlin.Int): kotlin.Int
+    public final fun test(/*0*/ a: kotlin.Int): kotlin.Int
 }

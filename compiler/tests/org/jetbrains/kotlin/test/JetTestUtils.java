@@ -91,6 +91,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
 import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
+import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.MODULE_NAME;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
@@ -285,8 +286,8 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFile(@NotNull JetFile file) {
-        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
+    public static AnalysisResult analyzeFile(@NotNull JetFile file, @NotNull KotlinCoreEnvironment environment) {
+        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file, environment);
     }
 
     @NotNull
@@ -477,6 +478,8 @@ public class JetTestUtils {
             }
         }
 
+        configuration.put(MODULE_NAME, "compilerConfigurationForTests");
+
         return configuration;
     }
 
@@ -501,7 +504,7 @@ public class JetTestUtils {
                 }
             }
         }
-        LazyResolveTestUtil.resolve(environment.getProject(), jetFiles);
+        LazyResolveTestUtil.resolve(environment.getProject(), jetFiles, environment);
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
@@ -950,6 +953,7 @@ public class JetTestUtils {
 
     @NotNull
     public static String replaceHashWithStar(@NotNull String string) {
+        //TODO: hashes are still used in SamWrapperCodegen
         Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
         if (matcher.find()) {
             return matcher.replaceAll("\\$*");

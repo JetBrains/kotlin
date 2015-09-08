@@ -1,10 +1,10 @@
 package
 
-internal val a: kotlin.Enum<E>
-internal val b: kotlin.Enum<java.lang.annotation.RetentionPolicy>
-internal val c: kotlin.Enum<kotlin.InlineOption>
+public val a: kotlin.Enum<E>
+public val b: kotlin.Enum<java.lang.annotation.RetentionPolicy>
+public val c: kotlin.Enum<kotlin.InlineOption>
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry ENTRY
 
     private constructor E()

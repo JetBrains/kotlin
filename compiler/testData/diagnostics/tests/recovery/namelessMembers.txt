@@ -1,21 +1,21 @@
 package
 
-internal final class C {
+public final class C {
     public constructor C()
-    internal final val <no name provided>: kotlin.Int = 1
-    internal final fun <no name provided>(): kotlin.Unit
+    public final val <no name provided>: kotlin.Int = 1
+    public final fun <no name provided>(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class <no name provided> {
-        internal constructor <no name provided>()
+    public final class <no name provided> {
+        public constructor <no name provided>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final enum class <no name provided> : kotlin.Enum<C.<no name provided>> {
+    public final enum class <no name provided> : kotlin.Enum<C.<no name provided>> {
         private constructor <no name provided>()
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C.<no name provided>): kotlin.Int
@@ -31,16 +31,16 @@ internal final class C {
     }
 }
 
-internal final class C1</*0*/ in <no name provided>> {
+public final class C1</*0*/ in <no name provided>> {
     public constructor C1</*0*/ in <no name provided>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C2 {
+public final class C2 {
     public constructor C2(/*0*/ <no name provided>: [ERROR : Type annotation was missing for parameter <no name provided>])
-    internal final val <no name provided>: [ERROR : Annotation is absent]
+    public final val <no name provided>: [ERROR : Annotation is absent]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

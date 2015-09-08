@@ -1,9 +1,9 @@
 package test
 
-internal interface Rec</*0*/ R, /*1*/ out T : test.Rec<R, T>> {
-    internal abstract fun t(): T
+public interface Rec</*0*/ R, /*1*/ out T : test.Rec<R, T>> {
+    public abstract fun t(): T
 }
 
-internal interface Super {
-    internal open fun foo(/*0*/ p: test.Rec<*, *>): test.Rec<*, *>
+public interface Super {
+    public open fun foo(/*0*/ p: test.Rec<*, *>): test.Rec<*, *>
 }

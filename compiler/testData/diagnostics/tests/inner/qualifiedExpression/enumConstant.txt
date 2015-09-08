@@ -1,9 +1,9 @@
 package
 
-internal fun bar(): E
-internal fun foo(): E
+public fun bar(): E
+public fun foo(): E
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry E1
 
     enum entry E2

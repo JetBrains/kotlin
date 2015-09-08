@@ -1,5 +1,5 @@
 package test
 
-internal object Bar {
+public object Bar {
     /*primary*/ private constructor Bar()
 }

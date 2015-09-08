@@ -1,18 +1,18 @@
 package test
 
-internal open class Impl : test.Trait {
+public open class Impl : test.Trait {
     public constructor Impl()
-    internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.String
-    internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun bar(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
 }
 
 public open class Subclass : test.Impl {
     public constructor Subclass()
     java.lang.Override() public open override /*1*/ fun bar(): kotlin.String
-    internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
 }
 
-internal interface Trait {
-    internal open fun bar(): kotlin.String
-    internal open fun foo(): kotlin.String
+public interface Trait {
+    public open fun bar(): kotlin.String
+    public open fun foo(): kotlin.String
 }

@@ -1,13 +1,13 @@
 package
 
-internal final enum class E : kotlin.Enum<E>, T {
+public final enum class E : kotlin.Enum<E>, T {
     enum entry ENTRY
 
     private constructor E()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
     public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract override /*1*/ fun f(): kotlin.Unit
+    public abstract override /*1*/ fun f(): kotlin.Unit
     public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
@@ -18,9 +18,9 @@ internal final enum class E : kotlin.Enum<E>, T {
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
-internal interface T {
+public interface T {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun f(): kotlin.Unit
+    public abstract fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

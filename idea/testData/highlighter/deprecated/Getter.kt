@@ -14,7 +14,7 @@ class MyClass() {
     public var test2: String = ""
       @Deprecated("Use A instead") get
 
-    Deprecated("Use A instead") public val test3: String = ""
+    @Deprecated("Use A instead") public val test3: String = ""
       @Deprecated("Use A instead") get
 }
 

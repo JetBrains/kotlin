@@ -62,6 +62,21 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
         }
     }
 
+    @TestMetadata("compiler/testData/asJava/lightClasses/facades")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Facades extends AbstractKotlinLightClassTest {
+        public void testAllFilesPresentInFacades() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("SingleFile.kt")
+        public void testSingleFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleFile.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

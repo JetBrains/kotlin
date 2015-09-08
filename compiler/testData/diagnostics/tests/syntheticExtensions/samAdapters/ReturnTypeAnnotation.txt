@@ -1,7 +1,7 @@
 package
 
 public /*synthesized*/ fun </*0*/ T : kotlin.Any!> Provider(/*0*/ function: () -> T!): Provider<T>
-internal fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
+public fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
 
 public interface JavaInterface {
     org.jetbrains.annotations.Nullable() public abstract fun </*0*/ T : kotlin.Any!> compute(/*0*/ org.jetbrains.annotations.NotNull() provider: Provider<T!>): kotlin.String?

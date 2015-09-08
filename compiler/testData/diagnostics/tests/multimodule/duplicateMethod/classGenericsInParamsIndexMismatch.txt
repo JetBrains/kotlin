@@ -47,7 +47,7 @@ package p {
 // -- Module: <m4> --
 package
 
-internal fun </*0*/ Y, /*1*/ Z> test(/*0*/ b: p.B<Y, Z>?): kotlin.Unit
+public fun </*0*/ Y, /*1*/ Z> test(/*0*/ b: p.B<Y, Z>?): kotlin.Unit
 
 package p {
 

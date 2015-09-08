@@ -39,5 +39,11 @@ var a : Int
 // EXIST:  companion object
 // EXIST:  sealed
 // EXIST:  lateinit
+// EXIST:  data
+// EXIST:  inline
+// EXIST:  noinline
+// EXIST:  tailrec
+// EXIST:  external
+// EXIST:  annotation
 /*TODO*/
 // NOTHING_ELSE

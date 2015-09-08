@@ -20,7 +20,7 @@ package kotlin
  * Annotates the parameter of a function annotated as [inline] and forbids inlining of
  * function literals passed as arguments for this parameter.
  */
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class noinline
@@ -31,33 +31,13 @@ public annotation class noinline
  * functions can contain non-local returns.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/inline-functions.html) for more information.
  *
- * @property strategy the [InlineStrategy] to use for inlining this function.
- *
  * @see noinline
  * @see inlineOptions
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
-
-/**
- * Specifies the strategy for code generation for an inline function.
- */
-public enum class InlineStrategy {
-    /**
-     * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
-     * is generated as a separate method invoked from the calling function.
-     */
-    AS_FUNCTION,
-
-    /**
-     * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
-     * is inlined directly into the calling function.
-     */
-    IN_PLACE
-}
-
+public annotation class inline
 
 /**
  * Specifies options for allowed control flow in inlined lambdas. Lambdas which are invoked directly by the
@@ -67,7 +47,7 @@ public enum class InlineStrategy {
  *
  * @property value the inlining options selected for the annotated function parameter.
  */
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class inlineOptions(vararg val value: InlineOption)

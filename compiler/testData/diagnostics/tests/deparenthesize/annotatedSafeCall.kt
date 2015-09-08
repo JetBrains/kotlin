@@ -1,4 +1,4 @@
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 annotation class foo
 
 fun f(s : String?) : Boolean {

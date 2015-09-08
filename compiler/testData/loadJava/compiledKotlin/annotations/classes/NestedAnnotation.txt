@@ -1,14 +1,14 @@
 package test
 
-internal final class A {
+public final class A {
     /*primary*/ public constructor A()
 
-    kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
+    kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
         /*primary*/ public constructor Anno()
     }
 }
 
-test.A.Anno() internal final class B {
+test.A.Anno() public final class B {
     /*primary*/ public constructor B()
-    test.A.Anno() internal final fun f(): kotlin.Unit
+    test.A.Anno() public final fun f(): kotlin.Unit
 }

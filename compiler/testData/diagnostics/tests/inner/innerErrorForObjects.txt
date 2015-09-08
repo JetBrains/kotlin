@@ -1,44 +1,44 @@
 package
 
-internal open class SomeClass</*0*/ T> {
+public open class SomeClass</*0*/ T> {
     public constructor SomeClass</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Test {
+public final class Test {
     public constructor Test()
-    internal final val inClass: kotlin.Int = 12
+    public final val inClass: kotlin.Int = 12
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun foo(): kotlin.Unit
+    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal open inner class InnerClass {
+    public open inner class InnerClass {
         public constructor InnerClass()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal object Some : Test.InnerClass {
+    public object Some : Test.InnerClass {
         private constructor Some()
-        internal final val a: Test.InnerClass
+        public final val a: Test.Some.a.<no name provided>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun more(): Test.InnerClass
+        public final fun more(): Test.InnerClass
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-internal final class TestSome</*0*/ P> {
+public final class TestSome</*0*/ P> {
     public constructor TestSome</*0*/ P>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal object Some : SomeClass<[ERROR : P]> {
+    public object Some : SomeClass<[ERROR : P]> {
         private constructor Some()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

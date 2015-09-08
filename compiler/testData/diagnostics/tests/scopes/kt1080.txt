@@ -15,7 +15,7 @@ package b {
 
 package kt1080 {
 
-    internal final class Some {
+    public final class Some {
         public constructor Some()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,8 +1,8 @@
 package
 
-internal var A: kotlin.String!
-internal var B: [ERROR : Type from delegate]
-internal var C: kotlin.String!
+public var A: kotlin.String!
+public var B: [ERROR : Type from delegate]
+public var C: kotlin.String!
 
 public open class J {
     public constructor J()

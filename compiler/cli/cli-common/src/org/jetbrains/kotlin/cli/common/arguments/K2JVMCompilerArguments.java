@@ -55,6 +55,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String kotlinHome;
 
+    @Argument(value = "module-name", description = "Module name")
+    public String moduleName;
+
     // Advanced options
 
     @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
@@ -74,4 +77,5 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String executableScriptFileName() {
         return "kotlinc-jvm";
     }
+
 }

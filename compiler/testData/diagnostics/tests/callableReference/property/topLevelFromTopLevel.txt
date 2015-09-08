@@ -1,6 +1,6 @@
 package
 
-internal var x: kotlin.Int
-internal val y: kotlin.String
-internal fun testX(): kotlin.Unit
-internal fun testY(): kotlin.Unit
+public var x: kotlin.Int
+public val y: kotlin.String
+public fun testX(): kotlin.Unit
+public fun testY(): kotlin.Unit

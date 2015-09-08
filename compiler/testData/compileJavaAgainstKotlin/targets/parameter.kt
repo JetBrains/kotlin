@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class parameter

@@ -1,26 +1,26 @@
 package
 
-internal fun f1(): Outer
-internal fun f2(): Outer.Nested
-internal fun f3(): Outer.Nested.NestedNested
-internal fun f4(): [ERROR : Error function type]
-internal fun f5(): [ERROR : <ERROR FUNCTION RETURN TYPE>]
-internal fun f6(): Outer.Inner
-internal fun f7(): Outer.Inner.InnerInner
+public fun f1(): Outer
+public fun f2(): Outer.Nested
+public fun f3(): Outer.Nested.NestedNested
+public fun f4(): [ERROR : Error function type]
+public fun f5(): [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public fun f6(): Outer.Inner
+public fun f7(): Outer.Inner.InnerInner
 
-internal final class Outer {
+public final class Outer {
     public constructor Outer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final inner class Inner {
+    public final inner class Inner {
         public constructor Inner()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final inner class InnerInner {
+        public final inner class InnerInner {
             public constructor InnerInner()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -28,13 +28,13 @@ internal final class Outer {
         }
     }
 
-    internal final class Nested {
+    public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class NestedNested {
+        public final class NestedNested {
             public constructor NestedNested()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

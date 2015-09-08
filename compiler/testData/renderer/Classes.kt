@@ -35,20 +35,20 @@ public class WithReified<reified A, reified out B>
 public interface TwoUpperBounds<T> where T : Number, T : Any
 
 //package rendererTest
-//kotlin.annotation.annotation internal final class TheAnnotation : kotlin.Annotation defined in rendererTest
+//kotlin.annotation.annotation public final class TheAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor TheAnnotation() defined in rendererTest.TheAnnotation
-//kotlin.annotation.annotation internal final class AnotherAnnotation : kotlin.Annotation defined in rendererTest
+//kotlin.annotation.annotation public final class AnotherAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor AnotherAnnotation() defined in rendererTest.AnotherAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : kotlin.Int, X> defined in rendererTest
 //<out T : kotlin.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
 //rendererTest.AnotherAnnotation public constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
 //private final val privateVal: kotlin.Int defined in rendererTest.TheClass
-//internal final val shouldBeFinal: kotlin.Int defined in rendererTest.TheClass
-//internal final val <T> T.checkTypeParameterScope: kotlin.Int defined in rendererTest.TheClass
+//public final val shouldBeFinal: kotlin.Int defined in rendererTest.TheClass
+//public final val <T> T.checkTypeParameterScope: kotlin.Int defined in rendererTest.TheClass
 //<T> defined in rendererTest.TheClass.checkTypeParameterScope
-//internal final fun T.<get-checkTypeParameterScope>(): kotlin.Int defined in rendererTest.TheClass
-//internal final val <T> checkTypeParameterScope2: kotlin.Int defined in rendererTest.TheClass
+//public final fun T.<get-checkTypeParameterScope>(): kotlin.Int defined in rendererTest.TheClass
+//public final val <T> checkTypeParameterScope2: kotlin.Int defined in rendererTest.TheClass
 //<T> defined in rendererTest.TheClass.checkTypeParameterScope2
 //protected abstract fun foo(): kotlin.Unit defined in rendererTest.TheClass
 //rendererTest.TheAnnotation private constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
@@ -56,11 +56,11 @@ public interface TwoUpperBounds<T> where T : Number, T : Any
 //public constructor Inner() defined in rendererTest.TheClass.Inner
 //internal final class InternalClass defined in rendererTest
 //public constructor InternalClass() defined in rendererTest.InternalClass
-//internal interface TheTrait defined in rendererTest
-//internal abstract fun abstractFun(): kotlin.Unit defined in rendererTest.TheTrait
+//public interface TheTrait defined in rendererTest
+//public abstract fun abstractFun(): kotlin.Unit defined in rendererTest.TheTrait
 //public companion object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
 //private constructor Companion() defined in rendererTest.TheTrait.Companion
-//internal final fun classObjectFunction(): kotlin.Int defined in rendererTest.TheTrait.Companion
+//public final fun classObjectFunction(): kotlin.Int defined in rendererTest.TheTrait.Companion
 //public final class WithReified<reified A, reified out B> defined in rendererTest
 //public constructor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified

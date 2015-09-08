@@ -1,6 +1,6 @@
 package
 
-internal fun test(/*0*/ j: J?): kotlin.Unit
+public fun test(/*0*/ j: J?): kotlin.Unit
 
 public open class J {
     public constructor J()

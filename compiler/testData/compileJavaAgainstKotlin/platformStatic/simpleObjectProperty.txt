@@ -1,11 +1,11 @@
 package test
 
-internal fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
 
-internal object A {
+public object A {
     private constructor A()
-    kotlin.platform.platformStatic() internal final val b: kotlin.String
-    internal final var test.A.c: kotlin.String
+    kotlin.platform.platformStatic() public final val b: kotlin.String
+    public final var test.A.c: kotlin.String
 }
 
 public/*package*/ open class Test {

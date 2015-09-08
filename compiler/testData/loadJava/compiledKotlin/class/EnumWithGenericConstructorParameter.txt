@@ -1,6 +1,6 @@
 package test
 
-internal final enum class EnumWithGenericConstructorParameter : kotlin.Enum<test.EnumWithGenericConstructorParameter> {
+public final enum class EnumWithGenericConstructorParameter : kotlin.Enum<test.EnumWithGenericConstructorParameter> {
     /*primary*/ private constructor EnumWithGenericConstructorParameter(/*0*/ list: kotlin.List<kotlin.String>?)
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithGenericConstructorParameter): kotlin.Int

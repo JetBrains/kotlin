@@ -33,7 +33,7 @@ interface LightClassDataForKotlinClass: LightClassData {
     val jvmQualifiedName: FqName
 }
 
-data class KotlinPackageLightClassData(
+data class KotlinFacadeLightClassData(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics
 ): LightClassData, WithFileStubAndExtraDiagnostics

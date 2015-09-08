@@ -1,5 +1,5 @@
 package test
 
 public interface SingleAbstractMethod {
-    internal abstract fun foo(): kotlin.Unit
+    public abstract fun foo(): kotlin.Unit
 }

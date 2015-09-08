@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 public class Z {
-    val privateProperty = 11;
+    internal val privateProperty = 11;
 
-    fun privateFun() {
+    internal fun privateFun() {
 
     }
 }
@@ -12,7 +12,7 @@ public inline fun test() {
     Z().<!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
 }
 
-inline fun testInternal() {
+internal inline fun testInternal() {
     Z().privateProperty
     Z().privateFun()
 }
@@ -30,7 +30,7 @@ public class Z2 {
         <!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
     }
 
-    inline fun testInternal() {
+    internal inline fun testInternal() {
         privateProperty
         privateFun()
     }

@@ -3,5 +3,5 @@ fun foo() {
     }
 }
 
-// METHOD : _DefaultPackage*$foo$1.invoke()V
-// VARIABLE : NAME=this TYPE=L_DefaultPackage*$foo$1; INDEX=0
+// METHOD : LocalFunKt$foo$1.invoke()V
+// VARIABLE : NAME=this TYPE=LLocalFunKt$foo$1; INDEX=0

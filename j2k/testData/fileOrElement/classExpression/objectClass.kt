@@ -1,1 +1,1 @@
-javaClass<Any>()
+Any::class.java

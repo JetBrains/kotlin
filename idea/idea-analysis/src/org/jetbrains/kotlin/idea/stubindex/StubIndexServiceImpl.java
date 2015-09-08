@@ -17,9 +17,13 @@
 package org.jetbrains.kotlin.idea.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.UtilPackage;
@@ -33,6 +37,25 @@ public class StubIndexServiceImpl implements StubIndexService {
         FqName packageFqName = stub.getPackageFqName();
 
         sink.occurrence(JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
+
+        String facadeSimpleName = stub.getFacadeSimpleName();
+        if (facadeSimpleName != null) {
+            FqName fileFacadeFqName = packageFqName.child(Name.identifier(facadeSimpleName));
+            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileFacadeFqName.asString());
+        }
+
+        String partSimpleName = stub.getPartSimpleName();
+        if (partSimpleName != null) {
+            FqName filePartFqName = packageFqName.child(Name.identifier(partSimpleName));
+            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), filePartFqName.asString());
+        }
+
+        JetFile jetFile = stub.getPsi();
+        if (jetFile != null) {
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile);
+            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
+            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), fileClassInfo.getFileClassFqName().asString());
+        }
     }
 
     @Override

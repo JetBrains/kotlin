@@ -1,7 +1,7 @@
 package
 
-internal fun bar1(): Derived<kotlin.String>
-internal fun bar2(): Derived<kotlin.String?>
+public fun bar1(): Derived<kotlin.String>
+public fun bar2(): Derived<kotlin.String?>
 
 public open class A {
     public constructor A()
@@ -11,7 +11,7 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B : A {
+public final class B : A {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ fun foo(): Base<kotlin.String>
@@ -19,13 +19,13 @@ internal final class B : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Base</*0*/ T> {
+public interface Base</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C1 : A {
+public final class C1 : A {
     public constructor C1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ fun foo(): Derived<kotlin.String>
@@ -33,7 +33,7 @@ internal final class C1 : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C2 : A {
+public final class C2 : A {
     public constructor C2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ fun foo(): Derived<kotlin.String>?
@@ -41,7 +41,7 @@ internal final class C2 : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C3 : A {
+public final class C3 : A {
     public constructor C3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ fun foo(): Derived<kotlin.String?>
@@ -49,7 +49,7 @@ internal final class C3 : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Derived</*0*/ E> : Base<E> {
+public interface Derived</*0*/ E> : Base<E> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

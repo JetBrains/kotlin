@@ -46,6 +46,7 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
 
 internal fun Class<*>.getOrCreateModule(): RuntimeModuleData {
     val classLoader = this.safeClassLoader
+
     val key = WeakClassLoaderBox(classLoader)
 
     val cached = moduleByClassLoader[key]

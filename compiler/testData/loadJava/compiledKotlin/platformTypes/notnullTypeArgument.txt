@@ -1,6 +1,6 @@
 package test
 
-internal final class C : java.util.ArrayList<kotlin.String> {
+public final class C : java.util.ArrayList<kotlin.String> {
     /*primary*/ public constructor C()
     invisible_fake final override /*1*/ /*fake_override*/ var elementData: kotlin.Array<(out) kotlin.Any!>!
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int

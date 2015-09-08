@@ -27,6 +27,10 @@ public class ReflectionFactory {
         return null;
     }
 
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return null;
+    }
+
     public KClass foreignKotlinClass(Class javaClass) {
         return new ClassReference(javaClass);
     }

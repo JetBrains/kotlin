@@ -72,15 +72,15 @@ public enum class AnnotationRetention {
  *
  * @property allowedTargets list of allowed annotation targets
  */
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 @MustBeDocumented
-public annotation class target(vararg val allowedTargets: AnnotationTarget)
+public annotation class Target(vararg val allowedTargets: AnnotationTarget)
 
 /**
  * This special meta-annotation is used to declare an annotation.
  * So a class in Kotlin is an annotation if and only if it has the "annotation" meta-annotation.
  */
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class annotation
@@ -90,17 +90,17 @@ public annotation class annotation
  *
  * @property value necessary annotation retention (RUNTIME, BINARY or SOURCE)
  */
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 public annotation class Retention(val value: AnnotationRetention = AnnotationRetention.RUNTIME)
 
 /**
  * This meta-annotation determines that an annotation is applicable twice or more on a single code element
  */
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 public annotation class Repeatable
 
 /**
  * This meta-annotation determines that an annotation is a part of public API and therefore must be documented
  */
-target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 public annotation class MustBeDocumented

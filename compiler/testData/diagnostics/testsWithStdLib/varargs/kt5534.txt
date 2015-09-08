@@ -1,4 +1,4 @@
 package
 
-internal fun foo(/*0*/ vararg a: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Array<out kotlin.String?>
-internal fun test(): kotlin.Unit
+public fun foo(/*0*/ vararg a: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Array<out kotlin.String?>
+public fun test(): kotlin.Unit

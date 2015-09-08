@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASSIFIER)
 annotation class classifier

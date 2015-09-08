@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import kotlin.test.fail
 
-public abstract class AbstractDecompiledTextBaseTest(private val isJsLibrary: Boolean = false) : JetLightCodeInsightFixtureTestCase() {
-    protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/decompiledText"
+public abstract class AbstractDecompiledTextBaseTest(
+        baseDirectory: String,
+        private val isJsLibrary: Boolean = false
+) : JetLightCodeInsightFixtureTestCase() {
+    protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 
     protected val TEST_PACKAGE: String = "test"
 

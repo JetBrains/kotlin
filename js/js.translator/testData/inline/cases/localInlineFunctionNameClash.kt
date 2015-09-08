@@ -2,11 +2,11 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: add
 
-inline fun run(action: () -> Int): Int {
+internal inline fun run(action: () -> Int): Int {
     return action()
 }
 
-fun add(a: Int, b: Int): Int {
+internal fun add(a: Int, b: Int): Int {
     var sum = a + b
 
     @inline fun getSum(): Int {

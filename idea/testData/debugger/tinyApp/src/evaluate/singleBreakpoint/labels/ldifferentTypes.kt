@@ -20,13 +20,13 @@ fun main(args: Array<String>) {
     val primitiveArray = arrayOf(1)
 
     // EXPRESSION: localObj_DebugLabel
-    // RESULT: instance of ldifferentTypes.LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localObj$1(id=ID): LldifferentTypes/LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localObj$1;
+    // RESULT: instance of ldifferentTypes.LdifferentTypesKt$main$localObj$1(id=ID): LldifferentTypes/LdifferentTypesKt$main$localObj$1;
     // EXPRESSION: localObj_DebugLabel.test()
     // RESULT: Unresolved reference: test
     // DEBUG_LABEL: localObj = localObj
     val localObj = object { fun test() = 1 }
     // EXPRESSION: localObjArray_DebugLabel
-    // RESULT: instance of ldifferentTypes.LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localObj$1[1] (id=ID): [LldifferentTypes/LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localObj$1;
+    // RESULT: instance of ldifferentTypes.LdifferentTypesKt$main$localObj$1[1] (id=ID): [LldifferentTypes/LdifferentTypesKt$main$localObj$1;
     // EXPRESSION: localObjArray_DebugLabel[0].test()
     // RESULT: Unresolved reference: test
     // DEBUG_LABEL: localObjArray = localObjArray
@@ -37,13 +37,13 @@ fun main(args: Array<String>) {
     }
 
     // EXPRESSION: localClass_DebugLabel
-    // RESULT: instance of ldifferentTypes.LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localClass$1(id=ID): LldifferentTypes/LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localClass$1;
+    // RESULT: instance of ldifferentTypes.LdifferentTypesKt$main$localClass$1(id=ID): LldifferentTypes/LdifferentTypesKt$main$localClass$1;
     // EXPRESSION: localClass_DebugLabel.test()
     // RESULT: Unresolved reference: test
     // DEBUG_LABEL: localClass = localClass
     val localClass = object { fun test() = 1 }
     // EXPRESSION: localClassArray_DebugLabel
-    // RESULT: instance of ldifferentTypes.LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localClass$1[1] (id=ID): [LldifferentTypes/LdifferentTypesPackage$ldifferentTypes$@packagePartHASH$main$localClass$1;
+    // RESULT: instance of ldifferentTypes.LdifferentTypesKt$main$localClass$1[1] (id=ID): [LldifferentTypes/LdifferentTypesKt$main$localClass$1;
     // EXPRESSION: localClassArray_DebugLabel[0].test()
     // RESULT: Unresolved reference: test
     // DEBUG_LABEL: localClassArray = localClassArray

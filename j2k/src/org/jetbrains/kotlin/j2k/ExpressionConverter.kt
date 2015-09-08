@@ -182,8 +182,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             FqName("java.lang.Void")
         }
         else {
-            val typeElement = converter.convertTypeElement(operand)
-            result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.type.toNotNullType()))
+            val type = converter.convertTypeElement(operand, Nullability.NotNull)
+            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier("java").assignNoPrototype())
             return
         }
 
@@ -213,7 +213,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitInstanceOfExpression(expression: PsiInstanceOfExpression) {
         val checkType = expression.getCheckType()
         result = IsOperator(codeConverter.convertExpression(expression.getOperand()),
-                              converter.convertTypeElement(checkType))
+                              converter.convertTypeElement(checkType, Nullability.NotNull))
     }
 
     override fun visitLiteralExpression(expression: PsiLiteralExpression) {
@@ -661,7 +661,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     private fun convertMethodReferenceQualifier(qualifier: PsiElement): String {
         return when(qualifier) {
             is PsiExpression -> codeConverter.convertExpression(qualifier).canonicalCode()
-            is PsiTypeElement -> converter.convertTypeElement(qualifier).type.canonicalCode()
+            is PsiTypeElement -> converter.convertTypeElement(qualifier, Nullability.NotNull).canonicalCode()
             else -> qualifier.text
         }
     }

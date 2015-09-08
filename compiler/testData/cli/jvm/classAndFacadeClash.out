@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/classAndFacadeClash.kt:3:1: error: duplicate JVM class name 'test/TestPackage' generated from: package-fragment test, TestPackage
+class TestPackage {
+^
+COMPILATION_ERROR

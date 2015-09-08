@@ -19,7 +19,7 @@ package boo
 val BAZ = "baz"
 val N = 0
 
-target(AnnotationTarget.FILE)
+@Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class myAnnotation(val i: Int, val s: String)

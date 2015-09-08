@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.annotations.*;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.types.JetType;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
@@ -56,15 +56,21 @@ public class AnnotationResolver {
     @NotNull private TypeResolver typeResolver;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
+    @NotNull private final List<AnnotationDescriptor> modifiersAnnotations;
+
     public AnnotationResolver(
             @NotNull CallResolver callResolver,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
-            @NotNull StorageManager storageManager
+            @NotNull StorageManager storageManager,
+            @NotNull KotlinBuiltIns kotlinBuiltIns
     ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.storageManager = storageManager;
+
+        modifiersAnnotations = AnnotationsPackage.buildMigrationAnnotationDescriptors(kotlinBuiltIns);
     }
+
 
     // component dependency cycle
     @Inject
@@ -120,7 +126,29 @@ public class AnnotationResolver {
 
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
 
-        return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
+        return resolveAndAppendAnnotationsFromModifiers(
+                resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments),
+                modifierList
+        );
+    }
+
+    @NotNull
+    public Annotations resolveAndAppendAnnotationsFromModifiers(
+            @NotNull Annotations annotations,
+            @NotNull JetModifierList modifierList
+    ) {
+        List<AnnotationDescriptor> annotationFromModifiers = new ArrayList<AnnotationDescriptor>();
+
+        for (int i = 0; i < JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY.length; i++) {
+            JetModifierKeywordToken modifier = JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY[i];
+            if (modifierList.hasModifier(modifier)) {
+                annotationFromModifiers.add(modifiersAnnotations.get(i));
+            }
+        }
+
+        if (annotationFromModifiers.isEmpty()) return annotations;
+
+        return new CompositeAnnotations(annotations, new AnnotationsImpl(annotationFromModifiers));
     }
 
     private Annotations resolveAnnotationEntries(

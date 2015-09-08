@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 
 // TODO: should be dropped with derived classes?
@@ -62,4 +63,22 @@ abstract class StdLibTestBase extends SingleFileTranslationTest {
         }
         return files;
     }
+
+    @NotNull
+    @Override
+    protected List<String> additionalKotlinFiles() {
+        return removeAdHocAssertions(super.additionalKotlinFiles());
+    }
+
+    @NotNull
+    public static List<String> removeAdHocAssertions(List<String> additionalKotlinFiles) {
+        List<String> kotlinFiles = Lists.newArrayList(additionalKotlinFiles);
+        Iterator<String> iterator = kotlinFiles.iterator();
+        while (iterator.hasNext()) {
+            if (new File(iterator.next()).getName().equals("asserts.kt"))
+                iterator.remove();
+        }
+        return kotlinFiles;
+    }
+
 }

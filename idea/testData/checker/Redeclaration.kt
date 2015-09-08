@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 val <error>a</error> : Int = 1
 val <error>a</error> : Int = 1
 
@@ -18,8 +19,8 @@ class A {
 }
 
 object B {
-    class <error>C</error>
-    class <error>C</error>
+    <error>class <error>C</error></error>
+    <error>class <error>C</error></error>
 }
 
 fun PairParam<<error>T</error>, <error>T</error>>() {}

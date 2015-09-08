@@ -70,6 +70,19 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
             args.add(it.list().join(pathSeparator))
         }
 
+        if (moduleName == null) {
+            if (owningTarget != null) {
+                moduleName = owningTarget.name
+            } else if (getProject() != null) {
+                moduleName = getProject().name
+            }
+        }
+
+        moduleName?.let {
+            args.add("-module-name")
+            args.add(moduleName!!)
+        }
+
         if (noStdlib) args.add("-no-stdlib")
         if (includeRuntime) args.add("-include-runtime")
     }

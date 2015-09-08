@@ -13,17 +13,17 @@ annotation class repann2(val f: Boolean)
 @Repeatable
 annotation class binrepann
 
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 @Repeatable
 annotation class repexpr
 
-repann <!NON_SOURCE_REPEATED_ANNOTATION!>repann<!> class DoubleAnnotated
+@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> class DoubleAnnotated
 
-repann1(1) repann1(2) repann1(3) class TripleAnnotated
+@repann1(1) @repann1(2) @repann1(3) class TripleAnnotated
 
-repann2(true) repann2(false) repann2(false) repann2(true) class FourTimesAnnotated
+@repann2(true) @repann2(false) @repann2(false) @repann2(true) class FourTimesAnnotated
 
-binrepann <!NON_SOURCE_REPEATED_ANNOTATION!>binrepann<!> class BinaryAnnotated
+@binrepann <!NON_SOURCE_REPEATED_ANNOTATION!>@binrepann<!> class BinaryAnnotated
 
 @repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> fun foo(@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> x: Int): Int {
     @repexpr <!NON_SOURCE_REPEATED_ANNOTATION!>@repexpr<!> return x

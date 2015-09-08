@@ -1,7 +1,7 @@
 package
 
-internal fun </*0*/ T : kotlin.Any> exclExcl(/*0*/ t: T?): T
-internal fun test11(): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> exclExcl(/*0*/ t: T?): T
+public fun test11(): kotlin.Unit
 
 public open class A {
     public constructor A()

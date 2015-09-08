@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
+import org.jetbrains.kotlin.modules.Module;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -40,6 +41,9 @@ public class ModuleXmlParser {
     public static final String MODULES = "modules";
     public static final String MODULE = "module";
     public static final String NAME = "name";
+    public static final String TYPE = "type";
+    public static final String TYPE_PRODUCTION = "java-production";
+    public static final String TYPE_TEST = "java-test";
     public static final String OUTPUT_DIR = "outputDir";
     public static final String SOURCES = "sources";
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
@@ -124,9 +128,12 @@ public class ModuleXmlParser {
                 throw createError(qName);
             }
 
+            String moduleType = getAttribute(attributes, TYPE, qName);
+            assert(TYPE_PRODUCTION.equals(moduleType) || TYPE_TEST.equals(moduleType)): "Unknown module type: " + moduleType;
             setCurrentState(new InsideModule(
                     getAttribute(attributes, NAME, qName),
-                    getAttribute(attributes, OUTPUT_DIR, qName)
+                    getAttribute(attributes, OUTPUT_DIR, qName),
+                    moduleType
             ));
         }
 
@@ -141,8 +148,8 @@ public class ModuleXmlParser {
     private class InsideModule extends DefaultHandler {
 
         private final ModuleBuilder moduleBuilder;
-        private InsideModule(String name, String outputDir) {
-            this.moduleBuilder = new ModuleBuilder(name, outputDir);
+        private InsideModule(String name, String outputDir, @NotNull String type) {
+            this.moduleBuilder = new ModuleBuilder(name, outputDir, type);
             modules.add(moduleBuilder);
         }
 

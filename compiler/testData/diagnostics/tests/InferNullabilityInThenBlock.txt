@@ -1,4 +1,4 @@
 package
 
-internal fun ff(/*0*/ a: kotlin.String): kotlin.Int
-internal fun gg(): kotlin.Unit
+public fun ff(/*0*/ a: kotlin.String): kotlin.Int
+public fun gg(): kotlin.Unit

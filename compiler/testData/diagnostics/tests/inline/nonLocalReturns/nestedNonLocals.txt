@@ -1,33 +1,33 @@
 package
 
 kotlin.inline() public fun </*0*/ R> doCall(/*0*/ block: () -> R): R
-internal fun test1(/*0*/ intKind: Kind, /*1*/ extKind: Kind): Global
+public fun test1(/*0*/ intKind: Kind, /*1*/ extKind: Kind): Global
 
-internal final class External {
+public final class External {
     public constructor External(/*0*/ value: kotlin.String)
-    internal final val value: kotlin.String
+    public final val value: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Global {
+public final class Global {
     public constructor Global(/*0*/ value: kotlin.String)
-    internal final val value: kotlin.String
+    public final val value: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Internal {
+public final class Internal {
     public constructor Internal(/*0*/ value: kotlin.String)
-    internal final val value: kotlin.String
+    public final val value: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final enum class Kind : kotlin.Enum<Kind> {
+public final enum class Kind : kotlin.Enum<Kind> {
     enum entry LOCAL
 
     enum entry EXT_RETURN

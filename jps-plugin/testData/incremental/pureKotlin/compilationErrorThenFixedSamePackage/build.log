@@ -1,5 +1,6 @@
 Cleaning output files:
-out/production/module/_DefaultPackage$usage$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
@@ -10,7 +11,7 @@ Expecting an expression
 
 
 Cleaning output files:
-out/production/module/_DefaultPackage$fun$*.class
+out/production/module/FunKt.class
 End of files
 Compiling files:
 src/fun.kt

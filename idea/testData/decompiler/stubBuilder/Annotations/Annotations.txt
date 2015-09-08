@@ -65,7 +65,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=Annotations.c2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
@@ -77,7 +77,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=Annotations.withCustomAccessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=withCustomAccessors]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -140,7 +140,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       FUN:[fqName=Annotations.types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=types]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
             TYPE_REFERENCE:
@@ -176,7 +176,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[private]
             ANNOTATION:

@@ -1,13 +1,13 @@
-nativeInvoke
+@nativeInvoke
 fun String.foo(): Int
-nativeInvoke
+@nativeInvoke
 fun String.bar(): Int = noImpl
 
 
-native
+@native
 object O {
-    nativeInvoke
+    @nativeInvoke
     fun foo()
-    nativeInvoke
+    @nativeInvoke
     fun bar() {}
 }

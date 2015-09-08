@@ -1,6 +1,6 @@
 annotation class Ann(vararg val i: Int)
 
-Ann(
+@Ann(
         <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i1<!>,
         i2,
         <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i3<!>,

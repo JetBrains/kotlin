@@ -3,14 +3,14 @@
 
 package test
 
-internal object Object {
-    internal final val kotlin.Int.g: kotlin.Int /* compiled code */
+public object Object {
+    public final val kotlin.Int.g: kotlin.Int /* compiled code */
 
-    internal final fun <T, K, G> complexFun(a: T, b: K, c: G): G { /* compiled code */ }
+    public final fun <T, K, G> complexFun(a: T, b: K, c: G): G { /* compiled code */ }
 
-    internal final fun f(): kotlin.Unit { /* compiled code */ }
+    public final fun f(): kotlin.Unit { /* compiled code */ }
 
     private final fun privateFun(): kotlin.Unit { /* compiled code */ }
 
-    internal final fun kotlin.Int.f(): kotlin.Unit { /* compiled code */ }
+    public final fun kotlin.Int.f(): kotlin.Unit { /* compiled code */ }
 }

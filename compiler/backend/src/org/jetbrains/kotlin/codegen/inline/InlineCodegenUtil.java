@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -204,11 +204,20 @@ public class InlineCodegenUtil {
         return null;
     }
 
-    public static String getInlineName(@NotNull CodegenContext codegenContext, @NotNull JetTypeMapper typeMapper) {
-        return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper);
+    public static String getInlineName(
+            @NotNull CodegenContext codegenContext,
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
+        return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper, fileClassesManager);
     }
 
-    private static String getInlineName(@NotNull CodegenContext codegenContext, @NotNull DeclarationDescriptor currentDescriptor, @NotNull JetTypeMapper typeMapper) {
+    private static String getInlineName(
+            @NotNull CodegenContext codegenContext,
+            @NotNull DeclarationDescriptor currentDescriptor,
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
             PsiFile file = getContainingFile(codegenContext);
 
@@ -218,7 +227,7 @@ public class InlineCodegenUtil {
                 assert codegenContext instanceof PackageContext : "Expected package context but " + codegenContext;
                 packagePartType = ((PackageContext) codegenContext).getPackagePartType();
             } else {
-                packagePartType = PackagePartClassUtils.getPackagePartType((JetFile) file);
+                packagePartType = fileClassesManager.getFileClassType((JetFile) file);
             }
 
             if (packagePartType == null) {
@@ -245,7 +254,7 @@ public class InlineCodegenUtil {
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
         //noinspection ConstantConditions
-        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
+        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesManager) + "$" + suffix;
     }
 
     public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {

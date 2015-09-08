@@ -1,10 +1,9 @@
 // FILE: TargetUse.java
 
-import kotlin.annotation.target;
 import java.lang.annotation.Target;
 
 public class TargetUse {
-    public static String foo(target aTarget) {
+    public static String foo(kotlin.annotation.Target aTarget) {
         return aTarget.toString();
     }
 
@@ -15,8 +14,8 @@ public class TargetUse {
 
 // FILE: TargetUse.kt
 
-import java.lang.annotation.Target
+import java.lang.annotation.Target as JTarget
 
-fun fooUse(aTarget: target): String = TargetUse.foo(aTarget)
+fun fooUse(aTarget: Target): String = TargetUse.foo(aTarget)
 
-fun barUse(aTarget: Target): String = TargetUse.bar(aTarget)
+fun barUse(aTarget: JTarget): String = TargetUse.bar(aTarget)

@@ -1,11 +1,11 @@
 package
 
-internal val a: (???) -> ???
-internal val b: (kotlin.Int) -> kotlin.Int
-internal val c: (kotlin.Int, kotlin.String) -> kotlin.Int
-internal val d: (kotlin.Int, kotlin.String) -> kotlin.Int
-internal val e: (kotlin.Int, kotlin.String) -> kotlin.Int
-internal val f: (kotlin.Int) -> kotlin.Int
-internal fun test1(/*0*/ a: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-internal fun test2(/*0*/ a: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-internal fun test3(/*0*/ a: (kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit
+public val a: (???) -> ???
+public val b: (kotlin.Int) -> kotlin.Int
+public val c: (kotlin.Int, kotlin.String) -> kotlin.Int
+public val d: (kotlin.Int, kotlin.String) -> kotlin.Int
+public val e: (kotlin.Int, kotlin.String) -> kotlin.Int
+public val f: (kotlin.Int) -> kotlin.Int
+public fun test1(/*0*/ a: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun test2(/*0*/ a: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun test3(/*0*/ a: (kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit

@@ -1,9 +1,9 @@
 package
 
-internal val a1: kotlin.Int
-internal val a2: kotlin.Int = -2147483648
-internal val a3: kotlin.Int = -2147483648
-internal val a4: kotlin.Int
+public val a1: kotlin.Int
+public val a2: kotlin.Int = -2147483648
+public val a3: kotlin.Int = -2147483648
+public val a4: kotlin.Int
 
 public open class Test {
     public constructor Test()

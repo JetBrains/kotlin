@@ -23,10 +23,8 @@ import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
-import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.ast.Enum
 import org.jetbrains.kotlin.j2k.ast.Function
-import org.jetbrains.kotlin.j2k.ast.Object
 import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
@@ -532,8 +530,8 @@ class Converter private constructor(
         return null
     }
 
-    public fun convertTypeElement(element: PsiTypeElement?): TypeElement
-            = TypeElement(if (element == null) ErrorType().assignNoPrototype() else typeConverter.convertType(element.getType())).assignPrototype(element)
+    public fun convertTypeElement(element: PsiTypeElement?, nullability: Nullability): Type
+            = (if (element == null) ErrorType() else typeConverter.convertType(element.type, nullability)).assignPrototype(element)
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }

@@ -1,52 +1,52 @@
 package
 
 package Jet87 {
-    internal val t1: kotlin.Unit
-    internal val t2: kotlin.Unit
-    internal val t3: kotlin.Unit
-    internal val </*0*/ T, /*1*/ B : T> x: kotlin.Int = 0
-    internal fun test(): kotlin.Unit
-    internal fun </*0*/ T : Jet87.A> test2(/*0*/ t: T): kotlin.Unit where T : Jet87.B
+    public val t1: kotlin.Unit
+    public val t2: kotlin.Unit
+    public val t3: kotlin.Unit
+    public val </*0*/ T, /*1*/ B : T> x: kotlin.Int = 0
+    public fun test(): kotlin.Unit
+    public fun </*0*/ T : Jet87.A> test2(/*0*/ t: T): kotlin.Unit where T : Jet87.B
 
-    internal open class A {
+    public open class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(): kotlin.Int
+        public final fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface B {
-        internal open fun bar(): kotlin.Double
+    public interface B {
+        public open fun bar(): kotlin.Double
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class Bar</*0*/ T : Jet87.Foo> {
+    public final class Bar</*0*/ T : Jet87.Foo> {
         public constructor Bar</*0*/ T : Jet87.Foo>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class Buzz</*0*/ T : Jet87.Bar<kotlin.Int>> where T : [ERROR : nioho] {
+    public final class Buzz</*0*/ T : Jet87.Bar<kotlin.Int>> where T : [ERROR : nioho] {
         public constructor Buzz</*0*/ T : Jet87.Bar<kotlin.Int>>() where T : [ERROR : nioho]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class C : Jet87.A, Jet87.B {
+    public final class C : Jet87.A, Jet87.B {
         public constructor C()
-        internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.Double
+        public open override /*1*/ /*fake_override*/ fun bar(): kotlin.Double
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class D {
+    public final class D {
         public constructor D()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -54,46 +54,46 @@ package Jet87 {
 
         public companion object Companion : Jet87.A, Jet87.B {
             private constructor Companion()
-            internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.Double
+            public open override /*1*/ /*fake_override*/ fun bar(): kotlin.Double
             public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
             public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
 
-    internal final class Foo {
+    public final class Foo {
         public constructor Foo()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface G</*0*/ X> {
-        internal abstract val </*0*/ A : Jet87.B> bal: kotlin.Double
-        internal abstract val </*0*/ Y : Jet87.B> bas: kotlin.Double
-        internal abstract val </*0*/ X : Jet87.A> boo: kotlin.Double where X : Jet87.B
+    public interface G</*0*/ X> {
+        public abstract val </*0*/ A : Jet87.B> bal: kotlin.Double
+        public abstract val </*0*/ Y : Jet87.B> bas: kotlin.Double
+        public abstract val </*0*/ X : Jet87.A> boo: kotlin.Double where X : Jet87.B
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class Test1</*0*/ T : Jet87.A> where T : Jet87.B {
+    public final class Test1</*0*/ T : Jet87.A> where T : Jet87.B {
         public constructor Test1</*0*/ T : Jet87.A>() where T : Jet87.B
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun test(/*0*/ t: T): kotlin.Unit
+        public final fun test(/*0*/ t: T): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class X</*0*/ T : Jet87.Foo> {
+    public final class X</*0*/ T : Jet87.Foo> {
         public constructor X</*0*/ T : Jet87.Foo>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class Y</*0*/ T : Jet87.Foo> where T : Jet87.Bar<Jet87.Foo> {
+    public final class Y</*0*/ T : Jet87.Foo> where T : Jet87.Bar<Jet87.Foo> {
         public constructor Y</*0*/ T : Jet87.Foo>() where T : Jet87.Bar<Jet87.Foo>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

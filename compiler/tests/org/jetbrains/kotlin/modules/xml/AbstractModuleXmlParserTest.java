@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.common.modules.Module;
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -62,6 +62,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
 
     private static String moduleToString(@NotNull Module module) {
         return module.getModuleName() +
+               "\n\ttype=" + module.getModuleType() +
                "\n\toutputDir=" + module.getOutputDirectory() +
                "\n\tsources=" + module.getSourceFiles() +
                "\n\tclasspath=" + module.getClasspathRoots() +

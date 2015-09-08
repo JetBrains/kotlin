@@ -1,29 +1,29 @@
 package
 
 package a {
-    internal fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
-    internal fun </*0*/ T> foo(/*0*/ t: T, /*1*/ l: kotlin.MutableList<T>): T
-    internal fun </*0*/ T> id(/*0*/ t: T): T
-    internal fun rr(/*0*/ s: kotlin.String?): kotlin.Unit
-    internal fun test(/*0*/ a: a.A, /*1*/ b: a.B, /*2*/ c: a.C): kotlin.Unit
-    internal fun testErrorMessages(/*0*/ a: a.A, /*1*/ ml: kotlin.MutableList<kotlin.String>): kotlin.Unit
-    internal fun </*0*/ T> three(/*0*/ a: T, /*1*/ b: T, /*2*/ c: T): T
-    internal fun </*0*/ T> two(/*0*/ u: T, /*1*/ v: T): T
-    internal fun use(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Array<out kotlin.Any>
+    public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
+    public fun </*0*/ T> foo(/*0*/ t: T, /*1*/ l: kotlin.MutableList<T>): T
+    public fun </*0*/ T> id(/*0*/ t: T): T
+    public fun rr(/*0*/ s: kotlin.String?): kotlin.Unit
+    public fun test(/*0*/ a: a.A, /*1*/ b: a.B, /*2*/ c: a.C): kotlin.Unit
+    public fun testErrorMessages(/*0*/ a: a.A, /*1*/ ml: kotlin.MutableList<kotlin.String>): kotlin.Unit
+    public fun </*0*/ T> three(/*0*/ a: T, /*1*/ b: T, /*2*/ c: T): T
+    public fun </*0*/ T> two(/*0*/ u: T, /*1*/ v: T): T
+    public fun use(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Array<out kotlin.Any>
 
-    internal interface A {
+    public interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface B : a.A {
+    public interface B : a.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface C : a.A {
+    public interface C : a.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

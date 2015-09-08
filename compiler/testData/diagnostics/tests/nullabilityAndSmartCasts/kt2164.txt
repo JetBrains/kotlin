@@ -1,6 +1,6 @@
 package
 
 package kt2164 {
-    internal fun foo(/*0*/ x: kotlin.Int): kotlin.Int
-    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 }

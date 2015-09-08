@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ arg: My): kotlin.Int
+public fun foo(/*0*/ arg: My): kotlin.Int
 
-internal final enum class My : kotlin.Enum<My> {
+public final enum class My : kotlin.Enum<My> {
     enum entry FIRST
 
     enum entry SECOND

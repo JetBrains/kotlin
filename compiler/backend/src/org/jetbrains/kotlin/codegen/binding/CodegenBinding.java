@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -161,7 +162,8 @@ public class CodegenBinding {
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
-            @NotNull Type asmType
+            @NotNull Type asmType,
+            @NotNull JvmFileClassesProvider fileClassesManager
     ) {
         JetElement element = (JetElement) descriptorToDeclaration(classDescriptor);
         assert element != null : "No source element for " + classDescriptor;
@@ -172,7 +174,7 @@ public class CodegenBinding {
             closure.setCaptureThis();
         }
 
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType, fileClassesManager);
         trace.record(ASM_TYPE, classDescriptor, asmType);
         trace.record(CLOSURE, classDescriptor, closure);
 
@@ -197,7 +199,12 @@ public class CodegenBinding {
     }
 
     // SCRIPT: register asmType for script, move to ScriptingUtil
-    public static void registerClassNameForScript(@NotNull BindingTrace trace, @NotNull JetScript script, @NotNull Type asmType) {
+    public static void registerClassNameForScript(
+            @NotNull BindingTrace trace,
+            @NotNull JetScript script,
+            @NotNull Type asmType,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
         ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
         if (descriptor == null) {
             throw new IllegalStateException("Script descriptor is not found for PSI: " + PsiUtilPackage.getElementTextWithContext(script));
@@ -210,7 +217,7 @@ public class CodegenBinding {
                                         toSourceElement(script));
         classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
-        recordClosure(trace, classDescriptor, null, asmType);
+        recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);
 
         trace.record(CLASS_FOR_SCRIPT, descriptor, classDescriptor);
     }

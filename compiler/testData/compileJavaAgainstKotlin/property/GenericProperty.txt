@@ -1,6 +1,6 @@
 package test
 
-internal val </*0*/ K, /*1*/ V> test: kotlin.Map<K, V>
+public val </*0*/ K, /*1*/ V> test: kotlin.Map<K, V>
 
 public/*package*/ open class GenericProperty {
     public/*package*/ constructor GenericProperty()

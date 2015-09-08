@@ -1,6 +1,6 @@
 package test
 
-internal fun www(/*0*/ kotlin.Int = ...): kotlin.Int
+public fun www(/*0*/ kotlin.Int = ...): kotlin.Int
 
 public/*package*/ open class IntWithDefault {
     public/*package*/ constructor IntWithDefault()

@@ -52,7 +52,7 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
 
     override fun getEqualsToken() = null
 
-    override fun hasBlockBody() = true
+    override fun hasBlockBody() = getBodyExpression() != null
 
     override fun hasBody() = getBodyExpression() != null
 

@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ s: Sealed): kotlin.Int
+public fun foo(/*0*/ s: Sealed): kotlin.Int
 
-internal sealed class Sealed {
+public sealed class Sealed {
     private constructor Sealed()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

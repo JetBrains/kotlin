@@ -1,8 +1,8 @@
 package
 
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
-internal final class MyListOfPairs</*0*/ T> : java.util.ArrayList<Pair<T, T>> {
+public final class MyListOfPairs</*0*/ T> : java.util.ArrayList<Pair<T, T>> {
     public constructor MyListOfPairs</*0*/ T>()
     invisible_fake final override /*1*/ /*fake_override*/ var elementData: kotlin.Array<(out) kotlin.Any!>!
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
@@ -49,10 +49,10 @@ internal final class MyListOfPairs</*0*/ T> : java.util.ArrayList<Pair<T, T>> {
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 }
 
-internal final class Pair</*0*/ A, /*1*/ B> {
+public final class Pair</*0*/ A, /*1*/ B> {
     public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
-    internal final val a: A
-    internal final val b: B
+    public final val a: A
+    public final val b: B
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

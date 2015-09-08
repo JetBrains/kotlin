@@ -1,35 +1,35 @@
 package
 
-a() internal fun <no name provided>(): kotlin.Unit
-internal fun <no name provided>(): kotlin.Unit
-internal fun outerFun(): kotlin.Unit
-internal fun @[a()] A.<no name provided>(): kotlin.Unit
-internal fun A.<no name provided>(): kotlin.Unit
+a() public fun <no name provided>(): kotlin.Unit
+public fun <no name provided>(): kotlin.Unit
+public fun outerFun(): kotlin.Unit
+public fun @[a()] A.<no name provided>(): kotlin.Unit
+public fun A.<no name provided>(): kotlin.Unit
 
-internal interface A {
+public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface B {
+public interface B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class Outer {
+public final class Outer {
     public constructor Outer()
-    a() internal final fun <no name provided>(): kotlin.Unit
-    internal final fun <no name provided>(): kotlin.Unit
+    a() public final fun <no name provided>(): kotlin.Unit
+    public final fun <no name provided>(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    internal final fun @[a()] A.<no name provided>(): kotlin.Unit
-    internal final fun B.<no name provided>(): kotlin.Unit
+    public final fun @[a()] A.<no name provided>(): kotlin.Unit
+    public final fun B.<no name provided>(): kotlin.Unit
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() internal final class a : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() public final class a : kotlin.Annotation {
     public constructor a()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

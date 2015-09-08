@@ -1,45 +1,45 @@
 package
 
 package typeInferenceExpectedTypeMismatch {
-    internal fun </*0*/ T> bar(/*0*/ o: typeInferenceExpectedTypeMismatch.Out<T>, /*1*/ i: typeInferenceExpectedTypeMismatch.In<T>): typeInferenceExpectedTypeMismatch.Two<T, T>
-    internal fun </*0*/ T, /*1*/ R> foo(/*0*/ o: typeInferenceExpectedTypeMismatch.Out<T>, /*1*/ i: typeInferenceExpectedTypeMismatch.In<R>): typeInferenceExpectedTypeMismatch.Two<T, R>
-    internal fun </*0*/ S> newList(): java.util.ArrayList<S>
-    internal fun test(): kotlin.Unit
-    internal fun test1(/*0*/ outA: typeInferenceExpectedTypeMismatch.Out<typeInferenceExpectedTypeMismatch.A>, /*1*/ inB: typeInferenceExpectedTypeMismatch.In<typeInferenceExpectedTypeMismatch.B>): kotlin.Unit
-    internal fun test2(/*0*/ outA: typeInferenceExpectedTypeMismatch.Out<typeInferenceExpectedTypeMismatch.A>, /*1*/ inC: typeInferenceExpectedTypeMismatch.In<typeInferenceExpectedTypeMismatch.C>): kotlin.Unit
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
+    public fun </*0*/ T> bar(/*0*/ o: typeInferenceExpectedTypeMismatch.Out<T>, /*1*/ i: typeInferenceExpectedTypeMismatch.In<T>): typeInferenceExpectedTypeMismatch.Two<T, T>
+    public fun </*0*/ T, /*1*/ R> foo(/*0*/ o: typeInferenceExpectedTypeMismatch.Out<T>, /*1*/ i: typeInferenceExpectedTypeMismatch.In<R>): typeInferenceExpectedTypeMismatch.Two<T, R>
+    public fun </*0*/ S> newList(): java.util.ArrayList<S>
+    public fun test(): kotlin.Unit
+    public fun test1(/*0*/ outA: typeInferenceExpectedTypeMismatch.Out<typeInferenceExpectedTypeMismatch.A>, /*1*/ inB: typeInferenceExpectedTypeMismatch.In<typeInferenceExpectedTypeMismatch.B>): kotlin.Unit
+    public fun test2(/*0*/ outA: typeInferenceExpectedTypeMismatch.Out<typeInferenceExpectedTypeMismatch.A>, /*1*/ inC: typeInferenceExpectedTypeMismatch.In<typeInferenceExpectedTypeMismatch.C>): kotlin.Unit
+    public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
-    internal interface A {
+    public interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface B : typeInferenceExpectedTypeMismatch.A {
+    public interface B : typeInferenceExpectedTypeMismatch.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface C : typeInferenceExpectedTypeMismatch.A {
+    public interface C : typeInferenceExpectedTypeMismatch.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface In</*0*/ in T> {
+    public interface In</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface Out</*0*/ out T> {
+    public interface Out</*0*/ out T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface Two</*0*/ T, /*1*/ R> {
+    public interface Two</*0*/ T, /*1*/ R> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

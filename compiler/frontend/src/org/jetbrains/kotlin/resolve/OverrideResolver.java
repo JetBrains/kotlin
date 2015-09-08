@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -668,7 +669,7 @@ public class OverrideResolver {
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
-        final JetAnnotationEntry dataAnnotation = findDataAnnotationForDataClass(componentFunction.getContainingDeclaration());
+        final PsiElement dataAnnotation = findDataAnnotationForDataClass(componentFunction.getContainingDeclaration());
 
         checkOverridesForMemberMarkedOverride(componentFunction, false, new CheckOverrideReportStrategy() {
             private boolean overrideConflict = false;
@@ -712,7 +713,7 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
+    private static PsiElement findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
         AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.data);
         if (annotation != null) {
             JetAnnotationEntry entry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
@@ -720,6 +721,16 @@ public class OverrideResolver {
                 return entry;
             }
         }
+
+
+        JetClass classDeclaration = (JetClass) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
+        if (classDeclaration != null && classDeclaration.getModifierList() != null) {
+            PsiElement modifier = classDeclaration.getModifierList().getModifier(JetTokens.DATA_KEYWORD);
+            if (modifier != null) {
+                return modifier;
+            }
+        }
+
         throw new IllegalStateException("No data annotation is found for data class " + dataClass);
     }
 

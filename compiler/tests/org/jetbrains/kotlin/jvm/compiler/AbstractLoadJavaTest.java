@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -55,6 +56,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
 import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.JetTestUtils.*;
@@ -146,13 +148,15 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject());
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
+                                                                                                getModuleName(environment));
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext,
                 environment.getSourceFiles(),
                 trace,
-                TopDownAnalysisMode.TopLevelDeclarations
+                TopDownAnalysisMode.TopLevelDeclarations,
+                new JvmPackagePartProvider(environment)
         );
 
         PackageViewDescriptor packageView = moduleContext.getModule().getPackage(TEST_PACKAGE_FQNAME);

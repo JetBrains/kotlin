@@ -42,13 +42,29 @@ fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, contex
     return fileStub
 }
 
-fun createPackageFacadeFileStub(
+fun createPackageFacadeStub(
         packageProto: ProtoBuf.Package,
         packageFqName: FqName,
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = createFileStub(packageFqName)
+    val fileStub = KotlinFileStubImpl.forPackageStub(packageFqName, packageFqName.isRoot)
+    setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer(null, packageFqName)
+    for (callableProto in packageProto.getMemberList()) {
+        createCallableStub(fileStub, callableProto, c, container)
+    }
+    return fileStub
+}
+
+fun createFileFacadeStub(
+        packageProto: ProtoBuf.Package,
+        facadeFqName: FqName,
+        c: ClsStubBuilderContext
+): KotlinFileStubImpl {
+    val packageFqName = facadeFqName.parent()
+    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    setupFileStub(fileStub, packageFqName)
+    val container = ProtoContainer(null, facadeFqName.parent())
     for (callableProto in packageProto.getMemberList()) {
         createCallableStub(fileStub, callableProto, c, container)
     }
@@ -58,11 +74,15 @@ fun createPackageFacadeFileStub(
 fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
 
 fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl(null, packageFqName.asString(), packageFqName.isRoot())
+    val fileStub = KotlinFileStubImpl.forPackageStub(packageFqName, packageFqName.isRoot)
+    setupFileStub(fileStub, packageFqName)
+    return fileStub
+}
+
+private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<JetPackageDirective>(fileStub, JetStubElementTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, packageFqName)
     KotlinPlaceHolderStubImpl<JetImportList>(fileStub, JetStubElementTypes.IMPORT_LIST)
-    return fileStub
 }
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<JetPackageDirective>, packageFqName: FqName) {

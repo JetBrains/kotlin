@@ -309,6 +309,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/checkArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CheckArguments extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInCheckArguments() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+    }
+
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1227,6 +1237,39 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+    }
+
+    @TestMetadata("idea/testData/quickfix/privateInFiles")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrivateInFiles extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInPrivateInFiles() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/privateInFiles"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("privateTopLevelFunInFile.before.Main.kt")
+        public void testPrivateTopLevelFunInFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/privateInFiles/privateTopLevelFunInFile.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("privateTopLevelValInFile.before.Main.kt")
+        public void testPrivateTopLevelValInFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/privateInFiles/privateTopLevelValInFile.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("privateTopLevelVarInFile.before.Main.kt")
+        public void testPrivateTopLevelVarInFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/privateInFiles/privateTopLevelVarInFile.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("privateTopLevelVarWithSetterInFile.before.Main.kt")
+        public void testPrivateTopLevelVarWithSetterInFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/privateInFiles/privateTopLevelVarWithSetterInFile.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/suppress")

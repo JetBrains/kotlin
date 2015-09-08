@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -244,5 +245,15 @@ public class JvmCodegenUtil {
         return descriptor instanceof JavaClassDescriptor ||
                module == module.getBuiltIns().getBuiltInsModule() ||
                DescriptorUtils.isAnnotationClass(descriptor);
+    }
+
+    @NotNull
+    public static String getModuleName(ModuleDescriptor module) {
+        return KotlinPackage.removeSurrounding(module.getName().asString(), "<", ">");
+    }
+
+    @NotNull
+    public static String getMappingFileName(@NotNull String moduleName) {
+        return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
     }
 }

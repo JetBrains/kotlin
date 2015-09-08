@@ -3,7 +3,7 @@
 
 package test
 
-internal final class FunctionTypes public constructor() {
+public final class FunctionTypes public constructor() {
     public final fun f1(f: kotlin.Function1<*, *>): kotlin.Unit { /* compiled code */ }
 
     public final fun f2(f: kotlin.Function2<kotlin.Int, *, kotlin.String>): kotlin.Unit { /* compiled code */ }

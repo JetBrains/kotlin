@@ -1,9 +1,9 @@
 package test
 
-internal fun </*0*/ T : test.Foo> foo(): kotlin.Unit where T : test.Bar
+public fun </*0*/ T : test.Foo> foo(): kotlin.Unit where T : test.Bar
 
-internal interface Bar {
+public interface Bar {
 }
 
-internal interface Foo {
+public interface Foo {
 }

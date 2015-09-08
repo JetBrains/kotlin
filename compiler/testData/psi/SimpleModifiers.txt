@@ -23,12 +23,7 @@ JetFile: SimpleModifiers.kt
       PsiWhiteSpace('\n')
       PsiElement(open)('open')
       PsiWhiteSpace('\n')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('annotation')
+      PsiElement(annotation)('annotation')
       PsiWhiteSpace('\n')
       PsiElement(override)('override')
       PsiWhiteSpace('\n')
@@ -70,12 +65,7 @@ JetFile: SimpleModifiers.kt
           PsiWhiteSpace('\n        ')
           PsiElement(open)('open')
           PsiWhiteSpace('\n        ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('annotation')
+          PsiElement(annotation)('annotation')
           PsiWhiteSpace('\n        ')
           PsiElement(override)('override')
           PsiWhiteSpace('\n        ')

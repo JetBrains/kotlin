@@ -4,4 +4,4 @@ public @interface A {
 }
 
 // FILE: b.kt
-A(arg = String::class) class MyClass3
+@A(arg = String::class) class MyClass3

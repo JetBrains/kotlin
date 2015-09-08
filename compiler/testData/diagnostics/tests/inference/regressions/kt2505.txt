@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun </*0*/ R> test(/*0*/ httpResponse: a.HttpResponse, /*1*/ rtype: a.MyClass<R>): kotlin.Unit
+    public fun </*0*/ R> test(/*0*/ httpResponse: a.HttpResponse, /*1*/ rtype: a.MyClass<R>): kotlin.Unit
 
     public open class HttpResponse {
         public constructor HttpResponse()
@@ -12,14 +12,14 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class MyClass</*0*/ T> : a.MyType {
+    public final class MyClass</*0*/ T> : a.MyType {
         public constructor MyClass</*0*/ T>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal interface MyType {
+    public interface MyType {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

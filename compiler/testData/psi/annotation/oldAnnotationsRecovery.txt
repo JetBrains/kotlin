@@ -6,18 +6,13 @@ JetFile: oldAnnotationsRecovery.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACKET)('[')
   MODIFIER_LIST
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('data')
-      VALUE_ARGUMENT_LIST
-        PsiElement(LPAR)('(')
-        VALUE_ARGUMENT
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('1')
-        PsiElement(RPAR)(')')
+    PsiElement(data)('data')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')

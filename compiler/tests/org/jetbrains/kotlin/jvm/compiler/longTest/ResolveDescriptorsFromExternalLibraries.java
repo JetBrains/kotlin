@@ -178,7 +178,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(jetCoreEnvironment.getProject());
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(jetCoreEnvironment.getProject(), jetCoreEnvironment);
 
         boolean hasErrors;
         try {

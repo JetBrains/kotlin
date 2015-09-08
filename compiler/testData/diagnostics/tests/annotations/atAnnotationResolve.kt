@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
-       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
-       AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
+        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
+        AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val x: Int = 6)
 
-@Ann(1) @Ann(2) @Ann(3) @private class A @Ann constructor() {
+@Ann(1) @Ann(2) @Ann(3) private class A @Ann constructor() {
     @Ann(x = 5) fun foo() {
         1 + @Ann(1) 1 * @Ann(<!TYPE_MISMATCH!>""<!>) 6
 

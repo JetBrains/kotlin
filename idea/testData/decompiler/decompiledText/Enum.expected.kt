@@ -3,7 +3,7 @@
 
 package test
 
-internal final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
+public final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
     A,
 
     B,
@@ -17,8 +17,8 @@ internal final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
     F;
 
     public companion object {
-        internal final val c: kotlin.Int /* compiled code */
+        public final val c: kotlin.Int /* compiled code */
     }
 
-    internal open fun f(): kotlin.Int { /* compiled code */ }
+    public open fun f(): kotlin.Int { /* compiled code */ }
 }

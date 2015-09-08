@@ -1,11 +1,11 @@
 package
 
-internal fun </*0*/ T> getJavaClass(): java.lang.Class<T>
-internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-internal fun </*0*/ T> typeinfo(): TypeInfo<T>
-internal fun </*0*/ T> TypeInfo<T>.getJavaClass(): java.lang.Class<T>
+public fun </*0*/ T> getJavaClass(): java.lang.Class<T>
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun </*0*/ T> typeinfo(): TypeInfo<T>
+public fun </*0*/ T> TypeInfo<T>.getJavaClass(): java.lang.Class<T>
 
-internal final class TypeInfo</*0*/ T> {
+public final class TypeInfo</*0*/ T> {
     public constructor TypeInfo</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

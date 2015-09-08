@@ -1,6 +1,6 @@
 package test
 
-internal fun </*0*/ T : kotlin.String> id(/*0*/ T): T
+public fun </*0*/ T : kotlin.String> id(/*0*/ T): T
 
 public/*package*/ open class Question {
     public/*package*/ constructor Question()

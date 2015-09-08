@@ -96,7 +96,9 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     open protected fun createKotlinCompileTask(suffix: String = ""): T {
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
         logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
-        return project.getTasks().create(name, compilerClass)
+        val compile = project.getTasks().create(name, compilerClass)
+        compile.extensions.extraProperties.set("defaultModuleName", name)
+        return compile
     }
 
     open protected fun commonTaskConfiguration() {
@@ -357,6 +359,8 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
+
+            kotlinTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-$kotlinTaskName")
             if (kotlinOptions != null) {
                 kotlinTask.setProperty("kotlinOptions", kotlinOptions)
             }

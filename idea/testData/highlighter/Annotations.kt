@@ -1,12 +1,11 @@
-<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">target</info>(<info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">CLASSIFIER</info>, <info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">EXPRESSION</info>)
+<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Target</info>(<info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">CLASSIFIER</info>, <info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">EXPRESSION</info>)
 <info descr="null">annotation</info> class <info descr="null">Ann</info>
 
-<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">Ann</info> class <info descr="null">A1</info>
-<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> class <info descr="null">A2</info>
+<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> class <info descr="null">A</info>
 
 fun <info descr="null">bar</info>(<info descr="null">block</info>: () -> <info descr="null">Int</info>) = <info descr="null"><info descr="null">block</info></info>()
 
-<info descr="null" textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">@private</info>
+<info descr="null" textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">private</info>
 fun <info descr="null">foo</info>() {
     1 + <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 2
 

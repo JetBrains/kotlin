@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/fileClassClashMultipleFiles1.kt:1:1: error: duplicate JVM class name 'test/Util' generated from: package-fragment test, package-fragment test
+@file:JvmName("Util")
+^
+compiler/testData/cli/jvm/fileClassClashMultipleFiles2.kt:1:1: error: duplicate JVM class name 'test/Util' generated from: package-fragment test, package-fragment test
+@file:JvmName("Util")
+^
+COMPILATION_ERROR

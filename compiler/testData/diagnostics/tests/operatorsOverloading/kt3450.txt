@@ -1,10 +1,10 @@
 package
 
-internal val x: B
-internal fun test(): kotlin.Unit
-internal fun A.div(/*0*/ s: kotlin.String): A
-internal fun kotlin.String.plus(): A
-internal fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
+public val x: B
+public fun test(): kotlin.Unit
+public fun A.div(/*0*/ s: kotlin.String): A
+public fun kotlin.String.plus(): A
+public fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
 
 public final class A {
     public constructor A()
@@ -14,7 +14,7 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class B {
+public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun get(/*0*/ s: Pair<kotlin.String, kotlin.String>): B
@@ -24,12 +24,12 @@ internal final class B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.data() internal final class Pair</*0*/ out A, /*1*/ out B> {
+kotlin.data() public final class Pair</*0*/ out A, /*1*/ out B> {
     public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)
-    internal final val first: A
-    internal final val second: B
-    internal final /*synthesized*/ fun component1(): A
-    internal final /*synthesized*/ fun component2(): B
+    public final val first: A
+    public final val second: B
+    public final /*synthesized*/ fun component1(): A
+    public final /*synthesized*/ fun component2(): B
     public final /*synthesized*/ fun copy(/*0*/ first: A = ..., /*1*/ second: B = ...): Pair<A, B>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

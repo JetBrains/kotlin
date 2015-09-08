@@ -1,6 +1,6 @@
 package
 
-internal final class MyClass : MyEnum2 {
+public final class MyClass : MyEnum2 {
     public constructor MyClass()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2): kotlin.Int
@@ -11,7 +11,7 @@ internal final class MyClass : MyEnum2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class MyClass2 : MyJavaEnum {
+public final class MyClass2 : MyJavaEnum {
     public constructor MyClass2()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyJavaEnum!): kotlin.Int
@@ -22,7 +22,7 @@ internal final class MyClass2 : MyJavaEnum {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open enum class MyEnum : kotlin.Enum<MyEnum> {
+public open enum class MyEnum : kotlin.Enum<MyEnum> {
     enum entry A
 
     private constructor MyEnum()
@@ -39,7 +39,7 @@ internal open enum class MyEnum : kotlin.Enum<MyEnum> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
 
-internal final enum class MyEnum2 : kotlin.Enum<MyEnum2> {
+public final enum class MyEnum2 : kotlin.Enum<MyEnum2> {
     private constructor MyEnum2()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2): kotlin.Int

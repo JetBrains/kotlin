@@ -1,17 +1,17 @@
-LineBreakpoint created at 1.kt:3
-LineBreakpoint created at 1.kt:3
-LineBreakpoint created at 1.kt:3
-LineBreakpoint created at 1.kt:3
+LineBreakpoint created at a1.kt:3
+LineBreakpoint created at a1.kt:3
+LineBreakpoint created at a1.kt:3
+LineBreakpoint created at a1.kt:3
 LineBreakpoint created at simpleLibFile.kt:3
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! customLibClassName.CustomLibClassNamePackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-1.kt:4
+a1.kt:4
 Compile bytecode for 1 + 1
-1.kt:4
+a1.kt:4
 Compile bytecode for 1 + 2
-1.kt:4
+a1.kt:4
 Compile bytecode for 1 + 3
-1.kt:4
+a1.kt:4
 Compile bytecode for 1 + 4
 simpleLibFile.kt:4
 Compile bytecode for 1 + 5

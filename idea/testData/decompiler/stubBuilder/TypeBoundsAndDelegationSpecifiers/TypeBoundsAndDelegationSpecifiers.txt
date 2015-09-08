@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   IMPORT_LIST:
   CLASS:[fqName=test.TypeBoundsAndDelegationSpecifiers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
-    MODIFIER_LIST:[internal final]
+    MODIFIER_LIST:[public final]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=H]
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G]

@@ -1,17 +1,17 @@
 package test
 
-kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
-internal final class Class {
+public final class Class {
     /*primary*/ public constructor Class()
 
-    test.Anno() internal final inner class Inner {
+    test.Anno() public final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    test.Anno() internal final class Nested {
+    test.Anno() public final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

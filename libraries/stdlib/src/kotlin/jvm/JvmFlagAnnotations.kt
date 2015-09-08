@@ -22,7 +22,7 @@ import kotlin.annotation.AnnotationTarget.*
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
  * are immediately made visible to other threads.
  */
-target(FIELD)
+@Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Volatile
@@ -31,7 +31,7 @@ public annotation class Volatile
  * Marks the JVM backing field of the annotated property as `transient`, meaning that it is not
  * part of the default serialized form of the object.
  */
-target(FIELD)
+@Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Transient
@@ -41,7 +41,7 @@ public annotation class Transient
  * of floating point operations performed inside the method needs to be restricted in order to
  * achieve better portability.
  */
-target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASSIFIER)
+@Target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASSIFIER)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Strictfp
@@ -51,7 +51,7 @@ public annotation class Strictfp
  * will be protected from concurrent execution by multiple threads by the monitor of the instance (or,
  * for static methods, the class) on which the method is defined.
  */
-target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Synchronized
@@ -60,7 +60,7 @@ public annotation class Synchronized
  * Marks the JVM method generated from the annotated function as `native`, meaning that it's not implemented
  * in Java but rather in a different language (for example, in C/C++ using JNI).
  */
-target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @deprecated("Use kotlin.external instead", ReplaceWith("kotlin.external"))

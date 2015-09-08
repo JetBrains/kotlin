@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.name.FqName
@@ -64,8 +65,8 @@ public open class KotlinLightClassForExplicitDeclaration(
 
             var createWrapper = forceMethodWrapping
             // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
-            if (containingClass is KotlinLightClassForPackage) {
-                containingClass = object : LightClass(containingClass as KotlinLightClassForPackage, JetLanguage.INSTANCE) {
+            if (containingClass is KotlinLightClassForFacade) {
+                containingClass = object : LightClass(containingClass as KotlinLightClassForFacade, JetLanguage.INSTANCE) {
                     override fun getName(): String? {
                         return currentFileName
                     }
@@ -410,7 +411,7 @@ public open class KotlinLightClassForExplicitDeclaration(
                 val data = getLightClassDataExactly(classOrObject)
                 return data?.jvmQualifiedName
             }
-            val internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject)
+            val internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider)
             return if (internalName == null) null else JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
         }
 

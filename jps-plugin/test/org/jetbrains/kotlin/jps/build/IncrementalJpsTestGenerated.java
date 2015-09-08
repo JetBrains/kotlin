@@ -61,15 +61,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inlineFunctionChanged")
-        public void testInlineFunctionChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionChanged/");
-            doTest(fileName);
-        }
-
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunctionTwoPackageParts")
+        public void testInlineFunctionTwoPackageParts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionTwoPackageParts/");
             doTest(fileName);
         }
 
@@ -118,6 +118,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("accessingFunctionsViaPackagePart")
         public void testAccessingFunctionsViaPackagePart() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaPackagePart/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessingFunctionsViaRenamedFileClass")
+        public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaRenamedFileClass/");
             doTest(fileName);
         }
 
@@ -209,6 +215,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compilationErrorThenFixedWithPhantomPart3")
+        public void testCompilationErrorThenFixedWithPhantomPart3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedWithPhantomPart3/");
+            doTest(fileName);
+        }
+
         @TestMetadata("conflictingPlatformDeclarations")
         public void testConflictingPlatformDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/conflictingPlatformDeclarations/");
@@ -230,6 +242,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("defaultArguments")
         public void testDefaultArguments() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArguments/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedPropertyInlineExtensionAccessor")
+        public void testDelegatedPropertyInlineExtensionAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineExtensionAccessor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedPropertyInlineMethodAccessor")
+        public void testDelegatedPropertyInlineMethodAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineMethodAccessor/");
             doTest(fileName);
         }
 
@@ -290,6 +314,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("inlineFunctionsUnchanged")
         public void testInlineFunctionsUnchanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionsUnchanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineLinesChanged")
+        public void testInlineLinesChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineLinesChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTwoFunctionsOneChanged")
+        public void testInlineTwoFunctionsOneChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTwoFunctionsOneChanged/");
             doTest(fileName);
         }
 
@@ -368,12 +404,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("packageInlineFunctionAccessingField")
         public void testPackageInlineFunctionAccessingField() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageInlineFunctionAccessingField/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageInlineFunctionChanged")
-        public void testPackageInlineFunctionChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageInlineFunctionChanged/");
             doTest(fileName);
         }
 
@@ -725,5 +755,93 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
         }
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/inlineFunCallSite")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineFunCallSite extends AbstractIncrementalJpsTest {
+        public void testAllFilesPresentInInlineFunCallSite() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("classProperty")
+        public void testClassProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/classProperty/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectProperty")
+        public void testCompanionObjectProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/companionObjectProperty/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("function")
+        public void testFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/function/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getter")
+        public void testGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/getter/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambda")
+        public void testLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/lambda/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFun")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/localFun/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("method")
+        public void testMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/method/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameterDefaultValue")
+        public void testParameterDefaultValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/parameterDefaultValue/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorParameterDefaultValue")
+        public void testPrimaryConstructorParameterDefaultValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/primaryConstructorParameterDefaultValue/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCall")
+        public void testSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/superCall/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisCall")
+        public void testThisCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/thisCall/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelObjectProperty")
+        public void testTopLevelObjectProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/topLevelObjectProperty/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelProperty")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/topLevelProperty/");
+            doTest(fileName);
+        }
+
     }
 }

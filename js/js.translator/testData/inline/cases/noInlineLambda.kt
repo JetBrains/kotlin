@@ -3,11 +3,11 @@ package foo
 // CHECK_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$f
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
 
-inline fun run<T>(noinline func: (T) -> T, arg: T): T {
+internal inline fun run<T>(noinline func: (T) -> T, arg: T): T {
     return func(arg)
 }
 
-fun multiplyBy2(x: Int): Int {
+internal fun multiplyBy2(x: Int): Int {
     return run({ it * 2 }, x)
 }
 

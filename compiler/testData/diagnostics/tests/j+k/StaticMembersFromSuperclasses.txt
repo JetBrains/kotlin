@@ -1,6 +1,6 @@
 package
 
-internal fun foo(): kotlin.String
+public fun foo(): kotlin.String
 
 public open class Aaa {
     public constructor Aaa()

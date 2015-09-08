@@ -3,20 +3,20 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   IMPORT_LIST:
   CLASS:[fqName=test.FlexibleTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleTypes, superNames=[]]
-    MODIFIER_LIST:[abstract internal]
+    MODIFIER_LIST:[abstract public]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
     CLASS_BODY:
       PROPERTY:[fqName=test.FlexibleTypes.p, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p]
-        MODIFIER_LIST:[abstract internal]
+        MODIFIER_LIST:[abstract public]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.FlexibleTypes.collection, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=collection]
-        MODIFIER_LIST:[abstract internal]
+        MODIFIER_LIST:[abstract public]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -31,7 +31,7 @@ PsiJetFileStubImpl[package=test]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.FlexibleTypes.withBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=withBody]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]

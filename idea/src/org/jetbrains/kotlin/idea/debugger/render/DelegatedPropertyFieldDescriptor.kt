@@ -61,18 +61,6 @@ class DelegatedPropertyFieldDescriptor(
         }
     }
 
-    override fun calcValueName(): String? {
-        return with (StringBuilder()) {
-            val classRenderer = NodeRendererSettings.getInstance()?.getClassRenderer()!!
-            append(getName())
-            if (classRenderer.SHOW_DECLARED_TYPE) {
-                append(": ")
-                append(classRenderer.renderTypeName(getValue()?.type()?.name()))
-            }
-            toString()
-        }
-    }
-
     override fun getName(): String {
         return delegate.name().removeSuffix(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
     }
@@ -86,5 +74,9 @@ class DelegatedPropertyFieldDescriptor(
         if (!Name.isValidIdentifier(fieldName)) return null
 
         return getObject().referenceType().methodsByName(JvmAbi.getterName(fieldName))?.firstOrNull()
+    }
+
+    override fun getDeclaredType(): String? {
+        return findGetterForDelegatedProperty()?.returnType()?.name()
     }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -33,10 +33,14 @@ public final class PsiCodegenPredictor {
     private PsiCodegenPredictor() {
     }
 
-    public static boolean checkPredictedNameFromPsi(@NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors) {
+    public static boolean checkPredictedNameFromPsi(
+            @NotNull DeclarationDescriptor descriptor,
+            @Nullable Type nameFromDescriptors,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
         PsiElement element = descriptorToDeclaration(descriptor);
         if (element instanceof JetDeclaration) {
-            String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element);
+            String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element, fileClassesManager);
             assert classNameFromPsi == null || Type.getObjectType(classNameFromPsi).equals(nameFromDescriptors) :
                     String.format("Invalid algorithm for getting qualified name from psi! Predicted: %s, actual %s\n" +
                                   "Element: %s", classNameFromPsi, nameFromDescriptors, element.getText());
@@ -49,7 +53,10 @@ public final class PsiCodegenPredictor {
      * @return null if no prediction can be done.
      */
     @Nullable
-    public static String getPredefinedJvmInternalName(@NotNull JetDeclaration declaration) {
+    public static String getPredefinedJvmInternalName(
+            @NotNull JetDeclaration declaration,
+            @NotNull JvmFileClassesProvider fileClassesManager
+    ) {
         // TODO: Method won't work for declarations inside companion objects
         // TODO: Method won't give correct class name for traits implementations
 
@@ -57,7 +64,7 @@ public final class PsiCodegenPredictor {
 
         String parentInternalName;
         if (parentDeclaration != null) {
-            parentInternalName = getPredefinedJvmInternalName(parentDeclaration);
+            parentInternalName = getPredefinedJvmInternalName(parentDeclaration, fileClassesManager);
             if (parentInternalName == null) {
                 return null;
             }
@@ -67,7 +74,7 @@ public final class PsiCodegenPredictor {
 
             if (declaration instanceof JetNamedFunction) {
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
-                return name == null ? null : PackagePartClassUtils.getPackagePartInternalName(containingFile) + "$" + name.asString();
+                return name == null ? null : fileClassesManager.getFileClassInternalName(containingFile) + "$" + name.asString();
             }
 
             parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());

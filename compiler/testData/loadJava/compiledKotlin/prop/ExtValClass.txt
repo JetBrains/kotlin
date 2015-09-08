@@ -1,4 +1,4 @@
 package test
 
-internal val </*0*/ P> P.anotherJavaClass: java.lang.Class<P>
-    internal fun P.<get-anotherJavaClass>(): java.lang.Class<P>
+public val </*0*/ P> P.anotherJavaClass: java.lang.Class<P>
+    public fun P.<get-anotherJavaClass>(): java.lang.Class<P>

@@ -1,8 +1,8 @@
 package
 
-internal val b: [ERROR : B]<out [ERROR : *]>
+public val b: [ERROR : B]<out [ERROR : *]>
 
-internal final class B {
+public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

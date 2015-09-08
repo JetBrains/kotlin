@@ -1,6 +1,6 @@
 package
 
-internal final class A : B, C {
+public final class A : B, C {
     public constructor A()
     public constructor A(/*0*/ x: kotlin.Int)
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -8,7 +8,7 @@ internal final class A : B, C {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class B {
+public open class B {
     public constructor B(/*0*/ x: kotlin.Double)
     public constructor B(/*0*/ x: kotlin.Int)
     public constructor B(/*0*/ x: kotlin.String)
@@ -17,7 +17,7 @@ internal open class B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface C {
+public interface C {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

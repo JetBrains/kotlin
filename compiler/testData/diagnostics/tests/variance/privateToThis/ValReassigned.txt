@@ -1,8 +1,8 @@
 package
 
-internal fun </*0*/ T> getT(): T
+public fun </*0*/ T> getT(): T
 
-internal final class A</*0*/ in I> {
+public final class A</*0*/ in I> {
     public constructor A</*0*/ in I>(/*0*/ init: I)
     private/*private to this*/ final val i: I
     private/*private to this*/ final var i2: I

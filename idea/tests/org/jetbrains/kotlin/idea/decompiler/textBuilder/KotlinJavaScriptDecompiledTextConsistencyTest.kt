@@ -18,10 +18,14 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -44,14 +48,14 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
 
     override fun setUp() {
         super.setUp()
-        KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary()
+        KotlinJavaScriptLibraryManager.getInstance(project).syncUpdateProjectLibrary()
     }
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledTextFromJsMetadata(packageFile, it) } ?: buildDecompiledTextFromJsMetadata(packageFile)).text
 
     override fun getModuleDescriptor(): ModuleDescriptor {
-        val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath()
+        val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.absolutePath
         val module = JetTestUtils.createEmptyModule("<module for stdlib>")
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
         assert(metadata.size() == 1)
@@ -60,10 +64,16 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
+        module.setDependencies(module, KotlinBuiltIns.getInstance().builtInsModule)
 
         return module
     }
 
     override fun getProjectDescriptor() = KotlinStdJSProjectDescriptor.instance
+
+    override fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean {
+        val containingDeclaration = descriptor.containingDeclaration
+        return containingDeclaration is PackageFragmentDescriptor &&
+               facadeFqName == PackageClassUtils.getPackageClassFqName(containingDeclaration.fqName)
+    }
 }

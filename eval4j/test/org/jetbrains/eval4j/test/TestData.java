@@ -779,6 +779,11 @@ class TestData extends BaseTestData {
         return true;
     }
 
+    static int coerceByte() {
+        byte[] b = new byte[2];
+        return b[1];
+    }
+
     public TestData() {
     }
 }

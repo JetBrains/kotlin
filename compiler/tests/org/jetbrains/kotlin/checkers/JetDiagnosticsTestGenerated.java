@@ -996,18 +996,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/migration")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Migration extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInMigration() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/migration"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("escapedModifiers.kt")
+                public void testEscapedModifiers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/migration/escapedModifiers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unescapedAnnotation.kt")
+                public void testUnescapedAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/migration/unescapedAnnotation.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/options")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Options extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInOptions() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("annotation.kt")
-                public void testAnnotation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotation.kt");
-                    doTest(fileName);
                 }
 
                 @TestMetadata("annotationAsArg.kt")
@@ -1019,12 +1034,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("annotationAsArgComplex.kt")
                 public void testAnnotationAsArgComplex() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotationAsArgComplex.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("brackets.kt")
-                public void testBrackets() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/brackets.kt");
                     doTest(fileName);
                 }
 
@@ -3111,6 +3120,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt799.kt")
             public void testKt799() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/kt799.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdasInExclExclAndElvis.kt")
+            public void testLambdasInExclExclAndElvis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/lambdasInExclExclAndElvis.kt");
                 doTest(fileName);
             }
 
@@ -7223,6 +7238,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt7433.kt")
                 public void testKt7433() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/kt7433.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt8879.kt")
+                public void testKt8879() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/kt8879.kt");
                     doTest(fileName);
                 }
 

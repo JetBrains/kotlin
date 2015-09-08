@@ -1,9 +1,9 @@
 package
 
 package a {
-    internal fun main(/*0*/ arg: a.MyClass1): kotlin.Unit
+    public fun main(/*0*/ arg: a.MyClass1): kotlin.Unit
 
-    internal final class MyClass1 {
+    public final class MyClass1 {
         public constructor MyClass1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

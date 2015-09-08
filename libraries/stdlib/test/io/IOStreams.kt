@@ -1,10 +1,10 @@
 package test.io
 
 import org.junit.Test as test
+import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
 import java.io.File
-import kotlinhack.test.assertEquals
 
 class IOStreamsTest {
     test fun testGetStreamOfFile() {

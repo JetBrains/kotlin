@@ -5,7 +5,7 @@ public open class Base {
     protected/*protected and package*/ open fun foo(): kotlin.Unit
 }
 
-internal final class Derived : test.Base {
+public final class Derived : test.Base {
     public constructor Derived()
     protected open override /*1*/ fun foo(): kotlin.Unit
 }

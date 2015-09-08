@@ -1,14 +1,14 @@
-interface A {
+internal interface A {
     fun foo(): String
 }
 
-class B : A {
+internal class B : A {
     override fun foo() = "OK"
 }
 
 val global = B()
 
-class C(x: Int) : A by global {
+internal class C(x: Int) : A by global {
     constructor(): this(1)
 }
 

@@ -10,5 +10,5 @@ package testData.libraries
 
     [[BLUE;]]
 
-    [internal final val rgb: kotlin.Int /* compiled code */]
+    [public final val rgb: kotlin.Int /* compiled code */]
 }]]

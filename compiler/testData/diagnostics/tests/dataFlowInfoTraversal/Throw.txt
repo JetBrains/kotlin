@@ -1,4 +1,4 @@
 package
 
-internal fun bar(/*0*/ x: kotlin.Int): java.lang.RuntimeException
-internal fun foo(): kotlin.Unit
+public fun bar(/*0*/ x: kotlin.Int): java.lang.RuntimeException
+public fun foo(): kotlin.Unit

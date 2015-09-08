@@ -2,9 +2,9 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 
-inline fun sum(x: Int, y: Int): Int = js("x + y")
+internal inline fun sum(x: Int, y: Int): Int = js("x + y")
 
-fun test(x: Int, y: Int): Int = sum(sum(x, x), sum(y, y))
+internal fun test(x: Int, y: Int): Int = sum(sum(x, x), sum(y, y))
 
 fun box(): String {
     assertEquals(4, test(1, 1))

@@ -1,6 +1,6 @@
 package test
 
-internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
+public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
     /*primary*/ private constructor MyEnum()

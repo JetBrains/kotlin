@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
@@ -81,7 +82,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
-        val actual = createReflectedPackageView(classLoader)
+        val actual = createReflectedPackageView(classLoader, JvmResolveUtil.TEST_MODULE_NAME)
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
@@ -123,13 +124,15 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
                 val jetFile = JetTestUtils.createFile(file.getPath(), text, environment.project)
-                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
+                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
             }
         }
     }
 
-    private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
-        val module = RuntimeModuleData.create(classLoader).module
+    private fun createReflectedPackageView(classLoader: URLClassLoader, moduleName: String): SyntheticPackageViewForTest {
+        val moduleData = RuntimeModuleData.create(classLoader)
+        moduleData.packageFacadeProvider.registerModule(moduleName)
+        val module = moduleData.module
 
 
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())

@@ -1,9 +1,9 @@
 package test
 
-internal final class ClassVal {
+public final class ClassVal {
     /*primary*/ public constructor ClassVal()
-    internal final val property1: kotlin.Int = 1
-        internal final fun <get-property1>(): kotlin.Int
+    public final val property1: kotlin.Int = 1
+        public final fun <get-property1>(): kotlin.Int
     internal final val property2: kotlin.Int = 1
         internal final fun <get-property2>(): kotlin.Int
     private final val property3: java.lang.Object

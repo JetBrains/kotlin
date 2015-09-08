@@ -26,7 +26,6 @@ import com.intellij.psi.ClassFileViewProvider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
+import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -62,6 +62,7 @@ import java.util.*;
 
 import static kotlin.KotlinPackage.*;
 import static org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles;
+import static org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourcesAndLibraries;
 
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
 
@@ -84,6 +85,11 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files) {
         assert !files.isEmpty() : "No files in package";
 
+        return getContextForFiles(files);
+    }
+
+    @NotNull
+    private LightClassConstructionContext getContextForFiles(@NotNull Collection<JetFile> files) {
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, scopeFileComparator);
 
@@ -116,6 +122,14 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
         ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject));
         return new LightClassConstructionContext(bindingContext, moduleDescriptor);
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForFacade(@NotNull Collection<JetFile> files) {
+        assert !files.isEmpty() : "No files in facade";
+
+        return getContextForFiles(files);
     }
 
     private static void forceResolvePackageDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
@@ -170,19 +184,6 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
         return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSourceAndClassFiles(searchScope, project), project);
-    }
-
-    @NotNull
-    private static Map<IdeaModuleInfo, List<JetFile>> groupByModuleInfo(@NotNull Collection<JetFile> allFiles) {
-        return KotlinPackage.groupByTo(
-                allFiles,
-                new LinkedHashMap<IdeaModuleInfo, List<JetFile>>(),
-                new Function1<JetFile, IdeaModuleInfo>() {
-                    @Override
-                    public IdeaModuleInfo invoke(JetFile file) {
-                        return ResolvePackage.getModuleInfo(file);
-                    }
-                });
     }
 
     @NotNull
@@ -272,31 +273,106 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
         List<PsiClass> result = new ArrayList<PsiClass>();
-        List<KotlinLightPackageClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
-        for (KotlinLightPackageClassInfo info : packageClassesInfos) {
-            List<JetFile> files = PackagePartClassUtils.getPackageFilesWithCallables(info.getFiles());
+        List<KotlinLightFacadeClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
+        for (KotlinLightFacadeClassInfo info : packageClassesInfos) {
+            List<JetFile> files = PackagePartClassUtils.getFilesWithCallables(info.getFiles());
             if (files.isEmpty()) continue;
 
             IdeaModuleInfo moduleInfo = info.getModuleInfo();
             if (moduleInfo instanceof ModuleSourceInfo) {
-                KotlinLightClassForPackage lightClass =
-                        KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, moduleInfo.contentScope(), files);
-                if (lightClass == null) continue;
-
-                result.add(lightClass);
-
-                if (files.size() > 1) {
-                    for (JetFile file : files) {
-                        result.add(new FakeLightClassForFileOfPackage(psiManager, lightClass, file));
-                    }
-                }
+                result.addAll(getLightClassesForPackageFacadeWithSources(packageFqName, files, moduleInfo));
             }
             else {
-                PsiClass clsClass = getLightClassForDecompiledPackage(packageFqName, files);
-                if (clsClass != null) {
-                    result.add(clsClass);
-                }
+                result.addAll(getLightClassesForDecompiledFacadeFiles(files));
             }
+        }
+        return result;
+    }
+
+    @NotNull
+    private List<PsiClass> getLightClassesForPackageFacadeWithSources(
+            @NotNull FqName packageFqName,
+            @NotNull List<JetFile> facadeFiles,
+            @NotNull IdeaModuleInfo moduleInfo
+    ) {
+        KotlinLightClassForFacade lightClassForFacade =
+                KotlinLightClassForFacade.Factory.createForPackageFacade(psiManager, packageFqName, moduleInfo.contentScope(), facadeFiles);
+        return getLightClassesForFacadeWithFiles(lightClassForFacade, facadeFiles);
+    }
+
+    @NotNull
+    private List<PsiClass> getLightClassesForFacadeWithFiles(
+            @Nullable KotlinLightClassForFacade lightClassForFacade,
+            @NotNull List<JetFile> facadeFiles
+    ) {
+        if (lightClassForFacade == null) return emptyList();
+
+        List<PsiClass> lightClasses = new ArrayList<PsiClass>();
+        lightClasses.add(lightClassForFacade);
+        if (facadeFiles.size() > 1) {
+            for (JetFile file : facadeFiles) {
+                lightClasses.add(new FakeLightClassForFileOfPackage(psiManager, lightClassForFacade, file));
+            }
+        }
+        return lightClasses;
+    }
+
+    @NotNull
+    @Override
+    public Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
+        List<PsiClass> result = new ArrayList<PsiClass>();
+        List<KotlinLightFacadeClassInfo> facadeClassesInfos = findFacadeClassesInfos(facadeFqName, scope);
+        for (KotlinLightFacadeClassInfo info : facadeClassesInfos) {
+            List<JetFile> files = PackagePartClassUtils.getFilesWithCallables(info.getFiles());
+            if (files.isEmpty()) continue;
+
+            IdeaModuleInfo moduleInfo = info.getModuleInfo();
+            if (moduleInfo instanceof ModuleSourceInfo) {
+                result.addAll(getLightClassesForStaticFacadeWithSources(facadeFqName, files, moduleInfo));
+            }
+            else {
+                result.addAll(getLightClassesForDecompiledFacadeFiles(files));
+            }
+        }
+        return result;
+    }
+
+    private List<PsiClass> getLightClassesForStaticFacadeWithSources(
+            @NotNull FqName facadeFqName,
+            @NotNull List<JetFile> facadeFiles,
+            @NotNull IdeaModuleInfo moduleInfo
+    ) {
+        KotlinLightClassForFacade lightClassForFacade = KotlinLightClassForFacade.Factory.createForFacade(
+                psiManager, facadeFqName, moduleInfo.contentScope(), facadeFiles);
+        return getLightClassesForFacadeWithFiles(lightClassForFacade, facadeFiles);
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
+        return StaticFacadeIndexUtil.findFilesForStaticFacade(facadeFqName, kotlinSourcesAndLibraries(scope, project), project);
+    }
+
+    @NotNull
+    private List<KotlinLightFacadeClassInfo> findFacadeClassesInfos(FqName facadeFqName, GlobalSearchScope scope) {
+        Collection<JetFile> facadeFiles = findFilesForFacade(facadeFqName, scope);
+        return groupFilesIntoFacadeLightClassesByModuleInfo(facadeFiles);
+    }
+
+    @NotNull
+    private static List<KotlinLightFacadeClassInfo> groupFilesIntoFacadeLightClassesByModuleInfo(Collection<JetFile> facadeFiles) {
+        Map<IdeaModuleInfo, List<JetFile>> filesByInfo = KotlinPackage.groupByTo(
+                facadeFiles,
+                new LinkedHashMap<IdeaModuleInfo, List<JetFile>>(),
+                new Function1<JetFile, IdeaModuleInfo>() {
+                    @Override
+                    public IdeaModuleInfo invoke(JetFile file) {
+                        return ResolvePackage.getModuleInfo(file);
+                    }
+                });
+        List<KotlinLightFacadeClassInfo> result = new ArrayList<KotlinLightFacadeClassInfo>();
+        for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
+            result.add(new KotlinLightFacadeClassInfo(entry.getValue(), entry.getKey()));
         }
         return result;
     }
@@ -312,36 +388,30 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
     }
 
-    @Nullable
-    private static PsiClass getLightClassForDecompiledPackage(@NotNull FqName packageFqName, @NotNull List<JetFile> filesWithCallables) {
-        JetFile firstFile = filesWithCallables.iterator().next();
-        if (firstFile.isCompiled()) {
-            if (filesWithCallables.size() > 1) {
-                LOG.error("Several files with callables for package: " + packageFqName);
+    @NotNull
+    private static List<PsiClass> getLightClassesForDecompiledFacadeFiles(@NotNull List<JetFile> filesWithCallables) {
+        List<PsiClass> lightClasses = new ArrayList<PsiClass>();
+        for (JetFile file : filesWithCallables) {
+            if (file.isCompiled()) {
+                lightClasses.add(createLightClassForDecompiledKotlinFile(file));
             }
-            return createLightClassForDecompiledKotlinFile(firstFile);
         }
-        return null;
+        return lightClasses;
     }
 
     @NotNull
-    private List<KotlinLightPackageClassInfo> findPackageClassesInfos(
+    private List<KotlinLightFacadeClassInfo> findPackageClassesInfos(
             @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
     ) {
         Collection<JetFile> allFiles = findFilesForPackage(fqName, wholeScope);
-        Map<IdeaModuleInfo, List<JetFile>> filesByInfo = groupByModuleInfo(allFiles);
-        List<KotlinLightPackageClassInfo> result = new ArrayList<KotlinLightPackageClassInfo>();
-        for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
-            result.add(new KotlinLightPackageClassInfo(entry.getValue(), entry.getKey()));
-        }
-        return result;
+        return groupFilesIntoFacadeLightClassesByModuleInfo(allFiles);
     }
 
-    private static final class KotlinLightPackageClassInfo {
+    private static final class KotlinLightFacadeClassInfo {
         private final Collection<JetFile> files;
         private final IdeaModuleInfo moduleInfo;
 
-        public KotlinLightPackageClassInfo(@NotNull Collection<JetFile> files, @NotNull IdeaModuleInfo moduleInfo) {
+        public KotlinLightFacadeClassInfo(@NotNull Collection<JetFile> files, @NotNull IdeaModuleInfo moduleInfo) {
             this.files = files;
             this.moduleInfo = moduleInfo;
         }
@@ -384,7 +454,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             return null;
         }
         PsiManager manager = PsiManager.getInstance(decompiledKotlinFile.getProject());
-        ClsFileImpl fakeFile = new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
+        ClsFileImpl fakeFile = new ClsFileImpl(new ClassFileViewProvider(manager, virtualFile)) {
             @NotNull
             @Override
             public PsiElement getNavigationElement() {

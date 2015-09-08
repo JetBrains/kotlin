@@ -1,0 +1,6 @@
+name
+	type=java-test
+	outputDir=out
+	sources=[]
+	classpath=[]
+	annotations=[]

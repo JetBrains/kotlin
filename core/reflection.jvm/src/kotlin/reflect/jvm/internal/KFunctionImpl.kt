@@ -30,7 +30,7 @@ import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaConstructor
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaMethod
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.KotlinFunction
 
-open class KFunctionImpl protected constructor(
+internal open class KFunctionImpl protected constructor(
         private val container: KDeclarationContainerImpl,
         name: String,
         signature: String,

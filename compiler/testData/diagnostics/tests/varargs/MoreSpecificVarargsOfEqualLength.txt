@@ -1,12 +1,12 @@
 package
 
-internal fun main(/*0*/ d: D): kotlin.Unit
+public fun main(/*0*/ d: D): kotlin.Unit
 
-internal final class D {
+public final class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun from(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
-    internal final fun from(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+    public final fun from(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+    public final fun from(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

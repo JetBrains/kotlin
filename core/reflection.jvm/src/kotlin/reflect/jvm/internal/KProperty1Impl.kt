@@ -22,7 +22,7 @@ import kotlin.jvm.internal.PropertyReference1
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
-open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, R>, KPropertyImpl<R> {
+internal open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, R>, KPropertyImpl<R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -36,7 +36,7 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, 
     }
 }
 
-open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
+internal open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -51,7 +51,7 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
 }
 
 
-class KProperty1FromReferenceImpl(
+internal class KProperty1FromReferenceImpl(
         val reference: PropertyReference1
 ) : KProperty1Impl<Any?, Any?>(
         reference.owner as KDeclarationContainerImpl,
@@ -64,7 +64,7 @@ class KProperty1FromReferenceImpl(
 }
 
 
-class KMutableProperty1FromReferenceImpl(
+internal class KMutableProperty1FromReferenceImpl(
         val reference: MutablePropertyReference1
 ) : KMutableProperty1Impl<Any?, Any?>(
         reference.owner as KDeclarationContainerImpl,

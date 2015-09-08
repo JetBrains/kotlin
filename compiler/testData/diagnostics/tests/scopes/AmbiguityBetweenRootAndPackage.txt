@@ -1,8 +1,8 @@
 package
 
-internal val t: [ERROR : Type for testFun()]
-internal fun testFun(): kotlin.Int
+public val t: [ERROR : Type for testFun()]
+public fun testFun(): kotlin.Int
 
 package test {
-    internal fun testFun(): kotlin.Int
+    public fun testFun(): kotlin.Int
 }

@@ -62,21 +62,9 @@
             idea.maven.version="141-SNAPSHOT"/>
     </target>
 
-    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="141-SNAPSHOT"/>
-    </target>
-
     <target name="update_continuous_142" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="142-SNAPSHOT"/>
-    </target>
-
-    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/snapshots/com/jetbrains/intellij/idea"
             idea.maven.version="142-SNAPSHOT"/>
     </target>
 

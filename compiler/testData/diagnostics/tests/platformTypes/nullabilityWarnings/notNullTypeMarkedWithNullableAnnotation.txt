@@ -1,6 +1,6 @@
 package
 
-internal fun list(/*0*/ j: J): kotlin.Any
+public fun list(/*0*/ j: J): kotlin.Any
 
 public open class J {
     public constructor J()

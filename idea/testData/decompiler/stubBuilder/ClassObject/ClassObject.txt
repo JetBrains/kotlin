@@ -5,7 +5,7 @@ PsiJetFileStubImpl[package=test.class_object]
       REFERENCE_EXPRESSION:[referencedName=class_object]
   IMPORT_LIST:
   CLASS:[fqName=test.class_object.ClassObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
-    MODIFIER_LIST:[internal final]
+    MODIFIER_LIST:[public final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
@@ -14,14 +14,14 @@ PsiJetFileStubImpl[package=test.class_object]
         MODIFIER_LIST:[public companion]
         CLASS_BODY:
           PROPERTY:[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
-            MODIFIER_LIST:[internal final]
+            MODIFIER_LIST:[public final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
           FUN:[fqName=test.class_object.ClassObject.Companion.z, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=z]
-            MODIFIER_LIST:[internal final]
+            MODIFIER_LIST:[public final]
             VALUE_PARAMETER_LIST:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -29,26 +29,26 @@ PsiJetFileStubImpl[package=test.class_object]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
           CLASS:[fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-            MODIFIER_LIST:[internal final]
+            MODIFIER_LIST:[public final]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
             CLASS_BODY:
               CLASS:[fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-                MODIFIER_LIST:[internal final]
+                MODIFIER_LIST:[public final]
                 PRIMARY_CONSTRUCTOR:
                   MODIFIER_LIST:[public]
                   VALUE_PARAMETER_LIST:
                 CLASS_BODY:
                   PROPERTY:[fqName=test.class_object.ClassObject.Companion.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
-                    MODIFIER_LIST:[internal final]
+                    MODIFIER_LIST:[public final]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
                   FUN:[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
-                    MODIFIER_LIST:[internal final]
+                    MODIFIER_LIST:[public final]
                     VALUE_PARAMETER_LIST:
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -56,14 +56,14 @@ PsiJetFileStubImpl[package=test.class_object]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=test.class_object.ClassObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.class_object.ClassObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -71,7 +71,7 @@ PsiJetFileStubImpl[package=test.class_object]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.class_object.ClassObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-        MODIFIER_LIST:[internal final]
+        MODIFIER_LIST:[public final]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
@@ -80,7 +80,7 @@ PsiJetFileStubImpl[package=test.class_object]
             MODIFIER_LIST:[public companion]
             CLASS_BODY:
               CLASS:[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
-                MODIFIER_LIST:[internal final]
+                MODIFIER_LIST:[public final]
                 PRIMARY_CONSTRUCTOR:
                   MODIFIER_LIST:[public]
                   VALUE_PARAMETER_LIST:
@@ -89,7 +89,7 @@ PsiJetFileStubImpl[package=test.class_object]
                     MODIFIER_LIST:[public companion]
                     CLASS_BODY:
                       CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
-                        MODIFIER_LIST:[internal final]
+                        MODIFIER_LIST:[public final]
                         PRIMARY_CONSTRUCTOR:
                           MODIFIER_LIST:[public]
                           VALUE_PARAMETER_LIST:
@@ -98,14 +98,14 @@ PsiJetFileStubImpl[package=test.class_object]
                             MODIFIER_LIST:[public companion]
                             CLASS_BODY:
                               PROPERTY:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
-                                MODIFIER_LIST:[internal final]
+                                MODIFIER_LIST:[public final]
                                 TYPE_REFERENCE:
                                   USER_TYPE:[isAbsoluteInRootPackage=false]
                                     USER_TYPE:[isAbsoluteInRootPackage=false]
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Int]
                               FUN:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
-                                MODIFIER_LIST:[internal final]
+                                MODIFIER_LIST:[public final]
                                 VALUE_PARAMETER_LIST:
                                 TYPE_REFERENCE:
                                   USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -113,7 +113,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Unit]
                               CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
-                                MODIFIER_LIST:[internal final]
+                                MODIFIER_LIST:[public final]
                                   ANNOTATION_ENTRY:[hasValueArguments=false, shortName=annotation]
                                     CONSTRUCTOR_CALLEE:
                                       TYPE_REFERENCE:
@@ -135,7 +135,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                         REFERENCE_EXPRESSION:[referencedName=Annotation]
                                 CLASS_BODY:
                               CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
-                                MODIFIER_LIST:[enum internal final]
+                                MODIFIER_LIST:[enum public final]
                                 PRIMARY_CONSTRUCTOR:
                                   MODIFIER_LIST:[private]
                                   VALUE_PARAMETER_LIST:

@@ -678,6 +678,21 @@
                 }
                 return builder + "}";
             },
+            equals_za3rmp$: function(o) {
+                if (o == null || this.size() !== o.size()) return false;
+                var map = this.map;
+                for (var key in map) {
+                    var key_ = this.convertKeyToKeyType(key);
+                    var value = map[key];
+                    if (value == null) {
+                        if (!(o.get_za3rmp$(key_) == null && o.contains_za3rmp$(key_))) return false;
+                    }
+                    else {
+                        if (!Kotlin.equals(value, o.get_za3rmp$(key_))) return false;
+                    }
+                }
+                return true;
+            },
             hashCode: function() {
                 var h = 0;
                 var map = this.map;

@@ -182,7 +182,7 @@ public class KotlinBuiltIns {
         public final FqName noinline = fqName("noinline");
         public final FqName inlineOptions = fqName("inlineOptions");
         public final FqName extension = fqName("Extension");
-        public final FqName target = annotationName("target");
+        public final FqName target = annotationName("Target");
         public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
@@ -247,7 +247,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
+    public ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
         ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName,
                                                                                                    NoLookupLocation.FROM_BUILTINS);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +

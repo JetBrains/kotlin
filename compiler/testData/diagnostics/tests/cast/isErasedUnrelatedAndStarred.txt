@@ -1,15 +1,15 @@
 package
 
-internal fun f(/*0*/ q: Tr): kotlin.Boolean
+public fun f(/*0*/ q: Tr): kotlin.Boolean
 
-internal final class G</*0*/ T> {
+public final class G</*0*/ T> {
     public constructor G</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Tr {
+public interface Tr {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

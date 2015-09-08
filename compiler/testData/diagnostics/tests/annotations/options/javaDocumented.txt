@@ -28,21 +28,21 @@ public open class DocumentedAnnotations {
     }
 }
 
-DocumentedAnnotations.RunDocAnn() internal final class His {
+DocumentedAnnotations.RunDocAnn() public final class His {
     public constructor His()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-DocumentedAnnotations.DocAnn() internal final class My {
+DocumentedAnnotations.DocAnn() public final class My {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-DocumentedAnnotations.NotDocAnn() internal final class Your {
+DocumentedAnnotations.NotDocAnn() public final class Your {
     public constructor Your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

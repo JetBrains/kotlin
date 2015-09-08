@@ -216,7 +216,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
             if (descriptor is DefaultNodeDescriptor) return true
 
-            val label = descriptor.getLabel()!!.replace("Package\\$[\\w]*\\$[0-9a-f]+".toRegex(), "Package\\$@packagePartHASH")
+            val label = descriptor.getLabel()!!
             if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return true
 
             val curIndent = " ".repeat(indent)
@@ -336,11 +336,10 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
     private fun Value.asString(): String {
         if (this is ObjectValue && this.value is ObjectReference) {
-            return this.toString().replace(PACKAGE_PART_REGEX, "$1@packagePartHASH").replaceFirst(ID_PART_REGEX, "id=ID")
+            return this.toString().replaceFirst(ID_PART_REGEX, "id=ID")
         }
         return this.toString()
     }
 }
 
-private val PACKAGE_PART_REGEX = "(Package\\$[\\w]*\\$)([0-9a-f]+)".toRegex()
 private val ID_PART_REGEX = "id=[0-9]*".toRegex()

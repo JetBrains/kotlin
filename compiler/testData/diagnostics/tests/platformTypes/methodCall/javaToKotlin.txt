@@ -1,4 +1,4 @@
 package
 
-internal fun takeJ(/*0*/ j: p.J): kotlin.Unit
-internal fun test(): kotlin.Unit
+public fun takeJ(/*0*/ j: p.J): kotlin.Unit
+public fun test(): kotlin.Unit

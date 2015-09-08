@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -63,28 +64,18 @@ public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnot
     protected abstract fun closeWriter()
 
     private inner class AnnotationCollectorClassBuilderFactory(
-            private val delegateFactory: ClassBuilderFactory,
+            delegateFactory: ClassBuilderFactory,
             val writer: Writer,
             val diagnostics: DiagnosticSink
-    ) : ClassBuilderFactory {
+    ) : DelegatingClassBuilderFactory(delegateFactory) {
 
-        override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
-            return AnnotationCollectorClassBuilder(delegateFactory.newClassBuilder(origin), writer, diagnostics)
-        }
-
-        override fun getClassBuilderMode() = delegateFactory.getClassBuilderMode()
-
-        override fun asText(builder: ClassBuilder?): String? {
-            return delegateFactory.asText((builder as AnnotationCollectorClassBuilder).delegateClassBuilder)
-        }
-
-        override fun asBytes(builder: ClassBuilder?): ByteArray? {
-            return delegateFactory.asBytes((builder as AnnotationCollectorClassBuilder).delegateClassBuilder)
+        override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+            return AnnotationCollectorClassBuilder(delegate.newClassBuilder(origin), writer, diagnostics)
         }
 
         override fun close() {
             closeWriter()
-            delegateFactory.close()
+            delegate.close()
         }
     }
 

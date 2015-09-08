@@ -2,15 +2,15 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: add
 
-data class State(var count: Int = 0)
+internal data class State(var count: Int = 0)
 
-inline fun repeatAction(times: Int, action: () -> Unit) {
+internal inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
         action()
     }
 }
 
-fun add(state: State, a: Int, b: Int): Int {
+internal fun add(state: State, a: Int, b: Int): Int {
     @inline fun inc(a: Int): Int {
         return a + 1
     }

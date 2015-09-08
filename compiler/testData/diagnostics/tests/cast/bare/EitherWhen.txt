@@ -1,38 +1,38 @@
 package
 
-internal fun _when(/*0*/ e: Either<C1, C2>): kotlin.Any
+public fun _when(/*0*/ e: Either<C1, C2>): kotlin.Any
 
-internal final class C1 {
+public final class C1 {
     public constructor C1(/*0*/ v1: kotlin.Int)
-    internal final val v1: kotlin.Int
+    public final val v1: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class C2 {
+public final class C2 {
     public constructor C2(/*0*/ v2: kotlin.Int)
-    internal final val v2: kotlin.Int
+    public final val v2: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Either</*0*/ out A, /*1*/ out B> {
+public interface Either</*0*/ out A, /*1*/ out B> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Left</*0*/ out A> : Either<A, kotlin.Nothing> {
-    internal abstract val value: A
+public interface Left</*0*/ out A> : Either<A, kotlin.Nothing> {
+    public abstract val value: A
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface Right</*0*/ out B> : Either<kotlin.Nothing, B> {
-    internal abstract val value: B
+public interface Right</*0*/ out B> : Either<kotlin.Nothing, B> {
+    public abstract val value: B
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

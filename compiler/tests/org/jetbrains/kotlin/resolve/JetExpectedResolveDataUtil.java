@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -50,7 +51,7 @@ public class JetExpectedResolveDataUtil {
     private JetExpectedResolveDataUtil() {
     }
 
-    public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project) {
+    public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project, KotlinCoreEnvironment environment) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
@@ -65,25 +66,25 @@ public class JetExpectedResolveDataUtil {
         return nameToDescriptor;
     }
 
-    public static Map<String, PsiElement> prepareDefaultNameToDeclaration(Project project) {
+    public static Map<String, PsiElement> prepareDefaultNameToDeclaration(Project project, KotlinCoreEnvironment environment) {
         Map<String, PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
 
-        PsiClass java_util_Collections = findClass("java.util.Collections", project);
+        PsiClass java_util_Collections = findClass("java.util.Collections", project, environment);
         nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(java_util_Collections, "emptyList"));
         nameToDeclaration.put("java::java.util.Collections", java_util_Collections);
-        PsiClass java_util_List = findClass("java.util.ArrayList", project);
-        nameToDeclaration.put("java::java.util.List", findClass("java.util.List", project));
+        PsiClass java_util_List = findClass("java.util.ArrayList", project, environment);
+        nameToDeclaration.put("java::java.util.List", findClass("java.util.List", project, environment));
         nameToDeclaration.put("java::java.util.ArrayList", java_util_List);
         nameToDeclaration.put("java::java.util.ArrayList.set()", java_util_List.findMethodsByName("set", true)[0]);
         nameToDeclaration.put("java::java.util.ArrayList.get()", java_util_List.findMethodsByName("get", true)[0]);
         nameToDeclaration.put("java::java", findPackage("java", project));
         nameToDeclaration.put("java::java.util", findPackage("java.util", project));
         nameToDeclaration.put("java::java.lang", findPackage("java.lang", project));
-        nameToDeclaration.put("java::java.lang.Object", findClass("java.lang.Object", project));
-        nameToDeclaration.put("java::java.lang.Comparable", findClass("java.lang.Comparable", project));
-        PsiClass java_lang_System = findClass("java.lang.System", project);
+        nameToDeclaration.put("java::java.lang.Object", findClass("java.lang.Object", project, environment));
+        nameToDeclaration.put("java::java.lang.Comparable", findClass("java.lang.Comparable", project, environment));
+        PsiClass java_lang_System = findClass("java.lang.System", project, environment);
         nameToDeclaration.put("java::java.lang.System", java_lang_System);
-        PsiMethod[] methods = findClass("java.io.PrintStream", project).findMethodsByName("print", true);
+        PsiMethod[] methods = findClass("java.io.PrintStream", project, environment).findMethodsByName("print", true);
         nameToDeclaration.put("java::java.io.PrintStream.print(Object)", methods[8]);
         nameToDeclaration.put("java::java.io.PrintStream.print(Int)", methods[2]);
         nameToDeclaration.put("java::java.io.PrintStream.print(char[])", methods[6]);
@@ -91,7 +92,7 @@ public class JetExpectedResolveDataUtil {
         PsiField outField = java_lang_System.findFieldByName("out", true);
         assertNotNull("'out' property wasn't found", outField);
         nameToDeclaration.put("java::java.lang.System.out", outField);
-        PsiClass java_lang_Number = findClass("java.lang.Number", project);
+        PsiClass java_lang_Number = findClass("java.lang.Number", project, environment);
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
         nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
@@ -113,8 +114,8 @@ public class JetExpectedResolveDataUtil {
     }
 
     @NotNull
-    private static PsiClass findClass(String qualifiedName, Project project) {
-        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project);
+    private static PsiClass findClass(String qualifiedName, Project project, KotlinCoreEnvironment environment) {
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project, environment);
         ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName), NoLookupLocation.FROM_TEST);
         assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);
         PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);

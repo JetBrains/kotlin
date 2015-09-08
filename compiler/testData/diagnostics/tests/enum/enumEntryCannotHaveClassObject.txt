@@ -1,8 +1,8 @@
 package
 
-internal fun f(): [ERROR : Error function type]
+public fun f(): [ERROR : Error function type]
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry FIRST
 
     enum entry SECOND

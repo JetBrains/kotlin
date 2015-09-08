@@ -97,7 +97,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                   "",
                   null,
                   "",
-                  Visibilities.INTERNAL,
+                  Visibilities.DEFAULT_VISIBILITY,
                   Collections.<JetParameterInfo>emptyList(),
                   null,
                   method,

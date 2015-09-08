@@ -1,8 +1,8 @@
 package test
 
-internal final class ExtPropInClass {
+public final class ExtPropInClass {
     /*primary*/ public constructor ExtPropInClass()
-    internal final var kotlin.Int.itIs: kotlin.Int
-        internal final fun kotlin.Int.<get-itIs>(): kotlin.Int
-        internal final fun kotlin.Int.<set-itIs>(/*0*/ p: kotlin.Int): kotlin.Unit
+    public final var kotlin.Int.itIs: kotlin.Int
+        public final fun kotlin.Int.<get-itIs>(): kotlin.Int
+        public final fun kotlin.Int.<set-itIs>(/*0*/ p: kotlin.Int): kotlin.Unit
 }

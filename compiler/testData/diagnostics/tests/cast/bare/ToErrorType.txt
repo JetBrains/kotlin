@@ -1,8 +1,8 @@
 package
 
-internal fun foo(/*0*/ p: P): kotlin.Any
+public fun foo(/*0*/ p: P): kotlin.Any
 
-internal final class P {
+public final class P {
     public constructor P()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

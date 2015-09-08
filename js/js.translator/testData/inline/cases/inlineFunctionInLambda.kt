@@ -2,15 +2,15 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: doNothingNoInline
 
-inline fun <T> doNothing1(a: T): T {
+internal inline fun <T> doNothing1(a: T): T {
     return a
 }
 
-inline fun <T> doNothing2(a: T, f: (T) -> T): T {
+internal inline fun <T> doNothing2(a: T, f: (T) -> T): T {
     return f(a)
 }
 
-fun doNothingNoInline(a: Int): Int {
+internal fun doNothingNoInline(a: Int): Int {
     return doNothing2(a, { x -> doNothing1(x)})
 }
 

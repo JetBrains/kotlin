@@ -36,17 +36,17 @@ private object O {
     }
 }
 
-fun test1(x: Int, y: Int): Int = apply(x) { it * y }
+internal fun test1(x: Int, y: Int): Int = apply(x) { it * y }
 
-fun test2(m: M, x: Int, y: Int): Int = m.applyM(x) { it * y }
+internal fun test2(m: M, x: Int, y: Int): Int = m.applyM(x) { it * y }
 
-fun test3(n: N, x: Int, y: Int): Int = n.applyN(x) { it * y }
+internal fun test3(n: N, x: Int, y: Int): Int = n.applyN(x) { it * y }
 
-object LTest : L() {
+internal object LTest : L() {
     fun test4(l: L, x: Int, y: Int): Int = l.applyL(x) { it * y }
 }
 
-fun test5(x: Int, y: Int): Int = O.OInner.applyO(x) { it * y }
+internal fun test5(x: Int, y: Int): Int = O.OInner.applyO(x) { it * y }
 
 fun box(): String {
     assertEquals(6, test1(2, 3))

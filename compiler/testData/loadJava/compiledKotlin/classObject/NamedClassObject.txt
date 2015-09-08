@@ -1,10 +1,10 @@
 package test
 
-internal final class NamedClassObject {
+public final class NamedClassObject {
     /*primary*/ public constructor NamedClassObject()
 
     public companion object Named {
         /*primary*/ private constructor Named()
-        internal final fun f(): kotlin.Int
+        public final fun f(): kotlin.Int
     }
 }

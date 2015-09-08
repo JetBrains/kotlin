@@ -1,9 +1,9 @@
 package test
 
-internal interface Bbb {
+public interface Bbb {
 }
 
-internal final class ClassObjectextendsTrait {
+public final class ClassObjectextendsTrait {
     /*primary*/ public constructor ClassObjectextendsTrait()
 
     public companion object Companion : test.Bbb {

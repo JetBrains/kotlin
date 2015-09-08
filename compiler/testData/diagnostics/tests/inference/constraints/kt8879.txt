@@ -1,0 +1,17 @@
+package
+
+public fun </*0*/ X> bar(): Inv<X>
+public fun </*0*/ T : Inv2<T>> foo(/*0*/ klass: Inv<T>): kotlin.String?
+public fun test(): kotlin.Unit
+
+public interface Inv</*0*/ I> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Inv2</*0*/ I> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

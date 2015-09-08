@@ -1,7 +1,7 @@
 package
 
-internal fun foo(/*0*/ ann: A): kotlin.Unit
-internal fun A.bar(): kotlin.Unit
+public fun foo(/*0*/ ann: A): kotlin.Unit
+public fun A.bar(): kotlin.Unit
 
 public final class A : kotlin.Annotation {
     public constructor A(/*0*/ value: kotlin.String, /*1*/ arg: kotlin.Int)
@@ -14,7 +14,7 @@ public final class A : kotlin.Annotation {
     public abstract fun value(): kotlin.String
 }
 
-A(arg = 1, value = "a") internal final class MyClass {
+A(arg = 1, value = "a") public final class MyClass {
     public constructor MyClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

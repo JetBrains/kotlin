@@ -1,9 +1,9 @@
 package
 
-internal fun test(): kotlin.Unit
-internal fun </*0*/ T> with(/*0*/ t: T, /*1*/ f: T.() -> kotlin.Unit): kotlin.Unit
-internal fun J?.bar(): kotlin.Unit
-internal fun J.foo(): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun </*0*/ T> with(/*0*/ t: T, /*1*/ f: T.() -> kotlin.Unit): kotlin.Unit
+public fun J?.bar(): kotlin.Unit
+public fun J.foo(): kotlin.Unit
 
 public open class J {
     public constructor J()

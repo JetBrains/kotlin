@@ -7,7 +7,7 @@
 import java.util.*
 
 // SIBLING:
-class Foo<T> {
+internal class Foo<T> {
     val map = HashMap<String, T>()
 
     fun test(l: String): T {

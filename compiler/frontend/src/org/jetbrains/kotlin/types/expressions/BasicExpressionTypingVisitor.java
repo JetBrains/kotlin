@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
@@ -826,6 +827,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "ExclExcl", Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
         JetTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
+
+        if (ArgumentTypeResolver.isFunctionLiteralArgument(baseExpression, context)) {
+            context.trace.report(NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL.on(operationSign));
+            return baseTypeInfo;
+        }
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
         JetType baseType = baseTypeInfo.getType();
         if (baseType == null) {
@@ -1149,12 +1155,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "Elvis", Lists.newArrayList("left", "right"), Lists.newArrayList(true, false), contextWithExpectedType, null);
         JetTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
+        if (ArgumentTypeResolver.isFunctionLiteralArgument(left, context)) {
+            context.trace.report(USELESS_ELVIS_ON_FUNCTION_LITERAL.on(expression.getOperationReference()));
+            if (leftTypeInfo == null) return TypeInfoFactoryPackage.noTypeInfo(context);
+        }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         JetType leftType = leftTypeInfo.getType();
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
         JetTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
+        if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralArgument(right, context)) {
+            // the type is computed later in call completer according to the '?:' semantics as a function
+            return TypeInfoFactoryPackage.noTypeInfo(context);
+        }
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;
         boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         JetType rightType = rightTypeInfo.getType();

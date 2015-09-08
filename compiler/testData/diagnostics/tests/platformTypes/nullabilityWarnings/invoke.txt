@@ -1,6 +1,6 @@
 package
 
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 public open class J {
     public constructor J()

@@ -3,15 +3,15 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: testImplicitThis
 // CHECK_CONTAINS_NO_CALLS: testExplicitThis
 
-class A(var value: Int)
+internal class A(var value: Int)
 
-fun testImplicitThis(a: A, newValue: Int) {
+internal fun testImplicitThis(a: A, newValue: Int) {
     with (a) {
         value = newValue
     }
 }
 
-fun testExplicitThis(a: A, newValue: Int) {
+internal fun testExplicitThis(a: A, newValue: Int) {
     with (a) {
         this.value = newValue
     }

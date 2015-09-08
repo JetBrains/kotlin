@@ -43,7 +43,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import kotlin.reflect.KotlinReflectionInternalError
 
-sealed class JvmFunctionSignature {
+internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
     class KotlinFunction(
@@ -80,7 +80,7 @@ sealed class JvmFunctionSignature {
     }
 }
 
-sealed class JvmPropertySignature {
+internal sealed class JvmPropertySignature {
     /**
      * Returns the JVM signature of the getter of this property. In case the property doesn't have a getter,
      * constructs the signature of its imaginary default getter. See CallableReference#getSignature for more information
@@ -116,7 +116,7 @@ sealed class JvmPropertySignature {
     }
 }
 
-object RuntimeTypeMapper {
+internal object RuntimeTypeMapper {
     fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): JvmFunctionSignature {
         // Fake overrides don't have a source element, so we need to take a declaration.
         // TODO: support the case when a fake override overrides several declarations with different signatures

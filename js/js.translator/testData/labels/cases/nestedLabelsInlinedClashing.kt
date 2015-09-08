@@ -9,28 +9,28 @@ class State() {
     public var value: Int = 0
 }
 
-inline fun test1(state: State) {
+internal inline fun test1(state: State) {
     loop@ for (i in 1..10) {
         state.value++
         if (i == 2) break@loop
     }
 }
 
-inline fun test2(state: State) {
+internal inline fun test2(state: State) {
     loop@ for (i in 1..10) {
         test1(state)
         if (i == 2) break@loop
     }
 }
 
-inline fun test3(state: State) {
+internal inline fun test3(state: State) {
     loop@ for (i in 1..10) {
         test2(state)
         if (i == 2) break@loop
     }
 }
 
-fun test(state: State) {
+internal fun test(state: State) {
     test3(state)
 }
 

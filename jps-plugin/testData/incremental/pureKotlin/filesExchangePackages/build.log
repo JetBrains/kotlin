@@ -1,7 +1,8 @@
 Cleaning output files:
-out/production/module/bar/BarPackage$c$*.class
+out/production/module/META-INF/module.kotlin_module
 out/production/module/bar/BarPackage.class
-out/production/module/foo/FooPackage$b$*.class
+out/production/module/bar/CKt.class
+out/production/module/foo/BKt.class
 out/production/module/foo/FooPackage.class
 End of files
 Compiling files:
@@ -9,9 +10,15 @@ src/b.kt
 src/c.kt
 End of files
 Cleaning output files:
-out/production/module/foo/FooPackage$a$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/bar/BKt.class
+out/production/module/bar/BarPackage.class
+out/production/module/foo/AKt.class
+out/production/module/foo/CKt.class
 out/production/module/foo/FooPackage.class
 End of files
 Compiling files:
 src/a.kt
+src/b.kt
+src/c.kt
 End of files

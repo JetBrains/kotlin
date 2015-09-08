@@ -54,7 +54,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetTestUtils.loadJetFile(getProject(), file);
 
         Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        AnalysisResult analysisResult = JetTestUtils.analyzeFile(jetFile);
+        AnalysisResult analysisResult = JetTestUtils.analyzeFile(jetFile, getEnvironment());
         List<JetDeclaration> declarations = jetFile.getDeclarations();
         BindingContext bindingContext = analysisResult.getBindingContext();
         for (JetDeclaration declaration : declarations) {

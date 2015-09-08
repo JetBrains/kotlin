@@ -20,9 +20,9 @@ public/*package*/ interface JSuper2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface KSuper {
+public interface KSuper {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
+    public abstract fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -48,7 +48,7 @@ public/*package*/ interface Sub3 : JSuper1, JSuper2, KSuper {
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class SubSub1 : Sub1 {
+public final class SubSub1 : Sub1 {
     public constructor SubSub1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
@@ -56,7 +56,7 @@ internal final class SubSub1 : Sub1 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class SubSub2 : Sub2 {
+public final class SubSub2 : Sub2 {
     public constructor SubSub2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
@@ -64,7 +64,7 @@ internal final class SubSub2 : Sub2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class SubSub3 : Sub3 {
+public final class SubSub3 : Sub3 {
     public constructor SubSub3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit

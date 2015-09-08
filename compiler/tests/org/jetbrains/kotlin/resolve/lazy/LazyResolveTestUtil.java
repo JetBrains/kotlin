@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -41,21 +42,27 @@ public class LazyResolveTestUtil {
     }
 
     @NotNull
-    public static ModuleDescriptor resolveProject(@NotNull Project project) {
-        return resolve(project, Collections.<JetFile>emptyList());
+    public static ModuleDescriptor resolveProject(@NotNull Project project, @NotNull KotlinCoreEnvironment environment) {
+        return resolve(project, Collections.<JetFile>emptyList(), environment);
     }
 
     @NotNull
-    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles) {
-        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles);
+    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles, @NotNull KotlinCoreEnvironment environment) {
+        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles, environment);
     }
 
     @NotNull
-    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+    public static ModuleDescriptor resolve(
+            @NotNull Project project,
+            @NotNull BindingTrace trace,
+            @NotNull List<JetFile> sourceFiles,
+            @NotNull KotlinCoreEnvironment environment
+    ) {
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME);
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations
+                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
+                new JvmPackagePartProvider(environment)
         );
 
         return moduleContext.getModule();

@@ -29,7 +29,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -101,7 +101,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             return PlatformIcons.PACKAGE_ICON;
         }
 
-        if (psiElement instanceof KotlinLightClassForPackage) {
+        if (psiElement instanceof KotlinLightClassForFacade) {
             return JetIcons.FILE;
         }
 

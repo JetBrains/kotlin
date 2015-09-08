@@ -1,6 +1,6 @@
 package
 
-internal open class Bbb {
+public open class Bbb {
     public constructor Bbb()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

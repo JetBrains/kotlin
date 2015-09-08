@@ -97,6 +97,12 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest(fileName);
         }
 
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateFunArgumentsResolve.kt")
         public void testPrivateFunArgumentsResolve() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
@@ -118,6 +124,18 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/protectedMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithoutBraces.kt")
+        public void testSecondaryConstructorWithoutBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/secondaryConstructorWithoutBraces.kt");
             doTest(fileName);
         }
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderIm
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -53,12 +54,15 @@ public class DeserializerForDecompiler(
             ResolveEverythingToKotlinAnyLocalClassResolver, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
     )
 
-    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        assert(packageFqName == directoryPackageFqName) { "Was called for $packageFqName but only $directoryPackageFqName is expected" }
-        val binaryClassForPackageClass = classFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
+        val packageFqName = facadeFqName.parent()
+        assert(packageFqName == directoryPackageFqName) {
+            "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
+        }
+        val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
-            LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
+            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.getClassId()}")
             return emptyList()
         }
         val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)

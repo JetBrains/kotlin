@@ -8,13 +8,14 @@
 
 @java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass Ann
 
-@kotlin.jvm.internal.KotlinSyntheticClass _DefaultPackage$onReceiver$b389baba {
+@kotlin.jvm.internal.KotlinFileFacade OnReceiverKt {
     @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
     @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
 }
 
 @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
     field $kotlinPackage: kotlin.reflect.KPackage
+    field $moduleName: java.lang.String
     method <clinit>(): void
     @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
     @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String

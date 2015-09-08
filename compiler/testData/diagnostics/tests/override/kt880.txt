@@ -11,7 +11,7 @@ public abstract class A {
 public interface I {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal abstract fun test(): kotlin.Unit
+    public abstract fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -19,7 +19,7 @@ public open class T : A, I {
     public constructor T()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal open fun main(): kotlin.Unit
+    public open fun main(): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun test(): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -1,6 +1,6 @@
 package
 
-internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplementingTraitWithFun>, T1 {
+public final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplementingTraitWithFun>, T1 {
     enum entry E1
 
     enum entry E2
@@ -9,7 +9,7 @@ internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImpleme
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
     public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
     public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
@@ -20,13 +20,13 @@ internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImpleme
     public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithFun>
 }
 
-internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplementingTraitWithVal>, T2 {
+public final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplementingTraitWithVal>, T2 {
     enum entry E1
 
     enum entry E2
 
     private constructor EnumImplementingTraitWithVal()
-    internal abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
     public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -40,15 +40,15 @@ internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImpleme
     public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithVal>
 }
 
-internal interface T1 {
+public interface T1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal abstract fun foo(): kotlin.Unit
+    public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface T2 {
-    internal abstract val bar: kotlin.Int
+public interface T2 {
+    public abstract val bar: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

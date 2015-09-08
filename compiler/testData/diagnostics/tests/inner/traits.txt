@@ -1,23 +1,23 @@
 package
 
-internal interface Foo {
-    internal abstract val b: Foo.Bar
-    internal abstract val b1: Foo.Bar
+public interface Foo {
+    public abstract val b: Foo.Bar
+    public abstract val b1: Foo.Bar
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal interface Bar {
+    public interface Bar {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-internal interface Foo2 : Foo {
-    internal abstract override /*1*/ /*fake_override*/ val b: Foo.Bar
-    internal abstract override /*1*/ /*fake_override*/ val b1: Foo.Bar
-    internal abstract val bb1: Foo.Bar
+public interface Foo2 : Foo {
+    public abstract override /*1*/ /*fake_override*/ val b: Foo.Bar
+    public abstract override /*1*/ /*fake_override*/ val b1: Foo.Bar
+    public abstract val bb1: Foo.Bar
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

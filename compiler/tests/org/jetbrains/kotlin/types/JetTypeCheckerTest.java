@@ -599,7 +599,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private JetScope getDeclarationsScope(String path) throws IOException {
         ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolve(
                 getProject(),
-                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path)))
+                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path))),
+                getEnvironment()
         );
 
         FqName fqName = new FqName("testData");
@@ -616,7 +617,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         List<JetScope> scopeChain = new ArrayList<JetScope>();
         scopeChain.add(writableScope);
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(getProject());
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(getProject(), getEnvironment());
         for (ImportPath defaultImport : module.getDefaultImports()) {
             FqName fqName = defaultImport.fqnPart();
             if (defaultImport.isAllUnder()) {

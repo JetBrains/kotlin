@@ -11,10 +11,10 @@ package outer {
     }
 
     package outer.p1 {
-        internal fun use(): kotlin.Unit
+        public fun use(): kotlin.Unit
 
         package outer.p1.p2 {
-            internal fun use(): kotlin.Unit
+            public fun use(): kotlin.Unit
         }
     }
 }

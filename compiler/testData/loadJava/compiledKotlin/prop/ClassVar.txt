@@ -1,8 +1,8 @@
 package test
 
-internal final class ClassVar {
+public final class ClassVar {
     /*primary*/ public constructor ClassVar()
-    internal final var aa: kotlin.Int
-        internal final fun <get-aa>(): kotlin.Int
-        internal final fun <set-aa>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final var aa: kotlin.Int
+        public final fun <get-aa>(): kotlin.Int
+        public final fun <set-aa>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 }

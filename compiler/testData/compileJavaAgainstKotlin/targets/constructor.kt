@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.CONSTRUCTOR)
+@Target(AnnotationTarget.CONSTRUCTOR)
 annotation class constructor

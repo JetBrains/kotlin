@@ -1,6 +1,6 @@
 package test
 
-internal final class Int {
+public final class Int {
     /*primary*/ public constructor Int()
 
     public companion object Companion {
@@ -11,7 +11,7 @@ internal final class Int {
 public final class Outer {
     /*primary*/ public constructor Outer()
 
-    internal final class Int {
+    public final class Int {
         /*primary*/ public constructor Int()
 
         public companion object Companion {

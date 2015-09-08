@@ -2,5 +2,5 @@
 
 package test
 
-target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASSIFIER)
 public annotation class TargetedAnnotation

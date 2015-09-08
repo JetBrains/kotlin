@@ -1,7 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
-target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Ann
 
 class A {

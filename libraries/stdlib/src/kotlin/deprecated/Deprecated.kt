@@ -40,8 +40,8 @@ public fun <T> countTo(n: Int): (T) -> Boolean {
 deprecated("Use contains() function instead", ReplaceWith("contains(item)"))
 public fun <T> Iterable<T>.containsItem(item : T) : Boolean = contains(item)
 
-deprecated("Use sortBy() instead", ReplaceWith("sortBy(comparator)"))
-public fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> = sortBy(comparator)
+deprecated("Use sortBy() instead", ReplaceWith("sortedWith(comparator)"))
+public fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> = sortedWith(comparator)
 
 deprecated("Use size() instead", ReplaceWith("size()"))
 public val Array<*>.size: Int get() = size()

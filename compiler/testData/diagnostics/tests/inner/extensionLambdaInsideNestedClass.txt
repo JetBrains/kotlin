@@ -2,13 +2,13 @@ package
 
 package f {
 
-    internal object A {
+    public object A {
         private constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class LoginFormPage : f.Request {
+        public final class LoginFormPage : f.Request {
             public constructor LoginFormPage()
             invisible_fake final override /*1*/ /*fake_override*/ val handler: f.ActionContext.() -> kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -17,26 +17,26 @@ package f {
         }
     }
 
-    internal interface ActionContext {
-        internal abstract val session: kotlin.Map<kotlin.String, kotlin.String>
+    public interface ActionContext {
+        public abstract val session: kotlin.Map<kotlin.String, kotlin.String>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class C {
+        public final class C {
             public constructor C()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-            internal final class LoginFormPage : f.Request {
+            public final class LoginFormPage : f.Request {
                 public constructor LoginFormPage()
                 invisible_fake final override /*1*/ /*fake_override*/ val handler: f.ActionContext.() -> kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -51,7 +51,7 @@ package f {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-            internal final class LoginFormPage : f.Request {
+            public final class LoginFormPage : f.Request {
                 public constructor LoginFormPage()
                 invisible_fake final override /*1*/ /*fake_override*/ val handler: f.ActionContext.() -> kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -61,7 +61,7 @@ package f {
         }
     }
 
-    internal open class Request {
+    public open class Request {
         public constructor Request(/*0*/ handler: f.ActionContext.() -> kotlin.Unit)
         private final val handler: f.ActionContext.() -> kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -10,7 +10,7 @@ public/*package*/ interface Sub : Super {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class SubSub : Sub {
+public final class SubSub : Sub {
     public constructor SubSub()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ subName: kotlin.Long): kotlin.Unit

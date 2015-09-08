@@ -76,18 +76,18 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testObjectLiteralInPackageClass() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$outerClassInfo$", null, null);
-        doCustomTest("foo/FooPackage\\$.+\\$packageObjectLiteral\\$1", expectedInfo, "outerClassInfo");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", null, null);
+        doCustomTest("foo/OuterClassInfoKt\\$packageObjectLiteral\\$1", expectedInfo, "outerClassInfo");
     }
 
     public void testLocalClassInTopLevelFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
-        doCustomTest("foo/FooPackage\\$.+\\$packageMethod\\$PackageLocalClass", expectedInfo, "outerClassInfo");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", "packageMethod", "(Lfoo/Foo;)V");
+        doCustomTest("foo/OuterClassInfoKt\\$packageMethod\\$PackageLocalClass", expectedInfo, "outerClassInfo");
     }
 
     public void testLocalObjectInTopLevelFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
-        doCustomTest("foo/FooPackage\\$.+\\$packageMethod\\$PackageLocalObject", expectedInfo, "outerClassInfo");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", "packageMethod", "(Lfoo/Foo;)V");
+        doCustomTest("foo/OuterClassInfoKt\\$packageMethod\\$PackageLocalObject", expectedInfo, "outerClassInfo");
     }
 
     public void testLocalObjectInInlineFunction() throws Exception {

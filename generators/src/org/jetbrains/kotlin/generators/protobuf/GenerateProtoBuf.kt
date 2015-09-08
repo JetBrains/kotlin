@@ -50,7 +50,8 @@ public val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/deserialization/src/descriptors.proto"),
         ProtoPath("core/deserialization/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
-        ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto")
+        ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto"),
+        ProtoPath("core/descriptor.loader.java/src/jvm_package_table.proto")
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/deserialization/src/ext_options.proto")

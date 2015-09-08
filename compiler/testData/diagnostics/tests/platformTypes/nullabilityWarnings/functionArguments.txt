@@ -1,8 +1,8 @@
 package
 
-internal fun bar(/*0*/ j: J?): kotlin.Unit
-internal fun foo(/*0*/ j: J): kotlin.Unit
-internal fun test(): kotlin.Unit
+public fun bar(/*0*/ j: J?): kotlin.Unit
+public fun foo(/*0*/ j: J): kotlin.Unit
+public fun test(): kotlin.Unit
 
 public open class J {
     public constructor J()

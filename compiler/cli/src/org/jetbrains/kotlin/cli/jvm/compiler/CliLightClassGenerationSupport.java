@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.asJava.LightClassConstructionContext;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -197,17 +197,44 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
         Collection<JetFile> filesInPackage = findFilesForPackage(packageFqName, scope);
 
-        List<JetFile> filesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage);
+        List<JetFile> filesWithCallables = PackagePartClassUtils.getFilesWithCallables(filesInPackage);
         if (filesWithCallables.isEmpty()) return Collections.emptyList();
 
         //noinspection RedundantTypeArguments
-        return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, scope, filesWithCallables));
+        return UtilsPackage.<PsiClass>emptyOrSingletonList(
+                KotlinLightClassForFacade.Factory.createForPackageFacade(psiManager, packageFqName, scope, filesWithCallables));
     }
 
     @Nullable
     @Override
     public ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject) {
         return bindingContext.get(BindingContext.CLASS, classOrObject);
+    }
+
+    @NotNull
+    @Override
+    public Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
+        Collection<JetFile> filesForFacade = findFilesForFacade(facadeFqName, scope);
+        if (filesForFacade.isEmpty()) return Collections.emptyList();
+
+        //noinspection RedundantTypeArguments
+        return UtilsPackage.<PsiClass>emptyOrSingletonList(
+                KotlinLightClassForFacade.Factory.createForFacade(psiManager, facadeFqName, scope, filesForFacade));
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
+        // TODO We need a way to plug some platform-dependent stuff into LazyTopDownAnalyzer.
+        // It already performs some ad hoc stuff for packages->files mapping, anyway.
+        Collection<JetFile> filesInPackage = findFilesForPackage(facadeFqName.parent(), scope);
+        return PackagePartClassUtils.getFilesForPart(facadeFqName, filesInPackage);
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForFacade(@NotNull Collection<JetFile> files) {
+        return getContext();
     }
 
     @NotNull

@@ -12,7 +12,7 @@ fun <T> Comparable<T>.extension2() {}
 
 val a: Int = 1
 val <T> Comparable<T>.a = "String"
-val b = object {}
+internal val b = object {}
 
 class A1
 class A2(val a: Int, var b = "some")

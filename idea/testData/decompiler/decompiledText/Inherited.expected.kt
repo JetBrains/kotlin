@@ -3,8 +3,8 @@
 
 package test
 
-internal interface Inherited : dependency.Base {
+public interface Inherited : dependency.Base {
     public companion object {
-        internal final val INT_CONST: kotlin.Int /* compiled code */
+        public final val INT_CONST: kotlin.Int /* compiled code */
     }
 }

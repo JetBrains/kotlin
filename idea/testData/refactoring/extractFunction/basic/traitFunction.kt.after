@@ -3,5 +3,5 @@ interface T{
         return i()
     }
 
-    fun i() = 1
+    fun i(): Int = 1
 }

@@ -1,10 +1,10 @@
 package
 
-internal fun directInvocation(): kotlin.Unit
-internal fun multipleParameters(): kotlin.Unit
-internal fun unresolvedParameter(): kotlin.Unit
-internal fun viaFakeOverride(): kotlin.Unit
-internal fun viaRealOverride(): kotlin.Unit
+public fun directInvocation(): kotlin.Unit
+public fun multipleParameters(): kotlin.Unit
+public fun unresolvedParameter(): kotlin.Unit
+public fun viaFakeOverride(): kotlin.Unit
+public fun viaRealOverride(): kotlin.Unit
 
 public/*package*/ open class JavaSuperClass {
     public/*package*/ constructor JavaSuperClass()
@@ -15,7 +15,7 @@ public/*package*/ open class JavaSuperClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open class KotlinSubClass : JavaSuperClass {
+public open class KotlinSubClass : JavaSuperClass {
     public constructor KotlinSubClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
@@ -24,7 +24,7 @@ internal open class KotlinSubClass : JavaSuperClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class KotlinSubSubClass : KotlinSubClass {
+public final class KotlinSubSubClass : KotlinSubClass {
     public constructor KotlinSubSubClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit

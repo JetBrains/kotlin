@@ -2,22 +2,22 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: factAbsNoInline1
 
-class State(value: Int) {
+internal class State(value: Int) {
     public var value: Int = value
 }
 
-inline fun multiply(state: State, factor: Int) {
+internal inline fun multiply(state: State, factor: Int) {
     state.value *= factor
 }
 
-inline fun abs(state: State) {
+internal inline fun abs(state: State) {
     val value = state.value
     if (value < 0) {
         multiply(state, -1)
     }
 }
 
-inline fun factAbs(state: State) {
+internal inline fun factAbs(state: State) {
     abs(state)
 
     if (state.value == 0) {
@@ -32,12 +32,12 @@ inline fun factAbs(state: State) {
     }
 }
 
-fun factAbsNoInline1(state: State): Int {
+internal fun factAbsNoInline1(state: State): Int {
     factAbs(state)
     return state.value
 }
 
-fun factAbsNoInline2(n: Int): Int {
+internal fun factAbsNoInline2(n: Int): Int {
     return factAbsNoInline1(State(n))
 }
 

@@ -1,18 +1,18 @@
 package foo
 
-val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
+internal val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
 
-fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
+internal fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
 
-native("\"O\"") val foo: String = noImpl
-native("boo") val bar: String = noImpl
+internal native("\"O\"") val foo: String = noImpl
+internal native("boo") val bar: String = noImpl
 
-class A
-native("__proto__") val Any.proto: String get() = noImpl
-native("__proto__") val A.proto: String get() = noImpl
+internal class A
+internal native("__proto__") val Any.proto: String get() = noImpl
+internal native("__proto__") val A.proto: String get() = noImpl
 
-fun actual(foo: String, native("boo") bar: String) = foo + bar
-fun expected(foo: String, boo: String) = foo + boo
+internal fun actual(foo: String, native("boo") bar: String) = foo + bar
+internal fun expected(foo: String, boo: String) = foo + boo
 
 fun box(): String {
     val OK = "OK"

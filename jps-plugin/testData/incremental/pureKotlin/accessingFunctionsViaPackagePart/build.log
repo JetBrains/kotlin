@@ -1,7 +1,8 @@
 Cleaning output files:
-out/production/module/test/TestPackage$b$*.class
-out/production/module/test/TestPackage$usage$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/test/BKt.class
 out/production/module/test/TestPackage.class
+out/production/module/test/UsageKt.class
 End of files
 Compiling files:
 src/b.kt

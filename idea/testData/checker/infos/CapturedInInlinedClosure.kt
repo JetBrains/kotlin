@@ -1,4 +1,4 @@
-inline fun <T> run(f: () -> T) = f()
+<info descr="null">inline</info> fun <T> run(f: () -> T) = f()
 fun run2(f: () -> Unit) = f()
 
 fun inline() {
@@ -90,7 +90,7 @@ fun objectExpression() {
     }
 }
 
-inline fun withNoInlineParam(noinline task1: () -> Unit, task2: () -> Unit) {
+<info>inline</info> fun withNoInlineParam(<info>noinline</info> task1: () -> Unit, task2: () -> Unit) {
     task1()
     task2()
 }

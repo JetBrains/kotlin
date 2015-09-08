@@ -1,16 +1,16 @@
 package
 
-internal fun Activity.toast(): kotlin.Unit
+public fun Activity.toast(): kotlin.Unit
 
-internal final class Activity {
+public final class Activity {
     public constructor Activity()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class Fragment {
+    public final class Fragment {
         public constructor Fragment()
-        internal final fun call(): [ERROR : Error function type]
+        public final fun call(): [ERROR : Error function type]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,12 +21,12 @@ public final class Manager {
     public constructor Manager()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal final fun task(/*0*/ callback: Manager.() -> kotlin.Unit): Manager.Task
+    public final fun task(/*0*/ callback: Manager.() -> kotlin.Unit): Manager.Task
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal final class Task : java.lang.Runnable {
+    public final class Task : java.lang.Runnable {
         public constructor Task(/*0*/ callback: Manager.() -> kotlin.Unit)
-        internal final val callback: Manager.() -> kotlin.Unit
+        public final val callback: Manager.() -> kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ fun run(): kotlin.Unit
@@ -34,17 +34,17 @@ public final class Manager {
     }
 }
 
-internal final class Outer {
+public final class Outer {
     public constructor Outer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     private final fun kotlin.String.extension(): kotlin.String
 
-    internal final class Nested {
+    public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun foo(/*0*/ s: kotlin.String): [ERROR : Error function type]
+        public final fun foo(/*0*/ s: kotlin.String): [ERROR : Error function type]
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

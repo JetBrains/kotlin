@@ -298,13 +298,13 @@ public class DescriptorResolver {
             JetModifierList modifierList = modifierListOwner.getModifierList();
             defaultVisibility = modifierList != null && modifierList.hasModifier(OVERRIDE_KEYWORD)
                                            ? Visibilities.INHERITED
-                                           : Visibilities.INTERNAL;
+                                           : Visibilities.DEFAULT_VISIBILITY;
         }
         else if (containingDescriptor instanceof FunctionDescriptor || containingDescriptor instanceof PropertyDescriptor) {
             defaultVisibility = Visibilities.LOCAL;
         }
         else {
-            defaultVisibility = Visibilities.INTERNAL;
+            defaultVisibility = Visibilities.DEFAULT_VISIBILITY;
         }
         return defaultVisibility;
     }

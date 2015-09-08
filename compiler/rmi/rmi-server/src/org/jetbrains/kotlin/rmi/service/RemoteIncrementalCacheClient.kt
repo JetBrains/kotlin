@@ -22,7 +22,15 @@ import org.jetbrains.kotlin.rmi.CompileService
 public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache): IncrementalCache {
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
-    override fun getPackageData(fqName: String): ByteArray? = cache.getPackageData(fqName)
+    override fun getPackagePartData(fqName: String): ByteArray? = cache.getPackagePartData(fqName)
+
+    override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
+
+    override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
+        cache.registerInline(fromPath, jvmSignature, toPath)
+    }
+
+    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
 
     override fun close(): Unit = cache.close()
 }

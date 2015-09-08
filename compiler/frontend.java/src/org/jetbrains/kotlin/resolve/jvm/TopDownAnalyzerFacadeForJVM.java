@@ -24,16 +24,17 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.frontend.java.di.DiPackage;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.modules.ModulesPackage;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -91,9 +92,10 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @NotNull TopDownAnalysisMode topDownAnalysisMode
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
+            PackagePartProvider packagePartProvider
     ) {
-        return analyzeFilesWithJavaIntegration(moduleContext, files, trace, topDownAnalysisMode, null, null);
+        return analyzeFilesWithJavaIntegration(moduleContext, files, trace, topDownAnalysisMode, null, null, packagePartProvider);
     }
 
     @NotNull
@@ -101,12 +103,13 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @Nullable List<String> moduleIds,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
+            @Nullable List<Module> modules,
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull PackagePartProvider packagePartProvider
     ) {
         return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCompilationComponents
-        );
+                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, modules, incrementalCompilationComponents,
+                packagePartProvider);
     }
 
     @NotNull
@@ -115,8 +118,9 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @Nullable List<String> moduleIds,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
+            @Nullable List<Module> modules,
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull PackagePartProvider packagePartProvider
     ) {
         Project project = moduleContext.getProject();
         List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
@@ -127,25 +131,37 @@ public enum TopDownAnalyzerFacadeForJVM {
         LookupTracker lookupTracker =
                 incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.DO_NOTHING;
 
+        List<TargetId> targetIds = null;
+        if (modules != null) {
+            targetIds = new ArrayList<TargetId>(modules.size());
+
+            for (Module module : modules) {
+                targetIds.add(ModulesPackage.TargetId(module));
+            }
+        }
+
+        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager());
+
         ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 providerFactory,
                 GlobalSearchScope.allScope(project),
-                lookupTracker
+                lookupTracker,
+                packagePartProvider
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
-        if (moduleIds != null && incrementalCompilationComponents != null) {
-            for (String moduleId : moduleIds) {
-                IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+        if (targetIds != null && incrementalCompilationComponents != null) {
+            for (TargetId targetId : targetIds) {
+                IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
 
                 additionalProviders.add(
                         new IncrementalPackageFragmentProvider(
                                 files, moduleContext.getModule(), moduleContext.getStorageManager(),
                                 container.getDeserializationComponentsForJava().getComponents(),
-                                incrementalCache, moduleId
+                                incrementalCache, targetId
                         )
                 );
             }
@@ -169,9 +185,9 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static MutableModuleContext createContextWithSealedModule(@NotNull Project project) {
+    public static MutableModuleContext createContextWithSealedModule(@NotNull Project project, @NotNull String moduleName) {
         MutableModuleContext context = ContextForNewModule(
-                project, Name.special("<shared-module>"), JVM_MODULE_PARAMETERS
+                project, Name.special("<" + moduleName + ">"), JVM_MODULE_PARAMETERS
         );
         context.setDependencies(context.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
         return context;

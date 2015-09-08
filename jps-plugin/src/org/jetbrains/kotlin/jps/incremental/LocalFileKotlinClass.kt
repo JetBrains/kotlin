@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.incremental
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
 class LocalFileKotlinClass private constructor(
@@ -38,6 +39,8 @@ class LocalFileKotlinClass private constructor(
             }
         }
     }
+
+    public val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
 
     override fun getLocation() = file.getAbsolutePath()
 

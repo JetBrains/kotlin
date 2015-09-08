@@ -1,13 +1,13 @@
 package test
 
-internal final class A {
+public final class A {
     /*primary*/ public constructor A()
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 
-    internal final enum class E : kotlin.Enum<test.A.E> {
+    public final enum class E : kotlin.Enum<test.A.E> {
         enum entry ENTRY
 
         /*primary*/ private constructor E()

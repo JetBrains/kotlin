@@ -1,3 +1,3 @@
-data <!WRONG_ANNOTATION_TARGET!>annotation<!> enum class E {
+data <!WRONG_MODIFIER_TARGET!>annotation<!> enum class E {
     D
 }

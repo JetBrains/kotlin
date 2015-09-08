@@ -22,7 +22,7 @@ package kotlin.jvm
  * If a method has N parameters and M of which have default values, M overloads are generated: the first one
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public annotation class JvmOverloads
@@ -33,7 +33,7 @@ public annotation class JvmOverloads
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
  * for more information.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class JvmStatic
@@ -45,7 +45,7 @@ public annotation class JvmStatic
  * for more information.
  * @property name the name of the element.
  */
-target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class JvmName(public val name: String)
@@ -53,7 +53,7 @@ public annotation class JvmName(public val name: String)
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
-target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class publicField

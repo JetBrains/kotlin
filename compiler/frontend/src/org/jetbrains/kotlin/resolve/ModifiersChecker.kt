@@ -57,7 +57,13 @@ public object ModifierCheckerCore {
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
             COMPANION_KEYWORD to EnumSet.of(OBJECT),
-            LATE_INIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY)
+            LATE_INIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY),
+            DATA_KEYWORD      to EnumSet.of(CLASSIFIER),
+            INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, PROPERTY),
+            NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
+            TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
+            EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
+            ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS)
     )
 
     // NOTE: redundant targets must be possible!
@@ -196,6 +202,9 @@ public object ModifierCheckerCore {
                 }
                 else if (!checkParent(trace, second, parentDescriptor)) {
                     incorrectNodes += second
+                }
+                else if ((second.elementType is JetModifierKeywordToken) && second.psi.textContains('@')) {
+                    trace.report(Errors.DEPRECATED_ESCAPED_MODIFIER.on(second.psi))
                 }
             }
         }

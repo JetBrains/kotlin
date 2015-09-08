@@ -1,11 +1,11 @@
 package
 
 package a {
-    internal fun hello(): kotlin.Unit
-    internal fun </*0*/ T> inferenceTest(/*0*/ a: T): T
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
+    public fun hello(): kotlin.Unit
+    public fun </*0*/ T> inferenceTest(/*0*/ a: T): T
+    public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
-    internal final enum class TestEnum : kotlin.Enum<a.TestEnum> {
+    public final enum class TestEnum : kotlin.Enum<a.TestEnum> {
         enum entry FIRST
 
         enum entry SECOND

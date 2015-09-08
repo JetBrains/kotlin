@@ -18,14 +18,13 @@ JetFile: EnumEntryCommaInlineMember.kt
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('FIRST')
         PsiElement(COMMA)(',')
-      PsiWhiteSpace('\n\n    ')
-      ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('inline')
       PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
         <empty list>
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('\n\n    ')
       FUN
+        MODIFIER_LIST
+          PsiElement(inline)('inline')
+        PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

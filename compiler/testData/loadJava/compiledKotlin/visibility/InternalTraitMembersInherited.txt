@@ -1,6 +1,6 @@
 package test
 
-internal interface A {
+public interface A {
     public open var p: kotlin.Int
         public open fun <get-p>(): kotlin.Int
         internal open fun <set-p>(/*0*/ value: kotlin.Int): kotlin.Unit
@@ -9,7 +9,7 @@ internal interface A {
     internal open fun f(): kotlin.Int
 }
 
-internal final class B : test.A {
+public final class B : test.A {
     /*primary*/ public constructor B()
     public open override /*1*/ /*fake_override*/ var p: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun <get-p>(): kotlin.Int

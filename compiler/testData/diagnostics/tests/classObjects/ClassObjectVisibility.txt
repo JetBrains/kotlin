@@ -1,9 +1,9 @@
 package
 
 package foo {
-    internal fun test(): kotlin.Unit
+    public fun test(): kotlin.Unit
 
-    internal final class A {
+    public final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -11,7 +11,7 @@ package foo {
 
         public companion object Companion {
             private constructor Companion()
-            internal final val d: kotlin.Int = 3
+            public final val d: kotlin.Int = 3
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -25,13 +25,13 @@ package foo {
         }
     }
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final class D {
+        public final class D {
             public constructor D()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -46,7 +46,7 @@ package foo {
         }
     }
 
-    internal final class CCC {
+    public final class CCC {
         public constructor CCC()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -54,7 +54,7 @@ package foo {
 
         private companion object Companion {
             private constructor Companion()
-            internal final val classObjectVar: kotlin.Int = 3
+            public final val classObjectVar: kotlin.Int = 3
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

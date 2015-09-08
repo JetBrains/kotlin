@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
@@ -342,7 +344,12 @@ internal class DescriptorRendererImpl(
         var hasTargetedAnnotations = false
 
         val annotationsBuilder = StringBuilder {
-            for ((annotation, target) in annotated.getAnnotations().getAllAnnotations()) {
+            // Sort is needed just to fix some order when annotations resolved from modifiers
+            // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
+            // This hack can be removed when modifiers will be resolved without annotations
+
+            val sortedAnnotations = annotated.getAnnotations().getAllAnnotations().sortedBy { p -> p.annotation.isBuiltinModifier() }
+            for ((annotation, target) in sortedAnnotations) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
                 if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
@@ -366,6 +373,9 @@ internal class DescriptorRendererImpl(
             builder.append("] ")
         }
     }
+
+    private fun AnnotationDescriptor.isBuiltinModifier()
+            = (type.constructor.declarationDescriptor as ClassDescriptor).fqNameSafe in ANNOTATION_MODIFIERS_FQ_NAMES
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {
@@ -413,7 +423,7 @@ internal class DescriptorRendererImpl(
         if (normalizedVisibilities) {
             visibility = visibility.normalize()
         }
-        if (!showInternalKeyword && visibility == Visibilities.INTERNAL) return
+        if (!showInternalKeyword && visibility == Visibilities.DEFAULT_VISIBILITY) return
         builder.append(renderKeyword(visibility.displayName)).append(" ")
     }
 

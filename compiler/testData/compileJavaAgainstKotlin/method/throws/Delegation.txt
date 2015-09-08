@@ -1,24 +1,24 @@
 package test
 
-internal final class E1 : java.lang.Exception {
+public final class E1 : java.lang.Exception {
     public constructor E1()
     public final /*fake_override*/ fun getCause(): kotlin.Throwable?
     public final /*fake_override*/ fun getMessage(): kotlin.String?
     public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
 }
 
-internal final class E2 : java.lang.Exception {
+public final class E2 : java.lang.Exception {
     public constructor E2()
     public final /*fake_override*/ fun getCause(): kotlin.Throwable?
     public final /*fake_override*/ fun getMessage(): kotlin.String?
     public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
 }
 
-internal final class Impl : test.Trait {
+public final class Impl : test.Trait {
     public constructor Impl()
-    internal open fun none(): kotlin.Unit
-    internal open fun one(): kotlin.Unit
-    internal open fun two(): kotlin.Unit
+    public open fun none(): kotlin.Unit
+    public open fun one(): kotlin.Unit
+    public open fun two(): kotlin.Unit
 }
 
 public/*package*/ open class JavaClass {
@@ -26,15 +26,15 @@ public/*package*/ open class JavaClass {
     public/*package*/ open fun testMethod(): kotlin.Unit
 }
 
-internal final class Test : test.Trait {
+public final class Test : test.Trait {
     public constructor Test()
-    internal open /*delegation*/ fun none(): kotlin.Unit
-    internal open /*delegation*/ fun one(): kotlin.Unit
-    internal open /*delegation*/ fun two(): kotlin.Unit
+    public open /*delegation*/ fun none(): kotlin.Unit
+    public open /*delegation*/ fun one(): kotlin.Unit
+    public open /*delegation*/ fun two(): kotlin.Unit
 }
 
-internal interface Trait {
-    internal abstract fun none(): kotlin.Unit
-    internal abstract fun one(): kotlin.Unit
-    internal abstract fun two(): kotlin.Unit
+public interface Trait {
+    public abstract fun none(): kotlin.Unit
+    public abstract fun one(): kotlin.Unit
+    public abstract fun two(): kotlin.Unit
 }

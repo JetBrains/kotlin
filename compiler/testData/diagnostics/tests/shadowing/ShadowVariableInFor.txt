@@ -1,3 +1,3 @@
 package
 
-internal fun ff(): kotlin.Int
+public fun ff(): kotlin.Int

@@ -1,6 +1,6 @@
 package
 
-internal val result: kotlin.(Mutable)List<(raw) kotlin.Any?>!
+public val result: kotlin.(Mutable)List<(raw) kotlin.Any?>!
 
 public/*package*/ open class A</*0*/ T : kotlin.Any!> {
     public/*package*/ constructor A</*0*/ T : kotlin.Any!>()

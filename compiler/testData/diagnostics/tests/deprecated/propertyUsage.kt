@@ -1,18 +1,18 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class Delegate() {
-    Deprecated("text")
+    @Deprecated("text")
     fun get(instance: Any, property: PropertyMetadata) : Int = 1
 
-    Deprecated("text")
+    @Deprecated("text")
     fun set(instance: Any, property: PropertyMetadata, value: Int) {}
 }
 
 class PropertyHolder {
-    Deprecated("text")
+    @Deprecated("text")
     val x = 1
 
-    Deprecated("text")
+    @Deprecated("text")
     var name = "String"
 
     val valDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()

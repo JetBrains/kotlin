@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -246,7 +247,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 jetFiles,
                 moduleTrace,
                 null,
-                null
+                null,
+                new JvmPackagePartProvider(getEnvironment())
         );
     }
 

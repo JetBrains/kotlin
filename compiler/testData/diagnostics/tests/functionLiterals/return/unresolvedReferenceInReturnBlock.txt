@@ -1,4 +1,4 @@
 package
 
-internal val a: () -> kotlin.Nothing
-internal val b: () -> kotlin.Unit
+public val a: () -> kotlin.Nothing
+public val b: () -> kotlin.Unit

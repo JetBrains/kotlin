@@ -4,9 +4,9 @@ package a {
 }
 
 package b {
-    internal fun foo(): kotlin.Int
+    public fun foo(): kotlin.Int
 }
 
 package c {
-    internal fun foo(): kotlin.Int
+    public fun foo(): kotlin.Int
 }

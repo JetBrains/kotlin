@@ -53,7 +53,7 @@ import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -190,7 +190,7 @@ public class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
+    fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         when (root) {
             is JvmClasspathRoot -> {
                 return if (root.file.isFile()) findJarRoot(root) else findLocalDirectory(root)
@@ -377,7 +377,8 @@ public class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.getProject()) {
                 registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
-                registerService(javaClass<KotlinLightClassForPackage.FileStubCache>(), KotlinLightClassForPackage.FileStubCache(this))
+                registerService(javaClass<KotlinLightClassForFacade.PackageFacadeStubCache>(), KotlinLightClassForFacade.PackageFacadeStubCache(this))
+                registerService(javaClass<KotlinLightClassForFacade.FacadeStubCache>(), KotlinLightClassForFacade.FacadeStubCache(this))
             }
         }
 

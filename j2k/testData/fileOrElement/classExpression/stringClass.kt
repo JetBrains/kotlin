@@ -1,1 +1,1 @@
-javaClass<String>()
+String::class.java

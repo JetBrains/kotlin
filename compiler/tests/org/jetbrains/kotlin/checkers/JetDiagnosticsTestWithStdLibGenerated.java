@@ -53,6 +53,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         doTest(fileName);
     }
 
+    @TestMetadata("kt9078.kt")
+    public void testKt9078() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt9078.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outstar.kt")
     public void testOutstar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outstar.kt");

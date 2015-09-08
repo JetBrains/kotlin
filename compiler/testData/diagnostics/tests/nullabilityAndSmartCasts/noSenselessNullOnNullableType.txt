@@ -1,7 +1,7 @@
 package
 
-internal fun bar(): kotlin.String
-internal fun </*0*/ T : kotlin.Number?> baz(/*0*/ t: T): kotlin.String
+public fun bar(): kotlin.String
+public fun </*0*/ T : kotlin.Number?> baz(/*0*/ t: T): kotlin.String
 
 public/*package*/ open class A {
     public/*package*/ constructor A()

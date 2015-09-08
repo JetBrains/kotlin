@@ -163,10 +163,19 @@ public interface JetTokens {
     JetModifierKeywordToken COMPANION_KEYWORD = JetModifierKeywordToken.softKeywordModifier("companion");
     JetModifierKeywordToken SEALED_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("sealed");
 
+    JetModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = PUBLIC_KEYWORD;
+
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
 
     JetModifierKeywordToken LATE_INIT_KEYWORD = JetModifierKeywordToken.softKeywordModifier("lateinit");
+
+    JetModifierKeywordToken DATA_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("data");
+    JetModifierKeywordToken INLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("inline");
+    JetModifierKeywordToken NOINLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("noinline");
+    JetModifierKeywordToken TAILREC_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("tailrec");
+    JetModifierKeywordToken EXTERNAL_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("external");
+    JetModifierKeywordToken ANNOTATION_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("annotation");
 
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
@@ -183,7 +192,9 @@ public interface JetTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD,
-                                             LATE_INIT_KEYWORD
+                                             LATE_INIT_KEYWORD,
+                                             DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
+                                             ANNOTATION_KEYWORD
     );
 
     /*
@@ -195,8 +206,16 @@ public interface JetTokens {
             new JetModifierKeywordToken[] {
                     ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                     PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
-                    REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATE_INIT_KEYWORD
+                    REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATE_INIT_KEYWORD,
+                    DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD
             };
+
+    // Please synchronize this array with org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
+    JetModifierKeywordToken[] ANNOTATION_MODIFIERS_KEYWORDS_ARRAY = new JetModifierKeywordToken[] {
+            DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD
+    };
+
+    TokenSet ANNOTATION_MODIFIERS_KEYWORDS = TokenSet.create(ANNOTATION_MODIFIERS_KEYWORDS_ARRAY);
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);
 

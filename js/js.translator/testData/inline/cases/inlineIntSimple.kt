@@ -4,7 +4,7 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: doNothing2
 // CHECK_CONTAINS_NO_CALLS: doNothing3
 
-class Inline {
+internal class Inline {
     public inline fun <T> identity1 (x: T): T {
         return x
     }
@@ -18,15 +18,15 @@ class Inline {
     }
 }
 
-fun doNothing1 (inline1: Inline, a: Int): Int {
+internal fun doNothing1 (inline1: Inline, a: Int): Int {
     return inline1.identity1(a)
 }
 
-fun doNothing2 (inline2: Inline, a: Int): Int {
+internal fun doNothing2 (inline2: Inline, a: Int): Int {
     return inline2.identity2(a, {it})
 }
 
-fun doNothing3 (inline3: Inline): Int {
+internal fun doNothing3 (inline3: Inline): Int {
     return inline3.identity3({11})
 }
 

@@ -1,11 +1,11 @@
 package
 
-internal interface Some {
+public interface Some {
     enum entry D
 
-    internal abstract val foo: kotlin.Int
+    public abstract val foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal abstract fun test(): kotlin.Unit
+    public abstract fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

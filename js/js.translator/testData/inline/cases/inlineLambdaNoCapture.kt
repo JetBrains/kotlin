@@ -2,7 +2,7 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: sumEven
 
-inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, reduceFun: (Int, Int) -> Int): Int {
+internal inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, reduceFun: (Int, Int) -> Int): Int {
     var result = 0
 
     for (element in a) {
@@ -15,7 +15,7 @@ inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, reduceFun:
     return result
 }
 
-fun sumEven(a: Array<Int>): Int {
+internal fun sumEven(a: Array<Int>): Int {
     return filteredReduce(a, { x -> x % 2 == 0}, { x, y -> x + y})
 }
 

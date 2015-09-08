@@ -65,6 +65,18 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("moduleName")
+    public void testModuleName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleName/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moduleNameDefault")
+    public void testModuleNameDefault() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleNameDefault/");
+        doTest(fileName);
+    }
+
     @TestMetadata("noStdlibForJavac")
     public void testNoStdlibForJavac() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noStdlibForJavac/");

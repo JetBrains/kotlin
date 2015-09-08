@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.rmi.*
 import java.io.File
 import java.io.OutputStream
@@ -175,10 +176,10 @@ public class KotlinCompilerClient {
             }
         }
 
-        public fun incrementalCompile(compiler: CompileService, args: Array<out String>, caches: Map<String, IncrementalCache>, out: OutputStream): Int {
+        public fun incrementalCompile(compiler: CompileService, args: Array<out String>, caches: Map<TargetId, IncrementalCache>, out: OutputStream): Int {
 
             val outStrm = RemoteOutputStreamServer(out)
-            val cacheServers = hashMapOf<String, RemoteIncrementalCacheServer>()
+            val cacheServers = hashMapOf<TargetId, RemoteIncrementalCacheServer>()
             try {
                 caches.mapValuesTo(cacheServers, { RemoteIncrementalCacheServer( it.getValue()) })
                 return compiler.remoteIncrementalCompile(args, cacheServers, outStrm, CompileService.OutputFormat.XML)

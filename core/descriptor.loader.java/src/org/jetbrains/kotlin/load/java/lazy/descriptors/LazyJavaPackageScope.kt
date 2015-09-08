@@ -48,12 +48,22 @@ public class LazyJavaPackageScope(
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
             = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
 
+    private val kotlinBinaryClasses = c.storageManager.createLazyValue {
+        val simpleNames = c.components.packageMapper.findPackageParts(jPackage.getFqName().asString())
+        val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName
+
+        simpleNames.map {
+            val classId = ClassId(packageClassId, Name.identifier(it))
+            c.components.kotlinClassFinder.findKotlinClass(classId)
+        }.filterNotNull()
+    }
+
     private val deserializedPackageScope = c.storageManager.createLazyValue {
-        val kotlinBinaryClass = kotlinBinaryClass
-        if (kotlinBinaryClass == null)
+        if (kotlinBinaryClasses().isEmpty())
             JetScope.Empty
-        else
-            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.Empty
+        else {
+            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClasses())
+        }
     }
 
     private val packageFragment: LazyJavaPackageFragment get() = getContainingDeclaration() as LazyJavaPackageFragment

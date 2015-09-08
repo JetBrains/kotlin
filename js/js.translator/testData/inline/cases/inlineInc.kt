@@ -2,11 +2,11 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: multiplyNoInline
 
-inline fun multiply(a: Int, b: Int): Int {
+internal inline fun multiply(a: Int, b: Int): Int {
     return a * b
 }
 
-fun multiplyNoInline(a: Int, b: Int): Int {
+internal fun multiplyNoInline(a: Int, b: Int): Int {
     var c = a - 1
     var d = b - 1
     return (c++) + (d++) + multiply(c, d) - (--c + --d)

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
-import com.intellij.psi.javadoc.PsiDocTag
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
@@ -129,8 +128,8 @@ class AnnotationConverter(private val converter: Converter) {
                                         Identifier(name, false).assignNoPrototype())
                 }
             }
-            return Annotation(Identifier("target").assignNoPrototype(),
-                              deferredExpressionList, withAt, newLineAfter).assignPrototype(annotation)
+            return Annotation(Identifier("Target").assignNoPrototype(),
+                              deferredExpressionList, true, newLineAfter).assignPrototype(annotation)
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -178,8 +177,8 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun convertExpressionValue(codeConverter: CodeConverter, value: PsiExpression, expectedType: PsiType?): Expression {
         val expression = if (value is PsiClassObjectAccessExpression) {
-            val typeElement = converter.convertTypeElement(value.getOperand())
-            ClassLiteralExpression(typeElement.type.toNotNullType())
+            val type = converter.convertTypeElement(value.getOperand(), Nullability.NotNull)
+            ClassLiteralExpression(type)
         }
         else {
             codeConverter.convertExpression(value, expectedType)

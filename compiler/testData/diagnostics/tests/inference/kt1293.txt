@@ -1,6 +1,6 @@
 package
 
 package kt1293 {
-    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-    internal fun requiresInt(/*0*/ i: kotlin.Int): kotlin.Unit
+    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun requiresInt(/*0*/ i: kotlin.Int): kotlin.Unit
 }

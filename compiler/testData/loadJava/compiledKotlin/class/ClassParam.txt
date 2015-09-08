@@ -1,5 +1,5 @@
 package test
 
-internal final class Beer</*0*/ T> {
+public final class Beer</*0*/ T> {
     /*primary*/ public constructor Beer</*0*/ T>()
 }

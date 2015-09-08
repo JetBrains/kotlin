@@ -3,15 +3,15 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: capturedInLambda
 // CHECK_CONTAINS_NO_CALLS: declaredInLambda
 
-data class State(var count: Int = 0)
+internal data class State(var count: Int = 0)
 
-inline fun repeatAction(times: Int, action: () -> Unit) {
+internal inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
         action()
     }
 }
 
-fun capturedInLambda(state: State, a: Int, b: Int): Int {
+internal fun capturedInLambda(state: State, a: Int, b: Int): Int {
     @inline fun State.inc() {
         count++
     }
@@ -24,7 +24,7 @@ fun capturedInLambda(state: State, a: Int, b: Int): Int {
 }
 
 
-fun declaredInLambda(state: State, a: Int, b: Int): Int {
+internal fun declaredInLambda(state: State, a: Int, b: Int): Int {
     repeatAction(a)  {
         @inline fun State.inc() {
             count++

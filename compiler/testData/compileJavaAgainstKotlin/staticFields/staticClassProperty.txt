@@ -1,6 +1,6 @@
 package test
 
-internal final class Test {
+public final class Test {
     public constructor Test()
 
     public companion object Companion {

@@ -132,6 +132,7 @@ public class KotlinFindClassUsagesHandler(
                                        options: KotlinClassFindUsagesOptions,
                                        processor: Processor<PsiReference>): Boolean {
         val searchParameters = KotlinReferencesSearchParameters(classOrObject,
+                                                                scope = options.searchScope,
                                                                 kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
         var usagesQuery = ReferencesSearch.search(searchParameters)
 
@@ -182,7 +183,7 @@ public class KotlinFindClassUsagesHandler(
         for (decl in classOrObject.effectiveDeclarations()) {
             if ((decl is JetNamedFunction && options.isMethodsUsages) ||
                 ((decl is JetProperty || decl is JetParameter) && options.isFieldsUsages)) {
-                if (!ReferencesSearch.search(decl).forEach(processor)) return false
+                if (!ReferencesSearch.search(decl, options.searchScope).forEach(processor)) return false
             }
         }
         return true

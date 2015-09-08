@@ -1,7 +1,7 @@
 package
 
-internal val x: A<kotlin.String>
-internal val y: B<kotlin.String>
+public val x: A<kotlin.String>
+public val y: B<kotlin.String>
 
 kotlin.jvm.PurelyImplements(value = "") public open class A</*0*/ T : kotlin.Any!> : java.util.AbstractList<T!> {
     public constructor A</*0*/ T : kotlin.Any!>()

@@ -1,6 +1,6 @@
 package
 
-internal final class Test {
+public final class Test {
     public constructor Test()
     private final var x: Test.x.<no name provided>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

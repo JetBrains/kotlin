@@ -1,4 +1,4 @@
 package
 
-internal val g: [ERROR : Unresolved class]
-internal val u: [ERROR : Unresolved class]
+public val g: [ERROR : Unresolved class]
+public val u: [ERROR : Unresolved class]

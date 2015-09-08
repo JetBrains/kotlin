@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.PackageData
@@ -40,25 +43,28 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
-import kotlin.reflect.jvm.*
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
-        val module: ModuleDescriptor,
+        val moduleDescriptor: ModuleDescriptor,
         val storageManager: StorageManager,
         val deserializationComponents: DeserializationComponents,
         val incrementalCache: IncrementalCache,
-        val moduleId: String
+        val target: TargetId
 ) : PackageFragmentProvider {
 
-    private companion object {
+    companion object {
         private val LOG = Logger.getLogger(IncrementalPackageFragmentProvider::class.java)
+
+        public fun fqNamesToLoad(obsoletePackageParts: Collection<String>, sourceFiles: Collection<JetFile>): Set<FqName> =
+                (obsoletePackageParts.map { JvmClassName.byInternalName(it).packageFqName }
+                 + PackagePartClassUtils.getFilesWithCallables(sourceFiles).map { it.packageFqName }).toSet()
     }
 
     val obsoletePackageParts = incrementalCache.getObsoletePackageParts().toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
-    val fqNamesToLoad: Set<FqName>
+    val fqNamesToLoad: Set<FqName> = fqNamesToLoad(obsoletePackageParts, sourceFiles)
 
     init {
         fun createPackageFragment(fqName: FqName) {
@@ -75,11 +81,6 @@ public class IncrementalPackageFragmentProvider(
             fqNameToPackageFragment[fqName] = IncrementalPackageFragment(fqName)
         }
 
-        fqNamesToLoad = (
-                obsoletePackageParts.map { JvmClassName.byInternalName(it).getPackageFqName() }
-                + PackagePartClassUtils.getPackageFilesWithCallables(sourceFiles).map { it.getPackageFqName() }
-        ).toSet()
-
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
 
@@ -92,21 +93,45 @@ public class IncrementalPackageFragmentProvider(
     }
 
 
-    public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(module, fqName) {
-        public val moduleId: String
-            get() = this@IncrementalPackageFragmentProvider.moduleId
+    public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
+        public val target: TargetId
+            get() = this@IncrementalPackageFragmentProvider.target
 
         val memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
                 JetScope.Empty
             }
             else {
-                val packageDataBytes = incrementalCache.getPackageData(fqName.asString())
-                if (packageDataBytes == null) {
+                val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
+
+                val actualPackagePartFiles =
+                        moduleMapping?.findPackageParts(fqName.asString())?.let {
+                            val allParts =
+                                    if (it.packageFqName.isEmpty()) {
+                                        it.parts
+                                    }
+                                    else {
+                                        val packageFqName = it.packageFqName.replace('.', '/')
+                                        it.parts.map { packageFqName + "/" + it }
+                                    }
+
+                            allParts.filterNot { it in obsoletePackageParts }
+                        } ?: emptyList<String>()
+
+                val dataOfPackageParts = actualPackagePartFiles.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
+
+                if (dataOfPackageParts.isEmpty()) {
                     JetScope.Empty
                 }
                 else {
-                    DecapitalizedAnnotationScope.wrapIfNeeded(IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(packageDataBytes)), fqName)
+                    val scopes = dataOfPackageParts.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it)) }
+                    DecapitalizedAnnotationScope.wrapIfNeeded(
+                            ChainedScope(this,
+                                         "Member scope for incremental compilation: union of package parts data",
+                                         *scopes.toTypedArray<JetScope>()
+                            ),
+                            fqName
+                    )
                 }
             }
         }
@@ -140,4 +165,3 @@ public class IncrementalPackageFragmentProvider(
         }
     }
 }
-

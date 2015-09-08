@@ -1,6 +1,6 @@
 package test
 
-internal final class A</*0*/ in I> {
+public final class A</*0*/ in I> {
     /*primary*/ public constructor A</*0*/ in I>()
     private/*private to this*/ final var bar: I
         private/*private to this*/ final fun <get-bar>(): I

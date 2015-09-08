@@ -1,23 +1,23 @@
 package
 
 package test {
-    internal val a0: java.lang.Class<test.A.Companion>
-    internal val a1: java.lang.Class<test.A.Companion>
-    internal val a2: java.lang.Class<test.A.Companion>
-    internal val a3: java.lang.Class<test.A>
-    internal val a4: java.lang.Class<test.A>
-    internal val a5: java.lang.Class<test.A.Companion>
-    internal val e0: [ERROR : Type for E.javaClass]
-    internal val e1: java.lang.Class<test.E>
-    internal val e2: java.lang.Class<test.E>
-    internal val int0: java.lang.Class<kotlin.Int.Companion>
-    internal val int1: java.lang.Class<kotlin.Int>
-    internal val o0: java.lang.Class<test.O>
-    internal val o1: java.lang.Class<test.O>
-    internal val string0: java.lang.Class<kotlin.String.Companion>
-    internal val string1: java.lang.Class<kotlin.String>
+    public val a0: java.lang.Class<test.A.Companion>
+    public val a1: java.lang.Class<test.A.Companion>
+    public val a2: java.lang.Class<test.A.Companion>
+    public val a3: java.lang.Class<test.A>
+    public val a4: java.lang.Class<test.A>
+    public val a5: java.lang.Class<test.A.Companion>
+    public val e0: [ERROR : Type for E.javaClass]
+    public val e1: java.lang.Class<test.E>
+    public val e2: java.lang.Class<test.E>
+    public val int0: java.lang.Class<kotlin.Int.Companion>
+    public val int1: java.lang.Class<kotlin.Int>
+    public val o0: java.lang.Class<test.O>
+    public val o1: java.lang.Class<test.O>
+    public val string0: java.lang.Class<kotlin.String.Companion>
+    public val string1: java.lang.Class<kotlin.String>
 
-    internal final class A {
+    public final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -31,7 +31,7 @@ package test {
         }
     }
 
-    internal final enum class E : kotlin.Enum<test.E> {
+    public final enum class E : kotlin.Enum<test.E> {
         enum entry ENTRY
 
         private constructor E()
@@ -48,7 +48,7 @@ package test {
         public final /*synthesized*/ fun values(): kotlin.Array<test.E>
     }
 
-    internal object O {
+    public object O {
         private constructor O()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

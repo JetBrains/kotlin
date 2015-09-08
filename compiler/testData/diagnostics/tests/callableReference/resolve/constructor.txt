@@ -1,9 +1,9 @@
 package
 
-internal fun fn(): kotlin.Unit
-internal fun user(/*0*/ f: (kotlin.Int) -> Klass): kotlin.Unit
+public fun fn(): kotlin.Unit
+public fun user(/*0*/ f: (kotlin.Int) -> Klass): kotlin.Unit
 
-internal final class Klass {
+public final class Klass {
     public constructor Klass(/*0*/ a: kotlin.Int)
     public constructor Klass(/*0*/ a: kotlin.String)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -2,20 +2,20 @@
 package
 
 package p {
-    internal val a: p.A
-    internal var v: p.A
-    internal fun a(): p.A
+    public val a: p.A
+    public var v: p.A
+    public fun a(): p.A
 
     public final class A {
         public constructor A()
-        internal final val a: p.A
-        internal final var v: p.A
-        internal final fun a(): p.A
+        public final val a: p.A
+        public final var v: p.A
+        public final fun a(): p.A
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final inner class B {
+        public final inner class B {
             public constructor B()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -23,7 +23,7 @@ package p {
         }
     }
 
-    internal final class B {
+    public final class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -35,18 +35,18 @@ package p {
 // -- Module: <m2> --
 package
 
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 package p {
-    internal val a: p.A
-    internal var v: p.A
-    internal fun a(): p.A
+    public val a: p.A
+    public var v: p.A
+    public fun a(): p.A
 
     public final class A {
         // -- Module: <m1> --
     }
 
-    internal final class B {
+    public final class B {
         // -- Module: <m1> --
     }
 }

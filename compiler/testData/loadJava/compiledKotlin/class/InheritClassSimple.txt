@@ -1,9 +1,9 @@
 package test
 
-internal abstract class Aaa {
+public abstract class Aaa {
     /*primary*/ public constructor Aaa()
 }
 
-internal final class Bbb : test.Aaa {
+public final class Bbb : test.Aaa {
     /*primary*/ public constructor Bbb()
 }

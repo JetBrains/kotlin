@@ -1,5 +1,5 @@
 package
 
 package test {
-    internal val c: java.util.concurrent.TimeUnit
+    public val c: java.util.concurrent.TimeUnit
 }

@@ -1,7 +1,7 @@
-target(AnnotationTarget.EXPRESSION) 
+@Target(AnnotationTarget.EXPRESSION)
 annotation class special
 
-target(AnnotationTarget.TYPE) 
+@Target(AnnotationTarget.TYPE)
 annotation class base
 
 fun transform(i: Int, tr: (@<!DEBUG_INFO_MISSING_UNRESOLVED!>special<!> Int) -> Int): Int = @special tr(@special i)

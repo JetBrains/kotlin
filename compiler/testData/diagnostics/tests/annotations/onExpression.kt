@@ -1,4 +1,4 @@
 fun foo() = @ann 1
 
-target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION)
 annotation class ann

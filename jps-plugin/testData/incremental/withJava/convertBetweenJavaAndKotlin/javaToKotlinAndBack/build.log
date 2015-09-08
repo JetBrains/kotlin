@@ -2,7 +2,8 @@ Cleaning output files:
 out/production/module/Foo.class
 End of files
 Cleaning output files:
-out/production/module/_DefaultPackage$usage$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
@@ -10,7 +11,8 @@ src/Foo.kt
 src/usage.kt
 End of files
 Cleaning output files:
-out/production/module/_DefaultPackage$usage$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
@@ -22,7 +24,8 @@ Cleaning output files:
 out/production/module/Foo.class
 End of files
 Cleaning output files:
-out/production/module/_DefaultPackage$usage$*.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:

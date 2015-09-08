@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -90,7 +91,8 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 ProjectContext(environment.project), listOf(builtInModule),
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
                 JvmPlatformParameters { throw IllegalStateException() },
-                CompilerEnvironment
+                CompilerEnvironment,
+                packagePartProviderFactory = { module, content -> JvmPackagePartProvider(environment) }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(builtInModule)

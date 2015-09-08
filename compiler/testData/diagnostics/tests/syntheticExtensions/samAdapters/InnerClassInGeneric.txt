@@ -1,6 +1,6 @@
 package
 
-internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Int
+public fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Int
 
 public open class JavaClass</*0*/ T : kotlin.Any!> {
     public constructor JavaClass</*0*/ T : kotlin.Any!>()

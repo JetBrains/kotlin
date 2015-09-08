@@ -1,18 +1,18 @@
 package
 
 package foo {
-    internal val f: () -> ???
-    internal val s: [ERROR : Type for java]
-    internal val ss: [ERROR : Type for System]
-    internal val sss: [ERROR : Type for X]
-    internal val x: kotlin.String
-    internal val xs: [ERROR : Type for java.lang]
-    internal val xss: [ERROR : Type for java.lang.System]
-    internal val xsss: [ERROR : Type for foo.X]
-    internal val xssss: [ERROR : Type for foo]
-    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public val f: () -> ???
+    public val s: [ERROR : Type for java]
+    public val ss: [ERROR : Type for System]
+    public val sss: [ERROR : Type for X]
+    public val x: kotlin.String
+    public val xs: [ERROR : Type for java.lang]
+    public val xss: [ERROR : Type for java.lang.System]
+    public val xsss: [ERROR : Type for foo.X]
+    public val xssss: [ERROR : Type for foo]
+    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
-    internal final class X {
+    public final class X {
         public constructor X()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

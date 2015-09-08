@@ -1,10 +1,10 @@
 package
 
-internal val e: E
-internal val kotlin.Int.entry: kotlin.Int
-internal val kotlin.Long.entry: kotlin.Int
+public val e: E
+public val kotlin.Int.entry: kotlin.Int
+public val kotlin.Long.entry: kotlin.Int
 
-internal final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry entry
 
     private constructor E()

@@ -1,14 +1,14 @@
 package test
 
-internal interface A {
-    internal open var v: kotlin.String
-        internal open fun <get-v>(): kotlin.String
-        internal open fun <set-v>(/*0*/ value: kotlin.String): kotlin.Unit
+public interface A {
+    public open var v: kotlin.String
+        public open fun <get-v>(): kotlin.String
+        public open fun <set-v>(/*0*/ value: kotlin.String): kotlin.Unit
 }
 
-internal final class B : test.A {
+public final class B : test.A {
     /*primary*/ public constructor B()
-    internal open override /*1*/ /*fake_override*/ var v: kotlin.String
-        internal open override /*1*/ /*fake_override*/ fun <get-v>(): kotlin.String
-        internal open override /*1*/ /*fake_override*/ fun <set-v>(/*0*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ var v: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun <get-v>(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun <set-v>(/*0*/ value: kotlin.String): kotlin.Unit
 }

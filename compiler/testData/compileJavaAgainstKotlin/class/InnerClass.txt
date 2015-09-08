@@ -6,14 +6,14 @@ public/*package*/ open class InnerClass {
     public/*package*/ final var field2: test.Outer.Inner2!
 }
 
-internal final class Outer {
+public final class Outer {
     public constructor Outer()
 
-    internal final inner class Inner1 {
+    public final inner class Inner1 {
         public constructor Inner1()
     }
 
-    internal final inner class Inner2 {
+    public final inner class Inner2 {
         public constructor Inner2(/*0*/ kotlin.String)
     }
 }

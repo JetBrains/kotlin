@@ -1,9 +1,9 @@
 package
 
-internal fun foo(/*0*/ a: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-internal fun foo(/*0*/ a: @[kotlin.Extension()] A): kotlin.Unit
+public fun foo(/*0*/ a: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ a: @[kotlin.Extension()] A): kotlin.Unit
 
-internal interface A : (kotlin.String) -> kotlin.Unit {
+public interface A : (kotlin.String) -> kotlin.Unit {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: kotlin.String): kotlin.Unit

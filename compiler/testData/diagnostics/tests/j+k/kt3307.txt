@@ -1,6 +1,6 @@
 package
 
-internal fun TestBug(): kotlin.Unit
+public fun TestBug(): kotlin.Unit
 
 public interface Bug {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

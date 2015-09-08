@@ -1,13 +1,13 @@
 package
 
 package a {
-    internal fun X(/*0*/ p: kotlin.Int): kotlin.Unit
+    public fun X(/*0*/ p: kotlin.Int): kotlin.Unit
 }
 
 package b {
-    internal fun X(): kotlin.Int
+    public fun X(): kotlin.Int
 }
 
 package c {
-    internal fun foo(): kotlin.Unit
+    public fun foo(): kotlin.Unit
 }

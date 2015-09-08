@@ -1,6 +1,6 @@
 import kotlin.InlineOption.*
 
-inline fun <R> inlineFunWithAnnotation(inlineOptions(ONLY_LOCAL_RETURN) p: () -> R) {
+inline fun <R> inlineFunWithAnnotation(@inlineOptions(ONLY_LOCAL_RETURN) p: () -> R) {
     inlineFun {
         p()
     }

@@ -1,12 +1,12 @@
 package
 
 package kt1185 {
-    internal fun bar(/*0*/ c: kt1185.Color): kotlin.Int
-    internal fun bar1(/*0*/ c: kt1185.Color): kotlin.Int
-    internal fun foo(/*0*/ d: kt1185.Direction): kotlin.Int
-    internal fun foo1(/*0*/ d: kt1185.Direction): kotlin.Int
+    public fun bar(/*0*/ c: kt1185.Color): kotlin.Int
+    public fun bar1(/*0*/ c: kt1185.Color): kotlin.Int
+    public fun foo(/*0*/ d: kt1185.Direction): kotlin.Int
+    public fun foo1(/*0*/ d: kt1185.Direction): kotlin.Int
 
-    internal final class A {
+    public final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -20,7 +20,7 @@ package kt1185 {
         }
     }
 
-    internal final enum class Color : kotlin.Enum<kt1185.Color> {
+    public final enum class Color : kotlin.Enum<kt1185.Color> {
         enum entry RED
 
         enum entry GREEN
@@ -28,7 +28,7 @@ package kt1185 {
         enum entry BLUE
 
         private constructor Color(/*0*/ rgb: kotlin.Int)
-        internal final val rgb: kotlin.Int
+        public final val rgb: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -42,7 +42,7 @@ package kt1185 {
         public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Color>
     }
 
-    internal final enum class Direction : kotlin.Enum<kt1185.Direction> {
+    public final enum class Direction : kotlin.Enum<kt1185.Direction> {
         enum entry NORTH
 
         enum entry SOUTH

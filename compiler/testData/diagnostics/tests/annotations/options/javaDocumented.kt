@@ -13,8 +13,8 @@ public class DocumentedAnnotations {
 
 // FILE: DocumentedAnnotations.kt
 
-DocumentedAnnotations.DocAnn class My
+@DocumentedAnnotations.DocAnn class My
 
-DocumentedAnnotations.NotDocAnn class Your
+@DocumentedAnnotations.NotDocAnn class Your
 
-DocumentedAnnotations.RunDocAnn class His
+@DocumentedAnnotations.RunDocAnn class His

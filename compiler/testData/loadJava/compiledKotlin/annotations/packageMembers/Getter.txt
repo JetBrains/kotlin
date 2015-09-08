@@ -1,8 +1,8 @@
 package test
 
-internal val property: kotlin.Int
-    test.Anno() internal fun <get-property>(): kotlin.Int
+public val property: kotlin.Int
+    test.Anno() public fun <get-property>(): kotlin.Int
 
-kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

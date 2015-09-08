@@ -1,6 +1,6 @@
 package test
 
-internal interface Test {
+public interface Test {
 
     public companion object Companion {
         private constructor Companion()

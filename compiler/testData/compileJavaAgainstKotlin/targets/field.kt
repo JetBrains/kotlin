@@ -1,4 +1,4 @@
 package test
 
-target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD)
 annotation class field

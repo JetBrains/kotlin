@@ -1,4 +1,4 @@
 package
 
-internal val closure: () -> kotlin.Unit
-internal fun f(): kotlin.Unit
+public val closure: () -> kotlin.Unit
+public fun f(): kotlin.Unit

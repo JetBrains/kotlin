@@ -73,7 +73,7 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
                                                                EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         // Activate Kotlin light class finder
-        LazyResolveTestUtil.resolveProject(environment.project)
+        LazyResolveTestUtil.resolveProject(environment.project, environment)
 
         return environment
     }

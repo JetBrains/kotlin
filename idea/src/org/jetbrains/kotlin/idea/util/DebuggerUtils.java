@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -32,12 +34,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
+import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.CompositeBindingContext;
@@ -55,6 +59,8 @@ public class DebuggerUtils {
     private DebuggerUtils() {
     }
 
+    private static final Set<String> KOTLIN_EXTENSIONS = Sets.newHashSet("kt", "kts");
+
     @Nullable
     public static JetFile findSourceFileForClass(
             @NotNull Project project,
@@ -63,6 +69,9 @@ public class DebuggerUtils {
             @NotNull final String fileName,
             final int lineNumber
     ) {
+        String extension = FileUtilRt.getExtension(fileName);
+        if (!KOTLIN_EXTENSIONS.contains(extension)) return null;
+
         Collection<JetFile> filesInPackage = findFilesWithExactPackage(className.getPackageFqName(), searchScope, project);
         Collection<JetFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<JetFile>() {
             @Override
@@ -75,6 +84,19 @@ public class DebuggerUtils {
 
         if (filesWithExactName.size() == 1) {
             return filesWithExactName.iterator().next();
+        }
+
+        // Static facade or inner class of such facade?
+        FqName partFqName = className.getFqNameForClassNameWithoutDollars();
+        Collection<JetFile> filesForPart = StaticFacadeIndexUtil.findFilesForFilePart(partFqName, searchScope, project);
+        if (!filesForPart.isEmpty()) {
+            for (JetFile file : filesForPart) {
+                if (file.getName().equals(fileName)) {
+                    return file;
+                }
+            }
+            // Do not fall back to decompiled files (which have different name).
+            return null;
         }
 
         if (isPackageClassName(className)) {
@@ -107,10 +129,11 @@ public class DebuggerUtils {
                     @Override
                     public Boolean invoke(JetFile file) {
                         Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
-                        assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " + lineNumber;
+                        assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " +
+                                                         lineNumber;
                         JetDeclaration elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetDeclaration.class);
                         return elementAt != null &&
-                               className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
+                            className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
                     }
                 }));
             }
@@ -242,11 +265,11 @@ public class DebuggerUtils {
             List<BindingContext> innerContexts = new ArrayList<BindingContext>();
             for (JetNamedFunction inlineFunctions : collectedElements) {
                 JetExpression body = inlineFunctions.getBodyExpression();
-                assert body != null : "Inline function should have a body: " + inlineFunctions.getText();
-
-                BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
-                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
-                                                           analyzedElements, analyzeInlineFunctions));
+                if (body != null) {
+                    BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
+                    innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
+                                                               analyzedElements, analyzeInlineFunctions));
+                }
             }
 
             innerContexts.add(bindingContext);

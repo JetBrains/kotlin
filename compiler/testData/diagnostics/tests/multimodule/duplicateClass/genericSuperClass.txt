@@ -69,7 +69,7 @@ package p {
 // -- Module: <m3> --
 package
 
-internal fun test(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 package p {
     public fun a(/*0*/ a: p.A): kotlin.Unit

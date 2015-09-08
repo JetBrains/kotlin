@@ -5,14 +5,14 @@
 
 package test
 
-trait InlineTrait {
+internal trait InlineTrait {
 
-    inline final fun finalInline(s: () -> String): String {
+    internal inline final fun finalInline(s: () -> String): String {
         return s()
     }
 
     companion object {
-        inline final fun finalInline(s: () -> String): String {
+        internal inline final fun finalInline(s: () -> String): String {
             return s()
         }
     }

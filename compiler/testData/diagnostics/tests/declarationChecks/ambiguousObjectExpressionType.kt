@@ -18,7 +18,7 @@ class Foo {
 
     protected val protectedProperty = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val internalProperty<!> = object : MyClass(), MyTrait {}
+    val internalProperty = object : MyClass(), MyTrait {}
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val internal2Property<!> = object : MyClass(), MyTrait {}
 
@@ -34,7 +34,7 @@ class Foo {
 
     protected fun protectedFunction() = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun internalFunction()<!> = object : MyClass(), MyTrait {}
+    fun internalFunction() = object : MyClass(), MyTrait {}
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun internal2Function()<!> = object : MyClass(), MyTrait {}
 
@@ -52,7 +52,7 @@ class Foo {
 
     protected val protectedProperty = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val internalProperty<!> = object : MyClass(), MyTrait {}
+    val internalProperty = object : MyClass(), MyTrait {}
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val internal2Property<!> = object : MyClass(), MyTrait {}
 
@@ -68,7 +68,7 @@ class Foo {
 
     protected fun protectedFunction() = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun internalFunction()<!> = object : MyClass(), MyTrait {}
+    fun internalFunction() = object : MyClass(), MyTrait {}
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun internal2Function()<!> = object : MyClass(), MyTrait {}
 
@@ -92,7 +92,7 @@ class Foo {
 
 <!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val packageInternalProperty<!> = object : MyClass(), MyTrait {}
+val packageInternalProperty = object : MyClass(), MyTrait {}
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val packageInternal2Property<!> = object : MyClass(), MyTrait {}
 
@@ -100,7 +100,7 @@ public val packagePublicProperty = object : MyClass(), MyTrait {}
 
 <!WRONG_MODIFIER_TARGET!>protected<!> fun packageProtectedFunction() = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun packageInternalFunction()<!> = object : MyClass(), MyTrait {}
+fun packageInternalFunction() = object : MyClass(), MyTrait {}
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun packageInternal2Function()<!> = object : MyClass(), MyTrait {}
 

@@ -1,6 +1,6 @@
 package test
 
-internal final enum class E : kotlin.Enum<test.E> {
+public final enum class E : kotlin.Enum<test.E> {
     enum entry ONE
 
     enum entry TWO

@@ -5,19 +5,9 @@ JetFile: EnumWithAnnotationKeyword.kt
     <empty list>
   CLASS
     MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+      PsiElement(data)('data')
       PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('annotation')
+      PsiElement(annotation)('annotation')
       PsiWhiteSpace(' ')
       PsiElement(enum)('enum')
     PsiWhiteSpace(' ')
@@ -38,12 +28,7 @@ JetFile: EnumWithAnnotationKeyword.kt
     MODIFIER_LIST
       PsiElement(enum)('enum')
       PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('annotation')
+      PsiElement(annotation)('annotation')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE

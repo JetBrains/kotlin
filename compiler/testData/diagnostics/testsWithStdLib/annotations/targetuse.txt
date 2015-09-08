@@ -1,7 +1,7 @@
 package
 
-internal fun barUse(/*0*/ aTarget: java.lang.annotation.Target): kotlin.String
-internal fun fooUse(/*0*/ aTarget: kotlin.annotation.target): kotlin.String
+public fun barUse(/*0*/ aTarget: java.lang.annotation.Target): kotlin.String
+public fun fooUse(/*0*/ aTarget: kotlin.annotation.Target): kotlin.String
 
 public open class TargetUse {
     public constructor TargetUse()
@@ -11,5 +11,5 @@ public open class TargetUse {
 
     // Static members
     public open fun bar(/*0*/ aTarget: java.lang.annotation.Target!): kotlin.String!
-    public open fun foo(/*0*/ aTarget: kotlin.annotation.target!): kotlin.String!
+    public open fun foo(/*0*/ aTarget: kotlin.annotation.Target!): kotlin.String!
 }

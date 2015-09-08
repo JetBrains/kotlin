@@ -1,24 +1,24 @@
 package
 
-internal open class Bar {
+public open class Bar {
     public constructor Bar()
-    internal final val v: kotlin.Int = 1
+    public final val v: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    internal final fun v(): kotlin.Int
+    public final fun v(): kotlin.Int
 }
 
-internal final class Barr : Bar {
+public final class Barr : Bar {
     public constructor Barr()
-    internal final override /*1*/ /*fake_override*/ val v: kotlin.Int
+    public final override /*1*/ /*fake_override*/ val v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    internal final override /*1*/ /*fake_override*/ fun v(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun v(): kotlin.Int
 }
 
-internal final class Foo1 : java.util.ArrayList<kotlin.Int> {
+public final class Foo1 : java.util.ArrayList<kotlin.Int> {
     public constructor Foo1()
     invisible_fake final override /*1*/ /*fake_override*/ var elementData: kotlin.Array<(out) kotlin.Any!>!
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int

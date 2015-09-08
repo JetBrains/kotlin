@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import kotlin.reflect.KAnnotatedElement
 
-interface KAnnotatedElementImpl : KAnnotatedElement {
+internal interface KAnnotatedElementImpl : KAnnotatedElement {
     val annotated: Annotated
 
     override val annotations: List<Annotation>

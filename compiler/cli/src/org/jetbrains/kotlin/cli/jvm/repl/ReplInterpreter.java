@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
@@ -78,6 +79,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -106,7 +108,7 @@ public class ReplInterpreter {
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, getModuleName(environment));
         this.module = moduleContext.getModule();
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
@@ -124,7 +126,8 @@ public class ReplInterpreter {
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(project),
-                scopeProvider
+                scopeProvider,
+                new JvmPackagePartProvider(environment)
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY,
@@ -277,7 +280,10 @@ public class ReplInterpreter {
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
 
         for (OutputFile outputFile : state.getFactory().asList()) {
-            classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")), outputFile.asByteArray());
+            if(outputFile.getRelativePath().endsWith(".class")) {
+                classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")),
+                                     outputFile.asByteArray());
+            }
         }
 
         try {
@@ -383,7 +389,7 @@ public class ReplInterpreter {
 
             PsiElement jetScript = descriptorToDeclaration(earlierDescriptor);
             if (jetScript != null) {
-                registerClassNameForScript(state.getBindingTrace(), (JetScript) jetScript, earlierClassType);
+                registerClassNameForScript(state.getBindingTrace(), (JetScript) jetScript, earlierClassType, state.getFileClassesProvider());
                 earlierScriptDescriptors.add(earlierDescriptor);
             }
         }
@@ -398,7 +404,7 @@ public class ReplInterpreter {
             @NotNull CompilationErrorHandler errorHandler
     ) {
         registerEarlierScripts(state, earlierScripts);
-        registerClassNameForScript(state.getBindingTrace(), script, classType);
+        registerClassNameForScript(state.getBindingTrace(), script, classType, state.getFileClassesProvider());
 
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(

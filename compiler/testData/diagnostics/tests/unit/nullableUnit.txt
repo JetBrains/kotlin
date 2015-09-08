@@ -1,4 +1,4 @@
 package
 
-internal val x: kotlin.Unit?
-internal fun foo(): kotlin.Unit
+public val x: kotlin.Unit?
+public fun foo(): kotlin.Unit

@@ -1,6 +1,6 @@
 package test
 
-internal final class ClassParamUsedInFun</*0*/ T> {
+public final class ClassParamUsedInFun</*0*/ T> {
     /*primary*/ public constructor ClassParamUsedInFun</*0*/ T>()
-    internal final fun f(/*0*/ t: T): kotlin.Int
+    public final fun f(/*0*/ t: T): kotlin.Int
 }

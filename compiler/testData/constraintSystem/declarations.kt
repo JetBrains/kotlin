@@ -6,6 +6,7 @@ interface C : B
 
 interface Consumer<in T>
 interface Producer<out T>
+interface Inv<T>
 
 interface My<T>
 interface Successor<T> : My<T>

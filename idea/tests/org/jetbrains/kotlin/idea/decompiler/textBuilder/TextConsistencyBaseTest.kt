@@ -37,6 +37,8 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
 
     protected abstract fun getPackages(): List<FqName>
 
+    protected open fun getFacades(): List<FqName> = emptyList()
+
     protected abstract fun getTopLevelMembers(): Map<String, String>
 
     protected abstract fun getVirtualFileFinder(): VirtualFileFinder
@@ -45,31 +47,43 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
 
     protected abstract fun getModuleDescriptor(): ModuleDescriptor
 
+    protected abstract fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean
+
     public fun testConsistency() {
-        getPackages().forEach { doTest(it) }
+        getPackages().forEach { doTestPackage(it) }
+        getFacades().forEach { doTestFacade(it) }
     }
 
-    private fun doTest(packageFqName: FqName) {
-        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
-        val projectBasedText = getDecompiledText(packageFile, ResolverForDecompilerImpl(getModuleDescriptor()))
-        val deserializedText = getDecompiledText(packageFile)
+    private fun doTestPackage(packageFqName: FqName) {
+        doTestClass(packageFqName, PackageClassUtils.getPackageClassId(packageFqName))
+    }
+
+    private fun doTestFacade(facadeFqName: FqName) {
+        doTestClass(facadeFqName, ClassId.topLevel(facadeFqName))
+    }
+
+    private fun doTestClass(testFqName: FqName, classId: ClassId) {
+        val classFile = getVirtualFileFinder().findVirtualFileWithHeader(classId)!!
+        val projectBasedText = getDecompiledText(classFile, ResolverForDecompilerImpl(getModuleDescriptor()))
+        val deserializedText = getDecompiledText(classFile)
         Assert.assertEquals(projectBasedText, deserializedText)
         // sanity checks
-        getTopLevelMembers()[packageFqName.asString()]?.let {
+        getTopLevelMembers()[testFqName.asString()]?.let {
             Assert.assertTrue(projectBasedText.contains(it))
         }
         Assert.assertFalse(projectBasedText.contains("ERROR"))
     }
+
+    private inner class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
+        override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? =
+                module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
+
+        override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
+                module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
+                    it is CallableMemberDescriptor &&
+                    it.module != KotlinBuiltIns.getInstance().builtInsModule &&
+                    isFromFacade(it, facadeFqName)
+                }.sortedWith(MemberComparator.INSTANCE)
+    }
 }
 
-private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
-    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
-        return module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
-    }
-
-    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        return module.getPackage(packageFqName).memberScope.getAllDescriptors() filter {
-            it is CallableMemberDescriptor && it.module != KotlinBuiltIns.getInstance().getBuiltInsModule()
-        } sortBy MemberComparator.INSTANCE
-    }
-}

@@ -6,4 +6,4 @@
 // ACTION: Create enum 'A'
 // ACTION: Create interface 'A'
 // ERROR: Unresolved reference: A
-fun foo(): J.<caret>A = throw Throwable("")
+internal fun foo(): J.<caret>A = throw Throwable("")

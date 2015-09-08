@@ -31,7 +31,6 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
@@ -41,6 +40,7 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -51,10 +51,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.*
-import java.util.Arrays
-import java.util.Collections
-import java.util.HashSet
-import java.util.TreeSet
+import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.test.*
@@ -166,6 +163,10 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private fun klass(moduleName: String, classFqName: String): String {
             val outputDirPrefix = "out/production/$moduleName/"
             return outputDirPrefix + classFqName.replace('.', '/') + ".class"
+        }
+
+        private fun module(moduleName: String): String {
+            return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
         }
 
         public fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
@@ -390,13 +391,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
 
         checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
         assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
     }
 
     public fun testKotlinProjectTwoFilesInOnePackage() {
@@ -405,7 +406,11 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
         checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
 
-        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING, arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"), packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"), klass("kotlinProject", "_DefaultPackage")))
+        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
+                  arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
+                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
+                          klass("kotlinProject", "_DefaultPackage"),
+                          module("kotlinProject")))
 
         assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class")
     }
@@ -528,15 +533,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }), true)
         makeAll().assertSuccessful()
-    }
-
-    public fun testDoNotCreateUselessKotlinIncrementalCaches() {
-        initProject()
-        makeAll().assertSuccessful()
-
-        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()
-        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
-        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
     public fun testCancelLongKotlinCompilation() {
@@ -689,19 +685,19 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     private fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
-        return arrayOf(klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
+        return arrayOf(module(moduleName), klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
     }
 
     private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
         val path = FileUtilRt.toSystemIndependentName(File(workDir, fileName).getAbsolutePath())
-        val fakeVirtualFile = object : LightVirtualFile(path) {
+        val fakeVirtualFile = object : LightVirtualFile(path.substringAfterLast('/')) {
             override fun getPath(): String {
                 // strip extra "/" from the beginning
-                return super.getPath().substring(1)
+                return path.substring(1)
             }
         }
 
-        val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(FqName(packageClassFqName), fakeVirtualFile)
+        val packagePartFqName = PackagePartClassUtils.getDefaultPartFqName(FqName(packageClassFqName), fakeVirtualFile)
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName))
     }
 

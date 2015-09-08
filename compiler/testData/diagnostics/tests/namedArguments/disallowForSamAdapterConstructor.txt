@@ -1,7 +1,7 @@
 package
 
 package test {
-    internal fun test(): kotlin.Unit
+    public fun test(): kotlin.Unit
 
     public open class J {
         public /*synthesized*/ constructor J(/*0*/ s: kotlin.String!, /*1*/ r: (() -> kotlin.Unit)!, /*2*/ z: kotlin.Boolean!)

@@ -2,7 +2,7 @@ package
 
 package abstract {
 
-    internal abstract enum class MyAbstractEnum : kotlin.Enum<abstract.MyAbstractEnum> {
+    public abstract enum class MyAbstractEnum : kotlin.Enum<abstract.MyAbstractEnum> {
         private constructor MyAbstractEnum()
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: abstract.MyAbstractEnum): kotlin.Int

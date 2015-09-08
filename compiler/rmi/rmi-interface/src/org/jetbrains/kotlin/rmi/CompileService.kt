@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.rmi
 
+import org.jetbrains.kotlin.modules.TargetId
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -31,7 +32,16 @@ public interface CompileService : Remote {
         public fun getObsoletePackageParts(): Collection<String>
 
         throws(RemoteException::class)
-        public fun getPackageData(fqName: String): ByteArray?
+        public fun getPackagePartData(fqName: String): ByteArray?
+
+        throws(RemoteException::class)
+        public fun getModuleMappingData(): ByteArray?
+
+        throws(RemoteException::class)
+        public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
+
+        throws(RemoteException::class)
+        fun getClassFilePath(internalClassName: String): String
 
         throws(RemoteException::class)
         public fun close()
@@ -52,7 +62,7 @@ public interface CompileService : Remote {
     throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
-            caches: Map<String, RemoteIncrementalCache>,
+            caches: Map<TargetId, RemoteIncrementalCache>,
             outputStream: RemoteOutputStream,
             outputFormat: OutputFormat): Int
 }

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.modules.Module;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
@@ -46,6 +45,9 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.modules.ModulesPackage;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
@@ -122,10 +124,10 @@ public class KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        String targetDescription = "in modules [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
+        String targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
             @Override
             public String apply(@Nullable Module input) {
-                return input != null ? input.getModuleName() : "<null>";
+                return input != null ? input.getModuleName() + "-" + input.getModuleType() : "<null>";
             }
         })) + "] ";
         AnalysisResult result = analyze(environment, targetDescription);
@@ -148,7 +150,8 @@ public class KotlinToJVMBytecodeCompiler {
                     }
             );
             GenerationState generationState =
-                    generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
+                    generate(environment, result, jetFiles, module, new File(module.getOutputDirectory()),
+                             module.getModuleName());
             outputFiles.put(module, generationState.getFactory());
         }
 
@@ -188,7 +191,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
             }
 
-            configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
+            configuration.add(JVMConfigurationKeys.MODULES, module);
         }
 
         return configuration;
@@ -302,7 +305,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         result.throwIfError();
 
-        return generate(environment, result, environment.getSourceFiles(), null, null);
+        return generate(environment, result, environment.getSourceFiles(), null, null, null);
     }
 
     @Nullable
@@ -318,14 +321,16 @@ public class KotlinToJVMBytecodeCompiler {
                     @Override
                     public AnalysisResult invoke() {
                         BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject());
+                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
+                                                                                                                getModuleName(environment));
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                                 moduleContext,
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+                                environment.getConfiguration().get(JVMConfigurationKeys.MODULES),
+                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                                new JvmPackagePartProvider(environment)
                         );
                     }
                 }
@@ -354,18 +359,22 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull KotlinCoreEnvironment environment,
             @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
-            @Nullable String moduleId,
-            File outputDirectory
+            @Nullable Module module,
+            File outputDirectory,
+            String moduleName
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
 
         Collection<FqName> packagesWithObsoleteParts;
-        if (moduleId == null || incrementalCompilationComponents == null) {
+        TargetId targetId = null;
+
+        if (module == null || incrementalCompilationComponents == null) {
             packagesWithObsoleteParts = Collections.emptySet();
         }
         else {
-            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+            targetId = ModulesPackage.TargetId(module);
+            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
             packagesWithObsoleteParts = new HashSet<FqName>();
             for (String internalName : incrementalCache.getObsoletePackageParts()) {
                 packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
@@ -385,8 +394,10 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,
-                moduleId,
-                outputDirectory
+                targetId,
+                moduleName,
+                outputDirectory,
+                incrementalCompilationComponents
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
@@ -395,7 +406,7 @@ public class KotlinToJVMBytecodeCompiler {
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         long generationNanos = PerformanceCounter.Companion.currentTime() - generationStart;
-        String desc = moduleId != null ? "module " + moduleId + " " : "";
+        String desc = module != null ? "target " + module.getModuleName() + "-" + module.getModuleType() + " " : "";
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);

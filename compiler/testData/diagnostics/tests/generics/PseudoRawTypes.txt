@@ -1,7 +1,7 @@
 package
 
 package test {
-    internal fun foo(/*0*/ u: test.Usage): kotlin.Unit
+    public fun foo(/*0*/ u: test.Usage): kotlin.Unit
 
     public open class Usage {
         public constructor Usage()

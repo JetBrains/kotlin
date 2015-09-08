@@ -44,7 +44,7 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         File txtFile = new File("compiler/testData/recursiveProcessor/declarations.txt");
         String text = FileUtil.loadFile(ktFile, true);
         JetFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
-        AnalysisResult result = JetTestUtils.analyzeFile(jetFile);
+        AnalysisResult result = JetTestUtils.analyzeFile(jetFile, getEnvironment());
         PackageViewDescriptor testPackage = result.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
 
         List<String> descriptors = recursivelyCollectDescriptors(testPackage);

@@ -16,23 +16,15 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.utils.join
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.ArrayList
@@ -43,7 +35,7 @@ public object InlineTestUtil {
 
     public val INLINE_ANNOTATION_CLASS: String = "kotlin/inline"
 
-    public fun checkNoCallsToInline(files: List<OutputFile>, sourceFiles: List<JetFile>) {
+    public fun checkNoCallsToInline(files: Iterable<OutputFile>, sourceFiles: List<JetFile>) {
         val inlineInfo = obtainInlineInfo(files)
         val inlineMethods = inlineInfo.inlineMethods
         assert(!inlineMethods.isEmpty(), "There are no inline methods")
@@ -64,7 +56,7 @@ public object InlineTestUtil {
         }
     }
 
-    private fun obtainInlineInfo(files: List<OutputFile>): InlineInfo {
+    private fun obtainInlineInfo(files: Iterable<OutputFile>): InlineInfo {
         val inlineMethods = HashSet<MethodInfo>()
         val classHeaders = hashMapOf<String, KotlinClassHeader>()
 
@@ -93,7 +85,7 @@ public object InlineTestUtil {
         return InlineInfo(inlineMethods, classHeaders)
     }
 
-    private fun checkInlineMethodNotInvoked(files: List<OutputFile>, inlinedMethods: Set<MethodInfo>): List<NotInlinedCall> {
+    private fun checkInlineMethodNotInvoked(files: Iterable<OutputFile>, inlinedMethods: Set<MethodInfo>): List<NotInlinedCall> {
         val notInlined = ArrayList<NotInlinedCall>()
 
         files.forEach { file ->
@@ -128,7 +120,7 @@ public object InlineTestUtil {
         return notInlined
     }
 
-    private fun checkParametersInlined(files: List<OutputFile>, inlineInfo: InlineInfo): ArrayList<NotInlinedParameter> {
+    private fun checkParametersInlined(files: Iterable<OutputFile>, inlineInfo: InlineInfo): ArrayList<NotInlinedParameter> {
         val inlinedMethods = inlineInfo.inlineMethods
         val notInlinedParameters = ArrayList<NotInlinedParameter>()
         for (file in files) {

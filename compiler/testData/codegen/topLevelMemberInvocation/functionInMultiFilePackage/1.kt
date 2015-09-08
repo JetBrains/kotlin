@@ -1,4 +1,4 @@
 fun test1() {}
 
-// 2 INVOKESTATIC _DefaultPackage.+\.test1 \(\)V
-// 1 INVOKESTATIC _DefaultPackage.+\.test2 \(\)V
+// 2 INVOKESTATIC _1Kt.test1 \(\)V
+// 1 INVOKESTATIC _2Kt.test2 \(\)V

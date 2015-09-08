@@ -1,17 +1,17 @@
 package test
 
-internal fun none(): kotlin.Unit
-internal fun one(): kotlin.Unit
-internal fun two(): kotlin.Unit
+public fun none(): kotlin.Unit
+public fun one(): kotlin.Unit
+public fun two(): kotlin.Unit
 
-internal final class E1 : java.lang.Exception {
+public final class E1 : java.lang.Exception {
     public constructor E1()
     public final /*fake_override*/ fun getCause(): kotlin.Throwable?
     public final /*fake_override*/ fun getMessage(): kotlin.String?
     public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
 }
 
-internal final class E2 : java.lang.Exception {
+public final class E2 : java.lang.Exception {
     public constructor E2()
     public final /*fake_override*/ fun getCause(): kotlin.Throwable?
     public final /*fake_override*/ fun getMessage(): kotlin.String?

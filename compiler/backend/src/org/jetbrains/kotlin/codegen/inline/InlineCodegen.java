@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -64,6 +66,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
+import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getClassFilePath;
+import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getSourceFilePath;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
@@ -119,6 +123,7 @@ public class InlineCodegen extends CallGenerator {
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
 
         sourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
+        reportIncrementalInfo(functionDescriptor, codegen.getContext().getFunctionDescriptor().getOriginal());
     }
 
     @Override
@@ -192,10 +197,10 @@ public class InlineCodegen extends CallGenerator {
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containerClassId, state);
-            if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-                /*use facade class*/
-                containerClassId = PackageClassUtils.getPackageClassId(containerClassId.getPackageFqName());
-            }
+            //if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
+            //    /*use facade class*/
+            //    containerClassId = PackageClassUtils.getPackageClassId(containerClassId.getPackageFqName());
+            //}
             nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(),
                                                           asmMethod.getName(),
                                                           asmMethod.getDescriptor(),
@@ -226,7 +231,7 @@ public class InlineCodegen extends CallGenerator {
 
             SMAP smap;
             if (callDefault) {
-                Type ownerType = typeMapper.mapOwner(functionDescriptor, false/*use facade class*/);
+                Type ownerType = typeMapper.mapOwner(functionDescriptor, true/*TODO: false, migration*/);
                 FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
                                                                         (FieldOwnerContext) methodContext.getParentContext(),
                                                                         ownerType.getInternalName());
@@ -337,7 +342,8 @@ public class InlineCodegen extends CallGenerator {
         FakeMemberCodegen parentCodegen =
                 new FakeMemberCodegen(codegen.getParentCodegen(), expression,
                                       (FieldOwnerContext) context.getParentContext(),
-                                      isLambda ? codegen.getParentCodegen().getClassName() : typeMapper.mapOwner(descriptor, false).getInternalName());
+                                      isLambda ? codegen.getParentCodegen().getClassName()
+                                               : typeMapper.mapOwner(descriptor, true /*TODO: false, migration*/).getInternalName());
 
         FunctionGenerationStrategy strategy =
                 expression instanceof JetCallableReferenceExpression ?
@@ -735,4 +741,18 @@ public class InlineCodegen extends CallGenerator {
         return new NestedSourceMapper(sourceMapper, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
 
+    private void reportIncrementalInfo(
+            @NotNull FunctionDescriptor sourceDescriptor,
+            @NotNull FunctionDescriptor targetDescriptor
+    ) {
+        IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
+        TargetId targetId = state.getTargetId();
+
+        if (incrementalCompilationComponents == null || targetId == null) return;
+
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
+        String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
+        String targetFile = getSourceFilePath(targetDescriptor);
+        incrementalCache.registerInline(sourceFile, jvmSignature.toString(), targetFile);
+    }
 }

@@ -1,4 +1,4 @@
-local final class `_DefaultPackage$anonymousObject$*$main$1` : java.lang.Runnable
+local final class `AnonymousObjectKt$main$1` : java.lang.Runnable
 
-public constructor `_DefaultPackage$anonymousObject$*$main$1`()
+public constructor `AnonymousObjectKt$main$1`()
 public open override /*1*/ fun run(): kotlin.Unit

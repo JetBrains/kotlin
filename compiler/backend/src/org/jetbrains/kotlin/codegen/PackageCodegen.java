@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
@@ -43,8 +42,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.MemberComparator;
@@ -83,6 +84,8 @@ public class PackageCodegen {
     private final PackageFragmentDescriptor compiledPackageFragment;
     private final List<DeserializedCallableMemberDescriptor> previouslyCompiledCallables;
 
+    private final PackageParts packageParts;
+
     public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull FqName fqName) {
         this.state = state;
         this.files = files;
@@ -101,7 +104,7 @@ public class PackageCodegen {
 
                 ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(
                         PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
-                        packageClassType, PackagePartClassUtils.getPackageFilesWithCallables(files)
+                        packageClassType, PackagePartClassUtils.getFilesWithCallables(files)
                 );
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
@@ -117,6 +120,7 @@ public class PackageCodegen {
                 return v;
             }
         });
+        packageParts = new PackageParts(fqName.asString());
     }
 
     // Returns null if file has callables in several files
@@ -126,7 +130,7 @@ public class PackageCodegen {
             return null;
         }
 
-        List<JetFile> packageFilesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(packageFiles);
+        List<JetFile> packageFilesWithCallables = PackagePartClassUtils.getFilesWithCallables(packageFiles);
         return packageFilesWithCallables.size() == 1 ? packageFilesWithCallables.get(0) : null;
     }
 
@@ -139,7 +143,7 @@ public class PackageCodegen {
         // TODO rewrite it to something more robust when module system is implemented
         for (PackageFragmentDescriptor fragment : state.getModule().getPackage(fqName).getFragments()) {
             if (fragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
-                ((IncrementalPackageFragmentProvider.IncrementalPackageFragment) fragment).getModuleId().equals(state.getModuleId())) {
+                ((IncrementalPackageFragmentProvider.IncrementalPackageFragment) fragment).getTarget().equals(state.getTargetId())) {
                 return fragment;
             }
         }
@@ -245,6 +249,7 @@ public class PackageCodegen {
             @NotNull List<JvmSerializationBindings> bindings
     ) {
         generateKotlinPackageReflectionField();
+        MemberCodegen.generateModuleNameField(state, v);
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(tasks.keySet())) {
             tasks.get(member).run();
@@ -256,7 +261,7 @@ public class PackageCodegen {
 
     private void generateKotlinPackageReflectionField() {
         MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class));
+        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class), getType(String.class));
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
         iv.areturn(Type.VOID_TYPE);
@@ -283,11 +288,12 @@ public class PackageCodegen {
         ProtoBuf.Package packageProto = serializer.packageProto(packageFragments, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
-                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
+//                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
+                return true;
             }
         }).build();
 
-        if (packageProto.getMemberCount() == 0) return;
+        //if (packageProto.getMemberCount() == 0) return;
 
         StringTable strings = serializer.getStringTable();
         NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
@@ -306,7 +312,7 @@ public class PackageCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
-        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
+        Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
         PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
@@ -329,7 +335,11 @@ public class PackageCodegen {
             }
         }
 
+
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
+
+        String name = packagePartType.getInternalName();
+        packageParts.getParts().add(name.substring(name.lastIndexOf('/') + 1));
 
         ClassBuilder builder = state.getFactory().newVisitor(PackagePart(file, packageFragment), packagePartType, file);
 
@@ -404,12 +414,20 @@ public class PackageCodegen {
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
+        Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 
     public void done() {
         v.done();
+    }
+
+    public PackageParts getPackageParts() {
+        return packageParts;
+    }
+
+    public Collection<JetFile> getFiles() {
+        return files;
     }
 }

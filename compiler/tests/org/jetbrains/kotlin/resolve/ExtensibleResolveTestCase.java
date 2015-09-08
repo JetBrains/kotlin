@@ -60,6 +60,6 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });
-        expectedResolveData.checkResult(expectedResolveData.analyze(files));
+        expectedResolveData.checkResult(ExpectedResolveData.analyze(files, getEnvironment()));
     }
 }

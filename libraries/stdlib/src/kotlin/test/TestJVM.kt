@@ -1,20 +1,39 @@
 package kotlin.test
 
 import java.util.ServiceLoader
+import kotlin.reflect.KClass
 
-/** Asserts that a [block] fails with a specific exception being thrown */
-public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): T {
+@deprecated("Use assertFailsWith instead.", ReplaceWith("assertFailsWith(exceptionClass, block)"))
+public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): T = assertFailsWith(exceptionClass, { block() })
+
+/** Asserts that a [block] fails with a specific exception being thrown. */
+public fun <T: Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+
+/** Asserts that a [block] fails with a specific exception being thrown. */
+public fun <T: Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
     try {
         block()
-        asserter.fail("Expected an exception to be thrown")
-        throw IllegalStateException("Should have failed")
-    } catch (e: T) {
+    }
+    catch (e: Throwable) {
         if (exceptionClass.isInstance(e)) {
-            return e
+            return e as T
         }
+        asserter.fail((message?.let { "$it. "} ?: "") + "Expected an exception of type $exceptionClass to be thrown, but was $e")
         throw e
     }
+    val msg = message?.let { "$it. " } ?: ""
+    asserter.fail(msg + "Expected an exception of type $exceptionClass to be thrown, but was completed successfully.")
+    throw IllegalStateException(msg + "Should have failed.")
 }
+
+/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+public fun <T: Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String? = null, block: () -> Unit): T = assertFailsWith(exceptionClass.java, message, block)
+
+/** Asserts that a [block] fails with a specific exception of type [T] being thrown.
+ *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
+ */
+public inline fun <reified T: Throwable> assertFailsWith(message: String, @noinline block: () -> Unit): T = assertFailsWith(T::class.java, message, block)
+
 
 /**
  * Comments out a [block] of test code until it is implemented while keeping a link to the code
@@ -33,17 +52,9 @@ private var _asserter: Asserter? = null
 public var asserter: Asserter
     get() {
         if (_asserter == null) {
-            val klass = javaClass<Asserter>()
+            val klass = Asserter::class.java
             val loader = ServiceLoader.load(klass)
-            for (a in loader) {
-                if (a != null) {
-                    _asserter = a
-                    break
-                }
-            }
-            if (_asserter == null) {
-                _asserter = DefaultAsserter()
-            }
+            _asserter = loader.firstOrNull { it != null } ?: DefaultAsserter()
             //debug("using asserter $_asserter")
         }
         return _asserter!!
@@ -59,36 +70,10 @@ public var asserter: Asserter
  */
 private class DefaultAsserter() : Asserter {
 
-    public override fun assertTrue(message : String, actual : Boolean) {
-        if (!actual) {
-            fail(message)
-        }
-    }
-
-    public override fun assertEquals(message : String, expected : Any?, actual : Any?) {
-        if (expected != actual) {
-            fail("$message. Expected <$expected> actual <$actual>")
-        }
-    }
-
-    override fun assertNotEquals(message : String, illegal: Any?, actual : Any?) {
-        if (illegal == actual) {
-            fail("$message. Illegal value: <$illegal>")
-        }
-    }
-
-    public override fun assertNotNull(message : String, actual : Any?) {
-        if (actual == null) {
-            fail(message)
-        }
-    }
-
-    public override fun assertNull(message : String, actual : Any?) {
-        if (actual != null) {
-            fail(message)
-        }
-    }
-    public override fun fail(message : String) {
-        throw AssertionError(message)
+    public override fun fail(message : String?) {
+        if (message == null)
+            throw AssertionError()
+        else
+            throw AssertionError(message)
     }
 }
