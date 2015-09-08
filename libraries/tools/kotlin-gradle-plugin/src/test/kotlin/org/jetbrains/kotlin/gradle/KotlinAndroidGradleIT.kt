@@ -52,4 +52,20 @@ class KotlinAndroidGradleIT: BaseGradleIT() {
                         ":compileFlavor2Release")
             }
         }
+
+    Test fun testModuleNameAndroid() {
+        val project = Project("AndroidProject", "2.3")
+
+        project.build("build") {
+            assertContains(
+                    "args.moduleName = Lib-compileReleaseKotlin",
+                    "args.moduleName = Lib-compileDebugKotlin",
+                    "args.moduleName = Android-compileFlavor1DebugKotlin",
+                    "args.moduleName = Android-compileFlavor2DebugKotlin",
+                    "args.moduleName = Android-compileFlavor1JnidebugKotlin",
+                    "args.moduleName = Android-compileFlavor2JnidebugKotlin",
+                    "args.moduleName = Android-compileFlavor1ReleaseKotlin",
+                    "args.moduleName = Android-compileFlavor2ReleaseKotlin")
+        }
+    }
 }

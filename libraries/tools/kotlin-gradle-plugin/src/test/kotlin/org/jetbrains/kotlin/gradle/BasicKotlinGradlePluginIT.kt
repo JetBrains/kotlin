@@ -60,6 +60,20 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         }
     }
 
+    Test fun testKotlinCustomModuleName() {
+        Project("moduleNameCustom", "1.6").build("build") {
+            assertSuccessful()
+            assertContains("args.moduleName = myTestName")
+        }
+    }
+
+    Test fun testKotlinDefaultModuleName() {
+        Project("moduleNameDefault", "1.6").build("build") {
+            assertSuccessful()
+            assertContains("args.moduleName = moduleNameDefault-compileKotlin")
+        }
+    }
+
     Test fun testAdvancedOptions() {
         Project("advancedOptions", "1.6").build("build") {
             assertSuccessful()

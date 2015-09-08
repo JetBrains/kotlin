@@ -97,7 +97,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
         logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
         val compile = project.getTasks().create(name, compilerClass)
-        compile.extensions.extraProperties.set("defaultModuleName", name)
+        compile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
         return compile
     }
 
