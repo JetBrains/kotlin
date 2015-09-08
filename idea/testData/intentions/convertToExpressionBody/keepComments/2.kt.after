@@ -1,2 +1,2 @@
-fun getText()<selection>: String</selection> = // let's return xxx
-        "xxx" //TODO
+fun getText(): String = // let's return xxx
+        "xxx"<caret> //TODO

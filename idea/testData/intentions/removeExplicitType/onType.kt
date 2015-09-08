@@ -1,1 +1,1 @@
-val x : Map.Entry<Stri<caret>ng, Int>? = null
+internal val x : Map.Entry<Stri<caret>ng, Int>? = null

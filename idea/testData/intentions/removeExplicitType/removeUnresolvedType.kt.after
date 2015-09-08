@@ -3,4 +3,4 @@
 
 package testing
 
-val a = 12
+internal val a = 12
