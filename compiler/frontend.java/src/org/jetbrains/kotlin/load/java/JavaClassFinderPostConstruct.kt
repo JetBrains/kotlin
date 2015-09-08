@@ -38,6 +38,6 @@ public class JavaLazyAnalyzerPostConstruct : JavaClassFinderPostConstruct() {
         @Inject set
 
     @PostConstruct override fun postCreate() {
-        CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.getModuleDescriptor(), codeAnalyzer)
+        CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.getModuleDescriptor(), codeAnalyzer!!)
     }
 }

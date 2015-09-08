@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.google.common.base.Predicate
-import com.google.common.collect.Collections2
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
@@ -38,7 +35,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlin.utils.*
-import java.util.Collections
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import kotlin.properties.Delegates
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -62,33 +62,20 @@ import java.util.Collections
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
 public class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSupport(), CodeAnalyzerInitializer {
-    private val psiManager: PsiManager
-    private var bindingContext: BindingContext? = null
-    private var module: ModuleDescriptor? = null
+    private val psiManager = PsiManager.getInstance(project)
+    private var bindingContext: BindingContext by Delegates.notNull()
+    private var module: ModuleDescriptor by Delegates.notNull()
 
-    init {
-        this.psiManager = PsiManager.getInstance(project)
-    }
 
-    override fun initialize(trace: BindingTrace, module: ModuleDescriptor, analyzer: KotlinCodeAnalyzer?) {
+    override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
         this.bindingContext = trace.bindingContext
         this.module = module
 
         if (trace !is CliBindingTrace) {
-            throw IllegalArgumentException("Shared trace is expected to be subclass of " + javaClass<CliBindingTrace>().simpleName + " class")
+            throw IllegalArgumentException("Shared trace is expected to be subclass of ${CliBindingTrace::class.java.simpleName} class")
         }
 
-        trace.setKotlinCodeAnalyzer(analyzer)
-    }
-
-    private fun getBindingContext(): BindingContext {
-        assert(bindingContext != null, "Call initialize() first")
-        return bindingContext
-    }
-
-    private fun getModule(): ModuleDescriptor {
-        assert(module != null, "Call initialize() first")
-        return module
+        trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
     override fun getContextForPackage(files: Collection<JetFile>): LightClassConstructionContext {
@@ -100,33 +87,23 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     private fun getContext(): LightClassConstructionContext {
-        return LightClassConstructionContext(bindingContext, getModule())
+        return LightClassConstructionContext(bindingContext, module)
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<JetClassOrObject> {
-        val classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(getModule(), fqName)
-
-        return ContainerUtil.mapNotNull(classDescriptors, object : Function<ClassDescriptor, JetClassOrObject> {
-            override fun `fun`(descriptor: ClassDescriptor): JetClassOrObject? {
-                val element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
-                if (element is JetClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
-                    return element
-                }
-                return null
+        return ResolveSessionUtils.getClassDescriptorsByFqName(module, fqName).map {
+            val element = DescriptorToSourceUtils.getSourceFromDescriptor(it)
+            if (element is JetClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
+                element
             }
-        })
+            else null
+        }.filterNotNull()
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<JetFile> {
-        val files = getBindingContext().get(BindingContext.PACKAGE_TO_FILES, fqName)
-        if (files != null) {
-            return Collections2.filter(files, object : Predicate<JetFile> {
-                override fun apply(input: JetFile?): Boolean {
-                    return PsiSearchScopeUtil.isInScope(searchScope, input)
-                }
-            })
-        }
-        return emptyList()
+        return bindingContext.get(BindingContext.PACKAGE_TO_FILES, fqName)?.filter {
+            PsiSearchScopeUtil.isInScope(searchScope, it)
+        } ?: emptyList()
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
@@ -144,11 +121,11 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean {
-        return !getModule().getPackage(fqName).isEmpty()
+        return !module.getPackage(fqName).isEmpty()
     }
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
-        val packageView = getModule().getPackage(fqn)
+        val packageView = module.getPackage(fqn)
         val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.ALL_NAME_FILTER)
         return ContainerUtil.mapNotNull(members, object : Function<DeclarationDescriptor, FqName> {
             override fun `fun`(member: DeclarationDescriptor): FqName? {
@@ -170,20 +147,19 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         val filesWithCallables = PackagePartClassUtils.getFilesWithCallables(filesInPackage)
         if (filesWithCallables.isEmpty()) return emptyList()
 
-        //noinspection RedundantTypeArguments
         return emptyOrSingletonList<PsiClass>(
-                KotlinLightClassForFacade.createForPackageFacade(psiManager, packageFqName, scope, filesWithCallables))
+                KotlinLightClassForFacade.createForPackageFacade(psiManager, packageFqName, scope, filesWithCallables)
+        )
     }
 
     override fun resolveClassToDescriptor(classOrObject: JetClassOrObject): ClassDescriptor? {
-        return bindingContext!!.get(BindingContext.CLASS, classOrObject)
+        return bindingContext.get(BindingContext.CLASS, classOrObject)
     }
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val filesForFacade = findFilesForFacade(facadeFqName, scope)
         if (filesForFacade.isEmpty()) return emptyList()
 
-        //noinspection RedundantTypeArguments
         return emptyOrSingletonList<PsiClass>(
                 KotlinLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
@@ -213,17 +189,15 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         }
 
         override fun toString(): String {
-            return javaClass<NoScopeRecordCliBindingTrace>().name
+            return NoScopeRecordCliBindingTrace::class.java.name
         }
     }
 
-    public open class CliBindingTrace
-    TestOnly
-    constructor() : BindingTraceContext() {
+    public open class CliBindingTrace TestOnly constructor() : BindingTraceContext() {
         private var kotlinCodeAnalyzer: KotlinCodeAnalyzer? = null
 
         override fun toString(): String {
-            return javaClass<CliBindingTrace>().name
+            return CliBindingTrace::class.java.name
         }
 
         public fun setKotlinCodeAnalyzer(kotlinCodeAnalyzer: KotlinCodeAnalyzer) {
@@ -238,7 +212,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
                     if (key is JetDeclaration) {
                         if (!JetPsiUtil.isLocal(key)) {
                             kotlinCodeAnalyzer!!.resolveToDescriptor(key)
-                            return super.get(slice, key)
+                            return super.get<K, V>(slice, key)
                         }
                     }
                 }
