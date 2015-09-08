@@ -5322,6 +5322,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inline.kt")
+            public void testInline() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/inline.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InsideEntryConstructorCall.kt")
             public void testInsideEntryConstructorCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/InsideEntryConstructorCall.kt");
