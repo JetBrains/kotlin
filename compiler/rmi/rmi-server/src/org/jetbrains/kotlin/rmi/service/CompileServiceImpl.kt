@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.service
+package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.rmi.*
-import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
-import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
 import java.io.IOException
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
 import java.net.URLClassLoader
+import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.TimeUnit
@@ -47,7 +46,6 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         val registry: Registry,
         val compiler: Compiler,
         val selfCompilerId: CompilerId,
-        val daemonOptions: DaemonOptions,
         port: Int
 ) : CompileService, UnicastRemoteObject() {
 
@@ -120,7 +118,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             // cleanup for the case of incorrect restart and many other situations
             UnicastRemoteObject.unexportObject(this, false)
         }
-        catch (e: java.rmi.NoSuchObjectException) {
+        catch (e: NoSuchObjectException) {
             // ignoring if object already exported
         }
 
@@ -138,8 +136,8 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream) -> ExitCode): Int =
             ifAlive {
-                val compilerMessagesStream = PrintStream( RemoteOutputStreamClient(compilerMessagesStreamProxy))
-                val serviceOutputStream = PrintStream( RemoteOutputStreamClient(serviceOutputStreamProxy))
+                val compilerMessagesStream = PrintStream(RemoteOutputStreamClient(compilerMessagesStreamProxy))
+                val serviceOutputStream = PrintStream(RemoteOutputStreamClient(serviceOutputStreamProxy))
                 checkedCompile(args, serviceOutputStream) {
                     val res = body( compilerMessagesStream).code
                     _lastUsedSeconds = nowSeconds()
@@ -176,8 +174,8 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         return ""
     }
 
-    fun ThreadMXBean.threadCputime() = if (isCurrentThreadCpuTimeSupported()) currentThreadCpuTime else 0L
-    fun ThreadMXBean.threadUsertime() = if (isCurrentThreadCpuTimeSupported()) currentThreadUserTime else 0L
+    fun ThreadMXBean.threadCpuTime() = if (isCurrentThreadCpuTimeSupported) currentThreadCpuTime else 0L
+    fun ThreadMXBean.threadUserTime() = if (isCurrentThreadCpuTimeSupported) currentThreadUserTime else 0L
 
     fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, body: () -> R): R {
         try {
@@ -187,12 +185,12 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             val threadMXBean: ThreadMXBean = ManagementFactory.getThreadMXBean()
             val startMem = usedMemory() / 1024
             val startTime = System.nanoTime()
-            val startThreadTime = threadMXBean.threadCputime()
-            val startThreadUserTime = threadMXBean.threadUsertime()
+            val startThreadTime = threadMXBean.threadCpuTime()
+            val startThreadUserTime = threadMXBean.threadUserTime()
             val res = body()
             val endTime = System.nanoTime()
-            val endThreadTime = threadMXBean.threadCputime()
-            val endThreadUserTime = threadMXBean.threadUsertime()
+            val endThreadTime = threadMXBean.threadCpuTime()
+            val endThreadUserTime = threadMXBean.threadUserTime()
             val endMem = usedMemory() / 1024
             log.info("Done with result " + res.toString())
             val elapsed = TimeUnit.NANOSECONDS.toMillis(endTime - startTime)
@@ -201,7 +199,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             log.info("Elapsed time: $elapsed ms (thread user: $elapsedThreadUser ms sys: ${elapsedThread - elapsedThreadUser} ms)")
             log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
             System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let {
-                serviceOut.println("PERF: TOTAL: $elapsed ms (thread user: $elapsedThreadUser ms sys: ${elapsedThread - elapsedThreadUser} ms); memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
+                serviceOut.println("PERF: Compile on daemon: $elapsed ms (thread user: $elapsedThreadUser ms sys: ${elapsedThread - elapsedThreadUser} ms); memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
             }
             return res
         }
@@ -214,12 +212,12 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     fun<R> ifAlive(body: () -> R): R = rwlock.read {
         if (!alive) throw IllegalStateException("Kotlin Compiler Service is not in alive state")
-        else body()
+        body()
     }
 
     fun<R> ifAliveExclusive(body: () -> R): R = rwlock.write {
         if (!alive) throw IllegalStateException("Kotlin Compiler Service is not in alive state")
-        else body()
+        body()
     }
 
     // sometimes used for debugging

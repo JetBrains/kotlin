@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.rmi.*
-import org.jetbrains.kotlin.service.CompileServiceImpl
-import org.jetbrains.kotlin.service.nowSeconds
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -57,151 +55,148 @@ class LogStream(name: String) : OutputStream() {
 }
 
 
-public class CompileDaemon {
+public object CompileDaemon {
 
-    companion object {
+    init {
+        val logPath: String = System.getProperty("kotlin.daemon.log.path")?.trimEnd('/','\\') ?: "%t"
+        val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
+        val cfg: String =
+            "handlers = java.util.logging.FileHandler\n" +
+            "java.util.logging.FileHandler.level     = ALL\n" +
+            "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+            "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+            "java.util.logging.FileHandler.limit     = 1073741824\n" + // 1Mb
+            "java.util.logging.FileHandler.count     = 3\n" +
+            "java.util.logging.FileHandler.append    = false\n" +
+            "java.util.logging.FileHandler.pattern   = $logPath/$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log\n" +
+            "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
 
-        init {
-            val logPath: String = System.getProperty("kotlin.daemon.log.path")?.trimEnd('/','\\') ?: "%t"
-            val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
-            val cfg: String =
-                "handlers = java.util.logging.FileHandler\n" +
-                "java.util.logging.FileHandler.level     = ALL\n" +
-                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-                "java.util.logging.FileHandler.limit     = 1073741824\n" + // 1Mb
-                "java.util.logging.FileHandler.count     = 3\n" +
-                "java.util.logging.FileHandler.append    = false\n" +
-                "java.util.logging.FileHandler.pattern   = $logPath/$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log\n" +
-                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
+        LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+    }
 
-            LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
-        }
+    val log by lazy { Logger.getLogger("daemon") }
 
-        val log by lazy { Logger.getLogger("daemon") }
-
-        private fun loadVersionFromResource(): String? {
-            (javaClass.classLoader as? URLClassLoader)
-                    ?.findResource("META-INF/MANIFEST.MF")
-                    ?.let {
-                        try {
-                            return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: ""
-                        }
-                        catch (e: IOException) {}
+    private fun loadVersionFromResource(): String? {
+        (CompileDaemon::class.java.classLoader as? URLClassLoader)
+                ?.findResource("META-INF/MANIFEST.MF")
+                ?.let {
+                    try {
+                        return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
                     }
-            return null
+                    catch (e: IOException) {}
+                }
+        return null
+    }
+
+    jvmStatic public fun main(args: Array<String>) {
+
+        log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
+        log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
+        log.info("daemon args: " + args.joinToString(" "))
+
+        val compilerId = CompilerId()
+        val daemonOptions = DaemonOptions()
+
+        try {
+            val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+
+            if (filteredArgs.any()) {
+                val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
+                log.info(helpLine)
+                println(helpLine)
+                throw IllegalArgumentException("Unknown arguments: " + filteredArgs.joinToString(" "))
+            }
+
+            log.info("starting daemon")
+
+            // TODO: find minimal set of permissions and restore security management
+            // note: may be not needed anymore since (hopefully) server is now loopback-only
+            //            if (System.getSecurityManager() == null)
+            //                System.setSecurityManager (RMISecurityManager())
+            //
+            //            setDaemonPpermissions(daemonOptions.port)
+
+            val (registry, port) = createRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS)
+            val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
+            runFileDir.mkdirs()
+            val runFile = File(runFileDir,
+                               makeRunFilenameString(ts = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                                     port = port.toString()))
+            if (!runFile.createNewFile()) {
+                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'")
+            }
+            runFile.deleteOnExit()
+
+            val compiler = K2JVMCompiler()
+            val compilerService = CompileServiceImpl(registry, compiler, compilerId, port)
+
+            if (daemonOptions.runFilesPath.isNotEmpty())
+                println(daemonOptions.runFilesPath)
+
+            daemonOptions.clientAliveFlagPath?.let {
+                if (!File(it).exists()) {
+                    log.info("Client alive flag $it do not exist, disable watching it")
+                    daemonOptions.clientAliveFlagPath = null
+                }
+            }
+
+            // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
+            // TODO: implement more reliable scheme
+            System.out.close()
+            System.err.close()
+
+            System.setErr(PrintStream(LogStream("stderr")))
+            System.setOut(PrintStream(LogStream("stdout")))
+
+            fun shutdownCondition(check: () -> Boolean, message: String): Boolean {
+                val res = check()
+                if (res) {
+                    log.info(message)
+                }
+                return res
+            }
+
+            // stopping daemon if any shutdown condition is met
+            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
+                val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
+                if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
+                    shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds},
+                                      "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
+                    shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
+                                      "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down"))
+                {
+                    cancel()
+                    compilerService.shutdown()
+                }
+            }
+        }
+        catch (e: Exception) {
+            System.err.println("Exception: " + e.getMessage())
+            log.info("Exception" + e.getMessage())
+            log.info(e.toString())
+            // TODO consider exiting without throwing
+            throw e
         }
 
-        jvmStatic public fun main(args: Array<String>) {
+    }
 
-            log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
-            log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
-            log.info("daemon args: " + args.joinToString(" "))
+    val random = Random()
 
-            val compilerId = CompilerId()
-            val daemonOptions = DaemonOptions()
+    private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
+        var i = 0
+        var lastException: RemoteException? = null
 
+        while (i++ < attempts) {
+            val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
             try {
-                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
-
-                if (filteredArgs.any()) {
-                    val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
-                    log.info(helpLine)
-                    println(helpLine)
-                    throw IllegalArgumentException("Unknown arguments: " + filteredArgs.joinToString(" "))
-                }
-
-                log.info("starting daemon")
-
-                // TODO: find minimal set of permissions and restore security management
-                // note: may be not needed anymore since (hopefully) server is now loopback-only
-                //            if (System.getSecurityManager() == null)
-                //                System.setSecurityManager (RMISecurityManager())
-                //
-                //            setDaemonPpermissions(daemonOptions.port)
-
-                val (registry, port) = createRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS)
-                val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
-                runFileDir.mkdirs()
-                val runFile = File(runFileDir,
-                                   makeRunFilenameString(ts = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                                                         digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
-                                                         port = port.toString()))
-                if (!runFile.createNewFile()) {
-                    throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'")
-                }
-                runFile.deleteOnExit()
-
-                val compiler = K2JVMCompiler()
-                val compilerService = CompileServiceImpl(registry, compiler, compilerId, daemonOptions, port)
-
-                if (daemonOptions.runFilesPath.isNotEmpty())
-                    println(daemonOptions.runFilesPath)
-
-                daemonOptions.clientAliveFlagPath?.let {
-                    if (!File(it).exists()) {
-                        log.info("Client alive flag $it do not exist, disable watching it")
-                        daemonOptions.clientAliveFlagPath = null
-                    }
-                }
-
-                // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
-                // TODO: implement more reliable scheme
-                System.out.close()
-                System.err.close()
-
-                System.setErr(PrintStream(LogStream("stderr")))
-                System.setOut(PrintStream(LogStream("stdout")))
-
-                fun shutdownCondition(check: () -> Boolean, message: String): Boolean {
-                    val res = check()
-                    if (res) {
-                        log.info(message)
-                    }
-                    return res
-                }
-
-                // stopping daemon if any shutdown condition is met
-                timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
-                    val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
-                    if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
-                        shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds},
-                                          "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
-                        shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
-                                          "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down"))
-                    {
-                        cancel()
-                        compilerService.shutdown()
-                    }
-                }
+                return Pair(LocateRegistry.createRegistry(port, clientLoopbackSocketFactory, serverLoopbackSocketFactory), port)
             }
-            catch (e: Exception) {
-                System.err.println("Exception: " + e.getMessage())
-                log.info("Exception" + e.getMessage())
-                log.info(e.toString())
-                // TODO consider exiting without throwing
-                throw e
+            catch (e: RemoteException) {
+                // assuming that the port is already taken
+                lastException = e
             }
-
         }
-
-        val random = Random()
-
-        private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
-            var i = 0
-            var lastException: RemoteException? = null
-
-            while (i++ < attempts) {
-                val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
-                try {
-                    return Pair(LocateRegistry.createRegistry(port, clientLoopbackSocketFactory, serverLoopbackSocketFactory), port)
-                }
-                catch (e: RemoteException) {
-                    // assuming that the port is already taken
-                    lastException = e
-                }
-            }
-            throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
-        }
+        throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
     }
 }

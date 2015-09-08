@@ -165,7 +165,7 @@ public class KotlinCompilerRunner {
 
             ArrayList<DaemonReportMessage> daemonReportMessages = new ArrayList<DaemonReportMessage>();
 
-            CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, new DaemonReportingTargets(null, daemonReportMessages), true, true);
+            CompileService daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, new DaemonReportingTargets(null, daemonReportMessages), true, true);
 
             for (DaemonReportMessage msg: daemonReportMessages) {
                 if (msg.getCategory() == DaemonReportCategory.EXCEPTION && daemon == null) {
@@ -182,7 +182,7 @@ public class KotlinCompilerRunner {
                 ByteArrayOutputStream compilerOut = new ByteArrayOutputStream();
                 ByteArrayOutputStream daemonOut = new ByteArrayOutputStream();
 
-                Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, compilerOut, daemonOut);
+                Integer res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, incrementalCaches, compilerOut, daemonOut);
 
                 ProcessCompilerOutput(messageCollector, collector, compilerOut, res.toString());
                 BufferedReader reader = new BufferedReader(new StringReader(daemonOut.toString()));
