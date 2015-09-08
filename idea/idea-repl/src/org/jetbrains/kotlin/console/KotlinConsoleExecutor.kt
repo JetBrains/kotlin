@@ -36,7 +36,7 @@ public class KotlinConsoleExecutor(
 
         if (inputText.isNotEmpty()) {
             historyHighlighter.printNewCommandInHistory(inputText)
-            submitCommand("$inputText\n")
+            submitCommand(inputText)
         }
     }
 
@@ -50,7 +50,7 @@ public class KotlinConsoleExecutor(
         val xmlRes = "$XML_PREAMBLE" +
                      "<input>" +
                      "${StringUtil.escapeXml(
-                             StringUtil.replace("${command.trim()}\n", SOURCE_CHARS, XML_REPLACEMENTS)
+                             StringUtil.replace("$command\n", SOURCE_CHARS, XML_REPLACEMENTS)
                      )}" +
                      "</input>"
 

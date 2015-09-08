@@ -36,7 +36,7 @@ public class KotlinConsoleModuleDialog(private val project: Project) {
         if (modules.isEmpty()) return errorNotification(project, "No modules were found")
         if (modules.size() == 1) return runConsole(modules.first())
 
-        val moduleActions = modules sortBy { it.name } map { runAction(it) }
+        val moduleActions = modules sortedBy { it.name } map { createRunAction(it) }
         val moduleGroup = DefaultActionGroup(moduleActions)
 
         val modulePopup = JBPopupFactory.getInstance().createActionGroupPopup(
@@ -47,19 +47,19 @@ public class KotlinConsoleModuleDialog(private val project: Project) {
     }
 
     private fun getModule(dataContext: DataContext): Module? {
-        val file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext)
+        val file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext) ?: return null
 
-        if (file != null) {
-            val moduleForFile = ModuleUtilCore.findModuleForFile(file, project)
-            if (moduleForFile != null) return moduleForFile
-        }
+        val moduleForFile = ModuleUtilCore.findModuleForFile(file, project)
+        if (moduleForFile != null) return moduleForFile
 
         return null
     }
 
-    private fun runConsole(module: Module) = KotlinConsoleKeeper.getInstance(project).run(module) let { Unit }
+    private fun runConsole(module: Module) {
+        KotlinConsoleKeeper.getInstance(project).run(module)
+    }
 
-    private fun runAction(module: Module) = object : AnAction(module.name) {
+    private fun createRunAction(module: Module) = object : AnAction(module.name) {
         override fun actionPerformed(_: AnActionEvent) = runConsole(module)
     }
 }

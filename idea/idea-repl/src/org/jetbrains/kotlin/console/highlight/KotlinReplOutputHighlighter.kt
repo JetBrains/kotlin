@@ -31,7 +31,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.console.KotlinConsoleHistoryManager
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.console.SeverityDetails
-import org.jetbrains.kotlin.console.gutter.IconPack
+import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
@@ -57,17 +57,17 @@ public class KotlinReplOutputHighlighter(
         return Pair(oldLen, newLen)
     }
 
-    private fun printOutput(output: String, contentType: ConsoleViewContentType, iconPack: IconPack? = null) {
+    private fun printOutput(output: String, contentType: ConsoleViewContentType, iconWithTooltip: IconWithTooltip? = null) {
         val (startOffset, endOffset) = textOffsets(output)
 
         consoleView.print(output, contentType)
         consoleView.flushDeferredText()
 
-        if (iconPack == null) return
+        if (iconWithTooltip == null) return
 
         historyMarkup.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
-        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(iconPack) }
+        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(iconWithTooltip) }
     }
 
     private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {
@@ -110,9 +110,9 @@ public class KotlinReplOutputHighlighter(
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
         val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
-        val historyCommandRunIndicator = historyMarkup.allHighlighters filter {
+        val historyCommandRunIndicator = historyMarkup.allHighlighters.filter {
             historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
-        } first { true }
+        }.first()
 
         val highlighterAndMessagesByLine = compilerMessages.filter {
             it.severity == Severity.ERROR || it.severity == Severity.WARNING

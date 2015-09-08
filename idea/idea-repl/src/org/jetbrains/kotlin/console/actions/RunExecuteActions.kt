@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.console.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
@@ -25,6 +26,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
+import org.jetbrains.kotlin.console.KotlinConsoleRunner
 
 fun errorNotification(project: Project?, message: String) {
     val errorTag = "KOTLIN REPL ERROR"
@@ -50,4 +52,11 @@ public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAc
 
         ktConsole.executor.executeCommand()
     }
+}
+
+public class BuildAndRestartConsoleAction(
+        private val runner: KotlinConsoleRunner
+) : AnAction("Build and restart", "Build module '${runner.module.name}' and restart", AllIcons.Actions.Restart) {
+
+    override fun actionPerformed(_: AnActionEvent) = runner.compilerHelper.compileModule()
 }

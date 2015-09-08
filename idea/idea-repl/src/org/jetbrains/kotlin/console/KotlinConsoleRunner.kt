@@ -29,9 +29,10 @@ import com.intellij.openapi.editor.markup.*
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
-import org.jetbrains.kotlin.console.gutter.IconPack
+import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.JetLanguage
 import java.awt.Color
 import java.awt.Font
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.Delegates
 
 public class KotlinConsoleRunner(
@@ -53,10 +53,11 @@ public class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    private val editorToHighlighter = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
     private val historyHighlighter = KotlinHistoryHighlighter(this)
-    private var disposableDescriptor: RunContentDescriptor by Delegates.notNull()
+
+    private var consoleEditorHighlighter by Delegates.notNull<RangeHighlighter>()
+    private var disposableDescriptor by Delegates.notNull<RunContentDescriptor>()
 
     val executor = KotlinConsoleExecutor(this, historyManager, historyHighlighter)
     var compilerHelper: KotlinConsoleCompilerHelper by Delegates.notNull()
@@ -137,7 +138,7 @@ public class KotlinConsoleRunner(
     }
 
     fun setupGutters() {
-        fun configureEditorGutter(editor: EditorEx, color: Color, iconPack: IconPack) {
+        fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
             editor.gutterComponentEx.setPaintBackground(true)
@@ -145,41 +146,37 @@ public class KotlinConsoleRunner(
             editorColorScheme.setColor(EditorColors.GUTTER_BACKGROUND, color)
             editor.colorsScheme = editorColorScheme
 
-            addGutterIndicator(editor, iconPack)
+            return addGutterIndicator(editor, iconWithTooltip)
         }
 
         val historyEditor = consoleView.historyViewer
         val consoleEditor = consoleView.consoleEditor
 
         configureEditorGutter(historyEditor, ReplColors.HISTORY_GUTTER_COLOR, ReplIcons.HISTORY_INDICATOR)
-        configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
+        consoleEditorHighlighter = configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
 
         historyEditor.settings.isUseSoftWraps = true
         historyEditor.settings.additionalLinesCount = 0
-        historyEditor.scrollPane.horizontalScrollBar.isEnabled = true
 
         consoleEditor.settings.isCaretRowShown = true
         consoleEditor.settings.additionalLinesCount = 2
     }
 
-    fun addGutterIndicator(editor: EditorEx, iconPack: IconPack) {
-        val indicator = KotlinConsoleIndicatorRenderer(iconPack)
+    fun addGutterIndicator(editor: EditorEx, iconWithTooltip: IconWithTooltip): RangeHighlighter {
+        val indicator = KotlinConsoleIndicatorRenderer(iconWithTooltip)
         val editorMarkup = editor.markupModel
         val indicatorHighlighter = editorMarkup.addRangeHighlighter(
                 0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE
         )
 
-        editorToHighlighter[editor] = indicatorHighlighter
-        indicatorHighlighter.gutterIconRenderer = indicator
+        return indicatorHighlighter apply { gutterIconRenderer = indicator }
     }
 
-    fun changeConsoleEditorIndicator(newIconPack: IconPack) {
-        val editorHighlighter = editorToHighlighter[consoleView.consoleEditor]
-        editorHighlighter?.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIconPack)
+    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) {
+        consoleEditorHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIconWithTooltip)
     }
 
-    // this method shouldn't be called in normal usage; it is for test purpose only
-    fun dispose() {
+    @TestOnly fun dispose() {
         processHandler.destroyProcess()
         Disposer.dispose(disposableDescriptor)
     }

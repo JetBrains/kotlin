@@ -46,7 +46,7 @@ public class KotlinConsoleKeeper(val project: Project) {
 
     fun run(module: Module, testMode: Boolean = false, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
-        val cmdLine = createCommandLine(module) ?: return errorNotification(project, "Module SDK not found") let { null }
+        val cmdLine = createCommandLine(module) ?: return run { errorNotification(project, "Module SDK not found"); null }
 
         val consoleRunner = KotlinConsoleRunner(module, cmdLine, testMode, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()

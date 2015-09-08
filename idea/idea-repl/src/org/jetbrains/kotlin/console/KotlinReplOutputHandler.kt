@@ -67,8 +67,8 @@ public class KotlinReplOutputHandler(
             "READLINE_END"    -> historyHighlighter.isReadLineMode = false
             "REPL_INCOMPLETE",
             "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
-            "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError(content)
-            "INNER_ERROR"     -> logError(javaClass, content)
+            "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError("${content.trim()}\n")
+            "INNER_ERROR"     -> logError(this.javaClass, content)
         }
     }
 

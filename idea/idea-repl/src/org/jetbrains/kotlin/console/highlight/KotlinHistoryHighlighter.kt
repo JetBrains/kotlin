@@ -60,9 +60,9 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
         consoleDocument.setText("")
         addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
-        historyEditor.markupModel let {
-            it.addRangeHighlighter(startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE)
-        } apply {
+        historyEditor.markupModel.addRangeHighlighter(
+                startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
+        ) apply {
             val historyMarker = if (isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
             gutterIconRenderer = KotlinConsoleIndicatorRenderer(historyMarker)
         }

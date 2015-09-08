@@ -20,19 +20,19 @@ import com.intellij.icons.AllIcons
 import org.jetbrains.kotlin.idea.JetIcons
 import javax.swing.Icon
 
-public data class IconPack(val icon: Icon, val tooltip: String)
+public data class IconWithTooltip(val icon: Icon, val tooltip: String?)
 
 public object ReplIcons {
-    public val BUILD_WARNING_INDICATOR: IconPack = IconPack(AllIcons.Ide.Warning_notifications, "Some issues with module <make>")
-    public val HISTORY_INDICATOR: IconPack = IconPack(AllIcons.General.MessageHistory, "History of executed commands")
-    public val EDITOR_INDICATOR: IconPack = IconPack(JetIcons.LAUNCH, "Write your commands here")
-    public val EDITOR_READLINE_INDICATOR: IconPack = IconPack(AllIcons.General.Balloon, "Waiting for input...")
-    public val COMMAND_MARKER: IconPack = IconPack(AllIcons.General.Run, "Executed command")
-    public val READLINE_MARKER: IconPack = IconPack(AllIcons.Icons.Ide.SpeedSearchPrompt, "Input line")
+    public val BUILD_WARNING_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Ide.Warning_notifications, null)
+    public val HISTORY_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.MessageHistory, "History of executed commands")
+    public val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(JetIcons.LAUNCH, "Write your commands here")
+    public val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon, "Waiting for input...")
+    public val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.General.Run, "Executed command")
+    public val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Icons.Ide.SpeedSearchPrompt, "Input line")
 
     // command result icons
-    public val SYSTEM_HELP: IconPack = IconPack(AllIcons.Actions.Menu_help, "System help")
-    public val RESULT: IconPack = IconPack(AllIcons.Vcs.Equal, "Result")
+    public val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Menu_help, "System help")
+    public val RESULT: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.Equal, "Result")
     public val COMPILER_ERROR: Icon = AllIcons.General.Error
-    public val RUNTIME_EXCEPTION: IconPack = IconPack(AllIcons.General.BalloonWarning, "Runtime exception")
+    public val RUNTIME_EXCEPTION: IconWithTooltip = IconWithTooltip(AllIcons.General.BalloonWarning, "Runtime exception")
 }
