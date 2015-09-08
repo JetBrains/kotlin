@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 public interface ClassBuilderInterceptorExtension {
     companion object : ProjectExtensionDescriptor<ClassBuilderInterceptorExtension>(
-            "org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension", javaClass<ClassBuilderInterceptorExtension>())
+            "org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension", ClassBuilderInterceptorExtension::class.java)
 
     public fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,

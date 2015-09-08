@@ -20,14 +20,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
+import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFile
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 
@@ -72,6 +76,8 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     val declarationsProvider = AndroidTestExternalDeclarationsProvider(project, resPaths, manifestPath, supportV4)
     ExternalDeclarationsProvider.registerExtension(project, declarationsProvider)
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+    StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
+    ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
 
     return myEnvironment
 }
