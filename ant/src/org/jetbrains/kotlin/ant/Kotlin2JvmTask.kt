@@ -73,7 +73,7 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
         if (moduleName == null) {
             if (owningTarget != null) {
                 moduleName = owningTarget.name
-            } else {
+            } else if (getProject() != null) {
                 moduleName = getProject().name
             }
         }
