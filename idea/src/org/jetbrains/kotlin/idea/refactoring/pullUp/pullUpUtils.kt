@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -112,12 +114,12 @@ fun makeAbstract(member: JetCallableDeclaration,
             type = KotlinBuiltIns.getInstance().nullableAnyType
         }
         else {
-            type = substitutor.substitute(type, Variance.INVARIANT) ?: KotlinBuiltIns.getInstance().nullableAnyType
+            type = substitutor.substitute(type.anonymousObjectSuperTypeOrNull() ?: type, Variance.INVARIANT)
+                   ?: KotlinBuiltIns.getInstance().nullableAnyType
         }
 
         if (member is JetProperty || !type.isUnit()) {
-            val typeRef = JetPsiFactory(targetClass).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-            member.setTypeReference(typeRef)
+            member.setType(type, false)
         }
     }
 

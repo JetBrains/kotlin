@@ -28,10 +28,13 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNO
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.substitute
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -93,4 +96,12 @@ public fun JetType.approximateWithResolvableType(scope: LexicalScope?, checkType
     if (isError() || isResolvableInScope(scope, checkTypeParameters)) return this
     return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
            ?: KotlinBuiltIns.getInstance().getAnyType()
+}
+
+public fun JetType.anonymousObjectSuperTypeOrNull(): JetType? {
+    val classDescriptor = constructor.declarationDescriptor
+    if (classDescriptor != null && DescriptorUtils.isAnonymousObject(classDescriptor)) {
+        return immediateSupertypes().firstOrNull() ?: KotlinBuiltIns.getInstance().anyType
+    }
+    return null
 }
