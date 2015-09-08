@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.decompiler.ReadMultifileClassException
+import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
+import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -46,6 +50,12 @@ public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
         "//\n" +
         "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
         "// File ABI version is $FILE_ABI_VERSION_MARKER"
+
+private val REASON = "REASON"
+public val FILE_CANT_BE_DECOMPILED_DUE_TO_ERRORS: String =
+        "// This class file has inconsistent Kotlin meta-information and can't be decompiled.\n" +
+        "//\n" +
+        "// $REASON"
 
 public fun buildDecompiledText(
         classFile: VirtualFile,
@@ -70,6 +80,11 @@ public fun buildDecompiledText(
             buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
         classHeader.isCompatibleClassKind() ->
             buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
+        classHeader.isCompatibleMultifileClassKind() -> {
+            val partClasses = findMultifileClassParts(classFile, kotlinClass)
+            val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
+            buildDecompiledText(packageFqName, partMembers)
+        }
         else ->
             throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
     }

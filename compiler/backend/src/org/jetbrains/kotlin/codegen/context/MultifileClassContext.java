@@ -21,26 +21,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class MultifileClassContext extends FieldOwnerContext<PackageFragmentDescriptor> {
-    private final Type multifileClassType;
-    private final Type filePartType;
-
+public class MultifileClassContext extends MultifileClassOrPartContext {
     public MultifileClassContext(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
             Type multifileClassType,
             Type filePartType
     ) {
-        super(descriptor, OwnerKind.PACKAGE, parent, null, null, null);
-        this.multifileClassType = multifileClassType;
-        this.filePartType = filePartType;
+        super(descriptor, parent, multifileClassType, filePartType);
     }
 
-    public Type getMultifileClassType() {
-        return multifileClassType;
-    }
-
-    public Type getFilePartType() {
-        return filePartType;
-    }
 }

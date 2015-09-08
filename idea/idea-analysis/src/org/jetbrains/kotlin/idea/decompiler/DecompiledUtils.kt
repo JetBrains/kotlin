@@ -21,10 +21,15 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
@@ -82,4 +87,28 @@ public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCoun
 
     fun isInNoKotlinJar(file: VirtualFile): Boolean =
             JarUserDataManager.hasFileWithProperty(HasCompiledKotlinInJar, file) == false
+}
+
+public class ReadMultifileClassException(message: String): RuntimeException(message)
+
+public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinJvmBinaryClass> {
+    val result = arrayListOf<KotlinClassHeader>()
+    val packageFqName = multifileClass.classId.packageFqName
+    val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
+    val partNames = multifileClass.classHeader.filePartClassNames ?: return emptyList()
+    return partNames.map {
+        partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it)))
+    }.filterNotNull()
+}
+
+@Throws(ReadMultifileClassException::class)
+public fun readMultifileClassPartHeaders(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinClassHeader> {
+    val classId = multifileClass.classId
+    val classHeader = multifileClass.classHeader
+    if (classHeader.filePartClassNames == null) {
+        throw ReadMultifileClassException("Multifile class $classId has no filePartClassNames or wrong ABI version: ${classHeader.version}")
+    }
+    else {
+        return findMultifileClassParts(file, multifileClass).map { it.classHeader }
+    }
 }

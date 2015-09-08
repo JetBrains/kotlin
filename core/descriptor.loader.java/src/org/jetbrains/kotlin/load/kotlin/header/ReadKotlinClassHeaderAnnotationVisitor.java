@@ -120,6 +120,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     return new PackageHeaderReader();
                 case FILE_FACADE:
                     return new FileFacadeHeaderReader();
+                case MULTIFILE_CLASS:
+                    return new MultifileClassHeaderReader();
+                case MULTIFILE_CLASS_PART:
+                    return new MultifileClassPartHeaderReader();
                 case SYNTHETIC_CLASS:
                     return new SyntheticClassHeaderReader();
                 default:
@@ -256,6 +260,18 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private class FileFacadeHeaderReader extends HeaderAnnotationArgumentVisitor {
         public FileFacadeHeaderReader() {
             super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_FILE_FACADE));
+        }
+    }
+
+    private class MultifileClassHeaderReader extends HeaderAnnotationArgumentVisitor {
+        public MultifileClassHeaderReader() {
+            super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS));
+        }
+    }
+
+    private class MultifileClassPartHeaderReader extends HeaderAnnotationArgumentVisitor {
+        public MultifileClassPartHeaderReader() {
+            super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS_PART));
         }
     }
 

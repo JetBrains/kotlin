@@ -226,7 +226,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             nameResolver: NameResolver
     ): KotlinJvmBinaryClass? {
         if (proto.hasExtension(implClassName)) {
-            return kotlinClassFinder.findKotlinClass(ClassId(packageFqName, nameResolver.getName(proto.getExtension(implClassName))))
+            val implClassName = nameResolver.getName(proto.getExtension(implClassName))
+            return kotlinClassFinder.findKotlinClass(ClassId(packageFqName, implClassName))
         }
         return null
     }

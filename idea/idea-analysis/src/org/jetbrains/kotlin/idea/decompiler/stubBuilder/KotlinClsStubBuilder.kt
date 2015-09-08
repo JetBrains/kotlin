@@ -22,7 +22,9 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.idea.decompiler.ReadMultifileClassException
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
+import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
@@ -83,30 +85,18 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
             header.isCompatibleMultifileClassKind() -> {
                 val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.nameResolver, packageFqName)
-                val partHeaders = readMultifileClassPartHeaders(file, header, packageFqName)
-                partHeaders?.let {
-                    createMultifileClassStub(it, classId.asSingleFqName(), context)
-                }
+                val partHeaders =
+                    try {
+                        readMultifileClassPartHeaders(file, kotlinBinaryClass)
+                    }
+                    catch (e: ReadMultifileClassException) {
+                        LOG.error(e.getMessage())
+                        return null
+                    }
+                createMultifileClassStub(partHeaders, classId.asSingleFqName(), context)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }
-    }
-
-    private fun readMultifileClassPartHeaders(file: VirtualFile, header: KotlinClassHeader, packageFqName: FqName): List<KotlinClassHeader>? {
-        val result = arrayListOf<KotlinClassHeader>()
-        val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-        val partNames = header.filePartClassNames
-        if (partNames != null) {
-            for (partName in partNames) {
-                val partClass = partsFinder.findKotlinClass(ClassId.topLevel(packageFqName.child(Name.identifier(partName))))
-                if (partClass == null) {
-                    LOG.error("Missing part class: $packageFqName.$partName")
-                    return null
-                }
-                result.add(partClass.classHeader)
-            }
-        }
-        return result
     }
 
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName): ClsStubBuilderComponents {

@@ -35,6 +35,12 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("MultifileClass")
+    public void testMultifileClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/MultifileClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TestKt/");

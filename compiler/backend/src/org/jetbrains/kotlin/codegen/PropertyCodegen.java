@@ -110,15 +110,12 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        if (context instanceof PackageFacadeContext) {
-            Type ownerType = ((PackageFacadeContext) context).getDelegateToClassType();
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(ownerType));
+        Type implClassType = CodegenContextUtil.getImplClassTypeByOwnerIfRequired(context);
+        if (implClassType != null) {
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(implClassType));
         }
-        else {
-            if (context instanceof PackageContext) {
-                Type ownerType = ((PackageContext) context).getPackagePartType();
-                v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(ownerType));
-            }
+
+        if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
 
             boolean hasBackingField = hasBackingField(declaration, descriptor);
