@@ -27,7 +27,7 @@ class FinalClass() {
 annotation class annotated(val text: String = "not given")
 
 //Check legal modifiers in constructor
-class LegalModifier(val a: Int, annotated private var b: String, annotated vararg <!UNUSED_PARAMETER!>v<!>: Int)
+class LegalModifier(val a: Int, @annotated private var b: String, @annotated vararg <!UNUSED_PARAMETER!>v<!>: Int)
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(
@@ -43,10 +43,10 @@ class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TAR
 
 
 //Check annotations with illegal modifiers in constructor
-class IllegalModifiers3(annotated <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>b<!>: String)
+class IllegalModifiers3(@annotated <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>b<!>: String)
 
 //Check annotations and vararg with illegal modifiers in constructor
-class IllegalModifiers4(val a: Int, annotated("a text") <!WRONG_MODIFIER_TARGET!>protected<!> vararg <!UNUSED_PARAMETER!>v<!>: Int)
+class IllegalModifiers4(val a: Int, @annotated("a text") <!WRONG_MODIFIER_TARGET!>protected<!> vararg <!UNUSED_PARAMETER!>v<!>: Int)
 
 //Check illegal modifiers for functions and catch block
 abstract class IllegalModifiers5() {
@@ -58,7 +58,7 @@ abstract class IllegalModifiers5() {
   abstract fun bar(<!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int, vararg v: String)
 
   //Check annotations with illegal modifiers
-  abstract fun baz(annotated("a text") <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int)
+  abstract fun baz(@annotated("a text") <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int)
 
   private fun qux() {
 
@@ -69,7 +69,7 @@ abstract class IllegalModifiers5() {
     try {} catch (<!WRONG_MODIFIER_TARGET!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> <!WRONG_MODIFIER_TARGET!>reified<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
 
     //Check annotations with illegal modifiers
-    try {} catch (annotated("a text") <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
+    try {} catch (@annotated("a text") <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
   }
 }
 

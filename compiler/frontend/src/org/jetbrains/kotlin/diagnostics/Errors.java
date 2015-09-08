@@ -140,6 +140,11 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory0<JetAnnotationEntry> DEPRECATED_UNESCAPED_ANNOTATION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> DEPRECATED_ESCAPED_MODIFIER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<JetAnnotationEntry, String> DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER = DiagnosticFactory1.create(WARNING);
+
+
     // Classes and traits
 
     DiagnosticFactory0<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =

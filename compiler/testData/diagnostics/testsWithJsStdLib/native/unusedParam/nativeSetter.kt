@@ -1,19 +1,19 @@
-nativeSetter
+@nativeSetter
 fun Int.foo(a: String, v: Int): Int = noImpl
 
-native
+@native
 class Bar(b: Int, c: Char) {
-    nativeSetter
+    @nativeSetter
     fun baz(d: Int, v: Int) {}
 }
 
-native
+@native
 object Obj {
-    nativeSetter
+    @nativeSetter
     fun test1(e: String, v: Any) {}
 
     object Nested {
-        nativeSetter
+        @nativeSetter
         fun test2(g: Int, v: Any) {}
     }
 }

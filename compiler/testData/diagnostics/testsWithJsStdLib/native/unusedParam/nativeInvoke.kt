@@ -1,19 +1,19 @@
-nativeInvoke
+@nativeInvoke
 fun Int.foo(a: String): Int = noImpl
 
-native
+@native
 class Bar(b: Int, c: Char) {
-    nativeInvoke
+    @nativeInvoke
     fun baz(d: Int) {}
 }
 
-native
+@native
 object Obj {
-    nativeInvoke
+    @nativeInvoke
     fun test1(e: String) {}
 
     object Nested {
-        nativeInvoke
+        @nativeInvoke
         fun test2(g: Int) {}
     }
 }

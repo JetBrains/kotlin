@@ -1,15 +1,15 @@
-native
+@native
 fun foo(a: String): Int = noImpl
 
-native
+@native
 fun Int.foo(a: String): Int = noImpl
 
-native
+@native
 class Bar(b: Int, c: Char) {
     fun baz(d: Int) {}
 }
 
-native
+@native
 object Obj {
     fun test1(e: String) {}
     object Nested {

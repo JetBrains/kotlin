@@ -1,4 +1,4 @@
 @Retention(AnnotationRetention.SOURCE)
 annotation class sourceann
 
-sourceann class AnnotatedAtSource
+@sourceann class AnnotatedAtSource

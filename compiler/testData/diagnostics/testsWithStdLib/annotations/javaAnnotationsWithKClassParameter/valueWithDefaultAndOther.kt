@@ -5,6 +5,6 @@ public @interface A {
 }
 
 // FILE: b.kt
-A(String::class, x = 2) class MyClass1
-A(value = String::class, x = 4) class MyClass2
-A(x = 5) class MyClass3
+@A(String::class, x = 2) class MyClass1
+@A(value = String::class, x = 4) class MyClass2
+@A(x = 5) class MyClass3

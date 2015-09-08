@@ -8,5 +8,5 @@ public @interface A {
 
 // FILE: 1.kt
 
-A(x = 1, y = "2")
+@A(x = 1, y = "2")
 fun test() {}

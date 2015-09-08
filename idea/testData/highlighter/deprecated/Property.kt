@@ -8,16 +8,16 @@ fun test() {
     MyClass.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test6: String' is deprecated. Use A instead">test6</warning>
 }
 
-Deprecated("Use A instead") val test1: String = ""
-Deprecated("Use A instead") var test4: String = ""
+@Deprecated("Use A instead") val test1: String = ""
+@Deprecated("Use A instead") var test4: String = ""
 
 class MyClass() {
-    Deprecated("Use A instead") val test2: String = ""
-    Deprecated("Use A instead") var test5: String = ""
+    @Deprecated("Use A instead") val test2: String = ""
+    @Deprecated("Use A instead") var test5: String = ""
 
     companion object {
-         Deprecated("Use A instead") val test3: String = ""
-         Deprecated("Use A instead") var test6: String = ""
+         @Deprecated("Use A instead") val test3: String = ""
+         @Deprecated("Use A instead") var test6: String = ""
     }
 }
 

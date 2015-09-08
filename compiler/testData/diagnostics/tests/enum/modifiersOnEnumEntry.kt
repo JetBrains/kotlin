@@ -14,7 +14,7 @@ enum class E {
     <!WRONG_MODIFIER_TARGET!>final<!> FINAL,
 
     <!WRONG_MODIFIER_TARGET!>inner<!> INNER,
-    <!WRONG_ANNOTATION_TARGET!>@annotation<!> ANNOTATION,
+    <!WRONG_MODIFIER_TARGET!>annotation<!> ANNOTATION,
     <!WRONG_MODIFIER_TARGET!>enum<!> ENUM,
     <!WRONG_MODIFIER_TARGET!>out<!> OUT,
     <!WRONG_MODIFIER_TARGET!>in<!> IN,

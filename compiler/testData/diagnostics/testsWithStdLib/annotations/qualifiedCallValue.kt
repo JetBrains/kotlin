@@ -1,19 +1,19 @@
 // !DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
 package a.b.c
 
-kotlin.Deprecated("aaa")
-ann1(kotlin.Deprecated("aaa"))
+@kotlin.Deprecated("aaa")
+@ann1(kotlin.Deprecated("aaa"))
 
-<!REPEATED_ANNOTATION!>a.b.c.ann1()<!>
-ann2(a.b.c.ann1())
+<!REPEATED_ANNOTATION!>@a.b.c.ann1()<!>
+@ann2(a.b.c.ann1())
 
-A.IAnn()
-ann3(A.IAnn())
+@A.IAnn()
+@ann3(A.IAnn())
 
-<!REPEATED_ANNOTATION!>a.b.c.A.IAnn()<!>
-<!REPEATED_ANNOTATION!>ann3(a.b.c.A.IAnn())<!>
+<!REPEATED_ANNOTATION!>@a.b.c.A.IAnn()<!>
+<!REPEATED_ANNOTATION!>@ann3(a.b.c.A.IAnn())<!>
 
-annArray(kotlin.arrayOf("a"))
+@annArray(kotlin.arrayOf("a"))
 fun test() = 1
 
 annotation class ann1(val p: Deprecated = kotlin.Deprecated("aaa"))

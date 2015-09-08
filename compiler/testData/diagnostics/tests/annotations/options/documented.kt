@@ -3,6 +3,6 @@ annotation class DocAnn
 
 annotation class NotDocAnn
 
-DocAnn class My
+@DocAnn class My
 
-NotDocAnn class Your
+@NotDocAnn class Your

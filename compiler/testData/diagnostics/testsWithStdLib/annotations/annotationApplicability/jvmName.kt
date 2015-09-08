@@ -30,8 +30,8 @@ var vardef: Int = 1
     set
 
 <!WRONG_ANNOTATION_TARGET!>@JvmName("C")<!>
-class C <!WRONG_ANNOTATION_TARGET!>JvmName("primary")<!> constructor() {
-    <!WRONG_ANNOTATION_TARGET!>JvmName("ctr")<!> constructor(x: Int): this() {}
+class C <!WRONG_ANNOTATION_TARGET!>@JvmName("primary")<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("ctr")<!> constructor(x: Int): this() {}
 
     @JvmName("a")
     fun foo() {}

@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
 
 open class C<T>() {
-    Deprecated("")
+    @Deprecated("")
     constructor(p: Int) : this(){}
 }
 

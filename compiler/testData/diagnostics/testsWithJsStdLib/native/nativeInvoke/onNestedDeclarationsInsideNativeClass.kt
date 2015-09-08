@@ -1,49 +1,49 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-native
+@native
 class A {
     class B {
         class C {
-            nativeInvoke
+            @nativeInvoke
             fun foo() {}
 
-            nativeInvoke
+            @nativeInvoke
             fun invoke(a: String): Int = 0
 
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
             fun Int.ext()<!> = 1
 
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
             fun Int.invoke(a: String, b: Int)<!> = "OK"
         }
 
         object obj {
-            nativeInvoke
+            @nativeInvoke
             fun foo() {}
 
-            nativeInvoke
+            @nativeInvoke
             fun invoke(a: String): Int = 0
 
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
             fun Int.ext()<!> = 1
 
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
             fun Int.invoke(a: String, b: Int)<!> = "OK"
         }
 
         companion object {
-            nativeInvoke
+            @nativeInvoke
             fun foo() {}
 
-            nativeInvoke
+            @nativeInvoke
             fun invoke(a: String): Int = 0
         }
 
         val anonymous = object {
-            nativeInvoke
+            @nativeInvoke
             fun foo() {}
 
-            nativeInvoke
+            @nativeInvoke
             fun invoke(a: String): Int = 0
         }
     }

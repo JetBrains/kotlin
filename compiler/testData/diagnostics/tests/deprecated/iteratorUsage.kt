@@ -1,5 +1,5 @@
 class Iter {
-    Deprecated("text")
+    @Deprecated("text")
     fun iterator() : IterIterator = throw Exception()
 
     class IterIterator {
@@ -11,9 +11,9 @@ class Iter {
 class Iter2 {
     fun iterator() : Iter2Iterator = throw Exception()
     class Iter2Iterator {
-        Deprecated("text")
+        @Deprecated("text")
         fun hasNext(): Boolean = throw UnsupportedOperationException()
-        Deprecated("text")
+        @Deprecated("text")
         fun next(): String = throw UnsupportedOperationException()
     }
 }

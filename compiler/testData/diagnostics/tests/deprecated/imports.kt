@@ -1,6 +1,6 @@
 import <!DEPRECATED_SYMBOL_WITH_MESSAGE!>C<!> as C2
 
-Deprecated("obsolete")
+@Deprecated("obsolete")
 class C {
     fun use() {}
 }

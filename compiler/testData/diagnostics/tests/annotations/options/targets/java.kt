@@ -60,16 +60,16 @@ package test
 
 import test.AnnotationTargets.*
 
-base meta type <!WRONG_ANNOTATION_TARGET!>konstructor<!> annotation class KMeta
+@base @meta @type <!WRONG_ANNOTATION_TARGET!>@konstructor<!> annotation class KMeta
 
-base <!WRONG_ANNOTATION_TARGET!>meta<!> type <!WRONG_ANNOTATION_TARGET!>method<!> <!WRONG_ANNOTATION_TARGET!>multiple<!> class KClass(
+@base <!WRONG_ANNOTATION_TARGET!>@meta<!> @type <!WRONG_ANNOTATION_TARGET!>@method<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> class KClass(
         @base @fieldann @parameter val y:
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@type<!> Int) {
 
-    base multiple fieldann <!WRONG_ANNOTATION_TARGET!>local<!> val x = 0
+    @base @multiple @fieldann <!WRONG_ANNOTATION_TARGET!>@local<!> val x = 0
     @method <!WRONG_ANNOTATION_TARGET!>@konstructor<!> <!WRONG_ANNOTATION_TARGET!>@type<!> get
 
-    base method multiple <!WRONG_ANNOTATION_TARGET!>konstructor<!>
+    @base @method @multiple <!WRONG_ANNOTATION_TARGET!>@konstructor<!>
     fun foo(@parameter <!WRONG_ANNOTATION_TARGET!>@type<!> i:
     <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> Int
     ): <!WRONG_ANNOTATION_TARGET!>@fieldann<!> <!WRONG_ANNOTATION_TARGET!>@parameter<!> Int {
@@ -78,5 +78,5 @@ base <!WRONG_ANNOTATION_TARGET!>meta<!> type <!WRONG_ANNOTATION_TARGET!>method<!
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j
     }
 
-    base <!WRONG_ANNOTATION_TARGET!>method<!> konstructor constructor(): this(0)
+    @base <!WRONG_ANNOTATION_TARGET!>@method<!> @konstructor constructor(): this(0)
 }

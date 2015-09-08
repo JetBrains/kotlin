@@ -1,19 +1,19 @@
-nativeGetter
+@nativeGetter
 fun Int.foo(a: String): Int? = noImpl
 
-native
+@native
 class Bar(b: Int, c: Char) {
-    nativeGetter
+    @nativeGetter
     fun baz(d: Int): Any? = noImpl
 }
 
-native
+@native
 object Obj {
-    nativeGetter
+    @nativeGetter
     fun test1(e: String): String? = noImpl
 
     object Nested {
-        nativeGetter
+        @nativeGetter
         fun test2(g: Int): Any? = noImpl
     }
 }

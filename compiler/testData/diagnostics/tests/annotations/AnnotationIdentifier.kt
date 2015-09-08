@@ -6,11 +6,11 @@ annotation class annotation
 
 package test
 
-<!NOT_AN_ANNOTATION_CLASS!>test.annotation<!> class annotation
+<!NOT_AN_ANNOTATION_CLASS!>@test.annotation<!> class annotation
 
-kotlin.annotation.annotation class realAnnotation
+<!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@kotlin.annotation.annotation<!> class realAnnotation
 
-realAnnotation class My
+@realAnnotation class My
 
 // FILE: other/c.kt
 
@@ -18,8 +18,8 @@ package other
 
 annotation class My
 
-<!NOT_AN_ANNOTATION_CLASS!>test.annotation<!> class Your
+<!NOT_AN_ANNOTATION_CLASS!>@test.annotation<!> class Your
 
-kotlin.annotation.annotation class His
+<!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@kotlin.annotation.annotation<!> class His
 
-My class Our
+@My class Our

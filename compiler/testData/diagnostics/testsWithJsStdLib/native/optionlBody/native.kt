@@ -1,22 +1,22 @@
-native
+@native
 val baz: Int
-native
+@native
 val boo: Int = noImpl
 
-native
+@native
 val Int.baz: Int
 
-native
+@native
 fun foo()
-native
+@native
 fun bar() {}
 
-native
+@native
 fun String.foo(): Int
-native
+@native
 fun String.bar(): Int = noImpl
 
-native
+@native
 interface T {
     val baz: Int
 
@@ -32,7 +32,7 @@ interface T {
     }
 }
 
-native
+@native
 class C {
     val baz: Int
     val boo: Int = noImpl
@@ -49,7 +49,7 @@ class C {
     }
 }
 
-native
+@native
 object O {
     val baz: Int
     val boo: Int = noImpl

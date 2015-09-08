@@ -1,13 +1,13 @@
-nativeGetter
+@nativeGetter
 fun String.foo(n: Int): Int?
-nativeGetter
+@nativeGetter
 fun String.bar(n: Int): Int? = noImpl
 
 
-native
+@native
 interface T {
-    nativeGetter
+    @nativeGetter
     fun foo(d: Double): String?
-    nativeGetter
+    @nativeGetter
     fun bar(d: Double): String? = noImpl
 }

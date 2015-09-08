@@ -12,7 +12,7 @@ annotation class common
 
 package test
 
-<!WRONG_ANNOTATION_TARGET!>special<!> class Incorrect
+<!WRONG_ANNOTATION_TARGET!>@special<!> class Incorrect
 
 // FILE: another.kt
 
@@ -20,4 +20,4 @@ package test
 
 package test
 
-common class Correct
+@common class Correct

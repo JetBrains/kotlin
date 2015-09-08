@@ -6,5 +6,5 @@ open class Base {
 }
 
 object Derived : Base() {
-    <!ACCIDENTAL_OVERRIDE!>JvmStatic fun foo(i: Int = 0)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>@JvmStatic fun foo(i: Int = 0)<!> {}
 }

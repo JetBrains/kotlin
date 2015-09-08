@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class PropertyHolder {
-    Deprecated("")
+    @Deprecated("")
     val a1 = 1
 
     @property:Deprecated("")

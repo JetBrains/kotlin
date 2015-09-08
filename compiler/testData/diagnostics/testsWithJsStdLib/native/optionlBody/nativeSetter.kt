@@ -1,13 +1,13 @@
-nativeSetter
+@nativeSetter
 fun String.foo(n: Int, v: Any)
-nativeSetter
+@nativeSetter
 fun String.bar(n: Int, v: Any) {}
 
 
-native
+@native
 class C {
-    nativeSetter
+    @nativeSetter
     fun foo(d: Double, v: Any): Any
-    nativeSetter
+    @nativeSetter
     fun bar(d: Double, v: Any): Any = noImpl
 }

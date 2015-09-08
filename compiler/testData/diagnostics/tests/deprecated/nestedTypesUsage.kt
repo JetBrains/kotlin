@@ -1,5 +1,5 @@
 class TopLevel {
-    Deprecated("Nested")
+    @Deprecated("Nested")
     class Nested {
         companion object {
             fun use() {}

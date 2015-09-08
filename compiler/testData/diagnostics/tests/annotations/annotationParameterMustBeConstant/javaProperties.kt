@@ -13,7 +13,7 @@ public class Test {
 // FILE: a.kt
 annotation class Ann(vararg val i: Int)
 
-Ann(
+@Ann(
         <!ANNOTATION_PARAMETER_MUST_BE_CONST!>Test.i1<!>,
         Test.i2,
         <!ANNOTATION_PARAMETER_MUST_BE_CONST!>Test.i3<!>,
