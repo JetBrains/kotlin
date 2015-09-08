@@ -273,6 +273,7 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
+        MAP.put(DEPRECATED_DECAPITALIZED_ANNOTATION, "Decapitalized annotations are deprecated. Use ''{0}'' instead", DEPRECATION_RENDERER);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");

@@ -223,6 +223,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> DEPRECATED_SYMBOL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATED_SYMBOL_WITH_MESSAGE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> DEPRECATED_DECAPITALIZED_ANNOTATION = DiagnosticFactory1.create(WARNING);
 
     // Objects
 

@@ -153,7 +153,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                         when (factory) {
                             Errors.DEPRECATED_SYMBOL,
                             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE,
-                            Errors.DEPRECATED_TRAIT_KEYWORD
+                            Errors.DEPRECATED_TRAIT_KEYWORD,
+                            Errors.DEPRECATED_DECAPITALIZED_ANNOTATION
                             -> annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
                         }
 
