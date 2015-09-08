@@ -66,7 +66,17 @@ import java.util.*;
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
-    private static final DescriptorRenderer SIGNATURE_RENDERER = DescriptorRenderer.Companion.withOptions(
+    private static final DescriptorRenderer SIGNATURE_SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setRenderDefaultValues(false);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
+
+    private static final DescriptorRenderer SIGNATURE_PREVIEW_RENDERER = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
@@ -75,6 +85,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                     options.setModifiers(Collections.<DescriptorRendererModifier>emptySet());
                     options.setNameShortness(NameShortness.SHORT);
                     options.setUnitReturnType(false);
+                    options.setRenderDefaultValues(false);
                     return Unit.INSTANCE$;
                 }
             }
@@ -96,7 +107,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     @Override
     public String getText() {
         if (possibleSignatures.size() == 1) {
-            return JetBundle.message("change.function.signature.action.single", SIGNATURE_RENDERER.render(possibleSignatures.get(0)));
+            return JetBundle.message("change.function.signature.action.single", SIGNATURE_PREVIEW_RENDERER.render(possibleSignatures.get(0)));
         }
         else {
             return JetBundle.message("change.function.signature.action.multiple");
@@ -134,7 +145,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         for (FunctionDescriptor superFunction : superFunctions) {
             if (!superFunction.getKind().isReal()) continue;
             FunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
-            possibleSignatures.put(SIGNATURE_RENDERER.render(signature), signature);
+            possibleSignatures.put(SIGNATURE_PREVIEW_RENDERER.render(signature), signature);
         }
         List<String> keys = new ArrayList<String>(possibleSignatures.keySet());
         Collections.sort(keys);
@@ -364,13 +375,13 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @NotNull
                 @Override
                 public String getTextFor(FunctionDescriptor aValue) {
-                    return SIGNATURE_RENDERER.render(aValue);
+                    return SIGNATURE_PREVIEW_RENDERER.render(aValue);
                 }
             };
         }
 
         private void changeSignature(FunctionDescriptor patternDescriptor) {
-            final String signatureString = IdeDescriptorRenderers.SOURCE_CODE.render(patternDescriptor);
+            final String signatureString = SIGNATURE_SOURCE_RENDERER.render(patternDescriptor);
 
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 
