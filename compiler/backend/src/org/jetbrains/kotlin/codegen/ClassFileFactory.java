@@ -84,12 +84,15 @@ public class ClassFileFactory implements OutputFileCollection {
     void done() {
         if (!isDone) {
             isDone = true;
-            Collection<PackageCodegen> values = package2codegen.values();
-            for (PackageCodegen codegen : values) {
+            Collection<PackageCodegen> packageCodegens = package2codegen.values();
+            for (PackageCodegen codegen : packageCodegens) {
                 codegen.done();
             }
-
-            writeModuleMappings(values);
+            for (MultifileClassCodegen codegen : multifileClass2codegen.values()) {
+                codegen.done();
+            }
+            // TODO module mappings for multifile classes
+            writeModuleMappings(packageCodegens);
         }
     }
 

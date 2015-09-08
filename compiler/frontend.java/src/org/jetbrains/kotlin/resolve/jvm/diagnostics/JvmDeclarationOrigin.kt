@@ -71,8 +71,8 @@ public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = Desc
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
-public fun MultifileClass(descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(MULTIFILE_CLASS, null, descriptor, multifileClassFqName)
+public fun MultifileClass(someFile: JetFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS, someFile, descriptor, multifileClassFqName)
 public fun MultifileClassPart(file: JetFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor, multifileClassFqName)
 

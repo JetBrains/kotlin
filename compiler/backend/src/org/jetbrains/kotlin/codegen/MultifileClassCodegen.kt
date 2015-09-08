@@ -70,7 +70,7 @@ public class MultifileClassCodegen(
         val actualPackageFragment = packageFragment ?:
                                     compiledPackageFragment ?:
                                     throw AssertionError("No package fragment for multifile facade $facadeFqName; files: $files")
-        val declarationOrigin = MultifileClass(actualPackageFragment, facadeFqName)
+        val declarationOrigin = MultifileClass(sourceFile, actualPackageFragment, facadeFqName)
         val classBuilder = state.factory.newVisitor(declarationOrigin, facadeClassType, filesWithTopLevelCallables)
 
         classBuilder.defineClass(sourceFile, Opcodes.V1_6, FACADE_CLASS_ATTRIBUTES,

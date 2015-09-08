@@ -135,6 +135,7 @@ private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDecla
     return when (other.classOrigin.originKind) {
         PACKAGE_PART -> this.classOrigin.originKind == PACKAGE_FACADE
         TRAIT_IMPL -> this.classOrigin.originKind != TRAIT_IMPL
+        MULTIFILE_CLASS_PART -> this.classOrigin.originKind == MULTIFILE_CLASS
         else -> false
     }
 }
