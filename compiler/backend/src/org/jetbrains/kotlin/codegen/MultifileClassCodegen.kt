@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -265,7 +266,7 @@ public class MultifileClassCodegen(
                 if (!IncrementalCompilation.ENABLED) null
                 else state.module.getPackage(packageFqName).fragments.firstOrNull { fragment ->
                     fragment is IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
-                    fragment.moduleId == state.moduleId
+                    fragment.target == state.targetId
                 }
     }
 
