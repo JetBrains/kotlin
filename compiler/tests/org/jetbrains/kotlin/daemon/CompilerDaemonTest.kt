@@ -35,8 +35,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val daemonOptions = DaemonOptions(runFilesPath = tmpdir.absolutePath)
-    val daemonJVMOptions = DaemonJVMOptions()
+    val daemonOptions by lazy { DaemonOptions(runFilesPath = tmpdir.absolutePath) }
+    val daemonJVMOptions by lazy { DaemonJVMOptions() }
     val compilerId by lazy { CompilerId.makeCompilerId( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }

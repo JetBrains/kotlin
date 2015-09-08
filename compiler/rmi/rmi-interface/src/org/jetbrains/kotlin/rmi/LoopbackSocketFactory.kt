@@ -26,28 +26,23 @@ import java.rmi.server.RMIServerSocketFactory
 
 
 // TODO switch to InetAddress.getLoopbackAddress on java 7+
-val loopbackAddrName = if (java.net.InetAddress.getLocalHost() is java.net.Inet6Address) "::1" else "127.0.0.1"
+val loopbackAddrName by lazy { if (java.net.InetAddress.getLocalHost() is java.net.Inet6Address) "::1" else "127.0.0.1" }
 val loopbackAddr by lazy { InetAddress.getByName(loopbackAddrName) }
 val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
 val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
 
+
 data class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
 
     throws(IOException::class)
-    override fun createServerSocket(port: Int): ServerSocket {
-        return ServerSocket(port, 5, loopbackAddr)
-    }
+    override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, 5, loopbackAddr)
 }
 
 
 data class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
 
     throws(IOException::class)
-    override fun createSocket(host: String, port: Int): Socket {
-        return Socket(loopbackAddr, port)
-        // just call the default client socket factory
-//        return RMISocketFactory.getDefaultSocketFactory().createSocket(host, port)
-    }
+    override fun createSocket(host: String, port: Int): Socket = Socket(loopbackAddr, port)
 }
 
 
