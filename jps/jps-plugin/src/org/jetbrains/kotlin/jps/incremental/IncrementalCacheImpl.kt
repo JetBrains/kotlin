@@ -68,7 +68,11 @@ class CacheFormatVersion(targetDataRoot: File) {
     companion object {
         // Change this when incremental cache format changes
         private val INCREMENTAL_CACHE_OWN_VERSION = 4
-        private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
+
+        private val CACHE_FORMAT_VERSION =
+                INCREMENTAL_CACHE_OWN_VERSION * 1000000 +
+                JvmAbi.VERSION.major * 1000 +
+                JvmAbi.VERSION.minor
 
         private val NON_INCREMENTAL_MODE_PSEUDO_VERSION = Int.MAX_VALUE
 
