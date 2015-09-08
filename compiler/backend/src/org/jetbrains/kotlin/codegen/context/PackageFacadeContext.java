@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -25,7 +24,7 @@ public class PackageFacadeContext extends PackageContext {
 
     public PackageFacadeContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
-            @Nullable CodegenContext parent,
+            @NotNull CodegenContext parent,
             @NotNull Type delegateTo
     ) {
         super(contextDescriptor, parent, delegateTo);

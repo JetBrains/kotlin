@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> {
-
     private final Type packagePartType;
 
-    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @Nullable CodegenContext parent, Type packagePartType) {
+    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @NotNull CodegenContext parent, Type packagePartType) {
         super(contextDescriptor, OwnerKind.PACKAGE, parent, null, null, null);
         this.packagePartType = packagePartType;
     }

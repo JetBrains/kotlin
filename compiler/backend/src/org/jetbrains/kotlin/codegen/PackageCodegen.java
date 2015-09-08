@@ -169,7 +169,7 @@ public class PackageCodegen {
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
                 public void run() {
-                    FieldOwnerContext context = CodegenContext.STATIC.intoPackageFacade(
+                    FieldOwnerContext context = state.getRootContext().intoPackageFacade(
                             AsmUtil.asmTypeByFqNameWithoutInnerClasses(PackagePartClassUtils.getPackagePartFqName(member)),
                             compiledPackageFragment
                     );
@@ -313,7 +313,7 @@ public class PackageCodegen {
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
         Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
-        PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
+        PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -345,7 +345,7 @@ public class PackageCodegen {
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
+        FieldOwnerContext packageFacade = state.getRootContext().intoPackageFacade(packagePartType, packageFragment);
 
         final MemberCodegen<?> memberCodegen = createCodegenForPartOfPackageFacade(packageFacade);
 
@@ -415,7 +415,7 @@ public class PackageCodegen {
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = classOrObject.getContainingJetFile();
         Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
-        CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
+        CodegenContext context = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 

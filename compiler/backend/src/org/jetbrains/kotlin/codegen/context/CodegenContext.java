@@ -39,8 +39,6 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
 public abstract class CodegenContext<T extends DeclarationDescriptor> {
-    public static final CodegenContext STATIC = new RootContext();
-
     private final T contextDescriptor;
     private final OwnerKind contextKind;
     private final CodegenContext parentContext;
@@ -76,6 +74,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         if (parentContext != null) {
             parentContext.addChild(this);
         }
+    }
+
+    @NotNull
+    public GenerationState getState() {
+        return parentContext.getState();
     }
 
     @NotNull
