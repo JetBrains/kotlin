@@ -2,7 +2,6 @@ package test.io
 
 import java.io.*
 import org.junit.Test as test
-import kotlin.test.assertEquals
 import kotlin.io.walkTopDown
 import kotlin.test.*
 
@@ -91,14 +90,30 @@ class FilesTest {
         val file7 = File("C:\\Users\\Me\\Documents")
         assertEquals("..", file6.relativeTo(file7))
         assertEquals("Documents", file7.relativeTo(file6))
-        val file8 = File("//my.host/home/user/documents/vip")
-        val file9 = File("//my.host/home/other/images/nice")
+        val file8 = File("""\\my.host\home/user/documents/vip""")
+        val file9 = File("""\\my.host\home/other/images/nice""")
         assertEquals("../../../user/documents/vip".separatorsToSystem(), file8.relativeTo(file9))
         assertEquals("../../../other/images/nice".separatorsToSystem(), file9.relativeTo(file8))
         val file10 = File("foo/bar")
         val file11 = File("foo")
         assertEquals("bar", file10.relativeTo(file11))
         assertEquals("..", file11.relativeTo(file10))
+    }
+
+    @test fun relativeToFails() {
+        val absolute = File("/foo/bar/baz")
+        val relative = File("foo/bar")
+        val networkShare1 = File("""\\my.host\share1/folder""")
+        val networkShare2 = File("""\\my.host\share2/folder""")
+
+        val allFiles = listOf(absolute, relative, networkShare1, networkShare2)
+        for (file in allFiles) {
+            for (base in allFiles) {
+                if (file != base) {
+                    assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
+                }
+            }
+        }
     }
 
     @test fun relativeTo() {
