@@ -178,7 +178,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaConstructor> constructors(@NotNull PsiMethod[] methods) {
+    public static Collection<JavaConstructor> constructors(@NotNull Iterable<PsiMethod> methods) {
         return convert(methods, Factories.CONSTRUCTORS);
     }
 
