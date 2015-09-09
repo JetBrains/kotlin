@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
+import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.Location
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
+import org.jetbrains.kotlin.idea.core.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.psi.*
@@ -56,7 +58,8 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
         val file = sourcePosition.file as? JetFile ?: return null
 
-        val inlinedArguments = getInlinedArgumentsIfAny(sourcePosition) ?: return null
+        val inlinedArguments = getInlinedArgumentsIfAny(sourcePosition)
+        if (inlinedArguments.isEmpty()) return null
 
         val locations = computedReferenceType.allLineLocations()
         val countOfLinesInFile = file.getLineCount()
@@ -96,7 +99,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val nextLineLocations = locations.dropWhile { it.lineNumber() != location.lineNumber() }.filter { it.method() == location.method() }
 
         val inlineFunction = getInlineFunctionsIfAny(file, lineStartOffset)
-        if (inlineFunction != null) {
+        if (inlineFunction.isNotEmpty()) {
             val xPosition = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunction) ?: return null
             return suspendContext.debugProcess.createRunToCursorCommand(suspendContext, xPosition, true)
         }
@@ -152,12 +155,12 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return null
     }
 
-    private fun getInlineFunctionsIfAny(file: JetFile, offset: Int): List<JetNamedFunction>? {
-        val elementAt = file.findElementAt(offset) ?: return null
-        val containingFunction = elementAt.getParentOfType<JetNamedFunction>(false) ?: return null
+    private fun getInlineFunctionsIfAny(file: JetFile, offset: Int): List<JetNamedFunction> {
+        val elementAt = file.findElementAt(offset) ?: return emptyList()
+        val containingFunction = elementAt.getParentOfType<JetNamedFunction>(false) ?: return emptyList()
 
         val descriptor = containingFunction.resolveToDescriptor()
-        if (!InlineUtil.isInline(descriptor)) return null
+        if (!InlineUtil.isInline(descriptor)) return emptyList()
 
         val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(
                 containingFunction.getResolutionFacade(),
@@ -211,16 +214,27 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return result
     }
 
-    private fun getInlinedArgumentsIfAny(sourcePosition: SourcePosition): List<JetFunction>? {
-        val file = sourcePosition.file as? JetFile ?: return null
+    private fun getInlinedArgumentsIfAny(sourcePosition: SourcePosition): List<JetFunction> {
+        val file = sourcePosition.file as? JetFile ?: return emptyList()
         val lineNumber = sourcePosition.line
-        val elementAt = CodeInsightUtils.getTopmostElementAtOffset(
-                sourcePosition.elementAt,
-                file.getLineStartOffset(lineNumber) ?: sourcePosition.elementAt.startOffset
-        ) ?: return null
+        var elementAt = sourcePosition.elementAt
 
-        val start = elementAt.startOffset
-        val end = elementAt.endOffset
+        var startOffset = file.getLineStartOffset(lineNumber) ?: elementAt.startOffset
+        var endOffset = file.getLineEndOffset(lineNumber) ?: elementAt.endOffset
+
+        var topMostElement: PsiElement? = null
+        while (topMostElement !is JetElement && startOffset < endOffset) {
+            elementAt = file.findElementAt(startOffset)
+            if (elementAt != null) {
+                topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, startOffset)
+            }
+            startOffset++
+        }
+
+        if (topMostElement == null) return emptyList()
+
+        val start = topMostElement.startOffset
+        val end = topMostElement.endOffset
 
         return CodeInsightUtils.
                 findElementsOfClassInRange(file, start, end, JetFunctionLiteral::class.java, JetNamedFunction::class.java)

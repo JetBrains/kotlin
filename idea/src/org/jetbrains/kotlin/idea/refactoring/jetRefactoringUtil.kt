@@ -280,7 +280,7 @@ public class SelectionAwareScopeHighlighter(val editor: Editor) {
 }
 
 fun PsiFile.getLineStartOffset(line: Int): Int? {
-    val doc = this.let { file -> PsiDocumentManager.getInstance(getProject()).getDocument(file) }
+    val doc = PsiDocumentManager.getInstance(project).getDocument(this)
     if (doc != null) {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
@@ -289,6 +289,10 @@ fun PsiFile.getLineStartOffset(line: Int): Int? {
     }
 
     return null
+}
+
+fun PsiFile.getLineEndOffset(line: Int): Int? {
+    return PsiDocumentManager.getInstance(project).getDocument(this)?.getLineEndOffset(line)
 }
 
 fun PsiElement.getLineCount(): Int {
