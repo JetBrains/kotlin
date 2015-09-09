@@ -2,4 +2,4 @@
 @file:JvmMultifileClass
 public fun bar(): String = barx()
 
-internal fun foox(): String = "O"
+private fun foox(): String = "O"

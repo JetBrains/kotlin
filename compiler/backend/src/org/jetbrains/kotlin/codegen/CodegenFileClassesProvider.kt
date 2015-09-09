@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-public class CodegenFileClassesProvider private constructor(private val bindingContext: BindingContext) : JvmFileClassesProvider {
+public class CodegenFileClassesProvider private constructor() : JvmFileClassesProvider {
     private val fileParts = hashMapOf<JetFile, JvmFileClassInfo>()
 
     override fun getFileClassFqName(file: JetFile): FqName =
@@ -33,11 +33,8 @@ public class CodegenFileClassesProvider private constructor(private val bindingC
     public fun getFileClassInfo(file: JetFile): JvmFileClassInfo =
             fileParts.getOrPut(file) { createFileClassInfo(file) }
 
-    private fun createFileClassInfo(file: JetFile): JvmFileClassInfo {
-        val fileAnnotations = JvmFileClassUtil.collectFileAnnotations(file, bindingContext)
-        val jvmClassNameAnnotation = JvmFileClassUtil.parseJvmFileClass(fileAnnotations)
-        return JvmFileClassUtil.getFileClassInfo(file, jvmClassNameAnnotation)
-    }
+    private fun createFileClassInfo(file: JetFile): JvmFileClassInfo =
+            JvmFileClassUtil.getFileClassInfoNoResolve(file)
 
     internal fun addFileClassInfo(file: JetFile) {
         if (fileParts.containsKey(file)) return
@@ -51,7 +48,7 @@ public class CodegenFileClassesProvider private constructor(private val bindingC
                 packagesWithObsoleteParts: Collection<FqName>,
                 multifileFacadesWithObsoleteParts: Collection<FqName>
         ) : CodegenFileClassesProvider {
-            val codegenFileClassesManager = CodegenFileClassesProvider(bindingContext)
+            val codegenFileClassesManager = CodegenFileClassesProvider()
             files.forEach {
                 codegenFileClassesManager.addFileClassInfo(it)
             }

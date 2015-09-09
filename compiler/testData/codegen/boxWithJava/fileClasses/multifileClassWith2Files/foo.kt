@@ -1,3 +1,2 @@
-@file:JvmName("Util")
-@file:JvmMultifileClass
+@file:[JvmName("Util") JvmMultifileClass]
 public fun foo(): String = "O"
