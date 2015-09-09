@@ -71,6 +71,24 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("MultiFileFacade.java")
+    public void testMultiFileFacade() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacade.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiFileFacadeMembers.java")
+    public void testMultiFileFacadeMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacadeMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiFileFacadeNoImport.java")
+    public void testMultiFileFacadeNoImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacadeNoImport.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Nested.java")
     public void testNested() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/Nested.java");
