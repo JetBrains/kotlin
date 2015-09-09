@@ -55,13 +55,6 @@ public object JvmFileClassUtil {
     public @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
             "${facadeName}__${PackagePartClassUtils.getFilePartShortName(fileName)}"
 
-    public @JvmStatic fun parseJvmFileClass(jvmName: AnnotationDescriptor, jvmMultifileClass: AnnotationDescriptor?): ParsedJmvFileClassAnnotations? {
-        val jvmNameArgument = jvmName.allValueArguments.values().singleOrNull() ?: return null
-        val name = (jvmNameArgument as? StringValue)?.value ?: return null
-        val isMultifileClassPart = jvmMultifileClass != null
-        return ParsedJmvFileClassAnnotations(name, isMultifileClassPart)
-    }
-
     public @JvmStatic fun getFileClassInfoNoResolve(file: JetFile): JvmFileClassInfo =
             getFileClassInfo(file, parseJvmNameOnFileNoResolve(file))
 

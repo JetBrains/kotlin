@@ -184,6 +184,16 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
+    @TestOnly
+    public Map<String, String> createTextForEachFile() {
+        Map<String, String> answer = new LinkedHashMap<String, String>();
+        for (OutputFile file : asList()) {
+            answer.put(file.getRelativePath(), file.asText());
+        }
+        return answer;
+    }
+
+    @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
         assert !isDone : "Already done!";
         PackageCodegen codegen = package2codegen.get(fqName);
