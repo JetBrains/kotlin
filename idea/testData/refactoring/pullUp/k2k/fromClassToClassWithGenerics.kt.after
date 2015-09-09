@@ -3,7 +3,7 @@ interface I
 
 interface Z<T>
 
-abstract class A<T: I, U: I, V>(x: X, y: Y) {
+abstract class A<T: I, U: I, V>(x: T, y: Any?) {
     // INFO: {"checked": "true"}
     val foo1: T
     // INFO: {"checked": "true"}

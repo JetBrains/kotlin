@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 class KotlinPullUpHelper(
@@ -533,7 +534,12 @@ class KotlinPullUpHelper(
             }
 
             with(constructor.getValueParameterList()!!) {
-                info.usedParameters.forEach { addParameter(it) }
+                info.usedParameters.forEach {
+                    val newParameter = addParameter(it)
+                    val originalType = data.sourceClassContext[BindingContext.VALUE_PARAMETER, it]!!.type
+                    newParameter.setType(data.sourceToTargetClassSubstitutor.substitute(originalType, Variance.INVARIANT) ?: originalType, false)
+                    newParameter.typeReference!!.addToShorteningWaitSet()
+                }
             }
             targetToSourceConstructors[constructorElement]!!.forEach {
                 val superCall: JetCallElement? = when (it) {
