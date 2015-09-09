@@ -60,6 +60,11 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         }
 
         val components = createStubBuilderComponents(file, packageFqName)
+        if (header.isCompatibleMultifileClassKind()) {
+            val partHeaders = readMultifileClassPartHeaders(file, kotlinBinaryClass)
+            return createMultifileClassStub(partHeaders, classId.asSingleFqName(), components)
+        }
+
         val annotationData = header.annotationData
         if (annotationData == null) {
             LOG.error("Corrupted kotlin header for file ${file.getName()}")
@@ -81,10 +86,6 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.getNameResolver(), packageFqName)
                 createFileFacadeStub(packageData.getPackageProto(), classId.asSingleFqName(), context)
-            }
-            header.isCompatibleMultifileClassKind() -> {
-                val partHeaders = readMultifileClassPartHeaders(file, kotlinBinaryClass)
-                createMultifileClassStub(partHeaders, classId.asSingleFqName(), components)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }
