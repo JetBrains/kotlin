@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.resolve.NewQualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -66,7 +66,7 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
 
 class LazyImportResolver(
         val storageManager: StorageManager,
-        val qualifiedExpressionResolver: NewQualifiedExpressionResolver,
+        val qualifiedExpressionResolver: QualifiedExpressionResolver,
         val fileScopeProvider: FileScopeProvider,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
