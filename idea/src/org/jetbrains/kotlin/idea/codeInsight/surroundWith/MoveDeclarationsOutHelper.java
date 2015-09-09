@@ -26,7 +26,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -117,7 +117,7 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetType getPropertyType(@NotNull JetProperty property) {
-        BindingContext bindingContext = ResolvePackage.analyze(property, BodyResolveMode.PARTIAL);
+        BindingContext bindingContext = ResolutionUtils.analyze(property, BodyResolveMode.PARTIAL);
 
         VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null : "Couldn't resolve property to property descriptor " + property.getText();

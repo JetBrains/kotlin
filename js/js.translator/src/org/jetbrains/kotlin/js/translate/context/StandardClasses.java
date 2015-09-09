@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name;
 
 import java.util.Map;
 
-import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 /**

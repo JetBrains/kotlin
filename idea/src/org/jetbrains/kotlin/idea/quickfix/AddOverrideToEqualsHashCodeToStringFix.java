@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
 import org.jetbrains.kotlin.psi.*;
 
@@ -82,7 +82,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
         Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
 
         for (JetFile jetFile : files) {
-            for (Diagnostic diagnostic : ResolvePackage.analyzeFully(jetFile).getDiagnostics()) {
+            for (Diagnostic diagnostic : ResolutionUtils.analyzeFully(jetFile).getDiagnostics()) {
                 if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
 
                 JetModifierListOwner element = (JetModifierListOwner) diagnostic.getPsiElement();

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
-import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.expandIsCalls;
+import static org.jetbrains.kotlin.js.translate.utils.ExpandIsCallsKt.expandIsCalls;
 
 /**
  * An entry point of translator.

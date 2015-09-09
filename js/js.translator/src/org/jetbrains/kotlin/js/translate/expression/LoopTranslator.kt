@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("LoopTranslator")
+
 package org.jetbrains.kotlin.js.translate.expression.loopTranslator
 
 import com.google.dart.compiler.backend.js.ast.*

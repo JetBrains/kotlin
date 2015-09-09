@@ -24,7 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.decompiler.DecompilerPackage;
+import org.jetbrains.kotlin.idea.decompiler.DecompiledUtilsKt;
 import org.jetbrains.kotlin.idea.decompiler.KotlinClsFileBase;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory;
@@ -59,8 +59,8 @@ public final class DecompiledNavigationUtils {
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor);
 
         if (virtualFile == null ||
-            !DecompilerPackage.isKotlinJvmCompiledFile(virtualFile) &&
-            !DecompilerPackage.isKotlinJsMetaFile(virtualFile)) return null;
+            !DecompiledUtilsKt.isKotlinJvmCompiledFile(virtualFile) &&
+            !DecompiledUtilsKt.isKotlinJsMetaFile(virtualFile)) return null;
 
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (!(psiFile instanceof KotlinClsFileBase)) {

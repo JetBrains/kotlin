@@ -23,7 +23,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.JetCallExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetQualifiedExpression;
@@ -44,7 +44,7 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof JetCallExpression && expression.getParent() instanceof JetQualifiedExpression) {
             return false;
         }
-        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type == null || isUnit(type)) {
             return false;
         }

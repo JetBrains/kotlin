@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -251,7 +251,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        BindingContext context = ResolvePackage.analyze(initializer, BodyResolveMode.FULL);
+        BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -281,7 +281,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
+        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
@@ -342,7 +342,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
+        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             BindingContext context = resolutionFacade.analyze(inlinedExpression, BodyResolveMode.FULL);
             Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
@@ -363,7 +363,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
-        BindingContext context = ResolvePackage.analyze(initializer, BodyResolveMode.FULL);
+        BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
         ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
         if (call == null) return null;
 

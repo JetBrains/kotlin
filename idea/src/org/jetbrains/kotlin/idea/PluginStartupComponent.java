@@ -20,7 +20,7 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
-import org.jetbrains.kotlin.idea.debugger.filter.FilterPackage;
+import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.decompiler.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
@@ -42,7 +42,7 @@ public class PluginStartupComponent implements ApplicationComponent {
         JarUserDataManager.INSTANCE$.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE$);
         JarUserDataManager.INSTANCE$.register(HasCompiledKotlinInJar.INSTANCE$);
 
-        FilterPackage.addKotlinStdlibDebugFilterIfNeeded();
+        DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
     }
 
     private static void registerPathVariable() {

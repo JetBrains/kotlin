@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("TypeUtils")
+
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

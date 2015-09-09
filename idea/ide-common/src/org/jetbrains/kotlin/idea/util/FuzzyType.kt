@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("FuzzyTypeUtils")
+
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor

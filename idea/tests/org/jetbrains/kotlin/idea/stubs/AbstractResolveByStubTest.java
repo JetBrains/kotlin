@@ -22,7 +22,7 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.test.AstAccessControl;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
@@ -60,7 +60,7 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
 
     private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
         JetFile file = (JetFile) getFile();
-        ModuleDescriptor module = ResolvePackage.findModuleDescriptor(file);
+        ModuleDescriptor module = ResolutionUtils.findModuleDescriptor(file);
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertFalse(packageViewDescriptor.isEmpty());
 

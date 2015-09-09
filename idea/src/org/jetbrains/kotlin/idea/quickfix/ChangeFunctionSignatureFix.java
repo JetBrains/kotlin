@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
@@ -106,7 +106,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return KotlinNameSuggester.INSTANCE$.suggestNameByName(argumentName.getAsName().asString(), validator);
         }
         else if (expression != null) {
-            BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL);
+            BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
             return KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, bindingContext, validator, "param").iterator().next();
         }
         else {
@@ -175,7 +175,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 DiagnosticWithParameters2<JetFunction, Integer, List<JetType>> diagnosticWithParameters =
                         EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic);
                 JetFunction functionLiteral = diagnosticWithParameters.getPsiElement();
-                DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(functionLiteral);
+                DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(functionLiteral);
 
                 if (descriptor instanceof FunctionDescriptor && functionLiteral instanceof JetFunctionLiteral) {
                     return new ChangeFunctionLiteralSignatureFix((JetFunctionLiteral) functionLiteral, (FunctionDescriptor) descriptor,
@@ -236,7 +236,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             List<? extends ValueArgument> arguments = callElement.getValueArguments();
 
             if (arguments.size() > parameters.size()) {
-                BindingContext bindingContext = ResolvePackage.analyze(callElement);
+                BindingContext bindingContext = ResolutionUtils.analyze(callElement);
                 boolean hasTypeMismatches = hasTypeMismatches(parameters, arguments, bindingContext);
                 return new AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches);
             }

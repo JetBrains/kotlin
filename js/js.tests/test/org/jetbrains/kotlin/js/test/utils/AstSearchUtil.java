@@ -25,8 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectNamedFunctions;
-import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectJsProperties;
+import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectNamedFunctions;
+import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectJsProperties;
 
 public class AstSearchUtil {
     @NotNull

@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
@@ -48,8 +49,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.types.TypesPackage;
-import org.jetbrains.kotlin.types.substitutions.SubstitutionsPackage;
+import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         if (!(parent instanceof JetFunctionLiteralExpression)) return false;
 
         JetFunctionLiteralExpression expression = (JetFunctionLiteralExpression) parent;
-        return ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
+        return ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
     }
 
     @NotNull
@@ -126,7 +126,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
                 if (!(classDescriptor instanceof ClassDescriptor)) return null;
 
-                typeSubstitutor = SubstitutionsPackage.getTypeSubstitutor(
+                typeSubstitutor = SubstitutionUtilsKt.getTypeSubstitutor(
                         ((ClassDescriptor) classDescriptor).getDefaultType(),
                         samCallType
                 );
@@ -154,13 +154,13 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             PsiElement element = getDeclaration();
 
             if (element instanceof JetFunction || element instanceof JetProperty || element instanceof JetParameter) {
-                currentCallableDescriptor = (CallableDescriptor) ResolvePackage.resolveToDescriptor((JetDeclaration) element);
+                currentCallableDescriptor = (CallableDescriptor) ResolutionUtils.resolveToDescriptor((JetDeclaration) element);
             }
             else if (element instanceof JetClass) {
-                currentCallableDescriptor = ((ClassDescriptor) ResolvePackage.resolveToDescriptor((JetClass) element)).getUnsubstitutedPrimaryConstructor();
+                currentCallableDescriptor = ((ClassDescriptor) ResolutionUtils.resolveToDescriptor((JetClass) element)).getUnsubstitutedPrimaryConstructor();
             }
             else if (element instanceof PsiMethod) {
-                currentCallableDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) element);
+                currentCallableDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) element);
             }
         }
         return currentCallableDescriptor;

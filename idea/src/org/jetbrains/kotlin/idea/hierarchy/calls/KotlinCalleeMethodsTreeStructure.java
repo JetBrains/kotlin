@@ -26,7 +26,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -89,7 +89,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         final Map<PsiReference, PsiElement> referencesToCalleeElements = new HashMap<PsiReference, PsiElement>();
         for (JetElement element : elementsToAnalyze) {
             element.accept(
-                    new CalleeReferenceVisitorBase(ResolvePackage.analyze(element, BodyResolveMode.FULL), false) {
+                    new CalleeReferenceVisitorBase(ResolutionUtils.analyze(element, BodyResolveMode.FULL), false) {
                         @Override
                         protected void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration) {
                             referencesToCalleeElements.put(ReferencesPackage.getMainReference(reference), declaration);

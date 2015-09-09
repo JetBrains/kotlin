@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 
 import java.util.Map;
 
@@ -44,6 +43,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
+import static org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt.isDynamic;
 
 /**
  * Aggregates all the static parts of the context.
@@ -237,7 +237,7 @@ public final class StaticContext {
                 @Override
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (TasksPackage.isDynamic(descriptor)) {
+                    if (isDynamic(descriptor)) {
                         String name = descriptor.getName().asString();
                         return JsDynamicScope.INSTANCE$.declareName(name);
                     }

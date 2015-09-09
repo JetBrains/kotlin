@@ -51,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetDeclaration;
@@ -325,7 +325,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Nullable
     private static JetNamedFunction findMainFun(@NotNull PsiClass psiClass) {
         for (JetNamedFunction function : getMainFunCandidates(psiClass)) {
-            BindingContext bindingContext = ResolvePackage.analyze(function, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze(function, BodyResolveMode.FULL);
             MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
             if (mainFunctionDetector.isMain(function)) return function;
         }

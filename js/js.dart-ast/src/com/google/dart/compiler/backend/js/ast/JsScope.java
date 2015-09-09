@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 
 /**
  * A scope is a factory for creating and allocating

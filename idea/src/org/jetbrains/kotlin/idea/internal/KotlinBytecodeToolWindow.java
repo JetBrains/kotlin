@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.DebuggerUtils;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -197,7 +197,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         GenerationState state;
         DiagnosticSink.CollectAll sink = new DiagnosticSink.CollectAll();
         try {
-            ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
+            ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(jetFile);
 
             BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
 
@@ -259,7 +259,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             for (Diagnostic diagnostic : diagnostics) {
                 answer.append("// Error at ")
                         .append(diagnostic.getPsiFile().getName())
-                        .append(UtilsPackage.join(diagnostic.getTextRanges(), ","))
+                        .append(StringsKt.join(diagnostic.getTextRanges(), ","))
                         .append(": ")
                         .append(DefaultErrorMessages.render(diagnostic))
                         .append("\n");

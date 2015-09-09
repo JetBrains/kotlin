@@ -30,9 +30,8 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.PropertyCodegen;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
@@ -86,7 +84,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     public JetFunctionCallUsage(@NotNull JetCallElement element, JetCallableDefinitionUsage callee) {
         super(element);
         this.callee = callee;
-        this.context = ResolvePackage.analyze(element, BodyResolveMode.FULL);
+        this.context = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
         this.resolvedCall = CallUtilPackage.getResolvedCall(element, context);
     }
 

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperty;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
-import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslatorPackage;
+import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;
@@ -244,13 +245,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
-        return LoopTranslatorPackage.createWhile(false, expression, context);
+        return LoopTranslator.createWhile(false, expression, context);
     }
 
     @Override
     @NotNull
     public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
-        return LoopTranslatorPackage.createWhile(true, expression, context);
+        return LoopTranslator.createWhile(true, expression, context);
     }
 
     @Override
@@ -421,7 +422,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
         if (InlineUtil.isInline(descriptor)) {
-            MetadataPackage.setStaticRef(name, alias);
+            MetadataProperties.setStaticRef(name, alias);
         }
 
         boolean isExpression = BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext());
@@ -459,7 +460,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitForExpression(@NotNull JetForExpression expression,
             @NotNull TranslationContext context) {
-        return LoopTranslatorPackage.translateForExpression(expression, context).source(expression);
+        return LoopTranslator.translateForExpression(expression, context).source(expression);
     }
 
     @Override

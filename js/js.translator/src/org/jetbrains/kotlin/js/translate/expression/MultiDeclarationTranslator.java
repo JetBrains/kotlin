@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.setInlineCallMetadata;
+import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
 
 public class MultiDeclarationTranslator extends AbstractTranslator {
 

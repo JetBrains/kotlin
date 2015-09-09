@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.actions.JetAddFunctionToClassifierAction;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -52,7 +52,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     }
 
     private static List<FunctionDescriptor> generateFunctionsToAdd(JetNamedFunction functionElement) {
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(functionElement);
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(functionElement);
 
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return Collections.emptyList();

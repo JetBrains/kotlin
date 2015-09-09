@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 
 import java.util.ArrayList;
@@ -138,7 +138,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
             @Override
             public DeclarationDescriptor compute() {
                 if (!DumbService.isDumb(element.getProject())) {
-                    return ResolvePackage.resolveToDescriptor(declaration);
+                    return ResolutionUtils.resolveToDescriptor(declaration);
                 }
 
                 return null;

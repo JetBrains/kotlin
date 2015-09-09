@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
-import org.jetbrains.kotlin.idea.util.UtilPackage;
+import org.jetbrains.kotlin.idea.util.ExtensionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -64,7 +64,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(contextExpression);
+        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(contextExpression);
 
         BindingContext bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL);
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
@@ -82,7 +82,7 @@ public abstract class BaseJetVariableMacro extends Macro {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 
                 if (variableDescriptor.getExtensionReceiverParameter() != null
-                    && UtilPackage.substituteExtensionIfCallableWithImplicitReceiver(
+                    && ExtensionUtils.substituteExtensionIfCallableWithImplicitReceiver(
                         variableDescriptor, scope, bindingContext, dataFlowInfo).isEmpty()) {
                     continue;
                 }
