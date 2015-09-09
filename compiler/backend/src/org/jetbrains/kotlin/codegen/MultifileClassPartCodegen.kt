@@ -47,7 +47,7 @@ public class MultifileClassPartCodegen(
 ) : MemberCodegen<JetFile>(state, null, partContext, file, v){
     override fun generateDeclaration() {
         v.defineClass(element, Opcodes.V1_6,
-                      Opcodes.ACC_SYNTHETIC,
+                      Opcodes.ACC_FINAL,
                       filePartType.internalName,
                       null,
                       "java/lang/Object",
