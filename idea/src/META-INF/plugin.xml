@@ -500,7 +500,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeClassIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeFqNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFilePartClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeClassByPackageIndex"/>
 

@@ -31,5 +31,5 @@ public object StaticFacadeIndexUtil {
             project: Project
     ) : Collection<JetFile> =
             PackagePartClassUtils.getFilesWithCallables(
-                    JetFileFacadeClassIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+                    JetFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 }

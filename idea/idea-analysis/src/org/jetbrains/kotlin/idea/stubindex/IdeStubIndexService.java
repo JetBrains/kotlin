@@ -45,7 +45,7 @@ public class IdeStubIndexService extends StubIndexService {
 
         FqName facadeFqName = ((KotlinFileStubForIde) stub).getFacadeFqName();
         if (facadeFqName != null) {
-            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), facadeFqName.asString());
+            sink.occurrence(JetFileFacadeFqNameIndex.INSTANCE.getKey(), facadeFqName.asString());
             sink.occurrence(JetFileFacadeClassByPackageIndex.INSTANCE.getKey(), packageFqName.asString());
         }
 
@@ -57,7 +57,7 @@ public class IdeStubIndexService extends StubIndexService {
         JetFile jetFile = stub.getPsi();
         if (jetFile != null) {
             JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile);
-            sink.occurrence(JetFileFacadeClassIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
+            sink.occurrence(JetFileFacadeFqNameIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
             sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), fileClassInfo.getFileClassFqName().asString());
         }
     }

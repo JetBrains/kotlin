@@ -215,7 +215,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<JetFile> {
-        return JetFileFacadeClassIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
+        return JetFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
     }
 
     override fun resolveClassToDescriptor(classOrObject: JetClassOrObject): ClassDescriptor? {

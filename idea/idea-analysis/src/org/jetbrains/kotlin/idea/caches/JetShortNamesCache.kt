@@ -27,7 +27,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.JavaElementFinder
 import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetFileFacadeClassIndex
+import org.jetbrains.kotlin.idea.stubindex.JetFileFacadeFqNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
@@ -43,7 +43,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         // package classes can not be indexed, since they have no explicit declarations
         val packageClassShortNames = PackageIndexUtil.getAllPossiblePackageClasses(project).keySet()
         classNames.addAll(packageClassShortNames)
-        classNames.addAll(JetFileFacadeClassIndex.getAllFacadeShortNames(project))
+        classNames.addAll(JetFileFacadeFqNameIndex.getAllFacadeShortNames(project))
 
         return classNames.toTypedArray()
     }
@@ -57,7 +57,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         val packageClasses = PackageIndexUtil.getAllPossiblePackageClasses(project)
 
         // package classes can not be indexed, since they have no explicit declarations
-        val fqNames = packageClasses.get(name) + JetFileFacadeClassIndex.getInstance().getAllKeys(project).map { FqName(it) }.filter { it.shortName().asString() == name }
+        val fqNames = packageClasses.get(name) + JetFileFacadeFqNameIndex.getInstance().getAllKeys(project).map { FqName(it) }.filter { it.shortName().asString() == name }
         for (fqName in fqNames) {
             val psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
             if (psiClass != null) {
