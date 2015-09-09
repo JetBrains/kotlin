@@ -22,7 +22,6 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.idea.decompiler.ReadMultifileClassException
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
 import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
@@ -30,10 +29,11 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.header.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
@@ -83,17 +83,8 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 createFileFacadeStub(packageData.getPackageProto(), classId.asSingleFqName(), context)
             }
             header.isCompatibleMultifileClassKind() -> {
-                val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
-                val context = components.createContext(packageData.nameResolver, packageFqName)
-                val partHeaders =
-                    try {
-                        readMultifileClassPartHeaders(file, kotlinBinaryClass)
-                    }
-                    catch (e: ReadMultifileClassException) {
-                        LOG.error(e.getMessage())
-                        return null
-                    }
-                createMultifileClassStub(partHeaders, classId.asSingleFqName(), context)
+                val partHeaders = readMultifileClassPartHeaders(file, kotlinBinaryClass)
+                createMultifileClassStub(partHeaders, classId.asSingleFqName(), components)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }

@@ -65,36 +65,32 @@ public class MultifileClassCodegen(
     // We can do this (probably without 'compiledPackageFragment') after modifications to part codegen.
 
     private val classBuilder = ClassBuilderOnDemand {
-        val filesWithTopLevelCallables = files.filter { hasTopLevelCallables(it) }
-        val sourceFile = filesWithTopLevelCallables.firstOrNull()
+        val originFile = files.firstOrNull()
         val actualPackageFragment = packageFragment ?:
                                     compiledPackageFragment ?:
                                     throw AssertionError("No package fragment for multifile facade $facadeFqName; files: $files")
-        val declarationOrigin = MultifileClass(sourceFile, actualPackageFragment, facadeFqName)
-        val classBuilder = state.factory.newVisitor(declarationOrigin, facadeClassType, filesWithTopLevelCallables)
+        val declarationOrigin = MultifileClass(originFile, actualPackageFragment, facadeFqName)
+        val classBuilder = state.factory.newVisitor(declarationOrigin, facadeClassType, files)
 
-        classBuilder.defineClass(sourceFile, Opcodes.V1_6, FACADE_CLASS_ATTRIBUTES,
+        val filesWithCallables = files.filter { it.declarations.any { it is JetNamedFunction || it is JetProperty } }
+        val singleSourceFile = filesWithCallables.singleOrNull()
+        classBuilder.defineClass(singleSourceFile, Opcodes.V1_6, FACADE_CLASS_ATTRIBUTES,
                                  facadeClassType.internalName,
                                  null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY)
-        sourceFile?.let { classBuilder.visitSource(it.name, null) }
+        if (singleSourceFile != null) {
+            classBuilder.visitSource(singleSourceFile.name, null)
+        }
         classBuilder
     }
 
-    private fun hasTopLevelCallables(file: JetFile) =
-            file.declarations.any { it is JetNamedFunction || it is JetProperty }
-
     public fun generate(errorHandler: CompilationErrorHandler) {
-        val bindings = ArrayList<JvmSerializationBindings>(files.size() + 1)
         val generateCallableMemberTasks = HashMap<CallableMemberDescriptor, () -> Unit>()
         val partFqNames = arrayListOf<FqName>()
 
         for (file in files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             try {
-                val partClassBuilder = generatePart(file, generateCallableMemberTasks, partFqNames)
-                if (partClassBuilder != null) {
-                    bindings.add(partClassBuilder.serializationBindings)
-                }
+                generatePart(file, generateCallableMemberTasks, partFqNames)
             }
             catch (e: ProcessCanceledException) {
                 throw e
@@ -113,13 +109,12 @@ public class MultifileClassCodegen(
 //        generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks)
 
         if (!generateCallableMemberTasks.isEmpty()) {
-            generateMultifileFacadeClass(generateCallableMemberTasks, bindings, partFqNames)
+            generateMultifileFacadeClass(generateCallableMemberTasks, partFqNames)
         }
     }
 
     private fun generateMultifileFacadeClass(
             tasks: Map<CallableMemberDescriptor, () -> Unit>,
-            bindings: MutableList<JvmSerializationBindings>,
             partFqNames: List<FqName>
     ) {
         MemberCodegen.generateModuleNameField(state, classBuilder)
@@ -128,8 +123,7 @@ public class MultifileClassCodegen(
             tasks[member]!!()
         }
 
-        bindings.add(classBuilder.serializationBindings)
-        writeKotlinMultifileFacadeAnnotationIfNeeded(JvmSerializationBindings.union(bindings), partFqNames)
+        writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames)
     }
 
     public fun generateClassOrObject(classOrObject: JetClassOrObject) {
@@ -196,20 +190,9 @@ public class MultifileClassCodegen(
         return builder
     }
 
-    private fun writeKotlinMultifileFacadeAnnotationIfNeeded(bindings: JvmSerializationBindings, partFqNames: List<FqName>) {
+    private fun writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames: List<FqName>) {
         if (state.classBuilderMode != ClassBuilderMode.FULL) return
         if (files.any { it.isScript }) return
-
-        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(bindings, state.typeMapper))
-
-        val packageFragments = arrayListOf<PackageFragmentDescriptor>()
-        ContainerUtil.addIfNotNull(packageFragments, packageFragment)
-        ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment)
-        val facadeProto = serializer.packageProto(packageFragments, /* skip= */ { true }).build()
-
-        val strings = serializer.stringTable
-        val nameResolver = NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        val facadeData = PackageData(nameResolver, facadeProto)
 
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION)
@@ -220,12 +203,6 @@ public class MultifileClassCodegen(
             filePartClassNamesArray.visit(null, shortName)
         }
         filePartClassNamesArray.visitEnd()
-
-        val dataArray = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME)
-        for (string in BitEncoding.encodeBytes(SerializationUtil.serializePackageData(facadeData))) {
-            dataArray.visit(null, string)
-        }
-        dataArray.visitEnd()
 
         av.visitEnd()
     }

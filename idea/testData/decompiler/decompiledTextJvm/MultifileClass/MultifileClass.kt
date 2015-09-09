@@ -2,9 +2,10 @@
 @file:JvmMultifileClass
 package test
 
-private var i = 2
-
-fun Int.plus(i: Int = 1) = this + i
+public val val1a = 42
+private val String.val2a: Int get() = 0
+public fun fn1a() {}
+public fun String.fn2a() {}
 
 class ShouldNotBeVisible1
 interface ShouldNotBeVisible2

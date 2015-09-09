@@ -95,7 +95,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         return headerKind == CLASS ||
                headerKind == PACKAGE_FACADE ||
                headerKind == FILE_FACADE ||
-               headerKind == MULTIFILE_CLASS ||
                headerKind == MULTIFILE_CLASS_PART;
     }
 

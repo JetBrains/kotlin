@@ -23,6 +23,7 @@ import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
@@ -67,9 +68,19 @@ public class KotlinFileStubImpl(
 
         public fun forFileFacadeStub(facadeFqName: FqName, isScript: Boolean): KotlinFileStubImpl =
                 KotlinFileStubImpl(jetFile = null,
-                                   packageName = StringRef.fromString(facadeFqName.parent().asString())!!,
-                                   facadeSimpleName = StringRef.fromString(facadeFqName.shortName().asString())!!,
-                                   partSimpleName = StringRef.fromString(facadeFqName.shortName().asString())!!,
+                                   packageName = facadeFqName.parent().stringRef(),
+                                   facadeSimpleName = facadeFqName.shortName().stringRef(),
+                                   partSimpleName = facadeFqName.shortName().stringRef(),
                                    isScript = isScript)
+
+        public fun forMultifileClassStub(facadeFqName: FqName, isScript: Boolean): KotlinFileStubImpl =
+                KotlinFileStubImpl(jetFile = null,
+                                   packageName = facadeFqName.parent().stringRef(),
+                                   facadeSimpleName = facadeFqName.shortName().stringRef(),
+                                   partSimpleName = null,
+                                   isScript = isScript)
+
+        private fun FqName.stringRef() = StringRef.fromString(asString())!!
+        private fun Name.stringRef() = StringRef.fromString(asString())!!
     }
 }

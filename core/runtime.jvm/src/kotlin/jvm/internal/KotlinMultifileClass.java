@@ -24,5 +24,4 @@ public @interface KotlinMultifileClass {
     int abiVersion();
 
     String[] filePartClassNames();
-    String[] data();
 }

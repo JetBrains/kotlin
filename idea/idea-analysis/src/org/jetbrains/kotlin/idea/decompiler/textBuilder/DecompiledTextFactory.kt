@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.decompiler.ReadMultifileClassException
 import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
-import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
@@ -50,12 +48,6 @@ public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
         "//\n" +
         "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
         "// File ABI version is $FILE_ABI_VERSION_MARKER"
-
-private val REASON = "REASON"
-public val FILE_CANT_BE_DECOMPILED_DUE_TO_ERRORS: String =
-        "// This class file has inconsistent Kotlin meta-information and can't be decompiled.\n" +
-        "//\n" +
-        "// $REASON"
 
 public fun buildDecompiledText(
         classFile: VirtualFile,

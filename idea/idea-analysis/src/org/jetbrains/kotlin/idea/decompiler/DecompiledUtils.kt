@@ -89,10 +89,7 @@ public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCoun
             JarUserDataManager.hasFileWithProperty(HasCompiledKotlinInJar, file) == false
 }
 
-public class ReadMultifileClassException(message: String): RuntimeException(message)
-
 public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinJvmBinaryClass> {
-    val result = arrayListOf<KotlinClassHeader>()
     val packageFqName = multifileClass.classId.packageFqName
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
     val partNames = multifileClass.classHeader.filePartClassNames ?: return emptyList()
@@ -101,14 +98,5 @@ public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmB
     }.filterNotNull()
 }
 
-@Throws(ReadMultifileClassException::class)
-public fun readMultifileClassPartHeaders(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinClassHeader> {
-    val classId = multifileClass.classId
-    val classHeader = multifileClass.classHeader
-    if (classHeader.filePartClassNames == null) {
-        throw ReadMultifileClassException("Multifile class $classId has no filePartClassNames or wrong ABI version: ${classHeader.version}")
-    }
-    else {
-        return findMultifileClassParts(file, multifileClass).map { it.classHeader }
-    }
-}
+public fun readMultifileClassPartHeaders(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinClassHeader> =
+        findMultifileClassParts(file, multifileClass).map { it.classHeader }

@@ -48,8 +48,7 @@ public enum class JvmDeclarationOriginKind {
 public class JvmDeclarationOrigin(
         public val originKind: JvmDeclarationOriginKind,
         public val element: PsiElement?,
-        public val descriptor: DeclarationDescriptor?,
-        public val multifileClassFqName: FqName? = null
+        public val descriptor: DeclarationDescriptor?
 ) {
     companion object {
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
@@ -71,10 +70,13 @@ public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = Desc
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
-public fun MultifileClass(someFile: JetFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(MULTIFILE_CLASS, someFile, descriptor, multifileClassFqName)
+/**
+ * @param representativeFile one of the files representing this multifile class (will be used for diagnostics)
+ */
+public fun MultifileClass(representativeFile: JetFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS, representativeFile, descriptor)
 public fun MultifileClassPart(file: JetFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor, multifileClassFqName)
+        JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
 public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
 public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
