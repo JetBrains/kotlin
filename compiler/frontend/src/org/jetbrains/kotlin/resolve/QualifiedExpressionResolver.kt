@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
+public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
 
 
     public fun resolvePackageHeader(

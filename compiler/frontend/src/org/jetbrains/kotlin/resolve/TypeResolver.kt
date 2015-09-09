@@ -45,7 +45,7 @@ import kotlin.platform.platformStatic
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
-        private val qualifiedExpressionResolver: NewQualifiedExpressionResolver,
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
         private val storageManager: StorageManager,

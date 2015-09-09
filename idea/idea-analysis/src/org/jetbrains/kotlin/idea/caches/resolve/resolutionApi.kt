@@ -79,7 +79,7 @@ public fun ResolutionFacade.resolveImportReference(
         fqName: FqName
 ): Collection<DeclarationDescriptor> {
     val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-    val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, javaClass<NewQualifiedExpressionResolver>())
+    val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
             importDirective, moduleDescriptor, BindingTraceContext(), moduleDescriptor).getAllDescriptors()
 }

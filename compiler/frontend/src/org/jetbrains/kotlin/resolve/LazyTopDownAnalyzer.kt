@@ -47,7 +47,7 @@ public class LazyTopDownAnalyzer(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val fileScopeProvider: FileScopeProvider,
         private val declarationScopeProvider: DeclarationScopeProvider,
-        private val newQualifiedExpressionResolver: NewQualifiedExpressionResolver
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver
 ) {
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
@@ -93,7 +93,7 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitPackageDirective(directive: JetPackageDirective) {
-                    newQualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
+                    qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 
                 override fun visitImportDirective(importDirective: JetImportDirective) {

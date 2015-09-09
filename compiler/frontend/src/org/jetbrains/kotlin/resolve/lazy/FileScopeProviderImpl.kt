@@ -33,7 +33,7 @@ public class FileScopeProviderImpl(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val storageManager: StorageManager,
         private val moduleDescriptor: ModuleDescriptor,
-        private val qualifiedExpressionResolver: NewQualifiedExpressionResolver,
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
         private val jetImportsFactory: JetImportsFactory,
         private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
