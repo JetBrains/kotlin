@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
 import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
@@ -341,10 +338,10 @@ public class ReplInterpreter {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                setReplScriptExecuting(false);
                 return LineResult.runtimeError(renderStackTrace(e.getCause()));
+            } finally {
+                setReplScriptExecuting(false);
             }
-            setReplScriptExecuting(false);
 
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
@@ -387,6 +384,8 @@ public class ReplInterpreter {
             }
         }
         Collections.reverse(newTrace);
+
+        // throw away last element which contains Line1.kts<init>(Unknown source)
         List<StackTraceElement> resultingTrace = newTrace.subList(0, newTrace.size() - 1);
 
         cause.setStackTrace(resultingTrace.toArray(new StackTraceElement[resultingTrace.size()]));

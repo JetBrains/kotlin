@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeLinebreaksUnescaper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -44,8 +45,9 @@ public class ReplFromTerminal {
     private final boolean ideMode;
     private ReplSystemInWrapper replReader;
     private final ReplSystemOutWrapper replWriter;
+    private final ReplErrorLogger replErrorLogger;
 
-    private final ConsoleReader consoleReader;
+    private ConsoleReader consoleReader;
 
     public ReplFromTerminal(
             @NotNull final Disposable disposable,
@@ -66,6 +68,8 @@ public class ReplFromTerminal {
             replReader = new ReplSystemInWrapper(System.in, replWriter);
             System.setIn(replReader);
         }
+
+        replErrorLogger = new ReplErrorLogger(ideMode, replWriter);
 
         new Thread("initialize-repl") {
             @Override
@@ -97,7 +101,7 @@ public class ReplFromTerminal {
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            replErrorLogger.logException(e);
         }
     }
 
@@ -135,14 +139,14 @@ public class ReplFromTerminal {
             }
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            replErrorLogger.logException(e);
         }
         finally {
             try {
                 ((FileHistory) consoleReader.getHistory()).flush();
             }
             catch (Exception e) {
-                replWriter.printlnInnerError("failed to flush history: " + e);
+                replErrorLogger.logException(e);
             }
         }
     }

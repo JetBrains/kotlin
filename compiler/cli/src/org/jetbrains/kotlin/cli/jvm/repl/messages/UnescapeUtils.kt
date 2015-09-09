@@ -38,5 +38,5 @@ fun parseXml(inputMessage: String): String {
 }
 
 public object IdeLinebreaksUnescaper {
-    jvmStatic fun unescapeFromDiez(inputMessage: String) = StringUtil.replace(inputMessage, XML_REPLACEMENTS, SOURCE_CHARS)
+    @JvmStatic fun unescapeFromDiez(inputMessage: String) = StringUtil.replace(inputMessage, XML_REPLACEMENTS, SOURCE_CHARS)
 }

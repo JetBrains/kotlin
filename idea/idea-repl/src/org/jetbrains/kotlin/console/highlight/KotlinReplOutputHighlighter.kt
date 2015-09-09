@@ -31,6 +31,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.console.KotlinConsoleHistoryManager
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.console.SeverityDetails
+import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
@@ -108,7 +109,7 @@ public class KotlinReplOutputHighlighter(
     }
 
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
-        val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength
+        val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength - 1
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
         val historyCommandRunIndicator = historyMarkup.allHighlighters.filter {
             historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
@@ -142,6 +143,12 @@ public class KotlinReplOutputHighlighter(
 
     fun printRuntimeError(errorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         printOutput(errorText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
+    }
+
+    fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {
+        val promptText = "Internal error occurred. Please, send report to developers.\n"
+        printOutput(promptText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
+        logError(this.javaClass, internalErrorText)
     }
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {

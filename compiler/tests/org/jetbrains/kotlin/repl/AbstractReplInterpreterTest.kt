@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 import java.io.PrintWriter
-import java.util.ArrayDeque
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.text.Regex
 

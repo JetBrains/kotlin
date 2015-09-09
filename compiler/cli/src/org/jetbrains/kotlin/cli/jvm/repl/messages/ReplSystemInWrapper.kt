@@ -42,7 +42,7 @@ public class ReplSystemInWrapper(
             $isReplScriptExecuting = value
         }
 
-    override synchronized fun read(): Int {
+    override fun read(): Int {
         if (isLastScriptByteProcessed && isReplScriptExecuting) {
             isLastScriptByteProcessed = false
             return -1

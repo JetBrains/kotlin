@@ -20,7 +20,6 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -68,7 +67,7 @@ public class KotlinReplOutputHandler(
             "REPL_INCOMPLETE",
             "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
             "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError("${content.trim()}\n")
-            "INNER_ERROR"     -> logError(this.javaClass, content)
+            "INTERNAL_ERROR"  -> outputHighlighter.printInternalErrorMessage(content)
         }
     }
 

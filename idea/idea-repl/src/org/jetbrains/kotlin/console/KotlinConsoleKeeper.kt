@@ -112,6 +112,6 @@ public class KotlinConsoleKeeper(val project: Project) {
     }
 
     companion object {
-        jvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
+        @JvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
     }
 }
