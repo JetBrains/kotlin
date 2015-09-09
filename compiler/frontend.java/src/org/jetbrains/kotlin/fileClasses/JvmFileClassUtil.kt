@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.StringValue
 
 public object JvmFileClassUtil {
@@ -58,12 +55,6 @@ public object JvmFileClassUtil {
     public @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
             "1${PackagePartClassUtils.getFilePartShortName(fileName)}"
 
-    public @JvmStatic fun parseJvmFileClass(annotations: Annotations): ParsedJmvFileClassAnnotations? {
-        val jvmName = annotations.findAnnotation(JVM_NAME) ?: return null
-        val jvmMultifileClass = annotations.findAnnotation(JVM_MULTIFILE_CLASS)
-        return parseJvmFileClass(jvmName, jvmMultifileClass)
-    }
-
     public @JvmStatic fun parseJvmFileClass(jvmName: AnnotationDescriptor, jvmMultifileClass: AnnotationDescriptor?): ParsedJmvFileClassAnnotations? {
         val jvmNameArgument = jvmName.allValueArguments.values().singleOrNull() ?: return null
         val name = (jvmNameArgument as? StringValue)?.value ?: return null
@@ -78,6 +69,7 @@ public object JvmFileClassUtil {
         val jvmName = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT) ?: return null
         val nameExpr = jvmName.valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
         val name = getLiteralStringFromRestrictedConstExpression(nameExpr) ?: return null
+        if (!Name.isValidIdentifier(name)) return null
         val isMultifileClassPart = findAnnotationEntryOnFileNoResolve(file, JVM_MULTIFILE_CLASS_SHORT) != null
         return ParsedJmvFileClassAnnotations(name, isMultifileClassPart)
     }
@@ -95,14 +87,6 @@ public object JvmFileClassUtil {
         return singleEntry.text
     }
 
-    public @JvmStatic fun collectFileAnnotations(file: JetFile, bindingContext: BindingContext): Annotations {
-        val fileAnnotationsList = file.fileAnnotationList ?: return Annotations.EMPTY
-        val annotationDescriptors = arrayListOf<AnnotationDescriptor>()
-        for (annotationEntry in fileAnnotationsList.annotationEntries) {
-            bindingContext.get(BindingContext.ANNOTATION, annotationEntry)?.let { annotationDescriptors.add(it) }
-        }
-        return AnnotationsImpl(annotationDescriptors)
-    }
 }
 
 public class ParsedJmvFileClassAnnotations(public val name: String, public val multipleFiles: Boolean)

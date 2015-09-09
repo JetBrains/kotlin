@@ -82,9 +82,7 @@ public class GenerationState jvmOverloads constructor(
         }
     }
 
-    public val fileClassesProvider: CodegenFileClassesProvider =
-            CodegenFileClassesProvider.createForCodegenTask(bindingContext, files, packagesWithObsoleteParts,
-                                                           /* TODO */ multifileFacadesWithObsoleteParts = emptySet())
+    public val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
 
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
