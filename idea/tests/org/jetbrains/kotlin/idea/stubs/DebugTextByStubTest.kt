@@ -81,7 +81,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val toCheckAgainst = "STUB: " + (expectedText ?: classByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
         if (expectedText != null) {
-            Assert.assertNotEquals("Expected text should not be specified", classByPsi.getDebugText(), psiFromStub.getDebugText())
+            Assert.assertNotEquals("Expected text should not be specified", classByPsi!!.getDebugText(), psiFromStub.getDebugText())
         }
     }
 
