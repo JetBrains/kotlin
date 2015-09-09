@@ -71,7 +71,12 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
 
             if (classDescriptor.fqNameSafe in ANNOTATIONS_SHOULD_BE_REPLACED_WITH_MODIFIERS_FQ_NAMES) {
-                trace.report(Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.on(entry, ANNOTATION_MODIFIERS_MAP[classDescriptor.fqNameSafe]!!))
+                if (descriptor.isInlineOptionsWithLocalBreaks()) {
+                    trace.report(Errors.DEPRECATED_ANNOTATION_USE.on(entry))
+                }
+                else {
+                    trace.report(Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.on(entry, ANNOTATION_MODIFIERS_MAP[classDescriptor.fqNameSafe]!!))
+                }
             }
             else {
                 if (!entry.hasAtSymbolOrInList()) {
@@ -91,6 +96,21 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             existingTargetsForAnnotation.add(useSiteTarget)
         }
         additionalCheckers.forEach { it.checkEntries(entries, actualTargets.defaultTargets, trace) }
+    }
+
+    private fun AnnotationDescriptor.isInlineOptionsWithLocalBreaks(): Boolean {
+        val descriptor = type.constructor.declarationDescriptor
+        if (descriptor !is ClassDescriptor) return false
+
+        if (descriptor.fqNameSafe == KotlinBuiltIns.FQ_NAMES.inlineOptions) {
+            val vararg = (allValueArguments.values().firstOrNull() as? ArrayValue)?.value ?: return false
+            return vararg.all {
+                arg ->
+                val enumValue = (arg as? EnumValue) ?: return false
+                return enumValue.value.name.asString() == InlineOption.LOCAL_CONTINUE_AND_BREAK.name()
+            }
+        }
+        return false
     }
 
     private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {

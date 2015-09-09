@@ -143,7 +143,7 @@ public interface Errors {
     DiagnosticFactory0<JetAnnotationEntry> DEPRECATED_UNESCAPED_ANNOTATION = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> DEPRECATED_ESCAPED_MODIFIER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory1<JetAnnotationEntry, String> DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER = DiagnosticFactory1.create(WARNING);
-
+    DiagnosticFactory0<JetAnnotationEntry> DEPRECATED_ANNOTATION_USE = DiagnosticFactory0.create(WARNING);
 
     // Classes and traits
 

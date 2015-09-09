@@ -29,3 +29,4 @@ fun bar2(): Array<Q> = null!!
 <!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@tailRecursive<!> fun tailFun(): Int = tailFun()
 
 inline fun inlineFun(<!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@inlineOptions(InlineOption.ONLY_LOCAL_RETURN)<!> block: () -> Int) {}
+inline fun inlineFun2(<!DEPRECATED_ANNOTATION_USE!>@inlineOptions(InlineOption.LOCAL_CONTINUE_AND_BREAK)<!> block: () -> Int) {}
