@@ -3,7 +3,9 @@ package
 kotlin.inline() private fun bar(/*0*/ block: () -> kotlin.Int): kotlin.Int
 public fun bar2(): kotlin.Array<Q>
 kotlin.inline() public fun baz(): kotlin.Unit
+kotlin.inline() public fun inlineFun(/*0*/ kotlin.inlineOptions(value = {InlineOption.ONLY_LOCAL_RETURN}) block: () -> kotlin.Int): kotlin.Unit
 kotlin.external() public fun nativeFun(): kotlin.Int
+kotlin.tailRecursive() public fun tailFun(): kotlin.Int
 
 public open class A {
     private constructor A(/*0*/ prop: kotlin.Int)

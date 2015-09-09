@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -73,8 +70,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
 
-            if (classDescriptor.fqNameSafe in ANNOTATION_MODIFIERS_FQ_NAMES) {
-                trace.report(Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.on(entry, classDescriptor.name.toString()))
+            if (classDescriptor.fqNameSafe in ANNOTATIONS_SHOULD_BE_REPLACED_WITH_MODIFIERS_FQ_NAMES) {
+                trace.report(Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.on(entry, ANNOTATION_MODIFIERS_MAP[classDescriptor.fqNameSafe]!!))
             }
             else {
                 if (!entry.hasAtSymbolOrInList()) {

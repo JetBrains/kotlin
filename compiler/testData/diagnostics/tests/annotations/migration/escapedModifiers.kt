@@ -25,3 +25,7 @@ fun bar2(): Array<Q> = null!!
 <!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>kotlin.data<!> class Data
 
 <!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>myNative<!> fun nativeFun(): Int
+
+<!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@tailRecursive<!> fun tailFun(): Int = tailFun()
+
+inline fun inlineFun(<!DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER!>@inlineOptions(InlineOption.ONLY_LOCAL_RETURN)<!> block: () -> Int) {}
