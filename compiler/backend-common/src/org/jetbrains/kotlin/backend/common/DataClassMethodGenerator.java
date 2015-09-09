@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.backend.common;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClass;
@@ -41,11 +43,13 @@ public abstract class DataClassMethodGenerator {
     private final JetClassOrObject declaration;
     private final BindingContext bindingContext;
     private final ClassDescriptor classDescriptor;
+    private final KotlinBuiltIns builtIns;
 
     public DataClassMethodGenerator(JetClassOrObject declaration, BindingContext bindingContext) {
         this.declaration = declaration;
         this.bindingContext = bindingContext;
         this.classDescriptor = BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, declaration);
+        this.builtIns = getBuiltIns(classDescriptor);
     }
 
     public void generate() {
@@ -61,20 +65,17 @@ public abstract class DataClassMethodGenerator {
         }
     }
 
-    // Backend-specific implementations.
-    protected abstract void generateComponentFunction(
-            @NotNull FunctionDescriptor function,
-            @NotNull ValueParameterDescriptor parameter
-    );
+    protected abstract void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter);
 
     protected abstract void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters);
 
-    protected abstract void generateToStringMethod(@NotNull List<PropertyDescriptor> properties);
+    protected abstract void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties);
 
-    protected abstract void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties);
+    protected abstract void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties);
 
-    protected abstract void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties);
+    protected abstract void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties);
 
+    @NotNull
     protected ClassDescriptor getClassDescriptor() {
         return classDescriptor;
     }
@@ -101,24 +102,23 @@ public abstract class DataClassMethodGenerator {
     }
 
     private void generateDataClassToStringIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor stringClass = getBuiltIns(classDescriptor).getString();
-        if (!hasDeclaredNonTrivialMember(CodegenUtil.TO_STRING_METHOD_NAME, stringClass)) {
-            generateToStringMethod(properties);
+        FunctionDescriptor function = getDeclaredMember("toString", builtIns.getString());
+        if (function != null && isTrivial(function)) {
+            generateToStringMethod(function, properties);
         }
     }
 
     private void generateDataClassHashCodeIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor intClass = getBuiltIns(classDescriptor).getInt();
-        if (!hasDeclaredNonTrivialMember(CodegenUtil.HASH_CODE_METHOD_NAME, intClass)) {
-            generateHashCodeMethod(properties);
+        FunctionDescriptor function = getDeclaredMember("hashCode", builtIns.getInt());
+        if (function != null && isTrivial(function)) {
+            generateHashCodeMethod(function, properties);
         }
     }
 
     private void generateDataClassEqualsIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor booleanClass = getBuiltIns(classDescriptor).getBoolean();
-        ClassDescriptor anyClass = getBuiltIns(classDescriptor).getAny();
-        if (!hasDeclaredNonTrivialMember(CodegenUtil.EQUALS_METHOD_NAME, booleanClass, anyClass)) {
-            generateEqualsMethod(properties);
+        FunctionDescriptor function = getDeclaredMember("equals", builtIns.getBoolean(), builtIns.getAny());
+        if (function != null && isTrivial(function)) {
+            generateEqualsMethod(function, properties);
         }
     }
 
@@ -132,42 +132,41 @@ public abstract class DataClassMethodGenerator {
         return result;
     }
 
-    private
     @NotNull
-    List<JetParameter> getPrimaryConstructorParameters() {
+    private List<JetParameter> getPrimaryConstructorParameters() {
         if (declaration instanceof JetClass) {
-            return ((JetClass) declaration).getPrimaryConstructorParameters();
+            return declaration.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }
 
-    /**
-     * @return true if the class has a declared member with the given name anywhere in its hierarchy besides Any
-     */
-    private boolean hasDeclaredNonTrivialMember(
+    @Nullable
+    private FunctionDescriptor getDeclaredMember(
             @NotNull String name,
             @NotNull ClassDescriptor returnedClassifier,
             @NotNull ClassDescriptor... valueParameterClassifiers
     ) {
-        FunctionDescriptor function =
-                CodegenUtil.getDeclaredFunctionByRawSignature(classDescriptor, Name.identifier(name), returnedClassifier,
-                                                              valueParameterClassifiers);
-        if (function == null) {
-            return false;
-        }
+        return CodegenUtil.getDeclaredFunctionByRawSignature(
+                classDescriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers
+        );
+    }
 
+    /**
+     * @return true if the member is an inherited implementation of a method from Any
+     */
+    private boolean isTrivial(@NotNull FunctionDescriptor function) {
         if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-            return true;
+            return false;
         }
 
         for (CallableDescriptor overridden : OverrideResolver.getOverriddenDeclarations(function)) {
             if (overridden instanceof CallableMemberDescriptor
                 && ((CallableMemberDescriptor) overridden).getKind() == CallableMemberDescriptor.Kind.DECLARATION
-                && !overridden.getContainingDeclaration().equals(getBuiltIns(classDescriptor).getAny())) {
-                return true;
+                && !overridden.getContainingDeclaration().equals(builtIns.getAny())) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 }

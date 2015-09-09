@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -30,9 +29,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static kotlin.KotlinPackage.first;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
@@ -91,11 +87,10 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateToStringMethod(@NotNull List<PropertyDescriptor> classProperties) {
+    public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
         // TODO: relax this limitation, with the data generation logic fixed.
         assert !classProperties.isEmpty();
-        FunctionDescriptor prototypeFun = CodegenUtil.getAnyToStringMethod(getBuiltIns(first(classProperties)));
-        JsFunction functionObj = generateJsMethod(prototypeFun);
+        JsFunction functionObj = generateJsMethod(function);
 
         JsProgram jsProgram = context.program();
         JsExpression result = null;
@@ -118,9 +113,8 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateHashCodeMethod(@NotNull List<PropertyDescriptor> classProperties) {
-        FunctionDescriptor prototypeFun = CodegenUtil.getAnyHashCodeMethod(getBuiltIns(first(classProperties)));
-        JsFunction functionObj = generateJsMethod(prototypeFun);
+    public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
+        JsFunction functionObj = generateJsMethod(function);
 
         JsProgram jsProgram = context.program();
         List<JsStatement> statements = functionObj.getBody().getStatements();
@@ -144,10 +138,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateEqualsMethod(@NotNull List<PropertyDescriptor> classProperties) {
+    public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
         assert !classProperties.isEmpty();
-        FunctionDescriptor prototypeFun = CodegenUtil.getAnyEqualsMethod(getBuiltIns(first(classProperties)));
-        JsFunction functionObj = generateJsMethod(prototypeFun);
+        JsFunction functionObj = generateJsMethod(function);
         JsFunctionScope funScope = functionObj.getScope();
 
         JsName paramName = funScope.declareName("other");
