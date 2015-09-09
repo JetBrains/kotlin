@@ -53,4 +53,14 @@ public abstract class JetExpressionImplStub<T extends StubElement<?>> extends Je
     private PsiElement rawReplace(@NotNull PsiElement newElement) {
         return super.replace(newElement);
     }
+
+    @Override
+    public PsiElement getParent() {
+        T stub = getStub();
+        if (stub != null) {
+            //noinspection unchecked
+            return stub.getParentStub().getPsi();
+        }
+        return super.getParent();
+    }
 }
