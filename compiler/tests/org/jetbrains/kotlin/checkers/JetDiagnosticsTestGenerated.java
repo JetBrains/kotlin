@@ -13895,6 +13895,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("extensionCall.kt")
+                public void testExtensionCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/extensionCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("falseArgument.kt")
                 public void testFalseArgument() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/falseArgument.kt");

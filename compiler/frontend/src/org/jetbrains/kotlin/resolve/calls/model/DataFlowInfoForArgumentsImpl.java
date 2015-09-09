@@ -86,8 +86,8 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     @NotNull
     @Override
     public DataFlowInfo getResultInfo() {
-        if (resultInfo == null) return initialInfo;
         assert initialInfo != null : "Initial data flow info was not set for call: " + call;
+        if (resultInfo == null) return initialInfo;
         return initialInfo.and(resultInfo);
     }
 }

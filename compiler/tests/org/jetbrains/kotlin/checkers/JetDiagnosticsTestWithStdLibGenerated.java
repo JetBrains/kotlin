@@ -830,6 +830,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Smartcasts extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInSmartcasts() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/smartcasts"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("letUsesOwnReceiver.kt")
+        public void testLetUsesOwnReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letUsesOwnReceiver.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/varargs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
