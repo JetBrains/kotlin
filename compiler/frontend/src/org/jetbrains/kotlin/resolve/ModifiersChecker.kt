@@ -63,7 +63,8 @@ public object ModifierCheckerCore {
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
             EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
-            ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS)
+            ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
+            CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER)
     )
 
     // NOTE: redundant targets must be possible!

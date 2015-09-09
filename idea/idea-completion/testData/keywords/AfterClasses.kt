@@ -45,5 +45,6 @@ class B {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
+// EXIST:  crossinline
 /*TODO*/
 // NOTHING_ELSE

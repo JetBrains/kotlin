@@ -42,4 +42,5 @@ class MouseMovedEventArgs
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
+// EXIST:  crossinline
 // NOTHING_ELSE

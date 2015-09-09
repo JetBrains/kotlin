@@ -36,5 +36,6 @@ package Test
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
+// EXIST:  crossinline
 /*TODO*/
 // NOTHING_ELSE

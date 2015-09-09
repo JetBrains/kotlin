@@ -176,6 +176,7 @@ public interface JetTokens {
     JetModifierKeywordToken TAILREC_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("tailrec");
     JetModifierKeywordToken EXTERNAL_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("external");
     JetModifierKeywordToken ANNOTATION_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("annotation");
+    JetModifierKeywordToken CROSSINLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("crossinline");
 
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
@@ -194,7 +195,7 @@ public interface JetTokens {
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD,
                                              LATE_INIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
-                                             ANNOTATION_KEYWORD
+                                             ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD
     );
 
     /*
@@ -207,12 +208,12 @@ public interface JetTokens {
                     ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                     PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATE_INIT_KEYWORD,
-                    DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD
+                    DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD
             };
 
     // Please synchronize this array with org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
     JetModifierKeywordToken[] ANNOTATION_MODIFIERS_KEYWORDS_ARRAY = new JetModifierKeywordToken[] {
-            DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD
+            DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD
     };
 
     TokenSet ANNOTATION_MODIFIERS_KEYWORDS = TokenSet.create(ANNOTATION_MODIFIERS_KEYWORDS_ARRAY);

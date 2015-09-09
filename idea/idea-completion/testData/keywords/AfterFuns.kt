@@ -45,4 +45,5 @@ class A {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
+// EXIST:  crossinline
 // NOTHING_ELSE
