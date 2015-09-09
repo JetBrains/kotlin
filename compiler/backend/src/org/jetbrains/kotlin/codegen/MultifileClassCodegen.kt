@@ -20,13 +20,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.ArrayUtil
 import com.intellij.util.SmartList
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -37,14 +34,8 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.PackageData
-import org.jetbrains.kotlin.serialization.SerializationUtil
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
@@ -128,8 +119,8 @@ public class MultifileClassCodegen(
 
     public fun generateClassOrObject(classOrObject: JetClassOrObject) {
         val file = classOrObject.getContainingJetFile()
-        val packagePartType = state.fileClassesProvider.getFileClassType(file)
-        val context = CodegenContext.STATIC.intoPackagePart(packageFragment!!, packagePartType)
+        val partType = state.fileClassesProvider.getFileClassType(file)
+        val context = state.rootContext.intoMultifileClassPart(packageFragment!!, facadeClassType, partType)
         MemberCodegen.genClassOrObject(context, classOrObject, state, null)
     }
 
@@ -137,14 +128,14 @@ public class MultifileClassCodegen(
             file: JetFile,
             generateCallableMemberTasks: MutableMap<CallableMemberDescriptor, () -> Unit>,
             partFqNames: MutableList<FqName>
-    ): ClassBuilder? {
+    ) {
         val packageFragment = this.packageFragment ?:
                               throw AssertionError("File part $file of $facadeFqName: no package fragment")
 
         var generatePart = false
         val partClassInfo = state.fileClassesProvider.getFileClassInfo(file)
         val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partClassInfo.fileClassFqName)
-        val partContext = CodegenContext.STATIC.intoMultifileClassPart(packageFragment, facadeClassType, partType)
+        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType)
 
         for (declaration in file.declarations) {
             if (declaration is JetProperty || declaration is JetNamedFunction) {
@@ -165,7 +156,7 @@ public class MultifileClassCodegen(
         }
 
 
-        if (!generatePart || !state.generateDeclaredClassFilter.shouldGeneratePackagePart(file)) return null
+        if (!generatePart || !state.generateDeclaredClassFilter.shouldGeneratePackagePart(file)) return
 
         partFqNames.add(partClassInfo.fileClassFqName)
 
@@ -176,7 +167,7 @@ public class MultifileClassCodegen(
 
         MultifileClassPartCodegen(builder, file, partType, facadeFqName, partContext, state).generate()
 
-        val facadeContext = CodegenContext.STATIC.intoMultifileClass(packageFragment, facadeClassType, partType)
+        val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForPartOfMultifileFacade(facadeContext)
         for (declaration in file.declarations) {
             if (declaration is JetNamedFunction || declaration is JetProperty) {
@@ -186,8 +177,6 @@ public class MultifileClassCodegen(
                                                 { memberCodegen.genFunctionOrProperty(declaration) })
             }
         }
-
-        return builder
     }
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames: List<FqName>) {
@@ -207,7 +196,7 @@ public class MultifileClassCodegen(
         av.visitEnd()
     }
 
-    private fun createCodegenForPartOfMultifileFacade(facadeContext: FieldOwnerContext<DeclarationDescriptor>): MemberCodegen<JetFile> =
+    private fun createCodegenForPartOfMultifileFacade(facadeContext: FieldOwnerContext<*>): MemberCodegen<JetFile> =
             object : MemberCodegen<JetFile>(state, null, facadeContext, null, classBuilder) {
                 override fun generateDeclaration() = throw UnsupportedOperationException()
                 override fun generateBody() = throw UnsupportedOperationException()
