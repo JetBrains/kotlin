@@ -31,7 +31,6 @@ import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
@@ -46,11 +45,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.org.objectweb.asm.*
 import java.io.DataInput
 import java.io.DataInputStream
@@ -67,7 +62,7 @@ private val CACHE_DIRECTORY_NAME = "kotlin"
 class CacheFormatVersion(targetDataRoot: File) {
     companion object {
         // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 4
+        private val INCREMENTAL_CACHE_OWN_VERSION = 5
 
         private val CACHE_FORMAT_VERSION =
                 INCREMENTAL_CACHE_OWN_VERSION * 1000000 +
@@ -301,11 +296,11 @@ public class IncrementalCacheImpl(
     }
 
     override fun getPackagePartData(fqName: String): ByteArray? {
-        return protoMap[JvmClassName.byInternalName(fqName)]
+        return protoMap[JvmClassName.byInternalName(fqName)]?.bytes
     }
 
     override fun getModuleMappingData(): ByteArray? {
-        return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]
+        return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
     override fun flush(memoryCachesOnly: Boolean) {
@@ -321,7 +316,7 @@ public class IncrementalCacheImpl(
         maps.forEach { it.close () }
     }
 
-    private inner class ProtoMap(storageFile: File) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer) {
+    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
         public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
             val header = kotlinClass.classHeader
@@ -333,20 +328,21 @@ public class IncrementalCacheImpl(
             return put(className, data, isPackage, checkChangesIsOpenPart)
         }
 
-        private fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
+        private fun put(className: JvmClassName, bytes: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
             val key = className.internalName
             val oldData = storage[key]
+            val data = ProtoMapValue(isPackage, bytes)
 
-            if (!Arrays.equals(data, oldData)) {
+            if (oldData == null || !Arrays.equals(bytes, oldData.bytes) || isPackage != oldData.isPackageFacade) {
                 storage.put(key, data)
             }
 
             return ChangesInfo(protoChanged = oldData == null ||
                                               !checkChangesIsOpenPart ||
-                                              !isOpenPartNotChanged(oldData, data, isPackage))
+                                              difference(oldData, data) != DifferenceKind.NONE)
         }
 
-        public fun get(className: JvmClassName): ByteArray? {
+        public fun get(className: JvmClassName): ProtoMapValue? {
             return storage[className.getInternalName()]
         }
 
@@ -354,55 +350,8 @@ public class IncrementalCacheImpl(
             storage.remove(className.getInternalName())
         }
 
-        override fun dumpValue(value: ByteArray): String {
-            return java.lang.Long.toHexString(value.md5())
-        }
-
-        private fun isOpenPartNotChanged(oldData: ByteArray, newData: ByteArray, isPackageFacade: Boolean): Boolean {
-            if (isPackageFacade) {
-                return isPackageFacadeOpenPartNotChanged(oldData, newData)
-            }
-            else {
-                return isClassOpenPartNotChanged(oldData, newData)
-            }
-        }
-
-        private fun isPackageFacadeOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
-            val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData)
-            val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData)
-
-            val compareObject = ProtoCompareGenerated(oldPackageData.nameResolver, newPackageData.nameResolver)
-            return compareObject.checkEquals(oldPackageData.packageProto, newPackageData.packageProto)
-        }
-
-        private fun isClassOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
-            val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData)
-            val newClassData = JvmProtoBufUtil.readClassDataFrom(newData)
-
-            val compareObject = object : ProtoCompareGenerated(oldClassData.nameResolver, newClassData.nameResolver) {
-                override fun checkEqualsClassMember(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
-                        checkEquals(old.memberList, new.memberList)
-
-                override fun checkEqualsClassSecondaryConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
-                        checkEquals(old.secondaryConstructorList, new.secondaryConstructorList)
-
-                private fun checkEquals(oldList: List<ProtoBuf.Callable>, newList: List<ProtoBuf.Callable>): Boolean {
-                    val oldListFiltered = oldList.filter { !it.isPrivate() }
-                    val newListFiltered = newList.filter { !it.isPrivate() }
-
-                    if (oldListFiltered.size() != newListFiltered.size()) return false
-
-                    for (i in oldListFiltered.indices) {
-                        if (!checkEquals(oldListFiltered[i], newListFiltered[i])) return false
-                    }
-
-                    return true
-                }
-
-                private fun ProtoBuf.Callable.isPrivate(): Boolean = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
-            }
-
-            return compareObject.checkEquals(oldClassData.classProto, newClassData.classProto)
+        override fun dumpValue(value: ProtoMapValue): String {
+            return (if (value.isPackageFacade) "1" else "0") + java.lang.Long.toHexString(value.bytes.md5())
         }
     }
 
@@ -454,7 +403,7 @@ public class IncrementalCacheImpl(
     private object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
         override fun save(out: DataOutput, map: Map<String, Any>?) {
             out.writeInt(map!!.size())
-            for (name in map.keySet().toSortedList()) {
+            for (name in map.keySet().sorted()) {
                 IOUtil.writeString(name, out)
                 val value = map[name]!!
                 when (value) {
@@ -737,20 +686,6 @@ private fun ByteArray.md5(): Long {
            )
 }
 
-private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
-    override fun save(out: DataOutput, value: ByteArray) {
-        out.writeInt(value.size())
-        out.write(value)
-    }
-
-    override fun read(`in`: DataInput): ByteArray {
-        val length = `in`.readInt()
-        val buf = ByteArray(length)
-        `in`.readFully(buf)
-        return buf
-    }
-}
-
 private abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
     override fun save(out: DataOutput, map: Map<String, T>?) {
         out.writeInt(map!!.size())
@@ -825,7 +760,7 @@ private val File.normalizedPath: String
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
         StringBuilder {
             append("{")
-            for (key in keySet().sort()) {
+            for (key in keySet().sorted()) {
                 if (length() != 1) {
                     append(", ")
                 }
@@ -838,7 +773,7 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
 
 @TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
-        "[${sort().map(Any::toString).join(", ")}]"
+        "[${sorted().map(Any::toString).join(", ")}]"
 
 private class PathFunctionPair(
         public val path: String,
@@ -882,3 +817,20 @@ private object PathFunctionPairKeyDescriptor : KeyDescriptor<PathFunctionPair> {
     }
 
 }
+
+private object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
+    override fun save(out: DataOutput, value: ProtoMapValue) {
+        out.writeBoolean(value.isPackageFacade)
+        out.writeInt(value.bytes.size())
+        out.write(value.bytes)
+    }
+
+    override fun read(`in`: DataInput): ProtoMapValue {
+        val isPackageFacade = `in`.readBoolean()
+        val length = `in`.readInt()
+        val buf = ByteArray(length)
+        `in`.readFully(buf)
+        return ProtoMapValue(isPackageFacade, buf)
+    }
+}
+
