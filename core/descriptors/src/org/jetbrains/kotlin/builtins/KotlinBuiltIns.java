@@ -180,6 +180,7 @@ public class KotlinBuiltIns {
         public final FqName tailRecursiveDeprecated = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
+        public final FqName crossinline = fqName("crossinline");
         public final FqName inlineOptions = fqName("inlineOptions");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");

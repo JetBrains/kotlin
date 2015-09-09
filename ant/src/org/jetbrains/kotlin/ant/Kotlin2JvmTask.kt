@@ -70,12 +70,9 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
             args.add(it.list().join(pathSeparator))
         }
 
+
         if (moduleName == null) {
-            if (owningTarget != null) {
-                moduleName = owningTarget.name
-            } else if (getProject() != null) {
-                moduleName = getProject().name
-            }
+            moduleName = defaultModuleName
         }
 
         moduleName?.let {

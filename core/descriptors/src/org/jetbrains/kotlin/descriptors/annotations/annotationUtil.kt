@@ -20,4 +20,4 @@ import org.jetbrains.kotlin.name.FqName
 
 // Please synchronize this set with JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY
 public val ANNOTATION_MODIFIERS_FQ_NAMES: Set<FqName> =
-        arrayOf("data", "inline", "noinline", "tailrec", "external", "annotation.annotation").map { FqName("kotlin.$it") }.toSet()
+        arrayOf("data", "inline", "noinline", "tailrec", "external", "annotation.annotation", "crossinline").map { FqName("kotlin.$it") }.toSet()

@@ -22,6 +22,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -86,6 +87,11 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @Nullable
     public static EditorNotificationPanel checkAndCreate(@NotNull Project project) {
+        SuppressNotificationState state = ServiceManager.getService(project, SuppressNotificationState.class).getState();
+        if (state != null && state.isSuppressed) {
+            return null;
+        }
+
         Collection<VirtualFile> badRoots = collectBadRoots(project);
         if (!badRoots.isEmpty()) {
             return new UnsupportedAbiVersionNotificationPanelProvider(project).doCreate(badRoots);

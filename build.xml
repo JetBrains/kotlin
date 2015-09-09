@@ -563,7 +563,7 @@
     <target name="kotlinr">
         <cleandir dir="${output}/classes/kotlinr"/>
 
-        <kotlinc output="${output}/classes/kotlinr">
+        <kotlinc output="${output}/classes/kotlinr" modulename="kotlin-rmi">
             <src>
                 <pathelement path="compiler/rmi/kotlinr/src"/>
             </src>
@@ -583,7 +583,7 @@
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
 
-        <kotlinc output="${output}/classes/android-compiler-plugin">
+        <kotlinc output="${output}/classes/android-compiler-plugin" modulename="kotlin-android-compiler-plugin">
             <src>
                 <pathelement path="plugins/android-compiler-plugin/src"/>
             </src>
@@ -606,7 +606,7 @@
         <cleandir dir="${output}/classes/ant"/>
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}"/>
+            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-ant-tools"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/ant">
@@ -911,7 +911,7 @@
 
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}"/>
+            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-for-upsource"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/idea/ide-common" includes="src"/>

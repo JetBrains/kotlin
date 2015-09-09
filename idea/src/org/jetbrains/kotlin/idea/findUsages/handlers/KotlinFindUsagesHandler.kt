@@ -71,7 +71,7 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     protected abstract fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
-        val results = ArrayList<PsiReference>()
+        val results = Collections.synchronizedList(arrayListOf<PsiReference>())
         val options = getFindUsagesOptions().clone()
         options.searchScope = searchScope
         searchReferences(target, object : Processor<UsageInfo> {

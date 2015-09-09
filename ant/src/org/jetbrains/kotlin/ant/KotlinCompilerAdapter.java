@@ -92,6 +92,9 @@ public class KotlinCompilerAdapter extends Javac13 {
 
         kotlinc.setExternalAnnotations(externalAnnotations);
 
+        if (moduleName == null) {
+            moduleName = AntPackage.getDefaultModuleName(javac);
+        }
         kotlinc.setModuleName(moduleName);
 
         kotlinc.getAdditionalArguments().addAll(additionalArguments);

@@ -50,7 +50,16 @@ public annotation class inline
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
+@Deprecated("Use 'crossinline' modifier instead of 'inlineOptions(InlineOption.ONLY_LOCAL_RETURN)'")
 public annotation class inlineOptions(vararg val value: InlineOption)
+
+/**
+ * Forbids use of non-local control flow statements within lambdas passed as arguments for this parameter.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class crossinline
 
 /**
  * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda

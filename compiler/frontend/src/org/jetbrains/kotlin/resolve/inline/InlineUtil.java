@@ -66,7 +66,8 @@ public class InlineUtil {
     }
 
     public static boolean hasOnlyLocalReturn(@NotNull ValueParameterDescriptor descriptor) {
-        return hasInlineOption(descriptor, InlineOption.ONLY_LOCAL_RETURN);
+        return hasInlineOption(descriptor, InlineOption.ONLY_LOCAL_RETURN)
+               || descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.crossinline) != null;
     }
 
     private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {

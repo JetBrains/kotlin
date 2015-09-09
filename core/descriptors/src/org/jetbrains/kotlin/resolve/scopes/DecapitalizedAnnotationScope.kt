@@ -40,7 +40,7 @@ public class DecapitalizedAnnotationScope(override val workerScope: JetScope) : 
     private fun findDecapitalizedAnnotation(name: Name, location: LookupLocation): ClassifierDescriptor? {
         val nameAsString = name.asString()
 
-        if (nameAsString[0].isUpperCase() || nameAsString !in DECAPITALIZED_SHORT_NAMES) return null
+        if (nameAsString.length() == 0 || nameAsString[0].isUpperCase() || nameAsString !in DECAPITALIZED_SHORT_NAMES) return null
         val capitalizedIdentifier = Name.identifier(nameAsString.capitalize())
 
         val capitalizedClassifier = getClassifier(capitalizedIdentifier, location) ?: return null

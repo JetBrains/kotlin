@@ -1,6 +1,6 @@
 import kotlin.InlineOption.*
 
-inline fun <R> onlyLocal(@inlineOptions(ONLY_LOCAL_RETURN)p: () -> R) {
+inline fun <R> onlyLocal(crossinline p: () -> R) {
     inlineAll(p)
 }
 

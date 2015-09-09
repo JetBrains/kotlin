@@ -2,7 +2,7 @@
 import kotlin.InlineOption.*
 
 class Z {
-    inline fun <R> inlineFun(@inlineOptions(ONLY_LOCAL_RETURN) p: () -> R) {
+    inline fun <R> inlineFun(crossinline p: () -> R) {
         p()
     }
 }

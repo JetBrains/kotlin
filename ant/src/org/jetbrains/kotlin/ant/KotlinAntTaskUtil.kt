@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ant
 
 import org.apache.tools.ant.AntClassLoader
+import org.apache.tools.ant.Task
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import java.io.File
@@ -63,4 +64,8 @@ object KotlinAntTaskUtil {
 
         return classLoader
     }
+
 }
+
+public val Task.defaultModuleName: String?
+    get() = owningTarget?.name ?: project?.name

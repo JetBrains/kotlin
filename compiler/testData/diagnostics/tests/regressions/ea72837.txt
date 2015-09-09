@@ -1,0 +1,5 @@
+package
+
+public fun foo(): kotlin.Unit
+public fun </*0*/ T> g(/*0*/ x: T): kotlin.Int
+public fun h(/*0*/ x: () -> kotlin.Unit): kotlin.Int
