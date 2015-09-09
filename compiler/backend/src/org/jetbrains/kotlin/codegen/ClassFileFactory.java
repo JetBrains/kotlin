@@ -193,18 +193,6 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public PackageCodegen forFacadeLightClass(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
-        assert !isDone : "Already done!";
-        PackageCodegen codegen = package2codegen.get(facadeFqName);
-        if (codegen == null) {
-            codegen = new PackageCodegen(state, files, facadeFqName.parent());
-            package2codegen.put(facadeFqName, codegen);
-        }
-
-        return codegen;
-    }
-
-    @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
         assert !isDone : "Already done!";
         MultifileClassCodegen codegen = multifileClass2codegen.get(facadeFqName);
