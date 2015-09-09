@@ -20,10 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 
 public class JetFileFacadeFqNameIndex private constructor() : StringStubIndexExtension<JetFile>() {
@@ -36,14 +32,5 @@ public class JetFileFacadeFqNameIndex private constructor() : StringStubIndexExt
         private val KEY = KotlinIndexUtil.createIndexKey(JetFileFacadeFqNameIndex::class.java)
         public val INSTANCE: JetFileFacadeFqNameIndex = JetFileFacadeFqNameIndex()
         public @jvmStatic fun getInstance(): JetFileFacadeFqNameIndex = INSTANCE
-
-        public fun getAllFacadeShortNames(project: Project): Collection<String> {
-            return CachedValuesManager.getManager(project).getCachedValue(project) {
-                val shortNames = getInstance().getAllKeys(project).map {
-                    FqName(it).shortName().asString()
-                }
-                CachedValueProvider.Result(shortNames, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-            }
-        }
     }
 }

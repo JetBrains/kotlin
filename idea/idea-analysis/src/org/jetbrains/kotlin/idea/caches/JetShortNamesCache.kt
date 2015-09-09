@@ -26,10 +26,7 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.JavaElementFinder
-import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetFileFacadeFqNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
@@ -43,7 +40,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         // package classes can not be indexed, since they have no explicit declarations
         val packageClassShortNames = PackageIndexUtil.getAllPossiblePackageClasses(project).keySet()
         classNames.addAll(packageClassShortNames)
-        classNames.addAll(JetFileFacadeFqNameIndex.getAllFacadeShortNames(project))
+        classNames.addAll(JetFileFacadeShortNameIndex.INSTANCE.getAllKeys(project))
 
         return classNames.toTypedArray()
     }
@@ -52,29 +49,27 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
      * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
     override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
+        val allFqNames = HashSet<FqName?>()
+
+        val packageClassNames = PackageIndexUtil.getAllPossiblePackageClasses(project).get(name)
+        allFqNames.addAll(packageClassNames)
+
+        JetClassShortNameIndex.getInstance().get(name, project, scope)
+                .mapTo(allFqNames) { it.fqName }
+
+        JetFileFacadeShortNameIndex.INSTANCE.get(name, project, scope)
+                .mapTo(allFqNames) { it.javaFileFacadeFqName }
+
         val result = ArrayList<PsiClass>()
+        for (fqName in allFqNames) {
+            if (fqName == null) continue
 
-        val packageClasses = PackageIndexUtil.getAllPossiblePackageClasses(project)
-
-        // package classes can not be indexed, since they have no explicit declarations
-        val fqNames = packageClasses.get(name) + JetFileFacadeFqNameIndex.getInstance().getAllKeys(project).map { FqName(it) }.filter { it.shortName().asString() == name }
-        for (fqName in fqNames) {
+            assert(fqName.shortName().asString() == name) {
+                "A declaration obtained from index has non-matching name:\nin index: $name\ndeclared: ${fqName.shortName()}($fqName)"
+            }
             val psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
             if (psiClass != null) {
                 result.add(psiClass)
-            }
-        }
-
-        // Quick check for classes from getAllClassNames()
-        val classOrObjects = JetClassShortNameIndex.getInstance().get(name, project, scope)
-        for (classOrObject in classOrObjects) {
-            val fqName = classOrObject.getFqName()
-            if (fqName != null) {
-                assert(fqName.shortName().asString() == name) { "A declaration obtained from index has non-matching name:\n" + "in index: " + name + "\n" + "declared: " + fqName.shortName() + "(" + fqName + ")" }
-                val psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
-                if (psiClass != null) {
-                    result.add(psiClass)
-                }
             }
         }
 
