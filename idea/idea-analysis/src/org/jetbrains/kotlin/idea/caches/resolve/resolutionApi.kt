@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
@@ -82,9 +79,9 @@ public fun ResolutionFacade.resolveImportReference(
         fqName: FqName
 ): Collection<DeclarationDescriptor> {
     val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-    val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, javaClass<QualifiedExpressionResolver>())
+    val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, javaClass<NewQualifiedExpressionResolver>())
     return qualifiedExpressionResolver.processImportReference(
-            importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
+            importDirective, moduleDescriptor, BindingTraceContext(), moduleDescriptor).getAllDescriptors()
 }
 
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )

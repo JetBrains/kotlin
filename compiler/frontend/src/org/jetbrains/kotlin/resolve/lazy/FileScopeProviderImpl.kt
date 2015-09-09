@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportsFactory
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.get
@@ -36,7 +33,7 @@ public class FileScopeProviderImpl(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val storageManager: StorageManager,
         private val moduleDescriptor: ModuleDescriptor,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val qualifiedExpressionResolver: NewQualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
         private val jetImportsFactory: JetImportsFactory,
         private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
