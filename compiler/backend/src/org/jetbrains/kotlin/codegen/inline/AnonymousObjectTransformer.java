@@ -237,7 +237,7 @@ public class AnonymousObjectTransformer {
         RegeneratedLambdaFieldRemapper remapper =
                 new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
                                                    parameters, anonymousObjectGen.getCapturedLambdasToInline(),
-                                                   parentRemapper);
+                                                   parentRemapper, false);
 
         MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
@@ -325,7 +325,7 @@ public class AnonymousObjectTransformer {
         RegeneratedLambdaFieldRemapper remapper =
                 new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
                                                    constructorParameters, anonymousObjectGen.getCapturedLambdasToInline(),
-                                                   parentRemapper);
+                                                   parentRemapper, true);
 
         MethodInliner inliner = new MethodInliner(constructor, constructorParameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for constructor of " + anonymousObjectGen.getOwnerInternalName(),

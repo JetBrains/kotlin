@@ -96,6 +96,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
+
+        @TestMetadata("kt9064.1.kt")
+        public void testKt9064() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt9064.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt9064v2.1.kt")
+        public void testKt9064v2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt9064v2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
