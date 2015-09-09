@@ -38,14 +38,14 @@ private class ReversedList<T>(protected override val delegate: MutableList<T>) :
 }
 
 /**
- * Returns a reversed immutable view of the original List.
- * All changes made in the original list will be reflected in the reversed one
+ * Returns a reversed read-only view of the original List.
+ * All changes made in the original list will be reflected in the reversed one.
  */
 public fun <T> List<T>.asReversed(): List<T> = ReversedListReadOnly(this)
 
 /**
- * Returns a reversed mutable view of the original List.
- * All changes made in the original list will be reflected in the reversed one and vice versa
+ * Returns a reversed mutable view of the original mutable List.
+ * All changes made in the original list will be reflected in the reversed one and vice versa.
  */
 platformName("asReversedMutable")
 public fun <T> MutableList<T>.asReversed(): MutableList<T> = ReversedList(this)
