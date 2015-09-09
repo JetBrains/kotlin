@@ -17,6 +17,6 @@ public @interface RepeatableAnnotations {
 // FILE: RepeatableUse.kt
 
 // Error should be gone when Java 8 Target will be available
-RepeatableAnnotation <!NON_SOURCE_REPEATED_ANNOTATION!>RepeatableAnnotation<!> class My
+@RepeatableAnnotation <!NON_SOURCE_REPEATED_ANNOTATION!>@RepeatableAnnotation<!> class My
 
 

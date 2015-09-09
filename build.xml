@@ -137,10 +137,6 @@
         <dirset refid="compilerSources.dirset"/>
     </path>
 
-    <path id="preloaderSources.path">
-        <dirset dir="compiler/preloader/src"/>
-    </path>
-
     <macrodef name="cleandir">
         <attribute name="dir"/>
 
@@ -392,8 +388,8 @@
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
         <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <src refid="preloaderSources.path"/>
+               source="${java.target}" target="${java.target}">
+            <src location="${basedir}/compiler/preloader/src"/>
         </javac>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-preloader.jar">
@@ -401,12 +397,35 @@
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.preloader}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
-
                 <attribute name="Main-Class" value="org.jetbrains.kotlin.preloading.Preloader"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="runner">
+        <cleandir dir="${output}/classes/runner"/>
+        <kotlinc output="${output}/classes/runner">
+            <src location="${basedir}/compiler/cli/cli-runner/src"/>
+        </kotlinc>
+
+        <local name="runtime.jar"/>
+        <condition property="runtime.jar" value="kotlin-runtime-internal-bootstrap.jar" else="kotlin-runtime.jar">
+            <istrue value="${bootstrap.or.local.build}"/>
+        </condition>
+
+        <jar jarfile="${kotlin-home}/lib/kotlin-runner.jar">
+            <fileset dir="${output}/classes/runner"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.runner}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+                <attribute name="Main-Class" value="org.jetbrains.kotlin.runner.Main"/>
+                <attribute name="Class-Path" value="${runtime.jar}"/>
             </manifest>
         </jar>
     </target>
@@ -868,7 +887,7 @@
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,kotlinr"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,kotlinr"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"

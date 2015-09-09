@@ -4,7 +4,7 @@ import shared.*
 
 private fun privateInM1Test() {
 }
-fun internalInM1Test() {
+internal fun internalInM1Test() {
 }
 public fun publicInM1Test() {
 }

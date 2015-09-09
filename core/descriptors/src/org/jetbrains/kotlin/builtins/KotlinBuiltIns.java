@@ -240,6 +240,11 @@ public class KotlinBuiltIns {
         return builtinsPackageFragment.getMemberScope();
     }
 
+    @NotNull
+    public JetScope getAnnotationPackageScope() {
+        return annotationPackageFragment.getMemberScope();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // GET CLASS

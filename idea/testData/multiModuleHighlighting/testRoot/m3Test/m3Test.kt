@@ -4,26 +4,26 @@ import shared.*
 
 private fun privateInM3Test() {
 }
-fun internalInM3Test() {
+internal fun internalInM3Test() {
 }
 public fun publicInM3Test() {
 }
 
 fun access() {
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1': it is 'private' in 'shared'">privateInM1</error>()
-    internalInM1()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM1': it is 'internal' in 'shared'">internalInM1</error>()
     publicInM1()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1Test': it is 'private' in 'test'">privateInM1Test</error>()
-    internalInM1Test()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM1Test': it is 'internal' in 'test'">internalInM1Test</error>()
     publicInM1Test()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM2': it is 'private' in 'shared'">privateInM2</error>()
-    internalInM2()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM2': it is 'internal' in 'shared'">internalInM2</error>()
     publicInM2()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM2Test': it is 'private' in 'test'">privateInM2Test</error>()
-    internalInM2Test()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM2Test': it is 'internal' in 'test'">internalInM2Test</error>()
     publicInM2Test()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM3': it is 'private' in 'shared'">privateInM3</error>()

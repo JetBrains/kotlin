@@ -17,23 +17,27 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.JetSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
-
     private final FunctionDescriptor calleeDescriptor;
+    private final JetSuperExpression superCallExpression;
 
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index
+            int index,
+            @Nullable JetSuperExpression superCallExpression
     ) {
         super(containingDeclaration,
               Name.identifier("access$" + (descriptor instanceof ConstructorDescriptor ? "init" : descriptor.getName()) + "$" + index));
         this.calleeDescriptor = descriptor;
+        this.superCallExpression = superCallExpression;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor || AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)
@@ -50,5 +54,10 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
     @Override
     public FunctionDescriptor getCalleeDescriptor() {
         return calleeDescriptor;
+    }
+
+    @Override
+    public JetSuperExpression getSuperCallExpression() {
+        return superCallExpression;
     }
 }

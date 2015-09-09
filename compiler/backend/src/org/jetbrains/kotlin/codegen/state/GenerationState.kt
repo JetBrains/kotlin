@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
@@ -60,9 +62,6 @@ public class GenerationState jvmOverloads constructor(
         public val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         public val progress: Progress = Progress.DEAF
 ) {
-
-    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
-
     public interface GenerateClassFilter {
         public fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean
         public fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean
@@ -110,6 +109,10 @@ public class GenerationState jvmOverloads constructor(
 
     public val isInlineEnabled: Boolean = !disableInline
         @jvmName("isInlineEnabled") get
+
+    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
+
+    public val rootContext: CodegenContext<*> = RootContext(this)
 
     init {
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)

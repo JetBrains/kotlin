@@ -91,6 +91,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("decapitalized.kt")
+        public void testDecapitalized() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/decapitalized.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultValueMustBeConstant.kt")
         public void testDefaultValueMustBeConstant() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/defaultValueMustBeConstant.kt");

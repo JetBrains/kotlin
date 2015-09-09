@@ -50,7 +50,7 @@ public fun <K : Comparable<K>, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = Tre
  *
  * @sample test.collections.MapJVMTest.toSortedMapWithComparator
  */
-public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K, V> {
+public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V> {
     val result = TreeMap<K, V>(comparator)
     result.putAll(this)
     return result

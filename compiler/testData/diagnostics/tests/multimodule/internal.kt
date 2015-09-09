@@ -5,16 +5,16 @@
 package p
 
 public class A {
-    val a = A()
-    var v = A()
-    fun a() = A()
-    inner class B
+    internal val a = A()
+    internal var v = A()
+    internal fun a() = A()
+    internal inner class B
 }
 
-val a = A()
-var v = A()
-fun a() = A()
-class B
+internal val a = A()
+internal var v = A()
+internal fun a() = A()
+internal class B
 
 // MODULE: m2(m1)
 // FILE: b.kt
@@ -22,14 +22,14 @@ class B
 import p.*
 
 fun test() {
-    val _a = a
-    val _v = v
-    a()
-    B()
+    val _a = <!INVISIBLE_MEMBER!>a<!>
+    val _v = <!INVISIBLE_MEMBER!>v<!>
+    <!INVISIBLE_MEMBER!>a<!>()
+    <!INVISIBLE_MEMBER!>B<!>()
 
     val inst = A()
-    val ia = inst.a
-    val iv = inst.v
-    inst.a()
-    inst.B()
+    val ia = inst.<!INVISIBLE_MEMBER!>a<!>
+    val iv = inst.<!INVISIBLE_MEMBER!>v<!>
+    inst.<!INVISIBLE_MEMBER!>a<!>()
+    inst.<!INVISIBLE_MEMBER!>B<!>()
 }

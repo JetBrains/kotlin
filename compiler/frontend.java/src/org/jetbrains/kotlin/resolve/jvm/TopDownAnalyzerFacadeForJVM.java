@@ -57,6 +57,12 @@ public enum TopDownAnalyzerFacadeForJVM {
 
     public static final List<ImportPath> DEFAULT_IMPORTS = buildDefaultImports();
 
+    private static void addAllClassifiersToImportPathList(List<ImportPath> list, JetScope scope) {
+        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
+            list.add(new ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false));
+        }
+    }
+
     private static List<ImportPath> buildDefaultImports() {
         List<ImportPath> list = new ArrayList<ImportPath>();
         list.add(new ImportPath("java.lang.*"));
@@ -65,10 +71,8 @@ public enum TopDownAnalyzerFacadeForJVM {
         list.add(new ImportPath("kotlin.jvm.*"));
         list.add(new ImportPath("kotlin.io.*"));
 
-        JetScope builtInsScope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
-        for (DeclarationDescriptor descriptor : builtInsScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
-            list.add(new ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false));
-        }
+        addAllClassifiersToImportPathList(list, KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+        addAllClassifiersToImportPathList(list, KotlinBuiltIns.getInstance().getAnnotationPackageScope());
 
         return list;
     }

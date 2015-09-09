@@ -4,14 +4,14 @@ import shared.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: test">t
 
 private fun privateInM2() {
 }
-fun internalInM2() {
+internal fun internalInM2() {
 }
 public fun publicInM2() {
 }
 
 fun access() {
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1': it is 'private' in 'shared'">privateInM1</error>()
-    internalInM1()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM1': it is 'internal' in 'shared'">internalInM1</error>()
     publicInM1()
 
     <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: privateInM1Test">privateInM1Test</error>()

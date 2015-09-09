@@ -18,15 +18,25 @@ package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.OwnerKind;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-class RootContext extends CodegenContext<RootContext.FakeDescriptor> {
-    public RootContext() {
+public class RootContext extends CodegenContext<RootContext.FakeDescriptor> {
+    private final GenerationState state;
+
+    public RootContext(@NotNull GenerationState state) {
         super(new FakeDescriptor(), OwnerKind.PACKAGE, null, null, null, null);
+        this.state = state;
+    }
+
+    @Override
+    @NotNull
+    public GenerationState getState() {
+        return state;
     }
 
     @Override

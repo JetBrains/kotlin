@@ -1,7 +1,5 @@
 open class Foo() {
-    /**
-     * Doc for method xyzzy
-     */
+    /** Doc for method xyzzy */
     open fun xyzzy(): Int = 0
 }
 

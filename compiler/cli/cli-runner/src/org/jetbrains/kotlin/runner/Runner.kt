@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.runner
 
-public enum MethodKind {
-    GENERAL,
-    INITIALIZER,
-    SYNTHETIC_ACCESSOR
+interface Runner {
+    fun run(classpath: Classpath, arguments: List<String>)
 }

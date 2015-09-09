@@ -589,7 +589,7 @@ public class InlineCodegen extends CallGenerator {
 
     public static CodegenContext getContext(DeclarationDescriptor descriptor, GenerationState state) {
         if (descriptor instanceof PackageFragmentDescriptor) {
-            return new PackageContext((PackageFragmentDescriptor) descriptor, null, null);
+            return new PackageContext((PackageFragmentDescriptor) descriptor, state.getRootContext(), null);
         }
 
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
+import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -108,7 +109,7 @@ public class JvmCodegenUtil {
             @NotNull CodegenContext context,
             @Nullable File outDirectory
     ) {
-        if (context == CodegenContext.STATIC) {
+        if (context instanceof RootContext) {
             return true;
         }
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();

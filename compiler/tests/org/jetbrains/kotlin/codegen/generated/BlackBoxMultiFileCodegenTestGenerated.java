@@ -37,6 +37,12 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
+    @TestMetadata("accessorForProtectedInvokeVirtual")
+    public void testAccessorForProtectedInvokeVirtual() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtectedInvokeVirtual/");
+        doTestMultiFile(fileName);
+    }
+
     public void testAllFilesPresentInBoxMultiFile() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }

@@ -271,6 +271,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumInline.kt")
+        public void testEnumInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumInline.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumInlinePublic.kt")
+        public void testEnumInlinePublic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumInlinePublic.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("EnumMissingName.kt")
         public void testEnumMissingName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumMissingName.kt");

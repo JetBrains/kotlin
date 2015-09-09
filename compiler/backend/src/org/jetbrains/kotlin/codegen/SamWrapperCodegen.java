@@ -144,8 +144,8 @@ public class SamWrapperCodegen {
             SimpleFunctionDescriptor erasedInterfaceFunction,
             JetType functionJetType
     ) {
-        // using static context to avoid creating ClassDescriptor and everything else
-        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC.intoClass(
+        // using root context to avoid creating ClassDescriptor and everything else
+        FunctionCodegen codegen = new FunctionCodegen(state.getRootContext().intoClass(
                 (ClassDescriptor) erasedInterfaceFunction.getContainingDeclaration(), OwnerKind.IMPLEMENTATION, state), cv, state, parentCodegen);
 
         FunctionDescriptor invokeFunction =

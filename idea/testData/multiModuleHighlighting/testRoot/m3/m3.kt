@@ -4,7 +4,7 @@ import shared.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: test">t
 
 private fun privateInM3() {
 }
-fun internalInM3() {
+internal fun internalInM3() {
 }
 public fun publicInM3() {
 }

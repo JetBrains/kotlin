@@ -962,8 +962,7 @@ public class JetParsing extends AbstractJetParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+        parseModifierListWithStopAt(TokenSet.create(COMMA, SEMICOLON, RBRACE), ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             PsiBuilder.Marker nameAsDeclaration = mark();
@@ -2125,12 +2124,20 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     public void parseModifierListWithUnescapedAnnotations(TokenSet stopAt) {
-        parseModifierListWithUnescapedAnnotations(TokenSet.create(IDENTIFIER), stopAt);
+        parseModifierListWithLookForStopAt(TokenSet.create(IDENTIFIER), stopAt, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+    }
+
+    public void parseModifierListWithStopAt(TokenSet stopAt, AnnotationParsingMode mode) {
+        parseModifierListWithLookForStopAt(TokenSet.create(IDENTIFIER), stopAt, mode);
     }
 
     public void parseModifierListWithUnescapedAnnotations(TokenSet lookFor, TokenSet stopAt) {
+        parseModifierListWithLookForStopAt(lookFor, stopAt, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+    }
+
+    public void parseModifierListWithLookForStopAt(TokenSet lookFor, TokenSet stopAt, AnnotationParsingMode mode) {
         int lastId = matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AnnotationTargetStop(stopAt, ANNOTATION_TARGETS), false));
-        createTruncatedBuilder(lastId).parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+        createTruncatedBuilder(lastId).parseModifierList(mode);
     }
 
     private class AnnotationTargetStop extends AbstractTokenStreamPredicate {

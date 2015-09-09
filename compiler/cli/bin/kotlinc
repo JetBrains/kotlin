@@ -9,8 +9,6 @@
 # PARTICULAR PURPOSE.
 ##############################################################################
 
-[ -n "$KOTLIN_COMPILER" ] || KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-
 cygwin=false;
 case "`uname`" in
     CYGWIN*) cygwin=true ;;
@@ -34,11 +32,8 @@ if $cygwin; then
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
 fi
 
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M -noverify"
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
 
-# break out -D and -J options and add them to JAVA_OPTS as well
-# so they reach the underlying JVM in time to do some good.  The
-# -D options will be available as system properties.
 declare -a java_args
 declare -a kotlin_args
 
@@ -59,17 +54,20 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-# reset "$@" to the remaining args
-set -- "${kotlin_args[@]}"
-
 if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     JAVACMD="$JAVA_HOME/bin/java"
 fi
 
-"${JAVACMD:=java}" \
-  $JAVA_OPTS \
-  "${java_args[@]}" \
-  -cp "${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
-  org.jetbrains.kotlin.preloading.Preloader \
-  -cp "${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
-  $KOTLIN_COMPILER "$@"
+declare -a kotlin_app
+
+if [ -n "$KOTLIN_RUNNER" ];
+then
+    java_args=("${java_args[@]}" "-Dkotlin.home=${KOTLIN_HOME}")
+    kotlin_app=("${KOTLIN_HOME}/lib/kotlin-runner.jar" "org.jetbrains.kotlin.runner.Main")
+else
+    [ -n "$KOTLIN_COMPILER" ] || KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+    java_args=("${java_args[@]}" "-noverify")
+    kotlin_app=("${KOTLIN_HOME}/lib/kotlin-preloader.jar" "org.jetbrains.kotlin.preloading.Preloader" "-cp" "${KOTLIN_HOME}/lib/kotlin-compiler.jar" $KOTLIN_COMPILER)
+fi
+
+"${JAVACMD:=java}" $JAVA_OPTS "${java_args[@]}" -cp "${kotlin_app[@]}" "${kotlin_args[@]}"
