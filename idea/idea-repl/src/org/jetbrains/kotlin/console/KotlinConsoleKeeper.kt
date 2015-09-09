@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.console
 import com.intellij.execution.Platform
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.JavaParameters
+import com.intellij.execution.configurations.ParametersList
 import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
@@ -80,9 +81,7 @@ public class KotlinConsoleKeeper(val project: Project) {
         // path to compiler and his options
         paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 
-        // add path to compiled output in kompiler classpath
-        paramList.add("-cp")
-        paramList.add(pathToCompiledOutput(module))
+        addPathToCompiledOutput(paramList, module)
 
         return commandLine
     }
@@ -103,12 +102,15 @@ public class KotlinConsoleKeeper(val project: Project) {
         return params
     }
 
-    private fun pathToCompiledOutput(module: Module): String {
-        val outPaths = CompilerPathsEx.getOutputPaths(arrayOf(module))
-        val compiledModulePath = outPaths.find { "production" in it } ?: return "<module is not compiled>"
-        val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
+    private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
+        val pathSeparator = Platform.current().pathSeparator.toString()
 
-        return "$compiledModulePath${Platform.current().pathSeparator}$moduleDependencies"
+        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).join(pathSeparator)
+        val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
+        val compiledOutputClasspath = "$compiledModulePath$pathSeparator$moduleDependencies"
+
+        paramList.add("-cp")
+        paramList.add(compiledOutputClasspath)
     }
 
     companion object {
