@@ -20,6 +20,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_ENABLED_PROPERTY
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
@@ -110,6 +111,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     public fun testThreeModulesNoReexportWithDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
+        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
         val flagFile = File.createTempFile("kotlin-jps-tests-", "-is-running");
         try {
             System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
@@ -118,6 +120,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         finally {
             flagFile.delete()
             System.clearProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
+            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
             System.clearProperty(COMPILE_DAEMON_ENABLED_PROPERTY)
         }
     }
