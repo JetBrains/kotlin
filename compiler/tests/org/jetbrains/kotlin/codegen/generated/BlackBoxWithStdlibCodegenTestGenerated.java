@@ -2245,6 +2245,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("multifileClassWithLocalClass.kt")
+        public void testMultifileClassWithLocalClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/multifileClassWithLocalClass.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("multifileClassWithLocalGeneric.kt")
         public void testMultifileClassWithLocalGeneric() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/multifileClassWithLocalGeneric.kt");

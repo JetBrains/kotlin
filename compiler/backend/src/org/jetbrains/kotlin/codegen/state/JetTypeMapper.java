@@ -144,9 +144,7 @@ public class JetTypeMapper {
         if (container instanceof PackageFragmentDescriptor) {
             boolean effectiveInsideModule = isInsideModule && !NativeDeclarationsPackage.hasNativeAnnotation(descriptor);
             return Type.getObjectType(internalNameForPackage(
-                    (PackageFragmentDescriptor) container,
-                    (CallableMemberDescriptor) descriptor,
-                    effectiveInsideModule
+                    (CallableMemberDescriptor) descriptor
             ));
         }
         else if (container instanceof ClassDescriptor) {
@@ -161,25 +159,25 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private String internalNameForPackage(
-            @NotNull PackageFragmentDescriptor packageFragment,
-            @NotNull CallableMemberDescriptor descriptor,
-            boolean insideModule
-    ) {
-        ///if (insideModule) {
-            JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
-            if (file != null) {
+    private String internalNameForPackage(@NotNull CallableMemberDescriptor descriptor) {
+        JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
+        if (file != null) {
+            Visibility visibility = descriptor.getVisibility();
+            if (Visibilities.isPrivate(visibility)) {
                 return fileClassesProvider.getFileClassInternalName(file);
             }
-
-            CallableMemberDescriptor directMember = getDirectMember(descriptor);
-
-            if (directMember instanceof DeserializedCallableMemberDescriptor) {
-                FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
-                return internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+            else {
+                return fileClassesProvider.getFacadeClassInternalName(file);
             }
+        }
 
-        //}
+        CallableMemberDescriptor directMember = getDirectMember(descriptor);
+
+        if (directMember instanceof DeserializedCallableMemberDescriptor) {
+            // TODO private vs public
+            FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
+            return internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+        }
 
         throw new RuntimeException("Unreachable state");
         //return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
