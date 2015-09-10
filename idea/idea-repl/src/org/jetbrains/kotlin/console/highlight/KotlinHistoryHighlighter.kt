@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.console.highlight
 
 import com.intellij.execution.console.LanguageConsoleImpl
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
@@ -32,12 +31,10 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
 
     var isReadLineMode: Boolean = false
         set(value) {
-            WriteCommandAction.runWriteCommandAction(runner.project) {
-                if (value)
-                    runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_READLINE_INDICATOR)
-                else
-                    runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_INDICATOR)
-            }
+            if (value)
+                runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_READLINE_INDICATOR)
+            else
+                runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_INDICATOR)
 
             $isReadLineMode = value
         }

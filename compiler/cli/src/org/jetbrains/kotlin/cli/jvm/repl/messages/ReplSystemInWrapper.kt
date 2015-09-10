@@ -25,30 +25,30 @@ public class ReplSystemInWrapper(
 ) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastScriptByteProcessed = false
+    private var isReadLineStartSent = false
     private var byteBuilder = ByteArrayOutputStream()
     private var curBytePos = 0
     private var inputByteArray = byteArrayOf()
 
-    private val isReachBufferEnd: Boolean
+    private val isAtBufferEnd: Boolean
         get() = curBytePos == inputByteArray.size()
 
     var isReplScriptExecuting = false
-        set(value) {
-            if (value)
-                replWriter.printlnReadLineStart()
-            else
-                replWriter.printlnReadLineEnd()
-
-            $isReplScriptExecuting = value
-        }
 
     override fun read(): Int {
         if (isLastScriptByteProcessed && isReplScriptExecuting) {
             isLastScriptByteProcessed = false
+            isReadLineStartSent = false
+            replWriter.printlnReadLineEnd()
             return -1
         }
 
         while (isXmlIncomplete) {
+            if (isReplScriptExecuting && !isReadLineStartSent) {
+                replWriter.printlnReadLineStart()
+                isReadLineStartSent = true
+            }
+
             byteBuilder.write(stdin.read())
 
             if (byteBuilder.toString().endsWith(END_LINE)) {
@@ -77,7 +77,7 @@ public class ReplSystemInWrapper(
     }
 
     private fun resetBufferIfNeeded() {
-        if (isReachBufferEnd) {
+        if (isAtBufferEnd) {
             isXmlIncomplete = true
             byteBuilder = ByteArrayOutputStream()
             curBytePos = 0

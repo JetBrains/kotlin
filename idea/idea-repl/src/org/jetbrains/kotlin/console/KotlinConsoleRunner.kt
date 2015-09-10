@@ -18,14 +18,25 @@ package org.jetbrains.kotlin.console
 
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.console.*
-import com.intellij.execution.process.*
+import com.intellij.execution.console.ConsoleExecuteAction
+import com.intellij.execution.console.LanguageConsoleBuilder
+import com.intellij.execution.console.LanguageConsoleView
+import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler
+import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.markup.*
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.RangeHighlighter
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -172,7 +183,7 @@ public class KotlinConsoleRunner(
         return indicatorHighlighter apply { gutterIconRenderer = indicator }
     }
 
-    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) {
+    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) = WriteCommandAction.runWriteCommandAction(project) {
         consoleEditorHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIconWithTooltip)
     }
 
