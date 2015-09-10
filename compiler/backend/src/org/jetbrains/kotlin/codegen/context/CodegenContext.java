@@ -204,7 +204,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull Type multifileClassType,
             @NotNull Type filePartType
     ) {
-        return new MultifileClassContext(descriptor, this, multifileClassType, filePartType);
+        return new MultifileClassFacadeContext(descriptor, this, multifileClassType, filePartType);
     }
 
     @NotNull

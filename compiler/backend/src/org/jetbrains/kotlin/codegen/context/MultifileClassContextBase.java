@@ -17,18 +17,29 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.kotlin.codegen.OwnerKind;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class MultifileClassContext extends MultifileClassOrPartContext {
-    public MultifileClassContext(
+public class MultifileClassContextBase extends FieldOwnerContext<PackageFragmentDescriptor> {
+    private final Type multifileClassType;
+    private final Type filePartType;
+
+    public MultifileClassContextBase(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
             Type multifileClassType,
             Type filePartType
     ) {
-        super(descriptor, parent, multifileClassType, filePartType);
+        super(descriptor, OwnerKind.PACKAGE, parent, null, null, null);
+        this.multifileClassType = multifileClassType;
+        this.filePartType = filePartType;
     }
 
+    public Type getMultifileClassType() {
+        return multifileClassType;
+    }
+
+    public Type getFilePartType() {
+        return filePartType;
+    }
 }

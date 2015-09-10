@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.fileClasses
+package org.jetbrains.kotlin.codegen.context;
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.org.objectweb.asm.Type;
 
-
-public object NoResolveFileClassesProvider : JvmFileClassesProvider {
-    override fun getFileClassInfo(file: JetFile): JvmFileClassInfo =
-            JvmFileClassUtil.getFileClassInfo(file, JvmFileClassUtil.parseJvmNameOnFileNoResolve(file))
+public interface DelegatingFacadeContext {
+    @Nullable
+    public Type getDelegateToClassType();
 }

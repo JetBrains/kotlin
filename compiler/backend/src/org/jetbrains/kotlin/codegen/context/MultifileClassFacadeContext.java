@@ -16,30 +16,23 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
-import org.jetbrains.kotlin.codegen.OwnerKind;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class MultifileClassOrPartContext extends FieldOwnerContext<PackageFragmentDescriptor> {
-    private final Type multifileClassType;
-    private final Type filePartType;
-
-    public MultifileClassOrPartContext(
+public class MultifileClassFacadeContext extends MultifileClassContextBase implements DelegatingFacadeContext {
+    public MultifileClassFacadeContext(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
             Type multifileClassType,
             Type filePartType
     ) {
-        super(descriptor, OwnerKind.PACKAGE, parent, null, null, null);
-        this.multifileClassType = multifileClassType;
-        this.filePartType = filePartType;
+        super(descriptor, parent, multifileClassType, filePartType);
     }
 
-    public Type getMultifileClassType() {
-        return multifileClassType;
-    }
-
-    public Type getFilePartType() {
-        return filePartType;
+    @Nullable
+    @Override
+    public Type getDelegateToClassType() {
+        return getFilePartType();
     }
 }

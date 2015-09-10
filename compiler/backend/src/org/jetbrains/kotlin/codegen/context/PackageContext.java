@@ -17,14 +17,19 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> {
+public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> implements DelegatingToPartContext {
     private final Type packagePartType;
 
-    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @NotNull CodegenContext parent, Type packagePartType) {
+    public PackageContext(
+            @NotNull PackageFragmentDescriptor contextDescriptor,
+            @NotNull CodegenContext parent,
+            @Nullable Type packagePartType
+    ) {
         super(contextDescriptor, OwnerKind.PACKAGE, parent, null, null, null);
         this.packagePartType = packagePartType;
     }
@@ -34,7 +39,14 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
         return "Package: " + getContextDescriptor().getName();
     }
 
+    @Nullable
     public Type getPackagePartType() {
+        return packagePartType;
+    }
+
+    @Nullable
+    @Override
+    public Type getImplementationOwnerClassType() {
         return packagePartType;
     }
 }

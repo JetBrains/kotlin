@@ -289,9 +289,16 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         if (outermost instanceof ClassContext) {
             return typeMapper.mapType(((ClassContext) outermost).getContextDescriptor());
         }
-        else if (outermost instanceof PackageContext && !(outermost instanceof PackageFacadeContext)) {
-            return fileClassesProvider.getFileClassType(element.getContainingJetFile());
-        }/*disabled cause of KT-7775
+        else if (outermost instanceof DelegatingFacadeContext || outermost instanceof DelegatingToPartContext) {
+            Type implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(outermost);
+            if (implementationOwnerType != null) {
+                return implementationOwnerType;
+            }
+            else {
+                return fileClassesProvider.getFileClassType(element.getContainingJetFile());
+            }
+        }
+        /*disabled cause of KT-7775
         else if (outermost instanceof ScriptContext) {
             return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
         }*/
