@@ -32,6 +32,8 @@ public object KotlinCompilerClient {
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
 
+    val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
+
 
     // TODO: remove jvmStatic after all use sites will switch to kotlin
     jvmStatic
@@ -45,6 +47,7 @@ public object KotlinCompilerClient {
 
         var attempts = 0
         var fileLock: FileBasedLock? = null
+        var shutdonwnPerformed = false
         try {
             while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
                 val service = tryFindDaemon(File(daemonOptions.runFilesPath), compilerId, reportingTargets)
@@ -59,11 +62,12 @@ public object KotlinCompilerClient {
                     service.shutdown()
                     // TODO: find more reliable way
                     Thread.sleep(1000)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon shut down correctly, restarting search")
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon shut down correctly")
+                    shutdonwnPerformed = true
                 }
                 else {
                     if (!autostart) return null
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found, starting a new one")
+                    reportingTargets.report(DaemonReportCategory.DEBUG, if (shutdonwnPerformed) "starting a new daemon" else "no suitable daemon found, starting a new one")
                 }
 
                 if (fileLock == null || !fileLock.isLocked()) {
@@ -75,7 +79,7 @@ public object KotlinCompilerClient {
                 }
                 else {
                     startDaemon(compilerId, daemonJVMOptions, daemonOptions, reportingTargets)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon started, trying to resolve")
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon started, trying to find it")
                 }
             }
         }
@@ -208,20 +212,28 @@ public object KotlinCompilerClient {
 
     // --- Implementation ---------------------------------------
 
-    val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
-
     fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
         if (category == DaemonReportCategory.DEBUG && !verboseReporting) return
         out?.println("[$source] ${category.name()}: $message")
         messages?.add(DaemonReportMessage(category, "[$source] $message"))
     }
 
+
+    private fun String.extractPortFromRunFilename(digest: String): Int =
+        makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
+            .match(this)
+            ?.groups?.get(1)
+            ?.value?.toInt()
+            ?: 0
+
+
     private fun tryFindDaemon(registryDir: File, compilerId: CompilerId, reportingTargets: DaemonReportingTargets): CompileService? {
         val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest()
         val daemons = registryDir.walk()
-                .map { Pair(it, makeRunFilenameRegex(digest = classPathDigest, port = "(\\d+)").match(it.name)?.groups?.get(1)?.value?.toInt() ?: 0) }
+                .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
                 .filter { it.second != 0 }
                 .map {
+                    assert(it.second > 0 && it.second < 0xffff)
                     reportingTargets.report(DaemonReportCategory.DEBUG, "found suitable daemon on port ${it.second}, trying to connect")
                     val daemon = tryConnectToDaemon(it.second, reportingTargets)
                     // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
@@ -240,9 +252,10 @@ public object KotlinCompilerClient {
         }
     }
 
+
     private fun tryConnectToDaemon(port: Int, reportingTargets: DaemonReportingTargets): CompileService? {
         try {
-            val daemon = LocateRegistry.getRegistry(loopbackAddrName, port)
+            val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port)
                     ?.lookup(COMPILER_SERVICE_RMI_NAME)
             if (daemon != null)
                 return daemon as? CompileService ?:
@@ -330,13 +343,15 @@ public object KotlinCompilerClient {
 
 
     class FileBasedLock(compilerId: CompilerId, daemonOptions: DaemonOptions) {
+
         private val lockFile: File =
                 File(daemonOptions.runFilesPath,
-                     makeRunFilenameString(ts = "lock",
+                     makeRunFilenameString(timestamp = "lock",
                                            digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                            port = "0"))
-
-        private var locked: Boolean = acquireLockFile(lockFile)
+        private volatile var locked = acquireLockFile(lockFile)
+        private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null
+        private val lock = channel?.lock()
 
         public fun isLocked(): Boolean = locked
 
@@ -349,40 +364,24 @@ public object KotlinCompilerClient {
             }
         }
 
-        private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null
-        private val lock = channel?.lock()
-
         synchronized private fun acquireLockFile(lockFile: File): Boolean {
-            if (lockFile.createNewFile()) return true
-            try {
-                // attempt to delete if file is orphaned
-                if (lockFile.delete() && lockFile.createNewFile())
-                    return true // if orphaned file deleted assuming that the probability of
-            }
-            catch (e: IOException) {
-                // Ignoring it - assuming it is another client process owning it
-            }
-            var attempts = 0L
-            while (lockFile.exists() && attempts++ * COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS < COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS) {
+            val maxAttempts = COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS / COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS + 1
+            var attempt = 0L
+            while (true) {
+                try {
+                    if (lockFile.createNewFile()) break
+                    // attempt to delete if file is orphaned
+                    if (lockFile.delete() && lockFile.createNewFile()) break
+                }
+                catch (e: IOException) {} // Ignoring it - assuming it is another client process owning it
+                if (lockFile.exists() && ++attempt >= maxAttempts)
+                    throw IOException("Timeout waiting the release of the lock file '${lockFile.absolutePath}")
                 Thread.sleep(COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS)
             }
-            if (lockFile.exists())
-                throw IOException("Timeout waiting the release of the lock file '${lockFile.absolutePath}")
-
-            return lockFile.createNewFile()
+            return true
         }
     }
 }
-
-
-fun Process.isAlive() =
-        try {
-            this.exitValue()
-            false
-        }
-        catch (e: IllegalThreadStateException) {
-            true
-        }
 
 
 public enum class DaemonReportCategory {
@@ -392,3 +391,13 @@ public enum class DaemonReportCategory {
 public data class DaemonReportMessage(public val category: DaemonReportCategory, public val message: String)
 
 public class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
+
+
+internal fun Process.isAlive() =
+        try {
+            this.exitValue()
+            false
+        }
+        catch (e: IllegalThreadStateException) {
+            true
+        }

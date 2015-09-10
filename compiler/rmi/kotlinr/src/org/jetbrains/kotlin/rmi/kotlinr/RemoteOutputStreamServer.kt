@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
+import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
 import org.jetbrains.kotlin.rmi.RemoteOutputStream
-import org.jetbrains.kotlin.rmi.clientLoopbackSocketFactory
-import org.jetbrains.kotlin.rmi.serverLoopbackSocketFactory
+import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
 import java.io.OutputStream
 import java.rmi.server.UnicastRemoteObject
 
 
-class RemoteOutputStreamServer(val out: OutputStream, port: Int = 0) : RemoteOutputStream {
+class RemoteOutputStreamServer(val out: OutputStream, port: Int = SOCKET_ANY_FREE_PORT) : RemoteOutputStream {
 
     init {
-        UnicastRemoteObject.exportObject(this, port, clientLoopbackSocketFactory, serverLoopbackSocketFactory)
+        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
     }
 
     public fun disconnect() {

@@ -120,7 +120,7 @@ public object CompileDaemon {
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
-                               makeRunFilenameString(ts = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                               makeRunFilenameString(timestamp = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
                                                      digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                                      port = port.toString()))
             if (!runFile.createNewFile()) {
@@ -190,7 +190,7 @@ public object CompileDaemon {
         while (i++ < attempts) {
             val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
             try {
-                return Pair(LocateRegistry.createRegistry(port, clientLoopbackSocketFactory, serverLoopbackSocketFactory), port)
+                return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
             }
             catch (e: RemoteException) {
                 // assuming that the port is already taken
