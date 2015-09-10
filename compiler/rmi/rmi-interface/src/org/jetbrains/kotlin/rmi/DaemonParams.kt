@@ -22,7 +22,6 @@ import java.lang.management.ManagementFactory
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import kotlin.reflect.KMutableProperty1
-import kotlin.text.Regex
 
 
 public val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
@@ -54,9 +53,7 @@ public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
 val COMPILER_ID_DIGEST = "MD5"
 
 
-public fun makeRunFilenameString(ts: String, digest: String, port: String, esc: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$esc.$ts$esc.$digest$esc.$port$esc.run"
-
-public fun makeRunFilenameRegex(ts: String = "[0-9TZ:\\.\\+-]+", digest: String = "[0-9a-f]+", port: String = "\\d+"): Regex = makeRunFilenameString(ts, digest, port, esc = "\\").toRegex()
+public fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
 
 open class PropMapper<C, V, P : KMutableProperty1<C, V>>(val dest: C,
@@ -114,6 +111,8 @@ class RestPropMapper<C, P : KMutableProperty1<C, MutableCollection<String>>>(des
 }
 
 
+// helper function combining find with map, useful for the cases then there is a calculation performed in find, which is nice to return along with
+// found value; mappingPredicate should return the pair of boolean compare predicate result and transformation value, we want to get along with found value
 inline fun <T, R : Any> Iterable<T>.findWithTransform(mappingPredicate: (T) -> Pair<Boolean, R?>): R? {
     for (element in this) {
         val (found, mapped) = mappingPredicate(element)
@@ -123,6 +122,9 @@ inline fun <T, R : Any> Iterable<T>.findWithTransform(mappingPredicate: (T) -> P
 }
 
 
+// filter-like function, takes list of propmappers, bound to properties of concrete objects, iterates over receiver, extract matching values via appropriate
+// mappers into bound properties; if restParser is given, adds all non-matching elements to it, otherwise return them as an iterable
+// note bound properties mutation!
 fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, prefix: String, restParser: RestPropMapper<*, *>? = null): Iterable<String> {
 
     val iter = iterator()
@@ -169,6 +171,9 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
 }
 
 
+public fun String.trimQuotes() = trim('"','\'')
+
+
 public interface OptionsGroup : Serializable {
     public val mappers: List<PropMapper<*, *, *>>
 }
@@ -203,10 +208,10 @@ public data class DaemonOptions(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, ::runFilesPath, fromString = { it.trim('"') }),
+        get() = listOf(PropMapper(this, ::runFilesPath, fromString = { it.trimQuotes() }),
                        PropMapper(this, ::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }, mergeDelimiter = "="),
                        PropMapper(this, ::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }, mergeDelimiter = "="),
-                       NullablePropMapper(this, ::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trim('\"', '\'')}" }, mergeDelimiter = "="))
+                       NullablePropMapper(this, ::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="))
 }
 
 
@@ -257,7 +262,7 @@ public data class CompilerId(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, ::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trim('"').split(File.pathSeparator) }),
+        get() = listOf(PropMapper(this, ::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
                        StringPropMapper(this, ::compilerDigest),
                        StringPropMapper(this, ::compilerVersion))
 
@@ -283,10 +288,11 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
         ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
     }
     System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
-        opts.jvmParams.addAll(it.trim('"', '\'')
-                                      .split("(?<!\\\\),".toRegex())
-                                      .map { it.replace("[\\\\](.)".toRegex(), "$1") }
-                                      .filterExtractProps(opts.mappers, "-", opts.restMapper))
+        opts.jvmParams.addAll(
+                it.trimQuotes()
+                  .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
+                  .map { it.replace("\\\\(.)".toRegex(), "$1") } // de-escaping characters escaped by backslash, straightforward, without exceptions
+                  .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
     System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_REPORT_PERF_PROPERTY) }
@@ -294,24 +300,27 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
     return opts
 }
 
+
 public fun configureDaemonJVMOptions(inheritMemoryLimits: Boolean): DaemonJVMOptions =
         configureDaemonJVMOptions(DaemonJVMOptions(), inheritMemoryLimits = inheritMemoryLimits)
 
+
 public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
     System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)?.let {
-        val unrecognized = it.trim('"', '\'').split(",").filterExtractProps(opts.mappers, "")
+        val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
         if (unrecognized.any())
             throw IllegalArgumentException(
                     "Unrecognized daemon options passed via property $COMPILE_DAEMON_OPTIONS_PROPERTY: " + unrecognized.joinToString(" ") +
                     "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
     }
     System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)?.let {
-        val trimmed = it.trim('"', '\'')
+        val trimmed = it.trimQuotes()
         if (!trimmed.isBlank()) {
             opts.clientAliveFlagPath = trimmed
         }
     }
     return opts
 }
+
 
 public fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptions())

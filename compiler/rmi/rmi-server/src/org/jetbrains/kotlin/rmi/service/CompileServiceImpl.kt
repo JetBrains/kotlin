@@ -122,7 +122,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             // ignoring if object already exported
         }
 
-        val stub = UnicastRemoteObject.exportObject(this, port, clientLoopbackSocketFactory, serverLoopbackSocketFactory) as CompileService
+        val stub = UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) as CompileService
         registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
         alive = true
     }
