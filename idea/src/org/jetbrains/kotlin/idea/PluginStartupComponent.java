@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.decompiler.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
-import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -55,18 +54,29 @@ public class PluginStartupComponent implements ApplicationComponent {
 
     private String aliveFlagPath;
 
-    public String getAliveFlagPath() {
-        if (aliveFlagPath == null) {
+    public synchronized String getAliveFlagPath() {
+        if (this.aliveFlagPath == null) {
             try {
                 File flagFile = File.createTempFile("kotlin-idea-", "-is-running");
                 flagFile.deleteOnExit();
-                aliveFlagPath = flagFile.getAbsolutePath();
+                this.aliveFlagPath = flagFile.getAbsolutePath();
             }
             catch (IOException e) {
-                aliveFlagPath = "";
+                this.aliveFlagPath = "";
             }
         }
         return this.aliveFlagPath;
+    }
+
+    public synchronized void resetAliveFlag() {
+        if (this.aliveFlagPath != null) {
+            File flagFile = new File(this.aliveFlagPath);
+            if (flagFile.exists()) {
+                if (flagFile.delete()) {
+                    this.aliveFlagPath = null;
+                }
+            }
+        }
     }
 
     @Override
