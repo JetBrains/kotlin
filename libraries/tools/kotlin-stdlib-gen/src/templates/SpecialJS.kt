@@ -42,7 +42,7 @@ fun specialJS(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         inline(true)
-        annotations("""suppress("NOTHING_TO_INLINE")""")
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
@@ -54,7 +54,7 @@ fun specialJS(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         inline(true)
-        annotations("""suppress("NOTHING_TO_INLINE")""")
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
@@ -95,7 +95,7 @@ fun specialJS(): List<GenericFunction> {
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         inline(true)
-        annotations("""suppress("NOTHING_TO_INLINE")""")
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         body() {
             """
@@ -121,7 +121,7 @@ fun specialJS(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns an array containing all elements of the original array and then all elements of the given [array]." }
         inline(true)
-        annotations("""suppress("NOTHING_TO_INLINE")""")
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
@@ -134,7 +134,7 @@ fun specialJS(): List<GenericFunction> {
     templates add f("sort(comparison: (T, T) -> Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        annotations("native")
+        annotations("@native")
         returns("Unit")
         doc { "Sorts the array inplace according to the order specified by the given [comparison] function." }
         body { "return noImpl" }
@@ -154,7 +154,7 @@ fun specialJS(): List<GenericFunction> {
         exclude(PrimitiveType.Long)
         returns("Unit")
         doc { "Sorts the array inplace." }
-        annotations("""library("primitiveArraySort")""")
+        annotations("""@library("primitiveArraySort")""")
         body { "return noImpl" }
     }
 

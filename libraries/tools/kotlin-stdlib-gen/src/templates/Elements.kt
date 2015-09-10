@@ -762,7 +762,7 @@ fun elements(): List<GenericFunction> {
     templates addAll (1..5).map { n ->
         f("component$n()") {
             inline(true)
-            annotations("""suppress("NOTHING_TO_INLINE")""")
+            annotations("""@Suppress("NOTHING_TO_INLINE")""")
             fun getOrdinal(n: Int) = n.toString() + when (n) {
                 1 -> "st"
                 2 -> "nd"

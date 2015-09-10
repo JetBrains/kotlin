@@ -329,7 +329,7 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-platformName("mutableCopyOf")
+@JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
     return Arrays.copyOf(this, newSize)
 }

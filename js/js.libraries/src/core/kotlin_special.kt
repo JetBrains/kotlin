@@ -78,7 +78,7 @@ public inline fun ShortArray.asList(): List<Short> {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.copyOf(): Array<T> {
     return (this: dynamic).slice(0)
 }
@@ -86,7 +86,7 @@ public inline fun <T> Array<out T>.copyOf(): Array<T> {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.copyOf(): BooleanArray {
     return (this: dynamic).slice(0)
 }
@@ -94,7 +94,7 @@ public inline fun BooleanArray.copyOf(): BooleanArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.copyOf(): ByteArray {
     return (this: dynamic).slice(0)
 }
@@ -102,7 +102,7 @@ public inline fun ByteArray.copyOf(): ByteArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.copyOf(): CharArray {
     return (this: dynamic).slice(0)
 }
@@ -110,7 +110,7 @@ public inline fun CharArray.copyOf(): CharArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.copyOf(): DoubleArray {
     return (this: dynamic).slice(0)
 }
@@ -118,7 +118,7 @@ public inline fun DoubleArray.copyOf(): DoubleArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.copyOf(): FloatArray {
     return (this: dynamic).slice(0)
 }
@@ -126,7 +126,7 @@ public inline fun FloatArray.copyOf(): FloatArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.copyOf(): IntArray {
     return (this: dynamic).slice(0)
 }
@@ -134,7 +134,7 @@ public inline fun IntArray.copyOf(): IntArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.copyOf(): LongArray {
     return (this: dynamic).slice(0)
 }
@@ -142,7 +142,7 @@ public inline fun LongArray.copyOf(): LongArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.copyOf(): ShortArray {
     return (this: dynamic).slice(0)
 }
@@ -213,7 +213,7 @@ public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -221,7 +221,7 @@ public inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Ar
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -229,7 +229,7 @@ public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -237,7 +237,7 @@ public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -245,7 +245,7 @@ public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -253,7 +253,7 @@ public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleA
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -261,7 +261,7 @@ public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArr
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -269,7 +269,7 @@ public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -277,7 +277,7 @@ public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
 /**
  * Returns new array which is a copy of range of original array.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
     return (this: dynamic).slice(fromIndex, toIndex)
 }
@@ -285,7 +285,7 @@ public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.plus(array: Array<out T>): Array<T> {
     return (this: dynamic).concat(array)
 }
@@ -293,7 +293,7 @@ public inline fun <T> Array<out T>.plus(array: Array<out T>): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.plus(array: BooleanArray): BooleanArray {
     return (this: dynamic).concat(array)
 }
@@ -301,7 +301,7 @@ public inline fun BooleanArray.plus(array: BooleanArray): BooleanArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.plus(array: ByteArray): ByteArray {
     return (this: dynamic).concat(array)
 }
@@ -309,7 +309,7 @@ public inline fun ByteArray.plus(array: ByteArray): ByteArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.plus(array: CharArray): CharArray {
     return (this: dynamic).concat(array)
 }
@@ -317,7 +317,7 @@ public inline fun CharArray.plus(array: CharArray): CharArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.plus(array: DoubleArray): DoubleArray {
     return (this: dynamic).concat(array)
 }
@@ -325,7 +325,7 @@ public inline fun DoubleArray.plus(array: DoubleArray): DoubleArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.plus(array: FloatArray): FloatArray {
     return (this: dynamic).concat(array)
 }
@@ -333,7 +333,7 @@ public inline fun FloatArray.plus(array: FloatArray): FloatArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.plus(array: IntArray): IntArray {
     return (this: dynamic).concat(array)
 }
@@ -341,7 +341,7 @@ public inline fun IntArray.plus(array: IntArray): IntArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.plus(array: LongArray): LongArray {
     return (this: dynamic).concat(array)
 }
@@ -349,7 +349,7 @@ public inline fun LongArray.plus(array: LongArray): LongArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.plus(array: ShortArray): ShortArray {
     return (this: dynamic).concat(array)
 }
@@ -420,7 +420,7 @@ public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.plus(element: T): Array<T> {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -428,7 +428,7 @@ public inline fun <T> Array<out T>.plus(element: T): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.plus(element: Boolean): BooleanArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -436,7 +436,7 @@ public inline fun BooleanArray.plus(element: Boolean): BooleanArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.plus(element: Byte): ByteArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -444,7 +444,7 @@ public inline fun ByteArray.plus(element: Byte): ByteArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.plus(element: Char): CharArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -452,7 +452,7 @@ public inline fun CharArray.plus(element: Char): CharArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.plus(element: Double): DoubleArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -460,7 +460,7 @@ public inline fun DoubleArray.plus(element: Double): DoubleArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.plus(element: Float): FloatArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -468,7 +468,7 @@ public inline fun FloatArray.plus(element: Float): FloatArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.plus(element: Int): IntArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -476,7 +476,7 @@ public inline fun IntArray.plus(element: Int): IntArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.plus(element: Long): LongArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -484,7 +484,7 @@ public inline fun LongArray.plus(element: Long): LongArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.plus(element: Short): ShortArray {
     return (this: dynamic).concat(arrayOf(element))
 }
@@ -492,7 +492,7 @@ public inline fun ShortArray.plus(element: Short): ShortArray {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun ByteArray.sort(): Unit {
     return noImpl
 }
@@ -500,7 +500,7 @@ public fun ByteArray.sort(): Unit {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun CharArray.sort(): Unit {
     return noImpl
 }
@@ -508,7 +508,7 @@ public fun CharArray.sort(): Unit {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun DoubleArray.sort(): Unit {
     return noImpl
 }
@@ -516,7 +516,7 @@ public fun DoubleArray.sort(): Unit {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun FloatArray.sort(): Unit {
     return noImpl
 }
@@ -524,7 +524,7 @@ public fun FloatArray.sort(): Unit {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun IntArray.sort(): Unit {
     return noImpl
 }
@@ -532,7 +532,7 @@ public fun IntArray.sort(): Unit {
 /**
  * Sorts the array inplace.
  */
-library("primitiveArraySort")
+@library("primitiveArraySort")
 public fun ShortArray.sort(): Unit {
     return noImpl
 }
@@ -554,7 +554,7 @@ public fun LongArray.sort(): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
     return noImpl
 }
@@ -562,7 +562,7 @@ public fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
     return noImpl
 }
@@ -570,7 +570,7 @@ public fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
     return noImpl
 }
@@ -578,7 +578,7 @@ public fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
     return noImpl
 }
@@ -586,7 +586,7 @@ public fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
     return noImpl
 }
@@ -594,7 +594,7 @@ public fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
     return noImpl
 }
@@ -602,7 +602,7 @@ public fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
     return noImpl
 }
@@ -610,7 +610,7 @@ public fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
 /**
  * Sorts the array inplace according to the order specified by the given [comparison] function.
  */
-native
+@native
 public fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
     return noImpl
 }

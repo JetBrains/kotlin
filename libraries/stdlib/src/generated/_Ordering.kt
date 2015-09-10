@@ -13,7 +13,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun <T> Array<out T>.reverse(): List<T> {
     return reversed()
 }
@@ -21,7 +21,7 @@ public fun <T> Array<out T>.reverse(): List<T> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun BooleanArray.reverse(): List<Boolean> {
     return reversed()
 }
@@ -29,7 +29,7 @@ public fun BooleanArray.reverse(): List<Boolean> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun ByteArray.reverse(): List<Byte> {
     return reversed()
 }
@@ -37,7 +37,7 @@ public fun ByteArray.reverse(): List<Byte> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun CharArray.reverse(): List<Char> {
     return reversed()
 }
@@ -45,7 +45,7 @@ public fun CharArray.reverse(): List<Char> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun DoubleArray.reverse(): List<Double> {
     return reversed()
 }
@@ -53,7 +53,7 @@ public fun DoubleArray.reverse(): List<Double> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun FloatArray.reverse(): List<Float> {
     return reversed()
 }
@@ -61,7 +61,7 @@ public fun FloatArray.reverse(): List<Float> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun IntArray.reverse(): List<Int> {
     return reversed()
 }
@@ -69,7 +69,7 @@ public fun IntArray.reverse(): List<Int> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun LongArray.reverse(): List<Long> {
     return reversed()
 }
@@ -77,7 +77,7 @@ public fun LongArray.reverse(): List<Long> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun ShortArray.reverse(): List<Short> {
     return reversed()
 }
@@ -85,7 +85,7 @@ public fun ShortArray.reverse(): List<Short> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun <T> Iterable<T>.reverse(): List<T> {
     return reversed()
 }
@@ -93,7 +93,7 @@ public fun <T> Iterable<T>.reverse(): List<T> {
 /**
  * Returns a list with elements in reversed order.
  */
-deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun String.reverse(): String {
     return reversed()
 }
@@ -316,7 +316,7 @@ public fun ShortArray.reversedArray(): ShortArray {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("This method may change its behavior soon. Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("This method may change its behavior soon. Use sorted() instead.", ReplaceWith("sorted()"))
 public fun <T : Comparable<T>> Iterable<T>.sort(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -326,7 +326,7 @@ public fun <T : Comparable<T>> Iterable<T>.sort(): List<T> {
 /**
  * Returns a list of all elements, sorted by the specified [comparator].
  */
-deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
+@Deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
 public fun <T> Array<out T>.sortBy(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
@@ -336,7 +336,7 @@ public fun <T> Array<out T>.sortBy(comparator: Comparator<in T>): List<T> {
 /**
  * Returns a list of all elements, sorted by the specified [comparator].
  */
-deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
+@Deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
 public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
@@ -346,8 +346,8 @@ public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
-public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
+@Deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
+public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
@@ -357,8 +357,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(inlineOptions(Inlin
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
+@Deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(crossinline order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
@@ -368,7 +368,7 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(inlineOptions(Inline
 /**
  * Returns a sorted list of all elements, in descending order.
  */
-deprecated("This method may change its behavior soon. Use sortedDescending() instead.", ReplaceWith("sortedDescending()"))
+@Deprecated("This method may change its behavior soon. Use sortedDescending() instead.", ReplaceWith("sortedDescending()"))
 public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator { x, y -> y.compareTo(x) })
@@ -378,8 +378,8 @@ public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
 /**
  * Returns a sorted list of all elements, in descending order by results of specified [order] function.
  */
-deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
-public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
+@Deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
+public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(crossinline order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareByDescending(order)
     java.util.Collections.sort(sortedList, sortBy)
@@ -389,8 +389,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(inlineOpt
 /**
  * Returns a sorted list of all elements, in descending order by results of specified [order] function.
  */
-deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
+@Deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(crossinline order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareByDescending(order)
     java.util.Collections.sort(sortedList, sortBy)
@@ -638,154 +638,154 @@ public fun <T, A: Array<out T>> A.sortedArrayWith(comparator: Comparator<in T>):
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> BooleanArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Boolean) -> R?): List<Boolean> {
+public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ByteArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Byte) -> R?): List<Byte> {
+public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> CharArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Char) -> R?): List<Char> {
+public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> DoubleArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Double) -> R?): List<Double> {
+public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> FloatArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Float) -> R?): List<Float> {
+public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> IntArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Int) -> R?): List<Int> {
+public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> LongArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Long) -> R?): List<Long> {
+public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ShortArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Short) -> R?): List<Short> {
+public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): Sequence<T> {
+public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(crossinline selector: (T) -> R?): Sequence<T> {
     return sortedWith(compareBy(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Boolean) -> R?): List<Boolean> {
+public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Byte) -> R?): List<Byte> {
+public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> CharArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Char) -> R?): List<Char> {
+public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Double) -> R?): List<Double> {
+public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Float) -> R?): List<Float> {
+public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> IntArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Int) -> R?): List<Int> {
+public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> LongArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Long) -> R?): List<Long> {
+public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Short) -> R?): List<Short> {
+public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
 }
 
 /**
  * Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): Sequence<T> {
+public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(crossinline selector: (T) -> R?): Sequence<T> {
     return sortedWith(compareByDescending(selector))
 }
 
@@ -965,7 +965,7 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun <T : Comparable<T>> Array<out T>.toSortedList(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -975,7 +975,7 @@ public fun <T : Comparable<T>> Array<out T>.toSortedList(): List<T> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun BooleanArray.toSortedList(): List<Boolean> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -985,7 +985,7 @@ public fun BooleanArray.toSortedList(): List<Boolean> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun ByteArray.toSortedList(): List<Byte> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -995,7 +995,7 @@ public fun ByteArray.toSortedList(): List<Byte> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun CharArray.toSortedList(): List<Char> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1005,7 +1005,7 @@ public fun CharArray.toSortedList(): List<Char> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun DoubleArray.toSortedList(): List<Double> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1015,7 +1015,7 @@ public fun DoubleArray.toSortedList(): List<Double> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun FloatArray.toSortedList(): List<Float> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1025,7 +1025,7 @@ public fun FloatArray.toSortedList(): List<Float> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun IntArray.toSortedList(): List<Int> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1035,7 +1035,7 @@ public fun IntArray.toSortedList(): List<Int> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun LongArray.toSortedList(): List<Long> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1045,7 +1045,7 @@ public fun LongArray.toSortedList(): List<Long> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun ShortArray.toSortedList(): List<Short> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1055,7 +1055,7 @@ public fun ShortArray.toSortedList(): List<Short> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
+@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
 public fun <T : Comparable<T>> Iterable<T>.toSortedList(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1065,7 +1065,7 @@ public fun <T : Comparable<T>> Iterable<T>.toSortedList(): List<T> {
 /**
  * Returns a sorted list of all elements.
  */
-deprecated("Use asIterable().sorted() instead.", ReplaceWith("asIterable().sorted()"))
+@Deprecated("Use asIterable().sorted() instead.", ReplaceWith("asIterable().sorted()"))
 public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -1075,7 +1075,7 @@ public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <T, V : Comparable<V>> Array<out T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareBy(order)
@@ -1086,7 +1086,7 @@ public fun <T, V : Comparable<V>> Array<out T>.toSortedListBy(order: (T) -> V): 
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> BooleanArray.toSortedListBy(order: (Boolean) -> V): List<Boolean> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Boolean> = compareBy(order)
@@ -1097,7 +1097,7 @@ public fun <V : Comparable<V>> BooleanArray.toSortedListBy(order: (Boolean) -> V
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> ByteArray.toSortedListBy(order: (Byte) -> V): List<Byte> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Byte> = compareBy(order)
@@ -1108,7 +1108,7 @@ public fun <V : Comparable<V>> ByteArray.toSortedListBy(order: (Byte) -> V): Lis
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> CharArray.toSortedListBy(order: (Char) -> V): List<Char> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Char> = compareBy(order)
@@ -1119,7 +1119,7 @@ public fun <V : Comparable<V>> CharArray.toSortedListBy(order: (Char) -> V): Lis
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> DoubleArray.toSortedListBy(order: (Double) -> V): List<Double> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Double> = compareBy(order)
@@ -1130,7 +1130,7 @@ public fun <V : Comparable<V>> DoubleArray.toSortedListBy(order: (Double) -> V):
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> FloatArray.toSortedListBy(order: (Float) -> V): List<Float> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Float> = compareBy(order)
@@ -1141,7 +1141,7 @@ public fun <V : Comparable<V>> FloatArray.toSortedListBy(order: (Float) -> V): L
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> IntArray.toSortedListBy(order: (Int) -> V): List<Int> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Int> = compareBy(order)
@@ -1152,7 +1152,7 @@ public fun <V : Comparable<V>> IntArray.toSortedListBy(order: (Int) -> V): List<
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> LongArray.toSortedListBy(order: (Long) -> V): List<Long> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Long> = compareBy(order)
@@ -1163,7 +1163,7 @@ public fun <V : Comparable<V>> LongArray.toSortedListBy(order: (Long) -> V): Lis
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <V : Comparable<V>> ShortArray.toSortedListBy(order: (Short) -> V): List<Short> {
     val sortedList = toArrayList()
     val sortBy: Comparator<Short> = compareBy(order)
@@ -1174,7 +1174,7 @@ public fun <V : Comparable<V>> ShortArray.toSortedListBy(order: (Short) -> V): L
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
+@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
 public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareBy(order)
@@ -1185,7 +1185,7 @@ public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): L
 /**
  * Returns a sorted list of all elements, ordered by results of specified [order] function.
  */
-deprecated("Use asIterable().sortedBy(order) instead.", ReplaceWith("asIterable().sortedBy(order)"))
+@Deprecated("Use asIterable().sortedBy(order) instead.", ReplaceWith("asIterable().sortedBy(order)"))
 public fun <T, V : Comparable<V>> Sequence<T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = compareBy(order)

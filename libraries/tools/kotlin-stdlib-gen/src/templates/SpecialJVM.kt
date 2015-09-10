@@ -84,7 +84,7 @@ fun specialJVM(): List<GenericFunction> {
         }
         returns(ArraysOfObjects) { "Array<out T?>" }
         returns(InvariantArraysOfObjects) { "Array<T?>" }
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
     }
 
     templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size())") {

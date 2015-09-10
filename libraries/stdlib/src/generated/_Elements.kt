@@ -13,7 +13,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.component1(): T {
     return get(0)
 }
@@ -21,7 +21,7 @@ public inline fun <T> Array<out T>.component1(): T {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.component1(): Boolean {
     return get(0)
 }
@@ -29,7 +29,7 @@ public inline fun BooleanArray.component1(): Boolean {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.component1(): Byte {
     return get(0)
 }
@@ -37,7 +37,7 @@ public inline fun ByteArray.component1(): Byte {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.component1(): Char {
     return get(0)
 }
@@ -45,7 +45,7 @@ public inline fun CharArray.component1(): Char {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.component1(): Double {
     return get(0)
 }
@@ -53,7 +53,7 @@ public inline fun DoubleArray.component1(): Double {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.component1(): Float {
     return get(0)
 }
@@ -61,7 +61,7 @@ public inline fun FloatArray.component1(): Float {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.component1(): Int {
     return get(0)
 }
@@ -69,7 +69,7 @@ public inline fun IntArray.component1(): Int {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.component1(): Long {
     return get(0)
 }
@@ -77,7 +77,7 @@ public inline fun LongArray.component1(): Long {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.component1(): Short {
     return get(0)
 }
@@ -85,7 +85,7 @@ public inline fun ShortArray.component1(): Short {
 /**
  * Returns 1st *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.component1(): T {
     return get(0)
 }
@@ -93,7 +93,7 @@ public inline fun <T> List<T>.component1(): T {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.component2(): T {
     return get(1)
 }
@@ -101,7 +101,7 @@ public inline fun <T> Array<out T>.component2(): T {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.component2(): Boolean {
     return get(1)
 }
@@ -109,7 +109,7 @@ public inline fun BooleanArray.component2(): Boolean {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.component2(): Byte {
     return get(1)
 }
@@ -117,7 +117,7 @@ public inline fun ByteArray.component2(): Byte {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.component2(): Char {
     return get(1)
 }
@@ -125,7 +125,7 @@ public inline fun CharArray.component2(): Char {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.component2(): Double {
     return get(1)
 }
@@ -133,7 +133,7 @@ public inline fun DoubleArray.component2(): Double {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.component2(): Float {
     return get(1)
 }
@@ -141,7 +141,7 @@ public inline fun FloatArray.component2(): Float {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.component2(): Int {
     return get(1)
 }
@@ -149,7 +149,7 @@ public inline fun IntArray.component2(): Int {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.component2(): Long {
     return get(1)
 }
@@ -157,7 +157,7 @@ public inline fun LongArray.component2(): Long {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.component2(): Short {
     return get(1)
 }
@@ -165,7 +165,7 @@ public inline fun ShortArray.component2(): Short {
 /**
  * Returns 2nd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.component2(): T {
     return get(1)
 }
@@ -173,7 +173,7 @@ public inline fun <T> List<T>.component2(): T {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.component3(): T {
     return get(2)
 }
@@ -181,7 +181,7 @@ public inline fun <T> Array<out T>.component3(): T {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.component3(): Boolean {
     return get(2)
 }
@@ -189,7 +189,7 @@ public inline fun BooleanArray.component3(): Boolean {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.component3(): Byte {
     return get(2)
 }
@@ -197,7 +197,7 @@ public inline fun ByteArray.component3(): Byte {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.component3(): Char {
     return get(2)
 }
@@ -205,7 +205,7 @@ public inline fun CharArray.component3(): Char {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.component3(): Double {
     return get(2)
 }
@@ -213,7 +213,7 @@ public inline fun DoubleArray.component3(): Double {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.component3(): Float {
     return get(2)
 }
@@ -221,7 +221,7 @@ public inline fun FloatArray.component3(): Float {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.component3(): Int {
     return get(2)
 }
@@ -229,7 +229,7 @@ public inline fun IntArray.component3(): Int {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.component3(): Long {
     return get(2)
 }
@@ -237,7 +237,7 @@ public inline fun LongArray.component3(): Long {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.component3(): Short {
     return get(2)
 }
@@ -245,7 +245,7 @@ public inline fun ShortArray.component3(): Short {
 /**
  * Returns 3rd *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.component3(): T {
     return get(2)
 }
@@ -253,7 +253,7 @@ public inline fun <T> List<T>.component3(): T {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.component4(): T {
     return get(3)
 }
@@ -261,7 +261,7 @@ public inline fun <T> Array<out T>.component4(): T {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.component4(): Boolean {
     return get(3)
 }
@@ -269,7 +269,7 @@ public inline fun BooleanArray.component4(): Boolean {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.component4(): Byte {
     return get(3)
 }
@@ -277,7 +277,7 @@ public inline fun ByteArray.component4(): Byte {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.component4(): Char {
     return get(3)
 }
@@ -285,7 +285,7 @@ public inline fun CharArray.component4(): Char {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.component4(): Double {
     return get(3)
 }
@@ -293,7 +293,7 @@ public inline fun DoubleArray.component4(): Double {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.component4(): Float {
     return get(3)
 }
@@ -301,7 +301,7 @@ public inline fun FloatArray.component4(): Float {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.component4(): Int {
     return get(3)
 }
@@ -309,7 +309,7 @@ public inline fun IntArray.component4(): Int {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.component4(): Long {
     return get(3)
 }
@@ -317,7 +317,7 @@ public inline fun LongArray.component4(): Long {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.component4(): Short {
     return get(3)
 }
@@ -325,7 +325,7 @@ public inline fun ShortArray.component4(): Short {
 /**
  * Returns 4th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.component4(): T {
     return get(3)
 }
@@ -333,7 +333,7 @@ public inline fun <T> List<T>.component4(): T {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.component5(): T {
     return get(4)
 }
@@ -341,7 +341,7 @@ public inline fun <T> Array<out T>.component5(): T {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.component5(): Boolean {
     return get(4)
 }
@@ -349,7 +349,7 @@ public inline fun BooleanArray.component5(): Boolean {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.component5(): Byte {
     return get(4)
 }
@@ -357,7 +357,7 @@ public inline fun ByteArray.component5(): Byte {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.component5(): Char {
     return get(4)
 }
@@ -365,7 +365,7 @@ public inline fun CharArray.component5(): Char {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.component5(): Double {
     return get(4)
 }
@@ -373,7 +373,7 @@ public inline fun DoubleArray.component5(): Double {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.component5(): Float {
     return get(4)
 }
@@ -381,7 +381,7 @@ public inline fun FloatArray.component5(): Float {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.component5(): Int {
     return get(4)
 }
@@ -389,7 +389,7 @@ public inline fun IntArray.component5(): Int {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.component5(): Long {
     return get(4)
 }
@@ -397,7 +397,7 @@ public inline fun LongArray.component5(): Long {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.component5(): Short {
     return get(4)
 }
@@ -405,7 +405,7 @@ public inline fun ShortArray.component5(): Short {
 /**
  * Returns 5th *element* from the collection.
  */
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.component5(): T {
     return get(4)
 }

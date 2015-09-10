@@ -326,13 +326,13 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
 
         deprecate[f]?.let { deprecated ->
             val replacement = deprecateReplacement[f]?.let { ", ReplaceWith(\"$it\")" } ?: ""
-            builder.append("deprecated(\"$deprecated\"$replacement)\n")
+            builder.append("@Deprecated(\"$deprecated\"$replacement)\n")
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
             platformName[primitive]
                     ?.replace("<T>", primitive.name)
-                    ?.let { platformName -> builder.append("platformName(\"${platformName}\")\n")}
+                    ?.let { platformName -> builder.append("@kotlin.jvm.JvmName(\"${platformName}\")\n")}
         }
 
         annotations[f]?.let { builder.append(it).append('\n') }

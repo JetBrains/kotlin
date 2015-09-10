@@ -162,7 +162,7 @@ public fun String.asSequence(): Sequence<Char> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun <T> Array<out T>.sequence(): Sequence<T> {
     return asSequence()
 }
@@ -170,7 +170,7 @@ public fun <T> Array<out T>.sequence(): Sequence<T> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun BooleanArray.sequence(): Sequence<Boolean> {
     return asSequence()
 }
@@ -178,7 +178,7 @@ public fun BooleanArray.sequence(): Sequence<Boolean> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun ByteArray.sequence(): Sequence<Byte> {
     return asSequence()
 }
@@ -186,7 +186,7 @@ public fun ByteArray.sequence(): Sequence<Byte> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun CharArray.sequence(): Sequence<Char> {
     return asSequence()
 }
@@ -194,7 +194,7 @@ public fun CharArray.sequence(): Sequence<Char> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun DoubleArray.sequence(): Sequence<Double> {
     return asSequence()
 }
@@ -202,7 +202,7 @@ public fun DoubleArray.sequence(): Sequence<Double> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun FloatArray.sequence(): Sequence<Float> {
     return asSequence()
 }
@@ -210,7 +210,7 @@ public fun FloatArray.sequence(): Sequence<Float> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun IntArray.sequence(): Sequence<Int> {
     return asSequence()
 }
@@ -218,7 +218,7 @@ public fun IntArray.sequence(): Sequence<Int> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun LongArray.sequence(): Sequence<Long> {
     return asSequence()
 }
@@ -226,7 +226,7 @@ public fun LongArray.sequence(): Sequence<Long> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun ShortArray.sequence(): Sequence<Short> {
     return asSequence()
 }
@@ -234,7 +234,7 @@ public fun ShortArray.sequence(): Sequence<Short> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun <T> Iterable<T>.sequence(): Sequence<T> {
     return asSequence()
 }
@@ -242,7 +242,7 @@ public fun <T> Iterable<T>.sequence(): Sequence<T> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun <K, V> Map<K, V>.sequence(): Sequence<Map.Entry<K, V>> {
     return asSequence()
 }
@@ -250,7 +250,7 @@ public fun <K, V> Map<K, V>.sequence(): Sequence<Map.Entry<K, V>> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun <T> Sequence<T>.sequence(): Sequence<T> {
     return this
 }
@@ -258,7 +258,7 @@ public fun <T> Sequence<T>.sequence(): Sequence<T> {
 /**
  * Returns a sequence from the given collection
  */
-deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
 public fun String.sequence(): Sequence<Char> {
     return asSequence()
 }

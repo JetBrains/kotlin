@@ -234,7 +234,7 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
+    templates add f("sortedBy(crossinline selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -256,7 +256,7 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
+    templates add f("sortedByDescending(crossinline selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -350,7 +350,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Strings)
     }
 
-    templates add f("sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
+    templates add f("sortBy(crossinline order: (T) -> R)") {
         inline(true)
 
         doc {
@@ -402,7 +402,7 @@ fun ordering(): List<GenericFunction> {
         only(Sequences, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
-    templates add f("sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
+    templates add f("sortDescendingBy(crossinline order: (T) -> R)") {
         inline(true)
 
         doc {
