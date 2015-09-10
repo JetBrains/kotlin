@@ -85,11 +85,6 @@ public class KotlinToJVMBytecodeCompiler {
             if (!source.isAbsolute()) {
                 source = new File(directory, sourceFile);
             }
-
-            if (!source.exists()) {
-                throw new CompileEnvironmentException("'" + source + "' does not exist in module " + module.getModuleName());
-            }
-
             result.add(source.getAbsolutePath());
         }
         return result;

@@ -171,19 +171,22 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val compilerConfiguration = KotlinToJVMBytecodeCompiler.createCompilerConfiguration(configuration, moduleScript.getModules(), directory)
                 environment = createCoreEnvironment(rootDisposable, compilerConfiguration)
 
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+
                 KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size())
                 environment = createCoreEnvironment(rootDisposable, configuration)
+
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+
                 KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
             }
             else {
                 environment = createCoreEnvironment(rootDisposable, configuration)
 
-                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) {
-                    return COMPILATION_ERROR
-                }
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
