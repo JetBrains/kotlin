@@ -239,14 +239,14 @@ fun updateEntryDigest(entry: File, md: MessageDigest) {
     }
 }
 
-jvmName("getFilesClasspathDigest_Files")
+@JvmName("getFilesClasspathDigest_Files")
 fun Iterable<File>.getFilesClasspathDigest(): String {
     val md = MessageDigest.getInstance(COMPILER_ID_DIGEST)
     this.forEach { updateEntryDigest(it, md) }
     return md.digest().joinToString("", transform = { "%02x".format(it) })
 }
 
-jvmName("getFilesClasspathDigest_Strings")
+@JvmName("getFilesClasspathDigest_Strings")
 fun Iterable<String>.getFilesClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
 
 fun Iterable<String>.distinctStringsDigest(): String =
@@ -271,9 +271,9 @@ public data class CompilerId(
     }
 
     companion object {
-        public jvmStatic fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
+        public @JvmStatic fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 
-        public jvmStatic fun makeCompilerId(paths: Iterable<File>): CompilerId =
+        public @JvmStatic fun makeCompilerId(paths: Iterable<File>): CompilerId =
                 CompilerId(compilerClasspath = paths.map { it.absolutePath }, compilerDigest = paths.getFilesClasspathDigest())
     }
 }

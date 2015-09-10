@@ -28,35 +28,35 @@ public interface CompileService : Remote {
     }
 
     public interface RemoteIncrementalCache : Remote {
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         public fun getObsoletePackageParts(): Collection<String>
 
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         public fun getPackagePartData(fqName: String): ByteArray?
 
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         public fun getModuleMappingData(): ByteArray?
 
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
 
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         fun getClassFilePath(internalClassName: String): String
 
-        throws(RemoteException::class)
+        @Throws(RemoteException::class)
         public fun close()
     }
 
-    throws(RemoteException::class)
+    @Throws(RemoteException::class)
     public fun getCompilerId(): CompilerId
 
-    throws(RemoteException::class)
+    @Throws(RemoteException::class)
     public fun getUsedMemory(): Long
 
-    throws(RemoteException::class)
+    @Throws(RemoteException::class)
     public fun shutdown()
 
-    throws(RemoteException::class)
+    @Throws(RemoteException::class)
     public fun remoteCompile(
             args: Array<out String>,
             compilerOutputStream: RemoteOutputStream,
@@ -64,7 +64,7 @@ public interface CompileService : Remote {
             serviceOutputStream: RemoteOutputStream
     ): Int
 
-    throws(RemoteException::class)
+    @Throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
             caches: Map<TargetId, RemoteIncrementalCache>,

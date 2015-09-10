@@ -91,7 +91,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     // internal implementation stuff
 
-    private volatile var _lastUsedSeconds = nowSeconds()
+    private @Volatile var _lastUsedSeconds = nowSeconds()
     public val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
     val log by lazy { Logger.getLogger("compiler") }
@@ -159,19 +159,6 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         System.gc()
         val rt = Runtime.getRuntime()
         return (rt.totalMemory() - rt.freeMemory())
-    }
-
-    // TODO: consider using version as a part of compiler ID or drop this function
-    private fun loadKotlinVersionFromResource(): String {
-        (javaClass.classLoader as? URLClassLoader)
-        ?.findResource("META-INF/MANIFEST.MF")
-        ?.let {
-            try {
-                return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: ""
-            }
-            catch (e: IOException) {}
-        }
-        return ""
     }
 
     fun ThreadMXBean.threadCpuTime() = if (isCurrentThreadCpuTimeSupported) currentThreadCpuTime else 0L

@@ -36,7 +36,7 @@ public object KotlinCompilerClient {
 
 
     // TODO: remove jvmStatic after all use sites will switch to kotlin
-    jvmStatic
+    @JvmStatic
     public fun connectToCompileService(compilerId: CompilerId,
                                        daemonJVMOptions: DaemonJVMOptions,
                                        daemonOptions: DaemonOptions,
@@ -117,7 +117,7 @@ public object KotlinCompilerClient {
 
 
     // TODO: remove jvmStatic after all use sites will switch to kotlin
-    jvmStatic
+    @JvmStatic
     public fun incrementalCompile(compiler: CompileService, args: Array<out String>, caches: Map<TargetId, IncrementalCache>, compilerOut: OutputStream, daemonOut: OutputStream): Int {
 
         val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
@@ -143,7 +143,7 @@ public object KotlinCompilerClient {
     }
 
 
-    jvmStatic public fun main(vararg args: String) {
+    @JvmStatic public fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
         val daemonLaunchingOptions = DaemonJVMOptions()
@@ -351,13 +351,13 @@ public object KotlinCompilerClient {
                      makeRunFilenameString(timestamp = "lock",
                                            digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                            port = "0"))
-        private volatile var locked = acquireLockFile(lockFile)
+        private @Volatile var locked = acquireLockFile(lockFile)
         private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null
         private val lock = channel?.lock()
 
         public fun isLocked(): Boolean = locked
 
-        synchronized public fun release(): Unit {
+        @Synchronized public fun release(): Unit {
             if (locked) {
                 lock?.release()
                 channel?.close()
@@ -366,7 +366,7 @@ public object KotlinCompilerClient {
             }
         }
 
-        synchronized private fun acquireLockFile(lockFile: File): Boolean {
+        @Synchronized private fun acquireLockFile(lockFile: File): Boolean {
             val maxAttempts = COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS / COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS + 1
             var attempt = 0L
             while (true) {
