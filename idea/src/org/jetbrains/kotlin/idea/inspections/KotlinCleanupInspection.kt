@@ -103,7 +103,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER,
             Errors.DEPRECATED_DECAPITALIZED_ANNOTATION,
             Errors.DEPRECATED_ESCAPED_MODIFIER,
-            Errors.DEPRECATED_UNESCAPED_ANNOTATION
+            Errors.DEPRECATED_UNESCAPED_ANNOTATION,
+            Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
