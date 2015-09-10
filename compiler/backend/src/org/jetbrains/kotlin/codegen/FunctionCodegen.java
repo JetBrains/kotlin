@@ -522,7 +522,11 @@ public class FunctionCodegen {
 
     @NotNull
     public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final JetTypeMapper mapper) {
-        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.Throws"));
+        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
+        if (annotation == null) {
+            annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
+        }
+
         if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
 
         Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();

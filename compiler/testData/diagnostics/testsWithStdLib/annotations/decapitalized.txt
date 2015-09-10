@@ -4,7 +4,7 @@ kotlin.jvm.Strictfp() public fun bar(/*0*/ x: kotlin.Deprecated): @[kotlin.Exten
 
 public final class A {
     public constructor A()
-    kotlin.Throws(exceptionClasses = {java.lang.RuntimeException::class}) kotlin.jvm.Synchronized() public final fun </*0*/ T> baz(): kotlin.Unit
+    kotlin.throws(exceptionClasses = {java.lang.RuntimeException::class}) kotlin.jvm.Synchronized() public final fun </*0*/ T> baz(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     kotlin.Deprecated(value = "") public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
