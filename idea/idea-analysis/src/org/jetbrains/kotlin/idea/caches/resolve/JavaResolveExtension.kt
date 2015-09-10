@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
@@ -28,8 +29,10 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver {
-    @suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
+private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
+    if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
+
+    @Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
     return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), javaClass<JavaDescriptorResolver>())
 }
 
@@ -37,17 +40,17 @@ fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     val method = getOriginalElement() as? PsiMethod ?: return null
     val resolver = method.getJavaDescriptorResolver()
     return when {
-        method.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(method))
-        else -> resolver.resolveMethod(JavaMethodImpl(method))
+        method.isConstructor() -> resolver?.resolveConstructor(JavaConstructorImpl(method))
+        else -> resolver?.resolveMethod(JavaMethodImpl(method))
     }
 }
 
 fun PsiClass.getJavaClassDescriptor(): ClassDescriptor? {
-    return getJavaDescriptorResolver().resolveClass(JavaClassImpl(this))
+    return getJavaDescriptorResolver()?.resolveClass(JavaClassImpl(this))
 }
 
 fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor? {
-    return getJavaDescriptorResolver().resolveField(JavaFieldImpl(this))
+    return getJavaDescriptorResolver()?.resolveField(JavaFieldImpl(this))
 }
 
 fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
