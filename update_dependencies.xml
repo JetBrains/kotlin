@@ -7,14 +7,14 @@
 
     -->
 
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS,branch:M13"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <property name="ideaVersion" value="141.1531.2"/>
+    <property name="ideaVersion" value="141.1532.4"/>
 
     <condition property="isWindows">
         <os family="windows"/>
