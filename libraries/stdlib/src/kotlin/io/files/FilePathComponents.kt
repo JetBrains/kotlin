@@ -113,9 +113,9 @@ public fun File.filePathComponents(): FilePathComponents {
     val subPath = path.substring(rootName.length)
     // if: a special case when we have only root component
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
-    val list = if (rootName.length > 0 && subPath.isEmpty()) listOf() else
+    val list = if (subPath.isEmpty()) listOf() else
         // Looks awful but we split just by /+ or \+ depending on OS
-        subPath.split(Regex.fromLiteral(File.separatorChar.toString())).toList().map { it -> File(it) }
+        subPath.split(Regex.fromLiteral(File.separatorChar.toString())).map { it -> File(it) }
     return FilePathComponents(rootName, list)
 }
 

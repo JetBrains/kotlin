@@ -69,35 +69,69 @@ class FilesTest {
         assertEquals(2, result2!!.size)
     }
 
-    @test fun relativeToTest() {
+    @test fun relativeToRooted() {
         val file1 = File("/foo/bar/baz")
         val file2 = File("/foo/baa/ghoo")
+
         assertEquals("../../bar/baz".separatorsToSystem(), file1.relativeTo(file2))
+
         val file3 = File("/foo/bar")
+
         assertEquals("baz", file1.relativeTo(file3))
         assertEquals("..", file3.relativeTo(file1))
+
         val file4 = File("/foo/bar/")
+
         assertEquals("baz", file1.relativeTo(file4))
         assertEquals("..", file4.relativeTo(file1))
         assertEquals("", file3.relativeTo(file4))
         assertEquals("", file4.relativeTo(file3))
+
         val file5 = File("/foo/baran")
+
         assertEquals("../bar".separatorsToSystem(), file3.relativeTo(file5))
         assertEquals("../baran".separatorsToSystem(), file5.relativeTo(file3))
         assertEquals("../bar".separatorsToSystem(), file4.relativeTo(file5))
         assertEquals("../baran".separatorsToSystem(), file5.relativeTo(file4))
+
         val file6 = File("C:\\Users\\Me")
         val file7 = File("C:\\Users\\Me\\Documents")
+
         assertEquals("..", file6.relativeTo(file7))
         assertEquals("Documents", file7.relativeTo(file6))
+
         val file8 = File("""\\my.host\home/user/documents/vip""")
         val file9 = File("""\\my.host\home/other/images/nice""")
+
         assertEquals("../../../user/documents/vip".separatorsToSystem(), file8.relativeTo(file9))
         assertEquals("../../../other/images/nice".separatorsToSystem(), file9.relativeTo(file8))
-        val file10 = File("foo/bar")
-        val file11 = File("foo")
-        assertEquals("bar", file10.relativeTo(file11))
-        assertEquals("..", file11.relativeTo(file10))
+    }
+
+    @test fun relativeToRelative() {
+        val nested = File("foo/bar")
+        val base = File("foo")
+
+        assertEquals("bar", nested.relativeTo(base))
+        assertEquals("..", base.relativeTo(nested))
+        assertEquals("", base.relativeTo(base))
+        assertEquals("", nested.relativeTo(nested))
+
+        val empty = File("")
+        val current = File(".")
+        val parent = File("..")
+        val outOfRoot = File("../bar")
+
+        assertEquals("../bar".separatorsToSystem(), outOfRoot.relativeTo(empty))
+
+        val root = File("/root")
+        val files = listOf(nested, base, empty, outOfRoot, current, parent)
+        for (file1 in files) {
+            for (file2 in files) {
+                val rootedFile1 = root.resolve(file1)
+                val rootedFile2 = root.resolve(file2)
+                assertEquals(file1.relativeTo(file2), rootedFile1.relativeTo(rootedFile2), "nested: $file1, base: $file2")
+            }
+        }
     }
 
     @test fun relativeToFails() {
@@ -161,7 +195,7 @@ class FilesTest {
             checkFileElements(File("\\\\host.ru\\home\\mike"), File("\\\\host.ru\\home"), listOf("mike"))
             checkFileElements(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
         }
-        checkFileElements(File(""), null, listOf(""))
+        checkFileElements(File(""), null, listOf())
         checkFileElements(File("."), null, listOf("."))
         checkFileElements(File(".."), null, listOf(".."))
     }
