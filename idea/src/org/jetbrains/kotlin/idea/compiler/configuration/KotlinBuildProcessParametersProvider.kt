@@ -24,12 +24,12 @@ public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceS
 ): BuildProcessParametersProvider() {
     override fun getVMArguments(): MutableList<String> {
         val res = arrayListOf<String>()
-        if (compilerWorkspaceSettings.incrementalCompilationEnabled) {
+        if (!compilerWorkspaceSettings.incrementalCompilationEnabled) {
             res.add("-Dkotlin.incremental.compilation=false")
         }
         kotlinPluginStartupComponent.aliveFlagPath.let {
             if (!it.isBlank()) {
-                // TODO: cosider taking the property name from compiler/rmi-interface (check whether dependency will be not too heavy)
+                // TODO: consider taking the property name from compiler/rmi-interface (check whether dependency will be not too heavy)
                 res.add("-Dkotlin.daemon.client.alive.path=$it")
             }
         }
