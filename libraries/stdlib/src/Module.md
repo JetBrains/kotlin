@@ -9,6 +9,10 @@ text and files.
 
 Core functions and types, available on all supported platforms.
 
+# Package kotlin.annotation
+
+Library support for the Kotlin annotation facility.
+
 # Package kotlin.browser
 
 API to access the web browser DOM.

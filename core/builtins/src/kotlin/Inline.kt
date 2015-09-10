@@ -40,12 +40,7 @@ public annotation class noinline
 public annotation class inline
 
 /**
- * Specifies options for allowed control flow in inlined lambdas. Lambdas which are invoked directly by the
- * receiving function are allowed to use non-local control flow statements. Lambdas which are called from
- * a different execution context (for example, from an object contained in the receiving function)
- * are restricted to local control flow statements.
- *
- * @property value the inlining options selected for the annotated function parameter.
+ * @suppress
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
@@ -64,6 +59,7 @@ public annotation class crossinline
  * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda
  * passed as a parameter to an inline function.
  */
+@Deprecated("Use the crossinline modifier instead")
 public enum class InlineOption {
     /**
      * This option hasn't been implemented yet.
