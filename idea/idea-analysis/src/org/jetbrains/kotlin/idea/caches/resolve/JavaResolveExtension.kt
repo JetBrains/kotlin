@@ -46,11 +46,13 @@ fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
 }
 
 fun PsiClass.getJavaClassDescriptor(): ClassDescriptor? {
-    return getJavaDescriptorResolver()?.resolveClass(JavaClassImpl(this))
+    val psiClass = originalElement as? PsiClass ?: return null
+    return psiClass.getJavaDescriptorResolver()?.resolveClass(JavaClassImpl(psiClass))
 }
 
 fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor? {
-    return getJavaDescriptorResolver()?.resolveField(JavaFieldImpl(this))
+    val field = originalElement as? PsiField ?: return null
+    return field.getJavaDescriptorResolver()?.resolveField(JavaFieldImpl(field))
 }
 
 fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
