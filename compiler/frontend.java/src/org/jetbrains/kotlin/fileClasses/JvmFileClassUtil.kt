@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.fileClasses
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+
 
 public object JvmFileClassUtil {
     public val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
@@ -48,6 +50,15 @@ public object JvmFileClassUtil {
 
     public @JvmStatic fun getFacadeFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(jvmFileClassAnnotations.name))
+
+    public @JvmStatic fun getPartFqNameForDeserializedCallable(callable: DeserializedCallableMemberDescriptor): FqName {
+        val implClassName = getImplClassName(callable)
+        val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
+        return packageFqName.child(implClassName)
+    }
+
+    public @JvmStatic fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name =
+            callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
 
     public @JvmStatic fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))

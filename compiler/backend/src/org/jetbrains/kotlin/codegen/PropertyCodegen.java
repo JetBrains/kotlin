@@ -110,9 +110,9 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        Type implClassType = CodegenContextUtil.getImplementationOwnerClassType(context);
-        if (implClassType != null) {
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(implClassType));
+        String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
+        if (implClassName != null) {
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, implClassName);
         }
 
         if (CodegenContextUtil.isImplClassOwner(context)) {

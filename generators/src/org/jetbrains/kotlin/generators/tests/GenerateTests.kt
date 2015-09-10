@@ -183,6 +183,10 @@ fun main(args: Array<String>) {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 
+        testClass(javaClass<AbstractCompileKotlinAgainstMultifileKotlinTest>(), "CompileKotlinAgainstMultifileKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doBoxTest")
+        }
+
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
             model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }

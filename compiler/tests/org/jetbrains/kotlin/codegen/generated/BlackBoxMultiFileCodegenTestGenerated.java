@@ -47,6 +47,12 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("callMultifileClassMemberFromOtherPackage")
+    public void testCallMultifileClassMemberFromOtherPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/callMultifileClassMemberFromOtherPackage/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("internalVisibility")
     public void testInternalVisibility() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/internalVisibility/");

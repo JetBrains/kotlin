@@ -30,16 +30,13 @@ import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
+import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -59,6 +56,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -142,10 +140,7 @@ public class JetTypeMapper {
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
-            boolean effectiveInsideModule = isInsideModule && !NativeDeclarationsPackage.hasNativeAnnotation(descriptor);
-            return Type.getObjectType(internalNameForPackage(
-                    (CallableMemberDescriptor) descriptor
-            ));
+            return Type.getObjectType(internalNameForPackage((CallableMemberDescriptor) descriptor));
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
@@ -174,9 +169,19 @@ public class JetTypeMapper {
         CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            // TODO private vs public
-            FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
-            return internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+            Name implClassName = JvmFileClassUtil.getImplClassName((DeserializedCallableMemberDescriptor) directMember);
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
+                JetScope scope = packageFragmentDescriptor.getMemberScope();
+                if (scope instanceof LazyJavaPackageScope) {
+                    String facadeShortName = ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
+                    if (facadeShortName != null) {
+                        FqName facadeFqName = packageFragmentDescriptor.getFqName().child(Name.identifier(facadeShortName));
+                        return internalNameByFqNameWithoutInnerClasses(facadeFqName);
+                    }
+                }
+            }
         }
 
         throw new RuntimeException("Unreachable state");
