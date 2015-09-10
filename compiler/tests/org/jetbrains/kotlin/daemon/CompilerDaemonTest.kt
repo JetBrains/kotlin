@@ -39,11 +39,17 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }
 
     private fun compileOnDaemon(args: Array<out String>): CompilerResults {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
-        TestCase.assertNotNull("failed to connect daemon", daemon)
-        val strm = ByteArrayOutputStream()
-        val code = KotlinCompilerClient.compile(daemon!!, args, strm)
-        return CompilerResults(code, strm.toString())
+        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
+        try {
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
+            TestCase.assertNotNull("failed to connect daemon", daemon)
+            val strm = ByteArrayOutputStream()
+            val code = KotlinCompilerClient.compile(daemon!!, args, strm)
+            return CompilerResults(code, strm.toString())
+        }
+        finally {
+            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
+        }
     }
 
     private fun runDaemonCompilerTwice(logName: String, vararg arguments: String): Unit {
