@@ -167,5 +167,10 @@
             <id>jetbrains-utils</id>
             <url>http://repository.jetbrains.com/utils</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
     </repositories>
 </project>
