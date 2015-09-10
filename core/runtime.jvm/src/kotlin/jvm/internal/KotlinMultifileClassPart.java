@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi.stubs.elements;
+package kotlin.jvm.internal;
 
-import com.intellij.openapi.components.ServiceManager;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-final class StubIndexServiceFactory {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KotlinMultifileClassPart {
+    int abiVersion();
 
-    private StubIndexServiceFactory() {
-    }
-
-    public static StubIndexService getInstance() {
-        // If executed in plugin service will be registered
-        StubIndexService registeredService = ServiceManager.getService(StubIndexService.class);
-        return registeredService != null ? registeredService : StubIndexService.NO_INDEX_SERVICE;
-    }
+    String multifileClassName();
+    String[] data();
 }

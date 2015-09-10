@@ -31,6 +31,8 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = KotlinClass.CLASS_NAME.getFqNameForClassNameWithoutDollars();
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
     public static final FqName KOTLIN_FILE_FACADE = new FqName("kotlin.jvm.internal.KotlinFileFacade");
+    public static final FqName KOTLIN_MULTIFILE_CLASS = new FqName("kotlin.jvm.internal.KotlinMultifileClass");
+    public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
 
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
@@ -38,6 +40,8 @@ public final class JvmAnnotationNames {
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
     public static final String KIND_FIELD_NAME = "kind";
+    public static final String FILE_PART_CLASS_NAMES_FIELD_NAME = "filePartClassNames";
+    public static final String MULTIFILE_CLASS_NAME_FIELD_NAME = "multifileClassName";
     public static final String DATA_FIELD_NAME = "data";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");

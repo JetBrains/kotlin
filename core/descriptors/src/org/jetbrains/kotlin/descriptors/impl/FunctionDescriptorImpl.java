@@ -26,9 +26,13 @@ import org.jetbrains.kotlin.types.DescriptorSubstitutor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.utils.SmartSet;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
@@ -38,7 +42,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
     private Visibility visibility = Visibilities.UNKNOWN;
-    private final Set<FunctionDescriptor> overriddenFunctions = new LinkedHashSet<FunctionDescriptor>(); // LinkedHashSet is essential here
+    private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
 

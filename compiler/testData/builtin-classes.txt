@@ -1268,7 +1268,7 @@ kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, Annotation
     /*primary*/ public constructor inline()
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.Deprecated(value = "Use 'crossinline' modifier instead of 'inlineOptions(InlineOption.ONLY_LOCAL_RETURN)'") kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
     /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
     public final val value: kotlin.Array<out kotlin.InlineOption>
         public final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
@@ -1278,7 +1278,7 @@ kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
     /*primary*/ public constructor noinline()
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.Deprecated(replaceWith = kotlin.ReplaceWith(expression = "kotlin.tailrec", imports = {}), value = "Use kotlin.tailrec instead") kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
 }
 

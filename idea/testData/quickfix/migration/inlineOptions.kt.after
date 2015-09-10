@@ -1,0 +1,3 @@
+// "Replace with 'crossinline'" "true"
+
+inline fun inlineFun(crossinline block: () -> Int) {}

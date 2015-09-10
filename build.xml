@@ -151,6 +151,10 @@
         <delete dir="${output}"/>
     </target>
 
+    <target name="clean_idea_output">
+        <delete dir="${basedir}/out"/>
+    </target>
+
     <target name="init">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>

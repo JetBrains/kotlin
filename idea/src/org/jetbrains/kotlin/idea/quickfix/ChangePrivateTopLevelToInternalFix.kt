@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, private val elementName: String) : JetIntentionAction<JetModifierListOwner>(element) {
+public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, private val elementName: String) : JetIntentionAction<JetModifierListOwner>(element), CleanupFix {
     override fun getText() = "Make $elementName internal"
     override fun getFamilyName() = "Make top-level declaration internal"
 

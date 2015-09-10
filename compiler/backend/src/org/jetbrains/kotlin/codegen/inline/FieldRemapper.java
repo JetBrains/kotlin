@@ -60,6 +60,11 @@ public class FieldRemapper {
         return foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node);
     }
 
+    //TODO: seems that this method is redundant but it added from safety purposes before new milestone
+    public boolean processNonAload0FieldAccessChains(boolean isInlinedLambda) {
+        return false;
+    }
+
     @Nullable
     private AbstractInsnNode foldFieldAccessChainIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,

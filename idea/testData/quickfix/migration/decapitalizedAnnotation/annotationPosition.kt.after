@@ -1,0 +1,3 @@
+// "Replace with 'kotlin.Deprecated'" "true"
+@Deprecated<caret>("")
+class A

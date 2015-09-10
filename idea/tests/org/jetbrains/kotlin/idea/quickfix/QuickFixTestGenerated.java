@@ -4019,6 +4019,60 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("annotationModifier.kt")
+        public void testAnnotationModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/annotationModifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationModifier2.kt")
+        public void testAnnotationModifier2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/annotationModifier2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationModifier3.kt")
+        public void testAnnotationModifier3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/annotationModifier3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationModifier4.kt")
+        public void testAnnotationModifier4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/annotationModifier4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("escapedModifier.kt")
+        public void testEscapedModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/escapedModifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineOptions.kt")
+        public void testInlineOptions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/inlineOptions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineOptionsWithBreak.kt")
+        public void testInlineOptionsWithBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/inlineOptionsWithBreak.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tailRec.kt")
+        public void testTailRec() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/tailRec.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unescapedAnnotation.kt")
+        public void testUnescapedAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/unescapedAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4108,6 +4162,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("wrongSetter.kt")
             public void testWrongSetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/wrongSetter.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/migration/decapitalizedAnnotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DecapitalizedAnnotation extends AbstractQuickFixTest {
+            public void testAllFilesPresentInDecapitalizedAnnotation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/decapitalizedAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("annotationPosition.kt")
+            public void testAnnotationPosition() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/decapitalizedAnnotation/annotationPosition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valueParameter.kt")
+            public void testValueParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/decapitalizedAnnotation/valueParameter.kt");
                 doTest(fileName);
             }
         }

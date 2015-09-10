@@ -27,10 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
-import org.jetbrains.kotlin.codegen.context.PackageFacadeContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -163,15 +160,11 @@ public class FunctionCodegen {
                                        jvmSignature.getGenericsSignature(),
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
-        if (owner instanceof PackageFacadeContext) {
-            Type ownerType = ((PackageFacadeContext) owner).getDelegateToClassType();
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
+        String implClassName = CodegenContextUtil.getImplClassNameByOwnerIfRequired(owner);
+        if (implClassName != null) {
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, implClassName);
         }
-        else {
-            if (owner instanceof PackageContext) {
-                Type ownerType = ((PackageContext) owner).getPackagePartType();
-                v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
-            }
+        if (CodegenContextUtil.isImplClassOwner(owner)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }
 

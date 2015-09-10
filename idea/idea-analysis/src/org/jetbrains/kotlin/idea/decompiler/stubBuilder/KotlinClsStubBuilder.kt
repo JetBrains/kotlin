@@ -23,6 +23,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
+import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
@@ -30,8 +31,8 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleSyntheticClassKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -59,6 +60,11 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         }
 
         val components = createStubBuilderComponents(file, packageFqName)
+        if (header.isCompatibleMultifileClassKind()) {
+            val partHeaders = readMultifileClassPartHeaders(file, kotlinBinaryClass)
+            return createMultifileClassStub(partHeaders, classId.asSingleFqName(), components)
+        }
+
         val annotationData = header.annotationData
         if (annotationData == null) {
             LOG.error("Corrupted kotlin header for file ${file.getName()}")
@@ -93,6 +99,6 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 
     companion object {
-        val LOG = Logger.getInstance(javaClass<KotlinClsStubBuilder>())
+        val LOG = Logger.getInstance(KotlinClsStubBuilder::class.java)
     }
 }

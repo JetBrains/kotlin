@@ -20,9 +20,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.getPackageFqName())
@@ -47,7 +49,7 @@ fun createPackageFacadeStub(
         packageFqName: FqName,
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forPackageStub(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer(null, packageFqName)
     for (callableProto in packageProto.getMemberList()) {
@@ -62,7 +64,7 @@ fun createFileFacadeStub(
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer(null, facadeFqName.parent())
     for (callableProto in packageProto.getMemberList()) {
@@ -71,10 +73,29 @@ fun createFileFacadeStub(
     return fileStub
 }
 
+fun createMultifileClassStub(
+        partHeaders: List<KotlinClassHeader>,
+        facadeFqName: FqName,
+        components: ClsStubBuilderComponents
+): KotlinFileStubImpl {
+    val packageFqName = facadeFqName.parent()
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, packageFqName.isRoot)
+    setupFileStub(fileStub, packageFqName)
+    val multifileClassContainer = ProtoContainer(null, packageFqName)
+    for (partHeader in partHeaders) {
+        val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!)
+        val partContext = components.createContext(partData.nameResolver, packageFqName)
+        for (partMember in partData.packageProto.memberList) {
+            createCallableStub(fileStub, partMember, partContext, multifileClassContainer)
+        }
+    }
+    return fileStub
+}
+
 fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
 
 fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forPackageStub(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     return fileStub
 }

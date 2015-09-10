@@ -63,5 +63,4 @@ public annotation class Synchronized
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-@deprecated("Use kotlin.external instead", ReplaceWith("kotlin.external"))
 public annotation class native

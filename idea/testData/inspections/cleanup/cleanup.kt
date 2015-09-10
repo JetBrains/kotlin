@@ -22,6 +22,11 @@ fun foo() {
     oldFun1(oldFun2(10))
 
     oldFun2()
+
+    ff()
+    val xx = valX
+    varX = 50
+    varY = 60
 }
 
 fun unnecessarySafeCall(x: String) {
@@ -37,3 +42,22 @@ fun unnecessaryCast(x: String) = x as String
 fun unnecessaryElvis(x: String) = x ?: ""
 
 JavaAnn(1, "abc") class MyClass
+
+annotation class Ann()
+
+Ann class A1
+
+Ann() class A2
+
+kotlin.data class A3
+
+@inline @private fun <T> baz() {
+    @suppress("UNCHECKED_CAST")
+    (1 as T)
+
+    @data class Local
+}
+
+deprecated("123", ReplaceWith("34")) class Obsolete
+
+native fun nativeFun(): Int

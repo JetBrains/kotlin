@@ -22,15 +22,15 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.JetFile
 
-public class JetFileFacadeClassIndex private constructor() : StringStubIndexExtension<JetFile>() {
+public class JetFileFacadeClassByPackageIndex private constructor() : StringStubIndexExtension<JetFile>() {
     override fun getKey(): StubIndexKey<String, JetFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
             super.get(key, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project))
 
     companion object {
-        private val KEY = KotlinIndexUtil.createIndexKey(JetFileFacadeClassIndex::class.java)
-        public val INSTANCE: JetFileFacadeClassIndex = JetFileFacadeClassIndex()
-        public @jvmStatic fun getInstance(): JetFileFacadeClassIndex = INSTANCE
+        private val KEY = KotlinIndexUtil.createIndexKey(JetFileFacadeClassByPackageIndex::class.java)
+        public val INSTANCE: JetFileFacadeClassByPackageIndex = JetFileFacadeClassByPackageIndex()
+        public @jvmStatic fun getInstance(): JetFileFacadeClassByPackageIndex = INSTANCE
     }
 }

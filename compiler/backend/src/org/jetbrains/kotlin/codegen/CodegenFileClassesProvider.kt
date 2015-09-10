@@ -24,47 +24,12 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-public class CodegenFileClassesProvider private constructor(private val bindingContext: BindingContext) : JvmFileClassesProvider {
+public class CodegenFileClassesProvider() : JvmFileClassesProvider {
     private val fileParts = hashMapOf<JetFile, JvmFileClassInfo>()
 
     override fun getFileClassFqName(file: JetFile): FqName =
             getFileClassInfo(file).fileClassFqName
 
     public fun getFileClassInfo(file: JetFile): JvmFileClassInfo =
-            fileParts.getOrPut(file) { createFileClassInfo(file) }
-
-    private fun createFileClassInfo(file: JetFile): JvmFileClassInfo {
-        val fileAnnotations = JvmFileClassUtil.collectFileAnnotations(file, bindingContext)
-        val jvmClassNameAnnotation = JvmFileClassUtil.parseJvmFileClass(fileAnnotations)
-        return JvmFileClassUtil.getFileClassInfo(file, jvmClassNameAnnotation)
-    }
-
-    internal fun addFileClassInfo(file: JetFile) {
-        if (fileParts.containsKey(file)) return
-        fileParts[file] = createFileClassInfo(file)
-    }
-
-    companion object {
-        public @jvmStatic fun createForCodegenTask(
-                bindingContext: BindingContext,
-                files: Collection<JetFile>,
-                packagesWithObsoleteParts: Collection<FqName>,
-                multifileFacadesWithObsoleteParts: Collection<FqName>
-        ) : CodegenFileClassesProvider {
-            val codegenFileClassesManager = CodegenFileClassesProvider(bindingContext)
-            files.forEach {
-                codegenFileClassesManager.addFileClassInfo(it)
-            }
-
-            val packagesToProcess = HashSet<FqName>(packagesWithObsoleteParts)
-            packagesToProcess.addAll(multifileFacadesWithObsoleteParts.map { it.parent() })
-            for (packageFqName in packagesToProcess) {
-                bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName)?.forEach {
-                    codegenFileClassesManager.addFileClassInfo(it)
-                }
-            }
-
-            return codegenFileClassesManager
-        }
-    }
+            fileParts.getOrPut(file) { JvmFileClassUtil.getFileClassInfoNoResolve(file) }
 }

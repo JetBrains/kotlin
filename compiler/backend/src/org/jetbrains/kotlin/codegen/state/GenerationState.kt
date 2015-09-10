@@ -52,6 +52,7 @@ public class GenerationState jvmOverloads constructor(
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
+        public val packageFacadesAsMultifileClasses: Boolean = false,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
@@ -81,9 +82,7 @@ public class GenerationState jvmOverloads constructor(
         }
     }
 
-    public val fileClassesProvider: CodegenFileClassesProvider =
-            CodegenFileClassesProvider.createForCodegenTask(bindingContext, files, packagesWithObsoleteParts,
-                                                           /* TODO */ multifileFacadesWithObsoleteParts = emptySet())
+    public val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
 
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")

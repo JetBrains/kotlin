@@ -115,6 +115,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("fileClassAndMultifileClassClash.args")
+        public void testFileClassAndMultifileClassClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/fileClassAndMultifileClassClash.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("fileClassAndTImplClash.args")
         public void testFileClassAndTImplClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/fileClassAndTImplClash.args");

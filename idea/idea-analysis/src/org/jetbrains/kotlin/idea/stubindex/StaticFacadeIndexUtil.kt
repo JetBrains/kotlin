@@ -21,16 +21,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import kotlin.platform.platformStatic
 
 public object StaticFacadeIndexUtil {
-
-    @jvmStatic public fun findFilesForStaticFacade(
-            facadeFqName: FqName,
-            searchScope: GlobalSearchScope,
-            project: Project
-    ) : Collection<JetFile> =
-            JetFileFacadeClassIndex.INSTANCE.get(facadeFqName.asString(), project, searchScope)
 
     // TODO change as we introduce multi-file facades (this will require a separate index)
     @jvmStatic public fun findFilesForFilePart(
@@ -39,5 +31,5 @@ public object StaticFacadeIndexUtil {
             project: Project
     ) : Collection<JetFile> =
             PackagePartClassUtils.getFilesWithCallables(
-                    JetFileFacadeClassIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+                    JetFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 }

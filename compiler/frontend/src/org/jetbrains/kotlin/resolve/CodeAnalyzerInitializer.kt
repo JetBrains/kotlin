@@ -22,7 +22,7 @@ import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 public interface CodeAnalyzerInitializer {
-    public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?)
+    public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
     public fun createTrace(): BindingTrace
     
     companion object {
@@ -32,7 +32,7 @@ public interface CodeAnalyzerInitializer {
 }
 
 public class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
-    public override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?) {
+    public override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
         // Do nothing
     }
 

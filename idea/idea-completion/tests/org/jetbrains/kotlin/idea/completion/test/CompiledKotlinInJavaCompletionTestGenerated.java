@@ -71,6 +71,24 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("MultiFileFacade.java")
+    public void testMultiFileFacade() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacade.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiFileFacadeMembers.java")
+    public void testMultiFileFacadeMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacadeMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiFileFacadeNoImport.java")
+    public void testMultiFileFacadeNoImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacadeNoImport.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Nested.java")
     public void testNested() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/Nested.java");
@@ -104,6 +122,30 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
     @TestMetadata("ObjectInstance.java")
     public void testObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/ObjectInstance.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RenamedFacade.java")
+    public void testRenamedFacade() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/RenamedFacade.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SingleFileFacade.java")
+    public void testSingleFileFacade() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/SingleFileFacade.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SingleFileFacadeMembers.java")
+    public void testSingleFileFacadeMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/SingleFileFacadeMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SingleFileFacadeNoImport.java")
+    public void testSingleFileFacadeNoImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/SingleFileFacadeNoImport.java");
         doTest(fileName);
     }
 

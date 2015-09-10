@@ -5,6 +5,7 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
+import com.android.build.gradle.internal.VariantManager
 import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
@@ -86,5 +87,9 @@ class AndroidGradleWrapper {
       }
     }
     return list
+  }
+
+  static def VariantManager getVariantDataManager(BasePlugin plugin) {
+    return plugin.getVariantManager()
   }
 }

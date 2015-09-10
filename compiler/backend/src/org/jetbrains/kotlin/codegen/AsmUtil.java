@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
-import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
@@ -330,10 +330,18 @@ public class AsmUtil {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) memberDescriptor).getCorrespondingProperty();
             if (property instanceof SyntheticJavaPropertyDescriptor) {
                 FunctionDescriptor method = memberDescriptor == property.getGetter()
-                                                ? ((SyntheticJavaPropertyDescriptor) property).getGetMethod()
-                                                : ((SyntheticJavaPropertyDescriptor) property).getSetMethod();
-                assert method != null : "No setMethod in SyntheticJavaPropertyDescriptor";
+                                            ? ((SyntheticJavaPropertyDescriptor) property).getGetMethod()
+                                            : ((SyntheticJavaPropertyDescriptor) property).getSetMethod();
+                assert method != null : "No get/set method in SyntheticJavaPropertyDescriptor: " + property;
                 return getVisibilityAccessFlag(method);
+            }
+        }
+
+        if (memberDescriptor instanceof CallableDescriptor && memberVisibility == Visibilities.PROTECTED) {
+            for (CallableDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors((CallableDescriptor) memberDescriptor)) {
+                if (isInterface(overridden.getContainingDeclaration())) {
+                    return ACC_PUBLIC;
+                }
             }
         }
 

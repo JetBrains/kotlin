@@ -25,7 +25,9 @@ public class KotlinClassHeader(
         public val version: Int,
         public val annotationData: Array<String>?,
         public val classKind: KotlinClass.Kind?,
-        public val syntheticClassKind: KotlinSyntheticClass.Kind?
+        public val syntheticClassKind: KotlinSyntheticClass.Kind?,
+        public val filePartClassNames: Array<String>?,
+        public val multifileClassName: String?
 ) {
     public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
 
@@ -33,6 +35,8 @@ public class KotlinClassHeader(
         CLASS,
         PACKAGE_FACADE,
         FILE_FACADE,
+        MULTIFILE_CLASS,
+        MULTIFILE_CLASS_PART,
         SYNTHETIC_CLASS
     }
 
@@ -46,4 +50,6 @@ public class KotlinClassHeader(
 public fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
 public fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
 public fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
+public fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
+public fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 public fun KotlinClassHeader.isCompatibleSyntheticClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS

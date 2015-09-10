@@ -90,6 +90,6 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
 
     @Override
     public void indexStub(@NotNull KotlinObjectStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexObject(stub, sink);
+        StubIndexService.getInstance().indexObject(stub, sink);
     }
 }

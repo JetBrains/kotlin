@@ -3,6 +3,6 @@
 // ACTION: Make private
 // ACTION: Make internal
 
-J.<caret>foo(1, "2") fun test() {
+@J.<caret>foo(1, "2") fun test() {
 
 }

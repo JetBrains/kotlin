@@ -31,19 +31,22 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     private final String newOwnerType;
     private final Parameters parameters;
     private final Map<String, LambdaInfo> recapturedLambdas;
+    private final boolean isConstructor;
 
     public RegeneratedLambdaFieldRemapper(
             String oldOwnerType,
             String newOwnerType,
             Parameters parameters,
             Map<String, LambdaInfo> recapturedLambdas,
-            FieldRemapper remapper
+            FieldRemapper remapper,
+            boolean isConstructor
     ) {
         super(oldOwnerType, remapper, parameters);
         this.oldOwnerType = oldOwnerType;
         this.newOwnerType = newOwnerType;
         this.parameters = parameters;
         this.recapturedLambdas = recapturedLambdas;
+        this.isConstructor = isConstructor;
     }
 
     @Override
@@ -64,6 +67,11 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
         } else {
             return findFieldInMyCaptured(fieldInsnNode);
         }
+    }
+
+    @Override
+    public boolean processNonAload0FieldAccessChains(boolean isInlinedLambda) {
+        return isInlinedLambda && isConstructor;
     }
 
     @Nullable

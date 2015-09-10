@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 public enum class MemberKind { FIELD, METHOD }
@@ -39,6 +40,8 @@ public enum class JvmDeclarationOriginKind {
     DELEGATION_TO_TRAIT_IMPL,
     DELEGATION,
     BRIDGE,
+    MULTIFILE_CLASS,
+    MULTIFILE_CLASS_PART,
     SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 
@@ -66,6 +69,14 @@ public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = Desc
 
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
+
+/**
+ * @param representativeFile one of the files representing this multifile class (will be used for diagnostics)
+ */
+public fun MultifileClass(representativeFile: JetFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS, representativeFile, descriptor)
+public fun MultifileClassPart(file: JetFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
 public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
 public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =

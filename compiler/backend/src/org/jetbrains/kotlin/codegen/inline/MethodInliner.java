@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
@@ -25,11 +24,6 @@ import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -551,9 +545,7 @@ public class MethodInliner {
     public LambdaInfo getLambdaIfExists(AbstractInsnNode insnNode) {
         if (insnNode.getOpcode() == Opcodes.ALOAD) {
             int varIndex = ((VarInsnNode) insnNode).var;
-            if (varIndex < parameters.totalSize()) {
-                return parameters.get(varIndex).getLambda();
-            }
+            return getLambdaIfExists(varIndex);
         }
         else if (insnNode instanceof FieldInsnNode) {
             FieldInsnNode fieldInsnNode = (FieldInsnNode) insnNode;
@@ -562,6 +554,13 @@ public class MethodInliner {
             }
         }
 
+        return null;
+    }
+
+    private LambdaInfo getLambdaIfExists(int varIndex) {
+        if (varIndex < parameters.totalSize()) {
+            return parameters.get(varIndex).getLambda();
+        }
         return null;
     }
 
@@ -598,7 +597,8 @@ public class MethodInliner {
         AbstractInsnNode cur = node.instructions.getFirst();
         while (cur != null) {
             if (cur instanceof VarInsnNode && cur.getOpcode() == Opcodes.ALOAD) {
-                if (((VarInsnNode) cur).var == 0) {
+                int varIndex = ((VarInsnNode) cur).var;
+                if (varIndex == 0 || nodeRemapper.processNonAload0FieldAccessChains(getLambdaIfExists(varIndex) != null)) {
                     List<AbstractInsnNode> accessChain = getCapturedFieldAccessChain((VarInsnNode) cur);
                     AbstractInsnNode insnNode = nodeRemapper.foldFieldAccessChainIfNeeded(accessChain, node);
                     if (insnNode != null) {

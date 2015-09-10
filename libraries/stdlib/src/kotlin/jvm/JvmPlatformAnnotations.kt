@@ -51,6 +51,14 @@ public annotation class JvmStatic
 public annotation class JvmName(public val name: String)
 
 /**
+ * Instructs the Kotlin compiler to generate a multifile class with this file as one o
+ */
+target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class JvmMultifileClass
+
+/**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
 @Target(AnnotationTarget.FIELD)

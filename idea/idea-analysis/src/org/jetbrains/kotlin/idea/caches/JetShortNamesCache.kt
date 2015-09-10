@@ -16,23 +16,21 @@
 
 package org.jetbrains.kotlin.idea.caches
 
-import com.intellij.util.containers.HashSet
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiField
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
-import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.util.Processor
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.HashSet
+import org.jetbrains.kotlin.asJava.JavaElementFinder
+import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.name.FqName
+import java.util.*
 
-// used in Upsource, what's why in idea-analysis module
-public class JetShortNamesCache(private val project: com.intellij.openapi.project.Project) : com.intellij.psi.search.PsiShortNamesCache() {
-    companion object {
-        public fun getKotlinInstance(project: com.intellij.openapi.project.Project): org.jetbrains.kotlin.idea.caches.JetShortNamesCache
-                = com.intellij.openapi.extensions.Extensions.getArea(project).getExtensionPoint<com.intellij.psi.search.PsiShortNamesCache>(com.intellij.psi.search.PsiShortNamesCache.EP_NAME).getExtensions()
-                .firstIsInstance<JetShortNamesCache>()
-    }
-
+public class JetShortNamesCache(private val project: Project) : PsiShortNamesCache() {
     /**
      * Return kotlin class names from project sources which should be visible from java.
      */
@@ -42,43 +40,36 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
         // package classes can not be indexed, since they have no explicit declarations
         val packageClassShortNames = PackageIndexUtil.getAllPossiblePackageClasses(project).keySet()
         classNames.addAll(packageClassShortNames)
+        classNames.addAll(JetFileFacadeShortNameIndex.INSTANCE.getAllKeys(project))
 
-        return com.intellij.util.ArrayUtil.toStringArray(classNames)
+        return classNames.toTypedArray()
     }
 
     /**
      * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
-    override fun getClassesByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiClass> {
-        val result = java.util.ArrayList<com.intellij.psi.PsiClass>()
+    override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
+        val allFqNames = HashSet<FqName?>()
 
-        val packageClasses = PackageIndexUtil.getAllPossiblePackageClasses(project)
+        val packageClassNames = PackageIndexUtil.getAllPossiblePackageClasses(project).get(name)
+        allFqNames.addAll(packageClassNames)
 
-        // package classes can not be indexed, since they have no explicit declarations
-        val fqNames = packageClasses.get(name)
-        if (!fqNames.isEmpty()) {
-            for (fqName in fqNames) {
-                val psiClass = org.jetbrains.kotlin.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
-                if (psiClass != null) {
-                    result.add(psiClass)
-                }
+        JetClassShortNameIndex.getInstance().get(name, project, scope)
+                .mapTo(allFqNames) { it.fqName }
+
+        JetFileFacadeShortNameIndex.INSTANCE.get(name, project, scope)
+                .mapTo(allFqNames) { it.javaFileFacadeFqName }
+
+        val result = ArrayList<PsiClass>()
+        for (fqName in allFqNames) {
+            if (fqName == null) continue
+
+            assert(fqName.shortName().asString() == name) {
+                "A declaration obtained from index has non-matching name:\nin index: $name\ndeclared: ${fqName.shortName()}($fqName)"
             }
-        }
-
-        // Quick check for classes from getAllClassNames()
-        val classOrObjects = org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex.getInstance().get(name, project, scope)
-        if (classOrObjects.isEmpty()) {
-            return result.toTypedArray()
-        }
-
-        for (classOrObject in classOrObjects) {
-            val fqName = classOrObject.getFqName()
-            if (fqName != null) {
-                assert(fqName.shortName().asString() == name) { "A declaration obtained from index has non-matching name:\n" + "in index: " + name + "\n" + "declared: " + fqName.shortName() + "(" + fqName + ")" }
-                val psiClass = org.jetbrains.kotlin.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
-                if (psiClass != null) {
-                    result.add(psiClass)
-                }
+            val psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
+            if (psiClass != null) {
+                result.add(psiClass)
             }
         }
 
@@ -86,20 +77,20 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
     }
 
     override fun getAllClassNames(dest: HashSet<String>) {
-        dest.addAll(java.util.Arrays.asList<String>(*getAllClassNames()))
+        dest.addAll(getAllClassNames())
     }
 
-    override fun getMethodsByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiMethod>
+    override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod>
             = emptyArray()
 
-    override fun getMethodsByNameIfNotMoreThan(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope, maxCount: Int): Array<PsiMethod>
+    override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod>
             = emptyArray()
 
-    override fun getFieldsByNameIfNotMoreThan(org.jetbrains.annotations.NonNls s: String, scope: com.intellij.psi.search.GlobalSearchScope, i: Int): Array<PsiField>
+    override fun getFieldsByNameIfNotMoreThan(s: String, scope: GlobalSearchScope, i: Int): Array<PsiField>
             = emptyArray()
 
-    override fun processMethodsWithName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope, processor: com.intellij.util.Processor<PsiMethod>): Boolean
-            = com.intellij.util.containers.ContainerUtil.process(getMethodsByName(name, scope), processor)
+    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean
+            = ContainerUtil.process(getMethodsByName(name, scope), processor)
 
     override fun getAllMethodNames(): Array<String>
             = JetFunctionShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
@@ -108,7 +99,7 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
         set.addAll(JetFunctionShortNameIndex.getInstance().getAllKeys(project))
     }
 
-    override fun getFieldsByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiField>
+    override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField>
             = emptyArray()
 
     override fun getAllFieldNames(): Array<String>

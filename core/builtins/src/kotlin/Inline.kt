@@ -50,7 +50,6 @@ public annotation class inline
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-@Deprecated("Use 'crossinline' modifier instead of 'inlineOptions(InlineOption.ONLY_LOCAL_RETURN)'")
 public annotation class inlineOptions(vararg val value: InlineOption)
 
 /**

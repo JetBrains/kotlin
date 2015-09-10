@@ -83,6 +83,6 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
 
     @Override
     public void indexStub(@NotNull KotlinFunctionStub stub, @NotNull IndexSink sink) {
-        StubIndexServiceFactory.getInstance().indexFunction(stub, sink);
+        StubIndexService.getInstance().indexFunction(stub, sink);
     }
 }

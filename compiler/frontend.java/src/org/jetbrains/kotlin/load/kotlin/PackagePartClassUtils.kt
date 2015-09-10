@@ -62,9 +62,6 @@ public object PackagePartClassUtils {
         return packageFqName.child(Name.identifier(partClassName))
     }
 
-    public @jvmStatic fun isPartClassFqName(classFqName: FqName): Boolean =
-            classFqName.shortName().asString().endsWith(PART_CLASS_NAME_SUFFIX)
-
     @deprecated("Migrate to JvmFileClassesProvider")
     public @jvmStatic fun getPackagePartInternalName(file: JetFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName

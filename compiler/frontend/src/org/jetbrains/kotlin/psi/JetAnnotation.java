@@ -47,4 +47,13 @@ public class JetAnnotation extends JetElementImplStub<KotlinPlaceHolderStub<JetA
     public JetAnnotationUseSiteTarget getUseSiteTarget() {
         return getStubOrPsiChild(JetStubElementTypes.ANNOTATION_TARGET);
     }
+
+    public void removeEntry(@NotNull JetAnnotationEntry entry) {
+        if (getEntries().size() > 1) {
+            entry.delete();
+        }
+        else {
+            delete();
+        }
+    }
 }

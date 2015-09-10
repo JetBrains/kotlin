@@ -22,30 +22,23 @@ import org.jetbrains.kotlin.psi.JetFile
 public interface JvmFileClassInfo {
     public val fileClassFqName: FqName
     public val facadeClassFqName: FqName
-    public val kind: Kind
-
-    public enum class Kind {
-        FILE_CLASS,
-        MULTIFILE_CLASS_PART
-        ;
-    }
+    public val isWithJvmName: Boolean
+    public val isMultifileClass: Boolean
 }
 
-public class JvmFileFacadeInfo(
-        override val fileClassFqName: FqName
+public class JvmSimpleFileClassInfo(
+        override val fileClassFqName: FqName,
+        override val isWithJvmName: Boolean
 ) : JvmFileClassInfo {
-    override val facadeClassFqName: FqName
-        get() = fileClassFqName
-    override val kind: JvmFileClassInfo.Kind
-        get() = JvmFileClassInfo.Kind.FILE_CLASS
+    override val facadeClassFqName: FqName get() = fileClassFqName
+    override val isMultifileClass: Boolean get() = false
 }
 
-public class JvmMultifileFacadePartInfo(
+public class JvmMultifileClassPartInfo(
         override val fileClassFqName: FqName,
         override val facadeClassFqName: FqName
 ) : JvmFileClassInfo {
-    override val kind: JvmFileClassInfo.Kind
-        get() = JvmFileClassInfo.Kind.MULTIFILE_CLASS_PART
-
+    override val isWithJvmName: Boolean get() = true
+    override val isMultifileClass: Boolean get() = true
 }
 
