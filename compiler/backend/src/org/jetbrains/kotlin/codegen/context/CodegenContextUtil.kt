@@ -23,12 +23,9 @@ import org.jetbrains.org.objectweb.asm.Type
 public object CodegenContextUtil {
     public @JvmStatic fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
             when (owner) {
-                is DelegatingFacadeContext ->
-                        owner.delegateToClassType
-                is DelegatingToPartContext ->
-                        owner.implementationOwnerClassType
-                else ->
-                        null
+                is DelegatingFacadeContext -> owner.delegateToClassType
+                is DelegatingToPartContext -> owner.implementationOwnerClassType
+                else -> null
             }
 
     public @JvmStatic fun getImplementationClassShortName(owner: CodegenContext<*>): String? =

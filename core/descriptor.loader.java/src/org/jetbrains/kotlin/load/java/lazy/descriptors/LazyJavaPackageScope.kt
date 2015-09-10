@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -57,6 +58,22 @@ public class LazyJavaPackageScope(
             c.components.kotlinClassFinder.findKotlinClass(classId)
         }.filterNotNull()
     }
+
+    private val partToFacade = c.storageManager.createLazyValue {
+        val result = hashMapOf<String, String>()
+        for (kotlinClass in kotlinBinaryClasses()) {
+            val header = kotlinClass.classHeader
+            if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) {
+                val partName = kotlinClass.classId.shortClassName.asString()
+                val facadeName = header.multifileClassName ?: ""
+                result[partName] = facadeName
+            }
+        }
+        result
+    }
+
+    public fun getFacadeSimpleNameForPartSimpleName(partName: String): String? =
+            partToFacade()[partName]
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
         if (kotlinBinaryClasses().isEmpty())

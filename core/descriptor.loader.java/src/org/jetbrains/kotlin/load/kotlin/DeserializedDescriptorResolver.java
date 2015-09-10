@@ -69,7 +69,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public JetScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, KotlinClassHeader.Kind.FILE_FACADE);
+        String[] data = readData(kotlinClass, null);
         if (data != null) {
             //all classes are included in java scope
             PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
@@ -102,12 +102,12 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
+    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @Nullable KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         if (!header.getIsCompatibleAbiVersion()) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getVersion());
         }
-        else if (header.getKind() == expectedKind) {
+        else if (expectedKind == null || header.getKind() == expectedKind) {
             return header.getAnnotationData();
         }
 

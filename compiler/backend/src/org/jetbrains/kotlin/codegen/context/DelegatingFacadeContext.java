@@ -21,5 +21,5 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 public interface DelegatingFacadeContext {
     @Nullable
-    public Type getDelegateToClassType();
+    Type getDelegateToClassType();
 }

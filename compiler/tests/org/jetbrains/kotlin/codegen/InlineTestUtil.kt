@@ -89,11 +89,22 @@ public object InlineTestUtil {
         val notInlined = ArrayList<NotInlinedCall>()
 
         files.forEach { file ->
-
             val cr = ClassReader(file.asByteArray())
             cr.accept(object : ClassVisitorWithName() {
+                private var skipMethodsOfThisClass = false
+
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                    if (desc.endsWith("KotlinPackage;") || desc.endsWith("KotlinMultifileClass;")) {
+                        skipMethodsOfThisClass = true
+                    }
+                    return null
+                }
 
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
+                    if (skipMethodsOfThisClass) {
+                        return null
+                    }
+
                     val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
                     if (PackageClassUtils.isPackageClassFqName(classFqName)) {
                         return null
