@@ -53,14 +53,14 @@ public object LoopbackNetworkInterface {
 
     data class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
 
-        throws(IOException::class)
+        @Throws(IOException::class)
         override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(loopbackInetAddressName))
     }
 
 
     data class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
 
-        throws(IOException::class)
+        @Throws(IOException::class)
         override fun createSocket(host: String, port: Int): Socket = Socket(InetAddress.getByName(loopbackInetAddressName), port)
     }
 }
