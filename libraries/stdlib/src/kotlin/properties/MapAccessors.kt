@@ -12,7 +12,7 @@ import kotlin.platform.platformName
  * @param property the metadata for the property, used to get the name of property and lookup the value corresponding to this name in the map.
  * @return the property value.
  *
- * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [Map.withDefault]).
+ * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 public fun <V> Map<in String, *>.get(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
 
@@ -22,7 +22,7 @@ public fun <V> Map<in String, *>.get(thisRef: Any?, property: PropertyMetadata):
  * @param property the metadata for the property, used to get the name of property and lookup the value corresponding to this name in the map.
  * @return the property value.
  *
- * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [Map.withDefault]).
+ * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 platformName("getVar")
 public fun <V> MutableMap<in String, in V>.get(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
