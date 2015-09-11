@@ -81,7 +81,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         val resultProcessor = MyRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
         if (kotlinOptions.anyEnabled()) {
-            val name = unwrappedElement.name
+            val name = runReadAction { unwrappedElement.name }
             if (name != null) {
                 queryParameters.optimizer.searchWord(name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement,
                                                      resultProcessor)
