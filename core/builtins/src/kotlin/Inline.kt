@@ -59,7 +59,6 @@ public annotation class crossinline
  * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda
  * passed as a parameter to an inline function.
  */
-@Deprecated("Use the crossinline modifier instead")
 public enum class InlineOption {
     /**
      * This option hasn't been implemented yet.
