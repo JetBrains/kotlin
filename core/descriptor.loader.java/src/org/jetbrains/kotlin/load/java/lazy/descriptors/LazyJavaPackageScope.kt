@@ -63,7 +63,7 @@ public class LazyJavaPackageScope(
         val result = hashMapOf<String, String>()
         kotlinClasses@for (kotlinClass in kotlinBinaryClasses()) {
             val header = kotlinClass.classHeader
-            when (header.kind ) {
+            when (header.kind) {
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                     val partName = kotlinClass.classId.shortClassName.asString()
                     val facadeName = header.multifileClassName ?: continue@kotlinClasses

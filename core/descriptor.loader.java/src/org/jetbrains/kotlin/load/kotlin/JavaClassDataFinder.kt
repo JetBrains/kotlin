@@ -31,7 +31,7 @@ public class JavaClassDataFinder(
         assert(kotlinJvmBinaryClass.getClassId() == classId) {
             "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.getClassId()}"
         }
-        val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
+        val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, DeserializedDescriptorResolver.KOTLIN_CLASS) ?: return null
         val classData = JvmProtoBufUtil.readClassDataFrom(data)
         return ClassDataProvider(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
     }

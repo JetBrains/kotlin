@@ -26,8 +26,7 @@ public abstract class AbstractCompileKotlinAgainstMultifileKotlinTest : Abstract
 
     public fun doBoxTest(firstFileName: String) {
         val inputFiles = listOf(firstFileName, firstFileName.substringBeforeLast("1.kt") + "2.kt")
-
-        val (factory1, factory2) = doBoxTest(inputFiles)
+        doBoxTest(inputFiles)
     }
 
     private fun doBoxTest(files: List<String>): Pair<ClassFileFactory, ClassFileFactory> {

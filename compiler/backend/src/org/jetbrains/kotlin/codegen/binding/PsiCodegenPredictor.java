@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -55,7 +56,7 @@ public final class PsiCodegenPredictor {
     @Nullable
     public static String getPredefinedJvmInternalName(
             @NotNull JetDeclaration declaration,
-            @NotNull JvmFileClassesProvider fileClassesManager
+            @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         // TODO: Method won't work for declarations inside companion objects
         // TODO: Method won't give correct class name for traits implementations
@@ -64,7 +65,7 @@ public final class PsiCodegenPredictor {
 
         String parentInternalName;
         if (parentDeclaration != null) {
-            parentInternalName = getPredefinedJvmInternalName(parentDeclaration, fileClassesManager);
+            parentInternalName = getPredefinedJvmInternalName(parentDeclaration, fileClassesProvider);
             if (parentInternalName == null) {
                 return null;
             }
@@ -74,7 +75,7 @@ public final class PsiCodegenPredictor {
 
             if (declaration instanceof JetNamedFunction) {
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
-                return name == null ? null : fileClassesManager.getFileClassInternalName(containingFile) + "$" + name.asString();
+                return name == null ? null : FileClassesPackage.getFileClassInternalName(fileClassesProvider, containingFile) + "$" + name.asString();
             }
 
             parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());
