@@ -337,6 +337,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ifCapturedVariableKt9118.kt")
+        public void testIfCapturedVariableKt9118() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/ifCapturedVariableKt9118.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverInlinedLambda.kt")
         public void testStepOverInlinedLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlinedLambda.kt");
