@@ -43,9 +43,9 @@ public class AnnotationSplitter(
         applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
 ) {
     public companion object {
-        private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_SETTER, PROPERTY_GETTER)
+        private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, PROPERTY, FIELD)
 
-        @jvmStatic
+        @JvmStatic
         public fun create(
                 storageManager: StorageManager,
                 annotations: Annotations,
@@ -54,7 +54,7 @@ public class AnnotationSplitter(
             return AnnotationSplitter(storageManager, annotations, { targets })
         }
 
-        @jvmStatic
+        @JvmStatic
         public fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
             val property = wrapper.property
             assert(property != null)
@@ -62,7 +62,7 @@ public class AnnotationSplitter(
             return getTargetSet(parameter, property!!.isVar, hasBackingField)
         }
 
-        @jvmStatic
+        @JvmStatic
         public fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
             return hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
                 if (parameter) add(CONSTRUCTOR_PARAMETER)

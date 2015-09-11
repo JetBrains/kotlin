@@ -6,7 +6,7 @@ class A {
     fun foo() {
         @Ann("class") class Local {
             Ann("fun") fun foo(): Local = this
-            Ann("val") val x = foo()
+            @field:Ann("val") val x = foo()
 
             Ann("inner") inner class Inner
         }

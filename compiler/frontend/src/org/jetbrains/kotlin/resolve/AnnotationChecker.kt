@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import kotlin.platform.platformStatic
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
@@ -146,7 +145,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        platformStatic
+        @JvmStatic
         public fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
@@ -211,24 +210,25 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }
 
             val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
-                canBeSubstituted(PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_TOP_LEVEL_PROPERTY = targetList(TOP_LEVEL_PROPERTY, PROPERTY) {
-                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_PROPERTY_GETTER = targetList(PROPERTY_GETTER)
             val T_PROPERTY_SETTER = targetList(PROPERTY_SETTER)
 
             val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER) {
-                onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+                onlyWithUseSiteTarget(PROPERTY, FIELD)
             }
 
             val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY) {
-                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_FILE = targetList(FILE)
@@ -273,7 +273,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 private var canBeSubstituted: List<KotlinTarget> = listOf()
                 private var onlyWithUseSiteTarget: List<KotlinTarget> = listOf()
 
-                fun canBeSubstituted(vararg targets: KotlinTarget) {
+                fun extraTargets(vararg targets: KotlinTarget) {
                     canBeSubstituted = targets.toList()
                 }
 
