@@ -319,9 +319,7 @@ class ExpressionDecomposer private constructor(
     private inner class Temporary(val value: JsExpression? = null) {
         val name: JsName = scope.declareTemporary()
 
-        val variable: JsVars by lazy {
-            newVar(name, value)
-        }
+        val variable: JsVars = newVar(name, value)
 
         val nameRef: JsExpression
             get() = name.makeRef()
