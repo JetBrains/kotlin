@@ -1,6 +1,6 @@
 package
 
-public val anonObject: anonObject.<no name provided>
+public val anonObject: kotlin.Any
 
 public object A {
     private constructor A()

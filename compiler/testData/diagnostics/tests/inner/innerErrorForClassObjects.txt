@@ -17,7 +17,7 @@ public final class Test {
 
     public companion object Companion : Test.InnerClass {
         private constructor Companion()
-        public final val a: Test.Companion.a.<no name provided>
+        public final val a: Test.InnerClass
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final fun more(): Test.InnerClass

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
@@ -42,12 +43,14 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 
 import java.util.*;
 
@@ -930,25 +933,21 @@ public class DescriptorResolver {
             @NotNull JetType type,
             @NotNull BindingTrace trace
     ) {
-        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (classifierDescriptor == null || !DescriptorUtils.isAnonymousObject(classifierDescriptor)) {
+        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+        if (classifier == null || !DescriptorUtils.isAnonymousObject(classifier) || DescriptorUtils.isLocal(descriptor)) {
             return type;
         }
 
         boolean definedInClass = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) != null;
-        boolean isLocal = DescriptorUtils.isLocal(descriptor);
-        Visibility visibility = descriptor.getVisibility();
-        boolean transformNeeded = !isLocal && !visibility.getIsPublicAPI()
-                                  && !(definedInClass && Visibilities.isPrivate(visibility));
-        if (transformNeeded) {
+        if (!definedInClass || !Visibilities.isPrivate(descriptor.getVisibility())) {
             if (type.getConstructor().getSupertypes().size() == 1) {
-                assert type.getArguments().isEmpty() : "Object expression couldn't have any type parameters!";
                 return type.getConstructor().getSupertypes().iterator().next();
             }
             else {
                 trace.report(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.on(declaration, type.getConstructor().getSupertypes()));
             }
         }
+
         return type;
     }
 

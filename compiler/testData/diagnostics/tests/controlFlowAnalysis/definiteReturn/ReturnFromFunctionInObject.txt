@@ -1,6 +1,6 @@
 package
 
-public val m: m.<no name provided>
+public val m: X
 
 public interface X {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

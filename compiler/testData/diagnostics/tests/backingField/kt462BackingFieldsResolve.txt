@@ -5,7 +5,7 @@ package kt462 {
 
     public final class T {
         public constructor T()
-        public final val a: kt462.T.a.<no name provided>
+        public final val a: kotlin.Any
         public final var r: kotlin.Int
         public final var x: kotlin.Int
         public final val z: kotlin.Int

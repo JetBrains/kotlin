@@ -1,6 +1,6 @@
 package
 
-public val a: a.<no name provided>
+public val a: T
 
 kotlin.annotation.annotation() public final class Ann : C {
     public constructor Ann()

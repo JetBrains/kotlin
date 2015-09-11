@@ -167,6 +167,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("SimpleValAnonymousObject.A.kt")
+    public void testSimpleValAnonymousObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SimpleValAnonymousObject.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("StarImportEnum.A.kt")
     public void testStarImportEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/StarImportEnum.A.kt");

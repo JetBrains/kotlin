@@ -1,3 +1,3 @@
 package
 
-public val oo: oo.<no name provided>
+public val oo: kotlin.Any
