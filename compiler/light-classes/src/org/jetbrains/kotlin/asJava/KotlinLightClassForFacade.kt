@@ -180,6 +180,8 @@ public class KotlinLightClassForFacade private constructor(
 
     override fun getName() = facadeClassFqName.shortName().asString()
 
+    override fun setName(name: String): PsiElement? = this
+
     override fun getQualifiedName() = facadeClassFqName.asString()
 
     override fun isValid() = files.all { it.isValid() }
