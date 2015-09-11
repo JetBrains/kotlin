@@ -55,9 +55,11 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -174,12 +176,22 @@ public class JetTypeMapper {
             if (containingDeclaration instanceof PackageFragmentDescriptor) {
                 PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
                 JetScope scope = packageFragmentDescriptor.getMemberScope();
+                if (scope instanceof AbstractScopeAdapter) {
+                    scope = ((AbstractScopeAdapter) scope).getActualScope();
+                }
                 if (scope instanceof LazyJavaPackageScope) {
                     String facadeShortName = ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
                     if (facadeShortName != null) {
                         FqName facadeFqName = packageFragmentDescriptor.getFqName().child(Name.identifier(facadeShortName));
                         return internalNameByFqNameWithoutInnerClasses(facadeFqName);
                     }
+                }
+                else if (scope instanceof DeserializedPackageMemberScope) {
+                    FqName implClassFqName = packageFragmentDescriptor.getFqName().child(implClassName);
+                    return internalNameByFqNameWithoutInnerClasses(implClassFqName);
+                }
+                else {
+                    throw new AssertionError("Unexpected member scope for deserialized callable: " + scope);
                 }
             }
         }
