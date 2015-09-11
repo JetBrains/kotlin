@@ -204,7 +204,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         }
 
         private object TargetLists {
-            val T_CLASSIFIER = targetList(CLASSIFIER)
+            val T_CLASSIFIER = targetList(CLASS, CLASSIFIER)
 
             val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
                 onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)

@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
+@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
         AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)

@@ -27,10 +27,10 @@ a public class Annotations private @a constructor(private @property:a @param:a v
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
-        AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER)
+        AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class a
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASSIFIER,
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable

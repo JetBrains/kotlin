@@ -1,4 +1,4 @@
 package test
 
-@Target(AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class multiple

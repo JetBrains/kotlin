@@ -39,7 +39,7 @@ public open class AnnotationTargets {
         public constructor parameter()
     }
 
-    kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FILE}) public final class type : kotlin.Annotation {
+    kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final class type : kotlin.Annotation {
         public constructor type()
     }
 }

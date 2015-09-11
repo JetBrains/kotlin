@@ -22,6 +22,7 @@ package kotlin.annotation
 public enum class AnnotationTarget {
     /** Class, interface or object, annotation class is also included */
     CLASSIFIER,
+    CLASS,
     /** Annotation class only */
     ANNOTATION_CLASS,
     /** Generic type parameter (unsupported yet) */
