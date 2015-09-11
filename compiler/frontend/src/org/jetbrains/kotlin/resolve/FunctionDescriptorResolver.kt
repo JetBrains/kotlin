@@ -310,7 +310,7 @@ class FunctionDescriptorResolver(
             val type: JetType
             if (typeReference != null) {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
-                if (expectedType != null) {
+                if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
                     if (!JetTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
                         trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }

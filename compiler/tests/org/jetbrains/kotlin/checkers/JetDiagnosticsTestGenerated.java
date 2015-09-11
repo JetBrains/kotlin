@@ -307,6 +307,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LiteralAsResult.kt")
+        public void testLiteralAsResult() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/LiteralAsResult.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalClassAndShortSubpackageNames.kt")
         public void testLocalClassAndShortSubpackageNames() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/LocalClassAndShortSubpackageNames.kt");
@@ -13302,6 +13308,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt7561.kt")
             public void testKt7561() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/kt7561.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaCall.kt")
+            public void testLambdaCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaCallAnnotated.kt")
+            public void testLambdaCallAnnotated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCallAnnotated.kt");
                 doTest(fileName);
             }
 

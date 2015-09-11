@@ -23,7 +23,9 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
@@ -57,6 +60,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -81,16 +85,19 @@ public class CallResolver {
     private CallCompleter callCompleter;
     private final TaskPrioritizer taskPrioritizer;
     private final ResolutionResultsHandler resolutionResultsHandler;
+    @NotNull private KotlinBuiltIns builtIns;
 
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
     public CallResolver(
             @NotNull TaskPrioritizer taskPrioritizer,
-            @NotNull ResolutionResultsHandler resolutionResultsHandler
+            @NotNull ResolutionResultsHandler resolutionResultsHandler,
+            @NotNull KotlinBuiltIns builtIns
     ) {
         this.taskPrioritizer = taskPrioritizer;
         this.resolutionResultsHandler = resolutionResultsHandler;
+        this.builtIns = builtIns;
     }
 
     // component dependency cycle
@@ -289,8 +296,17 @@ public class CallResolver {
         }
 
         // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
+        JetType expectedType = NO_EXPECTED_TYPE;
+        if (calleeExpression instanceof JetFunctionLiteralExpression) {
+            int parameterNumber = ((JetFunctionLiteralExpression) calleeExpression).getValueParameters().size();
+            List<JetType> parameterTypes = new ArrayList<JetType>(parameterNumber);
+            for (int i = 0; i < parameterNumber; i++) {
+                parameterTypes.add(NO_EXPECTED_TYPE);
+            }
+            expectedType = builtIns.getFunctionType(Annotations.EMPTY, null, parameterTypes, context.expectedType);
+        }
         JetType calleeType = expressionTypingServices.safeGetType(
-                context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
 
         Call call = new CallTransformer.CallForImplicitInvoke(context.call.getExplicitReceiver(), expressionReceiver, context.call);
