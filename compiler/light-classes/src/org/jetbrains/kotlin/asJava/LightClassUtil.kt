@@ -14,411 +14,331 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.java.stubs.PsiClassStub;
-import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.PsiFileStub;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PathUtil;
-import com.intellij.util.SmartList;
-import kotlin.KotlinPackage;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.utils.KotlinVfsUtil;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.*
+import com.intellij.psi.impl.java.stubs.PsiClassStub
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.PathUtil
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.KotlinVfsUtil
+import org.jetbrains.kotlin.utils.rethrow
+import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
+import java.util.*
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
+public object LightClassUtil {
+    private val LOG = Logger.getInstance(LightClassUtil::class.java)
 
-public class LightClassUtil {
-    private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
+    public val BUILT_INS_SRC_DIR: File = File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString())
 
-    public static final File BUILT_INS_SRC_DIR = new File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString());
-
-    private static final class BuiltinsDirUrlHolder {
-        private static final URL BUILT_INS_DIR_URL = computeBuiltInsDir();
-    }
+    public val builtInsDirUrl: URL by lazy { computeBuiltInsDir() }
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
      * As of today, this is core/builtins/native/kotlin directory and files such as Any.kt, Nothing.kt etc.
-     *
+
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
-    public static boolean belongsToKotlinBuiltIns(@NotNull JetFile file) {
-        VirtualFile virtualFile = file.getVirtualFile();
+    public fun belongsToKotlinBuiltIns(file: JetFile): Boolean {
+        val virtualFile = file.virtualFile
         if (virtualFile != null) {
-            VirtualFile parent = virtualFile.getParent();
+            val parent = virtualFile.parent
             if (parent != null) {
                 try {
-                    String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(getBuiltInsDirUrl());
-                    String fileDirVfsUrl = parent.getUrl();
-                    if (jetVfsPathUrl.equals(fileDirVfsUrl)) {
-                        return true;
+                    val jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(builtInsDirUrl)
+                    val fileDirVfsUrl = parent.url
+                    if (jetVfsPathUrl == fileDirVfsUrl) {
+                        return true
                     }
                 }
-                catch (MalformedURLException e) {
-                    LOG.error(e);
+                catch (e: MalformedURLException) {
+                    LOG.error(e)
                 }
+
             }
         }
 
         // We deliberately return false on error: who knows what weird URLs we might come across out there
         // it would be a pity if no light classes would be created in such cases
-        return false;
+        return false
     }
 
-    @NotNull
-    public static URL getBuiltInsDirUrl() {
-        return BuiltinsDirUrlHolder.BUILT_INS_DIR_URL;
-    }
+    private fun computeBuiltInsDir(): URL {
+        val builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME + "/Library.kt"
 
-    @NotNull
-    private static URL computeBuiltInsDir() {
-        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME + "/Library.kt";
-
-        URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
+        val url = KotlinBuiltIns::class.java.getResource(builtInFilePath)
 
         if (url == null) {
-            if (ApplicationManager.getApplication().isUnitTestMode()) {
+            if (ApplicationManager.getApplication().isUnitTestMode) {
                 // HACK: Temp code. Get built-in files from the sources when running from test.
                 try {
-                    return new URL(StandardFileSystems.FILE_PROTOCOL, "",
-                                   FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.getAbsolutePath()));
+                    return URL(StandardFileSystems.FILE_PROTOCOL, "",
+                               FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.absolutePath))
                 }
-                catch (MalformedURLException e) {
-                    throw UtilsPackage.rethrow(e);
+                catch (e: MalformedURLException) {
+                    throw rethrow(e)
                 }
+
             }
 
-            throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
+            throw IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath)
         }
 
         try {
-            return new URL(url.getProtocol(), url.getHost(), PathUtil.getParentPath(url.getFile()));
+            return URL(url.protocol, url.host, PathUtil.getParentPath(url.file))
         }
-        catch (MalformedURLException e) {
-            throw new AssertionError(e);
+        catch (e: MalformedURLException) {
+            throw AssertionError(e)
         }
+
     }
 
-    @Nullable
-    /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.asString(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass) stub.getPsi();
+    fun findClass(fqn: FqName, stub: StubElement<*>): PsiClass? {
+        if (stub is PsiClassStub<*> && Comparing.equal(fqn.asString(), stub.qualifiedName)) {
+            return stub.getPsi()
         }
 
-        if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
-            for (StubElement child : stub.getChildrenStubs()) {
-                PsiClass answer = findClass(fqn, child);
-                if (answer != null) return answer;
+        if (stub is PsiClassStub<*> || stub is PsiFileStub<*>) {
+            for (child in stub.childrenStubs) {
+                val answer = findClass(fqn, child)
+                if (answer != null) return answer
             }
         }
 
-        return null;
+        return null
+    }/*package*/
+
+    public fun getPsiClass(classOrObject: JetClassOrObject?): PsiClass? {
+        if (classOrObject == null) return null
+        return LightClassGenerationSupport.getInstance(classOrObject.project).getPsiClass(classOrObject)
     }
 
-    @Nullable
-    public static PsiClass getPsiClass(@Nullable JetClassOrObject classOrObject) {
-        if (classOrObject == null) return null;
-        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getPsiClass(classOrObject);
-    }
-
-    @Nullable
-    public static PsiMethod getLightClassAccessorMethod(@NotNull JetPropertyAccessor accessor) {
-        JetProperty property = PsiTreeUtil.getParentOfType(accessor, JetProperty.class);
-        if (property == null) {
-            return null;
-        }
-        List<PsiMethod> wrappers = getPsiMethodWrappers(property, true);
-        for (PsiMethod wrapper : wrappers) {
-            if ((accessor.isGetter() && !wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) ||
-                (accessor.isSetter() && wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX))) {
-                return wrapper;
+    public fun getLightClassAccessorMethod(accessor: JetPropertyAccessor): PsiMethod? {
+        val property = PsiTreeUtil.getParentOfType(accessor, JetProperty::class.java) ?: return null
+        val wrappers = getPsiMethodWrappers(property, true)
+        for (wrapper in wrappers) {
+            if ((accessor.isGetter && !wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) || (accessor.isSetter && wrapper.name.startsWith(JvmAbi.SETTER_PREFIX))) {
+                return wrapper
             }
         }
-        return null;
+        return null
     }
 
-    @Nullable
-    public static PsiField getLightFieldForCompanionObject(@NotNull JetClassOrObject companionObject) {
-        PsiClass outerPsiClass = getWrappingClass(companionObject);
+    public fun getLightFieldForCompanionObject(companionObject: JetClassOrObject): PsiField? {
+        val outerPsiClass = getWrappingClass(companionObject)
         if (outerPsiClass != null) {
-            for (PsiField fieldOfParent : outerPsiClass.getFields()) {
-                if ((fieldOfParent instanceof KotlinLightElement) &&
-                    ((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == companionObject) {
-                    return fieldOfParent;
+            for (fieldOfParent in outerPsiClass.fields) {
+                if ((fieldOfParent is KotlinLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
+                    return fieldOfParent
                 }
             }
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetProperty property) {
-        JetPropertyAccessor getter = property.getGetter();
-        JetPropertyAccessor setter = property.getSetter();
+    public fun getLightClassPropertyMethods(property: JetProperty): PropertyAccessorsPsiMethods {
+        val getter = property.getter
+        val setter = property.setter
 
-        PsiMethod getterWrapper = getter != null ? getLightClassAccessorMethod(getter) : null;
-        PsiMethod setterWrapper = setter != null ? getLightClassAccessorMethod(setter) : null;
+        val getterWrapper = if (getter != null) getLightClassAccessorMethod(getter) else null
+        val setterWrapper = if (setter != null) getLightClassAccessorMethod(setter) else null
 
-        return extractPropertyAccessors(property, getterWrapper, setterWrapper);
+        return extractPropertyAccessors(property, getterWrapper, setterWrapper)
     }
 
-    @Nullable
-    private static PsiField getLightClassBackingField(JetDeclaration declaration) {
-        PsiClass psiClass = getWrappingClass(declaration);
-        if (psiClass == null) {
-            return null;
-        }
+    private fun getLightClassBackingField(declaration: JetDeclaration): PsiField? {
+        var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
 
-        if (psiClass instanceof KotlinLightClass) {
-            JetClassOrObject origin = ((KotlinLightClass) psiClass).getOrigin();
-            if (origin instanceof JetObjectDeclaration && ((JetObjectDeclaration) origin).isCompanion()) {
-                JetClass containingClass = PsiTreeUtil.getParentOfType(origin, JetClass.class);
+        if (psiClass is KotlinLightClass) {
+            val origin = psiClass.getOrigin()
+            if (origin is JetObjectDeclaration && origin.isCompanion()) {
+                val containingClass = PsiTreeUtil.getParentOfType(origin, JetClass::class.java)
                 if (containingClass != null) {
-                    PsiClass containingLightClass = getPsiClass(containingClass);
+                    val containingLightClass = getPsiClass(containingClass)
                     if (containingLightClass != null) {
-                        psiClass = containingLightClass;
+                        psiClass = containingLightClass
                     }
                 }
             }
         }
 
-        for (PsiField field : psiClass.getFields()) {
-            if (field instanceof KotlinLightField && ((KotlinLightField) field).getOrigin() == declaration) {
-                return field;
+        for (field in psiClass.fields) {
+            if (field is KotlinLightField<*, *> && field.getOrigin() === declaration) {
+                return field
             }
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetParameter parameter) {
-        return extractPropertyAccessors(parameter, null, null);
+    public fun getLightClassPropertyMethods(parameter: JetParameter): PropertyAccessorsPsiMethods {
+        return extractPropertyAccessors(parameter, null, null)
     }
 
-    @Nullable
-    public static PsiMethod getLightClassMethod(@NotNull JetFunction function) {
-        return getPsiMethodWrapper(function);
+    public fun getLightClassMethod(function: JetFunction): PsiMethod? {
+        return getPsiMethodWrapper(function)
     }
 
-    @Nullable
-    private static PsiMethod getPsiMethodWrapper(@NotNull JetDeclaration declaration) {
-        List<PsiMethod> wrappers = getPsiMethodWrappers(declaration, false);
-        return !wrappers.isEmpty() ? wrappers.get(0) : null;
+    private fun getPsiMethodWrapper(declaration: JetDeclaration): PsiMethod? {
+        val wrappers = getPsiMethodWrappers(declaration, false)
+        return if (!wrappers.isEmpty()) wrappers.get(0) else null
     }
 
-    @NotNull
-    private static List<PsiMethod> getPsiMethodWrappers(@NotNull JetDeclaration declaration, boolean collectAll) {
-        PsiClass psiClass = getWrappingClass(declaration);
-        if (psiClass == null) {
-            return Collections.emptyList();
-        }
+    private fun getPsiMethodWrappers(declaration: JetDeclaration, collectAll: Boolean): List<PsiMethod> {
+        val psiClass = getWrappingClass(declaration) ?: return emptyList()
 
-        List<PsiMethod> methods = new SmartList<PsiMethod>();
-        for (PsiMethod method : psiClass.getMethods()) {
+        val methods = SmartList<PsiMethod>()
+        for (method in psiClass.methods) {
             try {
-                if (method instanceof KotlinLightMethod && ((KotlinLightMethod) method).getOrigin() == declaration) {
-                    methods.add(method);
+                if (method is KotlinLightMethod && method.getOrigin() === declaration) {
+                    methods.add(method)
                     if (!collectAll) {
-                        return methods;
+                        return methods
                     }
                 }
             }
-            catch (ProcessCanceledException e) {
-                throw e;
+            catch (e: ProcessCanceledException) {
+                throw e
             }
-            catch (Throwable e) {
-                throw new IllegalStateException(
-                        "Error while wrapping declaration " + declaration.getName() +
-                        "Context\n:" +
-                        String.format("=== In file ===\n" +
-                                      "%s\n" +
-                                      "=== On element ===\n" +
-                                      "%s\n" +
-                                      "=== WrappedElement ===\n" +
-                                      "%s\n",
-                                      declaration.getContainingFile().getText(),
-                                      declaration.getText(),
-                                      method.toString()),
-                        e
-                );
+            catch (e: Throwable) {
+                throw IllegalStateException(
+                        "Error while wrapping declaration " + declaration.name + "Context\n:" + method, e)
             }
         }
 
-        return methods;
+        return methods
     }
 
-    @Nullable
-    private static PsiClass getWrappingClass(@NotNull JetDeclaration declaration) {
-        if (declaration instanceof JetParameter) {
-            JetClassOrObject constructorClass = JetPsiUtil.getClassIfParameterIsProperty((JetParameter) declaration);
+    private fun getWrappingClass(declaration: JetDeclaration): PsiClass? {
+        var declaration = declaration
+        if (declaration is JetParameter) {
+            val constructorClass = JetPsiUtil.getClassIfParameterIsProperty(declaration)
             if (constructorClass != null) {
-                return getPsiClass(constructorClass);
+                return getPsiClass(constructorClass)
             }
         }
 
-        if (declaration instanceof JetPropertyAccessor) {
-            PsiElement propertyParent = declaration.getParent();
-            assert propertyParent instanceof JetProperty : "JetProperty is expected to be parent of accessor";
+        if (declaration is JetPropertyAccessor) {
+            val propertyParent = declaration.parent
+            assert(propertyParent is JetProperty, "JetProperty is expected to be parent of accessor")
 
-            declaration = (JetProperty) propertyParent;
+            declaration = propertyParent as JetProperty
         }
 
-        if (declaration instanceof JetConstructor) {
-            return getPsiClass(((JetConstructor) declaration).getContainingClassOrObject());
+        if (declaration is JetConstructor<*>) {
+            return getPsiClass(declaration.getContainingClassOrObject())
         }
 
         if (!canGenerateLightClass(declaration)) {
             // Can't get wrappers for internal declarations. Their classes are not generated during calcStub
             // with ClassBuilderMode.LIGHT_CLASSES mode, and this produces "Class not found exception" in getDelegate()
-            return null;
+            return null
         }
 
-        PsiElement parent = declaration.getParent();
+        val parent = declaration.parent
 
-        if (parent instanceof JetFile) {
+        if (parent is JetFile) {
             // top-level declaration
-            FqName fqName = PackageClassUtils.getPackageClassFqName(((JetFile) parent).getPackageFqName());
-            Project project = declaration.getProject();
-            return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project));
+            val fqName = PackageClassUtils.getPackageClassFqName(parent.packageFqName)
+            val project = declaration.project
+            return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
         }
-        else if (parent instanceof JetClassBody) {
-            assert parent.getParent() instanceof JetClassOrObject;
-            return getPsiClass((JetClassOrObject) parent.getParent());
+        else if (parent is JetClassBody) {
+            assert(parent.parent is JetClassOrObject)
+            return getPsiClass(parent.parent as JetClassOrObject)
         }
 
-        return null;
+        return null
     }
 
-    public static boolean canGenerateLightClass(JetDeclaration declaration) {
+    public fun canGenerateLightClass(declaration: JetDeclaration): Boolean {
         //noinspection unchecked
-        return PsiTreeUtil.getParentOfType(declaration, JetFunction.class, JetProperty.class) == null;
+        return PsiTreeUtil.getParentOfType(declaration, JetFunction::class.java, JetProperty::class.java) == null
     }
 
-    @NotNull
-    private static PropertyAccessorsPsiMethods extractPropertyAccessors(
-            @NotNull JetDeclaration jetDeclaration,
-            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter
-    ) {
-        PsiMethod getterWrapper = specialGetter;
-        PsiMethod setterWrapper = specialSetter;
+    private fun extractPropertyAccessors(
+            jetDeclaration: JetDeclaration,
+            specialGetter: PsiMethod?, specialSetter: PsiMethod?): PropertyAccessorsPsiMethods {
+        var getterWrapper = specialGetter
+        var setterWrapper = specialSetter
 
         if (getterWrapper == null || setterWrapper == null) {
             // If some getter or setter isn't found yet try to get it from wrappers for general declaration
 
-            List<PsiMethod> wrappers = KotlinPackage.filter(
-                    getPsiMethodWrappers(jetDeclaration, true),
-                    new Function1<PsiMethod, Boolean>() {
-                        @Override
-                        public Boolean invoke(PsiMethod method) {
-                            String name = method.getName();
-                            return name.startsWith(JvmAbi.GETTER_PREFIX) || name.startsWith(JvmAbi.SETTER_PREFIX);
-                        }
-                    }
-            );
-            assert wrappers.size() <= 2 : "Maximum two wrappers are expected to be generated for declaration: " + jetDeclaration.getText();
+            val wrappers = getPsiMethodWrappers(jetDeclaration, true).filter {
+                it.name.startsWith(JvmAbi.GETTER_PREFIX) || it.name.startsWith(JvmAbi.SETTER_PREFIX)
+            }
 
-            for (PsiMethod wrapper : wrappers) {
+            assert(wrappers.size() <= 2) { "Maximum two wrappers are expected to be generated for declaration: " + jetDeclaration.text }
+
+            for (wrapper in wrappers) {
                 if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    assert setterWrapper == null || setterWrapper == specialSetter: String.format(
-                            "Setter accessor isn't expected to be reassigned (old: %s, new: %s)", setterWrapper, wrapper);
+                    assert(setterWrapper == null || setterWrapper === specialSetter) {
+                        "Setter accessor isn't expected to be reassigned (old: $setterWrapper, new: $wrapper)"
+                    }
 
-                    setterWrapper = wrapper;
+                    setterWrapper = wrapper
                 }
                 else {
-                    assert getterWrapper == null || getterWrapper == specialGetter: String.format(
-                            "Getter accessor isn't expected to be reassigned (old: %s, new: %s)", getterWrapper, wrapper);
+                    assert(getterWrapper == null || getterWrapper === specialGetter) {
+                        "Getter accessor isn't expected to be reassigned (old: $getterWrapper, new: $wrapper)"
+                    }
 
-                    getterWrapper = wrapper;
+                    getterWrapper = wrapper
                 }
             }
 
         }
 
-        PsiField backingField = getLightClassBackingField(jetDeclaration);
-        return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField);
+        val backingField = getLightClassBackingField(jetDeclaration)
+        return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField)
     }
 
-    @NotNull
-    public static PsiTypeParameterList buildLightTypeParameterList(PsiTypeParameterListOwner owner, JetDeclaration declaration) {
-        LightTypeParameterListBuilder builder = new KotlinLightTypeParameterListBuilder(owner.getManager());
-        if (declaration instanceof JetTypeParameterListOwner) {
-            JetTypeParameterListOwner typeParameterListOwner = (JetTypeParameterListOwner) declaration;
-            List<JetTypeParameter> parameters = typeParameterListOwner.getTypeParameters();
-            for (int i = 0; i < parameters.size(); i++) {
-                JetTypeParameter jetTypeParameter = parameters.get(i);
-                String name = jetTypeParameter.getName();
-                String safeName = name == null ? "__no_name__" : name;
-                builder.addParameter(new KotlinLightTypeParameter(owner, i, safeName));
+    public fun buildLightTypeParameterList(
+            owner: PsiTypeParameterListOwner,
+            declaration: JetDeclaration): PsiTypeParameterList {
+        val builder = KotlinLightTypeParameterListBuilder(owner.manager)
+        if (declaration is JetTypeParameterListOwner) {
+            val parameters = declaration.typeParameters
+            for (i in parameters.indices) {
+                val jetTypeParameter = parameters.get(i)
+                val name = jetTypeParameter.name
+                val safeName = name ?: "__no_name__"
+                builder.addParameter(KotlinLightTypeParameter(owner, i, safeName))
             }
         }
-        return builder;
+        return builder
     }
 
-    public static class PropertyAccessorsPsiMethods implements Iterable<PsiMethod> {
-        private final PsiMethod getter;
-        private final PsiMethod setter;
-        private final PsiField backingField;
-        private final Collection<PsiMethod> accessors = new ArrayList<PsiMethod>(2);
+    public class PropertyAccessorsPsiMethods(public val getter: PsiMethod?, public val setter: PsiMethod?, public val backingField: PsiField?) : Iterable<PsiMethod> {
+        private val accessors = ArrayList<PsiMethod>(2)
 
-        PropertyAccessorsPsiMethods(@Nullable PsiMethod getter, @Nullable PsiMethod setter, @Nullable PsiField backingField) {
-            this.getter = getter;
+        init {
             if (getter != null) {
-                accessors.add(getter);
+                accessors.add(getter)
             }
-
-            this.setter = setter;
             if (setter != null) {
-                accessors.add(setter);
+                accessors.add(setter)
             }
-
-            this.backingField = backingField;
         }
 
-        @Nullable
-        public PsiMethod getGetter() {
-            return getter;
+        override fun iterator(): Iterator<PsiMethod> {
+            return accessors.iterator()
         }
-
-        @Nullable
-        public PsiMethod getSetter() {
-            return setter;
-        }
-
-        @Nullable
-        public PsiField getBackingField() {
-            return backingField;
-        }
-
-        @NotNull
-        @Override
-        public Iterator<PsiMethod> iterator() {
-            return accessors.iterator();
-        }
-    }
-
-    private LightClassUtil() {
     }
 }

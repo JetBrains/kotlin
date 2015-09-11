@@ -21,7 +21,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -43,9 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
-import java.net.MalformedURLException
 import java.net.URL
 
 public class BuiltInsReferenceResolver(val project: Project, val startupManager: StartupManager) {
@@ -178,7 +175,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         }
 
         public fun getBuiltInsDirUrls(): Set<URL> {
-            val defaultBuiltIns = LightClassUtil.getBuiltInsDirUrl()
+            val defaultBuiltIns = LightClassUtil.builtInsDirUrl
             // In production, the above URL is enough as it contains sources for both native and compilable built-ins
             // (it's simply the "kotlin" directory in kotlin-plugin.jar)
             // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:

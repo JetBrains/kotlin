@@ -73,7 +73,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
 
             if (owner instanceof JetClass) {
-                PsiClass delegate = LightClassUtil.getPsiClass((JetClass) owner);
+                PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((JetClass) owner);
                 if (delegate != null) {
                     for (PsiMethod method : delegate.getMethods()) {
                         if (method.getNavigationElement() == function) {
@@ -97,7 +97,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             return false;
         }
 
-        PsiClass delegate = LightClassUtil.getPsiClass(jetClass);
+        PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass(jetClass);
         if (!isTestNGClass(delegate)) {
             return false;
         }

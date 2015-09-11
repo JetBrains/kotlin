@@ -517,7 +517,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
 }
 
 fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
-    val template = LightClassUtil.getLightClassPropertyMethods(property).getGetter()
+    val template = LightClassUtil.getLightClassPropertyMethods(property).getter
                    ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
     val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())

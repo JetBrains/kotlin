@@ -359,7 +359,7 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
-        if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
+        if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
             Name className = classOrObject.getNameAsName();
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
@@ -372,7 +372,7 @@ public class JetSourceNavigationHelper {
                 );
             }
         }
-        return LightClassUtil.getPsiClass(classOrObject);
+        return LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
     }
 
     @Nullable
