@@ -38,8 +38,9 @@ public class PathUtil {
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar";
     public static final String KOTLIN_JAVA_RUNTIME_SRC_JAR = "kotlin-runtime-sources.jar";
-    public static final String HOME_FOLDER_NAME = "kotlinc";
+    public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
 
+    public static final String HOME_FOLDER_NAME = "kotlinc";
     private static final File NO_PATH = new File("<no_path>");
 
     private PathUtil() {}
@@ -90,7 +91,7 @@ public class PathUtil {
 
         if (!jar.exists()) return NO_PATH;
 
-        if (jar.getName().equals("kotlin-compiler.jar")) {
+        if (jar.getName().equals(KOTLIN_COMPILER_JAR)) {
             File lib = jar.getParentFile();
             return lib.getParentFile();
         }

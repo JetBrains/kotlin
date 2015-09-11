@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -64,21 +65,22 @@ public class KotlinConsoleKeeper(val project: Project) {
 
         val commandLine = JdkUtil.setupJVMCommandLine(exePath, javaParameters, true)
 
-        // set parameters to run compiler
         val paramList = commandLine.parametersList
         paramList.clearAll()
 
         // use to debug repl process
         //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
 
-        // set classpath for process to compiler
-        paramList.add("-cp")
-        paramList.add("${PathUtil.getKotlinPathsForIdeaPlugin().libPath.absolutePath}/*")
+        val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
+        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath)
+                .map { it.absolutePath }
+                .joinToString(File.pathSeparator)
 
-        // set param to prevent process from repeating input backwards
+        paramList.add("-cp")
+        paramList.add(replClassPath)
+
         paramList.add("-Drepl.ideMode=true")
 
-        // path to compiler and his options
         paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 
         addPathToCompiledOutput(paramList, module)
