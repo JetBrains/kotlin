@@ -56,7 +56,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
 
 
     public void testRefToFunctionWithVararg() {
-        PsiElement navigationElement = configureAndResolve("val x = <caret>arrayList(\"\", \"\")");
+        PsiElement navigationElement = configureAndResolve("val x = <caret>arrayListOf(\"\", \"\")");
         assertSame(JetLanguage.INSTANCE, navigationElement.getLanguage());
     }
 

@@ -7,8 +7,8 @@ annotation class JustAnnotation(val annotation: Empty)
 annotation class AnnotationArray(val annotationArray: Array<JustAnnotation>)
 
 @JustAnnotation(Empty())
-@AnnotationArray(array())
+@AnnotationArray(arrayOf())
 class C1
 
-@AnnotationArray(array(JustAnnotation(Empty()), JustAnnotation(Empty())))
+@AnnotationArray(arrayOf(JustAnnotation(Empty()), JustAnnotation(Empty())))
 class C2

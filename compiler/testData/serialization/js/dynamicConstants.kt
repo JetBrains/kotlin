@@ -17,7 +17,7 @@ val booleanConst: dynamic = true
 val floatConst: dynamic = 2.0f
 val doubleConst: dynamic = 3.0
 val enumConst: dynamic = Weapon.ROCK
-val arrayConst: dynamic = byteArray(1,2)
+val arrayConst: dynamic = byteArrayOf(1,2)
 val dynamicConst: dynamic = 100
 
 class Class {
@@ -31,6 +31,6 @@ class Class {
     val floatConst: dynamic = 2.0f
     val doubleConst: dynamic = 3.0
     val enumConst: dynamic = Weapon.ROCK
-    val arrayConst: dynamic = byteArray(1,2)
+    val arrayConst: dynamic = byteArrayOf(1,2)
     val dynamicConst: dynamic = 100
 }

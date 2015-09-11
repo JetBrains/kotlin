@@ -16,7 +16,7 @@ val booleanConst: Boolean = true
 val floatConst: Float = 2.0f
 val doubleConst: Double = 3.0
 val enumConst: Weapon? = Weapon.ROCK
-val arrayConst: Any = byteArray(1,2)
+val arrayConst: Any = byteArrayOf(1,2)
 
 val a = 10
 val b = a + 20
@@ -32,7 +32,7 @@ class Class {
     val floatConst: Float = 2.0f
     val doubleConst: Double = 3.0
     val enumConst: Weapon? = Weapon.ROCK
-    val arrayConst: Any = byteArray(1,2)
+    val arrayConst: Any = byteArrayOf(1,2)
     val a = 10
     val b = a + 20
 }

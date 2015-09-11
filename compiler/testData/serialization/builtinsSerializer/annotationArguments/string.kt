@@ -5,8 +5,8 @@ annotation class JustString(val string: String)
 annotation class StringArray(val stringArray: Array<String>)
 
 @JustString("kotlin")
-@StringArray(array())
+@StringArray(arrayOf())
 class C1
 
-@StringArray(array("java", ""))
+@StringArray(arrayOf("java", ""))
 class C2

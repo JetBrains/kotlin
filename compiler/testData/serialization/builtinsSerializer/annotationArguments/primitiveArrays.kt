@@ -12,25 +12,25 @@ annotation class PrimitiveArrays(
 )
 
 @PrimitiveArrays(
-        byteArray = byteArray(-7, 7),
-        charArray = charArray('%', 'z'),
-        shortArray = shortArray(239),
-        intArray = intArray(239017, -1),
-        longArray = longArray(123456789123456789L),
-        floatArray = floatArray(2.72f, 0f),
-        doubleArray = doubleArray(-3.14),
-        booleanArray = booleanArray(true, false, true)
+        byteArray = byteArrayOf(-7, 7),
+        charArray = charArrayOf('%', 'z'),
+        shortArray = shortArrayOf(239),
+        intArray = intArrayOf(239017, -1),
+        longArray = longArrayOf(123456789123456789L),
+        floatArray = floatArrayOf(2.72f, 0f),
+        doubleArray = doubleArrayOf(-3.14),
+        booleanArray = booleanArrayOf(true, false, true)
 )
 class C1
 
 @PrimitiveArrays(
-        byteArray = byteArray(),
-        charArray = charArray(),
-        shortArray = shortArray(),
-        intArray = intArray(),
-        longArray = longArray(),
-        floatArray = floatArray(),
-        doubleArray = doubleArray(),
-        booleanArray = booleanArray()
+        byteArray = byteArrayOf(),
+        charArray = charArrayOf(),
+        shortArray = shortArrayOf(),
+        intArray = intArrayOf(),
+        longArray = longArrayOf(),
+        floatArray = floatArrayOf(),
+        doubleArray = doubleArrayOf(),
+        booleanArray = booleanArrayOf()
 )
 class C2

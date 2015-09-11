@@ -2,7 +2,7 @@
 import builders.*
 
 fun testAllInline() : String {
-    val args = array("1", "2", "3")
+    val args = arrayOf("1", "2", "3")
     val result =
             html {
                 val htmlVal = 0
@@ -42,7 +42,7 @@ fun testAllInline() : String {
 }
 
 fun testHtmlNoInline() : String {
-    val args = array("1", "2", "3")
+    val args = arrayOf("1", "2", "3")
     val result =
             htmlNoInline() {
                 val htmlVal = 0
@@ -82,7 +82,7 @@ fun testHtmlNoInline() : String {
 }
 
 fun testBodyNoInline() : String {
-    val args = array("1", "2", "3")
+    val args = arrayOf("1", "2", "3")
     val result =
             html {
                 val htmlVal = 0
@@ -122,7 +122,7 @@ fun testBodyNoInline() : String {
 }
 
 fun testBodyHtmlNoInline() : String {
-    val args = array("1", "2", "3")
+    val args = arrayOf("1", "2", "3")
     val result =
             htmlNoInline {
                 val htmlVal = 0

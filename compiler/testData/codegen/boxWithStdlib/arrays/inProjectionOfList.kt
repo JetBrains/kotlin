@@ -1,5 +1,5 @@
 fun box(): String {
-    val x: Array<List<*>> = array(listOf(1))
+    val x: Array<List<*>> = arrayOf(listOf(1))
     val y : Array<in List<String>> = x
 
     if (y.size() != 1) return "fail 1"

@@ -1,13 +1,13 @@
 import java.util.Arrays.equals
 
 fun box(): String {
-    val s = array("live", "long")
+    val s = arrayOf("live", "long")
     val t = s.clone()
     t : Array<String>
     if (!equals(s, t)) return "Fail string"
     if (s identityEquals t) return "Fail string identity"
 
-    val ss = array(s, s)
+    val ss = arrayOf(s, s)
     val tt = ss.clone()
     tt : Array<Array<String>>
     if (!equals(ss, tt)) return "Fail string[]"

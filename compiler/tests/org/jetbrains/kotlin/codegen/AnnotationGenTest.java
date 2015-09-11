@@ -319,7 +319,7 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "" +
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<String>)\n" +
                  "" +
-                 "@A(array(\"239\",\"932\")) class B()");
+                 "@A(arrayOf(\"239\",\"932\")) class B()");
         Class aClass = generateClass("A");
 
         Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
@@ -354,7 +354,7 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "" +
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: IntArray)\n" +
                  "" +
-                 "@A(intArray(239,932)) class B()");
+                 "@A(intArrayOf(239,932)) class B()");
         Class aClass = generateClass("A");
 
         Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
@@ -411,7 +411,7 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "" +
                  "@Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<Retention>)\n" +
                  "" +
-                 "@A(array(Retention(RetentionPolicy.RUNTIME),Retention(RetentionPolicy.SOURCE))) class B()");
+                 "@A(arrayOf(Retention(RetentionPolicy.RUNTIME),Retention(RetentionPolicy.SOURCE))) class B()");
         Class aClass = generateClass("A");
 
         Method[] methods = aClass.getDeclaredMethods();

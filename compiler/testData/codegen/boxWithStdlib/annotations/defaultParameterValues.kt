@@ -7,8 +7,8 @@ annotation class Ann(
         val a: Ann2 = Ann2(),
         val e: MyEnum = MyEnum.A,
         val c: KClass<*> = A::class,
-        val ia: IntArray = intArray(1, 2),
-        val sa: Array<String> = array("a", "b")
+        val ia: IntArray = intArrayOf(1, 2),
+        val sa: Array<String> = arrayOf("a", "b")
 )
 
 fun box(): String {

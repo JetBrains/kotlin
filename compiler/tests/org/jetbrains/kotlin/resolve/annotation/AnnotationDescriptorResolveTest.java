@@ -50,7 +50,7 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
     }
 
     public void testIntArrayAnnotation() throws IOException {
-        String content = getContent("AnnIntArray(intArray(1, 2))");
+        String content = getContent("AnnIntArray(intArrayOf(1, 2))");
         String expectedAnnotation = "@AnnIntArray(a = {1, 2})";
         doTest(content, expectedAnnotation);
     }
@@ -68,13 +68,13 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
     }
 
     public void testStringArrayAnnotation() throws IOException {
-        String content = getContent("AnnStringArray(array(\"a\"))");
+        String content = getContent("AnnStringArray(arrayOf(\"a\"))");
         String expectedAnnotation = "@AnnStringArray(a = {\"a\"})";
         doTest(content, expectedAnnotation);
     }
 
     public void testEnumArrayAnnotation() throws IOException {
-        String content = getContent("AnnArrayOfEnum(array(MyEnum.A))");
+        String content = getContent("AnnArrayOfEnum(arrayOf(MyEnum.A))");
         String expectedAnnotation = "@AnnArrayOfEnum(a = {MyEnum.A})";
         doTest(content, expectedAnnotation);
     }

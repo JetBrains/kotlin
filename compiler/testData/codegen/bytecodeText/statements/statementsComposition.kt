@@ -1,6 +1,6 @@
 
 fun foo() {
-    val array = intArray(1,2,3)
+    val array = intArrayOf(1,2,3)
 
     var count = 0
     for (element in array) if (element > 0) count++
