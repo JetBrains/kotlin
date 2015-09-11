@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedInfo>) {
-    private val expectedInfos by lazy { expectedInfosCalculator() }
+    private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
     public fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
         return when (descriptor) {
