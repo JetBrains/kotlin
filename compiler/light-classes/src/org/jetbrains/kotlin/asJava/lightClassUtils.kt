@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.*
-import java.util.Collections
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.*
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
@@ -59,8 +57,8 @@ public fun PsiElement.toLightMethods(): List<PsiMethod> =
 public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         when (this) {
             is JetFunction -> LightClassUtil.getLightClassMethod(this)
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
-            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
+            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).getter
+            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).getter
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this)
             is PsiMethod -> this
             else -> null

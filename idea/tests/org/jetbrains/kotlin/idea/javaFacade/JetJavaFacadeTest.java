@@ -212,7 +212,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         assertInstanceOf(element, JetClass.class);
         JetClass aClass = (JetClass) element;
 
-        PsiClass createdByWrapDelegate = LightClassUtil.getPsiClass(aClass);
+        PsiClass createdByWrapDelegate = LightClassUtil.INSTANCE$.getPsiClass(aClass);
         assertNull(createdByWrapDelegate);
     }
 
@@ -220,7 +220,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         JetNamedFunction jetFunction = getPreparedElement(JetNamedFunction.class);
 
         // Should not fail!
-        PsiMethod psiMethod = LightClassUtil.getLightClassMethod(jetFunction);
+        PsiMethod psiMethod = LightClassUtil.INSTANCE$.getLightClassMethod(jetFunction);
 
         checkDeclarationMethodWrapped(shouldBeWrapped, jetFunction, psiMethod);
     }
@@ -229,7 +229,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         JetParameter jetParameter = getPreparedElement(JetParameter.class);
 
         // Should not fail!
-        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetParameter);
+        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.INSTANCE$.getLightClassPropertyMethods(jetParameter);
 
         checkDeclarationMethodWrapped(shouldWrapGetter, jetParameter, propertyAccessors.getGetter());
         checkDeclarationMethodWrapped(shouldWrapSetter, jetParameter, propertyAccessors.getSetter());
@@ -239,7 +239,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         JetProperty jetProperty = getPreparedElement(JetProperty.class);
 
         // Should not fail!
-        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetProperty);
+        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.INSTANCE$.getLightClassPropertyMethods(jetProperty);
 
         checkDeclarationMethodWrapped(shouldWrapGetter, jetProperty, propertyAccessors.getGetter());
         checkDeclarationMethodWrapped(shouldWrapSetter, jetProperty, propertyAccessors.getSetter());
@@ -249,7 +249,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         JetPropertyAccessor jetPropertyAccessor = getPreparedElement(JetPropertyAccessor.class);
 
         // Should not fail!
-        PsiMethod propertyAccessors = LightClassUtil.getLightClassAccessorMethod(jetPropertyAccessor);
+        PsiMethod propertyAccessors = LightClassUtil.INSTANCE$.getLightClassAccessorMethod(jetPropertyAccessor);
         checkDeclarationMethodWrapped(shouldWrapAccessor,
                                       PsiTreeUtil.getParentOfType(jetPropertyAccessor, JetProperty.class),
                                       propertyAccessors);
@@ -296,7 +296,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         assertNotNull("Caret should be placed to class definition", jetClass);
 
         // Should not fail!
-        KotlinLightClass lightClass = (KotlinLightClass) LightClassUtil.getPsiClass(jetClass);
+        KotlinLightClass lightClass = (KotlinLightClass) LightClassUtil.INSTANCE$.getPsiClass(jetClass);
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", jetClass.getText()), lightClass);
 

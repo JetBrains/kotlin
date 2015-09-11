@@ -21,7 +21,6 @@ import com.intellij.find.findUsages.FindClassUsagesDialog;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.find.findUsages.JavaClassFindUsagesOptions;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
@@ -63,7 +62,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
 
     @NotNull
     private static PsiClass getRepresentingPsiClass(@NotNull JetClassOrObject classOrObject) {
-        PsiClass lightClass = LightClassUtil.getPsiClass(classOrObject);
+        PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
         if (lightClass != null) return lightClass;
 
         // TODO: Remove this code when light classes are generated for builtins

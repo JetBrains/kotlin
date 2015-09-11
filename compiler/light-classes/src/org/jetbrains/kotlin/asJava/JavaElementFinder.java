@@ -32,7 +32,6 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.NamePackage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
@@ -134,7 +133,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         for (JetClassOrObject declaration : classOrObjectDeclarations) {
             if (!(declaration instanceof JetEnumEntry)) {
-                PsiClass lightClass = LightClassUtil.getPsiClass(declaration);
+                PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
                 }
@@ -208,7 +207,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (JetClassOrObject declaration : declarations) {
-            PsiClass aClass = LightClassUtil.getPsiClass(declaration);
+            PsiClass aClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
             if (aClass != null) {
                 answer.add(aClass);
             }
