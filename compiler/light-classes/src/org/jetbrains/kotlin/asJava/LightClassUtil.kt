@@ -31,6 +31,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
 
 public object LightClassUtil {
     private val LOG = Logger.getInstance(LightClassUtil::class.java)
@@ -141,7 +141,7 @@ public object LightClassUtil {
     }
 
     public fun getLightFieldForCompanionObject(companionObject: JetClassOrObject): PsiField? {
-        val outerPsiClass = getWrappingClass(companionObject)
+        val outerPsiClass = getWrappingClass(companionObject, true)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
                 if ((fieldOfParent is KotlinLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
@@ -163,7 +163,7 @@ public object LightClassUtil {
     }
 
     private fun getLightClassBackingField(declaration: JetDeclaration): PsiField? {
-        var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
+        var psiClass: PsiClass = getWrappingClass(declaration, true) ?: return null
 
         if (psiClass is KotlinLightClass) {
             val origin = psiClass.getOrigin()
@@ -194,16 +194,19 @@ public object LightClassUtil {
         return getPsiMethodWrapper(function)
     }
 
+    public fun getLightClassMethods(function: JetFunction): Collection<PsiMethod> {
+        return getPsiMethodWrappers(function, true)
+    }
+
     private fun getPsiMethodWrapper(declaration: JetDeclaration): PsiMethod? {
-        val wrappers = getPsiMethodWrappers(declaration, false)
-        return if (!wrappers.isEmpty()) wrappers.get(0) else null
+        return getPsiMethodWrappers(declaration, false).firstOrNull()
     }
 
     private fun getPsiMethodWrappers(declaration: JetDeclaration, collectAll: Boolean): List<PsiMethod> {
-        val psiClass = getWrappingClass(declaration) ?: return emptyList()
+        val psiClasses = getWrappingClasses(declaration, collectAll)
 
         val methods = SmartList<PsiMethod>()
-        for (method in psiClass.methods) {
+        for (method in psiClasses.flatMap { it.methods.asList() }) {
             try {
                 if (method is KotlinLightMethod && method.getOrigin() === declaration) {
                     methods.add(method)
@@ -224,7 +227,17 @@ public object LightClassUtil {
         return methods
     }
 
-    private fun getWrappingClass(declaration: JetDeclaration): PsiClass? {
+    private fun getWrappingClasses(declaration: JetDeclaration, collectAll: Boolean): Collection<PsiClass> {
+        val wrappingClass = getWrappingClass(declaration, true)
+        val oldPackagePartWrappingClass = if (declaration.parent is JetFile && collectAll)
+            getWrappingClass(declaration, false)
+        else
+            null
+
+        return setOf(wrappingClass, oldPackagePartWrappingClass).filterNotNull()
+    }
+
+    private fun getWrappingClass(declaration: JetDeclaration, useNewPackageParts: Boolean): PsiClass? {
         var declaration = declaration
         if (declaration is JetParameter) {
             val constructorClass = JetPsiUtil.getClassIfParameterIsProperty(declaration)
@@ -254,7 +267,11 @@ public object LightClassUtil {
 
         if (parent is JetFile) {
             // top-level declaration
-            val fqName = PackageClassUtils.getPackageClassFqName(parent.packageFqName)
+            val fqName = if (useNewPackageParts)
+                JvmFileClassUtil.getFileClassInfoNoResolve(parent).facadeClassFqName
+            else
+                PackageClassUtils.getPackageClassFqName(parent.packageFqName)
+
             val project = declaration.project
             return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
         }
@@ -276,6 +293,7 @@ public object LightClassUtil {
             specialGetter: PsiMethod?, specialSetter: PsiMethod?): PropertyAccessorsPsiMethods {
         var getterWrapper = specialGetter
         var setterWrapper = specialSetter
+        val additionalAccessors = arrayListOf<PsiMethod>()
 
         if (getterWrapper == null || setterWrapper == null) {
             // If some getter or setter isn't found yet try to get it from wrappers for general declaration
@@ -284,29 +302,28 @@ public object LightClassUtil {
                 it.name.startsWith(JvmAbi.GETTER_PREFIX) || it.name.startsWith(JvmAbi.SETTER_PREFIX)
             }
 
-            assert(wrappers.size() <= 2) { "Maximum two wrappers are expected to be generated for declaration: " + jetDeclaration.text }
-
             for (wrapper in wrappers) {
                 if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    assert(setterWrapper == null || setterWrapper === specialSetter) {
-                        "Setter accessor isn't expected to be reassigned (old: $setterWrapper, new: $wrapper)"
+                    if (setterWrapper == null || setterWrapper === specialSetter) {
+                        setterWrapper = wrapper
                     }
-
-                    setterWrapper = wrapper
+                    else {
+                        additionalAccessors.add(wrapper)
+                    }
                 }
                 else {
-                    assert(getterWrapper == null || getterWrapper === specialGetter) {
-                        "Getter accessor isn't expected to be reassigned (old: $getterWrapper, new: $wrapper)"
+                    if (getterWrapper == null || getterWrapper == specialGetter) {
+                        getterWrapper = wrapper
                     }
-
-                    getterWrapper = wrapper
+                    else {
+                        additionalAccessors.add(wrapper)
+                    }
                 }
             }
-
         }
 
         val backingField = getLightClassBackingField(jetDeclaration)
-        return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField)
+        return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField, additionalAccessors)
     }
 
     public fun buildLightTypeParameterList(
@@ -325,20 +342,19 @@ public object LightClassUtil {
         return builder
     }
 
-    public class PropertyAccessorsPsiMethods(public val getter: PsiMethod?, public val setter: PsiMethod?, public val backingField: PsiField?) : Iterable<PsiMethod> {
-        private val accessors = ArrayList<PsiMethod>(2)
+    public class PropertyAccessorsPsiMethods(public val getter: PsiMethod?,
+                                             public val setter: PsiMethod?,
+                                             public val backingField: PsiField?,
+                                             additionalAccessors: List<PsiMethod>) : Iterable<PsiMethod> {
+        private val allMethods = arrayListOf<PsiMethod>()
+        val allDeclarations = arrayListOf<PsiNamedElement>()
 
         init {
-            if (getter != null) {
-                accessors.add(getter)
-            }
-            if (setter != null) {
-                accessors.add(setter)
-            }
+            listOf(getter, setter).filterNotNullTo(allMethods)
+            listOf<PsiNamedElement?>(getter, setter, backingField).filterNotNullTo(allDeclarations)
+            allDeclarations.addAll(additionalAccessors)
         }
 
-        override fun iterator(): Iterator<PsiMethod> {
-            return accessors.iterator()
-        }
+        override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()
     }
 }

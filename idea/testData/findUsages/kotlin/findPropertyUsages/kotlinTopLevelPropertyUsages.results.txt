@@ -4,3 +4,6 @@
 [kotlinTopLevelPropertyUsages.2.java] Unclassified usage (7: 53) System.out.println("foo = " + ServerPackage.getFoo());
 [kotlinTopLevelPropertyUsages.2.java] Unclassified usage (8: 55) System.out.println("length: " + ServerPackage.getFoo().length());
 [kotlinTopLevelPropertyUsages.2.java] Unclassified usage (9: 23) ServerPackage.setFoo("");
+[kotlinTopLevelPropertyUsages.3.java] Unclassified usage (7: 72) System.out.println("foo = " + KotlinTopLevelPropertyUsages_0Kt.getFoo());
+[kotlinTopLevelPropertyUsages.3.java] Unclassified usage (8: 74) System.out.println("length: " + KotlinTopLevelPropertyUsages_0Kt.getFoo().length());
+[kotlinTopLevelPropertyUsages.3.java] Unclassified usage (9: 42) KotlinTopLevelPropertyUsages_0Kt.setFoo("");
