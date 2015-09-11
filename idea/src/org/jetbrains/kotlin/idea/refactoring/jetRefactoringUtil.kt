@@ -137,13 +137,20 @@ public inline fun JetFile.createTempCopy(textTransform: (String) -> String): Jet
 public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<JetElement> {
     val containers = ArrayList<JetElement>()
 
-    var element: PsiElement? = if (strict) getParent() else this
-    while (element != null) {
-        when (element) {
-            is JetBlockExpression, is JetClassBody, is JetFile -> containers.add(element as JetElement)
+    var objectFound = false
+    val parents = if (strict) parents else parentsWithSelf
+    for (element in parents) {
+        val isValidContainer = when (element) {
+            is JetFile -> true
+            is JetClassBody -> !objectFound || element.parent is JetObjectDeclaration
+            is JetBlockExpression -> !objectFound
+            else -> false
         }
+        if (!isValidContainer) continue
 
-        element = element.getParent()
+        containers.add(element as JetElement)
+
+        ((element as? JetClassBody)?.parent as? JetObjectDeclaration)?.let { objectFound = true }
     }
 
     return containers
