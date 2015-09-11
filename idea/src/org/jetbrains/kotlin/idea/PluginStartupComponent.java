@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,10 @@ import java.io.IOException;
 
 public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
+
+    public static PluginStartupComponent getInstance() {
+        return ApplicationManager.getApplication().getComponent(PluginStartupComponent.class);
+    }
 
     @Override
     @NotNull

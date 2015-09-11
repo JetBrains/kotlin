@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.PluginStartupComponent;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -58,6 +59,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForOutputDirectory;
     private JTextField outputDirectory;
     private JCheckBox copyRuntimeFilesCheckBox;
+    private JCheckBox keepAliveCheckBox;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
@@ -109,6 +111,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
                ComparingUtils.isModified(incrementalCompilationCheckBox, compilerWorkspaceSettings.getIncrementalCompilationEnabled()) ||
+               ComparingUtils.isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()) ||
 
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
@@ -124,6 +127,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         compilerWorkspaceSettings.setIncrementalCompilationEnabled(incrementalCompilationCheckBox.isSelected());
 
+        boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
+        compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
+        if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
+            PluginStartupComponent.getInstance().resetAliveFlag();
+        }
+
         k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
         k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
@@ -137,6 +146,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
         incrementalCompilationCheckBox.setSelected(compilerWorkspaceSettings.getIncrementalCompilationEnabled());
+        keepAliveCheckBox.setSelected(compilerWorkspaceSettings.getEnableDaemon());
 
         generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourceMap);
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
