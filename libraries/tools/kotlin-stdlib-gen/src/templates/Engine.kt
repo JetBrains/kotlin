@@ -1,5 +1,6 @@
 package templates
 
+import generators.SourceFile
 import templates.Family.*
 import templates.Family.Collections
 import java.io.StringReader
@@ -57,8 +58,9 @@ enum class PrimitiveType {
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
+class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: SourceFile)
 
-class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
+class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     open class SpecializedProperty<TKey: Any, TValue : Any>() {
         private val values = HashMap<TKey?, TValue>()
@@ -165,6 +167,36 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         buildPrimitives.addAll(p.toList())
     }
 
+    fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
+        return families
+                .sortedBy { it.name() }
+                .filter { buildFamilies.contains(it) }
+                .flatMap { family -> instantiate(family) }
+    }
+
+    fun instantiate(f: Family): List<ConcreteFunction> {
+        val onlyPrimitives = buildFamilyPrimitives[f]
+
+        if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
+            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.name() }
+                    .map { primitive -> ConcreteFunction( { build(it, f, primitive) }, sourceFileFor(f) ) }
+        } else {
+            return listOf(ConcreteFunction( { build(it, f, null) }, sourceFileFor(f) ))
+        }
+    }
+
+    private fun sourceFileFor(f: Family) = getDefaultSourceFile(f)
+
+    private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
+        Iterables, Collections, Lists -> SourceFile.Collections
+        Sequences -> SourceFile.Sequences
+        Sets -> SourceFile.Sets
+        Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
+        ArraysOfObjects, ArraysOfObjectsSubtype, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
+        Maps -> SourceFile.Maps
+        Strings -> SourceFile.Strings
+        Primitives, Generic -> SourceFile.Numbers
+    }
 
     fun build(vararg families: Family = Family.values()): String {
         val builder = StringBuilder()
@@ -185,7 +217,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         }
     }
 
-    fun build(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
+    fun build(builder: Appendable, f: Family, primitive: PrimitiveType?) {
         val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
         fun renderType(expression: String, receiver: String): String {
@@ -368,7 +400,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         builder.append("\n")
     }
 
-    public override fun compareTo(other: GenericFunction): Int = this.signature.compareTo(other.signature)
 }
 
 fun f(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
