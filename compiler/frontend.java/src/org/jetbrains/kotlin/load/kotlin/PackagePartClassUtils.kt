@@ -36,7 +36,7 @@ public object PackagePartClassUtils {
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
 
-    private @JvmStatic fun getPartClassName(str: String): String =
+    public @JvmStatic fun getPartClassName(str: String): String =
             if (str.isEmpty())
                 "_$PART_CLASS_NAME_SUFFIX"
             else
