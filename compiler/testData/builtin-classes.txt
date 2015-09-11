@@ -283,7 +283,7 @@ public interface Comparable</*0*/ in T> {
     public abstract fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
     public final val replaceWith: kotlin.ReplaceWith
         public final fun <get-replaceWith>(): kotlin.ReplaceWith
@@ -1235,7 +1235,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class Suppress : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) kotlin.annotation.annotation() public final class Suppress : kotlin.Annotation {
     /*primary*/ public constructor Suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val names: kotlin.Array<out kotlin.String>
         public final fun <get-names>(): kotlin.Array<out kotlin.String>
@@ -1256,7 +1256,7 @@ kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) ko
     /*primary*/ public constructor crossinline()
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class data : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class data : kotlin.Annotation {
     /*primary*/ public constructor data()
 }
 

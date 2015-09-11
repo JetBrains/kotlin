@@ -26,7 +26,7 @@ import kotlin.annotation.AnnotationTarget.*
  * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
  * for more information.
  */
-@Target(CLASSIFIER)
+@Target(CLASS)
 @MustBeDocumented
 public annotation class data
 
@@ -36,7 +36,7 @@ public annotation class data
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
-@Target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
+@Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
         LOCAL_VARIABLE, VALUE_PARAMETER)
 @MustBeDocumented
 public annotation class Deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
@@ -70,7 +70,7 @@ public annotation class Extension
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */
-@Target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
+@Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
         CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
 @Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)

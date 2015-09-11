@@ -41,7 +41,7 @@ public annotation class Transient
  * of floating point operations performed inside the method needs to be restricted in order to
  * achieve better portability.
  */
-@Target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASSIFIER)
+@Target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Strictfp
