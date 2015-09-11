@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -62,6 +63,14 @@ public object JvmFileClassUtil {
 
     public @JvmStatic fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))
+
+    public @JvmStatic fun getMultifilePackageFacadePartInfo(file: JetFile): JvmFileClassInfo {
+        val packageFqName = file.packageFqName
+        val packageFacadeFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
+        val filePartName = manglePartName(packageFacadeFqName.shortName().asString(), file.name)
+        val filePartFqName = packageFqName.child(Name.identifier(filePartName))
+        return JvmMultifileClassPartInfo(filePartFqName, packageFacadeFqName)
+    }
 
     public @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
             "${facadeName}__${PackagePartClassUtils.getFilePartShortName(fileName)}"

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
@@ -214,7 +215,7 @@ public class InlineCodegenUtil {
             @NotNull CodegenContext codegenContext,
             @NotNull DeclarationDescriptor currentDescriptor,
             @NotNull JetTypeMapper typeMapper,
-            @NotNull JvmFileClassesProvider fileClassesManager
+            @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
             PsiFile file = getContainingFile(codegenContext);
@@ -223,7 +224,7 @@ public class InlineCodegenUtil {
             if (file == null) {
                 implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
             } else {
-                implementationOwnerType = fileClassesManager.getFileClassType((JetFile) file);
+                implementationOwnerType = FileClassesPackage.getFileClassType(fileClassesProvider, (JetFile) file);
             }
 
             if (implementationOwnerType == null) {
@@ -252,7 +253,7 @@ public class InlineCodegenUtil {
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
         //noinspection ConstantConditions
-        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesManager) + "$" + suffix;
+        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesProvider) + "$" + suffix;
     }
 
     public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {

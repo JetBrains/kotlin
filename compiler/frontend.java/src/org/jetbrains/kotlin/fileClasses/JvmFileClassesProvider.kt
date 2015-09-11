@@ -23,28 +23,28 @@ import org.jetbrains.org.objectweb.asm.Type
 
 public interface JvmFileClassesProvider {
     public fun getFileClassInfo(file: JetFile): JvmFileClassInfo
-
-    public fun getFileClassFqName(file: JetFile): FqName =
-            getFileClassInfo(file).fileClassFqName
-
-    public fun getFileClassInternalName(file: JetFile): String =
-            getFileClassFqName(file).getInternalName()
-
-    public fun getFileClassType(file: JetFile): Type =
-            getFileClassFqName(file).getClassType()
-
-    public fun getFacadeClassFqName(file: JetFile): FqName =
-            getFileClassInfo(file).facadeClassFqName
-
-    public fun getFacadeClassInternalName(file: JetFile): String =
-            getFacadeClassFqName(file).getInternalName()
-
-    public fun getFacadeClassType(file: JetFile): Type =
-            getFacadeClassFqName(file).getClassType()
 }
 
-private fun FqName.getInternalName(): String =
+public fun FqName.getInternalName(): String =
         JvmClassName.byFqNameWithoutInnerClasses(this).internalName
 
-private fun FqName.getClassType(): Type =
+public fun FqName.getClassType(): Type =
         Type.getObjectType(getInternalName())
+
+public fun JvmFileClassesProvider.getFileClassFqName(file: JetFile): FqName =
+        getFileClassInfo(file).fileClassFqName
+
+public fun JvmFileClassesProvider.getFileClassInternalName(file: JetFile): String =
+        getFileClassFqName(file).getInternalName()
+
+public fun JvmFileClassesProvider.getFileClassType(file: JetFile): Type =
+        getFileClassFqName(file).getClassType()
+
+public fun JvmFileClassesProvider.getFacadeClassFqName(file: JetFile): FqName =
+        getFileClassInfo(file).facadeClassFqName
+
+public fun JvmFileClassesProvider.getFacadeClassInternalName(file: JetFile): String =
+        getFacadeClassFqName(file).getInternalName()
+
+public fun JvmFileClassesProvider.getFacadeClassType(file: JetFile): Type =
+        getFacadeClassFqName(file).getClassType()

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
@@ -295,7 +296,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
                 return implementationOwnerType;
             }
             else {
-                return fileClassesProvider.getFileClassType(element.getContainingJetFile());
+                return FileClassesPackage.getFileClassType(fileClassesProvider, element.getContainingJetFile());
             }
         }
         /*disabled cause of KT-7775

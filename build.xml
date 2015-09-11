@@ -702,6 +702,7 @@
                 <arg value="-d"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-Xmultifile-package-facades"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
                 <arg value="-module-name"/>

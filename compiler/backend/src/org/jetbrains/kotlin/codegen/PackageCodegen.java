@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -313,7 +314,7 @@ public class PackageCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
-        Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
+        Type packagePartType = FileClassesPackage.getFileClassType(state.getFileClassesProvider(), file);
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
@@ -414,7 +415,7 @@ public class PackageCodegen {
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = state.getFileClassesProvider().getFileClassType(file);
+        Type packagePartType = FileClassesPackage.getFileClassType(state.getFileClassesProvider(), file);
         CodegenContext context = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }

@@ -82,9 +82,6 @@ public object PackagePartClassUtils {
     public @JvmStatic fun fileHasTopLevelCallables(file: JetFile): Boolean =
             file.declarations.any { it is JetProperty || it is JetNamedFunction }
 
-    public @JvmStatic fun getFilesForPart(partFqName: FqName, files: Collection<JetFile>): List<JetFile> =
-            getFilesWithCallables(files).filter { getPackagePartFqName(it) == partFqName }
-
     public @JvmStatic fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))
 

@@ -40,4 +40,10 @@ public class BytecodeTextMultifileTestGenerated extends AbstractBytecodeTextTest
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersCall/");
         doTestMultiFile(fileName);
     }
+
+    @TestMetadata("partMembersInline")
+    public void testPartMembersInline() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersInline/");
+        doTestMultiFile(fileName);
+    }
 }
