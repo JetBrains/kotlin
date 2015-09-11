@@ -61,12 +61,19 @@ public class LazyJavaPackageScope(
 
     private val partToFacade = c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()
-        for (kotlinClass in kotlinBinaryClasses()) {
+        kotlinClasses@for (kotlinClass in kotlinBinaryClasses()) {
             val header = kotlinClass.classHeader
-            if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) {
-                val partName = kotlinClass.classId.shortClassName.asString()
-                val facadeName = header.multifileClassName ?: ""
-                result[partName] = facadeName
+            when (header.kind ) {
+                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                    val partName = kotlinClass.classId.shortClassName.asString()
+                    val facadeName = header.multifileClassName ?: continue@kotlinClasses
+                    result[partName] = facadeName
+                }
+                KotlinClassHeader.Kind.FILE_FACADE -> {
+                    val fileFacadeName = kotlinClass.classId.shortClassName.asString()
+                    result[fileFacadeName] = fileFacadeName
+                }
+                else -> {}
             }
         }
         result
