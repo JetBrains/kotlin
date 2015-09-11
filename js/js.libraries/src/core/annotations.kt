@@ -19,7 +19,7 @@ package kotlin.js
 import kotlin.annotation.AnnotationTarget.*
 
 native
-@Target(CLASSIFIER, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER)
 public annotation class native(public val name: String = "")
 
 native
@@ -35,7 +35,7 @@ native
 public annotation class nativeInvoke
 
 native
-@Target(CLASSIFIER, FUNCTION, PROPERTY)
+@Target(CLASS, FUNCTION, PROPERTY)
 public annotation class library(public val name: String = "")
 
 native
@@ -44,6 +44,6 @@ public annotation class enumerable()
 
 // TODO make it "internal" or "fake"
 native
-@Target(CLASSIFIER)
+@Target(CLASS)
 deprecated("Do not use this annotation: it is for internal use only")
 public annotation class marker

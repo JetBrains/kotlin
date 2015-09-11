@@ -24,7 +24,6 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    CLASSIFIER("class"),                       // deprecated: migrates to CLASS
     CLASS("class"),                            // includes CLASS_ONLY, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
@@ -80,25 +79,25 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
         public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
         public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
-            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS, CLASSIFIER)
+            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
                 if (descriptor.isInner) {
-                    listOf(INNER_CLASS, CLASS, CLASSIFIER)
+                    listOf(INNER_CLASS, CLASS)
                 }
                 else if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS)
                 }
                 else {
-                    listOf(CLASS_ONLY, CLASS, CLASSIFIER)
+                    listOf(CLASS_ONLY, CLASS)
                 }
-            ClassKind.OBJECT -> listOf(OBJECT, CLASS, CLASSIFIER)
-            ClassKind.INTERFACE -> listOf(INTERFACE, CLASS, CLASSIFIER)
+            ClassKind.OBJECT -> listOf(OBJECT, CLASS)
+            ClassKind.INTERFACE -> listOf(INTERFACE, CLASS)
             ClassKind.ENUM_CLASS ->
                 if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS)
                 }
                 else {
-                    listOf(ENUM_CLASS, CLASS, CLASSIFIER)
+                    listOf(ENUM_CLASS, CLASS)
                 }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
