@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -32,7 +32,7 @@ public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
     public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {
         if (symbol instanceof JetElement && symbol.getContainingFile() instanceof JetFile) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement)symbol);
+            BindingContext bindingContext = ResolutionUtils.analyze((JetElement)symbol);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
             if (descriptor instanceof CallableDescriptor) {
                 JetType type = ((CallableDescriptor) descriptor).getReturnType();

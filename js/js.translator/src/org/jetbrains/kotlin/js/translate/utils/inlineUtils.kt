@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("InlineUtils")
+
 package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*

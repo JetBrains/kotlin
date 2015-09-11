@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 val DECAPITALIZED_DEPRECATED_ANNOTATIONS = arrayOf(
-        "Deprecated", "Extension", "Suppress", "Throws",
+        "Deprecated", "Extension", "Suppress",
         "jvm.Volatile", "jvm.Transient", "jvm.Strictfp", "jvm.Synchronized",
         "jvm.JvmOverloads", "jvm.JvmName", "jvm.JvmStatic", "annotation.Target"
 ).map { FqName("kotlin.$it") }.toSet()

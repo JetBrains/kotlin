@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -137,7 +137,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolvePackage.analyze(entry);
+                BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
@@ -159,7 +159,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetExpression.class);
                 assert expression != null : "HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.analyze(expression);
+                BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
                 JetFunction hasNextFunction = (JetFunction) DescriptorToSourceUtils
@@ -180,7 +180,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
                 assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.analyze(expression);
+                BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
                 PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
@@ -200,7 +200,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
 
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 if (function != null) {
-                    FunctionDescriptor descriptor = (FunctionDescriptor)ResolvePackage.resolveToDescriptor(function);
+                    FunctionDescriptor descriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(function);
 
                     JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
                     if (matchingReturnType != null) {

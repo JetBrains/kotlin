@@ -37,7 +37,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -163,7 +163,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             elementText = ((JetFile) element).getName();
         }
         else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
@@ -194,11 +195,11 @@ public open class JetChangeInfo(
             buffer.append(name)
 
             if (newVisibility != defaultVisibility) {
-                buffer.append(' ').append(newVisibility).append(' ')
+                buffer.append(' ').append(newVisibility).append(" constructor ")
             }
         }
         else {
-            if (newVisibility != defaultVisibility) {
+            if (!DescriptorUtils.isLocal(inheritedCallable.originalCallableDescriptor) && newVisibility != defaultVisibility) {
                 buffer.append(newVisibility).append(' ')
             }
 

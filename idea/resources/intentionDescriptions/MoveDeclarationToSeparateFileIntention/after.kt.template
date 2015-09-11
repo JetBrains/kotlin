@@ -1,0 +1,13 @@
+// File: foo/bar/myFile.kt
+package foo.bar2
+
+fun test() {
+
+}
+
+// File: foo/bar/test.kt
+package foo.bar2
+
+class Test {
+
+}

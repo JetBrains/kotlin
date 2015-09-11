@@ -35,7 +35,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getFunctionDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.setInlineCallMetadata;
+import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator.getConstant;
 

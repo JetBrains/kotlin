@@ -19,32 +19,37 @@ package org.jetbrains.kotlin.daemon
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.CliBaseTest
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.DaemonJVMOptions
-import org.jetbrains.kotlin.rmi.DaemonOptions
+import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
-
-val KOTLIN_DAEMON_TEST_PORT = 19753
+import java.io.IOException
+import java.util.*
 
 public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val daemonOptions = DaemonOptions(port = KOTLIN_DAEMON_TEST_PORT)
-    val daemonLaunchingOptions = DaemonJVMOptions()
+    val daemonOptions by lazy { DaemonOptions(runFilesPath = tmpdir.absolutePath) }
+    val daemonJVMOptions by lazy { DaemonJVMOptions() }
     val compilerId by lazy { CompilerId.makeCompilerId( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
                                                         File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }
 
     private fun compileOnDaemon(args: Array<out String>): CompilerResults {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.err, autostart = true, checkId = true)
-        TestCase.assertNotNull("failed to connect daemon", daemon)
-        val strm = ByteArrayOutputStream()
-        val code = KotlinCompilerClient.compile(daemon!!, args, strm)
-        return CompilerResults(code, strm.toString())
+        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
+        try {
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
+            TestCase.assertNotNull("failed to connect daemon", daemon)
+            val strm = ByteArrayOutputStream()
+            val code = KotlinCompilerClient.compile(daemon!!, args, strm)
+            return CompilerResults(code, strm.toString())
+        }
+        finally {
+            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
+        }
     }
 
     private fun runDaemonCompilerTwice(logName: String, vararg arguments: String): Unit {
@@ -72,5 +77,34 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         runDaemonCompilerTwice("hello.compile", "-include-runtime", File(getTestBaseDir(), "hello.kt").absolutePath, "-d", jar)
         run("hello.run", "-cp", jar, "Hello.HelloPackage")
+    }
+
+    public fun testDaemonJvmOptionsParsing() {
+        val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
+        try {
+            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
+            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false)
+            TestCase.assertEquals("200m", opts.maxMemory)
+            TestCase.assertEquals("10k", opts.maxPermSize)
+            TestCase.assertEquals("100", opts.reservedCodeCacheSize)
+            TestCase.assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
+        }
+        finally {
+            backupJvmOptions?.let { System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, it) }
+        }
+    }
+
+    public fun testDaemonOptionsParsing() {
+        val backupJvmOptions = System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)
+        try {
+            System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, "runFilesPath=abcd,clientAliveFlagPath=efgh,autoshutdownIdleSeconds=1111")
+            val opts = configureDaemonOptions()
+            TestCase.assertEquals("abcd", opts.runFilesPath)
+            TestCase.assertEquals("efgh", opts.clientAliveFlagPath)
+            TestCase.assertEquals(1111, opts.autoshutdownIdleSeconds)
+        }
+        finally {
+            backupJvmOptions?.let { System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, it) }
+        }
     }
 }

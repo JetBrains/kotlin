@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectInstances;
+import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
 import static org.junit.Assert.*;
 

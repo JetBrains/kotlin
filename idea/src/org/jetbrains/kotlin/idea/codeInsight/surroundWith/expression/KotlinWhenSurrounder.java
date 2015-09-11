@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetWhenCondition;
 import org.jetbrains.kotlin.psi.JetWhenEntry;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -70,7 +69,7 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     }
 
     private String getCodeTemplate(JetExpression expression) {
-        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type != null) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_CLASS) {

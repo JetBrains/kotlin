@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
@@ -28,7 +28,7 @@ public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRend
     public String getElementText(PsiElement element) {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) element;
-            DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(function);
+            DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(function);
             return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }
         return super.getElementText(element);

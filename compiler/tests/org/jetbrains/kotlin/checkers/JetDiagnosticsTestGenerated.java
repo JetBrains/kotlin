@@ -13167,6 +13167,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("elvisExclExcl.kt")
+            public void testElvisExclExcl() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisExclExcl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elvisExclExclMerge.kt")
+            public void testElvisExclExclMerge() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisExclExclMerge.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elvisExclExclPlatform.kt")
+            public void testElvisExclExclPlatform() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisExclExclPlatform.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("elvisNothingRHS.kt")
             public void testElvisNothingRHS() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisNothingRHS.kt");

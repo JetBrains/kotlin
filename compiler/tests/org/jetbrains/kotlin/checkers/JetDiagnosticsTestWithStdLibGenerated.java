@@ -763,6 +763,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("ea70880_illegalJvmName.kt")
+        public void testEa70880_illegalJvmName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/ea70880_illegalJvmName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt2082.kt")
         public void testKt2082() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/kt2082.kt");

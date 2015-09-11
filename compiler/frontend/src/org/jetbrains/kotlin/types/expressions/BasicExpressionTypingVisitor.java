@@ -1173,10 +1173,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         JetType rightType = rightTypeInfo.getType();
 
-        DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
-        if (leftType != null && rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable()) {
-            DataFlowValue value = createDataFlowValue(left, leftType, context);
-            dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
+        // Only left argument DFA is taken into account here: we cannot be sure that right argument is executed
+        DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getInfo(call.getValueArguments().get(1));
+        if (leftType != null) {
+            DataFlowValue leftValue = createDataFlowValue(left, leftType, context);
+            DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
+            // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
+            if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
+                || !rightDataFlowInfo.getNullability(leftValue).canBeNull()) {
+                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.NULL);
+            }
         }
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();
         if (type == null || rightType == null) return TypeInfoFactoryPackage.noTypeInfo(dataFlowInfo);

@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.addRemoveModifier.*
+import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
@@ -31,16 +32,29 @@ public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
 
     override fun getContainingClassOrObject() = getParent() as JetClassOrObject
 
+    private fun getOrCreateConstructorKeyword(): PsiElement {
+        return getConstructorKeyword() ?: addBefore(JetPsiFactory(this).createConstructorKeyword(), valueParameterList!!)
+    }
+
     override fun addModifier(modifier: JetModifierKeywordToken) {
-        val modifierList = getModifierList()
+        val modifierList = modifierList
         if (modifierList != null) {
             addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD)
+            if (this.modifierList == null) {
+                getConstructorKeyword()?.delete()
+            }
         }
         else {
             if (modifier == JetTokens.PUBLIC_KEYWORD) return
-            val parameterList = getValueParameterList()!!
-            val newModifierList = JetPsiFactory(getProject()).createModifierList(modifier)
-            addBefore(newModifierList, parameterList)
+            val newModifierList = JetPsiFactory(this).createModifierList(modifier)
+            addBefore(newModifierList, getOrCreateConstructorKeyword())
+        }
+    }
+
+    override fun removeModifier(modifier: JetModifierKeywordToken) {
+        super.removeModifier(modifier)
+        if (modifierList == null) {
+            getConstructorKeyword()?.delete()
         }
     }
 

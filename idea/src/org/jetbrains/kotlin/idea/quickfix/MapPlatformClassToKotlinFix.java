@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -80,7 +80,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        BindingContext context = ResolvePackage.analyzeFully(file);
+        BindingContext context = ResolutionUtils.analyzeFully(file);
         Iterable<Diagnostic> diagnostics = context.getDiagnostics();
         List<JetImportDirective> imports = new ArrayList<JetImportDirective>();
         List<JetUserType> usages = new ArrayList<JetUserType>();
@@ -194,7 +194,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 JetReferenceExpression typeExpr = getImportOrUsageFromDiagnostic(diagnostic);
                 if (typeExpr == null) return null;
 
-                BindingContext context = ResolvePackage.analyze(typeExpr);
+                BindingContext context = ResolutionUtils.analyze(typeExpr);
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 

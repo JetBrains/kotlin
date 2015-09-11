@@ -47,7 +47,8 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
@@ -56,7 +57,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
 import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.UtilPackage;
+import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -73,7 +74,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.*;
@@ -198,8 +199,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 }
         );
         if (body != null) {
-            final DeclarationDescriptor callerDescriptor = ResolvePackage.resolveToDescriptor(element);
-            final BindingContext context = ResolvePackage.analyze(body);
+            final DeclarationDescriptor callerDescriptor = ResolutionUtils.resolveToDescriptor(element);
+            final BindingContext context = ResolutionUtils.analyze(body);
             body.accept(
                     new JetTreeVisitorVoid() {
                         @Override
@@ -351,12 +352,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetFunction jetFunction = (JetFunction) functionUsageInfo.getDeclaration();
         JetExpression body = jetFunction.getBodyExpression();
         if (body != null) {
-            body.accept(visitor, ResolvePackage.analyze(body, BodyResolveMode.FULL));
+            body.accept(visitor, ResolutionUtils.analyze(body, BodyResolveMode.FULL));
         }
         for (JetParameter parameter : jetFunction.getValueParameters()) {
             JetExpression defaultValue = parameter.getDefaultValue();
             if (defaultValue != null) {
-                defaultValue.accept(visitor, ResolvePackage.analyze(defaultValue, BodyResolveMode.FULL));
+                defaultValue.accept(visitor, ResolutionUtils.analyze(defaultValue, BodyResolveMode.FULL));
             }
         }
     }
@@ -432,7 +433,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement method = changeInfo.getMethod();
         if (!RefactoringPackage.isTrueJavaMethod(method)) return;
 
-        FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+        if (((PsiMethod) method).getContainingClass() == null) return;
+
+        FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
         assert methodDescriptor != null;
 
         DeclarationDescriptor containingDescriptor = methodDescriptor.getContainingDeclaration();
@@ -456,7 +459,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetExpression argExpression = arguments.get(0).getArgumentExpression();
             if (!(argExpression instanceof JetFunctionLiteralExpression)) continue;
 
-            BindingContext context = ResolvePackage.analyze(callExpression, BodyResolveMode.FULL);
+            BindingContext context = ResolutionUtils.analyze(callExpression, BodyResolveMode.FULL);
 
             JetFunctionLiteral functionLiteral = ((JetFunctionLiteralExpression) argExpression).getFunctionLiteral();
             FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
@@ -601,13 +604,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
-        BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
+        BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
         CallableDescriptor oldDescriptor = ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo);
         DeclarationDescriptor containingDeclaration = oldDescriptor.getContainingDeclaration();
 
         JetScope parametersScope = null;
         if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
-            parametersScope = UtilsPackage.asJetScope(((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution());
+            parametersScope = ScopeUtilsKt.asJetScope(((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution());
         else if (function instanceof JetFunction)
             parametersScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getBodyScope((JetFunction) function, bindingContext);
 
@@ -617,8 +620,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? UtilPackage.getAllAccessibleFunctions(callableScope, newName)
-                                                                 : UtilPackage.getAllAccessibleVariables(callableScope, newName);
+                                                                 ? ScopeUtils.getAllAccessibleFunctions(callableScope, newName)
+                                                                 : ScopeUtils.getAllAccessibleVariables(callableScope, newName);
             for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;
 
@@ -641,7 +644,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
             if (parametersScope != null) {
                 if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
-                    for (VariableDescriptor property : UtilPackage.getVariablesFromImplicitReceivers(parametersScope, Name.identifier(parameterName))) {
+                    for (VariableDescriptor property : ScopeUtils.getVariablesFromImplicitReceivers(parametersScope, Name.identifier(parameterName))) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
                         if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof JetParameterList)) {
@@ -673,7 +676,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (!(usageInfo instanceof KotlinCallerUsage)) continue;
 
             JetNamedDeclaration caller = (JetNamedDeclaration) usageInfo.getElement();
-            DeclarationDescriptor callerDescriptor = ResolvePackage.resolveToDescriptor(caller);
+            DeclarationDescriptor callerDescriptor = ResolutionUtils.resolveToDescriptor(caller);
 
             findParameterDuplicationInCaller(result, changeInfo, caller, callerDescriptor);
         }
@@ -727,7 +730,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (usageInfo.getElement() instanceof KDocName) continue; // TODO support converting parameter to receiver in KDoc
 
             JetExpression originalExpr = (JetExpression) usageInfo.getElement();
-            JetScope scope = ResolvePackage.analyze(originalExpr, BodyResolveMode.FULL)
+            JetScope scope = ResolutionUtils.analyze(originalExpr, BodyResolveMode.FULL)
                     .get(BindingContext.RESOLUTION_SCOPE, originalExpr);
             if (scope == null) continue;
 
@@ -806,7 +809,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetTypeReference receiverTypeRef = psiFactory.createType(newReceiverInfo.getCurrentTypeText());
             TypeRefHelpersPackage.setReceiverTypeReference(functionWithReceiver, receiverTypeRef);
             //noinspection ConstantConditions
-            BindingContext newContext = ResolvePackage.analyze(functionWithReceiver.getBodyExpression(), BodyResolveMode.FULL);
+            BindingContext newContext = ResolutionUtils.analyze(functionWithReceiver.getBodyExpression(), BodyResolveMode.FULL);
 
             //noinspection ConstantConditions
             int originalOffset = ((JetNamedFunction) callable).getBodyExpression().getTextOffset();
@@ -999,7 +1002,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             OriginalJavaMethodDescriptorWrapper descriptorWrapper = getOriginalJavaMethodDescriptorWrapper(usages);
             if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true;
 
-            FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+            FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
             assert methodDescriptor != null;
             descriptorWrapper.originalJavaMethodDescriptor =
                     new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));

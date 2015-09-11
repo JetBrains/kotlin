@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("ImportsUtils")
+
 package org.jetbrains.kotlin.idea.imports
 
 import org.jetbrains.kotlin.descriptors.*

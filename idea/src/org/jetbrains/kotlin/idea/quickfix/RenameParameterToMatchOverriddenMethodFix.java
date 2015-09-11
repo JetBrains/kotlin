@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
@@ -49,7 +49,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
             return false;
         }
 
-        BindingContext context = ResolvePackage.analyze(parameter);
+        BindingContext context = ResolutionUtils.analyze(parameter);
         VariableDescriptor parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter);
         if (parameterDescriptor == null) {
             return false;

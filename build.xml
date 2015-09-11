@@ -202,8 +202,8 @@
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
-            <include name="compiler/rmi/rmi-server/src"/>
-            <include name="compiler/rmi/rmi-interface/src"/>
+            <fileset dir="compiler/rmi/rmi-server/src"/>
+            <fileset dir="compiler/rmi/rmi-interface/src"/>
             <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>

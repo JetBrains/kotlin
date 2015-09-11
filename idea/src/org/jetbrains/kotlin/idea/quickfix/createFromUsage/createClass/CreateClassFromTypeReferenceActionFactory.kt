@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
 import java.util.Collections
 
-public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<JetUserType>(true) {
+public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<JetUserType>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetUserType? {
         return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetUserType>())
     }

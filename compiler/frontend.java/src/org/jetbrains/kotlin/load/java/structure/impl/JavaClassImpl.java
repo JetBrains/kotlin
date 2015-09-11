@@ -122,7 +122,14 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @Override
     @NotNull
     public Collection<JavaConstructor> getConstructors() {
-        return constructors(getPsi().getConstructors());
+        return constructors(KotlinPackage.filter(getPsi().getConstructors(), new Function1<PsiMethod, Boolean>() {
+            @Override
+            public Boolean invoke(PsiMethod method) {
+                // See for example org.jetbrains.plugins.scala.lang.psi.light.ScFunctionWrapper,
+                // which is present in getConstructors(), but its isConstructor() returns false
+                return method.isConstructor();
+            }
+        }));
     }
 
     @Override

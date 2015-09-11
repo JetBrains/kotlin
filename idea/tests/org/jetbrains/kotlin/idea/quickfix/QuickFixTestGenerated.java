@@ -4889,6 +4889,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noDefaultValuesInOverride.kt")
+            public void testNoDefaultValuesInOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/noDefaultValuesInOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noOpenSuperFunction.kt")
             public void testNoOpenSuperFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/noOpenSuperFunction.kt");

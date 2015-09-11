@@ -33,11 +33,13 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.JetType
 
-fun JetCallableDeclaration.setType(type: JetType) {
+fun JetCallableDeclaration.setType(type: JetType, shortenReferences: Boolean = true) {
     if (type.isError()) return
     val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     setTypeReference(typeReference)
-    ShortenReferences.DEFAULT.process(getTypeReference()!!)
+    if (shortenReferences) {
+        ShortenReferences.DEFAULT.process(getTypeReference()!!)
+    }
 }
 
 fun JetCallableDeclaration.setReceiverType(type: JetType) {

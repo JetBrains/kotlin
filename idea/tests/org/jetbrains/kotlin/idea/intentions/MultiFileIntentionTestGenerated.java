@@ -35,6 +35,24 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("moveDeclarationToSeparateFile/moveClassToExistingFile/moveClassToExistingFile.test")
+    public void testMoveDeclarationToSeparateFile_moveClassToExistingFile_MoveClassToExistingFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveClassToExistingFile/moveClassToExistingFile.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveDeclarationToSeparateFile/moveClassToFile/moveClassToFile.test")
+    public void testMoveDeclarationToSeparateFile_moveClassToFile_MoveClassToFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveClassToFile/moveClassToFile.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveDeclarationToSeparateFile/moveSingleToFile/moveSingleToFile.test")
+    public void testMoveDeclarationToSeparateFile_moveSingleToFile_MoveSingleToFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveSingleToFile/moveSingleToFile.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test")
     public void testMoveFileToPackageMatchingDirectory_moveToDefaultDirectory_MoveToDefaultDirectory() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test");

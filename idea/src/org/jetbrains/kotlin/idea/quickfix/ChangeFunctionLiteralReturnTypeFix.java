@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -57,7 +57,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         this.type = type;
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
-        BindingContext context = ResolvePackage.analyzeFully(functionLiteralExpression.getContainingJetFile());
+        BindingContext context = ResolutionUtils.analyzeFully(functionLiteralExpression.getContainingJetFile());
         JetType functionLiteralType = context.getType(functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -116,7 +116,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolvePackage.analyze(entry);
+                BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
@@ -138,7 +138,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
                 if (diagnostic.getPsiElement() instanceof JetProperty) {
                     JetProperty property = (JetProperty) diagnostic.getPsiElement();
-                    DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(property);
+                    DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(property);
                     if (!(descriptor instanceof PropertyDescriptor)) return actions;
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 

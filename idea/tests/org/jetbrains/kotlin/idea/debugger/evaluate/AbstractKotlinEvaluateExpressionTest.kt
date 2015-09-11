@@ -229,6 +229,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label"
                                                     + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext!!))})\n")
+                is MessageDescriptor ->       logDescriptor(descriptor, "$curIndent          - $label\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
             return false

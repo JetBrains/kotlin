@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
@@ -42,6 +43,10 @@ public fun StorageComponentContainer.configureModule(
     useInstance(platform)
 
     platform.platformConfigurator.configure(this)
+
+    for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
+        extension.addDeclarations(this, platform)
+    }
 }
 
 public fun StorageComponentContainer.configureModule(

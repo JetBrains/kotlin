@@ -20,11 +20,13 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
-import org.jetbrains.kotlin.idea.debugger.filter.FilterPackage;
+import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.decompiler.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
-import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.PathUtil;
+
+import java.io.File;
+import java.io.IOException;
 
 public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
@@ -42,7 +44,7 @@ public class PluginStartupComponent implements ApplicationComponent {
         JarUserDataManager.INSTANCE$.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE$);
         JarUserDataManager.INSTANCE$.register(HasCompiledKotlinInJar.INSTANCE$);
 
-        FilterPackage.addKotlinStdlibDebugFilterIfNeeded();
+        DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
     }
 
     private static void registerPathVariable() {
@@ -50,8 +52,33 @@ public class PluginStartupComponent implements ApplicationComponent {
         macros.setMacro(KOTLIN_BUNDLED, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
     }
 
-    @Override
-    public void disposeComponent() {
-        KotlinCompilerClient.Companion.shutdownCompileService();
+    private String aliveFlagPath;
+
+    public synchronized String getAliveFlagPath() {
+        if (this.aliveFlagPath == null) {
+            try {
+                File flagFile = File.createTempFile("kotlin-idea-", "-is-running");
+                flagFile.deleteOnExit();
+                this.aliveFlagPath = flagFile.getAbsolutePath();
+            }
+            catch (IOException e) {
+                this.aliveFlagPath = "";
+            }
+        }
+        return this.aliveFlagPath;
     }
+
+    public synchronized void resetAliveFlag() {
+        if (this.aliveFlagPath != null) {
+            File flagFile = new File(this.aliveFlagPath);
+            if (flagFile.exists()) {
+                if (flagFile.delete()) {
+                    this.aliveFlagPath = null;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void disposeComponent() {}
 }

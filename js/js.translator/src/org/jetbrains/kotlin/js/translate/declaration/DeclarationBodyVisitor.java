@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.PropertyTranslatorPackage;
+import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.PropertyTranslatorKt;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator;
@@ -117,7 +117,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitProperty(@NotNull JetProperty expression, TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
-        PropertyTranslatorPackage.translateAccessors(propertyDescriptor, expression, result, context);
+        PropertyTranslatorKt.translateAccessors(propertyDescriptor, expression, result, context);
         return null;
     }
 

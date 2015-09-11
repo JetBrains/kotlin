@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.DebugInfoUtil;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.JetCodeFragment;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -48,7 +48,7 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile && !(element instanceof JetCodeFragment)) {
             JetFile file = (JetFile) element;
             try {
-                BindingContext bindingContext = ResolvePackage.analyzeFully(file);
+                BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
                 DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
                     @Override
                     public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {

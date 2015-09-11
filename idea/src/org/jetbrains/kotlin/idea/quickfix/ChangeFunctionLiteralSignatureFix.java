@@ -24,7 +24,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
@@ -57,7 +57,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolvePackage.analyzeFully(file);
+        BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
         runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @NotNull
             @Override

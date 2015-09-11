@@ -30,12 +30,15 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
+import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
+import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -49,10 +52,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.util.ArrayList
-import java.util.Comparator
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.types.Variance
+import java.util.*
 
 class KotlinPullUpHelper(
         private val javaData: PullUpData,
@@ -365,9 +366,16 @@ class KotlinPullUpHelper(
     private fun moveToJavaClass(member: JetNamedDeclaration, substitutor: PsiSubstitutor) {
         if (!(data.targetClass is PsiClass && member.canMoveMemberToJavaClass(data.targetClass))) return
 
+        // TODO: Drop after PsiTypes in light elements are properly generated
+        if (member is JetCallableDeclaration && member.typeReference == null) {
+            val returnType = (data.memberDescriptors[member] as CallableDescriptor).returnType ?: KotlinBuiltIns.getInstance().anyType
+            returnType.anonymousObjectSuperTypeOrNull()?.let { member.setType(it, false) }
+        }
+
         val project = member.project
-        val lightMethod = member.getRepresentativeLightMethod() ?: return
         val elementFactory = JavaPsiFacade.getElementFactory(project)
+        val lightMethod = member.getRepresentativeLightMethod()!!
+
         val movedMember: PsiMember = when (member) {
             is JetProperty -> {
                 val newType = substitutor.substitute(lightMethod.returnType)
@@ -526,7 +534,12 @@ class KotlinPullUpHelper(
             }
 
             with(constructor.getValueParameterList()!!) {
-                info.usedParameters.forEach { addParameter(it) }
+                info.usedParameters.forEach {
+                    val newParameter = addParameter(it)
+                    val originalType = data.sourceClassContext[BindingContext.VALUE_PARAMETER, it]!!.type
+                    newParameter.setType(data.sourceToTargetClassSubstitutor.substitute(originalType, Variance.INVARIANT) ?: originalType, false)
+                    newParameter.typeReference!!.addToShorteningWaitSet()
+                }
             }
             targetToSourceConstructors[constructorElement]!!.forEach {
                 val superCall: JetCallElement? = when (it) {

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.name.FqName;
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
@@ -61,7 +61,7 @@ public class QuickFixUtil {
     public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(declaration);
+        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         JetType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
@@ -104,7 +104,7 @@ public class QuickFixUtil {
             @NotNull ResolvedCall<?> resolvedCall,
             @Nullable ValueArgument valueArgument
     ) {
-        PsiElement declaration = safeGetDeclaration(CallUtilPackage.getParameterForArgument(resolvedCall, valueArgument));
+        PsiElement declaration = safeGetDeclaration(CallUtilKt.getParameterForArgument(resolvedCall, valueArgument));
         return declaration instanceof JetParameter ? (JetParameter) declaration : null;
     }
 

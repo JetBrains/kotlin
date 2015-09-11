@@ -24,7 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
 import org.jetbrains.kotlin.psi.JetPrefixExpression;
@@ -41,7 +41,7 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
 
     @Override
     public boolean isApplicable(@NotNull JetExpression expression) {
-        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         return type != null && KotlinBuiltIns.isBoolean(type);
     }
 

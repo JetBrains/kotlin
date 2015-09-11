@@ -66,6 +66,9 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
     if (modifier == defaultVisibilityModifier) { // do not insert explicit 'internal' keyword (or 'public' for primary constructor)
         //TODO: code style option
         modifierToReplace?.delete()
+        if (modifierList.firstChild == null) {
+            modifierList.delete()
+        }
         return
     }
 
@@ -98,7 +101,12 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
 }
 
 internal fun removeModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
-    owner.getModifierList()?.getModifier(modifier)?.delete()
+    owner.getModifierList()?.let {
+        it.getModifier(modifier)?.delete()
+        if (it.firstChild == null) {
+            it.delete()
+        }
+    }
 }
 
 private val MODIFIERS_TO_REPLACE = mapOf(

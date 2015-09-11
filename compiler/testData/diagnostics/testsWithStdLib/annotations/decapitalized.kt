@@ -7,7 +7,7 @@ class A {
         @<!DEPRECATED_DECAPITALIZED_ANNOTATION!>jvmStatic<!> fun bar() {}
     }
 
-    <!DEPRECATED_DECAPITALIZED_ANNOTATION!>throws<!>(java.lang.RuntimeException::class)
+    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>throws<!>(java.lang.RuntimeException::class)
     <!DEPRECATED_DECAPITALIZED_ANNOTATION!>synchronized<!> fun <T> baz() {
         @<!DEPRECATED_DECAPITALIZED_ANNOTATION!>suppress<!>("UNCHECKED_CAST")
         (1 as T)

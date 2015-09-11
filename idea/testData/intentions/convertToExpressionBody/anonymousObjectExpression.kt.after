@@ -2,7 +2,7 @@ interface I {
     fun foo(): String
 }
 
-fun bar()<selection>: I</selection> = object: I {
+fun bar(): I = object<caret>: I {
     override fun foo(): String {
         return "a"
     }

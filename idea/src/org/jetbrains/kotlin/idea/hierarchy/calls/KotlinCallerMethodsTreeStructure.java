@@ -36,7 +36,7 @@ import com.intellij.util.containers.HashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
 import org.jetbrains.kotlin.idea.references.JetReference;
 import org.jetbrains.kotlin.idea.references.ReferencesPackage;
@@ -71,7 +71,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
 
         JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
 
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {

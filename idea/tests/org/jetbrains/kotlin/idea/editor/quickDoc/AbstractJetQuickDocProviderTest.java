@@ -27,14 +27,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.util.UtilPackage;
+import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 
 import java.io.File;
 import java.util.List;
 
 public abstract class AbstractJetQuickDocProviderTest extends JetLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        UtilPackage.configureWithExtraFile(myFixture, path, "_Data");
+        JetTestUtilsKt.configureWithExtraFile(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);

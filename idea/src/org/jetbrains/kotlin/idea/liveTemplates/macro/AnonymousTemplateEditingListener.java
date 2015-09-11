@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -61,7 +61,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         PsiElement name = psiFile.findElementAt(variableRange.getStartOffset());
         if (name != null && name.getParent() instanceof JetReferenceExpression) {
             JetReferenceExpression ref = (JetReferenceExpression) name.getParent();
-            DeclarationDescriptor descriptor = ResolvePackage.analyze(ref, BodyResolveMode.FULL).get(BindingContext.REFERENCE_TARGET, ref);
+            DeclarationDescriptor descriptor = ResolutionUtils.analyze(ref, BodyResolveMode.FULL).get(BindingContext.REFERENCE_TARGET, ref);
             if (descriptor instanceof ClassDescriptor) {
                 classRef = ref;
                 classDescriptor = (ClassDescriptor) descriptor;

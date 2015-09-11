@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -74,7 +74,7 @@ public class CodeInsightUtils {
 
         JetExpression expression = (JetExpression) element;
 
-        BindingContext context = ResolvePackage.analyze(expression);
+        BindingContext context = ResolutionUtils.analyze(expression);
 
         Qualifier qualifier = context.get(BindingContext.QUALIFIER, expression);
         if (qualifier != null) {

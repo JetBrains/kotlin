@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import java.util.Arrays
 import java.util.Collections
 
-public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFactory<JetSimpleNameExpression>(true) {
+public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFactory<JetSimpleNameExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
         val refExpr = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
         if (refExpr.getNonStrictParentOfType<JetTypeReference>() != null) return null

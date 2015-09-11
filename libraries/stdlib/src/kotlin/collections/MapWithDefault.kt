@@ -6,7 +6,7 @@ import kotlin.platform.platformName
 /**
  * Returns the value for the given key, or the implicit default value for this map.
  * By default no implicit value is provided for maps and a [NoSuchElementException] is thrown.
- * To create a map with implicit default value use [Map.withDefault] method.
+ * To create a map with implicit default value use [withDefault] method.
  *
  * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
  */

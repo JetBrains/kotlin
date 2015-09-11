@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -127,7 +127,7 @@ public class JetRefactoringUtil {
             @Nullable Collection<PsiElement> ignore,
             @NotNull String actionStringKey
     ) {
-        BindingContext bindingContext = ResolvePackage.analyze(declaration, BodyResolveMode.FULL);
+        BindingContext bindingContext = ResolutionUtils.analyze(declaration, BodyResolveMode.FULL);
 
         CallableDescriptor declarationDescriptor =
                 (CallableDescriptor)bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
@@ -262,7 +262,7 @@ public class JetRefactoringUtil {
         PsiElement originalDeclaration = AsJavaPackage.getUnwrapped(method);
         if (originalDeclaration instanceof JetDeclaration) {
             JetDeclaration jetDeclaration = (JetDeclaration) originalDeclaration;
-            BindingContext bindingContext = ResolvePackage.analyze(jetDeclaration, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze(jetDeclaration, BodyResolveMode.FULL);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetDeclaration);
 
             if (descriptor != null) return formatFunctionDescriptor(descriptor);
@@ -272,7 +272,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatClass(@NotNull JetClassOrObject classOrObject) {
-        BindingContext bindingContext = ResolvePackage.analyze(classOrObject, BodyResolveMode.FULL);
+        BindingContext bindingContext = ResolutionUtils.analyze(classOrObject, BodyResolveMode.FULL);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor instanceof ClassDescriptor) return formatClassDescriptor(descriptor);
@@ -422,7 +422,7 @@ public class JetRefactoringUtil {
                 }
                 if (addExpression) {
                     JetExpression expression = (JetExpression)element;
-                    BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.FULL);
+                    BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
                     JetType expressionType = bindingContext.getType(expression);
                     if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
                         expressions.add(expression);

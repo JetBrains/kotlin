@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
@@ -61,7 +61,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             JetObjectDeclaration.class);
         if (declaration == null) return;
 
-        DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(declaration);
+        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
 
         List<PsiElement> superDeclarations = findSuperDeclarations(descriptor);
 

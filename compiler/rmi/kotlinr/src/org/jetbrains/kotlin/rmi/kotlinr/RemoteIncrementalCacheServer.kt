@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.rmi.CompileService
+import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
+import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
 
 
-public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : CompileService.RemoteIncrementalCache {
+public class RemoteIncrementalCacheServer(val cache: IncrementalCache, port: Int = SOCKET_ANY_FREE_PORT) : CompileService.RemoteIncrementalCache {
 
     init {
-        UnicastRemoteObject.exportObject(this, 0)
+        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
     }
 
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()

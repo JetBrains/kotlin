@@ -19,50 +19,34 @@ package org.jetbrains.kotlin.android
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.gradle.api
 import com.android.build.gradle.BaseExtension
-import java.io.File
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 public class AndroidSubplugin : KotlinGradleSubplugin {
 
     override fun getExtraArguments(project: api.Project, task: AbstractCompile): List<SubpluginOption>? {
-        val androidExtension = project.getExtensions().getByName("android") as? BaseExtension
+        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return null
 
-        if (androidExtension == null) return null
-
-        val sourceSets = androidExtension.getSourceSets()
+        val sourceSets = androidExtension.sourceSets
         val mainSourceSet = sourceSets.getByName("main")
 
-        val resourceDirs = mainSourceSet.getRes().getSrcDirs()
-        val manifestFile = mainSourceSet.getManifest().getSrcFile()
-
-        val compileDependencies = project.getConfigurations().getByName("compile").getFiles()
-        val supportV4 = compileDependencies?.filter { it.name.startsWith("support-v4-") }?.isNotEmpty() ?: false
-        val supportV4Property = if (supportV4) "true" else "false"
+        val resourceDirs = mainSourceSet.res.srcDirs
+        val manifestFile = mainSourceSet.manifest.srcFile
 
         if (resourceDirs.isNotEmpty()) {
             val resourceDirOptions = resourceDirs.map { resourceDir ->
-                resourceDir.listFiles { it.isDirectory() && it.name.startsWith("layout") }?.forEach { task.source(it) }
-                SubpluginOption("androidRes", resourceDir.getAbsolutePath())
+                resourceDir.listFiles { it.isDirectory && it.name.startsWith("layout") }?.forEach { task.source(it) }
+                SubpluginOption("androidRes", resourceDir.absolutePath)
             }
-            return listOf(
-                    SubpluginOption("androidManifest", manifestFile.getAbsolutePath()),
-                    SubpluginOption("supportV4", supportV4Property)
-            ) + resourceDirOptions
+            return listOf(SubpluginOption("androidManifest", manifestFile.absolutePath)) + resourceDirOptions
         }
 
         return null
     }
 
-    override fun getPluginName(): String {
-        return "org.jetbrains.kotlin.android"
-    }
+    override fun getPluginName() = "org.jetbrains.kotlin.android"
 
-    override fun getGroupName(): String {
-        return "org.jetbrains.kotlin"
-    }
+    override fun getGroupName() = "org.jetbrains.kotlin"
 
-    override fun getArtifactName(): String {
-        return "kotlin-android-extensions"
-    }
+    override fun getArtifactName() = "kotlin-android-extensions"
 }

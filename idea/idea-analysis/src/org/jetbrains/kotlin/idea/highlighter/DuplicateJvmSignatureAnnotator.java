@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.JetDeclaration;
@@ -43,7 +43,7 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != JvmPlatform.INSTANCE$) return;
 
-        Diagnostics otherDiagnostics = ResolvePackage.analyzeFully((JetElement) element).getDiagnostics();
+        Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((JetElement) element).getDiagnostics();
         GlobalSearchScope moduleScope = getModuleInfo(element).contentScope();
         Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
 

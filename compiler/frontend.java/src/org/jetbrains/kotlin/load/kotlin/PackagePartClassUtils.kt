@@ -31,21 +31,21 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.util.*
 
 public object PackagePartClassUtils {
-    public @jvmStatic fun getPathHashCode(file: VirtualFile): Int =
+    public @JvmStatic fun getPathHashCode(file: VirtualFile): Int =
             file.path.toLowerCase().hashCode()
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
 
-    private @jvmStatic fun getPartClassName(str: String): String =
+    private @JvmStatic fun getPartClassName(str: String): String =
             if (str.isEmpty())
                 "_$PART_CLASS_NAME_SUFFIX"
             else
                 capitalizeAsJavaClassName(sanitizeAsJavaIdentifier(str)) + PART_CLASS_NAME_SUFFIX
 
-    private @jvmStatic fun sanitizeAsJavaIdentifier(str: String): String =
+    private @JvmStatic fun sanitizeAsJavaIdentifier(str: String): String =
             str.replace("[^\\p{L}\\p{Digit}]".toRegex(), "_")
 
-    private @jvmStatic fun capitalizeAsJavaClassName(str: String): String =
+    private @JvmStatic fun capitalizeAsJavaClassName(str: String): String =
             // NB use Locale.ENGLISH so that build is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
             if (Character.isJavaIdentifierStart(str.charAt(0)))
@@ -54,38 +54,38 @@ public object PackagePartClassUtils {
                 "_$str"
 
     @TestOnly
-    public @jvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
+    public @JvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
-    public @jvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
+    public @JvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
         val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
-    @deprecated("Migrate to JvmFileClassesProvider")
-    public @jvmStatic fun getPackagePartInternalName(file: JetFile): String =
+    @Deprecated("Migrate to JvmFileClassesProvider")
+    public @JvmStatic fun getPackagePartInternalName(file: JetFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
-    @deprecated("Migrate to JvmFileClassesProvider")
-    public @jvmStatic fun getPackagePartFqName(file: JetFile): FqName =
+    @Deprecated("Migrate to JvmFileClassesProvider")
+    public @JvmStatic fun getPackagePartFqName(file: JetFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
 
-    public @jvmStatic fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
+    public @JvmStatic fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
         val implClassName = callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
         val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
         return packageFqName.child(implClassName)
     }
 
-    public @jvmStatic fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =
+    public @JvmStatic fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =
             files.filter { fileHasTopLevelCallables(it) }
 
-    public @jvmStatic fun fileHasTopLevelCallables(file: JetFile): Boolean =
+    public @JvmStatic fun fileHasTopLevelCallables(file: JetFile): Boolean =
             file.declarations.any { it is JetProperty || it is JetNamedFunction }
 
-    public @jvmStatic fun getFilesForPart(partFqName: FqName, files: Collection<JetFile>): List<JetFile> =
+    public @JvmStatic fun getFilesForPart(partFqName: FqName, files: Collection<JetFile>): List<JetFile> =
             getFilesWithCallables(files).filter { getPackagePartFqName(it) == partFqName }
 
-    public @jvmStatic fun getFilePartShortName(fileName: String): String =
+    public @JvmStatic fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))
 
 }

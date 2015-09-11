@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -69,7 +69,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
 
     @Nullable
     private JetModifierKeywordToken findVisibilityChangeTo(JetFile file) {
-        BindingContext bindingContext = ResolvePackage.analyze(element);
+        BindingContext bindingContext = ResolutionUtils.analyze(element);
         DeclarationDescriptor descriptor;
         if (element instanceof JetParameter) {
             descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, element);

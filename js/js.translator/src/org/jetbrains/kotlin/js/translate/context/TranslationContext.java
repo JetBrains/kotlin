@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.context.ContextPackage.getNameForCapturedDescriptor;
+import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
 
 /**

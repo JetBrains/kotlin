@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
-import org.jetbrains.kotlin.util.UtilPackage;
+import org.jetbrains.kotlin.util.TypeIndexUtilKt;
 
 import java.io.IOException;
 import java.util.List;
@@ -113,7 +113,7 @@ public class IdeStubIndexService extends StubIndexService {
         if (name != null) {
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
 
-            if (UtilPackage.isProbablyNothing(stub.getPsi().getTypeReference())) {
+            if (TypeIndexUtilKt.isProbablyNothing(stub.getPsi().getTypeReference())) {
                 sink.occurrence(JetProbablyNothingFunctionShortNameIndex.getInstance().getKey(), name);
             }
         }
@@ -135,7 +135,7 @@ public class IdeStubIndexService extends StubIndexService {
         if (name != null) {
             sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), name);
 
-            if (UtilPackage.isProbablyNothing(stub.getPsi().getTypeReference())) {
+            if (TypeIndexUtilKt.isProbablyNothing(stub.getPsi().getTypeReference())) {
                 sink.occurrence(JetProbablyNothingPropertyShortNameIndex.getInstance().getKey(), name);
             }
         }

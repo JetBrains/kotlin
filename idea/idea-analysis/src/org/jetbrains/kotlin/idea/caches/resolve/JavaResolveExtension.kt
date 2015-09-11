@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("JavaResolutionUtils")
+
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*

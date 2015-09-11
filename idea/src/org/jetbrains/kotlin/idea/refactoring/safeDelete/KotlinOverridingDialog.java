@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.JetElement;
@@ -94,7 +94,7 @@ class KotlinOverridingDialog extends DialogWrapper {
     private static String formatElement(PsiElement element) {
         element = JetPsiUtil.ascendIfPropertyAccessor(element);
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
 
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (declarationDescriptor instanceof CallableMemberDescriptor) {

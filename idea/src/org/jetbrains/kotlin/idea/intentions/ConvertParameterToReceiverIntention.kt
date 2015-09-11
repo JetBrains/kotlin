@@ -45,6 +45,8 @@ public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<Jet
         }
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: JetParameter, editor: Editor) {
         val function = element.getStrictParentOfType<JetNamedFunction>() ?: return
         val parameterIndex = function.getValueParameters().indexOf(element)

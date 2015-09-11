@@ -37,6 +37,8 @@ public class CreateParameterFromUsageFix<E : JetElement>(
         return JetBundle.message("create.parameter.from.usage", parameterInfo.name)
     }
 
+    override fun startInWriteAction() = false
+
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val config = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {

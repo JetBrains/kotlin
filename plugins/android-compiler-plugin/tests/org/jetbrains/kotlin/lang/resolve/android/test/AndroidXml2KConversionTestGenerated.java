@@ -108,6 +108,18 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/supportSpecialTags/");
             doTest(fileName);
         }
+
+        @TestMetadata("unresolvedFqName")
+        public void testUnresolvedFqName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedFqName/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unresolvedWidget")
+        public void testUnresolvedWidget() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedWidget/");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("plugins/android-compiler-plugin/testData/android/converter/exceptions")

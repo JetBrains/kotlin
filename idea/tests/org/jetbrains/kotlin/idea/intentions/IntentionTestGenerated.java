@@ -2156,12 +2156,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/internal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
-            @TestMetadata("internalByDefault.kt")
-            public void testInternalByDefault() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/internalByDefault.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/simple.kt");
@@ -2348,6 +2342,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("primaryConstructorPublicByDefault.kt")
             public void testPrimaryConstructorPublicByDefault() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/primaryConstructorPublicByDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicByDefault.kt")
+            public void testPublicByDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/publicByDefault.kt");
                 doTest(fileName);
             }
 
@@ -3680,6 +3680,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class ConvertReceiverToParameter extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertReceiverToParameter() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("genericReceiver.kt")
+        public void testGenericReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/genericReceiver.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("localFun.kt")
@@ -6101,6 +6107,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class RemoveExplicitType extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveExplicitType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("notOnDefaultVisibility.kt")
+        public void testNotOnDefaultVisibility() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnDefaultVisibility.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("notOnParameterOfFunctionType.kt")

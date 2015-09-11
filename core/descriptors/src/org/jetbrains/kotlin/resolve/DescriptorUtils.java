@@ -562,8 +562,8 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static String getJvmName(@NotNull Annotations annotations) {
-        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(annotations);
+    public static String getJvmName(@NotNull Annotated annotated) {
+        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(annotated.getAnnotations());
         if (jvmNameAnnotation == null) return null;
 
         Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
@@ -573,11 +573,6 @@ public class DescriptorUtils {
         if (!(name instanceof StringValue)) return null;
 
         return ((StringValue) name).getValue();
-    }
-
-    @Nullable
-    public static String getJvmName(@NotNull Annotated annotated) {
-        return getJvmName(annotated.getAnnotations());
     }
 
     @Nullable

@@ -44,7 +44,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> JVM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_JVM_NAME = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<JetAnnotationEntry, String> ILLEGAL_JVM_NAME = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<JetAnnotationEntry> ILLEGAL_JVM_NAME = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetDeclaration> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> OVERLOADS_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);

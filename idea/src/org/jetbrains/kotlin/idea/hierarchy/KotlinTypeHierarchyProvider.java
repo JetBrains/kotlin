@@ -31,7 +31,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
@@ -69,7 +69,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             else if (target instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) target;
                 String functionName = function.getName();
-                FunctionDescriptor functionDescriptor = ResolvePackage.analyze(function)
+                FunctionDescriptor functionDescriptor = ResolutionUtils.analyze(function)
                         .get(BindingContext.FUNCTION, target);
                 if (functionDescriptor != null) {
                     JetType type = functionDescriptor.getReturnType();

@@ -541,23 +541,26 @@ private class MutableParameter(
 
         val typePredicate = and(typePredicates)
 
-        val typeList = if (defaultType.isNullabilityFlexible()) {
-            val bounds = defaultType.getCapability(javaClass<Flexibility>())
-            if (typePredicate(bounds!!.upperBound)) arrayListOf(bounds.upperBound, bounds.lowerBound) else arrayListOf(bounds.lowerBound)
+        val typeSet = if (defaultType.isFlexible()) {
+            val bounds = defaultType.getCapability(javaClass<Flexibility>())!!
+            LinkedHashSet<JetType>().apply {
+                if (typePredicate(bounds.upperBound)) add(bounds.upperBound)
+                if (typePredicate(bounds.lowerBound)) add(bounds.lowerBound)
+            }
         }
-        else arrayListOf(defaultType)
+        else linkedSetOf(defaultType)
 
-        val addNullableTypes = typeList.size() > 1
+        val addNullableTypes = defaultType.isNullabilityFlexible() && typeSet.size() > 1
         val superTypes = TypeUtils.getAllSupertypes(defaultType).filter(typePredicate)
 
         for (superType in superTypes) {
             if (addNullableTypes) {
-                typeList.add(superType.makeNullable())
+                typeSet.add(superType.makeNullable())
             }
-            typeList.add(superType)
+            typeSet.add(superType)
         }
 
-        typeList
+        typeSet.toList()
     }
 
     override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType> {

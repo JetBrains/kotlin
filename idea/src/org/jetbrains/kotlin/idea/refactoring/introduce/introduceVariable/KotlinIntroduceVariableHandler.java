@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
@@ -137,7 +137,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             return;
         }
 
-        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(expression);
+        AnalysisResult analysisResult = ResolutionUtils.analyzeAndGetResult(expression);
         final BindingContext bindingContext = analysisResult.getBindingContext();
         final JetType expressionType = bindingContext.getType(expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
@@ -208,7 +208,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         NewDeclarationNameValidator.Target.VARIABLES
                 );
                 final Collection<String> suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(
-                        expression, ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL), validator, "value");
+                        expression, ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL), validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();

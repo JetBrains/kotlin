@@ -3,4 +3,4 @@
 
 package testing
 
-val a: <caret>Bad = 12
+internal val a: <caret>Bad = 12

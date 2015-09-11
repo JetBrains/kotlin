@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.inline;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -231,14 +231,14 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private void reportInlineCycle(@NotNull JsInvocation call, @NotNull JsFunction calledFunction) {
-        MetadataPackage.setInlineStrategy(call, InlineStrategy.NOT_INLINE);
+        MetadataProperties.setInlineStrategy(call, InlineStrategy.NOT_INLINE);
         Iterator<JsCallInfo> it = inlineCallInfos.descendingIterator();
 
         while (it.hasNext()) {
             JsCallInfo callInfo = it.next();
-            PsiElement psiElement = MetadataPackage.getPsiElement(callInfo.call);
+            PsiElement psiElement = MetadataProperties.getPsiElement(callInfo.call);
 
-            CallableDescriptor descriptor = MetadataPackage.getDescriptor(callInfo.call);
+            CallableDescriptor descriptor = MetadataProperties.getDescriptor(callInfo.call);
             if (psiElement != null && descriptor != null) {
                 trace.report(Errors.INLINE_CALL_CYCLE.on(psiElement, descriptor));
             }
@@ -250,7 +250,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     public boolean hasToBeInlined(@NotNull JsInvocation call) {
-        InlineStrategy strategy = MetadataPackage.getInlineStrategy(call);
+        InlineStrategy strategy = MetadataProperties.getInlineStrategy(call);
         if (strategy == null || !strategy.isInline()) return false;
 
         return getFunctionContext().hasFunctionDefinition(call);

@@ -1,1 +1,1 @@
-class C1 protected (){}
+class C1 protected constructor(){}

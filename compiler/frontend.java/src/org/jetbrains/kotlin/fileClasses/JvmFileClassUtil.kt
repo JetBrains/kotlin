@@ -53,7 +53,7 @@ public object JvmFileClassUtil {
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))
 
     public @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
-            "1${PackagePartClassUtils.getFilePartShortName(fileName)}"
+            "${facadeName}__${PackagePartClassUtils.getFilePartShortName(fileName)}"
 
     public @JvmStatic fun parseJvmFileClass(jvmName: AnnotationDescriptor, jvmMultifileClass: AnnotationDescriptor?): ParsedJmvFileClassAnnotations? {
         val jvmNameArgument = jvmName.allValueArguments.values().singleOrNull() ?: return null

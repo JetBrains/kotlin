@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("MetadataProperties")
 
 package com.google.dart.compiler.backend.js.ast.metadata
 

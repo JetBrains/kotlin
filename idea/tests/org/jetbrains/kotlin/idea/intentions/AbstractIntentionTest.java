@@ -123,6 +123,10 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
             DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) getFile());
 
             doTestFor(pathToFile, intentionAction, fileText);
+
+            if (InTextDirectivesUtils.isDirectiveDefined(fileText, "// CHECK_ERRORS_AFTER")) {
+                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) getFile());
+            }
         }
         finally {
             if (isWithRuntime) {

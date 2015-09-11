@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
 
-import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
@@ -396,14 +396,14 @@ public final class Namer {
     @NotNull
     public JsExpression isTypeOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
-        MetadataPackage.setTypeCheck(invocation, TypeCheck.TYPEOF);
+        MetadataProperties.setTypeCheck(invocation, TypeCheck.TYPEOF);
         return invocation;
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
-        MetadataPackage.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
+        MetadataProperties.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
         return invocation;
     }
 

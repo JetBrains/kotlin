@@ -42,7 +42,7 @@ public class KotlinJavaScriptMetaFileDecompiler extends ClassFileDecompilers.Ful
     @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, DecompilerPackage.isKotlinJavaScriptInternalCompiledFile(
+        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, DecompiledUtilsKt.isKotlinJavaScriptInternalCompiledFile(
                 file));
     }
 }
