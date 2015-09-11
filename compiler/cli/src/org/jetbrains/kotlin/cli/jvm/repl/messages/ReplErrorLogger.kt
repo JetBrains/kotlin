@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.PrintWriter
 import java.io.StringWriter
-import kotlin.reflect.jvm.internal.impl.utils.UtilsPackage
 
 public class ReplErrorLogger(private val ideMode: Boolean, private val replWriter: ReplSystemOutWrapper) {
     fun logException(e: Throwable?) {
@@ -33,6 +33,6 @@ public class ReplErrorLogger(private val ideMode: Boolean, private val replWrite
             replWriter.sendInternalErrorReport(internalErrorText)
         }
 
-        throw UtilsPackage.rethrow(e ?: Throwable("null exception", e))
+        throw rethrow(e ?: Throwable("null exception", e))
     }
 }
