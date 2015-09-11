@@ -13197,6 +13197,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldExclExcl.kt")
+            public void testFieldExclExcl() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldExclExcl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fieldPlus.kt")
+            public void testFieldPlus() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldPlus.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1461.kt")
             public void testKt1461() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/kt1461.kt");

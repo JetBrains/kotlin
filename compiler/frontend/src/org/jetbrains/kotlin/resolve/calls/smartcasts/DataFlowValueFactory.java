@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
@@ -188,16 +187,16 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static IdentifierInfo createPackageInfo(Object id) {
+    private static IdentifierInfo createPackageOrClassInfo(Object id) {
         return new IdentifierInfo(id, true, false, true);
     }
 
     @NotNull
     private static IdentifierInfo combineInfo(@Nullable IdentifierInfo receiverInfo, @NotNull IdentifierInfo selectorInfo) {
-        if (selectorInfo.id == null) {
+        if (selectorInfo.id == null || receiverInfo == NO_IDENTIFIER_INFO) {
             return NO_IDENTIFIER_INFO;
         }
-        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isPackage) {
+        if (receiverInfo == null || receiverInfo.isPackage) {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id),
@@ -281,8 +280,8 @@ public class DataFlowValueFactory {
                                                         isStableVariable(variableDescriptor, usageModuleDescriptor),
                                                         isUncapturedLocalVariable(variableDescriptor, bindingContext)));
         }
-        if (declarationDescriptor instanceof PackageViewDescriptor) {
-            return createPackageInfo(declarationDescriptor);
+        if (declarationDescriptor instanceof PackageViewDescriptor || declarationDescriptor instanceof ClassDescriptor) {
+            return createPackageOrClassInfo(declarationDescriptor);
         }
         return NO_IDENTIFIER_INFO;
     }
