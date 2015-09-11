@@ -112,7 +112,8 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     public fun testThreeModulesNoReexportWithDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
-        val flagFile = File.createTempFile("kotlin-jps-tests-", "-is-running");
+        // spaces in the name to test proper file name handling
+        val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running");
         try {
             System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
             testThreeModulesNoReexport()
