@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.UsefulTestCase
+import java.util.*
 
 class IdeaModuleInfoTest : ModuleTestCase() {
 
@@ -34,7 +35,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a)
 
         b.production.assertDependenciesEqual(b.production, a.production)
-        assertDoesntContain(a.production.dependencies(), b.production)
+        UsefulTestCase.assertDoesntContain(a.production.dependencies(), b.production)
     }
 
     fun testCircularDependency() {
