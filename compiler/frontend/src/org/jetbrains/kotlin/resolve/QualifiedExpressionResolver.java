@@ -42,10 +42,11 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
     @NotNull private final SymbolUsageValidator symbolUsageValidator;
-    @NotNull private final ImportDirectiveProcessor importDirectiveProcessor = new ImportDirectiveProcessor(this);
+    @NotNull private final NewQualifiedExpressionResolver newQualifiedExpressionResolver;
 
-    public QualifiedExpressionResolver(@NotNull SymbolUsageValidator symbolUsageValidator) {
+    public QualifiedExpressionResolver(@NotNull SymbolUsageValidator symbolUsageValidator, @NotNull NewQualifiedExpressionResolver newQualifiedExpressionResolver) {
         this.symbolUsageValidator = symbolUsageValidator;
+        this.newQualifiedExpressionResolver = newQualifiedExpressionResolver;
     }
 
     private static final Predicate<DeclarationDescriptor> CLASSIFIERS_AND_PACKAGE_VIEWS = new Predicate<DeclarationDescriptor>() {
@@ -70,7 +71,8 @@ public class QualifiedExpressionResolver {
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
-        return importDirectiveProcessor.processImportReference(importDirective, moduleDescriptor, trace, lookupMode);
+        // todo fix shouldBeVisibleFrom
+        return newQualifiedExpressionResolver.processImportReference(importDirective, moduleDescriptor, trace, moduleDescriptor);
     }
 
     @NotNull
