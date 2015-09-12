@@ -2,7 +2,7 @@
 package c
 
 import c.A.Companion.B
-import c.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>M<!>.*
+import c.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>M<!>.*
 
 fun foo() {
     val <!UNUSED_VARIABLE!>b<!>: B = B()

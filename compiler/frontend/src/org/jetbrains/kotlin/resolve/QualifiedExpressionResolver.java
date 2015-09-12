@@ -322,7 +322,7 @@ public class QualifiedExpressionResolver {
         // Check for more information and additional errors
         if (canBeImportedDescriptors.isEmpty()) {
             assert descriptors.size() >= 1;
-            trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next()));
+            trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next().getName()));
             return;
         }
         if (canBeImportedDescriptors.size() > 1) {
