@@ -4,5 +4,6 @@ class A {
 
     transient int field2 = 1;
 
+    // Should work even for bad modifiers
     strictfp double field3 = 2;
 }
