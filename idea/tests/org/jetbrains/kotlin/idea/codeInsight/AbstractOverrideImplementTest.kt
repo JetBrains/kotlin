@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObj
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
+import org.jetbrains.kotlin.idea.test.diagnosticsHeader
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
@@ -192,7 +192,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
             val file = myFixture.file as JetFile
             val document = myFixture.getDocument(file)
             myFixture.project.executeWriteCommand("") {
-                document.replaceString(0, document.textLength, file.dumpTextWithErrors())
+                document.insertString(0, file.diagnosticsHeader())
             }
             myFixture.checkResultByFile(fileName)
         }

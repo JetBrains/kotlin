@@ -71,11 +71,14 @@ public fun Module.configureAs(kind: ModuleKind) {
 }
 
 public fun JetFile.dumpTextWithErrors(): String {
+    return diagnosticsHeader() + getText()
+}
+
+public fun JetFile.diagnosticsHeader(): String {
     val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
     val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
-    if (errors.isEmpty()) return getText()
-    val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
-    return header + getText()
+    if (errors.isEmpty()) return ""
+    return errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
 }
 
 public fun closeAndDeleteProject(): Unit =
