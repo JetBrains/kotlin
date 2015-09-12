@@ -31,6 +31,12 @@ fun test(b: B) {
 
     val b_2: B = a.B()
     b_2.m2()
+
+    val b_3 = B()
+    b_3.m2()
+
+    val b_4 = a.B()
+    b_4.m2()
 }
 
 
@@ -60,4 +66,10 @@ fun test(b: B) {
 
     val b_2 = B()
     b_2.m2()
+
+    val b_3 = B()
+    b_3.m2()
+
+    val b_4 = <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>B<!>()
+    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b_4<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>m2<!>()
 }

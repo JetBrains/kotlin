@@ -1,0 +1,29 @@
+package
+
+public fun test(/*0*/ a: [ERROR : A.]): [ERROR : A.]
+public fun test1(/*0*/ a: [ERROR : A.B.]): [ERROR : A.B.]
+public fun test2(/*0*/ a: [ERROR : A.e.C]): [ERROR : A.e.C]
+public fun test3(/*0*/ a: [ERROR : a.A.C]): [ERROR : a.A.C]
+public fun test4(/*0*/ a: [ERROR : A.B.ee]): [ERROR : A.B.ee]
+public fun test5(/*0*/ a: [ERROR : A.ee]): [ERROR : A.ee]
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class C {
+            public constructor C()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
