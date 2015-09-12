@@ -85,7 +85,8 @@ class LazyImportResolver(
 
         volatile var importResolveStatus: ImportResolveStatus? = null
 
-        fun scopeForMode(mode: LookupMode): JetScope {
+        fun scopeForMode(realMode: LookupMode): JetScope {
+            val mode = LookupMode.EVERYTHING // todo
             val status = importResolveStatus
             if (status != null && (status.lookupMode == mode || status.lookupMode == LookupMode.EVERYTHING)) {
                 return status.scope

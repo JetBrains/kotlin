@@ -148,7 +148,6 @@ public class DefaultErrorMessages {
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
         MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
-        MAP.put(CANNOT_IMPORT_FROM_ELEMENT, "Cannot import from ''{0}''", NAME);
         MAP.put(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON, "Cannot import-on-demand from object ''{0}''", NAME);
         MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
@@ -432,6 +431,8 @@ public class DefaultErrorMessages {
         MAP.put(INSTANCE_ACCESS_BEFORE_SUPER_CALL, "Cannot access ''{0}'' before superclass constructor has been called", NAME);
 
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", STRING);
+
+        MAP.put(SAFE_CALL_IN_QUALIFIER, "Safe call is not allowed for qualifier");
 
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
         MAP.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter");

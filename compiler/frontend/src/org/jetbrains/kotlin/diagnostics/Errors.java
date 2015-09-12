@@ -101,7 +101,6 @@ public interface Errors {
 
     // Imports
 
-    DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_IMPORT_FROM_ELEMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
 
@@ -415,6 +414,8 @@ public interface Errors {
     // Call resolution
 
     DiagnosticFactory1<JetExpression, String> ILLEGAL_SELECTOR = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> SAFE_CALL_IN_QUALIFIER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetExpression, JetExpression, JetType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
