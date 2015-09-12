@@ -253,6 +253,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InEmptyPackage.kt")
+        public void testInEmptyPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InEmptyPackage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InExpressionNoPrefix.kt")
         public void testInExpressionNoPrefix() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InExpressionNoPrefix.kt");
@@ -352,6 +358,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("InObjectInDelegationSpecifier.kt")
         public void testInObjectInDelegationSpecifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InObjectInDelegationSpecifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InPackage.kt")
+        public void testInPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InPackage.kt");
             doTest(fileName);
         }
 

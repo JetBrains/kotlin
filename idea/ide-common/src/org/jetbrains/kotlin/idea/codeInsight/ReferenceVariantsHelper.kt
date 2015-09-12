@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
+import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -102,17 +106,19 @@ public class ReferenceVariantsHelper(
             explicitReceiverData: ExplicitReceiverData?,
             useRuntimeReceiverType: Boolean
     ): Collection<DeclarationDescriptor> {
-        val parent = expression.getParent()
+        if (expression.isImportDirectiveExpression()) {
+            return getVariantsForImportOrPackageDirective(explicitReceiverData, kindFilter, nameFilter)
+        }
+        if (expression.isPackageDirectiveExpression()) {
+            val packageKindFilter = kindFilter restrictedToKinds DescriptorKindFilter.PACKAGES_MASK
+            return getVariantsForImportOrPackageDirective(explicitReceiverData, packageKindFilter, nameFilter)
+        }
+        if (expression.getParent() is JetUserType) {
+            return getVariantsForUserType(explicitReceiverData, expression, kindFilter, nameFilter)
+        }
+
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
         val containingDeclaration = resolutionScope.getContainingDeclaration()
-
-        if (parent is JetImportDirective || parent is JetPackageDirective) {
-            return resolutionScope.getDescriptorsFiltered(kindFilter.restrictedToKinds(DescriptorKindFilter.PACKAGES_MASK), nameFilter)
-        }
-
-        if (parent is JetUserType) {
-            return resolutionScope.getDescriptorsFiltered(kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK), nameFilter)
-        }
 
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
 
@@ -161,6 +167,40 @@ public class ReferenceVariantsHelper(
         }
 
         return descriptors
+    }
+
+    private fun getVariantsForUserType(
+            explicitReceiverData: ExplicitReceiverData?,
+            expression: JetSimpleNameExpression,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
+        val accurateKindFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK)
+        if (explicitReceiverData != null) {
+            val qualifier = context[BindingContext.QUALIFIER, explicitReceiverData.expression] ?: return emptyList()
+            return qualifier.scope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
+        }
+        else {
+            val lexicalScope = expression.getParentOfType<JetTypeReference>(strict = true)?.let {
+                context[BindingContext.TYPE_RESOLUTION_SCOPE, it]
+            } ?: return emptyList()
+            return lexicalScope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
+        }
+    }
+
+    private fun getVariantsForImportOrPackageDirective(
+            explicitReceiverData: ExplicitReceiverData?,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
+        if (explicitReceiverData != null) {
+            val qualifier = context[BindingContext.QUALIFIER, explicitReceiverData.expression] ?: return emptyList()
+            return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
+        }
+        else {
+            val rootPackage = resolutionFacade.moduleDescriptor.getPackage(FqName.ROOT)
+            return rootPackage.memberScope.getDescriptorsFiltered(kindFilter, nameFilter)
+        }
     }
 
     private fun MutableSet<DeclarationDescriptor>.processAll(
@@ -303,6 +343,8 @@ public class ReferenceVariantsHelper(
                 }
 
                 is JetUnaryExpression -> CallType.UNARY
+
+                is JetUserType -> CallType.NORMAL
 
                 else -> return null
             }
