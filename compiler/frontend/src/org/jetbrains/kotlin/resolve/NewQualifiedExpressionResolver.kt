@@ -56,40 +56,89 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
         if (importDirective.isAllUnder) {
             val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom) ?: return JetScope.Empty
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
-                trace.report(Errors.CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor))
+                trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
             }
             val scope = AllUnderImportsScope()
             scope.addAllUnderImport(packageOrClassDescriptor)
             return scope
         }
         else {
+            val aliasName = JetPsiUtil.getAliasName(importDirective)
+            if (aliasName == null) { // import kotlin.
+                resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom)
+                return JetScope.Empty
+            }
+
             val packageOrClassDescriptor = resolveToPackageOrClass(path.subList(0, path.size() - 1), moduleDescriptor, trace, shouldBeVisibleFrom)
                                            ?: return JetScope.Empty
             val descriptors = SmartList<DeclarationDescriptor>()
 
+            val lastName = lastPart.name
+            val location = lastPart.location
             when (packageOrClassDescriptor) {
                 is PackageViewDescriptor -> {
                     val packageScope = packageOrClassDescriptor.memberScope
-                    descriptors.addIfNotNull(packageScope.getClassifier(lastPart.name, lastPart.location))
-                    descriptors.addAll(packageScope.getProperties(lastPart.name, lastPart.location))
-                    descriptors.addAll(packageScope.getFunctions(lastPart.name, lastPart.location))
+                    descriptors.addIfNotNull(packageScope.getClassifier(lastName, location))
+                    descriptors.addAll(packageScope.getProperties(lastName, location))
+                    descriptors.addAll(packageScope.getFunctions(lastName, location))
                 }
+
                 is ClassDescriptor -> {
                     descriptors.addIfNotNull(
-                            packageOrClassDescriptor.unsubstitutedInnerClassesScope.getClassifier(lastPart.name, lastPart.location)
+                            packageOrClassDescriptor.unsubstitutedInnerClassesScope.getClassifier(lastName, location)
                     )
                     val staticClassScope = packageOrClassDescriptor.staticScope
-                    descriptors.addAll(staticClassScope.getFunctions(lastPart.name, lastPart.location))
-                    descriptors.addAll(staticClassScope.getProperties(lastPart.name, lastPart.location))
+                    descriptors.addAll(staticClassScope.getFunctions(lastName, location))
+                    descriptors.addAll(staticClassScope.getProperties(lastName, location))
                 }
-                // todo assert?
-                else -> return JetScope.Empty
-            }
-            storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom)
 
-            val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return JetScope.Empty
+                else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
+            }
+            if (descriptors.isNotEmpty()) {
+                storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom)
+            }
+            else {
+                tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
+            }
+
             return SingleImportScope(aliasName, descriptors)
         }
+    }
+
+    private fun tryResolveDescriptorsWhichCannotBeImported(
+            trace: BindingTrace,
+            moduleDescriptor: ModuleDescriptor,
+            packageOrClassDescriptor: DeclarationDescriptor,
+            lastPart: QualifierPart
+    ) {
+        val descriptors = SmartList<DeclarationDescriptor>()
+        val lastName = lastPart.name
+        when (packageOrClassDescriptor) {
+            is PackageViewDescriptor -> {
+                val packageDescriptor = moduleDescriptor.getPackage(packageOrClassDescriptor.fqName.child(lastName))
+                if (!packageDescriptor.isEmpty()) {
+                    trace.report(Errors.PACKAGE_CANNOT_BE_IMPORTED.on(lastPart.expression))
+                    descriptors.add(packageOrClassDescriptor)
+                }
+            }
+
+            is ClassDescriptor -> {
+                val memberScope = packageOrClassDescriptor.unsubstitutedMemberScope
+                descriptors.addAll(memberScope.getFunctions(lastName, lastPart.location))
+                descriptors.addAll(memberScope.getProperties(lastName, lastPart.location))
+                if (descriptors.isNotEmpty()) {
+                    if (packageOrClassDescriptor.kind.isSingleton) {
+                        trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor))
+                    }
+                    else {
+                        trace.report(Errors.CANNOT_BE_IMPORTED.on(lastPart.expression, lastName))
+                    }
+                }
+            }
+
+            else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
+        }
+        storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null)
     }
 
     private fun JetExpression.asQualifierPartList(trace: BindingTrace): List<QualifierPart> {
@@ -140,6 +189,9 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
         } ?: moduleDescriptor.quickResolveToPackage(path, trace)
         return path.subList(currentIndex, path.size()).fold<QualifierPart, DeclarationDescriptor?>(currentDescriptor) {
             descriptor, qualifierPart ->
+            // report unresolved reference only for first unresolved qualifier
+            if (descriptor == null) return@fold null
+
             val nextDescriptor = when (descriptor) {
                 // TODO: support inner classes which captured type parameter from outer class
                 is ClassDescriptor ->

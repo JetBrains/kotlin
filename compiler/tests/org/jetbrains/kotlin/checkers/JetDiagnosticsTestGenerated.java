@@ -6699,9 +6699,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("SyntaxError.kt")
+            public void testSyntaxError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/SyntaxError.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("TopLevelClassVsPackage.kt")
             public void testTopLevelClassVsPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/TopLevelClassVsPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("WrongImport.kt")
+            public void testWrongImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/WrongImport.kt");
                 doTest(fileName);
             }
         }

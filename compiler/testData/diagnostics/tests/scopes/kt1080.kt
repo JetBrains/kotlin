@@ -8,7 +8,7 @@ import <!UNRESOLVED_REFERENCE!>reflect<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Const
 import b.*
 import <!UNRESOLVED_REFERENCE!>d<!>
 import <!UNRESOLVED_REFERENCE!>d<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Test<!>
-import b.d
+import b.<!PACKAGE_CANNOT_BE_IMPORTED!>d<!>
 
 class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 

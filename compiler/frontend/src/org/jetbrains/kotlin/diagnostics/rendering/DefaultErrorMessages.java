@@ -143,8 +143,9 @@ public class DefaultErrorMessages {
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
         MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
-        MAP.put(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON, "Cannot import-on-demand from object ''{0}''", NAME);
-        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
+        MAP.put(CANNOT_IMPORT_MEMBERS_FROM_SINGLETON, "Cannot import members from object ''{0}''", NAME);
+        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", TO_STRING);
+        MAP.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported");
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 

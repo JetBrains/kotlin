@@ -11,7 +11,7 @@ object O {
 // FILE: b.kt
 package b
 
-import a.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>O<!>.*
+import a.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>O<!>.*
 
 fun test() {
     A()
