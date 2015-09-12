@@ -30,6 +30,12 @@ fun test(b: B) {
 
     val b_2: B = a.B()
     b_2.m1()
+
+    val b_3: B = B()
+    b_3.m1()
+
+    val b_4: B = a.B()
+    b_4.m1()
 }
 
 
@@ -56,6 +62,9 @@ fun test(b: B) {
 
     val b_: B = B()
     b_.m1()
+
+    val b_2 = B()
+    b_2.m1()
 }
 
 // FILE: top_d.kt
@@ -66,4 +75,7 @@ fun test2(b: B) {
 
     val b_: B = B()
     b_.m1()
+
+    val b_2 = B()
+    b_2.m1()
 }

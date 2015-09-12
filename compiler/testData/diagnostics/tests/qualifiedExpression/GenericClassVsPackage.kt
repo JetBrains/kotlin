@@ -25,10 +25,14 @@ fun test(ab_c: c) {
 
     val ab_c2: a.b.c = a.b.c()
     ab_c2.ab_c()
+
+    val ab_c3 = a.b.c()
+    ab_c3.ab_c()
 }
 
 fun test2(a_bc: a.b<Int>.c) {
     a_bc.<!UNRESOLVED_REFERENCE!>a_bc<!>() // todo
+    a_bc.ab_c() // todo
 }
 
 
@@ -58,10 +62,14 @@ import a.b
 fun test(a_b: b) {
     a_b.a_b()
 
-    val a_b2: a.b = a.b()
-    a_b2.a_b()
+    val _ab: a.b = a.b()
+    _ab._ab()
+
+    val _ab2 = a.b()
+    _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
 }
 
 fun test2(_ab: a<Int>.b) {
-    _ab.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
+    _ab._ab()
+    _ab.<!UNRESOLVED_REFERENCE!>a_b<!>()
 }

@@ -6558,12 +6558,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("GenericClassVsPackage.kt")
-            public void testGenericClassVsPackage() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/GenericClassVsPackage.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentName.kt");
@@ -11040,6 +11034,45 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("visibility.kt")
             public void testVisibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/privateInFile/visibility.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/qualifiedExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class QualifiedExpression extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInQualifiedExpression() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("GenericClassVsPackage.kt")
+            public void testGenericClassVsPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/GenericClassVsPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageVsClass.kt")
+            public void testPackageVsClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageVsRootClass.kt")
+            public void testPackageVsRootClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsRootClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TypeWithError.kt")
+            public void testTypeWithError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/TypeWithError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("visibleClassVsQualifiedClass.kt")
+            public void testVisibleClassVsQualifiedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/visibleClassVsQualifiedClass.kt");
                 doTest(fileName);
             }
         }

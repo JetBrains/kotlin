@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -43,11 +46,73 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
         }
     }
 
+    public fun resolveDescriptorForUserType(
+            userType: JetUserType,
+            scope: LexicalScope,
+            trace: BindingTrace
+    ): ClassifierDescriptor? {
+        if (userType.qualifier == null) { // optimization for non-qualified types
+            return userType.referenceExpression?.let {
+                val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
+                storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor)
+                classifier
+            }
+        }
+
+        val module = scope.ownerDescriptor.module
+        val (qualifierPartList, hasError) = userType.asQualifierPartList()
+        if (hasError) {
+            resolveToPackageOrClass(qualifierPartList, module, trace, scope.ownerDescriptor)
+            return null
+        }
+        assert(qualifierPartList.size() > 1) {
+            "Too short qualifier list for user type $userType : ${qualifierPartList.joinToString()}"
+        }
+
+        val qualifier = resolveToPackageOrClass(
+                qualifierPartList.subList(0, qualifierPartList.size() - 1), module, trace, scope.ownerDescriptor,
+                firstPartResolver =  {
+                    if (userType.isAbsoluteInRootPackage) {
+                        null
+                    }
+                    else {
+                        scope.getClassifier(it.name, it.location)
+                    }
+                }
+        ) ?: return null
+
+        val lastPart = qualifierPartList.last()
+        val classifier = when (qualifier) {
+            is PackageViewDescriptor -> qualifier.memberScope.getClassifier(lastPart.name, lastPart.location)
+            is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getClassifier(lastPart.name, lastPart.location)
+            else -> null
+        }
+        storageResult(trace, lastPart.expression, listOfNotNull(classifier), scope.ownerDescriptor)
+        return classifier
+    }
+
+    private fun JetUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
+        var hasError = false
+        val result = SmartList<QualifierPart>()
+        var userType: JetUserType? = this
+        while (userType != null) {
+            val referenceExpression = userType.referenceExpression
+            if (referenceExpression != null) {
+                result add QualifierPart(referenceExpression.getReferencedNameAsName(), referenceExpression, userType.typeArgumentList)
+            }
+            else {
+                hasError = true
+            }
+            userType = userType.qualifier
+        }
+        return result.asReversed() to hasError
+    }
+
     public fun processImportReference(
             importDirective: JetImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            shouldBeVisibleFrom: DeclarationDescriptor
+            shouldBeVisibleFrom: DeclarationDescriptor // todo
     ): JetScope {
         val importedReference = importDirective.importedReference ?: return JetScope.Empty
         val path = importedReference.asQualifierPartList(trace)
@@ -185,6 +250,7 @@ public class NewQualifiedExpressionResolver(val symbolUsageValidator: SymbolUsag
         }
 
         val (currentDescriptor, currentIndex) = firstPartResolver(path.first())?.let {
+            storageResult(trace, path.first().expression, listOf(it), shouldBeVisibleFrom)
             Pair(it, 1)
         } ?: moduleDescriptor.quickResolveToPackage(path, trace)
         return path.subList(currentIndex, path.size()).fold<QualifierPart, DeclarationDescriptor?>(currentDescriptor) {

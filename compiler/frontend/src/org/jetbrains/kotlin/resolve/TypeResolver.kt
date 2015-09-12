@@ -45,7 +45,7 @@ import kotlin.platform.platformStatic
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val qualifiedExpressionResolver: NewQualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
         private val storageManager: StorageManager,
@@ -318,8 +318,7 @@ public class TypeResolver(
             }
         }
 
-        val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope.asJetScope(), trace, true)
-                                        .firstIsInstanceOrNull<ClassifierDescriptor>()
+        val classifierDescriptor = qualifiedExpressionResolver.resolveDescriptorForUserType(userType, scope, trace)
         if (classifierDescriptor != null) {
             PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)
         }
