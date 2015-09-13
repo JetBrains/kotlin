@@ -21,8 +21,8 @@ import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
-import org.intellij.markdown.parser.dialects.commonmark.CommonMarkMarkerProcessor
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 
@@ -85,7 +85,7 @@ object KDocRenderer {
     }
 
     fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
-        val markdownTree = MarkdownParser(CommonMarkMarkerProcessor.Factory).buildMarkdownTreeFromString(markdown)
+        val markdownTree = MarkdownParser(CommonMarkFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
