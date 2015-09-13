@@ -1,7 +1,5 @@
-import java.io
-
 fun File(): String = ""
 
 class A {
-    val x = io.File()
+    val x = java.io.File()
 }

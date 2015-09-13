@@ -5,7 +5,6 @@ import java.sql.*
 import java.util.*
 import java.util.Date
 import java.util.HashSet as JavaHashSet // alias import should not be dropped
-import java.util.concurrent // import of package should not be dropped because packages are not imported by *
 
 fun foo() {
     val v1 = JavaHashSet()

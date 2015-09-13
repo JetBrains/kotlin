@@ -1,3 +1,1 @@
-import java.sql
-
-val x: Map.Entry<Array<String>, sql.Array>
+val x: Map.Entry<Array<String>, java.sql.Array>

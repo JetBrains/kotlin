@@ -1,7 +1,5 @@
 package language
 
-import java.lang as j
-
 import java.lang.Integer.MAX_VALUE as MaxI
 import java.lang.Integer.MIN_VALUE as MinI
 import java.lang.Byte.MAX_VALUE as MaxB
@@ -35,29 +33,29 @@ public class RangeIterationJVMTest {
     }
 
     test fun infiniteSteps() {
-        doTest(0.0..5.0 step j.Double.POSITIVE_INFINITY, 0.0, 5.0, j.Double.POSITIVE_INFINITY, listOf(0.0))
-        doTest(0.0.toFloat()..5.0.toFloat() step j.Float.POSITIVE_INFINITY, 0.0.toFloat(), 5.0.toFloat(), j.Float.POSITIVE_INFINITY,
+        doTest(0.0..5.0 step java.lang.Double.POSITIVE_INFINITY, 0.0, 5.0, java.lang.Double.POSITIVE_INFINITY, listOf(0.0))
+        doTest(0.0.toFloat()..5.0.toFloat() step java.lang.Float.POSITIVE_INFINITY, 0.0.toFloat(), 5.0.toFloat(), java.lang.Float.POSITIVE_INFINITY,
                listOf<Float>(0.0.toFloat()))
-        doTest(5.0 downTo 0.0 step j.Double.POSITIVE_INFINITY, 5.0, 0.0, j.Double.NEGATIVE_INFINITY, listOf(5.0))
-        doTest(5.0.toFloat() downTo 0.0.toFloat() step j.Float.POSITIVE_INFINITY, 5.0.toFloat(), 0.0.toFloat(), j.Float.NEGATIVE_INFINITY,
+        doTest(5.0 downTo 0.0 step java.lang.Double.POSITIVE_INFINITY, 5.0, 0.0, java.lang.Double.NEGATIVE_INFINITY, listOf(5.0))
+        doTest(5.0.toFloat() downTo 0.0.toFloat() step java.lang.Float.POSITIVE_INFINITY, 5.0.toFloat(), 0.0.toFloat(), java.lang.Float.NEGATIVE_INFINITY,
                listOf<Float>(5.0.toFloat()))
     }
 
     test fun nanEnds() {
-        doTest(j.Double.NaN..5.0, j.Double.NaN, 5.0, 1.0, listOf())
-        doTest(j.Float.NaN.toFloat()..5.0.toFloat(), j.Float.NaN, 5.0.toFloat(), 1.0.toFloat(), listOf())
-        doTest(j.Double.NaN downTo 0.0, j.Double.NaN, 0.0, -1.0, listOf())
-        doTest(j.Float.NaN.toFloat() downTo 0.0.toFloat(), j.Float.NaN, 0.0.toFloat(), -1.0.toFloat(), listOf())
+        doTest(java.lang.Double.NaN..5.0, java.lang.Double.NaN, 5.0, 1.0, listOf())
+        doTest(java.lang.Float.NaN.toFloat()..5.0.toFloat(), java.lang.Float.NaN, 5.0.toFloat(), 1.0.toFloat(), listOf())
+        doTest(java.lang.Double.NaN downTo 0.0, java.lang.Double.NaN, 0.0, -1.0, listOf())
+        doTest(java.lang.Float.NaN.toFloat() downTo 0.0.toFloat(), java.lang.Float.NaN, 0.0.toFloat(), -1.0.toFloat(), listOf())
 
-        doTest(0.0..j.Double.NaN, 0.0, j.Double.NaN, 1.0, listOf())
-        doTest(0.0.toFloat()..j.Float.NaN, 0.0.toFloat(), j.Float.NaN, 1.0.toFloat(), listOf())
-        doTest(5.0 downTo j.Double.NaN, 5.0, j.Double.NaN, -1.0, listOf())
-        doTest(5.0.toFloat() downTo j.Float.NaN, 5.0.toFloat(), j.Float.NaN, -1.0.toFloat(), listOf())
+        doTest(0.0..java.lang.Double.NaN, 0.0, java.lang.Double.NaN, 1.0, listOf())
+        doTest(0.0.toFloat()..java.lang.Float.NaN, 0.0.toFloat(), java.lang.Float.NaN, 1.0.toFloat(), listOf())
+        doTest(5.0 downTo java.lang.Double.NaN, 5.0, java.lang.Double.NaN, -1.0, listOf())
+        doTest(5.0.toFloat() downTo java.lang.Float.NaN, 5.0.toFloat(), java.lang.Float.NaN, -1.0.toFloat(), listOf())
 
-        doTest(j.Double.NaN..j.Double.NaN, j.Double.NaN, j.Double.NaN, 1.0, listOf())
-        doTest(j.Float.NaN..j.Float.NaN, j.Float.NaN, j.Float.NaN, 1.0.toFloat(), listOf())
-        doTest(j.Double.NaN downTo j.Double.NaN, j.Double.NaN, j.Double.NaN, -1.0, listOf())
-        doTest(j.Float.NaN downTo j.Float.NaN, j.Float.NaN, j.Float.NaN, -1.0.toFloat(), listOf())
+        doTest(java.lang.Double.NaN..java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, 1.0, listOf())
+        doTest(java.lang.Float.NaN..java.lang.Float.NaN, java.lang.Float.NaN, java.lang.Float.NaN, 1.0.toFloat(), listOf())
+        doTest(java.lang.Double.NaN downTo java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, -1.0, listOf())
+        doTest(java.lang.Float.NaN downTo java.lang.Float.NaN, java.lang.Float.NaN, java.lang.Float.NaN, -1.0.toFloat(), listOf())
     }
 
     test fun maxValueToMaxValue() {
