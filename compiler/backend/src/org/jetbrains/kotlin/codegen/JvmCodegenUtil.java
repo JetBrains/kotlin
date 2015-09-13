@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 
 import java.io.File;
 
@@ -256,5 +259,12 @@ public class JvmCodegenUtil {
     @NotNull
     public static String getMappingFileName(@NotNull String moduleName) {
         return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
+    }
+
+    public static void writeAbiVersion(@NotNull AnnotationVisitor av) {
+        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
+
+        // TODO: drop after some time
+        av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
     }
 }

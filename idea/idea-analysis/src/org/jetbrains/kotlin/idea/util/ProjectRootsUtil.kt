@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
-import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
@@ -28,7 +26,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 
 public object ProjectRootsUtil {
-    platformStatic
+    @JvmStatic
     public fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                            includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
@@ -49,7 +47,7 @@ public object ProjectRootsUtil {
                || (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))
     }
 
-    platformStatic
+    @JvmStatic
     public fun isInContent(
             element: PsiElement,
             includeProjectSource: Boolean,
@@ -67,27 +65,32 @@ public object ProjectRootsUtil {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun isInProjectSource(element: PsiElement): Boolean {
         return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false)
     }
 
-    platformStatic
+    @JvmStatic
     public fun isInProjectOrLibSource(element: PsiElement): Boolean {
         return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false)
     }
 
-    platformStatic
+    @JvmStatic
     public fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
         return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true)
     }
 
-    platformStatic
+    @JvmStatic
+    public fun isInProjectOrLibraryClassFile(element: PsiElement): Boolean {
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true)
+    }
+
+    @JvmStatic
     public fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true)
     }
 
-    platformStatic
+    @JvmStatic
     public fun isLibraryFile(project: Project, file: VirtualFile): Boolean {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true)
     }

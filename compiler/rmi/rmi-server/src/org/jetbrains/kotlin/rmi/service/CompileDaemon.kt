@@ -30,6 +30,7 @@ import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
+import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.timer
@@ -120,11 +121,13 @@ public object CompileDaemon {
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
-                               makeRunFilenameString(timestamp = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                               makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
                                                      digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                                      port = port.toString()))
-            if (!runFile.createNewFile()) {
-                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'")
+            try {
+                if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
+            } catch (e: Exception) {
+                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
             }
             runFile.deleteOnExit()
 
@@ -159,26 +162,31 @@ public object CompileDaemon {
 
             // stopping daemon if any shutdown condition is met
             timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
-                val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
-                if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
-                    shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds},
-                                      "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
-                    shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
-                                      "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down"))
-                {
-                    cancel()
-                    compilerService.shutdown()
+                try {
+                    val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
+                    if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
+                        shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds },
+                                          "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
+                        shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
+                                          "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down")) {
+                        cancel()
+                        compilerService.shutdown()
+                    }
+                }
+                catch (e: Exception) {
+                    System.err.println("Exception in timer thread: " + e.getMessage())
+                    e.printStackTrace(System.err)
                 }
             }
         }
         catch (e: Exception) {
             System.err.println("Exception: " + e.getMessage())
-            log.info("Exception" + e.getMessage())
-            log.info(e.toString())
+            e.printStackTrace(System.err)
+            // repeating it to log for the cases when stderr is not redirected yet
+            log.log(Level.INFO, "Exception: ", e)
             // TODO consider exiting without throwing
             throw e
         }
-
     }
 
     val random = Random()

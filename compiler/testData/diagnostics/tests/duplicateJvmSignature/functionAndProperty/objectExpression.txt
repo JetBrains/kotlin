@@ -1,3 +1,3 @@
 package
 
-public fun foo(): foo.<no name provided>
+public fun foo(): kotlin.Any

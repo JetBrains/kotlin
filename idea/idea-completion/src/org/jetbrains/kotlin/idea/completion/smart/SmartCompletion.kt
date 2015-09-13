@@ -64,7 +64,7 @@ class SmartCompletion(
 
     public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
-    public val smartCastCalculator: SmartCastCalculator by lazy {
+    public val smartCastCalculator: SmartCastCalculator by lazy(LazyThreadSafetyMode.NONE) {
         SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression)
     }
 
@@ -86,7 +86,7 @@ class SmartCompletion(
         return postProcessedItems to postProcessedSearcher
     }
 
-    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
+    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
         val parent = expressionWithType.getParent()
         when (parent) {
             is JetBinaryExpression -> {

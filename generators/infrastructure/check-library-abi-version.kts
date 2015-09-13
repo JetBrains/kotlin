@@ -26,15 +26,18 @@ import org.jetbrains.org.objectweb.asm.*
  * Some additional information is printed to stderr
  */
 
-fun loadAbiVersionOfClass(bytes: ByteArray): Int? {
-    var result: Int? = null
+fun loadAbiVersionOfClass(bytes: ByteArray): IntArray? {
+    var result: IntArray? = null
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
         override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
             if (desc == "Lkotlin/jvm/internal/KotlinClass;") {
                 return object : AnnotationVisitor(Opcodes.ASM5) {
                     override fun visit(name: String, value: Any) {
-                        if (name == "abiVersion") {
-                            result = value as Int
+                        if (name == "version") {
+                            result = value as IntArray
+                        }
+                        else if (name == "abiVersion") {
+                            result = intArrayOf(0, value as Int, 0)
                         }
                     }
                 }
@@ -45,7 +48,7 @@ fun loadAbiVersionOfClass(bytes: ByteArray): Int? {
     return result
 }
 
-fun loadVersion(library: File): Int {
+fun loadVersion(library: File): IntArray {
     val jarFile = JarFile(library)
     try {
         for (entry in jarFile.entries()) {
@@ -71,8 +74,8 @@ fun main(args: Array<String>) {
     val library1 = File(args[0])
     val library2 = File(args[1])
 
-    val v1 = loadVersion(library1)
-    val v2 = loadVersion(library2)
+    val v1 = loadVersion(library1).joinToString(".")
+    val v2 = loadVersion(library2).joinToString(".")
 
     if (v1 != v2) {
         System.err.println("ABI versions differ:")

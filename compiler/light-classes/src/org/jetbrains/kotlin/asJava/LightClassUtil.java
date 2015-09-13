@@ -362,9 +362,7 @@ public class LightClassUtil {
     }
 
     @NotNull
-    public static PsiTypeParameterList buildLightTypeParameterList(
-            PsiTypeParameterListOwner owner,
-            JetDeclaration declaration) {
+    public static PsiTypeParameterList buildLightTypeParameterList(PsiTypeParameterListOwner owner, JetDeclaration declaration) {
         LightTypeParameterListBuilder builder = new KotlinLightTypeParameterListBuilder(owner.getManager());
         if (declaration instanceof JetTypeParameterListOwner) {
             JetTypeParameterListOwner typeParameterListOwner = (JetTypeParameterListOwner) declaration;

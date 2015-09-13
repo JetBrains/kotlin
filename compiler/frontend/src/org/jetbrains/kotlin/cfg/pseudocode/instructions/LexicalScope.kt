@@ -24,15 +24,15 @@ public class LexicalScope(val parentScope: LexicalScope?, val element: JetElemen
     private val d = (parentScope?.depth ?: 0) + 1
     val depth: Int get() = d
 
-    val lexicalScopeForContainingDeclaration: LexicalScope? by lazy { computeLexicalScopeForContainingDeclaration() }
-    private fun computeLexicalScopeForContainingDeclaration(): LexicalScope? {
+    val lexicalScopeForContainingDeclaration: LexicalScope? by lazy {
         var scope: LexicalScope? = this
         while (scope != null) {
             if (scope.element is JetDeclaration) {
-                return scope
+                return@lazy scope
             }
             scope = scope.parentScope
         }
-        return null
+
+        return@lazy null
     }
 }

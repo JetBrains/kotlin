@@ -4,6 +4,9 @@ interface WindowListener {
     public fun windowClosing()
 }
 
+interface EmptyWindowListener
+open class EmptyWindowAdapter
+
 open class WindowAdapter : WindowListener {
     override fun windowClosing() {
     }
@@ -27,5 +30,12 @@ public class Client : Frame() {
             override fun windowClosing() {
             }
         })
+
+        val b = object : EmptyWindowListener {
+
+        }
+        val c = object : EmptyWindowAdapter() {
+
+        }
     }
 }

@@ -1,6 +1,6 @@
 package
 
-public val R: R.<no name provided>
+public val R: kotlin.Any
 public val prop: kotlin.Int = 42
 public fun foo(): kotlin.Unit
 

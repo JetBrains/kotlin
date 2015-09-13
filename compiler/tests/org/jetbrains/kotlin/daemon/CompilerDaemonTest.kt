@@ -25,18 +25,19 @@ import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
-import java.util.*
 
 public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val daemonOptions by lazy { DaemonOptions(runFilesPath = tmpdir.absolutePath) }
-    val daemonJVMOptions by lazy { DaemonJVMOptions() }
-    val compilerId by lazy { CompilerId.makeCompilerId( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
-                                                        File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
-                                                        File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")) }
+    val daemonOptions by lazy(LazyThreadSafetyMode.NONE) { DaemonOptions(runFilesPath = tmpdir.absolutePath) }
+    val daemonJVMOptions by lazy(LazyThreadSafetyMode.NONE) { DaemonJVMOptions() }
+    val compilerId by lazy(LazyThreadSafetyMode.NONE) {
+        CompilerId.makeCompilerId(
+                File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
+                File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"),
+                File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar"))
+    }
 
     private fun compileOnDaemon(args: Array<out String>): CompilerResults {
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")

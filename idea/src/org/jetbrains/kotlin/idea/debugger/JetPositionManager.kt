@@ -175,8 +175,6 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val project = myDebugProcess.getProject()
 
-        if (DumbService.getInstance(project).isDumb()) return null
-
         return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1)
     }
 

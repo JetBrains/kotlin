@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -61,7 +60,6 @@ import java.util.Set;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -823,7 +821,7 @@ public class AsmUtil {
 
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull KotlinSyntheticClass.Kind kind) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
-        av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        JvmCodegenUtil.writeAbiVersion(av);
         av.visitEnum(
                 JvmAnnotationNames.KIND_FIELD_NAME,
                 Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),

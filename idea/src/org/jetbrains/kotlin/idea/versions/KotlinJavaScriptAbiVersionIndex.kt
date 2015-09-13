@@ -16,42 +16,43 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.collect.Maps
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import java.util.ArrayList
+import java.util.*
 
-public object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(javaClass<KotlinJavaScriptAbiVersionIndex>()) {
+public object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(KotlinJavaScriptAbiVersionIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> JavaScript.EXTENSION == file.getExtension() }
+    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> JavaScript.EXTENSION == file.extension }
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 1
+    private val VERSION = 2
 
-    private val INDEXER = DataIndexer() { inputData: FileContent ->
-        val result = Maps.newHashMap<Int, Void>()
+    private val INDEXER = DataIndexer { inputData: FileContent ->
+        val result = HashMap<BinaryVersion, Void?>()
 
         tryBlock(inputData) {
-            val text = VfsUtilCore.loadText(inputData.getFile())
+            val text = VfsUtilCore.loadText(inputData.file)
             val metadataList = ArrayList<KotlinJavascriptMetadata>()
             KotlinJavascriptMetadataUtils.parseMetadata(text, metadataList)
             for (metadata in metadataList) {
-                if (KotlinJavascriptMetadataUtils.isAbiVersionCompatible(metadata.abiVersion)) {
-                    result.put(metadata.abiVersion, null)
+                val version = if (KotlinJavascriptMetadataUtils.isAbiVersionCompatible(metadata.abiVersion)) {
+                    BinaryVersion.create(0, metadata.abiVersion, 0)
                 }
                 else {
                     // Version is set to something weird
-                    result.put(AbiVersionUtil.INVALID_VERSION, null)
+                    AbiVersionUtil.INVALID_VERSION
                 }
+                result[version] = null
             }
         }
 

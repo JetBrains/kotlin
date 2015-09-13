@@ -24,7 +24,8 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    CLASSIFIER("classifier"),                  // includes CLASS, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
+    CLASSIFIER("class"),                       // deprecated: migrates to CLASS
+    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
     PROPERTY("property"),                      // includes *_PROPERTY, PROPERTY_PARAMETER, ENUM_ENTRY
@@ -43,7 +44,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     STAR_PROJECTION("star projection", false),
     PROPERTY_PARAMETER("property constructor parameter", false),
 
-    CLASS("class", false),
+    CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
     OBJECT("object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
@@ -79,25 +80,25 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
         public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
         public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
-            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASSIFIER)
+            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS, CLASSIFIER)
             ClassKind.CLASS ->
                 if (descriptor.isInner) {
-                    listOf(INNER_CLASS, CLASSIFIER)
+                    listOf(INNER_CLASS, CLASS, CLASSIFIER)
                 }
                 else if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS, CLASSIFIER)
                 }
                 else {
-                    listOf(CLASS, CLASSIFIER)
+                    listOf(CLASS_ONLY, CLASS, CLASSIFIER)
                 }
-            ClassKind.OBJECT -> listOf(OBJECT, CLASSIFIER)
-            ClassKind.INTERFACE -> listOf(INTERFACE, CLASSIFIER)
+            ClassKind.OBJECT -> listOf(OBJECT, CLASS, CLASSIFIER)
+            ClassKind.INTERFACE -> listOf(INTERFACE, CLASS, CLASSIFIER)
             ClassKind.ENUM_CLASS ->
                 if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS, CLASSIFIER)
                 }
                 else {
-                    listOf(ENUM_CLASS, CLASSIFIER)
+                    listOf(ENUM_CLASS, CLASS, CLASSIFIER)
                 }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }

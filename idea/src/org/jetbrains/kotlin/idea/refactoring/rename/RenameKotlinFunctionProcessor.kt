@@ -29,12 +29,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor
 
 public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
-    private val javaMethodProcessorInstance by lazy {
-        // KT-4250
-        // RenamePsiElementProcessor.EP_NAME.findExtension(javaClass<RenameJavaMethodProcessor>())!!
-
-        RenameJavaMethodProcessor()
-    }
+    private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is JetNamedFunction || (element is KotlinLightMethod && element.getOrigin() is JetNamedFunction)

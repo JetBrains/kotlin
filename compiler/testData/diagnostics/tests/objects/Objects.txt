@@ -2,7 +2,7 @@ package
 
 package toplevelObjectDeclarations {
     public val x: kotlin.Int
-    public val y: toplevelObjectDeclarations.y.<no name provided>
+    public val y: toplevelObjectDeclarations.Foo
     public val z: kotlin.Int
 
     public object A : toplevelObjectDeclarations.Foo {

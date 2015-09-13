@@ -142,7 +142,7 @@ public class JavaToKotlinConverter(
             val file: PsiFile,
             val processings: Collection<UsageProcessing>
     ) {
-        val depth: Int by lazy { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
+        val depth: Int by lazy(LazyThreadSafetyMode.NONE) { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
     }
 
     private fun buildExternalCodeProcessing(

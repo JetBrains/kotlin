@@ -179,7 +179,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
-    protected val collector: LookupElementsCollector by lazy {
+    protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
         LookupElementsCollector(prefixMatcher, parameters, resultSet, lookupElementFactory, createSorter())
     }
 
@@ -281,7 +281,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return context
     }
 
-    protected val referenceVariants: Collection<DeclarationDescriptor> by lazy {
+    protected val referenceVariants: Collection<DeclarationDescriptor> by lazy(LazyThreadSafetyMode.NONE) {
         if (descriptorKindFilter != null) {
             referenceVariantsHelper.getReferenceVariants(
                     nameExpression!!,

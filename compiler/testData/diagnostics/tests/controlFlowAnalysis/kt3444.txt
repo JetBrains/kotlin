@@ -1,6 +1,6 @@
 package
 
-public val m: m.<no name provided>
+public val m: X
 public fun box(): kotlin.Unit
 
 public interface X {

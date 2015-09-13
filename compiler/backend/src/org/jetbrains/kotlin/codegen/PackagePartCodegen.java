@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -41,12 +37,9 @@ import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<JetFile> {
@@ -124,7 +117,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         PackageData data = new PackageData(nameResolver, packageProto);
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
-        av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        JvmCodegenUtil.writeAbiVersion(av);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(SerializationUtil.serializePackageData(data))) {
             array.visit(null, string);

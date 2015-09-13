@@ -91,7 +91,11 @@ public open class KotlinLightClassForExplicitDeclaration(
 
         var declaration: PsiElement? = JetPsiUtil.getTopmostParentOfTypes(
                 classOrObject,
-                javaClass<JetNamedFunction>(), javaClass<JetConstructor<*>>(), javaClass<JetProperty>(), javaClass<JetClassInitializer>(), javaClass<JetParameter>())
+                JetNamedFunction::class.java,
+                JetConstructor::class.java,
+                JetProperty::class.java,
+                JetClassInitializer::class.java,
+                JetParameter::class.java)
 
         if (declaration is JetParameter) {
             declaration = declaration.getStrictParentOfType<JetNamedDeclaration>()

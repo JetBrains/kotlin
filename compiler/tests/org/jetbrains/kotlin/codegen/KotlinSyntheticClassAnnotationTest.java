@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
@@ -27,17 +26,18 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KIND_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.VERSION_FIELD_NAME;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
@@ -194,10 +194,10 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
 
         Annotation annotation = aClass.getAnnotation(annotationClass);
 
-        Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, ABI_VERSION_FIELD_NAME);
+        int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, VERSION_FIELD_NAME);
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
-                   AbiVersionUtil.isAbiVersionCompatible(version));
+                   AbiVersionUtil.isAbiVersionCompatible(BinaryVersion.create(version)));
 
         Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KIND_FIELD_NAME);
         assertNotNull(actualKind);

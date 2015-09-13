@@ -22,7 +22,7 @@ base() public final class Outer {
     }
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) kotlin.annotation.annotation() public final class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

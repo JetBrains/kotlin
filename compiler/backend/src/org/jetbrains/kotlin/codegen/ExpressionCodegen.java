@@ -1662,6 +1662,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         int index = myFrameMap.enter(variableDescriptor, type);
 
         if (isSharedVarType(type)) {
+            markLineNumber(statement, false);
             v.anew(type);
             v.dup();
             v.invokespecial(type.getInternalName(), "<init>", "()V", false);

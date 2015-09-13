@@ -27,7 +27,7 @@ class StarProjectionImpl(
     override fun getProjectionKind() = Variance.OUT_VARIANCE
 
     // No synchronization here: there's no problem in accidentally computing this twice
-    private val _type: JetType by lazy {
+    private val _type: JetType by lazy(LazyThreadSafetyMode.NONE) {
         typeParameter.starProjectionType()
     }
 

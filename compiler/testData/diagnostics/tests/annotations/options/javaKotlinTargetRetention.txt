@@ -1,6 +1,6 @@
 package
 
-java.lang.annotation.Target(value = {ElementType.PACKAGE}) kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation() public final class my : kotlin.Annotation {
+java.lang.annotation.Target(value = {ElementType.PACKAGE}) kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) kotlin.annotation.annotation() public final class my : kotlin.Annotation {
     public constructor my()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

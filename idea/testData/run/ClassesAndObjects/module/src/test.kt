@@ -28,9 +28,9 @@ object Foo {
     }
 }
 
-// RUN: q.QPackage
+// RUN: q.TestKt
 object Foo2 {
-    // RUN: q.QPackage
+    // RUN: q.TestKt
     fun main(s: Array<String>) {
         println("Foo2")
     }
@@ -46,33 +46,33 @@ class Bar {
     }
 }
 
-// RUN: q.QPackage
+// RUN: q.TestKt
 class Bar2 {
     companion object {
-        // RUN: q.QPackage
+        // RUN: q.TestKt
         fun main(s: Array<String>) {
             println("Bar2")
         }
     }
 }
 
-// RUN: q.QPackage
+// RUN: q.TestKt
 class Baz {
-    // RUN: q.QPackage
+    // RUN: q.TestKt
     platformStatic fun main(s: Array<String>) {
         println("Baz")
     }
 }
 
-// RUN: q.QPackage
+// RUN: q.TestKt
 class Baz2 {
-    // RUN: q.QPackage
+    // RUN: q.TestKt
     fun main(s: Array<String>) {
         println("Baz2")
     }
 }
 
-// RUN: q.QPackage
+// RUN: q.TestKt
 fun main(s: Array<String>) {
     println("Top-level")
 }

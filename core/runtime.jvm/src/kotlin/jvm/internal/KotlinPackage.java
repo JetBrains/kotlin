@@ -21,7 +21,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KotlinPackage {
+    @Deprecated
     int abiVersion();
+
+    int[] version() default {};
 
     String[] data();
 }

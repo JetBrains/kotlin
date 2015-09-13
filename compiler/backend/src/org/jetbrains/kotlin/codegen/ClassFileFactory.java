@@ -120,10 +120,13 @@ public class ClassFileFactory implements OutputFileCollection {
                 @Override
                 public byte[] asBytes(ClassBuilderFactory factory) {
                     try {
-                        ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(4*1024);
+                        ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(4096);
                         DataOutputStream dataOutStream = new DataOutputStream(moduleMapping);
-                        dataOutStream.writeInt(1);
-                        dataOutStream.writeInt(JvmAbi.VERSION);
+                        int[] version = JvmAbi.VERSION.toArray();
+                        dataOutStream.writeInt(version.length);
+                        for (int number : version) {
+                            dataOutStream.writeInt(number);
+                        }
                         builder.build().writeTo(dataOutStream);
                         dataOutStream.flush();
                         return moduleMapping.toByteArray();
