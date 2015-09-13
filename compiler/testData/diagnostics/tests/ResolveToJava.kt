@@ -8,7 +8,6 @@ import <!UNRESOLVED_REFERENCE!>utils<!>.*
 
 import java.io.PrintStream
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
-import java.util
 
 val l : MutableList<in Int> = ArrayList<Int>()
 
@@ -16,7 +15,6 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
   val <!UNUSED_VARIABLE!>x<!> : java.<!UNRESOLVED_REFERENCE!>List<!>
   val <!UNUSED_VARIABLE!>y<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>
   val <!UNUSED_VARIABLE!>b<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
-  val <!UNUSED_VARIABLE!>a<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>util.List<Int><!>
   val <!UNUSED_VARIABLE!>z<!> : java.<!UNRESOLVED_REFERENCE!>utils<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>List<!><Int>
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null

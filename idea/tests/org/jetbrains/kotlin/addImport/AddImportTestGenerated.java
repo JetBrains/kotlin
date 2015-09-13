@@ -209,12 +209,6 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
-    @TestMetadata("ImportPackage.kt")
-    public void testImportPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportPackage.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("ImportSecondFunction.kt")
     public void testImportSecondFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportSecondFunction.kt");
@@ -254,12 +248,6 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("NoNeedToImportStandardClass.kt")
     public void testNoNeedToImportStandardClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoNeedToImportStandardClass.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("PackageAlreadyImported.kt")
-    public void testPackageAlreadyImported() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PackageAlreadyImported.kt");
         doTest(fileName);
     }
 

@@ -1,5 +1,3 @@
-import b.a
-
 fun bar() {
-    val t: a.A = a.A()
+    val t: b.a.A = b.a.A()
 }

@@ -1,7 +1,5 @@
-import java.util
-
 fun Random(): Int = 1
 
 class A {
-    val x = util.Random()
+    val x = java.util.Random()
 }

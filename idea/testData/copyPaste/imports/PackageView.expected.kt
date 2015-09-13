@@ -1,5 +1,3 @@
 package to
 
-import a.b
-
-val c = b.B()
+val c = a.b.B()

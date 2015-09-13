@@ -1,7 +1,5 @@
 package some
 
-import jettesting.data
-
 fun other() {
-    data.topLevelFu<caret>
+    jettesting.data.topLevelFu<caret>
 }
