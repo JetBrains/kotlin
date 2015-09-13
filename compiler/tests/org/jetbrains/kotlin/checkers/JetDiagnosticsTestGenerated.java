@@ -6504,6 +6504,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassClash.kt")
+            public void testClassClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ClassClash.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ClassClashStarImport.kt")
+            public void testClassClashStarImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ClassClashStarImport.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ClassImportsConflicting.kt")
             public void testClassImportsConflicting() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ClassImportsConflicting.kt");
@@ -6543,6 +6555,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ExplicitPackageImportsAmbiguity.kt")
             public void testExplicitPackageImportsAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitPackageImportsAmbiguity.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GenericClassVsPackage.kt")
+            public void testGenericClassVsPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/GenericClassVsPackage.kt");
                 doTest(fileName);
             }
 
@@ -6642,6 +6660,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NestedClassClash.kt")
+            public void testNestedClassClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/NestedClassClash.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PackageLocalClassNotImported.kt")
             public void testPackageLocalClassNotImported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImported.kt");
@@ -6651,6 +6675,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("PackageLocalClassReferencedError.kt")
             public void testPackageLocalClassReferencedError() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassReferencedError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageVsClass.kt")
+            public void testPackageVsClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageVsClass.kt");
                 doTest(fileName);
             }
 
@@ -6681,6 +6711,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("StarImportFromObject.kt")
             public void testStarImportFromObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/StarImportFromObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelClassVsPackage.kt")
+            public void testTopLevelClassVsPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/TopLevelClassVsPackage.kt");
                 doTest(fileName);
             }
         }
