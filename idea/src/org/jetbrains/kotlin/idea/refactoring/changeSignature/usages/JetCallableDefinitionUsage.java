@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
@@ -346,10 +347,10 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         JetModifierKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
 
         if (element instanceof JetCallableDeclaration) {
-            ((JetCallableDeclaration)element).addModifier(newVisibilityToken);
+            PsiModificationUtilsKt.setVisibility((JetCallableDeclaration)element, newVisibilityToken);
         }
         else if (element instanceof JetClass) {
-            ((JetClass) element).createPrimaryConstructorIfAbsent().addModifier(newVisibilityToken);
+            PsiModificationUtilsKt.setVisibility(((JetClass) element).createPrimaryConstructorIfAbsent(), newVisibilityToken);
         }
         else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
     }

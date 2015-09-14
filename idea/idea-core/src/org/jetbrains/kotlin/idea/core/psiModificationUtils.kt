@@ -20,13 +20,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getFunctionLiteralArgumentName
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
@@ -153,4 +159,34 @@ public fun PsiElement.deleteSingle() {
 public fun JetClass.getOrCreateCompanionObject() : JetObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
     return addDeclaration(JetPsiFactory(this).createCompanionObject()) as JetObjectDeclaration
+}
+
+//TODO: code style option whether to insert redundant 'public' keyword or not
+public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordToken) {
+    val defaultVisibilityKeyword = if (hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+        (resolveToDescriptor() as? CallableMemberDescriptor)
+                ?.overriddenDescriptors
+                ?.let { OverridingUtil.findMaxVisibility(it) }
+                ?.toKeyword()
+    }
+    else {
+        JetTokens.DEFAULT_VISIBILITY_KEYWORD
+    }
+
+    if (visibilityModifier == defaultVisibilityKeyword) {
+        this.visibilityModifier()?.let { removeModifier(it.node.elementType as JetModifierKeywordToken) }
+        return
+    }
+
+    addModifier(visibilityModifier)
+}
+
+private fun Visibility.toKeyword(): JetModifierKeywordToken? {
+    return when (this) {
+        Visibilities.PUBLIC -> JetTokens.PUBLIC_KEYWORD
+        Visibilities.PROTECTED -> JetTokens.PROTECTED_KEYWORD
+        Visibilities.INTERNAL -> JetTokens.INTERNAL_KEYWORD
+        Visibilities.PRIVATE -> JetTokens.PRIVATE_KEYWORD
+        else -> null
+    }
 }

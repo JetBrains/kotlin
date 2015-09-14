@@ -22,7 +22,6 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -52,7 +51,7 @@ public class JetModifierListOwnerStub<T extends StubElement<?>> extends JetEleme
 
     @Override
     public void addModifier(@NotNull JetModifierKeywordToken modifier) {
-        AddRemoveModifierPackage.addModifier(this, modifier, JetTokens.DEFAULT_VISIBILITY_KEYWORD);
+        AddRemoveModifierPackage.addModifier(this, modifier);
     }
 
     @Override

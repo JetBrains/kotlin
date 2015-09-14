@@ -3,5 +3,5 @@ interface I {
 }
 
 abstract class C : I {
-    <caret>override fun foo() {}
+    <caret>public override fun foo() {}
 }

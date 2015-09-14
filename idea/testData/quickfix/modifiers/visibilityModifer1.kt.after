@@ -4,5 +4,5 @@ open class A {
 }
 
 class B : A() {
-    <caret>protected override fun run() {}
+    <caret>override fun run() {}
 }

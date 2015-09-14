@@ -30,15 +30,16 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetModifierListOwner;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierListOwner> {
-    public ChangeVisibilityModifierFix(@NotNull JetModifierListOwner element) {
+public class ChangeVisibilityModifierFix extends JetIntentionAction<JetDeclaration> {
+    public ChangeVisibilityModifierFix(@NotNull JetDeclaration element) {
         super(element);
     }
 
@@ -64,7 +65,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetModifierKeywordToken modifier = findVisibilityChangeTo(file);
         assert modifier != null;
-        element.addModifier(modifier);
+        PsiModificationUtilsKt.setVisibility(element, modifier);
     }
 
     @Nullable
@@ -109,10 +110,10 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+            public JetIntentionAction<JetDeclaration> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                if (!(element instanceof JetModifierListOwner)) return null;
-                return new ChangeVisibilityModifierFix((JetModifierListOwner)element);
+                if (!(element instanceof JetDeclaration)) return null;
+                return new ChangeVisibilityModifierFix((JetDeclaration)element);
             }
         };
     }

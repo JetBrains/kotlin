@@ -25,6 +25,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -394,3 +395,10 @@ public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingCont
 public fun JetExpression.asAssignment(): JetBinaryExpression? =
         if (JetPsiUtil.isAssignment(this)) this as JetBinaryExpression else null
 
+public fun JetDeclaration.visibilityModifier(): PsiElement? {
+    val modifierList = modifierList ?: return null
+    return JetTokens.VISIBILITY_MODIFIERS.types
+                   .asSequence()
+                   .map { modifierList.getModifier(it as JetModifierKeywordToken) }
+                   .firstOrNull { it != null }
+}

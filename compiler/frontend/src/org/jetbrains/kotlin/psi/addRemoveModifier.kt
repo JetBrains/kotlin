@@ -33,14 +33,13 @@ private fun createModifierList(text: String, owner: JetModifierListOwner): JetMo
     return owner.addBefore(newModifierList, anchor) as JetModifierList
 }
 
-internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken, defaultVisibilityModifier: JetModifierKeywordToken) {
+internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
     val modifierList = owner.modifierList
     if (modifierList == null) {
-        if (modifier == defaultVisibilityModifier) return
         createModifierList(modifier.value, owner)
     }
     else {
-        addModifier(modifierList, modifier, defaultVisibilityModifier)
+        addModifier(modifierList, modifier)
     }
 }
 
@@ -54,7 +53,7 @@ internal fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: Je
     }
 }
 
-internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKeywordToken, defaultVisibilityModifier: JetModifierKeywordToken) {
+internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKeywordToken) {
     if (modifierList.hasModifier(modifier)) return
 
     val newModifier = JetPsiFactory(modifierList).createModifier(modifier)
@@ -62,15 +61,6 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
             ?.map { modifierList.getModifier(it) }
             ?.filterNotNull()
             ?.firstOrNull()
-
-    if (modifier == defaultVisibilityModifier) { // do not insert explicit 'internal' keyword (or 'public' for primary constructor)
-        //TODO: code style option
-        modifierToReplace?.delete()
-        if (modifierList.firstChild == null) {
-            modifierList.delete()
-        }
-        return
-    }
 
     if (modifierToReplace != null) {
         modifierToReplace.replace(newModifier)

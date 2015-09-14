@@ -39,7 +39,7 @@ public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
     override fun addModifier(modifier: JetModifierKeywordToken) {
         val modifierList = modifierList
         if (modifierList != null) {
-            addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD)
+            addModifier(modifierList, modifier)
             if (this.modifierList == null) {
                 getConstructorKeyword()?.delete()
             }
