@@ -125,6 +125,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments))
 
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
+
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
@@ -134,8 +136,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             CommandLineScriptUtils.scriptParameters()
         else
             emptyList<AnalyzerScriptParameter>())
-
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         putAdvancedOptions(configuration, arguments)
 
