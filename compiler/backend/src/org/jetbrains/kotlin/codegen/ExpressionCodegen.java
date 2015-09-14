@@ -2210,22 +2210,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null) {
-                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper, context);
+                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                 }
             }
 
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null && !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context)) {
-                    callableSetter = typeMapper.mapToCallableMethod(setter, isSuper, context);
+                    callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }
             }
         }
 
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         Type backingFieldOwner =
-                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
-                                    isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
+                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor);
 
         String fieldName;
         if (isExtensionProperty && !isDelegatedProperty) {
@@ -2247,11 +2246,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue.Property intermediateValueForSyntheticExtensionProperty(@NotNull SyntheticJavaPropertyDescriptor propertyDescriptor, StackValue receiver) {
+    private StackValue.Property intermediateValueForSyntheticExtensionProperty(
+            @NotNull SyntheticJavaPropertyDescriptor propertyDescriptor,
+            StackValue receiver
+    ) {
         Type type = typeMapper.mapType(propertyDescriptor.getOriginal().getType());
-        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false, context);
+        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false);
         FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();
-        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false, context) : null;
+        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false) : null;
         return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, state, receiver);
     }
 
@@ -2393,12 +2395,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return intrinsic.toCallable(fd, superCall, resolvedCall, this);
         }
 
-        return resolveToCallableMethod(fd, superCall, context);
+        return resolveToCallableMethod(fd, superCall);
     }
 
     @NotNull
-    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
-        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall, context);
+    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall) {
+        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall);
     }
 
     public void invokeMethodWithArguments(
@@ -3483,7 +3485,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean isGetter = "get".equals(operationDescriptor.getName().asString());
 
             Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
-            Callable callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
+            Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
             StackValue collectionElementReceiver = createCollectionElementReceiver(

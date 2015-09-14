@@ -408,8 +408,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         public fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
             return typeMapper.mapOwner(
-                    if (AsmUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.getContainingDeclaration() else descriptor,
-                    true).getInternalName()
+                    if (AsmUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
+            ).internalName
         }
 
         private fun isInPropertyAccessor(element: PsiElement?) =

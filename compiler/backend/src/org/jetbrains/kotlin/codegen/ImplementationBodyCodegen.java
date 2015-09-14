@@ -944,7 +944,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null;
         CallableMethod callableMethod = isConstructor ?
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
-                                        typeMapper.mapToCallableMethod(functionDescriptor, superCall, context);
+                                        typeMapper.mapToCallableMethod(functionDescriptor, superCall);
 
         int reg = 1;
         if (isConstructor && !accessorIsConstructor) {
@@ -1084,8 +1084,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v,
-                                                                                         constructorContext, myClass);
+        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
 
         if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
@@ -1110,8 +1109,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(myClass, constructorDescriptor, constructorDescriptor,
-                                                                              constructorContext, v);
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
+                myClass, constructorDescriptor, constructorDescriptor, kind, v
+        );
     }
 
     private void generatePrimaryConstructorImpl(

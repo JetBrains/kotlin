@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetClass
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -39,12 +38,13 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * If all of the parameters of the specified constructor declare default values,
      * generates a no-argument constructor that passes default values for all arguments.
      */
-    fun generateConstructorOverloadsIfNeeded(constructorDescriptor: ConstructorDescriptor,
-                                             classBuilder: ClassBuilder,
-                                             context: CodegenContext<*>,
-                                             classOrObject: JetClassOrObject) {
-        if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor,
-                                      context, classBuilder)) {
+    fun generateConstructorOverloadsIfNeeded(
+            constructorDescriptor: ConstructorDescriptor,
+            classBuilder: ClassBuilder,
+            contextKind: OwnerKind,
+            classOrObject: JetClassOrObject
+    ) {
+        if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
             return
         }
 
@@ -52,8 +52,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             return
         }
 
-        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, classOrObject,
-                                                  context,
+        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, classOrObject, contextKind,
                                                   constructorDescriptor.countDefaultParameters())
     }
 
@@ -70,21 +69,25 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *     implementation in the companion object class)
      * @return true if the overloads annotation was found on the element, false otherwise
      */
-    fun generateOverloadsIfNeeded(methodElement: JetElement?,
-                                  functionDescriptor: FunctionDescriptor,
-                                  delegateFunctionDescriptor: FunctionDescriptor,
-                                  owner: CodegenContext<*>,
-                                  classBuilder: ClassBuilder): Boolean {
+    fun generateOverloadsIfNeeded(
+            methodElement: JetElement?,
+            functionDescriptor: FunctionDescriptor,
+            delegateFunctionDescriptor: FunctionDescriptor,
+            contextKind: OwnerKind,
+            classBuilder: ClassBuilder
+    ): Boolean {
         if (!functionDescriptor.hasJvmOverloadsAnnotation()) {
             return false
         }
 
         val count = functionDescriptor.countDefaultParameters()
-        val context = owner.intoFunction(functionDescriptor)
 
         for (i in 1..count) {
-            generateOverloadWithSubstitutedParameters(functionDescriptor, delegateFunctionDescriptor, classBuilder, methodElement, context, i)
+            generateOverloadWithSubstitutedParameters(
+                    functionDescriptor, delegateFunctionDescriptor, classBuilder, methodElement, contextKind, i
+            )
         }
+
         return true
     }
 
@@ -102,18 +105,19 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *     implementation in the companion object class)
      * @param methodElement the PSI element for the method implementation (used in diagnostic messages only)
      */
-    fun generateOverloadWithSubstitutedParameters(functionDescriptor: FunctionDescriptor,
-                                                  delegateFunctionDescriptor: FunctionDescriptor,
-                                                  classBuilder: ClassBuilder,
-                                                  methodElement: JetElement?,
-                                                  context: CodegenContext<*>,
-                                                  substituteCount: Int) {
+    private fun generateOverloadWithSubstitutedParameters(
+            functionDescriptor: FunctionDescriptor,
+            delegateFunctionDescriptor: FunctionDescriptor,
+            classBuilder: ClassBuilder,
+            methodElement: JetElement?,
+            contextKind: OwnerKind,
+            substituteCount: Int
+    ) {
         val typeMapper = state.typeMapper
-
-        val isStatic = AsmUtil.isStaticMethod(context.getContextKind(), functionDescriptor)
+        val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
         val flags = AsmUtil.getVisibilityAccessFlag(functionDescriptor) or (if (isStatic) Opcodes.ACC_STATIC else 0)
         val remainingParameters = getRemainingParameters(functionDescriptor.getOriginal(), substituteCount)
-        val signature = typeMapper.mapSignature(functionDescriptor, context.getContextKind(), remainingParameters)
+        val signature = typeMapper.mapSignature(functionDescriptor, contextKind, remainingParameters)
         val mv = classBuilder.newMethod(OtherOrigin(methodElement, functionDescriptor), flags,
                                         signature.getAsmMethod().getName(),
                                         signature.getAsmMethod().getDescriptor(),
@@ -136,7 +140,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val v = InstructionAdapter(mv)
         mv.visitCode()
 
-        val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false, context).owner
+        val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false).owner
         if (!isStatic) {
             val thisIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
             v.load(thisIndex, methodOwner) // Load this on stack
@@ -187,7 +191,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             v.aconst(null)
         }
 
-        val defaultMethod = typeMapper.mapDefaultMethod(delegateFunctionDescriptor, context.getContextKind(), context)
+        val defaultMethod = typeMapper.mapDefaultMethod(delegateFunctionDescriptor, contextKind)
         if (functionDescriptor is ConstructorDescriptor) {
             v.invokespecial(methodOwner.getInternalName(), defaultMethod.getName(), defaultMethod.getDescriptor(), false)
         }

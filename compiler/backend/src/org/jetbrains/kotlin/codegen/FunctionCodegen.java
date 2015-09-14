@@ -27,7 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
-import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
+import org.jetbrains.kotlin.codegen.context.DelegatingFacadeContext;
+import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -121,10 +124,9 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull FunctionDescriptor delegateFunctionDescriptor
     ) {
-        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(function,
-                                                                              functionDescriptor,
-                                                                              delegateFunctionDescriptor,
-                                                                              owner, v);
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
+                function, functionDescriptor, delegateFunctionDescriptor, owner.getContextKind(), v
+        );
     }
 
     public void generateMethod(
@@ -580,7 +582,7 @@ public class FunctionCodegen {
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         flags &= ~ACC_PRIVATE;
 
-        Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
+        Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind);
 
         MethodVisitor mv = v.newMethod(
                 Synthetic(function, functionDescriptor),
@@ -667,7 +669,7 @@ public class FunctionCodegen {
             method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
         }
         else {
-            method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext);
+            method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
         }
 
         generator.genCallWithoutAssertions(method, codegen);

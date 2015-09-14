@@ -101,7 +101,7 @@ public class TraitImplBodyCodegen(
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                         val iv = codegen.v
 
-                        val method = typeMapper.mapToCallableMethod(delegateTo, true, context)
+                        val method = typeMapper.mapToCallableMethod(delegateTo, true)
                         val myParameters = signature.getValueParameters()
                         val calleeParameters = method.getValueParameters()
 

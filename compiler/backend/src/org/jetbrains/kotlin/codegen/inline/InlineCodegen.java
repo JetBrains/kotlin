@@ -185,7 +185,7 @@ public class InlineCodegen extends CallGenerator {
 
         Method asmMethod;
         if (callDefault) {
-            asmMethod = typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind(), context);
+            asmMethod = typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind());
         }
         else {
             asmMethod = jvmSignature.getAsmMethod();
@@ -231,7 +231,7 @@ public class InlineCodegen extends CallGenerator {
 
             SMAP smap;
             if (callDefault) {
-                Type ownerType = typeMapper.mapOwner(functionDescriptor, true/*TODO: false, migration*/);
+                Type ownerType = typeMapper.mapOwner(functionDescriptor);
                 FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
                                                                         (FieldOwnerContext) methodContext.getParentContext(),
                                                                         ownerType.getInternalName());
@@ -343,7 +343,7 @@ public class InlineCodegen extends CallGenerator {
                 new FakeMemberCodegen(codegen.getParentCodegen(), expression,
                                       (FieldOwnerContext) context.getParentContext(),
                                       isLambda ? codegen.getParentCodegen().getClassName()
-                                               : typeMapper.mapOwner(descriptor, true /*TODO: false, migration*/).getInternalName());
+                                               : typeMapper.mapOwner(descriptor).getInternalName());
 
         FunctionGenerationStrategy strategy =
                 expression instanceof JetCallableReferenceExpression ?

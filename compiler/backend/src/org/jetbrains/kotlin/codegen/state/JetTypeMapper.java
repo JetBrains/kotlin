@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
@@ -69,7 +68,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,7 +137,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean isInsideModule) {
+    public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
@@ -594,11 +592,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public CallableMethod mapToCallableMethod(
-            @NotNull FunctionDescriptor descriptor,
-            boolean superCall,
-            @NotNull CodegenContext<?> context
-    ) {
+    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
         FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
@@ -663,7 +657,7 @@ public class JetTypeMapper {
         }
         else {
             signature = mapSignature(functionDescriptor.getOriginal());
-            owner = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
+            owner = mapOwner(functionDescriptor);
             ownerForDefaultParam = owner;
             ownerForDefaultImpl = owner;
             if (functionParent instanceof PackageFragmentDescriptor) {
@@ -852,13 +846,15 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
+    public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
-        Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
+        Type ownerType = mapOwner(functionDescriptor);
         boolean isConstructor = isConstructor(jvmSignature);
-        String descriptor = getDefaultDescriptor(jvmSignature,
-                                                 isStaticMethod(kind, functionDescriptor) || isConstructor ? null : ownerType.getDescriptor(),
-                                                 functionDescriptor.getExtensionReceiverParameter() != null);
+        String descriptor = getDefaultDescriptor(
+                jvmSignature,
+                isStaticMethod(kind, functionDescriptor) || isConstructor ? null : ownerType.getDescriptor(),
+                functionDescriptor.getExtensionReceiverParameter() != null
+        );
 
         return new Method(isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor);
     }
@@ -1140,12 +1136,6 @@ public class JetTypeMapper {
         else if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
             return StackValue.sharedTypeForType(mapType(((VariableDescriptor) descriptor).getType()));
         }
-        return null;
-    }
-
-    // TODO Temporary hack until modules infrastructure is implemented. See JetTypeMapperWithOutDirectory for details
-    @Nullable
-    protected File getOutDirectory() {
         return null;
     }
 }

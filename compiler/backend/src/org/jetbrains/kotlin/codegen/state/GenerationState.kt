@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -41,7 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import java.io.File
 
-public class GenerationState jvmOverloads constructor(
+public class GenerationState @JvmOverloads constructor(
         public val project: Project,
         builderFactory: ClassBuilderFactory,
         public val module: ModuleDescriptor,
@@ -58,7 +57,9 @@ public class GenerationState jvmOverloads constructor(
         // for PackageCodegen in incremental compilation mode
         public val targetId: TargetId? = null,
         moduleName: String? = null,
-        // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
+        // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
+        // partial compilation. Module chunks are treated as a single module.
+        // TODO: get rid of it with the proper module infrastructure
         public val outDirectory: File? = null,
         public val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         public val progress: Progress = Progress.DEAF
@@ -87,8 +88,7 @@ public class GenerationState jvmOverloads constructor(
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     public val bindingContext: BindingContext = bindingTrace.getBindingContext()
-    public val typeMapper: JetTypeMapper =
-            JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, fileClassesProvider, outDirectory)
+    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider)
     public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
@@ -101,13 +101,13 @@ public class GenerationState jvmOverloads constructor(
     private var used = false
 
     public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
-        @jvmName("isCallAssertionsEnabled") get
+        @JvmName("isCallAssertionsEnabled") get
 
     public val isParamAssertionsEnabled: Boolean = !disableParamAssertions
-        @jvmName("isParamAssertionsEnabled") get
+        @JvmName("isParamAssertionsEnabled") get
 
     public val isInlineEnabled: Boolean = !disableInline
-        @jvmName("isInlineEnabled") get
+        @JvmName("isInlineEnabled") get
 
     public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
 

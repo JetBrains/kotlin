@@ -33,7 +33,7 @@ public abstract class IntrinsicMethod {
             @NotNull ResolvedCall resolvedCall,
             @NotNull ExpressionCodegen codegen
     ) {
-        return toCallable(codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext()), isSuper, resolvedCall);
+        return toCallable(codegen.getState().getTypeMapper().mapToCallableMethod(fd, false), isSuper, resolvedCall);
     }
 
     @NotNull
