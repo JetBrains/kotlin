@@ -215,8 +215,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             if (smartCompletion != null) {
-                @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
-                val (additionalItems, inheritanceSearcher) = smartCompletion.additionalItems()
+                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems()
 
                 // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
                 for (item in additionalItems) {

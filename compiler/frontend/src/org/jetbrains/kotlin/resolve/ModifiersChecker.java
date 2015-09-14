@@ -194,6 +194,15 @@ public class ModifiersChecker {
             ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
         }
 
+        public void checkModifiersForMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+            annotationChecker.check(multiDeclaration, trace, null);
+            ModifierCheckerCore.INSTANCE$.check(multiDeclaration, trace, null);
+            for (JetMultiDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
+                annotationChecker.check(multiEntry, trace, null);
+                ModifierCheckerCore.INSTANCE$.check(multiEntry, trace, null);
+            }
+        }
+
         private void checkNestedClassAllowed(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
             if (modifierListOwner.hasModifier(INNER_KEYWORD)) return;
             if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry)) {

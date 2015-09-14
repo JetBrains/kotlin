@@ -1,3 +1,4 @@
+@Target(AnnotationTarget.TYPE)
 annotation class My
 
 fun foo() {

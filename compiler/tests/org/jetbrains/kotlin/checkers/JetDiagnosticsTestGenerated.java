@@ -1043,6 +1043,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("forParam.kt")
+                public void testForParam() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/forParam.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("javaDocumented.kt")
                 public void testJavaDocumented() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/javaDocumented.kt");
@@ -1061,6 +1067,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("multiDeclaration.kt")
+                public void testMultiDeclaration() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/multiDeclaration.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("repeatable.kt")
                 public void testRepeatable() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/repeatable.kt");
@@ -1070,6 +1082,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("retention.kt")
                 public void testRetention() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/retention.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setterParam.kt")
+                public void testSetterParam() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/setterParam.kt");
                     doTest(fileName);
                 }
 

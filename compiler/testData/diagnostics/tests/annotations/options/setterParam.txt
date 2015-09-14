@@ -1,9 +1,9 @@
 package
 
-public fun foo(): kotlin.Unit
+public var x: kotlin.Int
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() public final class My : kotlin.Annotation {
-    public constructor My()
+kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+    public constructor Ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

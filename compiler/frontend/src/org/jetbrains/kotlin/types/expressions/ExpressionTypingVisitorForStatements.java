@@ -185,6 +185,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             return TypeInfoFactoryPackage.noTypeInfo(context);
         }
         components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
+        components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiDeclaration);
         return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
     }
 

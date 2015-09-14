@@ -40,7 +40,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
         }
-        if (annotated is JetFunction) {
+        if (annotated is JetDeclarationWithBody) {
+            // JetFunction or JetPropertyAccessor
             for (parameter in annotated.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace)
@@ -168,6 +169,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         private fun getActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): TargetList {
             return when (annotated) {
                 is JetClassOrObject -> descriptor?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
+                is JetMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
                 is JetProperty -> {
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE

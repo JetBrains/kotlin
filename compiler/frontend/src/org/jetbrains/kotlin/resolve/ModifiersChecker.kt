@@ -212,7 +212,8 @@ public object ModifierCheckerCore {
     }
 
     public fun check(listOwner: JetModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
-        if (listOwner is JetFunction) {
+        if (listOwner is JetDeclarationWithBody) {
+            // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace, null)
