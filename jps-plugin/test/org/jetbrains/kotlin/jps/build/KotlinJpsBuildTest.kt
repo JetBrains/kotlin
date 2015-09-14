@@ -623,6 +623,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             builder.build(scopeBuilder.build(), false)
         }
         finally {
+            descriptor.dataManager.flush(false)
             descriptor.release()
         }
     }
