@@ -504,6 +504,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFilePartClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeClassByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetMultifileClassPartIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileDecompiler"/>

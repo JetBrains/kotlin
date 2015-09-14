@@ -25,18 +25,16 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
-import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.parsing.JetParser;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl;
 
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 56;
+    public static final int STUB_VERSION = 57;
 
     private static final String NAME = "kotlin.FILE";
 
