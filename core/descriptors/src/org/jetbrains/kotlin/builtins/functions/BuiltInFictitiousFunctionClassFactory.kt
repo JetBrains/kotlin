@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
-import kotlin.platform.platformStatic
 
 /**
  * Produces descriptors representing the fictitious classes for function types, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -37,9 +35,8 @@ public class BuiltInFictitiousFunctionClassFactory(
     private data class KindWithArity(val kind: Kind, val arity: Int)
 
     companion object {
-        platformStatic public fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
-            // There is no functions in kotlin.annotation package
-            if (packageFqName == KotlinBuiltIns.ANNOTATION_PACKAGE_FQ_NAME) return null
+        @JvmStatic
+        public fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
             val kind = FunctionClassDescriptor.Kind.byPackage(packageFqName) ?: return null
 
             val prefix = kind.classNamePrefix
@@ -65,12 +62,12 @@ public class BuiltInFictitiousFunctionClassFactory(
     }
 
     override fun createClass(classId: ClassId): ClassDescriptor? {
-        if (classId.isLocal() || classId.isNestedClass()) return null
+        if (classId.isLocal || classId.isNestedClass) return null
 
-        val className = classId.getRelativeClassName().asString()
+        val className = classId.relativeClassName.asString()
         if ("Function" !in className) return null // An optimization
 
-        val packageFqName = classId.getPackageFqName()
+        val packageFqName = classId.packageFqName
         val (kind, arity) = parseClassName(className, packageFqName) ?: return null
 
         val containingPackageFragment = module.getPackage(packageFqName).fragments.single()
