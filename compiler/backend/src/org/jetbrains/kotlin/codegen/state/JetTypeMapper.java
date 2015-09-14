@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
@@ -207,7 +208,7 @@ public class JetTypeMapper {
 
     @Nullable
     private static String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
-        // XXX Dirty hack; see getPAckageMemberOwnerInternalName above for more details.
+        // XXX Dirty hack; see getPackageMemberOwnerInternalName above for more details.
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
@@ -222,14 +223,12 @@ public class JetTypeMapper {
             else if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
                 return PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()).shortName().asString();
             }
-            else if (scope instanceof DeserializedPackageMemberScope) {
-                // XXX IncrementalPackageScope
+            else {
+                // Incremental compilation ends up here. We do not have multifile classes support in incremental so far,
+                // so "use implementation class name" looks like a safe assumption for this case.
+                // However, this should be fixed; see getPackageMemberOwnerInternalName above for more details.
                 Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
                 return implClassName.asString();
-            }
-            else {
-                throw new AssertionError("Unexpected member scope for deserialized callable: " + scope +
-                                         "; descriptor: " + descriptor);
             }
         }
         return null;
