@@ -235,6 +235,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"
                     serviceImplementation="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ClsJavaStubByVirtualFileCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ClsJavaStubByVirtualFileCache"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
