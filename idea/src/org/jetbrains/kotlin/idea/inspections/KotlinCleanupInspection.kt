@@ -100,10 +100,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.USELESS_ELVIS,
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE,
-            Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER,
-            Errors.DEPRECATED_DECAPITALIZED_ANNOTATION,
-            Errors.DEPRECATED_ESCAPED_MODIFIER,
-            Errors.DEPRECATED_UNESCAPED_ANNOTATION,
             Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE
     )
 

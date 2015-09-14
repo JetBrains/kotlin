@@ -41,22 +41,3 @@ fun unnecessaryCast(x: String) = x
 fun unnecessaryElvis(x: String) = x
 
 @JavaAnn(1, arg1 = "abc") class MyClass
-
-annotation class Ann()
-
-@Ann class A1
-
-@Ann() class A2
-
-data class A3
-
-inline private fun <T> baz() {
-    @Suppress("UNCHECKED_CAST")
-    (1 as T)
-
-    data class Local
-}
-
-@Deprecated("123", ReplaceWith("34")) class Obsolete
-
-external fun nativeFun(): Int

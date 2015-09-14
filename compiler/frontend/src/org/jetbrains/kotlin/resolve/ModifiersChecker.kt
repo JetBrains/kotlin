@@ -204,9 +204,6 @@ public object ModifierCheckerCore {
                 else if (!checkParent(trace, second, parentDescriptor)) {
                     incorrectNodes += second
                 }
-                else if ((second.elementType is JetModifierKeywordToken) && second.psi.textContains('@')) {
-                    trace.report(Errors.DEPRECATED_ESCAPED_MODIFIER.on(second.psi))
-                }
             }
         }
     }

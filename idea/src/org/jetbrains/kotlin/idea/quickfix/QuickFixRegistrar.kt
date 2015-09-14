@@ -325,11 +325,5 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
-
-        DEPRECATED_UNESCAPED_ANNOTATION.registerFactory(UnescapedAnnotationFix.Factory)
-        DEPRECATED_ESCAPED_MODIFIER.registerFactory(EscapedModifierFix.Factory)
-        DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.registerFactory(ReplaceAnnotationWithModifierFix.Factory)
-        DEPRECATED_DECAPITALIZED_ANNOTATION.registerFactory(DecapitalizedAnnotationFix.Factory)
-        DEPRECATED_ANNOTATION_USE.registerFactory(RemoveAnnotationFix.Factory)
     }
 }

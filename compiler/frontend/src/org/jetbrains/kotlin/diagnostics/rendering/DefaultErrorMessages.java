@@ -132,11 +132,6 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_PARAM_TARGET, "''@param:'' annotations could be applied only to primary constructor parameters");
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
-        MAP.put(DEPRECATED_UNESCAPED_ANNOTATION, "Annotations without '@' are deprecated now");
-        MAP.put(DEPRECATED_ESCAPED_MODIFIER, "Modifiers with '@' are deprecated now");
-        MAP.put(DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER, "This annotation will become a modifier soon. Use ''{0}'' modifier instead", STRING);
-        MAP.put(DEPRECATED_ANNOTATION_USE, "This annotation use is deprecated");
-
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
@@ -274,7 +269,6 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
-        MAP.put(DEPRECATED_DECAPITALIZED_ANNOTATION, "Decapitalized annotations are deprecated. Use ''{0}'' instead", DEPRECATION_RENDERER);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");

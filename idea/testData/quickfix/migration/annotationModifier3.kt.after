@@ -1,6 +1,0 @@
-// "Replace with 'data'" "true"
-
-annotation class Ann
-@[Ann]
-data /* abc*/
-class A

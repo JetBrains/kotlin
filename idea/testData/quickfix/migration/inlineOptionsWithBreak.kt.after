@@ -1,3 +1,0 @@
-// "Remove annotation" "true"
-
-inline fun inlineFun(block: () -> Int) {}

@@ -108,12 +108,6 @@ public class JetAnnotationEntry extends JetElementImplStub<KotlinAnnotationEntry
         return findChildByType(JetTokens.AT);
     }
 
-    public boolean hasAtSymbolOrInList() {
-        if (getStub() != null) return true;
-
-        return getAtSymbol() != null || getParent() instanceof JetAnnotation;
-    }
-
     @Nullable
     public JetAnnotationUseSiteTarget getUseSiteTarget() {
         JetAnnotationUseSiteTarget target = getStubOrPsiChild(JetStubElementTypes.ANNOTATION_TARGET);

@@ -1002,27 +1002,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/annotations/migration")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Migration extends AbstractJetDiagnosticsTest {
-                public void testAllFilesPresentInMigration() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/migration"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("escapedModifiers.kt")
-                public void testEscapedModifiers() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/migration/escapedModifiers.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("unescapedAnnotation.kt")
-                public void testUnescapedAnnotation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/migration/unescapedAnnotation.kt");
-                    doTest(fileName);
-                }
-            }
-
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/options")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
