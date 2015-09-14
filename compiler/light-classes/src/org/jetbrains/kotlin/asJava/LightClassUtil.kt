@@ -31,7 +31,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -268,7 +268,7 @@ public object LightClassUtil {
         if (parent is JetFile) {
             // top-level declaration
             val fqName = if (useNewPackageParts)
-                JvmFileClassUtil.getFileClassInfoNoResolve(parent).facadeClassFqName
+                parent.javaFileFacadeFqName
             else
                 PackageClassUtils.getPackageClassFqName(parent.packageFqName)
 

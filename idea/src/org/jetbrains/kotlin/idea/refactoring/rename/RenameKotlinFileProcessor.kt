@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
@@ -46,7 +45,7 @@ class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
             val project = jetFile.project
             val facadeClass = JavaPsiFacade.getInstance(project).findClass(facadeFqName.asString(), project.allScope())
             if (facadeClass != null) {
-                allRenames[facadeClass] = PackagePartClassUtils.getPartClassName(FileUtil.getNameWithoutExtension(newName))
+                allRenames[facadeClass] = PackagePartClassUtils.getFilePartShortName(newName)
             }
         }
     }

@@ -26,7 +26,11 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.JavaElementFinder
-import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.JetFileFacadeShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
