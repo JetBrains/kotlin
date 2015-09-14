@@ -1,12 +1,16 @@
 JetFile: ShortAnnotations.kt
   PACKAGE_DIRECTIVE
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -20,6 +24,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -41,6 +47,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -58,12 +66,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -77,6 +89,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -98,6 +112,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -112,12 +128,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n')
   OBJECT_DECLARATION
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -131,6 +151,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -152,6 +174,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -167,12 +191,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n')
   FUN
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -186,6 +214,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -207,6 +237,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -228,12 +260,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n')
   PROPERTY
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -247,6 +283,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -268,6 +306,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -294,12 +334,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n')
   PROPERTY
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -313,6 +357,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -334,6 +380,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -360,12 +408,16 @@ JetFile: ShortAnnotations.kt
   PsiWhiteSpace('\n')
   TYPEDEF
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -379,6 +431,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -400,6 +454,8 @@ JetFile: ShortAnnotations.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -429,12 +485,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -448,6 +508,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -469,6 +531,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -487,12 +551,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       CLASS
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -506,6 +574,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -527,6 +597,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -541,12 +613,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -560,6 +636,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -581,6 +659,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -596,12 +676,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       FUN
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -615,6 +699,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -636,6 +722,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -657,12 +745,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       PROPERTY
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -676,6 +768,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -697,6 +791,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -723,12 +819,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       PROPERTY
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -742,6 +842,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -763,6 +865,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -789,12 +893,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n  ')
       TYPEDEF
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -808,6 +916,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -829,6 +939,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -850,12 +962,16 @@ JetFile: ShortAnnotations.kt
       PsiWhiteSpace('\n\n  ')
       ANONYMOUS_INITIALIZER
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -869,6 +985,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -890,6 +1008,8 @@ JetFile: ShortAnnotations.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -923,12 +1043,16 @@ JetFile: ShortAnnotations.kt
         PsiElement(LPAR)('(')
         PROPERTY
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('foo')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -942,6 +1066,8 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -963,6 +1089,8 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

@@ -462,6 +462,7 @@ public class JetParsing extends AbstractJetParsing {
                 // modifier advanced
             }
             else if (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER)) {
+                error("Use '@' symbol before annotations");
                 parseAnnotation(annotationParsingMode);
             }
             else {
@@ -532,11 +533,11 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotation
-     *   : annotationPrefix? unescapedAnnotation
+     *   : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
      *   ;
      *
      * annotationList
-     *   : annotationPrefix "[" unescapedAnnotation+ "]"
+     *   : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
      *   ;
      *
      *   annotationUseSiteTarget
@@ -547,10 +548,6 @@ public class JetParsing extends AbstractJetParsing {
      *   : "set"
      *   : "param"
      *   : "sparam"
-     *   ;
-     *
-     *  annotationPrefix:
-     *   : ("@" (annotationUseSiteTarget ":")?)
      *   ;
      */
     private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
@@ -697,7 +694,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotation
-     *   : annotationPrefix? unescapedAnnotation
+     *   : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
      *   ;
      *
      * unescapedAnnotation

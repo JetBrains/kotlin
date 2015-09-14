@@ -18,6 +18,8 @@ JetFile: functionTypes.kt
   PsiWhiteSpace(' ')
   FUN
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

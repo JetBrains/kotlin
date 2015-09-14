@@ -73,6 +73,8 @@ JetFile: ParameterNameMising.kt
       PsiElement(LPAR)('(')
       VALUE_PARAMETER
         MODIFIER_LIST
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE

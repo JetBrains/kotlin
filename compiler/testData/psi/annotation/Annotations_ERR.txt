@@ -198,6 +198,8 @@ JetFile: Annotations_ERR.kt
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       PsiElement(out)('out')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -277,6 +279,8 @@ JetFile: Annotations_ERR.kt
           PsiElement(in)('in')
           PsiWhiteSpace('\n')
           PsiElement(out)('out')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace('\n')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

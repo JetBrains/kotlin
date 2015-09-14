@@ -5,6 +5,6 @@ annotation
 class my
 
 annotation 
-Retention(RetentionPolicy.RUNTIME) 
-Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR) 
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)
 class my1

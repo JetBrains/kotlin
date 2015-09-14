@@ -61,6 +61,7 @@ JetFile: java.kt
       PsiElement(annotation)('annotation')
       PsiWhiteSpace(' \n')
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -76,8 +77,9 @@ JetFile: java.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('RUNTIME')
           PsiElement(RPAR)(')')
-      PsiWhiteSpace(' \n')
+      PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -102,7 +104,7 @@ JetFile: java.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('CONSTRUCTOR')
           PsiElement(RPAR)(')')
-    PsiWhiteSpace(' \n')
+    PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('my1')

@@ -21,6 +21,7 @@ JetFile: nestedClassAmbiguity.kt
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -53,6 +54,7 @@ JetFile: nestedClassAmbiguity.kt
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -87,6 +89,7 @@ JetFile: nestedClassAmbiguity.kt
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

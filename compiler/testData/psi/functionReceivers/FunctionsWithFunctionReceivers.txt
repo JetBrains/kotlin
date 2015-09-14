@@ -290,6 +290,8 @@ JetFile: FunctionsWithFunctionReceivers.kt
     PsiElement(DOT)('.')
   FUN
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -434,6 +436,8 @@ JetFile: FunctionsWithFunctionReceivers.kt
   PsiWhiteSpace('\n')
   CLASS
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

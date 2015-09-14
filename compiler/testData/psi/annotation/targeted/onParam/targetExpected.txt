@@ -171,6 +171,8 @@ JetFile: targetExpected.kt
               PsiErrorElement:Expecting a list of annotations
                 <empty list>
               PsiElement(RBRACKET)(']')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

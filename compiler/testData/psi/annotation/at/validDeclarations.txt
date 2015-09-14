@@ -50,6 +50,7 @@ JetFile: validDeclarations.kt
           PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

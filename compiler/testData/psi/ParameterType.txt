@@ -65,6 +65,7 @@ JetFile: ParameterType.kt
       VALUE_PARAMETER
         MODIFIER_LIST
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -93,6 +94,7 @@ JetFile: ParameterType.kt
       VALUE_PARAMETER
         MODIFIER_LIST
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE

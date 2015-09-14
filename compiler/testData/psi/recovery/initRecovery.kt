@@ -3,7 +3,7 @@ class A {
 }
 
 class B {
-    Ann init
+    @Ann init
     val x = 1
     init
     fun foo() {}

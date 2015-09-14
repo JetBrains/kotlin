@@ -20,6 +20,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
         PsiElement(private)('private')
         PsiWhiteSpace(' ')
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -52,6 +53,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -89,6 +91,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -129,6 +132,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -157,7 +161,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('Outer4')
+    PsiElement(IDENTIFIER)('Outer5')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')
@@ -172,6 +176,7 @@ JetFile: recoveryNestedClassAmbiguity.kt
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -203,5 +208,38 @@ JetFile: recoveryNestedClassAmbiguity.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer6')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested1')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(private)('private')
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
