@@ -1,4 +1,4 @@
-Deprecated("") class MyClass() {
+@Deprecated("") class MyClass() {
 }
 
 // TESTED_OBJECT_KIND: class

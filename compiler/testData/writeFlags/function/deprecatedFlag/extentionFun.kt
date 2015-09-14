@@ -1,6 +1,6 @@
 class MyClass() { }
 
-Deprecated("") fun MyClass.test() {}
+@Deprecated("") fun MyClass.test() {}
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: _DefaultPackage, test

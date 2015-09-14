@@ -8,7 +8,7 @@ annotation class Ann(
         val p6: Long
 )
 
-Ann(
+@Ann(
         p1 = java.lang.Byte.MAX_VALUE + 1,
         p2 = java.lang.Short.MAX_VALUE + 1,
         p3 = java.lang.Integer.MAX_VALUE + 1,

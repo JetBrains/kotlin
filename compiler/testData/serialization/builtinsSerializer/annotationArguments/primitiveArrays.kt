@@ -11,7 +11,7 @@ annotation class PrimitiveArrays(
         val booleanArray: BooleanArray
 )
 
-PrimitiveArrays(
+@PrimitiveArrays(
         byteArray = byteArray(-7, 7),
         charArray = charArray('%', 'z'),
         shortArray = shortArray(239),
@@ -23,7 +23,7 @@ PrimitiveArrays(
 )
 class C1
 
-PrimitiveArrays(
+@PrimitiveArrays(
         byteArray = byteArray(),
         charArray = charArray(),
         shortArray = shortArray(),

@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation
 annotation class foo(val name : String)
 
 class Test() {
-    foo("OK") fun hello(input : String) {
+    @foo("OK") fun hello(input : String) {
     }
 }
 

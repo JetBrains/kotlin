@@ -6,7 +6,7 @@ import kotlin.platform.*
 object ObjWithNative {
     external fun foo(x: Int = 1): Double
 
-    platformStatic external fun bar(l: Long, s: String = ""): Double
+    @platformStatic external fun bar(l: Long, s: String = ""): Double
 }
 
 external fun topLevel(x: Int = 1): Double

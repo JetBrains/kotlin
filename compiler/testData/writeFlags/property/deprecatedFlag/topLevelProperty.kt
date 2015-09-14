@@ -1,4 +1,4 @@
-Deprecated("") val test: Int = 0
+@Deprecated("") val test: Int = 0
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: TopLevelPropertyKt, test

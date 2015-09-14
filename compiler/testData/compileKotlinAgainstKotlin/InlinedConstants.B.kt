@@ -1,6 +1,6 @@
 import constants.*
 
-AnnotationClass("$b $s $i $l $f $d $bb $c $str")
+@AnnotationClass("$b $s $i $l $f $d $bb $c $str")
 class DummyClass()
 
 fun main(args: Array<String>) {

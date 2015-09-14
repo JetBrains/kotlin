@@ -15,7 +15,7 @@ val prop4: Int = 1 shl 1
 val prop5: Int = 1 shr 1
 val prop6: Int = 1 ushr 1
 
-Ann(1 or 1, 1 and 1, 1 xor 1, 1 shl 1, 1 shr 1, 1 ushr 1) class MyClass
+@Ann(1 or 1, 1 and 1, 1 xor 1, 1 shl 1, 1 shr 1, 1 ushr 1) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

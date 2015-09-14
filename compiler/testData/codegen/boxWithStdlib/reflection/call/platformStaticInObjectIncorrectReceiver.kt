@@ -1,9 +1,9 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 
 object Obj {
-    static fun foo(s: String) {}
-    static fun bar() {}
-    static fun sly(obj: Obj) {}
+    @static fun foo(s: String) {}
+    @static fun bar() {}
+    @static fun sly(obj: Obj) {}
 }
 
 fun box(): String {

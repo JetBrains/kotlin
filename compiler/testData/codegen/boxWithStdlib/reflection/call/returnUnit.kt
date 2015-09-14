@@ -7,7 +7,7 @@ class A {
 }
 
 object O {
-    kotlin.platform.platformStatic fun baz() {}
+    @kotlin.platform.platformStatic fun baz() {}
 }
 
 fun nullableUnit(unit: Boolean): Unit? = if (unit) Unit else null

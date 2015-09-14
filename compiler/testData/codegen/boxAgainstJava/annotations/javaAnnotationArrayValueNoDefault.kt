@@ -1,7 +1,7 @@
-JavaAnn class MyClass1
-JavaAnn() class MyClass2
-JavaAnn("asd") class MyClass3
-JavaAnn(*array()) class MyClass4
+@JavaAnn class MyClass1
+@JavaAnn() class MyClass2
+@JavaAnn("asd") class MyClass3
+@JavaAnn(*array()) class MyClass4
 
 
 fun box(): String {

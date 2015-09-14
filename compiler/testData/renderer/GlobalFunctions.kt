@@ -17,7 +17,7 @@ interface Bar
 
 fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 
-Deprecated("") fun deprecatedFun()
+@Deprecated("") fun deprecatedFun()
 
 //package rendererTest
 //public fun pub(): kotlin.Unit defined in rendererTest

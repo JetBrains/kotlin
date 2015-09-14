@@ -15,7 +15,7 @@ val prop4: Long = (1 + 2) * 2
 val prop5: Double = (1.0 + 2) * 2
 val prop6: Float = (1.toFloat() + 2) * 2
 
-Ann((1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1.0 + 2) * 2, (1.toFloat() + 2) * 2) class MyClass
+@Ann((1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1.0 + 2) * 2, (1.toFloat() + 2) * 2) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

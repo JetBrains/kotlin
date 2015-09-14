@@ -14,7 +14,7 @@ annotation class EnumAnno(val value: E)
 annotation class EnumArrayAnno(vararg val value: E)
 
 public class EnumArgumentWithCustomToString {
-    EnumAnno(E.CAKE)
-    EnumArrayAnno(E.CAKE, E.CAKE)
+    @EnumAnno(E.CAKE)
+    @EnumArrayAnno(E.CAKE, E.CAKE)
     fun annotated() {}
 }

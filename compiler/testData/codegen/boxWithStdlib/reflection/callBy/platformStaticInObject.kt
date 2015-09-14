@@ -1,8 +1,8 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 import kotlin.test.assertEquals
 
 object Obj {
-    static fun foo(a: String, b: String = "b") = a + b
+    @static fun foo(a: String, b: String = "b") = a + b
 }
 
 fun box(): String {

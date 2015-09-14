@@ -1,7 +1,7 @@
 
 class OK
 
-JavaAnn(OK::class) class MyClass
+@JavaAnn(OK::class) class MyClass
 
 fun box(): String {
     val ann = javaClass<MyClass>().getAnnotation(javaClass<JavaAnn>())

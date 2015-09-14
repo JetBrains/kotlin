@@ -1,7 +1,7 @@
 class O
 class K
 
-JavaAnn(O::class, K::class) class MyClass
+@JavaAnn(O::class, K::class) class MyClass
 
 fun box(): String {
     val args = javaClass<MyClass>().getAnnotation(javaClass<JavaAnn>()).value

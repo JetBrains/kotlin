@@ -3,9 +3,9 @@ import kotlin.test.assertEquals
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(val x: Int)
 class A {
-    Ann(1) fun foo(x: Int, y: Int = 2, z: Int) {}
+    @Ann(1) fun foo(x: Int, y: Int = 2, z: Int) {}
 
-    Ann(1) constructor(x: Int, y: Int = 2, z: Int)
+    @Ann(1) constructor(x: Int, y: Int = 2, z: Int)
 }
 
 class B @Ann(1) constructor(x: Int, y: Int = 2, z: Int) {}

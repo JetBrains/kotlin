@@ -7,7 +7,7 @@ annotation class Ann(
         val p5: Int
 )
 
-Ann(1 plus 1, 1 minus 1, 1 times 1, 1 div 1, 1 mod 1) class MyClass
+@Ann(1 plus 1, 1 minus 1, 1 times 1, 1 div 1, 1 mod 1) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

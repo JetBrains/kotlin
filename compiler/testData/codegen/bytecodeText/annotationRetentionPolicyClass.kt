@@ -1,4 +1,4 @@
-Ann class MyClass
+@Ann class MyClass
 
 @Retention(AnnotationRetention.BINARY)
 annotation class Ann

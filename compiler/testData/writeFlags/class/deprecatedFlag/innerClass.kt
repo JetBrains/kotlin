@@ -1,5 +1,5 @@
 class MyClass() {
-    Deprecated("") public class MyInnerClass() {}
+    @Deprecated("") public class MyInnerClass() {}
 }
 
 // TESTED_OBJECT_KIND: class

@@ -1,4 +1,4 @@
 package test
 
-deprecated(CONST + CONST)
+@Deprecated(CONST + CONST)
 class Usage

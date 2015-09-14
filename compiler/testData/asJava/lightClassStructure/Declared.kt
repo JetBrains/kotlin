@@ -26,9 +26,9 @@ enum class Enum
 interface Trait
 
 // Deprecation
-Deprecated("") class DeprecatedClass
-kotlin.Deprecated("") class DeprecatedFQN
-kotlin. Deprecated /**/ ("") class DeprecatedFQNSpaces
+@Deprecated("") class DeprecatedClass
+@kotlin.Deprecated("") class DeprecatedFQN
+@kotlin. Deprecated /**/ ("") class DeprecatedFQNSpaces
 @[Deprecated("")] class DeprecatedWithBrackets
 @[kotlin.Deprecated("")] class DeprecatedWithBracketsFQN
 @[kotlin

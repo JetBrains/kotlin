@@ -11,7 +11,7 @@ private var private = 5
 public val Int.ext: Int
 get() {}
 
-Deprecated("") val deprecatedVal = 5
+@Deprecated("") val deprecatedVal = 5
 
 public val <T> T.extWithTwoUpperBounds: Int where T : CharSequence, T : Number
 get() {}

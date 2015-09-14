@@ -7,5 +7,5 @@ public class KotlinA: AClass() {
 
     fun paramA(p: AClass) {}
 
-    AAnnotation fun annoA() {}
+    @AAnnotation fun annoA() {}
 }

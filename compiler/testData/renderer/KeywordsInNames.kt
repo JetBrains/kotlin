@@ -2,7 +2,7 @@ annotation class `true`
 
 val `val` = 5
 
-`true` interface `interface`
+@`true` interface `interface`
 
 class `class`<`in`>(p: `in`?) {
    inner class `class`

@@ -10,7 +10,7 @@ object A {
         v += B(1000)
     }
 
-    platformStatic fun B.plusAssign(b: B) {
+    @platformStatic fun B.plusAssign(b: B) {
         this.s += b.s
     }
 }

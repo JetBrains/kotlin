@@ -1,4 +1,4 @@
-// "Mark with @HiddenDeclaration and @deprecated" "true"
+// "Mark with @HiddenDeclaration and @Deprecated" "true"
 import java.io.File
 
 val File.<caret>name: String

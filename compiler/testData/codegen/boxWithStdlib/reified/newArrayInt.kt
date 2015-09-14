@@ -1,6 +1,6 @@
 import kotlin.InlineOption.*
 
-inline fun<reified T> createArray(n: Int, inlineOptions(ONLY_LOCAL_RETURN) block: () -> T): Array<T> {
+inline fun<reified T> createArray(n: Int, crossinline block: () -> T): Array<T> {
     return Array<T>(n) { block() }
 }
 

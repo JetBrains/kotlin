@@ -1,4 +1,4 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.KCallable
 
@@ -9,9 +9,9 @@ class A(private var bar: String = "") {
 }
 
 object O {
-    private static var baz: String = ""
+    private @static var baz: String = ""
 
-    static fun getBaz() = O::baz.apply { isAccessible = true }
+    @static fun getBaz() = O::baz.apply { isAccessible = true }
 }
 
 fun check(callable: KCallable<*>, vararg args: Any?) {

@@ -1,4 +1,4 @@
-Deprecated("") fun test() {}
+@Deprecated("") fun test() {}
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: _DefaultPackage, test

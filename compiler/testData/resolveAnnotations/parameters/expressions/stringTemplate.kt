@@ -9,7 +9,7 @@ annotation class Ann(
 
 val i = 1
 
-Ann(
+@Ann(
     s1 = "a$i",
     s2 = "a$i b",
     s3 = "$i",

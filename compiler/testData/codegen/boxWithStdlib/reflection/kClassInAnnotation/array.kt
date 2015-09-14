@@ -6,7 +6,7 @@ annotation class Ann(val args: Array<KClass<*>>)
 class O
 class K
 
-Ann(array(O::class, K::class)) class MyClass
+@Ann(array(O::class, K::class)) class MyClass
 
 fun box(): String {
     val args = javaClass<MyClass>().getAnnotation(javaClass<Ann>()).args

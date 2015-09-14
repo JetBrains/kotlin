@@ -1,4 +1,4 @@
 package test
 
-deprecated(Trait.CONST + Trait.CONST)
+@Deprecated(Trait.CONST + Trait.CONST)
 class Usage

@@ -9,7 +9,7 @@ fun getA(): A {
 
 object A {
 
-    platformStatic var a: Int = 1
+    @platformStatic var a: Int = 1
 
     var b: Int = 1
         @platformStatic get

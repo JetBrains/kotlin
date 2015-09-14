@@ -4,6 +4,6 @@ package a
 annotation class Ann
 
 interface Tr {
-    Ann
+    @Ann
     fun foo() {}
 }

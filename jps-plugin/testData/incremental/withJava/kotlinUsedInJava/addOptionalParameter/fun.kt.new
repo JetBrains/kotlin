@@ -1,6 +1,6 @@
 package test
 
-kotlin.jvm.jvmOverloads
+@kotlin.jvm.JvmOverloads
 fun f(a: String, b: Int = 5) {
 
 }

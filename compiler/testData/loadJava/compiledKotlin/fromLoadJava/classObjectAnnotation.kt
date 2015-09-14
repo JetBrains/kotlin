@@ -1,7 +1,7 @@
 package test
 
 class Some {
-  TestAnnotation companion object {
+  @TestAnnotation companion object {
     annotation class TestAnnotation
   }
 }

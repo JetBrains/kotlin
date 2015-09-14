@@ -1,4 +1,4 @@
 fun foo() {
-    <caret>@volatile var v: Int
+    <caret>@Volatile var v: Int
     v = 1
 }

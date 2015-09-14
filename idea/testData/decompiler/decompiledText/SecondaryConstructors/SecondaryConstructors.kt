@@ -4,7 +4,7 @@ class SecondaryConstructors(x: Boolean) {
     init {
     }
 
-    anno constructor(x: String) : this(x == "abc") {
+    @anno constructor(x: String) : this(x == "abc") {
     }
 
     init {
@@ -19,7 +19,7 @@ class SecondaryConstructors(x: Boolean) {
     }
 
     class Nested {
-        anno constructor(z: Int) {}
+        @anno constructor(z: Int) {}
         internal constructor() {}
     }
 }

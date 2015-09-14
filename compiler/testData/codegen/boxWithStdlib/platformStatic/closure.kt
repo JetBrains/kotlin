@@ -4,13 +4,13 @@ object A {
 
     val b: String = "OK"
 
-    platformStatic val c: String = "OK"
+    @platformStatic val c: String = "OK"
 
-    platformStatic fun test1() : String {
+    @platformStatic fun test1() : String {
         return {b}()
     }
 
-    platformStatic fun test2() : String {
+    @platformStatic fun test2() : String {
         return {test1()}()
     }
 
@@ -18,11 +18,11 @@ object A {
         return {"1".test5()}()
     }
 
-    platformStatic fun test4(): String {
+    @platformStatic fun test4(): String {
         return {"1".test5()}()
     }
 
-    platformStatic fun String.test5() : String {
+    @platformStatic fun String.test5() : String {
         return {this + b}()
     }
 

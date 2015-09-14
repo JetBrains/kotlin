@@ -1,4 +1,4 @@
 package test
 
-deprecated("$b $s $i $l $f $d $bb $c $str")
+@Deprecated("$b $s $i $l $f $d $bb $c $str")
 class Usage

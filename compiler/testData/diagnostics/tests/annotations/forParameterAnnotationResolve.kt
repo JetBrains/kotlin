@@ -10,5 +10,5 @@ fun foo() {
 
     for (<!WRONG_ANNOTATION_TARGET!>@Ann(3)<!> (x, @Ann(4) y) in bar()) {}
 
-    for (<!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET, DEPRECATED_UNESCAPED_ANNOTATION!>Err<!> (x,y) in bar()) {}
+    for (<!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>@Err<!> (x,y) in bar()) {}
 }

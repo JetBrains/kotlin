@@ -1,6 +1,6 @@
 import java.lang.annotation.*
 
-Foo class Bar
+@Foo class Bar
 
 fun box(): String {
     Bar()

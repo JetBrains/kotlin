@@ -2,5 +2,5 @@
 package test
 
 public open class AnnotatedMethod() {
-    public open Deprecated("Deprecated in Java") fun f(): Unit { }
+    public open @Deprecated("Deprecated in Java") fun f(): Unit { }
 }

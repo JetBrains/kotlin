@@ -1,5 +1,5 @@
-JavaAnn class MyClass
-JavaAnn2 class MyClass2
+@JavaAnn class MyClass
+@JavaAnn2 class MyClass2
 
 fun box(): String {
     val ann = javaClass<MyClass>().getAnnotation(javaClass<JavaAnn>())

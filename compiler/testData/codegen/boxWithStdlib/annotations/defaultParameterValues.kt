@@ -33,4 +33,4 @@ enum class MyEnum {
 
 class A
 
-Ann class MyClass
+@Ann class MyClass

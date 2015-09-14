@@ -1,4 +1,4 @@
-Ann(i, s, f, d, l, b, bool, c, str) class MyClass
+@Ann(i, s, f, d, l, b, bool, c, str) class MyClass
 
 fun box(): String {
     val ann = javaClass<MyClass>().getAnnotation(javaClass<Ann>())

@@ -10,4 +10,4 @@ class A {
     }
 }
 
-A.Companion.Anno1 A.Companion.B.Anno2 class C
+@A.Companion.Anno1 @A.Companion.B.Anno2 class C

@@ -1,19 +1,19 @@
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(vararg val p: Int)
 
-Ann() class MyClass1
-Ann(1) class MyClass2
-Ann(1, 2) class MyClass3
+@Ann() class MyClass1
+@Ann(1) class MyClass2
+@Ann(1, 2) class MyClass3
 
-Ann(*intArray()) class MyClass4
-Ann(*intArray(1)) class MyClass5
-Ann(*intArray(1, 2)) class MyClass6
+@Ann(*intArray()) class MyClass4
+@Ann(*intArray(1)) class MyClass5
+@Ann(*intArray(1, 2)) class MyClass6
 
-Ann(p = 1) class MyClass7
+@Ann(p = 1) class MyClass7
 
-Ann(p = *intArray()) class MyClass8
-Ann(p = *intArray(1)) class MyClass9
-Ann(p = *intArray(1, 2)) class MyClass10
+@Ann(p = *intArray()) class MyClass8
+@Ann(p = *intArray(1)) class MyClass9
+@Ann(p = *intArray(1, 2)) class MyClass10
 
 fun box(): String {
     test(javaClass<MyClass1>(), "")

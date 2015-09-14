@@ -5,7 +5,7 @@ class A {
         inlineFun { "test" }
     }
 
-    inline fun inlineFun(inlineOptions(ONLY_LOCAL_RETURN) lambda: () -> Unit) {
+    inline fun inlineFun(crossinline lambda: () -> Unit) {
         val s = object {
             fun run() {
                 lambda()

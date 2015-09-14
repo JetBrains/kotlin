@@ -1,11 +1,11 @@
 import kotlin.InlineOption.*
 
-inline fun<reified T1, reified T2> createArray(n: Int, inlineOptions(ONLY_LOCAL_RETURN) block: () -> Pair<T1, T2>): Pair<Array<T1>, Array<T2>> {
+inline fun<reified T1, reified T2> createArray(n: Int, crossinline block: () -> Pair<T1, T2>): Pair<Array<T1>, Array<T2>> {
     return Pair(Array(n) { block().first }, Array(n) { block().second })
 }
 
 inline fun<T1, T2, T3, T4, T5, T6, reified R> recursive(
-        inlineOptions(ONLY_LOCAL_RETURN) block: () -> R
+        crossinline block: () -> R
 ): Pair<Array<R>, Array<R>> {
     return createArray(5) { Pair(block(), block()) }
 }

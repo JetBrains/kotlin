@@ -6,11 +6,11 @@ import org.jetbrains.annotations.Nullable
 fun notNull(a: String): String = ""
 fun nullable(a: String?): String? = ""
 
-NotNull fun notNullWithNN(): String = ""
-Nullable fun notNullWithN(): String = ""
+@NotNull fun notNullWithNN(): String = ""
+@Nullable fun notNullWithN(): String = ""
 
-Nullable fun nullableWithN(): String? = ""
-NotNull fun nullableWithNN(): String? = ""
+@Nullable fun nullableWithN(): String? = ""
+@NotNull fun nullableWithNN(): String? = ""
 
 val nullableVal: String? = ""
 var nullableVar: String? = ""

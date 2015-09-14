@@ -1,6 +1,6 @@
 annotation class MyA(val i: Int)
 
-<caret>MyA(1) fun foo() {}
+@<caret>MyA(1) fun foo() {}
 
 
 Resolved call:

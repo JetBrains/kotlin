@@ -5,10 +5,10 @@ class A {
 
     fun foo() {
         @Ann("class") class Local {
-            Ann("fun") fun foo(): Local = this
+            @Ann("fun") fun foo(): Local = this
             @field:Ann("val") val x = foo()
 
-            Ann("inner") inner class Inner
+            @Ann("inner") inner class Inner
         }
     }
 }

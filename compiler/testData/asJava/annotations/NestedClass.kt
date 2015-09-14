@@ -1,5 +1,5 @@
 annotation class Ann
 
 class Outer {
-    Ann class Nested
+    @Ann class Nested
 }

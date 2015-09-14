@@ -15,7 +15,7 @@ val prop4: Long = +1
 val prop5: Double = +1.0
 val prop6: Float = +1.0.toFloat()
 
-Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
+@Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

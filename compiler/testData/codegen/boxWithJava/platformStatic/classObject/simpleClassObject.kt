@@ -5,13 +5,13 @@ class A {
     companion object {
         val b: String = "OK"
 
-        JvmStatic val c: String = "OK"
+        @JvmStatic val c: String = "OK"
 
-        JvmStatic fun test1() = b
+        @JvmStatic fun test1() = b
 
-        JvmStatic fun test2() = b
+        @JvmStatic fun test2() = b
 
-        JvmStatic fun String.test3() = this + b
+        @JvmStatic fun String.test3() = this + b
     }
 }
 

@@ -1,4 +1,4 @@
 // "Make 'A' open" "true"
-deprecated("") class A() {
+@Deprecated("") class A() {
     <caret>open fun foo() {}
 }

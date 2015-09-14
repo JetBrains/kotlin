@@ -5,9 +5,9 @@ enum class A {
     companion object {
         val foo: String = "OK"
 
-        JvmStatic val bar: String = "OK"
+        @JvmStatic val bar: String = "OK"
 
-        JvmStatic fun baz() = foo
+        @JvmStatic fun baz() = foo
     }
 }
 

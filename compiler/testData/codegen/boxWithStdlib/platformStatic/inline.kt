@@ -2,7 +2,7 @@ import kotlin.platform.platformStatic
 
 object A {
 
-    platformStatic inline fun test(b: String = "OK") : String {
+    @platformStatic inline fun test(b: String = "OK") : String {
         return b
     }
 }
