@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.fileClasses
 
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -103,3 +105,13 @@ public object JvmFileClassUtil {
 }
 
 public class ParsedJmvFileClassAnnotations(public val name: String, public val multipleFiles: Boolean)
+
+public val JetFile.javaFileFacadeFqName: FqName
+    get() {
+        return CachedValuesManager.getCachedValue(this) {
+            val facadeFqName =
+                    if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
+                    else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
+            CachedValueProvider.Result(facadeFqName, this)
+        }
+    }

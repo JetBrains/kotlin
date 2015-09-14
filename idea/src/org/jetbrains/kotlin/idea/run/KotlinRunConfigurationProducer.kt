@@ -25,7 +25,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -99,7 +99,7 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
 
         public fun getStartClassFqName(container: JetDeclarationContainer?): FqName? = when(container) {
             null -> null
-            is JetFile -> JvmFileClassUtil.getFileClassInfoNoResolve(container).facadeClassFqName
+            is JetFile -> container.javaFileFacadeFqName
             is JetClassOrObject -> {
                 if (container is JetObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<JetClass>(true)

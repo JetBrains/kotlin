@@ -1,4 +1,4 @@
-import static _DefaultPackage.bar;
+import static FunctionRenameJavaUsagesBeforeKt.bar;
 
 class J {
     void test() {

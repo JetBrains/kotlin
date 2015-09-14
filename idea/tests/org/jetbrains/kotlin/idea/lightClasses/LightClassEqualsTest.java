@@ -58,8 +58,8 @@ public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
     private static void doTestEquals(@Nullable JetClassOrObject origin) {
         assertNotNull(origin);
 
-        PsiClass lightClass1 = LightClassUtil.getPsiClass(origin);
-        PsiClass lightClass2 = LightClassUtil.getPsiClass(origin);
+        PsiClass lightClass1 = LightClassUtil.INSTANCE$.getPsiClass(origin);
+        PsiClass lightClass2 = LightClassUtil.INSTANCE$.getPsiClass(origin);
         assertNotNull(lightClass1);
         assertNotNull(lightClass2);
 

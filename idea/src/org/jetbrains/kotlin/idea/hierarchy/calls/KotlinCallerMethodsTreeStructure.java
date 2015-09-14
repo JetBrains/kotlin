@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     private final CallerMethodsTreeStructure javaTreeStructure;
@@ -107,18 +104,18 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             );
         }
         if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetFunction) element);
-            processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
+            Collection<PsiMethod> lightMethods = LightClassUtil.INSTANCE$.getLightClassMethods((JetFunction) element);
+            processPsiMethodCallers(lightMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof JetProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((JetProperty) element);
             processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof JetClassOrObject) {
             JetPrimaryConstructor constructor = ((JetClassOrObject) element).getPrimaryConstructor();
             if (constructor != null) {
-                PsiMethod lightMethod = LightClassUtil.getLightClassMethod(constructor);
+                PsiMethod lightMethod = LightClassUtil.INSTANCE$.getLightClassMethod(constructor);
                 processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
             }
             else {

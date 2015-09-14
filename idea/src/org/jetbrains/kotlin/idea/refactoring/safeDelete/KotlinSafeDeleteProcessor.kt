@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
@@ -306,9 +307,9 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is JetParameter ->
-                return element.toPsiParameter()?.let { psiParameter ->
-                    JetRefactoringUtil.checkParametersInMethodHierarchy(psiParameter)
-                } ?: Collections.singletonList(element)
+                return element.toPsiParameters().flatMap { psiParameter ->
+                    JetRefactoringUtil.checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
+                }.ifEmpty { listOf(element) }
 
             is PsiParameter ->
                 return JetRefactoringUtil.checkParametersInMethodHierarchy(element)
