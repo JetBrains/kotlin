@@ -695,6 +695,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/traitFunction.kt");
                 doExtractFunctionTest(fileName);
             }
+
+            @TestMetadata("unresolvedWrongReceiver.kt")
+            public void testUnresolvedWrongReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/unresolvedWrongReceiver.kt");
+                doExtractFunctionTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")

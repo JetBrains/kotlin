@@ -1020,7 +1020,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             if (currentDescriptor is LocalVariableDescriptor
                 && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
-            if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
+            if (diagnostics.any { it.getFactory() in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }
                 || (currentDescriptor != null
                     && !ErrorUtils.isError(currentDescriptor)
                     && !comparePossiblyOverridingDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
