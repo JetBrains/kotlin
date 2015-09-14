@@ -20,16 +20,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 
 public object StaticFacadeIndexUtil {
 
     // TODO change as we introduce multi-file facades (this will require a separate index)
-    @jvmStatic public fun findFilesForFilePart(
+    @JvmStatic public fun findFilesForFilePart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
     ) : Collection<JetFile> =
             PackagePartClassUtils.getFilesWithCallables(
                     JetFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+
+    @JvmStatic public fun getMultifileClassForPart(
+            partFqName: FqName,
+            searchScope: GlobalSearchScope,
+            project: Project
+    ): Collection<JetFile> =
+            JetMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
 }

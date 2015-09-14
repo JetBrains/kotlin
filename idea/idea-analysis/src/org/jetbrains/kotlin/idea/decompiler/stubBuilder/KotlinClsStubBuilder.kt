@@ -22,6 +22,7 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
 import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
@@ -61,8 +62,8 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
 
         val components = createStubBuilderComponents(file, packageFqName)
         if (header.isCompatibleMultifileClassKind()) {
-            val partHeaders = readMultifileClassPartHeaders(file, kotlinBinaryClass)
-            return createMultifileClassStub(partHeaders, classId.asSingleFqName(), components)
+            val partFiles = findMultifileClassParts(file, kotlinBinaryClass)
+            return createMultifileClassStub(kotlinBinaryClass, partFiles, classId.asSingleFqName(), components)
         }
 
         val annotationData = header.annotationData
