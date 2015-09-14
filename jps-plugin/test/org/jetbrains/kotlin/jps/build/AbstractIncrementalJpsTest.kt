@@ -62,7 +62,7 @@ public abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
         private val checkDumpsCaseInsensitively: Boolean = false,
         private val allowNoBuildLogFileInTestData: Boolean = false
-) : JpsBuildTestCase() {
+) : JpsBuildWithFlushingTestCase() {
     companion object {
         val COMPILATION_FAILED = "COMPILATION FAILED"
 

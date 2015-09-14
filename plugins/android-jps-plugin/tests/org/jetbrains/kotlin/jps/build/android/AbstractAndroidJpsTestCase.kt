@@ -23,9 +23,10 @@ import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.android.model.JpsAndroidSdkType
 import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
 import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.kotlin.jps.build.JpsBuildWithFlushingTestCase
 import java.io.File
 
-public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
+public abstract class AbstractAndroidJpsTestCase : JpsBuildWithFlushingTestCase() {
 
     private val SDK_NAME = "Android API 21 Platform"
 
