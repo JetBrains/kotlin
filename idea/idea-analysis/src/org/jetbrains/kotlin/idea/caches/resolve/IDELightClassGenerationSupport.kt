@@ -37,10 +37,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.cls.ClsFormatException
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourcesAndLibraries
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
