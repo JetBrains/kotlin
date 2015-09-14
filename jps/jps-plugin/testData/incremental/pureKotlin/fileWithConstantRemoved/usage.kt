@@ -1,5 +1,5 @@
 package usage
 
-deprecated(test.CONST)
+@Deprecated(test.CONST)
 val usage = ""
 

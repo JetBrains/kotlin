@@ -1,4 +1,4 @@
 package test
 
-deprecated(Object.CONST + Object.CONST)
+@Deprecated(Object.CONST + Object.CONST)
 class Usage
