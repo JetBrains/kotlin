@@ -20,7 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade

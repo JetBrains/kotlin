@@ -606,9 +606,21 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinTopLevelMethodUsagesMultifile.0.kt")
+            public void testKotlinTopLevelMethodUsagesMultifile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTopLevelMethodUsagesMultifile.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinTopLevelMethodUsagesNoImport.0.kt")
             public void testKotlinTopLevelMethodUsagesNoImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTopLevelMethodUsagesNoImport.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinTopLevelMethodUsagesWithRenamedFile.0.kt")
+            public void testKotlinTopLevelMethodUsagesWithRenamedFile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTopLevelMethodUsagesWithRenamedFile.0.kt");
                 doTest(fileName);
             }
 

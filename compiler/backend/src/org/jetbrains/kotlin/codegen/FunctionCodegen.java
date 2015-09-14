@@ -148,9 +148,8 @@ public class FunctionCodegen {
         int flags = getMethodAsmFlags(functionDescriptor, contextKind);
         boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
 
-        //TODO: generate native method only in new mini facades (now it equals to package part)
-        if (isNative && owner instanceof PackageFacadeContext) {
-            // Native methods are only defined in package facades and do not need package part implementations
+        if (isNative && owner instanceof DelegatingFacadeContext) {
+            // Native methods are only defined in facades and do not need package part implementations
             return;
         }
         MethodVisitor mv = v.newMethod(origin,
@@ -160,7 +159,7 @@ public class FunctionCodegen {
                                        jvmSignature.getGenericsSignature(),
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
-        String implClassName = CodegenContextUtil.getImplClassNameByOwnerIfRequired(owner);
+        String implClassName = CodegenContextUtil.getImplementationClassShortName(owner);
         if (implClassName != null) {
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, implClassName);
         }
@@ -329,8 +328,8 @@ public class FunctionCodegen {
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
         Label methodEnd;
-        if (context.getParentContext() instanceof PackageFacadeContext) {
-            generatePackageDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
+        if (context.getParentContext() instanceof DelegatingFacadeContext) {
+            generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (DelegatingFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
         else {
@@ -402,10 +401,10 @@ public class FunctionCodegen {
         }
     }
 
-    private static void generatePackageDelegateMethodBody(
+    private static void generateFacadeDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull PackageFacadeContext context
+            @NotNull DelegatingFacadeContext context
     ) {
         generateDelegateToMethodBody(true, mv, asmMethod, context.getDelegateToClassType().getInternalName());
     }
@@ -596,9 +595,9 @@ public class FunctionCodegen {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            if (this.owner instanceof PackageFacadeContext) {
+            if (this.owner instanceof DelegatingFacadeContext) {
                 mv.visitCode();
-                generatePackageDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
+                generateFacadeDelegateMethodBody(mv, defaultMethod, (DelegatingFacadeContext) this.owner);
                 endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
             }
             else {

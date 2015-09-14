@@ -131,12 +131,12 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
             val query = applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))
             if (!query.forEach(referenceProcessor)) return false
 
-            val psiMethod: PsiMethod? = when (element) {
-                is PsiMethod -> element
-                is JetFunction -> runReadAction { LightClassUtil.getLightClassMethod(element) }
-                else -> null
+            val psiMethods = when (element) {
+                is PsiMethod -> listOf(element)
+                is JetFunction -> runReadAction { LightClassUtil.getLightClassMethods(element) }
+                else -> listOf<PsiMethod>()
             }
-            if (psiMethod != null) {
+            for (psiMethod in psiMethods) {
                 val query = applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, options.searchScope, true))
                 if (!query.forEach(referenceProcessor)) return false
             }

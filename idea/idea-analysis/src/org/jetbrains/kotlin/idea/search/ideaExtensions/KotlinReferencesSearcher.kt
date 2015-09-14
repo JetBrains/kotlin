@@ -223,8 +223,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: JetParameter) {
             val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-            searchNamedElement(queryParameters, propertyMethods.getter)
-            searchNamedElement(queryParameters, propertyMethods.setter)
+            propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
         }
 
         private fun searchDataClassComponentUsages(queryParameters: ReferencesSearch.SearchParameters,
@@ -245,8 +244,10 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     val function = element as JetFunction
                     val name = function.getName()
                     if (name != null) {
-                        val method = runReadAction { LightClassUtil.getLightClassMethod(function) }
-                        searchNamedElement(queryParameters, method)
+                        val methods = runReadAction { LightClassUtil.getLightClassMethods(function) }
+                        for (method in methods) {
+                            searchNamedElement(queryParameters, method)
+                        }
                     }
 
                     val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(element) }
@@ -257,10 +258,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
                 is JetProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    searchNamedElement(queryParameters, propertyMethods.getter)
-                    searchNamedElement(queryParameters, propertyMethods.setter)
-                    searchNamedElement(queryParameters, propertyMethods.backingField)
-
+                    propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
                 }
 
                 is JetParameter -> {

@@ -19,17 +19,16 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.*
 
-public class CodegenFileClassesProvider() : JvmFileClassesProvider {
-    private val fileParts = hashMapOf<JetFile, JvmFileClassInfo>()
-
-    override fun getFileClassFqName(file: JetFile): FqName =
-            getFileClassInfo(file).fileClassFqName
-
-    public fun getFileClassInfo(file: JetFile): JvmFileClassInfo =
-            fileParts.getOrPut(file) { JvmFileClassUtil.getFileClassInfoNoResolve(file) }
+public class CodegenFileClassesProvider(private val packageFacadesAsMultifileClasses: Boolean) : JvmFileClassesProvider {
+    override public fun getFileClassInfo(file: JetFile): JvmFileClassInfo {
+        val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
+        if (packageFacadesAsMultifileClasses && !fileClassInfo.isMultifileClass) {
+            return JvmFileClassUtil.getMultifilePackageFacadePartInfo(file)
+        }
+        else {
+            return fileClassInfo
+        }
+    }
 }

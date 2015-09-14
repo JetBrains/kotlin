@@ -65,7 +65,8 @@ private enum class RenameType {
     KOTLIN_FUNCTION,
     KOTLIN_PROPERTY,
     KOTLIN_PACKAGE,
-    MARKED_ELEMENT
+    MARKED_ELEMENT,
+    FILE
 }
 
 public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
@@ -100,6 +101,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 RenameType.KOTLIN_PROPERTY -> renameKotlinPropertyTest(renameObject, context)
                 RenameType.KOTLIN_PACKAGE -> renameKotlinPackageTest(renameObject, context)
                 RenameType.MARKED_ELEMENT -> renameMarkedElement(renameObject, context)
+                RenameType.FILE -> renameFile(renameObject, context)
             }
 
             if (hintDirective != null) {
@@ -227,6 +229,18 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
             runRenameProcessor(context, newName, substitution, true, true)
+        }
+    }
+
+    private fun renameFile(renameParamsObject: JsonObject, context: TestContext) {
+        val file = renameParamsObject.getString("file")
+        val newName = renameParamsObject.getString("newName")
+
+        doTestCommittingDocuments { rootDir, rootAfter ->
+            val mainFile = rootDir.findChild(file)!!
+            val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)
+
+            runRenameProcessor(context, newName, psiFile, true, true)
         }
     }
 

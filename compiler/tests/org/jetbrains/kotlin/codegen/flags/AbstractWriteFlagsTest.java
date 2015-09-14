@@ -98,8 +98,13 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
             assertNotNull(outputFile);
 
             ClassReader cr = new ClassReader(outputFile.asByteArray());
-            TestClassVisitor classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
+            TestClassVisitor classVisitor = getClassVisitor(testedObject.kind, testedObject.name, false);
             cr.accept(classVisitor, ClassReader.SKIP_CODE);
+
+            if (!classVisitor.isExists())  {
+                classVisitor = getClassVisitor(testedObject.kind, testedObject.name, true);
+                cr.accept(classVisitor, ClassReader.SKIP_CODE);
+            }
 
             boolean isObjectExists = !Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
             assertEquals("Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
@@ -158,12 +163,12 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         }
     }
 
-    private static TestClassVisitor getClassVisitor(String visitorKind, String testedObjectName) {
+    private static TestClassVisitor getClassVisitor(String visitorKind, String testedObjectName, boolean allowSynthetic) {
         if (visitorKind.equals("class")) {
             return new ClassFlagsVisitor();
         }
         else if (visitorKind.equals("function")) {
-            return new FunctionFlagsVisitor(testedObjectName);
+            return new FunctionFlagsVisitor(testedObjectName, allowSynthetic);
         }
         else if (visitorKind.equals("property")) {
             return new PropertyFlagsVisitor(testedObjectName);
@@ -227,14 +232,17 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
     private static class FunctionFlagsVisitor extends TestClassVisitor {
         private int access = 0;
         private final String funName;
+        private final boolean allowSynthetic;
 
-        public FunctionFlagsVisitor(String name) {
+        public FunctionFlagsVisitor(String name, boolean allowSynthetic) {
             funName = name;
+            this.allowSynthetic = allowSynthetic;
         }
 
         @Override
         public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-            if (name.equals(funName) && (access & Opcodes.ACC_SYNTHETIC) == 0) {
+            if (name.equals(funName)) {
+                if (!allowSynthetic && (access & Opcodes.ACC_SYNTHETIC) != 0) return null;
                 this.access = access;
                 isExists = true;
             }

@@ -1,0 +1,2 @@
+Unclassified usage (6: 33) String s = RequestProcessor.processRequest();
+Unclassified usage (9: 33) return RequestProcessor.processRequest();

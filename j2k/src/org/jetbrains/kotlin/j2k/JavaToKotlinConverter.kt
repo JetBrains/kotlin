@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import java.util.ArrayList
-import java.util.Comparator
-import java.util.LinkedHashMap
+import java.util.*
 
 public interface PostProcessor {
     public fun insertImport(file: JetFile, fqName: FqName)
@@ -143,6 +141,7 @@ public class JavaToKotlinConverter(
             val processings: Collection<UsageProcessing>
     ) {
         val depth: Int by lazy(LazyThreadSafetyMode.NONE) { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
+        val offset: Int by lazy(LazyThreadSafetyMode.NONE) { reference.element.textRange.startOffset }
     }
 
     private fun buildExternalCodeProcessing(
@@ -217,17 +216,14 @@ public class JavaToKotlinConverter(
 
     private object ReferenceComparator : Comparator<ReferenceInfo> {
         override fun compare(info1: ReferenceInfo, info2: ReferenceInfo): Int {
-            val element1 = info1.reference.getElement()
-            val element2 = info2.reference.getElement()
-
             val depth1 = info1.depth
             val depth2 = info2.depth
             if (depth1 != depth2) { // put deeper elements first to not invalidate them when processing ancestors
                 return -depth1.compareTo(depth2)
             }
 
-            // process elements with the same parent from right to left so that right-side of assignments is not invalidated by processing of the left one
-            return -element1.getStartOffsetInParent().compareTo(element2.getStartOffsetInParent())
+            // process elements with the same deepness from right to left so that right-side of assignments is not invalidated by processing of the left one
+            return -info1.offset.compareTo(info2.offset)
         }
     }
 

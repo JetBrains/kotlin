@@ -183,6 +183,14 @@ fun main(args: Array<String>) {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 
+        testClass(AbstractBlackBoxMultifileClassCodegenTest::class.java, "BlackBoxMultifileClassKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doTestMultifileClassAgainstSources")
+        }
+
+        testClass(AbstractCompileKotlinAgainstMultifileKotlinTest::class.java, "CompileKotlinAgainstMultifileKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doBoxTest")
+        }
+
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
             model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
@@ -203,8 +211,12 @@ fun main(args: Array<String>) {
             model("codegen/script", extension = "kts")
         }
 
-        testClass(javaClass<AbstractBytecodeTextTest>()) {
+        testClass(AbstractBytecodeTextTest::class.java) {
             model("codegen/bytecodeText")
+        }
+
+        testClass(AbstractBytecodeTextTest::class.java, "BytecodeTextMultifileTestGenerated") {
+            model("codegen/bytecodeTextMultifile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
         testClass(javaClass<AbstractBytecodeListingTest>()) {

@@ -88,25 +88,29 @@ public class ClassFileFactory implements OutputFileCollection {
             for (PackageCodegen codegen : packageCodegens) {
                 codegen.done();
             }
-            for (MultifileClassCodegen codegen : multifileClass2codegen.values()) {
+            Collection<MultifileClassCodegen> multifileClassCodegens = multifileClass2codegen.values();
+            for (MultifileClassCodegen codegen : multifileClassCodegens) {
                 codegen.done();
             }
-            // TODO module mappings for multifile classes
-            writeModuleMappings(packageCodegens);
+            writeModuleMappings(packageCodegens, multifileClassCodegens);
         }
     }
 
-    private void writeModuleMappings(Collection<PackageCodegen> values) {
+    private void writeModuleMappings(
+            @NotNull Collection<PackageCodegen> packageCodegens,
+            @NotNull Collection<MultifileClassCodegen> multifileClassCodegens
+    ) {
         final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        List<PackageParts> parts = ContainerUtil.newArrayList();
+        List<PackageParts> parts = collectGeneratedPackageParts(packageCodegens, multifileClassCodegens);
+
         Set<File> sourceFiles = new HashSet<File>();
-
-        for (PackageCodegen codegen : values) {
-            parts.add(codegen.getPackageParts());
-
-            // TODO extract common logic
+        // TODO extract common logic
+        for (PackageCodegen codegen : packageCodegens) {
+            sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
+        }
+        for (MultifileClassCodegen codegen : multifileClassCodegens) {
             sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
         }
 
@@ -152,6 +156,34 @@ public class ClassFileFactory implements OutputFileCollection {
         }
     }
 
+    private static List<PackageParts> collectGeneratedPackageParts(
+            @NotNull Collection<PackageCodegen> packageCodegens,
+            @NotNull Collection<MultifileClassCodegen> multifileClassCodegens
+    ) {
+        Map<String, PackageParts> mergedPartsByPackageName = new LinkedHashMap<String, PackageParts>();
+
+        for (PackageCodegen packageCodegen : packageCodegens) {
+            PackageParts generatedParts = packageCodegen.getPackageParts();
+            PackageParts premergedParts = new PackageParts(generatedParts.getPackageFqName());
+            mergedPartsByPackageName.put(generatedParts.getPackageFqName(), premergedParts);
+            premergedParts.getParts().addAll(generatedParts.getParts());
+        }
+
+        for (MultifileClassCodegen multifileClassCodegen : multifileClassCodegens) {
+            PackageParts multifileClassParts = multifileClassCodegen.getPackageParts();
+            PackageParts premergedParts = mergedPartsByPackageName.get(multifileClassParts.getPackageFqName());
+            if (premergedParts == null) {
+                premergedParts = new PackageParts(multifileClassParts.getPackageFqName());
+                mergedPartsByPackageName.put(multifileClassParts.getPackageFqName(), premergedParts);
+            }
+            premergedParts.getParts().addAll(multifileClassParts.getParts());
+        }
+
+        List<PackageParts> result = new ArrayList<PackageParts>();
+        result.addAll(mergedPartsByPackageName.values());
+        return result;
+    }
+
     @NotNull
     @Override
     public List<OutputFile> asList() {
@@ -181,6 +213,16 @@ public class ClassFileFactory implements OutputFileCollection {
         }
 
         return answer.toString();
+    }
+
+    @NotNull
+    @TestOnly
+    public Map<String, String> createTextForEachFile() {
+        Map<String, String> answer = new LinkedHashMap<String, String>();
+        for (OutputFile file : asList()) {
+            answer.put(file.getRelativePath(), file.asText());
+        }
+        return answer;
     }
 
     @NotNull

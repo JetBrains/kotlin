@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -74,15 +75,18 @@ fun createFileFacadeStub(
 }
 
 fun createMultifileClassStub(
-        partHeaders: List<KotlinClassHeader>,
+        multifileClass: KotlinJvmBinaryClass,
+        partFiles: List<KotlinJvmBinaryClass>,
         facadeFqName: FqName,
         components: ClsStubBuilderComponents
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, packageFqName.isRoot)
+    val partNames = multifileClass.classHeader.filePartClassNames?.asList()
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val multifileClassContainer = ProtoContainer(null, packageFqName)
-    for (partHeader in partHeaders) {
+    for (partFile in partFiles) {
+        val partHeader = partFile.classHeader
         val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!)
         val partContext = components.createContext(partData.nameResolver, packageFqName)
         for (partMember in partData.packageProto.memberList) {

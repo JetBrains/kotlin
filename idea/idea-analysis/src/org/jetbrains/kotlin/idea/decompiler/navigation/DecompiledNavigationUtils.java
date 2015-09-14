@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.decompiler.DecompiledUtilsKt;
 import org.jetbrains.kotlin.idea.decompiler.KotlinClsFileBase;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
+import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
+
+import java.util.Collection;
 
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassId;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
@@ -89,7 +93,7 @@ public final class DecompiledNavigationUtils {
     ) {
         if (ErrorUtils.isError(referencedDescriptor)) return null;
 
-        ClassId containerClassId = getContainerClassId(referencedDescriptor);
+        ClassId containerClassId = getContainerClassId(project, referencedDescriptor);
         if (containerClassId == null) return null;
 
         GlobalSearchScope scopeToSearchIn = JetSourceFilterScope.kotlinSourceAndClassFiles(GlobalSearchScope.allScope(project), project);
@@ -115,11 +119,11 @@ public final class DecompiledNavigationUtils {
     //TODO: navigate to inner classes
     //TODO: should we construct proper SourceElement's for decompiled parts / facades?
     @Nullable
-    private static ClassId getContainerClassId(@NotNull DeclarationDescriptor referencedDescriptor) {
+    private static ClassId getContainerClassId(@NotNull Project project, @NotNull DeclarationDescriptor referencedDescriptor) {
         DeserializedCallableMemberDescriptor deserializedCallableContainer =
                 DescriptorUtils.getParentOfType(referencedDescriptor, DeserializedCallableMemberDescriptor.class, true);
         if (deserializedCallableContainer != null) {
-            return getContainerClassId(deserializedCallableContainer);
+            return getContainerClassId(project, deserializedCallableContainer);
         }
 
         ClassOrPackageFragmentDescriptor
@@ -132,8 +136,18 @@ public final class DecompiledNavigationUtils {
                 ProtoBuf.Callable proto = deserializedDescriptor.getProto();
                 NameResolver nameResolver = deserializedDescriptor.getNameResolver();
                 if (proto.hasExtension(JvmProtoBuf.implClassName)) {
-                    Name implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName));
-                    return new ClassId(packageFQN, implClassName);
+                    Name partClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName));
+                    FqName partFQN = packageFQN.child(partClassName);
+                    Collection<JetFile> multifileFacadeJetFiles =
+                            StaticFacadeIndexUtil.getMultifileClassForPart(partFQN, GlobalSearchScope.allScope(project), project);
+                    if (multifileFacadeJetFiles.isEmpty()) {
+                        return new ClassId(packageFQN, partClassName);
+                    }
+                    else {
+                        JetFile multifileFacade = multifileFacadeJetFiles.iterator().next();
+                        String multifileFacadeName = multifileFacade.getVirtualFile().getNameWithoutExtension();
+                        return new ClassId(packageFQN, Name.identifier(multifileFacadeName));
+                    }
                 }
             }
 
@@ -142,7 +156,7 @@ public final class DecompiledNavigationUtils {
         if (containerDescriptor instanceof ClassDescriptor) {
             if (containerDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                 || ExpressionTypingUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
-                return getContainerClassId(containerDescriptor.getContainingDeclaration());
+                return getContainerClassId(project, containerDescriptor.getContainingDeclaration());
             }
             return getClassId((ClassDescriptor) containerDescriptor);
         }

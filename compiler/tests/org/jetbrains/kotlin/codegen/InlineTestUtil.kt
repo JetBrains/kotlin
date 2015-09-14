@@ -34,11 +34,13 @@ import kotlin.properties.Delegates
 public object InlineTestUtil {
 
     public val INLINE_ANNOTATION_CLASS: String = "kotlin/inline"
+    private val KOTLIN_PACKAGE_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE) + ";"
+    private val KOTLIN_MULTIFILE_CLASS_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS) + ";"
 
     public fun checkNoCallsToInline(files: Iterable<OutputFile>, sourceFiles: List<JetFile>) {
         val inlineInfo = obtainInlineInfo(files)
         val inlineMethods = inlineInfo.inlineMethods
-        assert(!inlineMethods.isEmpty(), "There are no inline methods")
+        assert(!inlineMethods.isEmpty()) { "There are no inline methods" }
 
         val notInlinedCalls = checkInlineMethodNotInvoked(files, inlineMethods)
         assert(notInlinedCalls.isEmpty()) { "All inline methods should be inlined but:\n" + notInlinedCalls.joinToString("\n") }
@@ -89,11 +91,22 @@ public object InlineTestUtil {
         val notInlined = ArrayList<NotInlinedCall>()
 
         files.forEach { file ->
-
             val cr = ClassReader(file.asByteArray())
             cr.accept(object : ClassVisitorWithName() {
+                private var skipMethodsOfThisClass = false
+
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                    if (desc == KOTLIN_PACKAGE_DESC || desc == KOTLIN_MULTIFILE_CLASS_DESC) {
+                        skipMethodsOfThisClass = true
+                    }
+                    return null
+                }
 
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
+                    if (skipMethodsOfThisClass) {
+                        return null
+                    }
+
                     val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
                     if (PackageClassUtils.isPackageClassFqName(classFqName)) {
                         return null

@@ -141,9 +141,9 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
-        @TestMetadata("multifileClassWithCrossPrivate")
-        public void testMultifileClassWithCrossPrivate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/fileClasses/multifileClassWithCrossPrivate/");
+        @TestMetadata("multifileClassWithCrossCall")
+        public void testMultifileClassWithCrossCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/fileClasses/multifileClassWithCrossCall/");
             doTestWithJava(fileName);
         }
 

@@ -36,7 +36,7 @@ public object PackagePartClassUtils {
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
 
-    private @JvmStatic fun getPartClassName(str: String): String =
+    public @JvmStatic fun getPartClassName(str: String): String =
             if (str.isEmpty())
                 "_$PART_CLASS_NAME_SUFFIX"
             else
@@ -81,9 +81,6 @@ public object PackagePartClassUtils {
 
     public @JvmStatic fun fileHasTopLevelCallables(file: JetFile): Boolean =
             file.declarations.any { it is JetProperty || it is JetNamedFunction }
-
-    public @JvmStatic fun getFilesForPart(partFqName: FqName, files: Collection<JetFile>): List<JetFile> =
-            getFilesWithCallables(files).filter { getPackagePartFqName(it) == partFqName }
 
     public @JvmStatic fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))

@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.fileClasses
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+
 
 public object JvmFileClassUtil {
     public val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
@@ -49,18 +54,28 @@ public object JvmFileClassUtil {
     public @JvmStatic fun getFacadeFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(jvmFileClassAnnotations.name))
 
+    public @JvmStatic fun getPartFqNameForDeserializedCallable(callable: DeserializedCallableMemberDescriptor): FqName {
+        val implClassName = getImplClassName(callable)
+        val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
+        return packageFqName.child(implClassName)
+    }
+
+    public @JvmStatic fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name =
+            callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
+
     public @JvmStatic fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))
 
+    public @JvmStatic fun getMultifilePackageFacadePartInfo(file: JetFile): JvmFileClassInfo {
+        val packageFqName = file.packageFqName
+        val packageFacadeFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
+        val filePartName = manglePartName(packageFacadeFqName.shortName().asString(), file.name)
+        val filePartFqName = packageFqName.child(Name.identifier(filePartName))
+        return JvmMultifileClassPartInfo(filePartFqName, packageFacadeFqName)
+    }
+
     public @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
             "${facadeName}__${PackagePartClassUtils.getFilePartShortName(fileName)}"
-
-    public @JvmStatic fun parseJvmFileClass(jvmName: AnnotationDescriptor, jvmMultifileClass: AnnotationDescriptor?): ParsedJmvFileClassAnnotations? {
-        val jvmNameArgument = jvmName.allValueArguments.values().singleOrNull() ?: return null
-        val name = (jvmNameArgument as? StringValue)?.value ?: return null
-        val isMultifileClassPart = jvmMultifileClass != null
-        return ParsedJmvFileClassAnnotations(name, isMultifileClassPart)
-    }
 
     public @JvmStatic fun getFileClassInfoNoResolve(file: JetFile): JvmFileClassInfo =
             getFileClassInfo(file, parseJvmNameOnFileNoResolve(file))
@@ -90,3 +105,13 @@ public object JvmFileClassUtil {
 }
 
 public class ParsedJmvFileClassAnnotations(public val name: String, public val multipleFiles: Boolean)
+
+public val JetFile.javaFileFacadeFqName: FqName
+    get() {
+        return CachedValuesManager.getCachedValue(this) {
+            val facadeFqName =
+                    if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
+                    else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
+            CachedValueProvider.Result(facadeFqName, this)
+        }
+    }
