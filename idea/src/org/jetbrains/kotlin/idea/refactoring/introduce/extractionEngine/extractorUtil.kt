@@ -70,7 +70,13 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
     return CallableBuilder(builderTarget).let { builder ->
         builder.modifier(descriptor.visibility)
 
-        builder.typeParams(descriptor.typeParameters.map { it.originalDeclaration.getText()!! })
+        builder.typeParams(
+                descriptor.typeParameters.map {
+                    val typeParameter = it.originalDeclaration
+                    val bound = typeParameter.extendsBound
+                    typeParameter.name + (bound?.let { " : " + it.text } ?: "")
+                }
+        )
 
         fun JetType.typeAsString(): String {
             return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)

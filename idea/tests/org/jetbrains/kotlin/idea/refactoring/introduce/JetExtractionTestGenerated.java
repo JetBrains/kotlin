@@ -2292,6 +2292,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("noVarianceInFun.kt")
+            public void testNoVarianceInFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/noVarianceInFun.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("simpleTypeParameter.kt")
             public void testSimpleTypeParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameter.kt");
