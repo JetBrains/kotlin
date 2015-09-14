@@ -125,7 +125,7 @@ public class IncrementalCacheImpl(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
+    private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME).apply { mkdirs() }
 
     private val String.storageFile: File
         get() = File(baseDir, this)
