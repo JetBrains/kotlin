@@ -34,7 +34,7 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
             is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
-                toPsiParameter()?.let { psiParameter -> elements.add(psiParameter) }
+                toPsiParameters().toCollection(elements)
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
 
                 elements
@@ -64,21 +64,21 @@ public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
             else -> null
         }
 
-public fun JetParameter.toPsiParameter(): PsiParameter? {
-    val paramList = getNonStrictParentOfType<JetParameterList>() ?: return null
+public fun JetParameter.toPsiParameters(): Collection<PsiParameter> {
+    val paramList = getNonStrictParentOfType<JetParameterList>() ?: return emptyList()
 
     val paramIndex = paramList.getParameters().indexOf(this)
     val owner = paramList.getParent()
     val lightParamIndex = if (owner is JetDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
-    val method: PsiMethod =
+    val methods: Collection<PsiMethod> =
             when (owner) {
-                is JetFunction -> LightClassUtil.getLightClassMethod(owner)
-                is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
+                is JetFunction -> LightClassUtil.getLightClassMethods(owner)
+                is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(owner)
                 else -> null
-            } ?: return null
+            } ?: return emptyList()
 
-    return method.getParameterList().getParameters()[lightParamIndex]
+    return methods.map { it.getParameterList().getParameters()[lightParamIndex] }
 }
 
 public fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.utils.KotlinVfsUtil
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
@@ -129,15 +130,14 @@ public object LightClassUtil {
         return LightClassGenerationSupport.getInstance(classOrObject.project).getPsiClass(classOrObject)
     }
 
-    public fun getLightClassAccessorMethod(accessor: JetPropertyAccessor): PsiMethod? {
-        val property = PsiTreeUtil.getParentOfType(accessor, JetProperty::class.java) ?: return null
+    public fun getLightClassAccessorMethod(accessor: JetPropertyAccessor): PsiMethod? =
+            getLightClassAccessorMethods(accessor).firstOrNull()
+
+    public fun getLightClassAccessorMethods(accessor: JetPropertyAccessor): Collection<PsiMethod> {
+        val property = accessor.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property, true)
-        for (wrapper in wrappers) {
-            if ((accessor.isGetter && !wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) || (accessor.isSetter && wrapper.name.startsWith(JvmAbi.SETTER_PREFIX))) {
-                return wrapper
-            }
-        }
-        return null
+        return wrappers.filter { wrapper -> (accessor.isGetter && !wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) ||
+                                            (accessor.isSetter && wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) }
     }
 
     public fun getLightFieldForCompanionObject(companionObject: JetClassOrObject): PsiField? {
