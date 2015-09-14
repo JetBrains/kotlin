@@ -664,13 +664,7 @@ public class FunctionCodegen {
             generator.putValueIfNeeded(parameterDescriptor, type, StackValue.local(parameterIndex, type));
         }
 
-        CallableMethod method;
-        if (functionDescriptor instanceof ConstructorDescriptor) {
-            method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
-        }
-        else {
-            method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
-        }
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
 
         generator.genCallWithoutAssertions(method, codegen);
 

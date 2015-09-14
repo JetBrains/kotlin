@@ -593,6 +593,12 @@ public class JetTypeMapper {
 
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
+        if (descriptor instanceof ConstructorDescriptor) {
+            JvmMethodSignature method = mapSignature(descriptor);
+            Type owner = mapClass(((ConstructorDescriptor) descriptor).getContainingDeclaration());
+            return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
+        }
+
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
         FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
@@ -1111,17 +1117,6 @@ public class JetTypeMapper {
         writeVoidReturn(sw);
 
         return sw.makeJvmMethodSignature("<init>");
-    }
-
-    @NotNull
-    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor) {
-        JvmMethodSignature method = mapSignature(descriptor);
-        ClassDescriptor container = descriptor.getContainingDeclaration();
-        Type owner = mapClass(container);
-        if (owner.getSort() != Type.OBJECT) {
-            throw new IllegalStateException("type must have been mapped to object: " + container.getDefaultType() + ", actual: " + owner);
-        }
-        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {

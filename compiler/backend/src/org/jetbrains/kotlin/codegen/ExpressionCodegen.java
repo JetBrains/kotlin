@@ -1472,7 +1472,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     ConstructorDescriptor constructorToCall = SamCodegenUtil.resolveSamAdapter(superConstructor);
                     List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
                     int params = superValueParameters.size();
-                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(constructorToCall).getValueParameterTypes();
+                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(constructorToCall, false).getValueParameterTypes();
                     assert superMappedTypes.size() >= params : String
                             .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
                                     superMappedTypes.size(), params, classDescriptor);
@@ -3414,7 +3414,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
 
                 constructor = SamCodegenUtil.resolveSamAdapter(constructor);
-                CallableMethod method = typeMapper.mapToCallableMethod(constructor);
+                CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);
                 invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
                 return Unit.INSTANCE$;

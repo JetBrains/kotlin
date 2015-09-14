@@ -937,17 +937,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
     ) {
-        boolean isConstructor = functionDescriptor instanceof ConstructorDescriptor;
-        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
-
-        boolean superCall = accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                            ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null;
-        CallableMethod callableMethod = isConstructor ?
-                                        typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
-                                        typeMapper.mapToCallableMethod(functionDescriptor, superCall);
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
+                functionDescriptor,
+                accessorDescriptor instanceof AccessorForCallableDescriptor &&
+                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
+        );
 
         int reg = 1;
-        if (isConstructor && !accessorIsConstructor) {
+
+        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+        if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
@@ -1496,8 +1495,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.load(0, OBJECT_TYPE);
         ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(codegen.getConstructorDescriptor(delegationConstructorCall));
 
-        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor);
-        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);
+        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor, false);
+        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor, false);
 
         List<JvmMethodParameterSignature> delegatingParameters = delegateConstructorCallable.getValueParameters();
         List<JvmMethodParameterSignature> parameters = callable.getValueParameters();
@@ -1711,7 +1710,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumEntry)) {
             ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(delegationSpecifiers.get(0), bindingContext);
 
-            CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
+            CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor(), false);
 
             codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
         }
