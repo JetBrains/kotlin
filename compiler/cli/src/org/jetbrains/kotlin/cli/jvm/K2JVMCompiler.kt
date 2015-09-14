@@ -66,6 +66,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
+        configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
 
         if (IncrementalCompilation.ENABLED) {
             val incrementalCompilationComponents = services.get(javaClass<IncrementalCompilationComponents>())
@@ -125,6 +126,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments))
 
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
+
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
@@ -134,8 +137,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             CommandLineScriptUtils.scriptParameters()
         else
             emptyList<AnalyzerScriptParameter>())
-
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         putAdvancedOptions(configuration, arguments)
 
@@ -246,8 +247,10 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
-            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            if (configuration[CLIConfigurationKeys.REPORT_PERF] == true) {
+                val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+                collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            }
         }
 
         fun reportGCTime(configuration: CompilerConfiguration) {
