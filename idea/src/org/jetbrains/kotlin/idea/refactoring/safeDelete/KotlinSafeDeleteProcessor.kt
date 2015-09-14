@@ -189,7 +189,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     findKotlinDeclarationUsages(element)
                 }
                 else {
-                    element.getRepresentativeLightMethod()?.let { method -> findUsagesByJavaProcessor(method, false) }
+                    element.toLightMethods().map { method -> findUsagesByJavaProcessor(method, false) }.firstOrNull()
                 }
             }
 
