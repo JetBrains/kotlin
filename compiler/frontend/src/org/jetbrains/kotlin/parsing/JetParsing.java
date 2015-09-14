@@ -554,10 +554,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
-        if (mode.allowShortAnnotations && at(IDENTIFIER)) {
-            return parseAnnotation(mode);
-        }
-        else if (at(AT)) {
+        if (at(AT)) {
             IElementType nextRawToken = myBuilder.rawLookup(1);
             IElementType tokenToMatch = nextRawToken;
             boolean isTargetedAnnotation = false;
