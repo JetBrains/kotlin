@@ -48,6 +48,12 @@ public class KotlinBuiltIns {
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
 
+    public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
+            BUILT_INS_PACKAGE_FQ_NAME,
+            ANNOTATION_PACKAGE_FQ_NAME,
+            BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
+    );
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static volatile KotlinBuiltIns instance = null;
@@ -114,8 +120,7 @@ public class KotlinBuiltIns {
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
-                storageManager, builtInsModule,
-                setOf(BUILT_INS_PACKAGE_FQ_NAME, ANNOTATION_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
+                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
                 new Function1<String, InputStream>() {
                     @Override
