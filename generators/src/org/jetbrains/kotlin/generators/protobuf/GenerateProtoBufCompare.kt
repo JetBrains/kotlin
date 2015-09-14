@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
-import kotlin.platform.platformStatic
 
 class GenerateProtoBufCompare {
     companion object {
         val DEST_FILE: File = File("jps-plugin/src/org/jetbrains/kotlin/jps/incremental/ProtoCompareGenerated.kt")
 
-        platformStatic
+        @JvmStatic
         fun main(args: Array<String>) {
             generate(DEST_FILE)
         }

@@ -33,7 +33,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import kotlin.platform.platformStatic
 
 public object KotlinJavascriptSerializationUtil {
     public val CLASS_METADATA_FILE_EXTENSION: String = "kjsm"
@@ -57,7 +56,7 @@ public object KotlinJavascriptSerializationUtil {
         nameStream.toByteArray()
     }
 
-    platformStatic
+    @JvmStatic
     public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
         val contentMap = metadata.toContentMap()
 

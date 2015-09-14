@@ -30,7 +30,7 @@ import com.intellij.xdebugger.settings.XDebuggerSettings
 import com.intellij.xdebugger.XDebuggerUtil
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingConfigurableUi
 
-State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
+@State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
 public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
     public var DEBUG_RENDER_DELEGATED_PROPERTIES: Boolean = true
     public var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true

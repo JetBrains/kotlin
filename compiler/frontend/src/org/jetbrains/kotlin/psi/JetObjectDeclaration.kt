@@ -50,7 +50,7 @@ public class JetObjectDeclaration : JetClassOrObject {
 
     override fun getNameIdentifier(): PsiElement? = getNameAsDeclaration()?.getNameIdentifier()
 
-    override fun setName(NonNls name: String): PsiElement {
+    override fun setName(@NonNls name: String): PsiElement {
         val declarationName = getNameAsDeclaration()
         if (declarationName == null) {
             val psiFactory = JetPsiFactory(getProject())

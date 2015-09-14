@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import kotlin.platform.platformStatic
 
 public open class JetTypeImpl
 private constructor(
@@ -32,7 +31,7 @@ private constructor(
 ) : AbstractJetType() {
 
     companion object {
-        @platformStatic
+        @JvmStatic
         public fun create(annotations: Annotations,
                           constructor: TypeConstructor,
                           nullable: Boolean,
@@ -41,7 +40,7 @@ private constructor(
 
                 = JetTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
 
-        @platformStatic
+        @JvmStatic
         public fun create(annotations: Annotations,
                           constructor: TypeConstructor,
                           nullable: Boolean,
@@ -56,7 +55,7 @@ private constructor(
             return JetTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
         }
 
-        @platformStatic
+        @JvmStatic
         public fun create(annotations: Annotations,
                           descriptor: ClassDescriptor,
                           nullable: Boolean,

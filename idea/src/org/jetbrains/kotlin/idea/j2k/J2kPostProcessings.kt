@@ -93,12 +93,12 @@ object J2KPostProcessingRegistrar {
 
     private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) apply: TIntention.(TElement) -> Unit
+            crossinline apply: TIntention.(TElement) -> Unit
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 if (intention.applicabilityRange(element as TElement) == null) return null
                 return { intention.apply(element) }
             }
@@ -107,14 +107,14 @@ object J2KPostProcessingRegistrar {
 
     private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessing(
             diagnosticFactory: DiagnosticFactory<*>,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fix: (TElement, Diagnostic) -> Unit
+            crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
         registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
     private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessingFactory(
             diagnosticFactory: DiagnosticFactory<*>,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+            crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {

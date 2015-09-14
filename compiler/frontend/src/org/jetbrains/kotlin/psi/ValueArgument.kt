@@ -20,7 +20,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.name.Name
 
 public interface ValueArgument {
-    IfNotParsed
+    @IfNotParsed
     public fun getArgumentExpression(): JetExpression?
 
     public fun getArgumentName(): ValueArgumentName?

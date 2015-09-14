@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
-import kotlin.platform.platformStatic
 import java.util.*
 
 public abstract class ImportInsertHelper {
@@ -42,7 +41,7 @@ public abstract class ImportInsertHelper {
     public abstract fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
 
     companion object {
-        @platformStatic
+        @JvmStatic
         public fun getInstance(project: Project): ImportInsertHelper
             = ServiceManager.getService<ImportInsertHelper>(project, javaClass<ImportInsertHelper>())
     }

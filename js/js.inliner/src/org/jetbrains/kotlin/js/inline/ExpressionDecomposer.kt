@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
-import kotlin.platform.platformStatic
 
 /**
  * If inline function consists of multiple statements,
@@ -54,7 +53,7 @@ class ExpressionDecomposer private constructor(
     private var additionalStatements: MutableList<JsStatement> = SmartList()
 
     companion object {
-        platformStatic
+        @JvmStatic
         public fun preserveEvaluationOrder(
                 scope: JsScope, statement: JsStatement, canBeExtractedByInliner: (JsNode)->Boolean
         ): List<JsStatement> {

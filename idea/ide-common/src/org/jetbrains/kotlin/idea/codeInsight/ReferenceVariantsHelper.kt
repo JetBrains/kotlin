@@ -65,7 +65,7 @@ public class ReferenceVariantsHelper(
         }
     }
 
-    @jvmOverloads
+    @JvmOverloads
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,

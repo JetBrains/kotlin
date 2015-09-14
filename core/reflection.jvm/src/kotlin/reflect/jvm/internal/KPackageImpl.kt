@@ -44,7 +44,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
             scope.getProperties(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
 

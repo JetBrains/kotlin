@@ -20,16 +20,17 @@ import org.jetbrains.kotlin.psi.JetModifierList
 
 import org.jetbrains.kotlin.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import kotlin.platform.platformStatic
 
 public object ModifierMaskUtils {
     init {
         assert(MODIFIER_KEYWORDS_ARRAY.size() <= 32, "Current implementation depends on the ability to represent modifier list as bit mask")
     }
 
-    platformStatic public fun computeMaskFromModifierList(modifierList: JetModifierList): Int = computeMask { modifierList.hasModifier(it) }
+    @JvmStatic
+    public fun computeMaskFromModifierList(modifierList: JetModifierList): Int = computeMask { modifierList.hasModifier(it) }
 
-    platformStatic public fun computeMask(hasModifier: (JetModifierKeywordToken) -> Boolean): Int {
+    @JvmStatic
+    public fun computeMask(hasModifier: (JetModifierKeywordToken) -> Boolean): Int {
         var mask = 0
         for ((index, modifierKeywordToken) in MODIFIER_KEYWORDS_ARRAY.withIndex()) {
             if (hasModifier(modifierKeywordToken)) {
@@ -39,13 +40,15 @@ public object ModifierMaskUtils {
         return mask
     }
 
-    platformStatic public fun maskHasModifier(mask: Int, modifierToken: JetModifierKeywordToken): Boolean {
+    @JvmStatic
+    public fun maskHasModifier(mask: Int, modifierToken: JetModifierKeywordToken): Boolean {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(modifierToken)
         assert(index >= 0, "All JetModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY")
         return (mask and (1 shl index)) != 0
     }
 
-    platformStatic public fun maskToString(mask: Int): String {
+    @JvmStatic
+    public fun maskToString(mask: Int): String {
         val sb = StringBuilder()
         sb.append("[")
         var first = true

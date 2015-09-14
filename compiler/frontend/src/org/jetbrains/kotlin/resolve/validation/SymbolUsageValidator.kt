@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
-import kotlin.platform.platformStatic
 
 public interface SymbolUsageValidator {
 

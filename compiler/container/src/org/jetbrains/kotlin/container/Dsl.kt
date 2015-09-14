@@ -31,7 +31,7 @@ public inline fun <reified T : Any> ComponentProvider.get(): T {
     return getService(javaClass<T>())
 }
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
     return resolve(request)!!.getValue() as T
 }

@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.TypeUtils.topologicallySortSuperclassesAndReco
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
-import kotlin.platform.platformStatic
 
 /**
  * Generates a definition of a single class.
@@ -288,12 +287,12 @@ public class ClassTranslator private constructor(
             return result
         }
 
-        platformStatic
+        @JvmStatic
         public fun generateClassCreation(classDeclaration: JetClassOrObject, context: TranslationContext): JsInvocation {
             return ClassTranslator(classDeclaration, context).translate()
         }
 
-        platformStatic
+        @JvmStatic
         public fun generateObjectLiteral(objectDeclaration: JetObjectDeclaration, context: TranslationContext): JsExpression {
             return ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression()
         }

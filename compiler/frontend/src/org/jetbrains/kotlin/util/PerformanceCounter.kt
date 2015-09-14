@@ -53,7 +53,8 @@ public abstract class PerformanceCounter protected constructor(val name: String)
             }
         }
 
-        public jvmOverloads fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
+        @JvmOverloads
+        public fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
             return if (reenterable)
                 ReenterableCounter(name)
             else

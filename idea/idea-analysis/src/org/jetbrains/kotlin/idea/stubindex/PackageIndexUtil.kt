@@ -21,7 +21,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.name.FqName
-import kotlin.platform.platformStatic
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import com.intellij.psi.util.CachedValuesManager
@@ -30,7 +29,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.name.Name
 
 public object PackageIndexUtil {
-    platformStatic public fun getSubPackageFqNames(
+    @JvmStatic
+    public fun getSubPackageFqNames(
             packageFqName: FqName,
             scope: GlobalSearchScope,
             project: Project,
@@ -39,7 +39,8 @@ public object PackageIndexUtil {
         return SubpackagesIndexService.getInstance(project).getSubpackages(packageFqName, scope, nameFilter)
     }
 
-    platformStatic public fun findFilesWithExactPackage(
+    @JvmStatic
+    public fun findFilesWithExactPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -47,7 +48,8 @@ public object PackageIndexUtil {
         return JetExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
     }
 
-    platformStatic public fun packageExists(
+    @JvmStatic
+    public fun packageExists(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -56,7 +58,8 @@ public object PackageIndexUtil {
                SubpackagesIndexService.getInstance(project).hasSubpackages(packageFqName, searchScope)
     }
 
-    platformStatic public fun containsFilesWithExactPackage(
+    @JvmStatic
+    public fun containsFilesWithExactPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -71,7 +74,8 @@ public object PackageIndexUtil {
         return result
     }
 
-    platformStatic public fun getAllPossiblePackageClasses(project: Project): MultiMap<String, FqName> {
+    @JvmStatic
+    public fun getAllPossiblePackageClasses(project: Project): MultiMap<String, FqName> {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
             Result(computeAllPossiblePackageClasses(project), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
         }!!

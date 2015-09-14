@@ -58,5 +58,6 @@ public class MutableDiagnosticsWithSuppression(
         modificationTracker.incModificationCount()
     }
 
-    TestOnly public fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
+    @TestOnly
+    public fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
 }

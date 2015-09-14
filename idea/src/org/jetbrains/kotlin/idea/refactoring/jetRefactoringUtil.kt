@@ -660,7 +660,7 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
     this()
 }
 
-@throws(ConfigurationException::class)
+@Throws(ConfigurationException::class)
 public fun JetElement.validateElement(errorMessage: String) {
     try {
         AnalyzingUtils.checkForSyntacticErrors(this)

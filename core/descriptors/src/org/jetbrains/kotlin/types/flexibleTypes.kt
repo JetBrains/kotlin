@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import kotlin.platform.platformStatic
 
 public interface FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
@@ -123,7 +122,8 @@ public open class DelegatingFlexibleType protected constructor(
                 javaClass<FlexibleTypeDelegation>()
         )
 
-        platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
+        @JvmStatic
+        fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
             return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
         }
@@ -144,7 +144,7 @@ public open class DelegatingFlexibleType protected constructor(
         val extra = extraCapabilities.getCapability(capabilityClass, this, this)
         if (extra != null) return extra
 
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         if (capabilityClass in capabilityClasses) return this as T
 
         return super<DelegatingType>.getCapability(capabilityClass)

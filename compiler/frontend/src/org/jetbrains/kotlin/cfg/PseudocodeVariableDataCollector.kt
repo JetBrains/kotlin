@@ -36,7 +36,7 @@ public class PseudocodeVariableDataCollector(
 ) {
     val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
 
-    suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     public fun <D> collectData(
             traversalOrder: TraversalOrder,
             mergeDataWithLocalDeclarations: Boolean,

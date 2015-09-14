@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
-import kotlin.platform.platformStatic
-
 class FunctionInlineMutator
 private constructor(
         private val call: JsInvocation,
@@ -230,7 +228,7 @@ private constructor(
 
     companion object {
 
-        platformStatic
+        @JvmStatic
         public fun getInlineableCallReplacement(call: JsInvocation, inliningContext: InliningContext): InlineableResult {
             val mutator = FunctionInlineMutator(call, inliningContext)
             mutator.process()
@@ -245,7 +243,7 @@ private constructor(
             return InlineableResult(inlineableBody, mutator.resultExpr)
         }
 
-        platformStatic
+        @JvmStatic
         private fun getThisReplacement(call: JsInvocation): JsExpression? {
             if (isCallInvocation(call)) {
                 return call.getArguments().get(0)
@@ -263,7 +261,7 @@ private constructor(
             return !thisRefs.isEmpty()
         }
 
-        platformStatic
+        @JvmStatic
         public fun canBeExpression(function: JsFunction): Boolean {
             return canBeExpression(function.getBody())
         }

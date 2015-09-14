@@ -204,7 +204,7 @@ public class DeserializedClassDescriptor(
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
@@ -216,7 +216,7 @@ public class DeserializedClassDescriptor(
                 override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                     // TODO: report "cannot infer visibility"
                     OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
-                    @suppress("UNCHECKED_CAST")
+                    @Suppress("UNCHECKED_CAST")
                     result.add(fakeOverride as D)
                 }
 

@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import kotlin.platform.platformStatic
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -222,13 +221,15 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         var namesHighlightingEnabled = true
             @TestOnly set
 
-        platformStatic fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
+        @JvmStatic
+        fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {
                 holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
             }
         }
 
-        platformStatic fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
+        @JvmStatic
+        fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {
                 holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
             }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.analyzer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
-import kotlin.platform.platformStatic
 
 public data open class AnalysisResult protected constructor(
         public val bindingContext: BindingContext,
@@ -43,15 +42,18 @@ public data open class AnalysisResult protected constructor(
     companion object {
         public val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
 
-        platformStatic public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {
+        @JvmStatic
+        public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {
             return AnalysisResult(bindingContext, module, true)
         }
 
-        platformStatic public fun success(bindingContext: BindingContext, module: ModuleDescriptor, shouldGenerateCode: Boolean): AnalysisResult {
+        @JvmStatic
+        public fun success(bindingContext: BindingContext, module: ModuleDescriptor, shouldGenerateCode: Boolean): AnalysisResult {
             return AnalysisResult(bindingContext, module, shouldGenerateCode)
         }
 
-        platformStatic public fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
+        @JvmStatic
+        public fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
             return Error(bindingContext, error)
         }
     }

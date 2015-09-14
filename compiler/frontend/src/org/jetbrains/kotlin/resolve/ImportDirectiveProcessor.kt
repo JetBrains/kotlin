@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 public class ImportDirectiveProcessor(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver
@@ -161,7 +160,8 @@ public class ImportDirectiveProcessor(
 
         public fun canAllUnderImportFromClass(descriptor: ClassDescriptor): Boolean = !descriptor.getKind().isSingleton()
 
-        platformStatic public fun canImportMembersFrom(
+        @JvmStatic
+        public fun canImportMembersFrom(
                 descriptors: Collection<DeclarationDescriptor>,
                 reference: JetSimpleNameExpression,
                 trace: BindingTrace,

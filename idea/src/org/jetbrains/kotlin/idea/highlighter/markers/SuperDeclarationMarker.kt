@@ -67,7 +67,7 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
 public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<JetDeclaration> {
     private var testNavigableElements: List<NavigatablePsiElement>? = null
 
-    TestOnly
+    @TestOnly
     public fun getNavigationElements(): List<NavigatablePsiElement> {
         val navigationResult = testNavigableElements!!
         testNavigableElements = null

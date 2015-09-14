@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
 
-public class JetEnumEntrySuperClassReferenceExpressionElementType(NonNls debugName: String)
+public class JetEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: String)
     : JetStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, JetEnumEntrySuperclassReferenceExpression>(
         debugName,
         javaClass<JetEnumEntrySuperclassReferenceExpression>(),

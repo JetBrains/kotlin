@@ -49,9 +49,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import kotlin.platform.platformStatic
 
-SuppressWarnings("UseOfSystemOutOrSystemErr")
 public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
@@ -244,7 +242,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        platformStatic public fun main(args: Array<String>) {
+        @JvmStatic
+        public fun main(args: Array<String>) {
             CLICompiler.doMain(K2JVMCompiler(), args)
         }
 

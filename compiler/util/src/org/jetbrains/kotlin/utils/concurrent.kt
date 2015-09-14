@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.utils.concurrent.block
 
 public class LockedClearableLazyValue<T: Any>(val lock: Any, val init: () -> T) {
-    private volatile var value: T? = null
+    @Volatile private var value: T? = null
 
     public fun get(): T {
         val _v1 = value
@@ -28,7 +28,7 @@ public class LockedClearableLazyValue<T: Any>(val lock: Any, val init: () -> T) 
         return synchronized(lock) {
             val _v2 = value
             // Suppress because of https://youtrack.jetbrains.com/issue/KT-6176
-            @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             if (_v2 != null) {
                 _v2!!
             }

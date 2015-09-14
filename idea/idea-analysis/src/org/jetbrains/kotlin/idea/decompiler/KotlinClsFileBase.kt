@@ -69,7 +69,7 @@ public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvide
         decompiledText.drop()
     }
 
-    TestOnly
+    @TestOnly
     fun getRenderedDescriptorsToRange(): Map<String, TextRange> {
         return decompiledText.get().renderedDescriptorsToRange
     }

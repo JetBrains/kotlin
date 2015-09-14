@@ -112,14 +112,14 @@ public fun ContextForNewModule(
     return MutableModuleContextImpl(module, projectContext)
 }
 
-deprecated("Used temporarily while we are in transition from to lazy resolve")
+@Deprecated("Used temporarily while we are in transition from to lazy resolve")
 public open class TypeLazinessToken {
-    deprecated("Used temporarily while we are in transition from to lazy resolve")
+    @Deprecated("Used temporarily while we are in transition from to lazy resolve")
     public open fun isLazy(): Boolean = false
 }
 
-deprecated("Used temporarily while we are in transition from to lazy resolve")
+@Deprecated("Used temporarily while we are in transition from to lazy resolve")
 public class LazyResolveToken : TypeLazinessToken() {
-    deprecated("Used temporarily while we are in transition from to lazy resolve")
+    @Deprecated("Used temporarily while we are in transition from to lazy resolve")
     override fun isLazy() = true
 }

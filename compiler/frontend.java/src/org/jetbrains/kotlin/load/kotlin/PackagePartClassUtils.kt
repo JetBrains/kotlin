@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.util.*
 
 public object PackagePartClassUtils {
-    public @JvmStatic fun getPathHashCode(file: VirtualFile): Int =
+    @JvmStatic
+    public fun getPathHashCode(file: VirtualFile): Int =
             file.path.toLowerCase().hashCode()
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
@@ -54,35 +55,43 @@ public object PackagePartClassUtils {
                 "_$str"
 
     @TestOnly
-    public @JvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
+    @JvmStatic
+    public fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
-    public @JvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
+    @JvmStatic
+    public fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
         val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
     @Deprecated("Migrate to JvmFileClassesProvider")
-    public @JvmStatic fun getPackagePartInternalName(file: JetFile): String =
+    @JvmStatic
+    public fun getPackagePartInternalName(file: JetFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
     @Deprecated("Migrate to JvmFileClassesProvider")
-    public @JvmStatic fun getPackagePartFqName(file: JetFile): FqName =
+    @JvmStatic
+    public fun getPackagePartFqName(file: JetFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
 
-    public @JvmStatic fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
+    @JvmStatic
+    public fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
         val implClassName = callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
         val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
         return packageFqName.child(implClassName)
     }
 
-    public @JvmStatic fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =
+    @JvmStatic
+    public fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =
             files.filter { fileHasTopLevelCallables(it) }
 
-    public @JvmStatic fun fileHasTopLevelCallables(file: JetFile): Boolean =
+    @JvmStatic
+    public fun fileHasTopLevelCallables(file: JetFile): Boolean =
             file.declarations.any { it is JetProperty || it is JetNamedFunction }
 
-    public @JvmStatic fun getFilePartShortName(fileName: String): String =
+    @JvmStatic
+    public fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))
 
 }

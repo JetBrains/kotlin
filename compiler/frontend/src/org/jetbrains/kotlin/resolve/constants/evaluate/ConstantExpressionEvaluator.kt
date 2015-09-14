@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.math.BigInteger
 import java.util.ArrayList
 import java.util.HashMap
-import kotlin.platform.platformStatic
 
 public class ConstantExpressionEvaluator(
         internal val builtIns: KotlinBuiltIns
@@ -209,12 +208,14 @@ public class ConstantExpressionEvaluator(
 
 
     companion object {
-        platformStatic public fun getConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+        @JvmStatic
+        public fun getConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             val constant = getPossiblyErrorConstant(expression, bindingContext) ?: return null
             return if (!constant.isError) constant else null
         }
 
-        platformStatic fun getPossiblyErrorConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+        @JvmStatic
+        fun getPossiblyErrorConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression)
         }
     }
@@ -835,7 +836,7 @@ private val BOOLEAN = CompileTimeType<Boolean>()
 private val STRING = CompileTimeType<String>()
 private val ANY = CompileTimeType<Any>()
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 private fun <A, B> binaryOperation(
         a: CompileTimeType<A>,
         b: CompileTimeType<B>,
@@ -844,7 +845,7 @@ private fun <A, B> binaryOperation(
         checker: Function2<BigInteger, BigInteger, BigInteger>
 ) = BinaryOperationKey(a, b, functionName) to Pair(operation, checker) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 private fun <A> unaryOperation(
         a: CompileTimeType<A>,
         functionName: String,

@@ -31,6 +31,7 @@ public class JetFileFacadeFqNameIndex private constructor() : StringStubIndexExt
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(JetFileFacadeFqNameIndex::class.java)
         public val INSTANCE: JetFileFacadeFqNameIndex = JetFileFacadeFqNameIndex()
-        public @jvmStatic fun getInstance(): JetFileFacadeFqNameIndex = INSTANCE
+        @JvmStatic
+        public fun getInstance(): JetFileFacadeFqNameIndex = INSTANCE
     }
 }

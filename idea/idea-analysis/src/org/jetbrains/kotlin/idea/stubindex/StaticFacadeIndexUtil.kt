@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.JetFile
 public object StaticFacadeIndexUtil {
 
     // TODO change as we introduce multi-file facades (this will require a separate index)
-    @JvmStatic public fun findFilesForFilePart(
+    @JvmStatic
+    public fun findFilesForFilePart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project

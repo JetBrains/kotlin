@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
-jvmOverloads
+@JvmOverloads
 public fun JetExpression.computeTypeInfoInContext(
         scope: JetScope,
         contextExpression: JetExpression = this,
@@ -43,7 +43,7 @@ public fun JetExpression.computeTypeInfoInContext(
             .getTypeInfo(scope.asLexicalScope(), this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
-jvmOverloads
+@JvmOverloads
 public fun JetExpression.analyzeInContext(
         scope: JetScope,
         contextExpression: JetExpression = this,
@@ -56,7 +56,7 @@ public fun JetExpression.analyzeInContext(
     return trace.getBindingContext()
 }
 
-jvmOverloads
+@JvmOverloads
 public fun JetExpression.computeTypeInContext(
         scope: JetScope,
         contextExpression: JetExpression = this,

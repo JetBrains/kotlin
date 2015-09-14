@@ -160,7 +160,7 @@ public class IncrementalCacheImpl(
         dependents.add(cache)
     }
 
-    TestOnly
+    @TestOnly
     public fun dump(): String {
         return maps.map { it.dump() }.join("\n\n")
     }
@@ -821,7 +821,7 @@ private object PathCollectionExternalizer : DataExternalizer<Collection<String>>
 private val File.normalizedPath: String
     get() = FileUtil.toSystemIndependentName(canonicalPath)
 
-TestOnly
+@TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
         StringBuilder {
             append("{")
@@ -836,7 +836,7 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
             append("}")
         }.toString()
 
-TestOnly
+@TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
         "[${sort().map(Any::toString).join(", ")}]"
 

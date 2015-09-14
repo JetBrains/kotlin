@@ -54,7 +54,7 @@ public class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors
         Iterable<CallableDescriptorCollector<D>> {
     override fun iterator(): Iterator<CallableDescriptorCollector<D>> = collectors.iterator()
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     companion object {
         public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(

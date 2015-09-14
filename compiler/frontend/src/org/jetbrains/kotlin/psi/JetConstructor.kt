@@ -43,7 +43,7 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
 
     override fun getTypeReference() = null
 
-    throws(IncorrectOperationException::class)
+    @Throws(IncorrectOperationException::class)
     override fun setTypeReference(typeRef: JetTypeReference?) = throw IncorrectOperationException("setTypeReference to constructor")
 
     override fun getColon() = findChildByType<PsiElement>(JetTokens.COLON)
@@ -76,7 +76,7 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
 
     override fun getNameIdentifier() = null
 
-    throws(IncorrectOperationException::class)
+    @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement = throw IncorrectOperationException("setName to constructor")
 
     override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)

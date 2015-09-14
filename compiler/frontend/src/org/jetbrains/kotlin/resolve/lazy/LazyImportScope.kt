@@ -83,7 +83,7 @@ class LazyImportResolver(
 
     private inner class ImportDirectiveResolveCache(private val directive: JetImportDirective) {
 
-        volatile var importResolveStatus: ImportResolveStatus? = null
+        @Volatile var importResolveStatus: ImportResolveStatus? = null
 
         fun scopeForMode(mode: LookupMode): JetScope {
             val status = importResolveStatus

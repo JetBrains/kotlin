@@ -20,7 +20,7 @@ abstract class HasMetadata {
     private val metadata: MutableMap<String, Any?> = hashMapOf()
 
     fun <T> getData(key: String): T {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return metadata[key] as T
     }
 

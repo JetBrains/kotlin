@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 public class JvmPlatformParameters(
         public val moduleByJavaClass: (JavaClass) -> ModuleInfo
@@ -84,7 +83,8 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
     override val moduleParameters: ModuleParameters
         get() = TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS
 
-    public platformStatic fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
+    @JvmStatic
+    public fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
         val allFiles = ArrayList(baseFiles)
         for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
             allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
     val result = replace(newElement)
     return if (result is T)
@@ -37,7 +37,7 @@ public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T 
         (result as JetParenthesizedExpression).getExpression() as T
 }
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public fun <T: PsiElement> T.copied(): T = copy() as T
 
 public fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {

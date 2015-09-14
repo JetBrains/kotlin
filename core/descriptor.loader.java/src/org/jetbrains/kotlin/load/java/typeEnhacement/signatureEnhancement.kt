@@ -43,7 +43,7 @@ public fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     val enhancedReturnType = parts(isCovariant = true) { it.getReturnType()!! }.enhance()
 
     if (this is JavaCallableMemberDescriptor) {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return this.enhance(enhancedReceiverType, enhancedValueParametersTypes, enhancedReturnType) as D
     }
 
@@ -65,7 +65,7 @@ private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collect
     return SignatureParts(
             collector(this),
             this.getOverriddenDescriptors().map {
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 collector(it as D)
             },
             isCovariant

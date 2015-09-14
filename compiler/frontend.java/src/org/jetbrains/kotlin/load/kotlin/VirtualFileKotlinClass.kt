@@ -53,7 +53,7 @@ public class VirtualFileKotlinClass private constructor(
         private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
-        deprecated("Use KotlinBinaryClassCache")
+        @Deprecated("Use KotlinBinaryClassCache")
         fun create(file: VirtualFile): VirtualFileKotlinClass? {
             return perfCounter.time {
                 assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }

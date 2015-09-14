@@ -71,7 +71,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         }
 
         for (element in elementsToCheck) {
-            @suppress("UNCHECKED_CAST")
+            @Suppress("UNCHECKED_CAST")
             if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
                 return element as TElement
             }
@@ -111,7 +111,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
 
         fun <TElement : JetElement> findInspection(intentionClass: Class<out JetSelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
             if (intentionBasedInspections.containsKey(intentionClass)) {
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
             }
 
@@ -119,7 +119,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
                 val inspection = extension.instance as? IntentionBasedInspection<*> ?: continue
                 if (inspection.intentions.any { it.intention.javaClass == intentionClass }) {
                     intentionBasedInspections[intentionClass] = inspection
-                    @suppress("UNCHECKED_CAST")
+                    @Suppress("UNCHECKED_CAST")
                     return inspection as IntentionBasedInspection<TElement>
                 }
             }

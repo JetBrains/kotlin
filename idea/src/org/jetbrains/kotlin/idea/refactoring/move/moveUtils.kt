@@ -75,7 +75,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
 
     val importPaths = file.getImportDirectives().map { it.getImportPath() }.filterNotNull()
 
-    @tailRecursive fun isImported(descriptor: DeclarationDescriptor): Boolean {
+    tailrec fun isImported(descriptor: DeclarationDescriptor): Boolean {
         val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe()) it.toSafe() else return@isImported false }
         if (importPaths.any { fqName.isImported(it, false) }) return true
 

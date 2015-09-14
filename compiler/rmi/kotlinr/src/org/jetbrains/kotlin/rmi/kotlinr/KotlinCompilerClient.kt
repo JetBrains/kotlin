@@ -143,7 +143,8 @@ public object KotlinCompilerClient {
     }
 
 
-    @JvmStatic public fun main(vararg args: String) {
+    @JvmStatic
+    public fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
         val daemonLaunchingOptions = DaemonJVMOptions()
@@ -351,7 +352,7 @@ public object KotlinCompilerClient {
                      makeRunFilenameString(timestamp = "lock",
                                            digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                            port = "0"))
-        private @Volatile var locked = acquireLockFile(lockFile)
+        @Volatile private var locked = acquireLockFile(lockFile)
         private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null
         private val lock = channel?.lock()
 

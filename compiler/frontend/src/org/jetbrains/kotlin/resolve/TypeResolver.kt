@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import kotlin.platform.platformStatic
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -327,7 +326,7 @@ public class TypeResolver(
     }
 
     companion object {
-        @platformStatic
+        @JvmStatic
         public fun resolveProjectionKind(projectionKind: JetProjectionKind): Variance {
             return when (projectionKind) {
                 JetProjectionKind.IN -> IN_VARIANCE

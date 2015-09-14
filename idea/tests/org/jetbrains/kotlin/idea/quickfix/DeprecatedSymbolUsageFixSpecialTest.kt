@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.runner.RunWith
 
-TestMetadata("idea/testData/quickfix.special")
-TestDataPath("\$PROJECT_ROOT")
-RunWith(JUnit3RunnerWithInners::class)
+@TestMetadata("idea/testData/quickfix.special")
+@TestDataPath("\$PROJECT_ROOT")
+@RunWith(JUnit3RunnerWithInners::class)
 public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.Collections
 import java.util.HashSet
 
-public class CollectingNameValidator @jvmOverloads constructor(
+public class CollectingNameValidator @JvmOverloads constructor(
         existingNames: Collection<String> = Collections.emptySet(),
         private val filter: (String) -> Boolean = { true }
 ): (String) -> Boolean {

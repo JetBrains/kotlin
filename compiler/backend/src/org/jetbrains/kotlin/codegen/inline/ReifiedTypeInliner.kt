@@ -30,7 +30,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.tree.*
-import kotlin.platform.platformStatic
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -56,10 +55,12 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
             return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && namePredicate(insn.name)
         }
 
-        platformStatic public fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
+        @JvmStatic
+        public fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
                 isReifiedMarker(insn) { s -> s == NEED_CLASS_REIFICATION_MARKER_METHOD_NAME }
 
-        platformStatic public fun putNeedClassReificationMarker(v: MethodVisitor) {
+        @JvmStatic
+        public fun putNeedClassReificationMarker(v: MethodVisitor) {
             v.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,

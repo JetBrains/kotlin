@@ -66,7 +66,7 @@ public class CapturedType(
     override fun getDelegate(): JetType = delegateType
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return if (capabilityClass == javaClass<SubtypingRepresentatives>()) this as T
         else super<DelegatingType>.getCapability(capabilityClass)
     }

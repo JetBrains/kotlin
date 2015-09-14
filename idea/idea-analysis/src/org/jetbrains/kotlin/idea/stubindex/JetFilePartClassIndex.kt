@@ -32,6 +32,7 @@ public class JetFilePartClassIndex private constructor() : StringStubIndexExtens
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(JetFilePartClassIndex::class.java)
         public val INSTANCE: JetFilePartClassIndex = JetFilePartClassIndex()
-        public @jvmStatic fun getInstance(): JetFilePartClassIndex = INSTANCE
+        @JvmStatic
+        public fun getInstance(): JetFilePartClassIndex = INSTANCE
     }
 }

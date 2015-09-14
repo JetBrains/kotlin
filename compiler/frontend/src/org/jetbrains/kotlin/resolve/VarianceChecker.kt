@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.JetTypeParameterListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
-import kotlin.platform.platformStatic
 
 
 class VarianceChecker(private val trace: BindingTrace) {
@@ -80,7 +79,8 @@ class VarianceChecker(private val trace: BindingTrace) {
     )
 
     companion object {
-        platformStatic fun recordPrivateToThisIfNeeded(trace: BindingTrace, descriptor: CallableMemberDescriptor) {
+        @JvmStatic
+        fun recordPrivateToThisIfNeeded(trace: BindingTrace, descriptor: CallableMemberDescriptor) {
             if (isIrrelevant(descriptor) || descriptor.getVisibility() != Visibilities.PRIVATE) return
 
             val psiElement = descriptor.getSource().getPsi()

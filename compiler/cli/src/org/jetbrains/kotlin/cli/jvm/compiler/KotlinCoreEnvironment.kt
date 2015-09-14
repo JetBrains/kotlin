@@ -87,7 +87,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.ArrayList
 import java.util.Comparator
-import kotlin.platform.platformStatic
 
 public class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable, 
@@ -250,7 +249,8 @@ public class KotlinCoreEnvironment private constructor(
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
 
-        platformStatic public fun createForProduction(
+        @JvmStatic
+        public fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
         ): KotlinCoreEnvironment {
             // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
@@ -272,7 +272,9 @@ public class KotlinCoreEnvironment private constructor(
             return environment
         }
 
-        TestOnly platformStatic public fun createForTests(
+        @TestOnly
+        @JvmStatic
+        public fun createForTests(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
         ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
@@ -358,7 +360,8 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        platformStatic public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
+        @JvmStatic
+        public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(JetFileType.INSTANCE, "kt")
                 registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
@@ -374,7 +377,8 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        platformStatic public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
+        @JvmStatic
+        public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
                 registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))

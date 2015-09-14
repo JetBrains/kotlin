@@ -250,7 +250,7 @@ public class JetChangeSignatureDialog(
                         val columnInfo = parametersTableModel.getColumnInfos()[column]
 
                         if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
-                            return (components.get(column) as @suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).getSelectedItem()
+                            return (components.get(column) as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).getSelectedItem()
                         else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
                             return item.typeCodeFragment
                         else if (JetCallableParameterTableModel.isNameColumn(columnInfo))
@@ -270,7 +270,7 @@ public class JetChangeSignatureDialog(
             }
 
             private fun getEditorIndex(x: Int): Int {
-                @suppress("NAME_SHADOWING") var x = x
+                @Suppress("NAME_SHADOWING") var x = x
 
                 val columnLetters = if (isDefaultColumnEnabled())
                     intArrayOf(4, getParamNamesMaxLength(), getTypesMaxLength(), getDefaultValuesMaxLength())

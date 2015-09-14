@@ -62,7 +62,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         fun fetchReplaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.deprecatedAnnotation
             val annotation = descriptor.annotations.findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
-            val replaceWithValue = annotation.argumentValue(kotlin.deprecated::replaceWith.name) as? AnnotationDescriptor ?: return null
+            val replaceWithValue = annotation.argumentValue(kotlin.Deprecated::replaceWith.name) as? AnnotationDescriptor ?: return null
             val pattern = replaceWithValue.argumentValue(kotlin.ReplaceWith::expression.name) as? String ?: return null
             if (pattern.isEmpty()) return null
             val importValues = replaceWithValue.argumentValue(kotlin.ReplaceWith::imports.name) as? List<*> ?: return null

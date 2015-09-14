@@ -51,7 +51,7 @@ import java.util.*
 public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<JetSimpleNameExpression>(element), HighPriorityAction {
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
-    volatile private var anySuggestionFound: Boolean? = null
+    @Volatile private var anySuggestionFound: Boolean? = null
 
     private val suggestions: Collection<DeclarationDescriptor> by CachedValueProperty(
             {

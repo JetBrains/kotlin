@@ -47,10 +47,12 @@ import java.net.URL
 
 public class BuiltInsReferenceResolver(val project: Project, val startupManager: StartupManager) {
 
-    volatile private var moduleDescriptor: ModuleDescriptor? = null
-    volatile public var builtInsSources: Set<JetFile>? = null
+    @Volatile private var moduleDescriptor: ModuleDescriptor? = null
+
+    @Volatile public var builtInsSources: Set<JetFile>? = null
         private set
-    volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
+
+    @Volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
 
     init {
         startupManager.runWhenProjectIsInitialized { initialize() }

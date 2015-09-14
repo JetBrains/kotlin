@@ -89,7 +89,8 @@ public object CompileDaemon {
         return null
     }
 
-    @JvmStatic public fun main(args: Array<String>) {
+    @JvmStatic
+    public fun main(args: Array<String>) {
 
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))

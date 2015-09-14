@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
 import java.util.HashSet
-import kotlin.platform.platformStatic
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -288,12 +287,13 @@ class LazyJavaTypeResolver(
     }
 
     public object FlexibleJavaClassifierTypeCapabilities : FlexibleTypeCapabilities {
-        platformStatic fun create(lowerBound: JetType, upperBound: JetType) = DelegatingFlexibleType.create(lowerBound, upperBound, this)
+        @JvmStatic
+        fun create(lowerBound: JetType, upperBound: JetType) = DelegatingFlexibleType.create(lowerBound, upperBound, this)
 
         override val id: String get() = "kotlin.jvm.PlatformType"
 
         override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
-            @suppress("UNCHECKED_CAST")
+            @Suppress("UNCHECKED_CAST")
             return when (capabilityClass) {
                 javaClass<CustomTypeVariable>(), javaClass<Specificity>() -> Impl(flexibility) as T
                 else -> null

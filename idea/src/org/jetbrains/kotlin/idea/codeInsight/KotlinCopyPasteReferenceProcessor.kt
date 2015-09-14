@@ -271,7 +271,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val importHelper = ImportInsertHelper.getInstance(file.getProject())
         val smartPointerManager = SmartPointerManager.getInstance(file.getProject())
 
-        @data class BindingRequest(
+        data class BindingRequest(
                 val pointer: SmartPsiElementPointer<JetSimpleNameExpression>,
                 val fqName: FqName
         )

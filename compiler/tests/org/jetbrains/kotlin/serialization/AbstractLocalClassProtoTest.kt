@@ -77,7 +77,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     }
 
     private fun assertHasAnnotationData(clazz: Class<*>) {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         val annotation = clazz.getAnnotation(
                 clazz.getClassLoader().loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
         )

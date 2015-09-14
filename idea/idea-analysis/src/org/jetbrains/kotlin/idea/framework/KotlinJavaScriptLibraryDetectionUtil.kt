@@ -25,14 +25,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import kotlin.platform.platformStatic
 
 public object KotlinJavaScriptLibraryDetectionUtil {
-    platformStatic
+    @JvmStatic
     public fun isKotlinJavaScriptLibrary(library: Library): Boolean =
             isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
 
-    platformStatic
+    @JvmStatic
     public fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
         // Prevent clashing with java runtime
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) return false

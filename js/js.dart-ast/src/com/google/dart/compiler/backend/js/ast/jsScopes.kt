@@ -72,7 +72,7 @@ public open class JsFunctionScope(parent: JsScope, description: String) : JsScop
          * Safe call is necessary, because hasOwnName can be called
          * in constructor before labelName is initialized (see KT-4394)
          */
-        @suppress("UNNECESSARY_SAFE_CALL")
+        @Suppress("UNNECESSARY_SAFE_CALL")
         override fun hasOwnName(name: String): Boolean =
                 name in RESERVED_WORDS
                 || name == ident

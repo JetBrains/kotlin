@@ -125,7 +125,7 @@ public class KotlinLightClassForFacade private constructor(
 
     override fun getModifierList() = modifierList
 
-    override fun hasModifierProperty(NonNls name: String) = modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
 
     override fun isDeprecated() = false
 
@@ -176,7 +176,7 @@ public class KotlinLightClassForFacade private constructor(
 
     override fun getInitializers() = PsiClassInitializer.EMPTY_ARRAY
 
-    override fun findInnerClassByName(NonNls name: String, checkBases: Boolean) = null
+    override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean) = null
 
     override fun getName() = facadeClassFqName.shortName().asString()
 

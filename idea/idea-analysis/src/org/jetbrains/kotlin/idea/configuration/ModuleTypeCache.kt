@@ -29,11 +29,11 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.vfs.VirtualFileCopyEvent
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent
 import com.intellij.openapi.util.SimpleModificationTracker
-import kotlin.platform.platformStatic
 
 class ModuleTypeCacheManager private constructor(project: Project) {
     companion object {
-        platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
+        @JvmStatic
+        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
     }
 
     private val vfsModificationTracker = VfsModificationTracker(project)

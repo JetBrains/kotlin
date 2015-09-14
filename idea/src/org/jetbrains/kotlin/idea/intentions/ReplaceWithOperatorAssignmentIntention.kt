@@ -88,8 +88,7 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
         element.replace(JetPsiFactory(element).createExpression(replacement))
     }
 
-    @tailRecursive
-    private fun buildOperatorAssignmentText(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression, tail: String): String {
+    tailrec private fun buildOperatorAssignmentText(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression, tail: String): String {
         val operationText = expression.getOperationReference().getText()
         val variableName = variableExpression.getText()
 

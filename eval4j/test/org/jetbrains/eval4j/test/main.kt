@@ -132,7 +132,7 @@ object REFLECTION_EVAL : Eval {
         return _class.isInstance(value.obj())
     }
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun newArray(arrayType: Type, size: Int): Value {
         return ObjectValue(JArray.newInstance(findClass(arrayType).getComponentType() as Class<Any>, size), arrayType)
     }
@@ -275,7 +275,7 @@ object REFLECTION_EVAL : Eval {
         if (invokespecial) {
             if (methodDesc.name == "<init>") {
                 // Constructor call
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 val _class = findClass((instance as NewObjectValue).asmType)
                 val ctor = _class.findConstructor(methodDesc)
                 assertNotNull("Constructor not found: $methodDesc", ctor)
@@ -306,7 +306,7 @@ object REFLECTION_EVAL : Eval {
 }
 
 class ReflectionLookup(val classLoader: ClassLoader) {
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     fun findClass(asmType: Type): Class<*>? {
         return when (asmType.getSort()) {
             Type.BOOLEAN -> java.lang.Boolean.TYPE
@@ -324,7 +324,7 @@ class ReflectionLookup(val classLoader: ClassLoader) {
     }
 }
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 fun Class<Any>.findMethod(methodDesc: MethodDescription): Method? {
     for (declared in getDeclaredMethods()) {
         if (methodDesc.matches(declared)) return declared
@@ -341,7 +341,7 @@ fun Class<Any>.findMethod(methodDesc: MethodDescription): Method? {
     return null
 }
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 fun Class<Any>.findConstructor(methodDesc: MethodDescription): Constructor<Any?>? {
     for (declared in getDeclaredConstructors()) {
         if (methodDesc.matches(declared)) return declared as Constructor<Any?>
@@ -371,7 +371,7 @@ fun MethodDescription.matches(method: Method): Boolean {
     return returnType.matches(method.getReturnType()!!)
 }
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 fun Class<Any>.findField(fieldDesc: FieldDescription): Field? {
     for (declared in getDeclaredFields()) {
         if (fieldDesc.matches(declared)) return declared

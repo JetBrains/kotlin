@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import kotlin.platform.platformStatic
 
 public abstract class TypeSubstitution {
     companion object {
-        platformStatic public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
+        @JvmStatic
+        public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
             override fun get(key: JetType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
@@ -43,14 +43,14 @@ public abstract class TypeConstructorSubstitution : TypeSubstitution() {
     public abstract fun get(key: TypeConstructor): TypeProjection?
 
     companion object {
-        platformStatic
+        @JvmStatic
         public fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        platformStatic
+        @JvmStatic
         public fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key.declarationDescriptor]

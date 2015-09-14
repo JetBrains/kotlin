@@ -16,22 +16,24 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.name.Name
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
 data class MemberSignature private constructor(private val signature: String) {
     companion object {
-        platformStatic public fun fromMethodNameAndDesc(nameAndDesc: String): MemberSignature {
+        @JvmStatic
+        public fun fromMethodNameAndDesc(nameAndDesc: String): MemberSignature {
             return MemberSignature(nameAndDesc)
         }
 
-        platformStatic public fun fromFieldNameAndDesc(name: Name, desc: String): MemberSignature {
+        @JvmStatic
+        public fun fromFieldNameAndDesc(name: Name, desc: String): MemberSignature {
             return MemberSignature(name.asString() + "#" + desc)
         }
 
-        platformStatic public fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
+        @JvmStatic
+        public fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
             return MemberSignature(signature.signature + "@" + index)
         }
     }

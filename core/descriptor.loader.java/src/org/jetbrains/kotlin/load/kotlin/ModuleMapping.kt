@@ -81,7 +81,8 @@ public class PackageParts(val packageFqName: String) {
             packageFqName.hashCode() * 31 + parts.hashCode()
 
     companion object {
-        @jvmStatic public fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
+        @JvmStatic
+        public fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
             if (this.parts.isNotEmpty()) {
                 val packageParts = JvmPackageTable.PackageParts.newBuilder()
                 packageParts.setPackageFqName(this.packageFqName)

@@ -55,7 +55,7 @@ public fun JetFile.resolveImportReference(fqName: FqName): Collection<Declaratio
 // analyze - see ResolveSessionForBodies, ResolveElementCache
 // analyzeFully - see KotlinResolveCache, KotlinResolveDataProvider
 // In the future these two approaches should be unified
-@jvmOverloads
+@JvmOverloads
 public fun JetElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
     return getResolutionFacade().analyze(this, bodyResolveMode)
 }

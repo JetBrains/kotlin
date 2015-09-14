@@ -31,6 +31,7 @@ public class JetFileFacadeClassByPackageIndex private constructor() : StringStub
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(JetFileFacadeClassByPackageIndex::class.java)
         public val INSTANCE: JetFileFacadeClassByPackageIndex = JetFileFacadeClassByPackageIndex()
-        public @jvmStatic fun getInstance(): JetFileFacadeClassByPackageIndex = INSTANCE
+        @JvmStatic
+        public fun getInstance(): JetFileFacadeClassByPackageIndex = INSTANCE
     }
 }

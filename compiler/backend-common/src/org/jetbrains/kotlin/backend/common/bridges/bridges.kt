@@ -56,7 +56,7 @@ public fun <Function : FunctionHandle, Signature> generateBridges(
         // If it's a concrete fake override, some of the bridges may be inherited from the super-classes. Specifically, bridges for all
         // declarations that are reachable from all concrete immediate super-functions of the given function. Note that all such bridges are
         // guaranteed to delegate to the same implementation as bridges for the given function, that's why it's safe to inherit them
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         for (overridden in function.getOverridden() as Iterable<Function>) {
             if (!overridden.isAbstract) {
                 bridgesToGenerate.removeAll(findAllReachableDeclarations(overridden).map(signature))
@@ -77,7 +77,7 @@ private fun <Function : FunctionHandle> findAllReachableDeclarations(function: F
             }
         }
     }
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     DFS.dfs(listOf(function), { it.getOverridden() as Iterable<Function> }, collector)
     return HashSet(collector.result())
 }

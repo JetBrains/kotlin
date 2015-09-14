@@ -24,7 +24,7 @@ public class Services private constructor(private val map: Map<Class<*>, Any>) {
     }
 
     public fun <T> get(interfaceClass: Class<T>): T {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return map.get(interfaceClass) as T
     }
 

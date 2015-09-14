@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.sure
-import kotlin.platform.platformStatic
 
 public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
@@ -234,7 +233,7 @@ public object PositioningStrategies {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun modifierSetPosition(vararg tokens: JetModifierKeywordToken): PositioningStrategy<JetModifierListOwner> {
         return object : PositioningStrategy<JetModifierListOwner>() {
             override fun mark(element: JetModifierListOwner): List<TextRange> {

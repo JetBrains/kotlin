@@ -52,7 +52,8 @@ object KotlinAntTaskUtil {
         return this
     }
 
-    synchronized fun getOrCreateClassLoader(): ClassLoader {
+    @Synchronized
+    fun getOrCreateClassLoader(): ClassLoader {
         val cached = classLoaderRef.get()
         if (cached != null) return cached
 

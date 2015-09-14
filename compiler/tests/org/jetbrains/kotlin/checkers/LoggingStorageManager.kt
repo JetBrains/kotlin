@@ -121,7 +121,7 @@ public class LoggingStorageManager(
         var c = this
         while (true) {
             result.addAll(c.getDeclaredFields().toList())
-            @suppress("UNCHECKED_CAST")
+            @Suppress("UNCHECKED_CAST")
             val superClass = (c as Class<Any>).getSuperclass() as Class<Any>?
             if (superClass == null) break
             if (c == superClass) break

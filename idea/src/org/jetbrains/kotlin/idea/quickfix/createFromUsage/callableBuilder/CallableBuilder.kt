@@ -166,7 +166,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val types = typeInfo.getPossibleTypes(this).reverse()
 
             // We have to use semantic equality here
-            @data class EqWrapper(val _type: JetType) {
+            data class EqWrapper(val _type: JetType) {
                 override fun equals(other: Any?) = this === other
                                                    || other is EqWrapper && JetTypeChecker.DEFAULT.equalTypes(_type, other._type)
                 override fun hashCode() = 0 // no good way to compute hashCode() that would agree with our equals()

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 
 public object PluginCliParser {
 
-    @platformStatic
+    @JvmStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
         val classLoader = PluginURLClassLoader(
                 arguments.pluginClasspaths
@@ -103,7 +103,8 @@ public object PluginCliParser {
 private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().getContextClassLoader()) {
     private val childClassLoader: SelfThenParentURLClassLoader = SelfThenParentURLClassLoader(urls, parent)
 
-    override synchronized fun loadClass(name: String, resolve: Boolean): Class<*> {
+    @Synchronized
+    override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return try {
             childClassLoader.findClass(name)
         }

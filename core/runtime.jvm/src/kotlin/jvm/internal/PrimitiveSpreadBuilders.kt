@@ -21,7 +21,7 @@ private abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
 
     protected var position: Int = 0
 
-    @suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("CAST_NEVER_SUCCEEDS")
     private val spreads: Array<T?> = arrayOfNulls<Any>(size) as Array<T?>
 
     public fun addSpread(spreadArgument: T) {

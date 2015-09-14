@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.utils
 
 private val IDENTITY: (Any?) -> Any? = { it }
 
-suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public fun <T> identity(): (T) -> T = IDENTITY as (T) -> T
 
 

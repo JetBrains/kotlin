@@ -271,9 +271,11 @@ public data class CompilerId(
     }
 
     companion object {
-        public @JvmStatic fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
+        @JvmStatic
+        public fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 
-        public @JvmStatic fun makeCompilerId(paths: Iterable<File>): CompilerId =
+        @JvmStatic
+        public fun makeCompilerId(paths: Iterable<File>): CompilerId =
                 CompilerId(compilerClasspath = paths.map { it.absolutePath }, compilerDigest = paths.getFilesClasspathDigest())
     }
 }

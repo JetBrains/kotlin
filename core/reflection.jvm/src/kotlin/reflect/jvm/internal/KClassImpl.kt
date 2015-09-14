@@ -70,7 +70,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             return emptyList()
         }
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
             (memberScope.getProperties(name, NoLookupLocation.FROM_REFLECTION) +
              staticScope.getProperties(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
@@ -110,7 +110,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
     }
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override val constructors: Collection<KFunction<T>>
         get() = constructorDescriptors.map {
             KFunctionImpl(this, it) as KFunction<T>
@@ -137,7 +137,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             }
         }.filterNotNull().map { KClassImpl(it) }
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override val objectInstance: T? by ReflectProperties.lazy {
         val descriptor = descriptor
         if (descriptor.kind != ClassKind.OBJECT) return@lazy null

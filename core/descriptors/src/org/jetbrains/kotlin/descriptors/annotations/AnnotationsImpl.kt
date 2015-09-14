@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors.annotations
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import kotlin.platform.platformStatic
 
 public class AnnotationsImpl : Annotations {
     private val annotations: List<AnnotationDescriptor>
@@ -33,7 +32,7 @@ public class AnnotationsImpl : Annotations {
     // List<AnnotationDescriptor> and List<AnnotationWithTarget> have the same signature
     private constructor(
             targetedAnnotations: List<AnnotationWithTarget>,
-            @suppress("UNUSED_PARAMETER") i: Int
+            @Suppress("UNUSED_PARAMETER") i: Int
     ) {
         this.targetedAnnotations = targetedAnnotations
         this.annotations = targetedAnnotations.filter { it.target == null }.map { it.annotation }
@@ -61,7 +60,7 @@ public class AnnotationsImpl : Annotations {
     override fun toString() = annotations.toString()
 
     companion object {
-        platformStatic
+        @JvmStatic
         public fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
             return AnnotationsImpl(annotationsWithTargets, 0)
         }

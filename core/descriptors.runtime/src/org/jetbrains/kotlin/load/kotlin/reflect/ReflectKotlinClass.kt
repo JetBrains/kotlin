@@ -27,7 +27,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf(
         // Primitives
         javaClass<java.lang.Integer>(), javaClass<java.lang.Character>(), javaClass<java.lang.Byte>(), javaClass<java.lang.Long>(),

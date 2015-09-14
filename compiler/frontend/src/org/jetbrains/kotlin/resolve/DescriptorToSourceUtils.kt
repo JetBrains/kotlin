@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 public object DescriptorToSourceUtils {
     private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
@@ -44,19 +43,19 @@ public object DescriptorToSourceUtils {
         result.add(descriptor)
     }
 
-    platformStatic
+    @JvmStatic
     public fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         collectEffectiveReferencedDescriptors(result, descriptor.getOriginal())
         return result
     }
 
-    platformStatic
+    @JvmStatic
     public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
         return (descriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi()
     }
 
-    platformStatic
+    @JvmStatic
     public fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): JetAnnotationEntry? {
         return descriptor.source.getPsi() as? JetAnnotationEntry
     }
@@ -65,13 +64,13 @@ public object DescriptorToSourceUtils {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), returns null. It can't find declarations in builtins or decompiled code.
     // In IDE, use DescriptorToSourceUtilsIde instead.
-    platformStatic
+    @JvmStatic
     public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         val effectiveReferencedDescriptors = getEffectiveReferencedDescriptors(descriptor)
         return if (effectiveReferencedDescriptors.size() == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
     }
 
-    platformStatic
+    @JvmStatic
     public fun getContainingFile(declarationDescriptor: DeclarationDescriptor): JetFile? {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
         // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI

@@ -70,7 +70,7 @@ public object RawTypeCapabilities : TypeCapabilities {
     }
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
             javaClass<CustomSubstitutionCapability>() -> RawSubstitutionCapability as T
             javaClass<CustomFlexibleRendering>() -> RawFlexibleRendering as T

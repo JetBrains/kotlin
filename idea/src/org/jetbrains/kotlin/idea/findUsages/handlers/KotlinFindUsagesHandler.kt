@@ -35,7 +35,7 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
                                                               public val factory: KotlinFindUsagesHandlerFactory)
     : FindUsagesHandler(psiElement) {
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     public fun getElement(): T {
         return getPsiElement() as T
     }

@@ -60,7 +60,7 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     override val returnType: KType
         get() = KTypeImpl(descriptor.returnType!!) { caller.returnType }
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {
         return caller.call(args) as R
     }
@@ -112,7 +112,7 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
             arguments.add(null)
         }
 
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return reflectionCall {
             caller.call(arguments.toTypedArray()) as R
         }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.jvm
 import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
-import kotlin.platform.platformStatic
 
 public object JvmProtoBufUtil {
     public val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
@@ -28,15 +27,15 @@ public object JvmProtoBufUtil {
         registry
     }
 
-    platformStatic
+    @JvmStatic
     public fun readClassDataFrom(encodedData: Array<String>): ClassData = readClassDataFrom(BitEncoding.decodeBytes(encodedData))
 
-    platformStatic
+    @JvmStatic
     public fun readClassDataFrom(data: ByteArray): ClassData = ClassData.read(data, EXTENSION_REGISTRY)
 
-    platformStatic
+    @JvmStatic
     public fun readPackageDataFrom(encodedData: Array<String>): PackageData = readPackageDataFrom(BitEncoding.decodeBytes(encodedData))
 
-    platformStatic
+    @JvmStatic
     public fun readPackageDataFrom(data: ByteArray): PackageData = PackageData.read(data, EXTENSION_REGISTRY)
 }

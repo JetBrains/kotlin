@@ -78,7 +78,7 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
     private fun <E : JetElement> PsiReferenceRegistrar.registerMultiProvider(elementClass: Class<E>, factory: (E) -> Array<PsiReference>) {
         registerReferenceProvider(PlatformPatterns.psiElement(elementClass), object: PsiReferenceProvider() {
             override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 return factory(element as E)
             }
         })

@@ -38,11 +38,11 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 object DynamicCallableDescriptors {
 
-    platformStatic fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
+    @JvmStatic
+    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
         override fun getContainingDeclaration() = owner
 
         override fun printScopeStructure(p: Printer) {

@@ -43,7 +43,7 @@ internal class IncrementalPackagePartProvider private constructor(
     }
 
     companion object {
-        @jvmStatic
+        @JvmStatic
         public fun create(
                 parent: PackagePartProvider,
                 sourceFiles: Collection<JetFile>,

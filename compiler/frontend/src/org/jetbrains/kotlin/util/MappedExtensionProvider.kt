@@ -20,7 +20,6 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import java.lang.ref.WeakReference
-import kotlin.platform.platformStatic
 
 public open class MappedExtensionProvider<T, R>
 protected constructor(
@@ -49,13 +48,15 @@ protected constructor(
     }
 
     companion object {
-        platformStatic public fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
+        @JvmStatic
+        public fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
                 = MappedExtensionProvider(epName, map)
     }
 }
 
 public class ExtensionProvider<T>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {
     companion object {
-        platformStatic public fun <T> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
+        @JvmStatic
+        public fun <T> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
     }
 }
