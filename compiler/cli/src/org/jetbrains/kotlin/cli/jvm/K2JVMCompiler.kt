@@ -66,6 +66,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
+        configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
 
         if (IncrementalCompilation.ENABLED) {
             val incrementalCompilationComponents = services.get(javaClass<IncrementalCompilationComponents>())
@@ -246,8 +247,10 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
-            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            if (configuration[CLIConfigurationKeys.REPORT_PERF] == true) {
+                val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+                collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            }
         }
 
         fun reportGCTime(configuration: CompilerConfiguration) {
