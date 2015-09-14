@@ -19,7 +19,7 @@ public object Delegates {
      * specified block of code. Supports lazy initialization semantics for properties.
      * @param initializer the function that returns the value of the property.
      */
-    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(LazyThreadSafetyMode.NONE, initializer)"))
+    @Deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(LazyThreadSafetyMode.NONE, initializer)"))
     public fun lazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = LazyVal(initializer)
 
     /**
@@ -30,7 +30,7 @@ public object Delegates {
      *             the property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */
-    deprecated("Use lazy(lock) {} instead in kotlin package", ReplaceWith("lazy(lock, initializer)"))
+    @Deprecated("Use lazy(lock) {} instead in kotlin package", ReplaceWith("lazy(lock, initializer)"))
     public fun blockingLazy<T>(lock: Any?, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
 
     /**
@@ -40,7 +40,7 @@ public object Delegates {
      * The property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */
-    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
+    @Deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
     public fun blockingLazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(null, initializer)
 
     /**
@@ -49,7 +49,7 @@ public object Delegates {
      * @param onChange the callback which is called after the change of the property is made. The value of the property
      *  has already been changed when this callback is invoked.
      */
-    public inline fun observable<T>(initialValue: T, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit):
+    public inline fun observable<T>(initialValue: T, crossinline onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
             override fun afterChange(property: PropertyMetadata, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
         }
@@ -63,7 +63,7 @@ public object Delegates {
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    public inline fun vetoable<T>(initialValue: T, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean):
+    public inline fun vetoable<T>(initialValue: T, crossinline onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
             override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
         }
@@ -73,7 +73,7 @@ public object Delegates {
      * as a key.
      * @param map the map where the property values are stored.
      */
-    deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
+    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
     public fun mapVar<T>(map: MutableMap<in String, Any?>): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
@@ -94,7 +94,7 @@ public object Delegates {
      * as a key.
      * @param map the map where the property values are stored.
      */
-    deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
+    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
     public fun mapVal<T>(map: Map<in String, Any?>): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
@@ -125,7 +125,7 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
 }
 
 
-deprecated("Use Delegates.vetoable() instead or construct implementation of abstract ObservableProperty", ReplaceWith("Delegates.vetoable(initialValue, onChange)"))
+@Deprecated("Use Delegates.vetoable() instead or construct implementation of abstract ObservableProperty", ReplaceWith("Delegates.vetoable(initialValue, onChange)"))
 public fun ObservableProperty<T>(initialValue: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ObservableProperty<T> =
     object : ObservableProperty<T>(initialValue) {
         override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
@@ -189,7 +189,7 @@ private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<An
 
 private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
     private val lock = lock ?: this
-    private volatile var value: Any? = null
+    @volatile private var value: Any? = null
 
     public override fun get(thisRef: Any?, property: PropertyMetadata): T {
         val _v1 = value
@@ -215,9 +215,9 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
  * Exception thrown by the default implementation of property delegates which store values in a map
  * when the map does not contain the corresponding key.
  */
-deprecated("Do not throw or catch this exception, use NoSuchElementException instead.")
+@Deprecated("Do not throw or catch this exception, use NoSuchElementException instead.")
 public class KeyMissingException
-    deprecated("Throw NoSuchElementException instead.", ReplaceWith("NoSuchElementException(message)"))
+    @Deprecated("Throw NoSuchElementException instead.", ReplaceWith("NoSuchElementException(message)"))
     constructor(message: String): NoSuchElementException(message)
 
 

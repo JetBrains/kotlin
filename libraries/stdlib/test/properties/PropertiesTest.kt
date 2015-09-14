@@ -35,7 +35,7 @@ class MyChangeListener : ChangeListener {
 
 class PropertiesTest {
 
-    test fun testModel() {
+    @test fun testModel() {
         val c = Customer()
         c.name = "James"
         c.city = "Mells"

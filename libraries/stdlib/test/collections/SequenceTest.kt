@@ -19,20 +19,20 @@ fun fibonacci(): Sequence<Int> {
 
 public class SequenceTest {
 
-    test fun filterEmptySequence() {
+    @test fun filterEmptySequence() {
         for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
             assertEquals(0, sequence.filter { false }.count())
             assertEquals(0, sequence.filter { true }.count())
         }
     }
 
-    test fun mapEmptySequence() {
+    @test fun mapEmptySequence() {
         for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
             assertEquals(0, sequence.map { true }.count())
         }
     }
 
-    test fun requireNoNulls() {
+    @test fun requireNoNulls() {
         val sequence = sequenceOf<String?>("foo", "bar")
         val notNull = sequence.requireNoNulls()
         assertEquals(listOf("foo", "bar"), notNull.toList())
@@ -45,25 +45,25 @@ public class SequenceTest {
         }
     }
 
-    test fun filterNullable() {
+    @test fun filterNullable() {
         val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filter { it == null || it == "foo" }
         assertEquals(listOf(null, "foo", null), filtered.toList())
     }
 
-    test fun filterNot() {
+    @test fun filterNot() {
         val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filterNot { it == null }
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
-    test fun filterNotNull() {
+    @test fun filterNotNull() {
         val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filterNotNull()
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
-    test fun mapNotNull() {
+    @test fun mapNotNull() {
         val data = sequenceOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length() }
         assertEquals(listOf(3, 3), foo.toList())
@@ -73,60 +73,60 @@ public class SequenceTest {
         }
     }
 
-    test fun mapAndJoinToString() {
+    @test fun mapAndJoinToString() {
         assertEquals("3, 5, 8", fibonacci().withIndex().filter { it.index > 3 }.take(3).joinToString { it.value.toString() })
     }
 
-    test fun withIndex() {
+    @test fun withIndex() {
         val data = sequenceOf("foo", "bar")
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }.toList()
         assertEquals(2, indexed.size())
         assertEquals(listOf("f", "ba"), indexed)
     }
 
-    test fun filterAndTakeWhileExtractTheElementsWithinRange() {
+    @test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(listOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
     }
 
-    test fun foldReducesTheFirstNElements() {
+    @test fun foldReducesTheFirstNElements() {
         val sum = { a: Int, b: Int -> a + b }
         assertEquals(listOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
-    test fun takeExtractsTheFirstNElements() {
+    @test fun takeExtractsTheFirstNElements() {
         assertEquals(listOf(0, 1, 1, 2, 3, 5, 8, 13, 21, 34), fibonacci().take(10).toList())
     }
 
-    test fun mapAndTakeWhileExtractTheTransformedElements() {
+    @test fun mapAndTakeWhileExtractTheTransformedElements() {
         assertEquals(listOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
-    test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
+    @test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
     }
 
-    test fun drop() {
+    @test fun drop() {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
     }
 
-    test fun take() {
+    @test fun take() {
         assertEquals("0, 1, 1, 2, 3, 5, 8", fibonacci().take(7).joinToString())
         assertEquals("2, 3, 5, 8", fibonacci().drop(3).take(4).joinToString())
     }
 
-    test fun dropWhile() {
+    @test fun dropWhile() {
         assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
-    test fun merge() {
+    @test fun merge() {
         expect(listOf("ab", "bc", "cd")) {
             sequenceOf("a", "b", "c").merge(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
     }
 
-    test fun toStringJoinsNoMoreThanTheFirstTenElements() {
+    @test fun toStringJoinsNoMoreThanTheFirstTenElements() {
         assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter { it > 10 }.joinToString(limit = 10))
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
@@ -141,12 +141,12 @@ public class SequenceTest {
     }
 
 
-    test fun plusElement() = testPlus { it + "cheese" + "wine" }
-    test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
-    test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
-    test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
+    @test fun plusElement() = testPlus { it + "cheese" + "wine" }
+    @test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
+    @test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
+    @test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
 
-    test fun plusAssign() {
+    @test fun plusAssign() {
         // lets use a mutable variable
         var seq = sequenceOf("a")
         seq += "foo"
@@ -163,12 +163,12 @@ public class SequenceTest {
         assertEquals(expected_, b.toList())
     }
 
-    test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
-    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
-    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
-    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+    @test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
+    @test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    @test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    @test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
 
-    test fun minusIsLazyIterated() {
+    @test fun minusIsLazyIterated() {
         val seq = sequenceOf("foo", "bar")
         val list = arrayListOf<String>()
         val result = seq - list
@@ -179,7 +179,7 @@ public class SequenceTest {
         assertEquals(emptyList<String>(), result.toList())
     }
 
-    test fun minusAssign() {
+    @test fun minusAssign() {
         // lets use a mutable variable of readonly list
         val data = sequenceOf("cheese", "foo", "beer", "cheese", "wine")
         var l = data
@@ -194,7 +194,7 @@ public class SequenceTest {
 
 
 
-    test fun iterationOverSequence() {
+    @test fun iterationOverSequence() {
         var s = ""
         for (i in sequenceOf(0, 1, 2, 3, 4, 5)) {
             s += i.toString()
@@ -202,7 +202,7 @@ public class SequenceTest {
         assertEquals("012345", s)
     }
 
-    test fun sequenceFromFunction() {
+    @test fun sequenceFromFunction() {
         var count = 3
 
         val sequence = sequence {
@@ -218,7 +218,7 @@ public class SequenceTest {
         }
     }
 
-    test fun sequenceFromFunctionWithInitialValue() {
+    @test fun sequenceFromFunctionWithInitialValue() {
         val values = sequence(3) { n -> if (n > 0) n - 1 else null }
         val expected = listOf(3, 2, 1, 0)
         assertEquals(expected, values.toList())
@@ -226,7 +226,7 @@ public class SequenceTest {
     }
 
 
-    test fun sequenceFromIterator() {
+    @test fun sequenceFromIterator() {
         val list = listOf(3, 2, 1, 0)
         val iterator = list.iterator()
         val sequence = iterator.asSequence()
@@ -236,7 +236,7 @@ public class SequenceTest {
         }
     }
 
-    test fun makeSequenceOneTimeConstrained() {
+    @test fun makeSequenceOneTimeConstrained() {
         val sequence = sequenceOf(1, 2, 3, 4)
         sequence.toList()
         sequence.toList()
@@ -256,13 +256,13 @@ public class SequenceTest {
         return result
     }
 
-    test fun sequenceExtensions() {
+    @test fun sequenceExtensions() {
         val d = ArrayList<Int>()
         sequenceOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
         assertEquals(4, d.size())
     }
 
-    test fun flatMapAndTakeExtractTheTransformedElements() {
+    @test fun flatMapAndTakeExtractTheTransformedElements() {
         val expected = listOf(
                 '3', // fibonacci(4) = 3
                 '5', // fibonacci(5) = 5
@@ -276,51 +276,51 @@ public class SequenceTest {
         assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().asSequence() }.take(10).toList())
     }
 
-    test fun flatMap() {
+    @test fun flatMap() {
         val result = sequenceOf(1, 2).flatMap { sequenceOf(0..it) }
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 
-    test fun flatMapOnEmpty() {
+    @test fun flatMapOnEmpty() {
         val result = sequenceOf<Int>().flatMap { sequenceOf(0..it) }
         assertTrue(result.none())
     }
 
-    test fun flatMapWithEmptyItems() {
+    @test fun flatMapWithEmptyItems() {
         val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else sequenceOf(it - 1..it) }
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
-    test fun flatten() {
+    @test fun flatten() {
         val data = sequenceOf(1, 2).map { sequenceOf(0..it) }
         assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
     }
 
-    test fun distinct() {
+    @test fun distinct() {
         val sequence = fibonacci().dropWhile { it < 10 }.take(20)
         assertEquals(listOf(1, 2, 3, 0), sequence.map { it % 4 }.distinct().toList())
     }
 
-    test fun distinctBy() {
+    @test fun distinctBy() {
         val sequence = fibonacci().dropWhile { it < 10 }.take(20)
         assertEquals(listOf(13, 34, 55, 144), sequence.distinctBy { it % 4 }.toList())
     }
 
-    test fun unzip() {
+    @test fun unzip() {
         val seq = sequenceOf(1 to 'a', 2 to 'b', 3 to 'c')
         val (ints, chars) = seq.unzip()
         assertEquals(listOf(1, 2, 3), ints)
         assertEquals(listOf('a', 'b', 'c'), chars)
     }
 
-    test fun sorted() {
+    @test fun sorted() {
         sequenceOf(3, 7, 5).let {
             it.sorted().iterator().assertSorted { a, b -> a <= b }
             it.sortedDescending().iterator().assertSorted { a, b -> a >= b }
         }
     }
 
-    test fun sortedBy() {
+    @test fun sortedBy() {
         sequenceOf("it", "greater", "less").let {
             it.sortedBy { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } <= 0 }
             it.sortedByDescending { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } >= 0 }
@@ -332,7 +332,7 @@ public class SequenceTest {
         }
     }
 
-    test fun sortedWith() {
+    @test fun sortedWith() {
         val comparator = compareBy { s: String -> s.reversed() }
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
     }

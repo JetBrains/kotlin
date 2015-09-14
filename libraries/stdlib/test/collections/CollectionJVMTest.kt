@@ -20,7 +20,7 @@ class CollectionJVMTest {
 
     private data class IdentityData(public val value: Int)
 
-    test fun removeAllWithDifferentEquality() {
+    @test fun removeAllWithDifferentEquality() {
         val data = listOf(IdentityData(1), IdentityData(1))
         val list = data.toArrayList()
         list -= identitySetOf(data[0]) as Iterable<IdentityData>
@@ -35,7 +35,7 @@ class CollectionJVMTest {
         assertTrue(set3.isEmpty(), "Array doesn't have contains, equality contains is used instead")
     }
 
-    test fun flatMap() {
+    @test fun flatMap() {
         val data = listOf("", "foo", "bar", "x", "")
         val characters = data.flatMap { it.toCharList() }
         println("Got list of characters ${characters}")
@@ -45,7 +45,7 @@ class CollectionJVMTest {
     }
 
 
-    test fun filterIntoLinkedList() {
+    @test fun filterIntoLinkedList() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(linkedListOf<String>()) { it.startsWith("f") }
 
@@ -60,7 +60,7 @@ class CollectionJVMTest {
         }
     }
 
-    test fun filterNotIntoLinkedListOf() {
+    @test fun filterNotIntoLinkedListOf() {
         val data = listOf("foo", "bar")
         val foo = data.filterNotTo(linkedListOf<String>()) { it.startsWith("f") }
 
@@ -75,7 +75,7 @@ class CollectionJVMTest {
         }
     }
 
-    test fun filterNotNullIntoLinkedListOf() {
+    @test fun filterNotNullIntoLinkedListOf() {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedListOf<String>())
 
@@ -87,7 +87,7 @@ class CollectionJVMTest {
         }
     }
 
-    test fun filterIntoSortedSet() {
+    @test fun filterIntoSortedSet() {
         val data = listOf("foo", "bar")
         val sorted = data.filterTo(sortedSetOf<String>()) { it.length() == 3 }
         assertEquals(2, sorted.size())
@@ -97,26 +97,26 @@ class CollectionJVMTest {
         }
     }
 
-    test fun first() {
+    @test fun first() {
         assertEquals(19, TreeSet(listOf(90, 47, 19)).first())
     }
 
-    test fun last() {
+    @test fun last() {
         val data = listOf("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, listOf(15, 19, 20, 25).last())
         assertEquals('a', linkedListOf('a').last())
     }
 
-    test fun lastException() {
+    @test fun lastException() {
         fails { linkedListOf<String>().last() }
     }
 
-    test fun contains() {
+    @test fun contains() {
         assertTrue(linkedListOf(15, 19, 20).contains(15))
     }
 
-    test fun toArray() {
+    @test fun toArray() {
         val data = listOf("foo", "bar")
         val arr = data.toTypedArray()
         println("Got array ${arr}")
@@ -128,11 +128,11 @@ class CollectionJVMTest {
         }
     }
 
-    test fun takeReturnsFirstNElements() {
+    @test fun takeReturnsFirstNElements() {
         expect(setOf(1, 2)) { sortedSetOf(1, 2, 3, 4, 5).take(2).toSet() }
     }
 
-    test fun filterIsInstanceList() {
+    @test fun filterIsInstanceList() {
         val values: List<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde")
 
         val intValues: List<Int> = values.filterIsInstance<Int>()
@@ -151,7 +151,7 @@ class CollectionJVMTest {
         assertEquals(0, charValues.size())
     }
 
-    test fun filterIsInstanceArray() {
+    @test fun filterIsInstanceArray() {
         val src: Array<Any> = arrayOf(1, 2, 3.toDouble(), "abc", "cde")
 
         val intValues: List<Int> = src.filterIsInstance<Int>()
@@ -170,11 +170,11 @@ class CollectionJVMTest {
         assertEquals(0, charValues.size())
     }
 
-    test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
+    @test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
 
-    test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
+    @test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
 
-    test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
+    @test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
 
     private fun testSingletonSerialization(value: Any) {
         val result = serializeAndDeserialize(value)

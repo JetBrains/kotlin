@@ -6,7 +6,7 @@ import kotlin.test.*
 class NumbersTest {
 
 
-    test fun intMinMaxValues() {
+    @test fun intMinMaxValues() {
         assertTrue(Int.MIN_VALUE < 0)
         assertTrue(Int.MAX_VALUE > 0)
 
@@ -16,7 +16,7 @@ class NumbersTest {
         // expect(Int.MAX_VALUE) { Int.MIN_VALUE - 1 }
     }
 
-    test fun longMinMaxValues() {
+    @test fun longMinMaxValues() {
         assertTrue(Long.MIN_VALUE < 0)
         assertTrue(Long.MAX_VALUE > 0)
         // overflow behavior
@@ -24,7 +24,7 @@ class NumbersTest {
         expect(Long.MAX_VALUE) { Long.MIN_VALUE - 1 }
     }
 
-    test fun shortMinMaxValues() {
+    @test fun shortMinMaxValues() {
         assertTrue(Short.MIN_VALUE < 0)
         assertTrue(Short.MAX_VALUE > 0)
         // overflow behavior
@@ -32,7 +32,7 @@ class NumbersTest {
         expect(Short.MAX_VALUE) { (Short.MIN_VALUE - 1).toShort() }
     }
 
-    test fun byteMinMaxValues() {
+    @test fun byteMinMaxValues() {
         assertTrue(Byte.MIN_VALUE < 0)
         assertTrue(Byte.MAX_VALUE > 0)
         // overflow behavior
@@ -40,7 +40,7 @@ class NumbersTest {
         expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - 1).toByte() }
     }
 
-    test fun doubleMinMaxValues() {
+    @test fun doubleMinMaxValues() {
         assertTrue(Double.MIN_VALUE > 0)
         assertTrue(Double.MAX_VALUE > 0)
         // overflow behavior
@@ -49,7 +49,7 @@ class NumbersTest {
         expect(0.0) { Double.MIN_VALUE / 2 }
     }
 
-    test fun floatMinMaxValues() {
+    @test fun floatMinMaxValues() {
         assertTrue(Float.MIN_VALUE > 0)
         assertTrue(Float.MAX_VALUE > 0)
         // overflow behavior
@@ -58,7 +58,7 @@ class NumbersTest {
         expect(0.0F) { Float.MIN_VALUE / 2.0F }
     }
     
-    test fun doubleProperties() {
+    @test fun doubleProperties() {
         for (value in listOf(1.0, 0.0, Double.MIN_VALUE, Double.MAX_VALUE))
             doTestNumber(value)
         for (value in listOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY))
@@ -66,7 +66,7 @@ class NumbersTest {
         doTestNumber(Double.NaN, isNaN = true)
     }
 
-    test fun floatProperties() {
+    @test fun floatProperties() {
         for (value in listOf(1.0F, 0.0F, Float.MAX_VALUE, Float.MIN_VALUE))
             doTestNumber(value)
         for (value in listOf(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY))

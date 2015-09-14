@@ -17,7 +17,8 @@ class CoercionTest {
         val n3 = n coerceIn 2..5
     }
 
-    Test fun coercionsInt() {
+    @Test
+    fun coercionsInt() {
         expect(5) { 5.coerceAtLeast(1) }
         expect(5) { 1.coerceAtLeast(5) }
         expect(1) { 5.coerceAtMost(1) }
@@ -39,7 +40,8 @@ class CoercionTest {
         fails { 1.coerceIn(1..0) }
     }
 
-    Test fun coercionsLong() {
+    @Test
+    fun coercionsLong() {
         expect(5L) { 5L.coerceAtLeast(1L) }
         expect(5L) { 1L.coerceAtLeast(5L) }
         expect(1L) { 5L.coerceAtMost(1L) }
@@ -62,7 +64,8 @@ class CoercionTest {
 
     }
 
-    Test fun coercionsDouble() {
+    @Test
+    fun coercionsDouble() {
         expect(5.0) { 5.0.coerceAtLeast(1.0) }
         expect(5.0) { 1.0.coerceAtLeast(5.0) }
         expect(1.0) { 5.0.coerceAtMost(1.0) }
@@ -84,7 +87,8 @@ class CoercionTest {
         fails { 1.0.coerceIn(1.0..0.0) }
     }
 
-    Test fun coercionsComparable() {
+    @Test
+    fun coercionsComparable() {
         val v = 0..10 map { ComparableNumber(it) }
 
         expect(5) { v[5].coerceAtLeast(v[1]).value }

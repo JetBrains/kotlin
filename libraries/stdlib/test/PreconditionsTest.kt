@@ -5,7 +5,7 @@ import kotlin.test.*
 
 class PreconditionsTest() {
 
-    test fun passingRequire() {
+    @test fun passingRequire() {
         require(true)
 
         var called = false
@@ -13,32 +13,32 @@ class PreconditionsTest() {
         assertFalse(called)
     }
 
-    test fun failingRequire() {
+    @test fun failingRequire() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false)
         }
         assertNotNull(error.getMessage())
     }
 
-    test fun passingRequireWithMessage() {
+    @test fun passingRequireWithMessage() {
         require(true, "Hello")
     }
 
-    test fun failingRequireWithMessage() {
+    @test fun failingRequireWithMessage() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
-    test fun failingRequireWithLazyMessage() {
+    @test fun failingRequireWithLazyMessage() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
     }
 
-    test fun passingCheck() {
+    @test fun passingCheck() {
         check(true)
 
         var called = false
@@ -46,45 +46,45 @@ class PreconditionsTest() {
         assertFalse(called)
     }
 
-    test fun failingCheck() {
+    @test fun failingCheck() {
         val error = assertFailsWith(IllegalStateException::class) {
             check(false)
         }
         assertNotNull(error.getMessage())
     }
 
-    test fun passingCheckWithMessage() {
+    @test fun passingCheckWithMessage() {
         check(true, "Hello")
     }
 
-    test fun failingCheckWithMessage() {
+    @test fun failingCheckWithMessage() {
         val error = assertFailsWith(IllegalStateException::class) {
             check(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
-    test fun failingCheckWithLazyMessage() {
+    @test fun failingCheckWithLazyMessage() {
         val error = assertFailsWith(IllegalStateException::class) {
             check(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
     }
 
-    test fun requireNotNull() {
+    @test fun requireNotNull() {
         val s1: String? = "S1"
         val r1: String = requireNotNull(s1)
         assertEquals("S1", r1)
     }
 
-    test fun requireNotNullFails() {
+    @test fun requireNotNullFails() {
         assertFailsWith(IllegalArgumentException::class) {
             val s2: String? = null
             requireNotNull(s2)
         }
     }
 
-    test fun requireNotNullWithLazyMessage() {
+    @test fun requireNotNullWithLazyMessage() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             val obj: Any? = null
             requireNotNull(obj) { "Message" }
@@ -99,20 +99,20 @@ class PreconditionsTest() {
         assertFalse(lazyCalled, "Message is not evaluated if the condition is met")
     }
 
-    test fun checkNotNull() {
+    @test fun checkNotNull() {
         val s1: String? = "S1"
         val r1: String = checkNotNull(s1)
         assertEquals("S1", r1)
     }
 
-    test fun checkNotNullFails() {
+    @test fun checkNotNullFails() {
         assertFailsWith(IllegalStateException::class) {
             val s2: String? = null
             checkNotNull(s2)
         }
     }
 
-    test fun passingAssert() {
+    @test fun passingAssert() {
         assert(true)
         var called = false
         assert(true) { called = true; "some message" }
@@ -121,7 +121,7 @@ class PreconditionsTest() {
     }
 
 
-    test fun failingAssert() {
+    @test fun failingAssert() {
         val error = assertFails {
             assert(false)
         }
@@ -132,7 +132,7 @@ class PreconditionsTest() {
         }
     }
 
-    test fun error() {
+    @test fun error() {
         val error = assertFails {
             error("There was a problem")
         }
@@ -143,11 +143,11 @@ class PreconditionsTest() {
         }
     }
 
-    test fun passingAssertWithMessage() {
+    @test fun passingAssertWithMessage() {
         assert(true, "Hello")
     }
 
-    test fun failingAssertWithMessage() {
+    @test fun failingAssertWithMessage() {
         val error = assertFails {
             assert(false, "Hello")
         }
@@ -158,7 +158,7 @@ class PreconditionsTest() {
         }
     }
 
-    test fun failingAssertWithLazyMessage() {
+    @test fun failingAssertWithLazyMessage() {
         val error = assertFails {
             assert(false) { "Hello" }
         }

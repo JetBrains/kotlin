@@ -286,7 +286,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
 
 private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     try {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return get(id) as? T
     }
     catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
@@ -295,7 +295,7 @@ private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
 }
 
 fun getAnnotations(project: Project, logger: Logger): Collection<File> {
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
     if (!annotations.isEmpty()) {

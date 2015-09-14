@@ -55,7 +55,7 @@ public annotation class JvmName(public val name: String)
 /**
  * Instructs the Kotlin compiler to generate a multifile class with this file as one o
  */
-target(AnnotationTarget.FILE)
+@Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 public annotation class JvmMultifileClass

@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 fun sample(): Reader = StringReader("Hello\nWorld");
 
 class ReadWriteTest {
-    test fun testAppendText() {
+    @test fun testAppendText() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
         file.writeText("Hello\n", "UTF8")
         file.appendText("World\n", "UTF8")
@@ -24,7 +24,7 @@ class ReadWriteTest {
         file.deleteOnExit()
     }
 
-    test fun reader() {
+    @test fun reader() {
         val list = ArrayList<String>()
 
         /* TODO would be nicer maybe to write this as
@@ -63,7 +63,7 @@ class ReadWriteTest {
         assertEquals(2, c)
     }
 
-    test fun file() {
+    @test fun file() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
         val writer = file.outputStream().writer().buffered()
 
@@ -109,7 +109,7 @@ class ReadWriteTest {
     }
 
     class LineIteratorTest {
-        test fun useLines() {
+        @test fun useLines() {
             // TODO we should maybe zap the useLines approach as it encourages
             // use of iterators which don't close the underlying stream
             val list1 = sample().useLines { it.toArrayList() }
@@ -119,7 +119,7 @@ class ReadWriteTest {
             assertEquals(arrayListOf("Hello", "World"), list2)
         }
 
-        test fun manualClose() {
+        @test fun manualClose() {
             val reader = sample().buffered()
             try {
                 val list = reader.lineSequence().toArrayList()
@@ -129,7 +129,7 @@ class ReadWriteTest {
             }
         }
 
-        test fun boundaryConditions() {
+        @test fun boundaryConditions() {
             var reader = StringReader("").buffered()
             assertEquals(ArrayList<String>(), reader.lineSequence().toArrayList())
             reader.close()
@@ -148,7 +148,7 @@ class ReadWriteTest {
         }
     }
 
-    test fun testUse() {
+    @test fun testUse() {
         val list = ArrayList<String>()
         val reader = sample().buffered()
 
@@ -165,7 +165,7 @@ class ReadWriteTest {
         assertEquals(arrayListOf("Hello", "World"), list)
     }
 
-    test fun testURL() {
+    @test fun testURL() {
         val url = URL("http://kotlinlang.org")
         val text = url.readText()
         assertFalse(text.isEmpty())

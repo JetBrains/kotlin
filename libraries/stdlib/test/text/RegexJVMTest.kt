@@ -7,7 +7,7 @@ import org.junit.Test as test
 
 class RegexJVMTest {
 
-    test fun matchGroups() {
+    @test fun matchGroups() {
         val input = "1a 2b 3c"
         val regex = "(\\d)(\\w)".toRegex()
 

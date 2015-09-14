@@ -7,7 +7,7 @@ import java.nio.charset.CharsetEncoder
 import java.util.NoSuchElementException
 
 /** Returns an [Iterator] of bytes in this input stream. */
-deprecated("It's not recommended to iterate through input stream bytes")
+@Deprecated("It's not recommended to iterate through input stream bytes")
 public fun InputStream.iterator(): ByteIterator =
         object : ByteIterator() {
 

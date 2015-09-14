@@ -25,7 +25,8 @@ class TestJVMTest {
         override fun toString() = "actual"
     }
 
-    Test fun assertEqualsMessage() {
+    @Test
+    fun assertEqualsMessage() {
         expectAssertion( { msg ->
             assertNotNull(msg); msg!!
             assertTrue { msg.contains(expected.toString()) }
@@ -41,7 +42,8 @@ class TestJVMTest {
         } , { assertEquals(expected, actual, message) })
     }
 
-    Test fun assertNotEqualsMessage() {
+    @Test
+    fun assertNotEqualsMessage() {
         expectAssertion( { msg ->
             assertNotNull(msg); msg!!
             assertTrue { msg.contains(actual.toString()) }
@@ -56,7 +58,8 @@ class TestJVMTest {
     }
 
 
-    Test fun assertTrueMessage() {
+    @Test
+    fun assertTrueMessage() {
         expectAssertion( { msg -> assertNotNull(msg) }, { assertTrue(false) })
         expectAssertion( { msg -> assertNotNull(msg) }, { assertTrue { false } })
         expectAssertion( { msg -> assertNotNull(msg) }, { assertTrue(null) { false } })
@@ -64,7 +67,8 @@ class TestJVMTest {
         expectAssertion( { msg -> msg!!.contains(message)}, { assertTrue(message) { false }})
     }
 
-    Test fun assertFalseMessage() {
+    @Test
+    fun assertFalseMessage() {
         expectAssertion( { msg -> assertNotNull(msg) }, { assertFalse(true) })
         expectAssertion( { msg -> assertNotNull(msg) }, { assertFalse { true } })
         expectAssertion( { msg -> assertNotNull(msg) }, { assertFalse(null) { true } })
@@ -72,12 +76,14 @@ class TestJVMTest {
         expectAssertion( { msg -> assertTrue(msg!!.contains(message)) }, { assertFalse(message) { true }})
     }
 
-    Test fun assertNotNullMessage() {
+    @Test
+    fun assertNotNullMessage() {
         expectAssertion( { msg -> msg!! }, { assertNotNull(null) })
         expectAssertion( { msg -> assertTrue(msg!!.contains(message)) }, { assertNotNull(null, message)})
     }
 
-    Test fun assertNullMessage() {
+    @Test
+    fun assertNullMessage() {
         expectAssertion( { msg -> msg!! }, { assertNull(actual) })
         expectAssertion( { msg -> msg!!
             assertTrue(msg.contains(message))

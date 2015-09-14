@@ -25,7 +25,7 @@ import org.junit.Test as test
  */
 class ReversedViewsJVMTest {
 
-    test fun testMutableSubList() {
+    @test fun testMutableSubList() {
         val original = arrayListOf(1, 2, 3, 4)
         val reversedSubList = original.asReversed().subList(1, 3)
 

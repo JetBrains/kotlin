@@ -58,10 +58,10 @@ public fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart
  */
 public fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
-deprecated("Please use Char.isJavaIdentifierStart() instead")
+@Deprecated("Please use Char.isJavaIdentifierStart() instead")
 public fun Char.isJavaLetter(): Boolean = Character.isJavaLetter(this)
 
-deprecated("Please use Char.isJavaIdentifierPart() instead")
+@Deprecated("Please use Char.isJavaIdentifierPart() instead")
 public fun Char.isJavaLetterOrDigit(): Boolean = Character.isJavaLetterOrDigit(this)
 
 /**

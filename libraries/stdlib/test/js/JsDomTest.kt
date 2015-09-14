@@ -9,7 +9,7 @@ import org.junit.Test as test
 
 class JsDomTest {
 
-    test fun testCreateDocument() {
+    @test fun testCreateDocument() {
         var doc = document
         assertNotNull(doc, "Should have created a document")
 
@@ -25,7 +25,7 @@ class JsDomTest {
         assertCssClass(e, "bar")
     }
 
-    test fun addText() {
+    @test fun addText() {
         var doc = document
         assertNotNull(doc, "Should have created a document")
 
@@ -38,7 +38,7 @@ class JsDomTest {
         assertEquals("hello", e.textContent)
     }
 
-    test fun testAddClassMissing() {
+    @test fun testAddClassMissing() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -49,7 +49,7 @@ class JsDomTest {
         assertEquals("class1 class2", e.classes)
     }
 
-    test fun testAddClassPresent() {
+    @test fun testAddClassPresent() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -60,13 +60,13 @@ class JsDomTest {
         assertEquals("class2 class1", e.classes)
     }
 
-    test fun testAddClassUndefinedClasses() {
+    @test fun testAddClassUndefinedClasses() {
         val e = document.createElement("e")!!
         e.addClass("class1")
         assertEquals("class1", e.classes)
     }
 
-    test fun testRemoveClassMissing() {
+    @test fun testRemoveClassMissing() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -77,7 +77,7 @@ class JsDomTest {
         assertEquals("class2 class1", e.classes)
     }
 
-    test fun testRemoveClassPresent1() {
+    @test fun testRemoveClassPresent1() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -88,7 +88,7 @@ class JsDomTest {
         assertEquals("class1", e.classes)
     }
 
-    test fun testRemoveClassPresent2() {
+    @test fun testRemoveClassPresent2() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -99,7 +99,7 @@ class JsDomTest {
         assertEquals("class2", e.classes)
     }
 
-    test fun testRemoveClassPresent3() {
+    @test fun testRemoveClassPresent3() {
         val e = document.createElement("e")!!
         assertNotNull(e)
 
@@ -110,13 +110,13 @@ class JsDomTest {
         assertEquals("class2 class3", e.classes)
     }
 
-    test fun testRemoveClassUndefinedClasses() {
+    @test fun testRemoveClassUndefinedClasses() {
         val e = document.createElement("e")!!
         e.removeClass("class1")
         assertEquals("", e.classes)
     }
 
-    test fun testRemoveFromParent() {
+    @test fun testRemoveFromParent() {
         val doc = document
 
         val parent = doc.createElement("pp")
@@ -135,7 +135,7 @@ class JsDomTest {
         assertNull(child.parentNode)
     }
 
-    test fun testRemoveFromParentOrphanNode() {
+    @test fun testRemoveFromParentOrphanNode() {
         val child = document.createElement("cc")
 
         child.removeFromParent()

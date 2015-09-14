@@ -54,7 +54,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOfRange")"""}
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOfRange")"""}
         body {
             "return Arrays.copyOfRange(this, fromIndex, toIndex)"
         }
@@ -64,7 +64,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
         body {
             "return Arrays.copyOf(this, size())"
         }

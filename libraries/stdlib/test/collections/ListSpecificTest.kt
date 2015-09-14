@@ -7,17 +7,20 @@ class ListSpecificTest {
     val data = listOf("foo", "bar")
     val empty = listOf<String>()
 
-    Test fun _toString() {
+    @Test
+    fun _toString() {
         assertEquals("[foo, bar]", data.toString())
     }
 
-    Test fun tail() {
+    @Test
+    fun tail() {
         val data = listOf("foo", "bar", "whatnot")
         val actual = data.drop(1)
         assertEquals(listOf("bar", "whatnot"), actual)
     }
 
-    Test fun slice() {
+    @Test
+    fun slice() {
         val list = listOf('A', 'B', 'C', 'D')
         // ABCD
         // 0123
@@ -28,7 +31,8 @@ class ListSpecificTest {
         assertEquals(listOf('C', 'A', 'D'), list.slice(iter))
     }
 
-    Test fun getOr() {
+    @Test
+    fun getOr() {
         expect("foo") { data.get(0) }
         expect("bar") { data.get(1) }
         fails { data.get(2) }
@@ -44,12 +48,14 @@ class ListSpecificTest {
 
     }
 
-    Test fun lastIndex() {
+    @Test
+    fun lastIndex() {
         assertEquals(-1, empty.lastIndex)
         assertEquals(1, data.lastIndex)
     }
 
-    Test fun mutableList() {
+    @Test
+    fun mutableList() {
         val items = listOf("beverage", "location", "name")
 
         var list = listOf<String>()
@@ -61,7 +67,8 @@ class ListSpecificTest {
         assertEquals("beverage,location,name", list.join(","))
     }
 
-    Test fun testNullToString() {
+    @Test
+    fun testNullToString() {
         assertEquals("[null]", listOf<String?>(null).toString())
     }
 }

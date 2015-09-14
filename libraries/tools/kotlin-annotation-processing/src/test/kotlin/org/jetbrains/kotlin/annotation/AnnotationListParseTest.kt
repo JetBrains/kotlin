@@ -8,31 +8,44 @@ import java.io.IOException
 
 public class AnnotationListParseTest {
 
-    Test fun testAnnotatedGettersSetters() = doTest("annotatedGettersSetters")
+    @Test
+    fun testAnnotatedGettersSetters() = doTest("annotatedGettersSetters")
 
-    Test fun testAnnotationInSameFile() = doTest("annotationInSameFile")
+    @Test
+    fun testAnnotationInSameFile() = doTest("annotationInSameFile")
 
-    Test fun testAnonymousClasses() = doTest("anonymousClasses")
+    @Test
+    fun testAnonymousClasses() = doTest("anonymousClasses")
 
-    Test fun testClassAnnotations() = doTest("classAnnotations")
+    @Test
+    fun testClassAnnotations() = doTest("classAnnotations")
 
-    Test fun testConstructors() = doTest("constructors")
+    @Test
+    fun testConstructors() = doTest("constructors")
 
-    Test fun testDefaultPackage() = doTest("defaultPackage")
+    @Test
+    fun testDefaultPackage() = doTest("defaultPackage")
 
-    Test fun testFieldAnnotations() = doTest("fieldAnnotations")
+    @Test
+    fun testFieldAnnotations() = doTest("fieldAnnotations")
 
-    Test fun testLocalClasses() = doTest("localClasses")
+    @Test
+    fun testLocalClasses() = doTest("localClasses")
 
-    Test fun testMethodAnnotations() = doTest("methodAnnotations")
+    @Test
+    fun testMethodAnnotations() = doTest("methodAnnotations")
 
-    Test fun testNestedClasses() = doTest("nestedClasses")
+    @Test
+    fun testNestedClasses() = doTest("nestedClasses")
 
-    Test fun testPlatformStatic() = doTest("platformStatic")
+    @Test
+    fun testPlatformStatic() = doTest("platformStatic")
 
-    Test fun testSimple() = doTest("simple")
+    @Test
+    fun testSimple() = doTest("simple")
 
-    Test fun testDeclarations() = doTest("classDeclarations")
+    @Test
+    fun testDeclarations() = doTest("classDeclarations")
 
 
     private val resourcesRootFile = File("src/test/resources/parse")

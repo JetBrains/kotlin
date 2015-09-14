@@ -7,7 +7,8 @@ import org.junit.Ignore
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
-    Test fun testSimpleCompile() {
+    @Test
+    fun testSimpleCompile() {
         val project = Project("simpleProject", "1.12")
 
         project.build("compileDeployKotlin", "build") {
@@ -22,7 +23,8 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testSuppressWarningsAndVersionInVerboseMode() {
+    @Test
+    fun testSuppressWarningsAndVersionInVerboseMode() {
         val project = Project("suppressWarningsAndVersion", "1.6")
 
         project.build("build") {
@@ -38,7 +40,8 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testSuppressWarningsAndVersionInNonVerboseMode() {
+    @Test
+    fun testSuppressWarningsAndVersionInNonVerboseMode() {
         val project = Project("suppressWarningsAndVersion", "1.6", minLogLevel = LogLevel.INFO)
 
         project.build("build") {
@@ -54,39 +57,45 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testKotlinCustomDirectory() {
+    @Test
+    fun testKotlinCustomDirectory() {
         Project("customSrcDir", "1.6").build("build") {
             assertSuccessful()
         }
     }
 
-    Test fun testKotlinCustomModuleName() {
+    @Test
+    fun testKotlinCustomModuleName() {
         Project("moduleNameCustom", "1.6").build("build") {
             assertSuccessful()
             assertContains("args.moduleName = myTestName")
         }
     }
 
-    Test fun testKotlinDefaultModuleName() {
+    @Test
+    fun testKotlinDefaultModuleName() {
         Project("moduleNameDefault", "1.6").build("build") {
             assertSuccessful()
             assertContains("args.moduleName = moduleNameDefault-compileKotlin")
         }
     }
 
-    Test fun testAdvancedOptions() {
+    @Test
+    fun testAdvancedOptions() {
         Project("advancedOptions", "1.6").build("build") {
             assertSuccessful()
         }
     }
 
-    Test fun testKotlinExtraJavaSrc() {
+    @Test
+    fun testKotlinExtraJavaSrc() {
         Project("additionalJavaSrc", "1.6").build("build") {
             assertSuccessful()
         }
     }
 
-    Test fun testGradleSubplugin() {
+    @Test
+    fun testGradleSubplugin() {
         val project = Project("kotlinGradleSubplugin", "1.6")
 
         project.build("compileKotlin", "build") {

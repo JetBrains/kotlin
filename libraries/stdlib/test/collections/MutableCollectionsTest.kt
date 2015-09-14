@@ -10,7 +10,7 @@ class MutableCollectionTest {
 
     // TODO: Use apply scope function
 
-    test fun addAll() {
+    @test fun addAll() {
         val data = listOf("foo", "bar")
 
         fun assertAdd(f: MutableList<String>.() -> Unit) = assertEquals(data, arrayListOf<String>().let { it.f(); it })
@@ -21,7 +21,7 @@ class MutableCollectionTest {
         assertAdd { addAll(data.asSequence()) }
     }
 
-    test fun removeAll() {
+    @test fun removeAll() {
         val content = arrayOf("foo", "bar", "bar")
         val data = listOf("bar")
         val expected = listOf("foo")
@@ -35,7 +35,7 @@ class MutableCollectionTest {
     }
 
 
-    test fun retainAll() {
+    @test fun retainAll() {
         val content = arrayOf("foo", "bar", "bar")
         val data = listOf("bar")
         val expected = listOf("bar", "bar")

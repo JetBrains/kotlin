@@ -100,7 +100,7 @@ public val Collection<*>.indices: IntRange
 /**
  * Returns an [IntRange] that starts with zero and ends at the value of this number but does not include it.
  */
-deprecated("Use 0..n-1 range instead.", ReplaceWith("0..this - 1"))
+@Deprecated("Use 0..n-1 range instead.", ReplaceWith("0..this - 1"))
 public val Int.indices: IntRange
     get() = 0..this - 1
 
@@ -217,7 +217,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  *
  * If the list contains multiple elements with the specified [key], there is no guarantee which one will be found.
  */
-public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size(), inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K?): Int =
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size(), crossinline selector: (T) -> K?): Int =
         binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
 
 // do not introduce this overload --- too rare

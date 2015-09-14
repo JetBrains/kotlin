@@ -9,7 +9,7 @@ private fun listDifference<T>(first : List<T>, second : List<T>) : List<T> {
 
 class StdLibIssuesTest {
 
-    test fun test_KT_1131() {
+    @test fun test_KT_1131() {
         val data = arrayListOf("blah", "foo", "bar")
         val filterValues = arrayListOf("bar", "something", "blah")
 

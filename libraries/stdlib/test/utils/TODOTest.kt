@@ -37,7 +37,7 @@ class TODOTest {
     }
 
 
-    test fun usage() {
+    @test fun usage() {
         val inst = PartiallyImplementedClass()
 
         assertNotImplemented { inst.prop }

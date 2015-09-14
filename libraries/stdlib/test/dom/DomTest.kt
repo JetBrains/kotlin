@@ -8,7 +8,7 @@ import org.junit.Test as test
 
 class DomTest {
 
-    test fun testCreateDocument() {
+    @test fun testCreateDocument() {
         var doc = createDocument()
         assertNotNull(doc, "Should have created a document")
 
@@ -27,7 +27,7 @@ class DomTest {
         println("document ${doc.toXmlString()}")
     }
 
-    test fun addText() {
+    @test fun addText() {
         var doc = createDocument()
         assertNotNull(doc, "Should have created a document")
 

@@ -10,14 +10,14 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-deprecated("use textContent directly instead")
+@Deprecated("use textContent directly instead")
 public var Node.text: String
     get() = textContent ?: ""
     set(value) {
         textContent = value
     }
 
-deprecated("You shouldn't use it as setter will drop all elements and get may return not exactly content user can expect")
+@Deprecated("You shouldn't use it as setter will drop all elements and get may return not exactly content user can expect")
 public var Element.childrenText: String
     get() {
         val buffer = StringBuilder()
@@ -101,7 +101,7 @@ public fun Document?.elements(namespaceUri: String, localName: String): List<Ele
 }
 
 public fun NodeList?.asList() : List<Node> = if (this == null) emptyList() else NodeListAsList(this)
-deprecated("use asList instead", ReplaceWith("asList()"))
+@Deprecated("use asList instead", ReplaceWith("asList()"))
 public fun NodeList?.toList(): List<Node> = asList()
 
 public fun NodeList?.toElementList(): List<Element> {
@@ -268,7 +268,7 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
 }
 
 /** Returns true if this node is a Text node or a CDATA node */
-deprecated("use property isText instead", ReplaceWith("isText"))
+@Deprecated("use property isText instead", ReplaceWith("isText"))
 public fun Node.isText() : Boolean = isText
 
 /**

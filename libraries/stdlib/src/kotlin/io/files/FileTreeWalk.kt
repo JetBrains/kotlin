@@ -153,8 +153,7 @@ public class FileTreeWalk(private val start: File,
         })
     }
 
-    tailRecursive
-    private fun gotoNext(): File? {
+    tailrec private fun gotoNext(): File? {
         if (end) {
             // We are already at the end
             return null
@@ -284,7 +283,7 @@ public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
  *
  * @param function the function to call on each file.
  */
-deprecated("It's recommended to use walkTopDown() / walkBottomUp()")
+@Deprecated("It's recommended to use walkTopDown() / walkBottomUp()")
 public fun File.recurse(function: (File) -> Unit): Unit {
     walkTopDown().forEach { function(it) }
 }

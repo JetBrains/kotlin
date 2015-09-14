@@ -7,7 +7,7 @@ import java.io.BufferedReader
 import java.io.File
 
 class IOStreamsTest {
-    test fun testGetStreamOfFile() {
+    @test fun testGetStreamOfFile() {
         val tmpFile = createTempFile()
         var writer: Writer? = null
         try {

@@ -41,7 +41,7 @@ val EXPECTED = """
 class StringExpressionExampleTest {
     val customer = Customer("James", arrayListOf(Product("Beer", 1.99), Product("Wine", 5.99)))
 
-    test fun testExpressions(): Unit {
+    @test fun testExpressions(): Unit {
         assertEquals(EXPECTED, customerTemplate(customer))
     }
 }

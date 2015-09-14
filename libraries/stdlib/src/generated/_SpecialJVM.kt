@@ -266,7 +266,7 @@ public fun ShortArray.copyOf(): ShortArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-platformName("mutableCopyOf")
+@JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(): Array<T> {
     return Arrays.copyOf(this, size())
 }
@@ -408,7 +408,7 @@ public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
 /**
  * Returns new array which is a copy of range of original array.
  */
-platformName("mutableCopyOfRange")
+@JvmName("mutableCopyOfRange")
 public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }

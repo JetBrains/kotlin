@@ -107,16 +107,19 @@ class NoInternalVisibilityInStdLibTest {
         }
     }
 
-    Before fun setUp() {
+    @Before
+    fun setUp() {
         disposable = Disposer.newDisposable()
     }
 
-    After fun tearDown() {
+    @After
+    fun tearDown() {
         Disposer.dispose(disposable!!)
         disposable = null
     }
 
-    Test fun testJvmStdlib() {
+    @Test
+    fun testJvmStdlib() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JVM, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JVM) {
             val configuration = CompilerConfiguration()
             configuration.addKotlinSourceRoot("../src/kotlin")
@@ -134,7 +137,8 @@ class NoInternalVisibilityInStdLibTest {
         }
     }
 
-    Test fun testJsStdlibJar() {
+    @Test
+    fun testJsStdlibJar() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JS, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JS) {
             val configuration = CompilerConfiguration()
             val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)

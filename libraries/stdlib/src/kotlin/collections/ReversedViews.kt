@@ -47,6 +47,6 @@ public fun <T> List<T>.asReversed(): List<T> = ReversedListReadOnly(this)
  * Returns a reversed mutable view of the original mutable List.
  * All changes made in the original list will be reflected in the reversed one and vice versa.
  */
-platformName("asReversedMutable")
+@platformName("asReversedMutable")
 public fun <T> MutableList<T>.asReversed(): MutableList<T> = ReversedList(this)
 

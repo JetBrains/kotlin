@@ -9,12 +9,12 @@ import java.io.*
 
 class ExceptionTest {
 
-    test fun printStackTraceOnRuntimeException() {
+    @test fun printStackTraceOnRuntimeException() {
         assertPrintStackTrace(RuntimeException("Crikey!"))
         assertPrintStackTraceStream(RuntimeException("Crikey2"))
     }
 
-    test fun printStackTraceOnError() {
+    @test fun printStackTraceOnError() {
         assertPrintStackTrace(Error("Oh dear"))
         assertPrintStackTraceStream(Error("Oh dear2"))
     }

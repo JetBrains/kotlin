@@ -7,7 +7,7 @@ import org.junit.Test as test
 
 class DomBuilderTest() {
 
-    test fun buildDocument() {
+    @test fun buildDocument() {
         var doc = createDocument()
 
         assertTrue {

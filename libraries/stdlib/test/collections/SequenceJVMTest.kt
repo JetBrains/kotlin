@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 class SequenceJVMTest {
 
-    test fun filterIsInstance() {
+    @test fun filterIsInstance() {
         val src: Sequence<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde").asSequence()
 
         val intValues: Sequence<Int> = src.filterIsInstance<Int>()

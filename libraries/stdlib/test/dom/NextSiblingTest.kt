@@ -7,7 +7,7 @@ import org.junit.Test as test
 
 class NextSiblingTest {
 
-    test fun nextSibling() {
+    @test fun nextSibling() {
         val doc = createDocument()
 
         doc.addElement("foo") {

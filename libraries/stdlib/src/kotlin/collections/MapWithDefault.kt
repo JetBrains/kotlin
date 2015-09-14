@@ -37,7 +37,7 @@ public fun <K, V> Map<K, V>.withDefault(default: (key: K) -> V): Map<K, V> =
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
-platformName("withDefaultMutable")
+@platformName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(default: (key: K) -> V): MutableMap<K, V> =
         when (this) {
             is MutableMapWithDefault -> this.map.withDefault(default)

@@ -14,13 +14,13 @@ import kotlin.test.assertTrue
 
 class FilesTest {
 
-    test fun testPath() {
+    @test fun testPath() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
         assertTrue(file1.path.endsWith(fileSuf), file1.path)
     }
 
-    test fun testCreateTempDir() {
+    @test fun testCreateTempDir() {
         val dirSuf = System.currentTimeMillis().toString()
         val dir1 = createTempDir("temp", dirSuf)
         assert(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
@@ -41,7 +41,7 @@ class FilesTest {
         dir3.delete()
     }
 
-    test fun testCreateTempFile() {
+    @test fun testCreateTempFile() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
         assert(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
@@ -79,7 +79,7 @@ class FilesTest {
             }
         }
 
-        test fun withSimple() {
+        @test fun withSimple() {
             val basedir = createTestFiles()
             try {
                 val referenceNames =
@@ -104,7 +104,7 @@ class FilesTest {
             }
         }
 
-        test fun withEnterLeave() {
+        @test fun withEnterLeave() {
             val basedir = createTestFiles()
             try {
                 val referenceNames =
@@ -163,7 +163,7 @@ class FilesTest {
             }
         }
 
-        test fun withFilterAndMap() {
+        @test fun withFilterAndMap() {
             val basedir = createTestFiles()
             try {
                 val referenceNames =
@@ -178,7 +178,7 @@ class FilesTest {
 
         }
 
-        test fun withDeleteTxtTopDown() {
+        @test fun withDeleteTxtTopDown() {
             val basedir = createTestFiles()
             try {
                 val referenceNames =
@@ -203,7 +203,7 @@ class FilesTest {
             }
         }
 
-        test fun withDeleteTxtBottomUp() {
+        @test fun withDeleteTxtBottomUp() {
             val basedir = createTestFiles()
             try {
                 val referenceNames =
@@ -228,7 +228,7 @@ class FilesTest {
             }
         }
 
-        test fun withFilter() {
+        @test fun withFilter() {
             val basedir = createTestFiles()
             try {
                 fun filter(file: File): Boolean {
@@ -258,7 +258,7 @@ class FilesTest {
             }
         }
 
-        test fun withTotalFilter() {
+        @test fun withTotalFilter() {
             val basedir = createTestFiles()
             try {
                 val referenceNames: Set<String> = setOf()
@@ -283,7 +283,7 @@ class FilesTest {
             }
         }
 
-        test fun withForEach() {
+        @test fun withForEach() {
             val basedir = createTestFiles()
             try {
                 var i = 0
@@ -297,7 +297,7 @@ class FilesTest {
             }
         }
 
-        test fun withCount() {
+        @test fun withCount() {
             val basedir = createTestFiles()
             try {
                 assertEquals(10, basedir.walkTopDown().count());
@@ -307,7 +307,7 @@ class FilesTest {
             }
         }
 
-        test fun withReduce() {
+        @test fun withReduce() {
             val basedir = createTestFiles()
             try {
                 val res = basedir.walkTopDown().reduce { a, b -> if (a.canonicalPath > b.canonicalPath) a else b }
@@ -317,7 +317,7 @@ class FilesTest {
             }
         }
 
-        test fun withVisitorAndDepth() {
+        @test fun withVisitorAndDepth() {
             val basedir = createTestFiles()
             try {
                 val files = HashSet<String>()
@@ -394,7 +394,7 @@ class FilesTest {
             }
         }
 
-        test fun topDown() {
+        @test fun topDown() {
             val basedir = createTestFiles()
             try {
                 val visited = HashSet<File>()
@@ -411,7 +411,7 @@ class FilesTest {
             }
         }
 
-        test fun restrictedAccess() {
+        @test fun restrictedAccess() {
             val basedir = createTestFiles()
             val restricted = File(basedir, "1")
             try {
@@ -431,7 +431,7 @@ class FilesTest {
             }
         }
 
-        test fun backup() {
+        @test fun backup() {
             var count = 0
             fun makeBackup(file: File) {
                 count++
@@ -465,7 +465,7 @@ class FilesTest {
             }
         }
 
-        test fun find() {
+        @test fun find() {
             val basedir = createTestFiles()
             try {
                 File(basedir, "8/4.txt".separatorsToSystem()).createNewFile()
@@ -481,7 +481,7 @@ class FilesTest {
             }
         }
 
-        test fun findGits() {
+        @test fun findGits() {
             val basedir = createTestFiles()
             try {
                 File(basedir, "1/3/.git").mkdir()
@@ -499,7 +499,7 @@ class FilesTest {
             }
         }
 
-        test fun streamFileTree() {
+        @test fun streamFileTree() {
             val dir = createTempDir()
             try {
                 val subDir1 = createTempDir(prefix = "d1_", directory = dir)
@@ -523,7 +523,7 @@ class FilesTest {
             }
         }
 
-        test fun recurse() {
+        @test fun recurse() {
             val set: MutableSet<String> = HashSet()
             val dir = createTestFiles()
             dir.recurse { set.add(it.path) }
@@ -531,7 +531,7 @@ class FilesTest {
         }
     }
 
-    test fun listFilesWithFilter() {
+    @test fun listFilesWithFilter() {
         val dir = createTempDir("temp")
 
         createTempFile("temp1", ".kt", dir)
@@ -546,7 +546,7 @@ class FilesTest {
         assertEquals(2, result2!!.size())
     }
 
-    test fun relativeToTest() {
+    @test fun relativeToTest() {
         val file1 = File("/foo/bar/baz")
         val file2 = File("/foo/baa/ghoo")
         assertEquals("../../bar/baz".separatorsToSystem(), file1.relativeTo(file2))
@@ -577,7 +577,7 @@ class FilesTest {
         assertEquals("..", file11.relativeTo(file10))
     }
 
-    test fun relativeTo() {
+    @test fun relativeTo() {
         assertEquals("kotlin", File("src/kotlin".separatorsToSystem()).relativeTo(File("src")))
         assertEquals("", File("dir").relativeTo(File("dir")))
         assertEquals("..", File("dir").relativeTo(File("dir/subdir".separatorsToSystem())))
@@ -596,7 +596,7 @@ class FilesTest {
         }
     }
 
-    test fun relativePath() {
+    @test fun relativePath() {
         val file1 = File("src")
         val file2 = File(file1, "kotlin")
         val file3 = File("test")
@@ -616,7 +616,7 @@ class FilesTest {
         assertEquals(elements.size(), i)
     }
 
-    test fun fileIterator() {
+    @test fun fileIterator() {
         checkFileElements(File("/foo/bar"), File("/"), listOf("foo", "bar"))
         checkFileElements(File("\\foo\\bar"), File("\\".separatorsToSystem()), listOf("foo", "bar"))
         checkFileElements(File("/foo/bar/gav"), File("/"), listOf("foo", "bar", "gav"))
@@ -637,13 +637,13 @@ class FilesTest {
         checkFileElements(File(".."), null, listOf(".."))
     }
 
-    test fun startsWith() {
+    @test fun startsWith() {
         assertTrue(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\Me"))
         assertFalse(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\He"))
         assertTrue(File("C:\\Users\\Me").startsWith("C:\\"))
     }
 
-    test fun endsWith() {
+    @test fun endsWith() {
         assertTrue(File("/foo/bar").endsWith("bar"))
         assertTrue(File("/foo/bar").endsWith("/bar"))
         assertTrue(File("/foo/bar/gav/bar").endsWith("/bar"))
@@ -652,7 +652,7 @@ class FilesTest {
         assertFalse(File("foo/bar").endsWith("/bar"))
     }
 
-    test fun subPath() {
+    @test fun subPath() {
         if (File.separatorChar == '\\') {
             // Check only in Windows
             assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
@@ -663,7 +663,7 @@ class FilesTest {
         assertEquals(File("gav/hi"), File("/foo/bar/gav/hi").subPath(2, 4))
     }
 
-    test fun normalize() {
+    @test fun normalize() {
         assertEquals(File("/foo/bar/baaz"), File("/foo/./bar/gav/../baaz").normalize())
         assertEquals(File("/foo/bar/baaz"), File("/foo/bak/../bar/gav/../baaz").normalize())
         assertEquals(File("../../bar"), File("../foo/../../bar").normalize())
@@ -674,7 +674,7 @@ class FilesTest {
         assertEquals(File("foo"), File("gav/bar/../../foo").normalize())
     }
 
-    test fun resolve() {
+    @test fun resolve() {
         assertEquals(File("/foo/bar/gav"), File("/foo/bar").resolve("gav"))
         assertEquals(File("/foo/bar/gav"), File("/foo/bar/").resolve("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolve("/gav"))
@@ -685,7 +685,7 @@ class FilesTest {
                 File("C:/Users/Me").resolve("Documents/important.doc"))
     }
 
-    test fun resolveSibling() {
+    @test fun resolveSibling() {
         assertEquals(File("/foo/gav"), File("/foo/bar").resolveSibling("gav"))
         assertEquals(File("/foo/gav"), File("/foo/bar/").resolveSibling("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolveSibling("/gav"))
@@ -696,7 +696,7 @@ class FilesTest {
                 File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
     }
 
-    test fun extension() {
+    @test fun extension() {
         assertEquals("bbb", File("aaa.bbb").extension)
         assertEquals("", File("aaa").extension)
         assertEquals("", File("aaa.").extension)
@@ -705,7 +705,7 @@ class FilesTest {
         assertEquals("", File("/my.dir/log").extension)
     }
 
-    test fun nameWithoutExtension() {
+    @test fun nameWithoutExtension() {
         assertEquals("aaa", File("aaa.bbb").nameWithoutExtension)
         assertEquals("aaa", File("aaa").nameWithoutExtension)
         assertEquals("aaa", File("aaa.").nameWithoutExtension)
@@ -713,7 +713,7 @@ class FilesTest {
         assertEquals("log", File("/my.dir/log").nameWithoutExtension)
     }
 
-    test fun separatorsToSystem() {
+    @test fun separatorsToSystem() {
         var path = "/aaa/bbb/ccc"
         assertEquals(path.replace("/", File.separator), File(path).separatorsToSystem())
 
@@ -733,7 +733,7 @@ class FilesTest {
         assertEquals("test", "test".allSeparatorsToSystem())
     }
 
-    test fun testCopyTo() {
+    @test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
         srcFile.writeText("Hello, World!", "UTF8")
@@ -780,7 +780,7 @@ class FilesTest {
         srcFile.delete()
     }
 
-    test fun copyToNameWithoutParent() {
+    @test fun copyToNameWithoutParent() {
         val currentDir = File("").getAbsoluteFile()!!
         val srcFile = createTempFile()
         val dstFile = createTempFile(directory = currentDir)
@@ -800,7 +800,7 @@ class FilesTest {
         }
     }
 
-    test fun deleteRecursively() {
+    @test fun deleteRecursively() {
         val dir = createTempDir()
         dir.delete()
         dir.mkdir()
@@ -814,7 +814,7 @@ class FilesTest {
         assert(!dir.deleteRecursively())
     }
     
-    test fun deleteRecursivelyWithFail() {
+    @test fun deleteRecursivelyWithFail() {
         val basedir = Walks.createTestFiles()
         val restricted = File(basedir, "1")
         try {
@@ -837,7 +837,7 @@ class FilesTest {
         }
     }
 
-    test fun copyRecursively() {
+    @test fun copyRecursively() {
         val src = createTempDir()
         val dst = createTempDir()
         dst.delete()
@@ -921,7 +921,7 @@ class FilesTest {
         }
     }
 
-    test fun helpers1() {
+    @test fun helpers1() {
         val str = "123456789\n"
         System.setIn(str.byteInputStream())
         val reader = System.`in`.bufferedReader()
@@ -932,7 +932,7 @@ class FilesTest {
         assertEquals('3', stringReader.read().toChar())
     }
 
-    test fun helpers2() {
+    @test fun helpers2() {
         val file = createTempFile()
         val writer = file.printWriter()
         val str1 = "Hello, world!"

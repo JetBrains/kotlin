@@ -56,7 +56,7 @@ import kotlin.jvm.internal.Intrinsic
 /**
  * Creates an input stream for reading data from this byte array.
  */
-deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
+@Deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
 public val ByteArray.inputStream : ByteArrayInputStream
     get() = inputStream()
 
