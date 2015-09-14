@@ -353,6 +353,7 @@ public object LightClassUtil {
             listOf(getter, setter).filterNotNullTo(allMethods)
             listOf<PsiNamedElement?>(getter, setter, backingField).filterNotNullTo(allDeclarations)
             allDeclarations.addAll(additionalAccessors)
+            additionalAccessors.filterIsInstanceTo<PsiMethod, MutableList<PsiMethod>>(allMethods)
         }
 
         override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()
