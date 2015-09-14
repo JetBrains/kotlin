@@ -258,7 +258,11 @@ public open class JetChangeInfo(
         javaChangeInfos = null
     }
 
-    public fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {
+    public fun getOrCreateJavaChangeInfos(multipleLightMethodsWithEqualNames: Boolean = false): List<JavaChangeInfo>? {
+        fun filterLightMethods(list: List<PsiMethod>): List<PsiMethod> {
+            return if (multipleLightMethodsWithEqualNames) list else list.groupBy { it.name }.values().map { it.firstOrNull() }.filterNotNull()
+        }
+
         /*
          * When primaryMethodUpdated is false, changes to the primary Kotlin declaration are already confirmed, but not yet applied.
          * It means that originalPsiMethod has already expired, but new one can't be created until Kotlin declaration is updated
@@ -350,7 +354,7 @@ public open class JetChangeInfo(
 
         if (javaChangeInfos == null) {
             val method = getMethod()
-            javaChangeInfos = (originalPsiMethods zip method.toLightMethods()).map {
+            javaChangeInfos = (filterLightMethods(originalPsiMethods) zip filterLightMethods(method.toLightMethods())).map {
                 val (originalPsiMethod, currentPsiMethod) = it
 
                 when (method) {

@@ -966,7 +966,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         boolean isJavaMethodUsage = isJavaMethodUsage(usageInfo);
 
         if (usageInfo instanceof KotlinWrapperForJavaUsageInfos) {
-            List<JavaChangeInfo> javaChangeInfos = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfos();
+            List<JavaChangeInfo> javaChangeInfos = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfos(false);
             assert javaChangeInfos != null : "JavaChangeInfo not found: " + method.getText();
 
             KotlinWrapperForJavaUsageInfos wrapperForJavaUsageInfos = (KotlinWrapperForJavaUsageInfos) usageInfo;
