@@ -456,9 +456,7 @@ public class JetParsing extends AbstractJetParsing {
                 atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
             if (at(AT)) {
-                if (!tryParseModifier(tokenConsumer)) {
-                    parseAnnotationOrList(annotationParsingMode);
-                }
+                parseAnnotationOrList(annotationParsingMode);
             }
             else if (tryParseModifier(tokenConsumer)) {
                 // modifier advanced
@@ -482,15 +480,6 @@ public class JetParsing extends AbstractJetParsing {
 
     private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker marker = mark();
-
-        if (at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1))) {
-            advance(); // AT
-            if (atSet(ANNOTATION_MODIFIERS_KEYWORDS)) {
-                myBuilder.remapCurrentToken(IDENTIFIER);
-                marker.rollbackTo();
-                return false;
-            }
-        }
 
         if (atSet(MODIFIER_KEYWORDS)) {
             IElementType tt = tt();
