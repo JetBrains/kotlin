@@ -207,19 +207,33 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
         }
 
         val factory = JetPsiFactory(callElement)
+        val type = resolvedCall.typeArguments[typeParameter]!!
         val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
             val _typeElement = explicitTypeArgs[index].typeReference?.typeElement ?: continue
             _typeElement.marked(USER_CODE_KEY)
         }
         else {
-            val type = resolvedCall.typeArguments[typeParameter]!!
             factory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).typeElement!!
+        }
+
+        // for class literal ("X::class") we need type arguments only for kotlin.Array
+        val typeClassifier = type.constructor.declarationDescriptor
+        val classLiteralTypeElement = if (typeElement is JetUserType && typeElement.typeArgumentList == null || typeClassifier == null || KotlinBuiltIns.isArray(type)) {
+            typeElement
+        }
+        else {
+            factory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(typeClassifier)).typeElement!!
         }
 
         for (usage in usages) {
             val parent = usage.parent
             if (parent is JetUserType) {
-                parent.replace(typeElement)
+                if (parent.parent is JetTypeReference && parent.parent.parent is JetClassLiteralExpression) {
+                    parent.replace(classLiteralTypeElement)
+                }
+                else {
+                    parent.replace(typeElement)
+                }
             }
             else {
                 //TODO: tests for this?
