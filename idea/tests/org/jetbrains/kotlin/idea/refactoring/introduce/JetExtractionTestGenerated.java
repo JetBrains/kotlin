@@ -2003,6 +2003,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("qualifiedThis.kt")
+                public void testQualifiedThis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/qualifiedThis.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("qualifiedThisAsArgument.kt")
                 public void testQualifiedThisAsArgument() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/qualifiedThisAsArgument.kt");

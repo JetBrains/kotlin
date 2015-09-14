@@ -1005,8 +1005,9 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
             if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-            val currentRefExpr = result.nameByOffset[originalOffset] as JetSimpleNameExpression?
-            if (currentRefExpr == null) continue
+            val currentRefExpr = result.nameByOffset[originalOffset]?.let {
+                (it as? JetThisExpression)?.instanceReference ?: it as? JetSimpleNameExpression
+            } ?: continue
 
             if (currentRefExpr.getParent() is JetThisExpression) continue
 

@@ -71,7 +71,7 @@ data class TypeParameter(
         val originalConstraints: List<JetTypeConstraint>
 )
 
-interface Replacement: Function1<JetElement, JetElement>
+interface Replacement: Function2<ExtractableCodeDescriptor, JetElement, JetElement>
 
 interface ParameterReplacement : Replacement {
     val parameter: Parameter
@@ -81,19 +81,17 @@ interface ParameterReplacement : Replacement {
 class RenameReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
-    override fun invoke(e: JetElement): JetElement {
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
         var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = JetPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
                 if (e.getText().startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
         val psiFactory = JetPsiFactory(e)
-        val replacement =
-                if (expressionToReplace is JetOperationReferenceExpression) {
-                    psiFactory.createOperationName(replacingName)
-                }
-                else {
-                    psiFactory.createSimpleName(replacingName)
-                }
+        val replacement = when {
+            parameter == descriptor.receiverParameter -> psiFactory.createExpression("this")
+            expressionToReplace is JetOperationReferenceExpression -> psiFactory.createOperationName(replacingName)
+            else -> psiFactory.createSimpleName(replacingName)
+        }
         return expressionToReplace.replaced(replacement)
     }
 }
@@ -101,17 +99,18 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = AddPrefixReplacement(parameter)
 
-    override fun invoke(e: JetElement): JetElement {
-        val selector = (e.getParent() as? JetCallExpression) ?: e
-        val newExpr = selector.replace(JetPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.getText()}")
-        ) as JetQualifiedExpression
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
+        if (descriptor.receiverParameter == parameter) return e
 
-        return with(newExpr.getSelectorExpression()!!) { if (this is JetCallExpression) getCalleeExpression()!! else this }
+        val selector = (e.parent as? JetCallExpression) ?: e
+        val replacingExpression = JetPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.text}")
+        val newExpr = (selector.replace(replacingExpression) as JetQualifiedExpression).selectorExpression!!
+        return (newExpr as? JetCallExpression)?.calleeExpression ?: newExpr
     }
 }
 
 class FqNameReplacement(val fqName: FqName): Replacement {
-    override fun invoke(e: JetElement): JetElement {
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
         val thisExpr = e.getParent() as? JetThisExpression
         if (thisExpr != null) {
             return thisExpr.replaced(JetPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
