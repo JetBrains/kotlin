@@ -30,7 +30,7 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is JetClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
             is JetNamedFunction,
-            is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(this as JetFunction).singletonOrEmptyList()
+            is JetSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as JetFunction)
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
             is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
@@ -45,10 +45,10 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
 
 public fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
-            is JetFunction -> LightClassUtil.getLightClassMethod(this).singletonOrEmptyList()
+            is JetFunction -> LightClassUtil.getLightClassMethods(this)
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
+            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
             is JetClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
