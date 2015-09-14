@@ -27,7 +27,7 @@ import java.lang.reflect.Type
 import java.util.*
 
 public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
-    internal abstract val member: Member
+    public abstract val member: Member
 
     override val element: AnnotatedElement get() = member as AnnotatedElement
 
