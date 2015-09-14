@@ -44,12 +44,6 @@ public class MultifileClassPartCodegen(
         state: GenerationState
 ) : MemberCodegen<JetFile>(state, null, partContext, file, v) {
 
-    override fun generate() {
-        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
-
-        super.generate()
-    }
-
     override fun generateDeclaration() {
         v.defineClass(element, Opcodes.V1_6,
                       Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
