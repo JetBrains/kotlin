@@ -2998,6 +2998,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classLiteralAndTypeArgsRuntime.kt")
+        public void testClassLiteralAndTypeArgsRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classLiteralAndTypeArgsRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doNotShortenUserReferences.kt")
         public void testDoNotShortenUserReferences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/doNotShortenUserReferences.kt");
