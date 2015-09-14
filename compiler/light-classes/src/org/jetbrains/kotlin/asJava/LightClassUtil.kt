@@ -133,7 +133,7 @@ public object LightClassUtil {
     public fun getLightClassAccessorMethod(accessor: JetPropertyAccessor): PsiMethod? =
             getLightClassAccessorMethods(accessor).firstOrNull()
 
-    public fun getLightClassAccessorMethods(accessor: JetPropertyAccessor): Collection<PsiMethod> {
+    public fun getLightClassAccessorMethods(accessor: JetPropertyAccessor): List<PsiMethod> {
         val property = accessor.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property, true)
         return wrappers.filter { wrapper -> (accessor.isGetter && !wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) ||
@@ -194,7 +194,7 @@ public object LightClassUtil {
         return getPsiMethodWrapper(function)
     }
 
-    public fun getLightClassMethods(function: JetFunction): Collection<PsiMethod> {
+    public fun getLightClassMethods(function: JetFunction): List<PsiMethod> {
         return getPsiMethodWrappers(function, true)
     }
 
@@ -295,29 +295,25 @@ public object LightClassUtil {
         var setterWrapper = specialSetter
         val additionalAccessors = arrayListOf<PsiMethod>()
 
-        if (getterWrapper == null || setterWrapper == null) {
-            // If some getter or setter isn't found yet try to get it from wrappers for general declaration
+        val wrappers = getPsiMethodWrappers(jetDeclaration, true).filter {
+            it.name.startsWith(JvmAbi.GETTER_PREFIX) || it.name.startsWith(JvmAbi.SETTER_PREFIX)
+        }
 
-            val wrappers = getPsiMethodWrappers(jetDeclaration, true).filter {
-                it.name.startsWith(JvmAbi.GETTER_PREFIX) || it.name.startsWith(JvmAbi.SETTER_PREFIX)
-            }
-
-            for (wrapper in wrappers) {
-                if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    if (setterWrapper == null || setterWrapper === specialSetter) {
-                        setterWrapper = wrapper
-                    }
-                    else {
-                        additionalAccessors.add(wrapper)
-                    }
+        for (wrapper in wrappers) {
+            if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+                if (setterWrapper == null || setterWrapper === specialSetter) {
+                    setterWrapper = wrapper
                 }
                 else {
-                    if (getterWrapper == null || getterWrapper == specialGetter) {
-                        getterWrapper = wrapper
-                    }
-                    else {
-                        additionalAccessors.add(wrapper)
-                    }
+                    additionalAccessors.add(wrapper)
+                }
+            }
+            else {
+                if (getterWrapper == null || getterWrapper == specialGetter) {
+                    getterWrapper = wrapper
+                }
+                else {
+                    additionalAccessors.add(wrapper)
                 }
             }
         }
