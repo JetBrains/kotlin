@@ -3,11 +3,11 @@ package java.util.Collections
 import java.lang.*
 import java.util.*
 
-library("collectionsMax")
+@library("collectionsMax")
 public fun max<T>(col : Collection<T>, comp : Comparator<in T>) : T = noImpl
 
-library("collectionsSort")
+@library("collectionsSort")
 public fun <T> sort(list: MutableList<T>): Unit = noImpl
 
-library("collectionsSort")
+@library("collectionsSort")
 public fun <T> sort(list: MutableList<T>, comparator: java.util.Comparator<in T>): Unit = noImpl

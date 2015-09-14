@@ -1,9 +1,9 @@
 package java.io
 
-library
+@library
 public class IOException(message: String = "") : Exception() {}
 
-library
+@library
 public trait Closeable {
     public open fun close() : Unit;
 }

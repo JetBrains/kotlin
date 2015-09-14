@@ -3,8 +3,8 @@ package kotlin.js.dom.html5
 import kotlin.js.dom.html.HTMLElement
 import org.w3c.dom.Element
 
-deprecated("Use declarations from org.w3c.dom instead")
-public native trait HTMLCanvasElement : HTMLElement {
+@Deprecated("Use declarations from org.w3c.dom instead")
+public @native trait HTMLCanvasElement : HTMLElement {
     public var width: Double
     public var height: Double
     public fun getContext(contextId: String, vararg attributes: Any): CanvasContext?
@@ -13,8 +13,8 @@ public native trait HTMLCanvasElement : HTMLElement {
     public fun toDataURL(string: String): String
 }
 
-deprecated("Use declarations from org.w3c.dom instead. See CanvasRenderingContext2D")
-public native trait CanvasContext {
+@Deprecated("Use declarations from org.w3c.dom instead. See CanvasRenderingContext2D")
+public @native trait CanvasContext {
     public var canvas: HTMLCanvasElement
     public fun save(): Unit
     public fun restore(): Unit
@@ -78,24 +78,24 @@ public native trait CanvasContext {
     public fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number, dirtyY: Number, dirtyWidth: Number): Unit
 }
 
-deprecated("Use declarations from org.w3c.dom instead")
-public native trait CanvasGradient {
+@Deprecated("Use declarations from org.w3c.dom instead")
+public @native trait CanvasGradient {
     public fun addColorStop(offset: Number, color: String): Unit
 }
 
-deprecated("Use declarations from org.w3c.dom instead")
-public native trait ImageData {
+@Deprecated("Use declarations from org.w3c.dom instead")
+public @native trait ImageData {
     public var data: CanvasPixelArray
     public var width: Double
     public var height: Double
 }
 
-public native trait CanvasPixelArray {
+public @native trait CanvasPixelArray {
     public var length: Double
 }
 
-deprecated("Use declarations from org.w3c.dom instead")
-public native trait TextMetrics {
+@Deprecated("Use declarations from org.w3c.dom instead")
+public @native trait TextMetrics {
     public var width: Double
 }
 

@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class Headers(init: dynamic = noImpl) {
+@native public open class Headers(init: dynamic = noImpl) {
     fun append(name: String, value: String): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): String? = noImpl
@@ -29,7 +29,7 @@ native public open class Headers(init: dynamic = noImpl) {
     fun set(name: String, value: String): Unit = noImpl
 }
 
-native public open class Request(input: dynamic, init: RequestInit = noImpl) {
+@native public open class Request(input: dynamic, init: RequestInit = noImpl) {
     open val method: String
         get() = noImpl
     open val url: String
@@ -58,7 +58,7 @@ native public open class Request(input: dynamic, init: RequestInit = noImpl) {
     fun text(): dynamic = noImpl
 }
 
-native public interface RequestInit {
+@native public interface RequestInit {
     var method: String
     var headers: dynamic
     var body: dynamic
@@ -68,7 +68,7 @@ native public interface RequestInit {
     var redirect: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
     val o = js("({})")
 
@@ -83,7 +83,7 @@ public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, m
     return o
 }
 
-native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
+@native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
     open val type: String
         get() = noImpl
     open val url: String
@@ -111,13 +111,13 @@ native public open class Response(body: dynamic = noImpl, init: ResponseInit = n
     }
 }
 
-native public interface ResponseInit {
+@native public interface ResponseInit {
     var status: Short
     var statusText: String
     var headers: dynamic
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
     val o = js("({})")
 

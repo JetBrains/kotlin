@@ -71,8 +71,8 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     indent(commented, level)
 
     when (f.nativeGetterOrSetter) {
-        NativeGetterOrSetter.GETTER -> append("nativeGetter ")
-        NativeGetterOrSetter.SETTER -> append("nativeSetter ")
+        NativeGetterOrSetter.GETTER -> append("@nativeGetter ")
+        NativeGetterOrSetter.SETTER -> append("@nativeSetter ")
         NativeGetterOrSetter.NONE -> {}
     }
 
@@ -81,7 +81,7 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     }
 
     if (f.name in keywords) {
-        append("native(\"${f.name}\") ")
+        append("@native(\"${f.name}\") ")
     }
     append("fun ${f.name.replaceKeywords()}")
     renderArgumentsDeclaration(f.arguments, override)
@@ -97,9 +97,9 @@ private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, function
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
-    append("native public ")
+    append("@native public ")
     if (markerAnnotation) {
-        append("marker ")
+        append("@marker ")
     }
     when (iface.kind) {
         GenerateDefinitionKind.CLASS -> append("open class ")
@@ -192,7 +192,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes }).distinctBy { it.signature }.map { it.copy(kind = AttributeKind.ARGUMENT) }.dynamicIfUnknownType(allTypes)
 
-    appendln("suppress(\"NOTHING_TO_INLINE\")")
+    appendln("@Suppress(\"NOTHING_TO_INLINE\")")
     append("public inline fun ${dictionary.name}")
     renderArgumentsDeclaration(fields)
     appendln(": ${dictionary.name} {")

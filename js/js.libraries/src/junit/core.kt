@@ -1,4 +1,4 @@
 package org.junit
 
-native
+@native
 public annotation class Test(val name: String = "")

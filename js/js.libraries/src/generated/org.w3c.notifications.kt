@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget {
+@native public open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget {
     var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -61,7 +61,7 @@ native public open class Notification(title: String, options: NotificationOption
     }
 }
 
-native public interface NotificationOptions {
+@native public interface NotificationOptions {
     var dir: String
     var lang: String
     var body: String
@@ -76,7 +76,7 @@ native public interface NotificationOptions {
     var data: Any?
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
     val o = js("({})")
 
@@ -96,11 +96,11 @@ public inline fun NotificationOptions(dir: String = "auto", lang: String = "", b
     return o
 }
 
-native public interface GetNotificationOptions {
+@native public interface GetNotificationOptions {
     var tag: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
     val o = js("({})")
 
@@ -109,16 +109,16 @@ public inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptio
     return o
 }
 
-native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
+@native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
     open val notification: Notification
         get() = noImpl
 }
 
-native public interface NotificationEventInit : ExtendableEventInit {
+@native public interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
     val o = js("({})")
 

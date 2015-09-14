@@ -17,7 +17,7 @@
 package kotlin.text.js
 
 
-native public class RegExp(pattern: String, flags: String? = null) {
+@native public class RegExp(pattern: String, flags: String? = null) {
 
     public fun test(str: String): Boolean = noImpl
 
@@ -40,7 +40,7 @@ public fun RegExp.reset() {
 }
 
 
-native public trait RegExpMatch {
+@native public trait RegExpMatch {
     public val index: Int
     public val input: String
 }

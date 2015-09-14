@@ -1,33 +1,33 @@
 package java.lang
 
-library
+@library
 open public class Error(message: String? = null): Throwable(message) {}
 
-library
+@library
 open public class Exception(message: String? = null): Throwable(message) {}
 
-library
+@library
 open public class RuntimeException(message: String? = null) : Exception(message) {}
 
-library
+@library
 public class IllegalArgumentException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public class IllegalStateException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public class IndexOutOfBoundsException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public class UnsupportedOperationException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public class NumberFormatException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public class NullPointerException(message: String? = null) : RuntimeException(message) {}
 
-library
+@library
 public trait Runnable {
     public open fun run() : Unit;
 }
@@ -36,14 +36,14 @@ public fun Runnable(action: () -> Unit): Runnable = object : Runnable {
     override fun run() = action()
 }
 
-library
+@library
 public trait Appendable {
     public open fun append(csq: CharSequence?): Appendable
     public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable
     public open fun append(c: Char): Appendable
 }
 
-library
+@library
 public class StringBuilder(capacity: Int? = null) : Appendable {
     override fun append(c: Char): StringBuilder = noImpl
     override fun append(csq: CharSequence?): StringBuilder = noImpl

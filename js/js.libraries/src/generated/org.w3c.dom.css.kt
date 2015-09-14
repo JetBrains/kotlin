@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public interface CSSStyleDeclaration {
+@native public interface CSSStyleDeclaration {
     var cssText: String
         get() = noImpl
         set(value) = noImpl
@@ -707,7 +707,7 @@ native public interface CSSStyleDeclaration {
         get() = noImpl
         set(value) = noImpl
     fun item(index: Int): String = noImpl
-    nativeGetter fun get(index: Int): String? = noImpl
+    @nativeGetter fun get(index: Int): String? = noImpl
     fun getPropertyValue(property: String): String = noImpl
     fun getPropertyPriority(property: String): String = noImpl
     fun setProperty(property: String, value: String, priority: String = ""): Unit = noImpl
@@ -716,19 +716,19 @@ native public interface CSSStyleDeclaration {
     fun removeProperty(property: String): String = noImpl
 }
 
-native public interface MediaList {
+@native public interface MediaList {
     var mediaText: String
         get() = noImpl
         set(value) = noImpl
     val length: Int
         get() = noImpl
     fun item(index: Int): String? = noImpl
-    nativeGetter fun get(index: Int): String? = noImpl
+    @nativeGetter fun get(index: Int): String? = noImpl
     fun appendMedium(medium: String): Unit = noImpl
     fun deleteMedium(medium: String): Unit = noImpl
 }
 
-native public interface StyleSheet {
+@native public interface StyleSheet {
     val type: String
         get() = noImpl
     val href: String?
@@ -746,7 +746,7 @@ native public interface StyleSheet {
         set(value) = noImpl
 }
 
-native public interface CSSStyleSheet : StyleSheet {
+@native public interface CSSStyleSheet : StyleSheet {
     val ownerRule: CSSRule?
         get() = noImpl
     val cssRules: CSSRuleList
@@ -755,21 +755,21 @@ native public interface CSSStyleSheet : StyleSheet {
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-native public interface StyleSheetList {
+@native public interface StyleSheetList {
     val length: Int
         get() = noImpl
     fun item(index: Int): StyleSheet? = noImpl
-    nativeGetter fun get(index: Int): StyleSheet? = noImpl
+    @nativeGetter fun get(index: Int): StyleSheet? = noImpl
 }
 
-native public interface CSSRuleList {
+@native public interface CSSRuleList {
     val length: Int
         get() = noImpl
     fun item(index: Int): CSSRule? = noImpl
-    nativeGetter fun get(index: Int): CSSRule? = noImpl
+    @nativeGetter fun get(index: Int): CSSRule? = noImpl
 }
 
-native public interface CSSRule {
+@native public interface CSSRule {
     val type: Short
         get() = noImpl
     var cssText: String
@@ -792,7 +792,7 @@ native public interface CSSRule {
     }
 }
 
-native public interface CSSStyleRule : CSSRule {
+@native public interface CSSStyleRule : CSSRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -800,7 +800,7 @@ native public interface CSSStyleRule : CSSRule {
         get() = noImpl
 }
 
-native public interface CSSImportRule : CSSRule {
+@native public interface CSSImportRule : CSSRule {
     val href: String
         get() = noImpl
     val media: MediaList
@@ -809,19 +809,19 @@ native public interface CSSImportRule : CSSRule {
         get() = noImpl
 }
 
-native public interface CSSGroupingRule : CSSRule {
+@native public interface CSSGroupingRule : CSSRule {
     val cssRules: CSSRuleList
         get() = noImpl
     fun insertRule(rule: String, index: Int): Int = noImpl
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-native public interface CSSMediaRule : CSSGroupingRule {
+@native public interface CSSMediaRule : CSSGroupingRule {
     val media: MediaList
         get() = noImpl
 }
 
-native public interface CSSPageRule : CSSGroupingRule {
+@native public interface CSSPageRule : CSSGroupingRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -829,14 +829,14 @@ native public interface CSSPageRule : CSSGroupingRule {
         get() = noImpl
 }
 
-native public interface CSSMarginRule : CSSRule {
+@native public interface CSSMarginRule : CSSRule {
     val name: String
         get() = noImpl
     val style: CSSStyleDeclaration
         get() = noImpl
 }
 
-native public interface CSSNamespaceRule : CSSRule {
+@native public interface CSSNamespaceRule : CSSRule {
     var namespaceURI: String
         get() = noImpl
         set(value) = noImpl
@@ -845,7 +845,7 @@ native public interface CSSNamespaceRule : CSSRule {
         set(value) = noImpl
 }
 
-native public interface PseudoElement : GeometryNode {
+@native public interface PseudoElement : GeometryNode {
     val cascadedStyle: CSSStyleDeclaration
         get() = noImpl
     val defaultStyle: CSSStyleDeclaration
@@ -860,7 +860,7 @@ native public interface PseudoElement : GeometryNode {
     fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
-native public interface CSS {
+@native public interface CSS {
 
     companion object {
         fun escape(ident: String): String = noImpl

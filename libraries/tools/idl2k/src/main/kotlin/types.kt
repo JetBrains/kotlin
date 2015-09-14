@@ -52,7 +52,7 @@ data class ArrayType(val memberType: Type, override val nullable: Boolean) : Typ
     override fun render(): String = "Array<${memberType.render()}>".withSuffix()
 }
 
-suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 private fun <T: Type> T.copyWithNullability(nullable: Boolean): T = when (this) {
     is UnitType -> UnitType
     is DynamicType -> this

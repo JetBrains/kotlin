@@ -2,7 +2,7 @@ package jquery
 
 import org.w3c.dom.Element
 
-native
+@native
 public class JQuery() {
     public fun addClass(className: String): JQuery = noImpl;
     public fun addClass(f: Element.(Int, String) -> String): JQuery = noImpl;
@@ -43,7 +43,7 @@ public class JQuery() {
     public fun `val`(): String? = noImpl
 }
 
-native
+@native
 open public class MouseEvent() {
     public val pageX: Double = 0.0;
     public val pageY: Double = 0.0;
@@ -52,20 +52,20 @@ open public class MouseEvent() {
     public fun isDefaultPrevented(): Boolean = true;
 }
 
-native
+@native
 public class MouseClickEvent() : MouseEvent() {
     public val which: Int = 0;
 }
 
-native("$")
+@native("$")
 public fun jq(selector: String): JQuery = JQuery();
-native("$")
+@native("$")
 public fun jq(selector: String, context: Element): JQuery = JQuery();
-native("$")
+@native("$")
 public fun jq(callback: () -> Unit): JQuery = JQuery();
-native("$")
+@native("$")
 public fun jq(obj: JQuery): JQuery = JQuery();
-native("$")
+@native("$")
 public fun jq(el: Element): JQuery = JQuery();
-native("$")
+@native("$")
 public fun jq(): JQuery = JQuery();
