@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -43,12 +42,6 @@ public class LazyJavaPackageScope(
         private val jPackage: JavaPackage,
         containingDeclaration: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c, containingDeclaration) {
-
-    // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
-    // See JetTypeMapperWithOutDirectories for details
-    public val kotlinBinaryClass: KotlinJvmBinaryClass?
-            = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
-
     private val kotlinBinaryClasses = c.storageManager.createLazyValue {
         val simpleNames = c.components.packageMapper.findPackageParts(jPackage.getFqName().asString())
         val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName

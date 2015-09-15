@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
@@ -143,12 +144,15 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        KotlinJvmBinaryClass binaryClass = ((LazyJavaPackageFragment) packageFragment).getScope().getKotlinBinaryClass();
-        if (binaryClass instanceof VirtualFileKotlinClass) {
-            VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
-            if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
-                File ioFile = VfsUtilCore.virtualToIoFile(file);
-                return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
+        SourceElement source = ((LazyJavaPackageFragment) packageFragment).getSource();
+        if (source instanceof KotlinJvmBinarySourceElement) {
+            KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
+            if (binaryClass instanceof VirtualFileKotlinClass) {
+                VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
+                if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
+                    File ioFile = VfsUtilCore.virtualToIoFile(file);
+                    return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
+                }
             }
         }
 
