@@ -189,7 +189,7 @@ private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<An
 
 private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
     private val lock = lock ?: this
-    @volatile private var value: Any? = null
+    @Volatile private var value: Any? = null
 
     public override fun get(thisRef: Any?, property: PropertyMetadata): T {
         val _v1 = value

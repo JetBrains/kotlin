@@ -17,7 +17,7 @@
 package kotlin
 
 private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
-    @volatile private var sequenceRef: Sequence<T>? = sequence
+    @Volatile private var sequenceRef: Sequence<T>? = sequence
     //private val lock = Any()
 
     //TODO: Synchronize with the synchonized() method
