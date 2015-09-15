@@ -39,11 +39,12 @@ public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorRep
 
     public data class AbiVersionErrorData(
             public val actualVersion: BinaryVersion,
+            public val filePath: String,
             public val classId: ClassId
     )
 
     override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
-        trace.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, classId))
+        trace.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, filePath, classId))
     }
 
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {

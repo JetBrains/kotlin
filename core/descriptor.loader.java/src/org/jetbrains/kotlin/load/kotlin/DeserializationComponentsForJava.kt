@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -30,7 +31,8 @@ public class DeserializationComponentsForJava(
         moduleDescriptor: ModuleDescriptor,
         classDataFinder: JavaClassDataFinder,
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
-        packageFragmentProvider: LazyJavaPackageFragmentProvider
+        packageFragmentProvider: LazyJavaPackageFragmentProvider,
+        errorReporter: ErrorReporter
 ) {
     val components: DeserializationComponents
 
@@ -38,7 +40,8 @@ public class DeserializationComponentsForJava(
         val localClassResolver = LocalClassResolverImpl()
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                localClassResolver, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, JavaTypeCapabilitiesLoader
+                localClassResolver, errorReporter, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY,
+                JavaTypeCapabilitiesLoader
         )
         localClassResolver.setDeserializationComponents(components)
     }

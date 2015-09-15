@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -43,12 +43,6 @@ public class LazyJavaPackageScope(
         private val jPackage: JavaPackage,
         containingDeclaration: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c, containingDeclaration) {
-
-    // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
-    // See JetTypeMapperWithOutDirectories for details
-    public val kotlinBinaryClass: KotlinJvmBinaryClass?
-            = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
-
     private val kotlinBinaryClasses = c.storageManager.createLazyValue {
         val simpleNames = c.components.packageMapper.findPackageParts(jPackage.getFqName().asString())
         val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName
@@ -83,8 +77,16 @@ public class LazyJavaPackageScope(
             partToFacade()[partName]
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
-        if (kotlinBinaryClasses().isEmpty())
+        if (kotlinBinaryClasses().isEmpty()) {
+            // If the scope is queried but no package parts are found, there's a possibility that we're trying to load symbols
+            // from an old package with the binary-incompatible facade.
+            // We try to read the old package facade if there is one, to report the "incompatible ABI version" message.
+            packageFragment.oldPackageFacade?.let { binaryClass ->
+                c.components.deserializedDescriptorResolver.readData(binaryClass, DeserializedDescriptorResolver.KOTLIN_PACKAGE_FACADE)
+            }
+
             JetScope.Empty
+        }
         else {
             c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClasses())
         }

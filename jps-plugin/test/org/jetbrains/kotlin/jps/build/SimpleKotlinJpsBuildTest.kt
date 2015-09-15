@@ -25,52 +25,9 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
 public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
-
     override fun setUp() {
         super.setUp()
         workDir = JetTestUtils.tmpDirForTest(this)
-    }
-
-    public fun testThreeModulesNoReexport() {
-        val aFile = createFile("a/a.kt",
-                               """
-                                   trait A1 {
-                                       fun bar()
-                                   }
-                                   trait A2 {
-                                       fun bar()
-                                   }
-                               """)
-        val a = addModule("a", PathUtil.getParentPath(aFile))
-
-        val bFile = createFile("b/b.kt",
-                               """
-                                    trait B1 {
-                                        fun foo(): B2? = null
-                                    }
-
-                                    trait B2 : A1, A2 {
-                                        override fun bar() {}
-                                    }
-                               """)
-        val b = addModule("b", PathUtil.getParentPath(bFile))
-        JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
-                b.getDependenciesList().addModuleDependency(a)
-        ).setExported(false)
-
-        val cFile = createFile("c/c.kt",
-                               """
-                                    class C : B1 {
-                                        fun test() {
-                                            foo()?.bar()
-                                        }
-                                    }
-                               """)
-        val c = addModule("c", PathUtil.getParentPath(cFile))
-        c.getDependenciesList().addModuleDependency(b)
-
-        addKotlinRuntimeDependency()
-        rebuildAll()
     }
 
     public fun testLoadingKotlinFromDifferentModules() {
@@ -102,21 +59,21 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                """)
         val b = addModule("b", PathUtil.getParentPath(bFile))
         JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
-                b.getDependenciesList().addModuleDependency(a)
-        ).setExported(false)
+                b.dependenciesList.addModuleDependency(a)
+        ).isExported = false
 
         addKotlinRuntimeDependency()
         rebuildAll()
     }
 
-    public fun testThreeModulesNoReexportWithDaemon() {
+    public fun testDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
         // spaces in the name to test proper file name handling
         val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running");
         try {
             System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
-            testThreeModulesNoReexport()
+            testLoadingKotlinFromDifferentModules()
         }
         finally {
             flagFile.delete()

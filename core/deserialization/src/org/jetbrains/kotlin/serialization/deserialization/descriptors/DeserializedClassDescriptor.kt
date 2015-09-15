@@ -32,11 +32,14 @@ import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedType
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 public class DeserializedClassDescriptor(
@@ -132,12 +135,25 @@ public class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    private fun computeSuperTypes(): Collection<JetType> {
-        val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())
-        for (supertype in classProto.getSupertypeList()) {
-            supertypes.add(c.typeDeserializer.type(supertype))
+    private fun computeSupertypes(): Collection<JetType> {
+        val result = ArrayList<JetType>(classProto.supertypeCount)
+        val unresolved = ArrayList<DeserializedType>(0)
+
+        for (supertypeProto in classProto.supertypeList) {
+            val supertype = c.typeDeserializer.type(supertypeProto)
+            if (supertype.isError) {
+                unresolved.add(supertype.upperIfFlexible() as? DeserializedType ?: error("Not a deserialized type: $supertype"))
+            }
+            else {
+                result.add(supertype)
+            }
         }
-        return supertypes
+
+        if (unresolved.isNotEmpty()) {
+            c.components.errorReporter.reportIncompleteHierarchy(this, unresolved.map(DeserializedType::getPresentableText))
+        }
+
+        return result.toReadOnlyList()
     }
 
     internal fun hasNestedClass(name: Name): Boolean {
@@ -149,20 +165,13 @@ public class DeserializedClassDescriptor(
     override fun getSource() = sourceElement
 
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
-        private val supertypes = computeSuperTypes()
+        private val supertypes = c.storageManager.createLazyValue {
+            computeSupertypes()
+        }
 
         override fun getParameters() = c.typeDeserializer.ownTypeParameters
 
-        override fun getSupertypes(): Collection<JetType> {
-            // We cannot have error supertypes because subclasses inherit error functions from them
-            // Filtering right away means copying the list every time, so we check for the rare condition first, and only then filter
-            for (supertype in supertypes) {
-                if (supertype.isError()) {
-                    return supertypes.filter { !it.isError() }
-                }
-            }
-            return supertypes
-        }
+        override fun getSupertypes() = supertypes()
 
         override fun isFinal() = !getModality().isOverridable()
 

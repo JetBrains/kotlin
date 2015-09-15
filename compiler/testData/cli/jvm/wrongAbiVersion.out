@@ -1,6 +1,12 @@
+compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: bar
+(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
+    bar()
+    ^
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+public fun <K, V> kotlin.MutableMap<kotlin.Int, kotlin.Int>.set(key: kotlin.Int, value: kotlin.Int): kotlin.Int? defined in kotlin
+(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
+    1.set(2, 3)
+      ^
 compiler/testData/cli/jvm/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. Its ABI version is unknown, expected ABI version is $ABI_VERSION$
-compiler/testData/cli/jvm/wrongAbiVersionLib/bin/wrong/Wrong_packageKt.class: error: class 'wrong/Wrong_packageKt' was compiled with an incompatible version of Kotlin. Its ABI version is unknown, expected ABI version is $ABI_VERSION$
-compiler/testData/cli/jvm/wrongAbiVersion.kt:4:3: error: unresolved reference: bar
-  bar()
-  ^
+compiler/testData/cli/jvm/wrongAbiVersionLib/bin/wrong/WrongPackage.class: error: class 'wrong/WrongPackage' was compiled with an incompatible version of Kotlin. Its ABI version is unknown, expected ABI version is $ABI_VERSION$
 COMPILATION_ERROR

@@ -484,17 +484,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties) {
-            KotlinBuiltIns builtins = getBuiltIns(descriptor);
-            FunctionDescriptor equalsFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.EQUALS_METHOD_NAME), builtins.getBoolean(), builtins.getAny()
-            );
-
-            assert equalsFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                          CodegenUtil.EQUALS_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(equalsFunction);
-            MethodVisitor mv = v.newMethod(OtherOrigin(equalsFunction), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+        public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -560,16 +552,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties) {
-            FunctionDescriptor hashCodeFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME), getBuiltIns(descriptor).getInt()
-            );
-
-            assert hashCodeFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                            CodegenUtil.HASH_CODE_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(hashCodeFunction);
-            MethodVisitor mv = v.newMethod(OtherOrigin(hashCodeFunction), ACC_PUBLIC, "hashCode", "()I", null, null);
+        public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -616,16 +601,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateToStringMethod(@NotNull List<PropertyDescriptor> properties) {
-            FunctionDescriptor toString = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME), getBuiltIns(descriptor).getString()
-            );
-
-            assert toString != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                    CodegenUtil.TO_STRING_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(toString);
-            MethodVisitor mv = v.newMethod(OtherOrigin(toString), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
