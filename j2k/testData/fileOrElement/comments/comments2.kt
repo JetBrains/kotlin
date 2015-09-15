@@ -23,6 +23,6 @@ internal class A {
 
     companion object {
 
-        /*it's public*//*and static*//*and final*/ val C: Int = 1
+        /*it's public*//*and static*//*and final*/ val C = 1
     }
 }

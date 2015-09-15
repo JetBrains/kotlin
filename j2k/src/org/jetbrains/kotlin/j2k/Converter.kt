@@ -317,7 +317,7 @@ class Converter private constructor(
         else {
             val isVal = field.isVal(referenceSearcher)
             val typeToDeclare = variableTypeToDeclare(field,
-                                                      settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
+                                                      settings.specifyFieldTypeByDefault,
                                                       isVal && modifiers.isPrivate)
             val propertyType = typeToDeclare ?: typeConverter.convertVariableType(field)
 

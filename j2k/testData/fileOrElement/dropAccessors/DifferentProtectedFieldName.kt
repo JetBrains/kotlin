@@ -1,5 +1,5 @@
 open class AAA {
-    var x: Int = 42
+    var x = 42
         protected set
 
     fun foo(other: AAA) {

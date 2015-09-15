@@ -1,7 +1,7 @@
 object AAA {
-    var x: Int = 42
-    var y: Int = 0
-    val z: Int = 0
+    var x = 42
+    var y = 0
+    val z = 0
 
     fun setZ(z: Int) {
         Other.z = z
@@ -9,5 +9,5 @@ object AAA {
 }
 
 internal object Other {
-    var z: Int = 0
+    var z = 0
 }

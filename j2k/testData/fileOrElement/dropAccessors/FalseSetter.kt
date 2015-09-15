@@ -1,5 +1,5 @@
 class AAA {
-    var x: Int = 42
+    var x = 42
         private set
 
     fun setX(x: Int) {

@@ -15,8 +15,8 @@ internal class Customer internal constructor(val firstName: String, val lastName
 }
 
 internal class CustomerBuilder {
-    var _firstName: String = "Homer"
-    var _lastName: String = "Simpson"
+    var _firstName = "Homer"
+    var _lastName = "Simpson"
 
     fun WithFirstName(firstName: String): CustomerBuilder {
         _firstName = firstName

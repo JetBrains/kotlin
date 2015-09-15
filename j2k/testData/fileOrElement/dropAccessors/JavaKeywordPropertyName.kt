@@ -1,5 +1,5 @@
 internal class C {
-    val default: Int = 0
+    val default = 0
 
     internal fun foo() {
         println(default)

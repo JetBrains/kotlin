@@ -1,8 +1,8 @@
 package test
 
 internal open class JavaClass {
-    var field: Int = 0
+    var field = 0
 
-    var property: Int = 0
+    var property = 0
         protected set
 }

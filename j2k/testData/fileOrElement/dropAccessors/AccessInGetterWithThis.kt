@@ -1,3 +1,3 @@
 class AAA {
-    val x: Int = 42
+    val x = 42
 }

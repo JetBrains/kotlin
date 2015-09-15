@@ -1,5 +1,5 @@
 open class Base internal constructor(x: Int) {
-    var x: Int = 42
+    var x = 42
         protected set
 
     init {

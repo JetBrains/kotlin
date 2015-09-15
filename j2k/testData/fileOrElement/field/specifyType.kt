@@ -3,8 +3,8 @@ import java.util.*
 internal class A {
     private val field1 = ArrayList<String>()
     internal val field2: List<String> = ArrayList()
-    val field3: Int = 0
-    protected val field4: Int = 0
+    val field3 = 0
+    protected val field4 = 0
 
     private var field5: List<String> = ArrayList()
     internal var field6: List<String> = ArrayList()

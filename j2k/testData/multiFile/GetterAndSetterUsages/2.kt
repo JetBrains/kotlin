@@ -4,6 +4,6 @@ internal class B {
         YY += "a"
     }
 
-    var YY: String = ""
+    var YY = ""
         private set
 }

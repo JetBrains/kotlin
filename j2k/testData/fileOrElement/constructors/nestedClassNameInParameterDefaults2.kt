@@ -6,7 +6,7 @@ internal class A JvmOverloads internal constructor(nested: Nested = Nested(Neste
     internal class Nested internal constructor(p: Int) {
         companion object {
 
-            val FIELD: Int = 0
+            val FIELD = 0
         }
     }
 }

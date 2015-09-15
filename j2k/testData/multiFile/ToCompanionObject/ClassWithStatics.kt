@@ -9,8 +9,8 @@ internal open class ClassWithStatics {
         fun staticMethod(p: Int) {
         }
 
-        val staticField: Int = 1
+        val staticField = 1
 
-        var value: Int = 0
+        var value = 0
     }
 }

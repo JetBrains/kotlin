@@ -8,5 +8,5 @@ internal object Utils {
         return 1
     }
 
-    val staticField: Int = 1
+    val staticField = 1
 }

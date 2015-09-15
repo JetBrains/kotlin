@@ -6,5 +6,5 @@ internal object Util {
     fun util2() {
     }
 
-    val CONSTANT: Int = 10
+    val CONSTANT = 10
 }

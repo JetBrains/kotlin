@@ -1,7 +1,7 @@
 interface INode {
     companion object {
-        val IN: String = "in"
-        val AT: String = "@"
-        val COMMA_WITH_SPACE: String = COMMA + SPACE
+        val IN = "in"
+        val AT = "@"
+        val COMMA_WITH_SPACE = COMMA + SPACE
     }
 }

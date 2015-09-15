@@ -8,7 +8,7 @@ annotation internal class Anon(val value: String) {
 
     companion object {
 
-        val field: E = E.A
+        val field = E.A
     }
 }
 
