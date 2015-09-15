@@ -1,0 +1,133 @@
+// -- Module: <m1> --
+package
+
+package a {
+
+    package a.b {
+        public fun ab_fun(): kotlin.Unit
+
+        public final class c {
+            public constructor c()
+            public final fun ab_c(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+public final class x {
+    public constructor x()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun top_x(): kotlin.Unit
+}
+
+package a {
+    public fun a_fun(): kotlin.Unit
+
+    public final class b {
+        public constructor b()
+        public final fun a_b(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class c {
+            public constructor c()
+            public final fun a_bc(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+
+// -- Module: <m3> --
+package
+
+public final class x {
+    // -- Module: <m2> --
+}
+
+package a {
+    public fun a_fun(): kotlin.Unit
+
+    public final class b {
+        // -- Module: <m2> --
+    }
+
+    package a.b {
+        public fun ab_fun(): kotlin.Unit
+
+        public final class c {
+            // -- Module: <m1> --
+        }
+    }
+}
+
+package other {
+    public fun test(/*0*/ a: other.a): kotlin.Unit
+
+    public object a {
+        private constructor a()
+        public final fun _a(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public object b {
+            private constructor b()
+            public final fun _ab(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+package some {
+    public fun test(/*0*/ a_b: a.b): kotlin.Unit
+    public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
+    public fun test3(/*0*/ top_x: x): kotlin.Unit
+
+    public final class a {
+        public constructor a()
+        public final fun _a(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class b {
+            public constructor b()
+            public final fun _ab(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class c {
+                public constructor c()
+                public final fun _abc(): kotlin.Unit
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+
+    public final class x {
+        public constructor x()
+        public final fun _x(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
