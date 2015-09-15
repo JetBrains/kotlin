@@ -1,6 +1,6 @@
 package test
 
-kotlin.jvm.JvmName(name = "bar") public fun foo(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "bar") public fun foo(): kotlin.Unit
 
 public open class PlatformName {
     public constructor PlatformName()

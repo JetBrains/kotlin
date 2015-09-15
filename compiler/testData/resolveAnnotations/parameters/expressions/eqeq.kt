@@ -10,4 +10,4 @@ annotation class Ann(
 
 @Ann(1 == 2, 1.0 == 2.0, 'b' == 'a', "a" == "b", "a" == "a") class MyClass
 
-// EXPECTED: Ann(b1 = false, b2 = false, b3 = false, b4 = false, b5 = true)
+// EXPECTED: @Ann(b1 = false, b2 = false, b3 = false, b4 = false, b5 = true)

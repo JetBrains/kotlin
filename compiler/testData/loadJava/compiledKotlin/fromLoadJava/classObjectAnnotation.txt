@@ -3,10 +3,10 @@ package test
 public final class Some {
     /*primary*/ public constructor Some()
 
-    test.Some.Companion.TestAnnotation() public companion object Companion {
+    @test.Some.Companion.TestAnnotation() public companion object Companion {
         /*primary*/ private constructor Companion()
 
-        kotlin.annotation.annotation() public final class TestAnnotation : kotlin.Annotation {
+        @kotlin.annotation.annotation() public final class TestAnnotation : kotlin.Annotation {
             /*primary*/ public constructor TestAnnotation()
         }
     }

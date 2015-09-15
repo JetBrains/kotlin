@@ -6,9 +6,9 @@ public var b: kotlin.Int
 public var c: kotlin.String
 public val cObj: C
 public fun </*0*/ T> B.get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): T
-kotlin.inline() public fun </*0*/ reified T> C.get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): T
+@kotlin.inline() public fun </*0*/ reified T> C.get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): T
 public fun </*0*/ T> B.set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: T): kotlin.Unit
-kotlin.inline() public fun </*0*/ reified T> C.set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: T): kotlin.Unit
+@kotlin.inline() public fun </*0*/ reified T> C.set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: T): kotlin.Unit
 
 public final class A {
     public constructor A()

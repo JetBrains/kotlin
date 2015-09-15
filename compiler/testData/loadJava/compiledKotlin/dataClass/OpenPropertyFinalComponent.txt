@@ -1,6 +1,6 @@
 package test
 
-kotlin.data() public open class DataClass {
+@kotlin.data() public open class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x: kotlin.String)
     public open val x: kotlin.String
         public open fun <get-x>(): kotlin.String

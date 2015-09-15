@@ -1,11 +1,11 @@
 package test
 
 @field:test.A(s = "2") public var v: kotlin.Int
-    kotlin.platform.platformName(name = "vget") test.A(s = "3") public fun <get-v>(): kotlin.Int
-    kotlin.platform.platformName(name = "vset") test.A(s = "4") public fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-kotlin.platform.platformName(name = "bar") test.A(s = "1") public fun foo(): kotlin.String
+    @kotlin.platform.platformName(name = "vget") @test.A(s = "3") public fun <get-v>(): kotlin.Int
+    @kotlin.platform.platformName(name = "vset") @test.A(s = "4") public fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+@kotlin.platform.platformName(name = "bar") @test.A(s = "1") public fun foo(): kotlin.String
 
-kotlin.annotation.annotation() public final class A : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class A : kotlin.Annotation {
     /*primary*/ public constructor A(/*0*/ s: kotlin.String)
     public final val s: kotlin.String
         public final fun <get-s>(): kotlin.String

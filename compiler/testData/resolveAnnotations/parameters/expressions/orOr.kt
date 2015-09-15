@@ -7,4 +7,4 @@ annotation class Ann(
 
 @Ann(true || false, true || true) class MyClass
 
-// EXPECTED: Ann(b1 = true, b2 = true)
+// EXPECTED: @Ann(b1 = true, b2 = true)

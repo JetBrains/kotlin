@@ -1,39 +1,39 @@
 package
 
-kotlin.inline() private fun a(): kotlin.Unit
-kotlin.inline() public fun b(): kotlin.Unit
-kotlin.inline() public fun c(): kotlin.Unit
+@kotlin.inline() private fun a(): kotlin.Unit
+@kotlin.inline() public fun b(): kotlin.Unit
+@kotlin.inline() public fun c(): kotlin.Unit
 
 public abstract class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.inline() private final fun good1(): kotlin.Unit
-    kotlin.inline() public final fun good2(): kotlin.Unit
-    kotlin.inline() protected final fun good3(): kotlin.Unit
-    kotlin.inline() public final fun good4(): kotlin.Unit
+    @kotlin.inline() private final fun good1(): kotlin.Unit
+    @kotlin.inline() public final fun good2(): kotlin.Unit
+    @kotlin.inline() protected final fun good3(): kotlin.Unit
+    @kotlin.inline() public final fun good4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    kotlin.inline() protected open fun wrong1(): kotlin.Unit
-    kotlin.inline() public open fun wrong2(): kotlin.Unit
-    kotlin.inline() public open fun wrong3(): kotlin.Unit
-    kotlin.inline() protected abstract fun wrong4(): kotlin.Unit
-    kotlin.inline() public abstract fun wrong5(): kotlin.Unit
-    kotlin.inline() public abstract fun wrong6(): kotlin.Unit
+    @kotlin.inline() protected open fun wrong1(): kotlin.Unit
+    @kotlin.inline() public open fun wrong2(): kotlin.Unit
+    @kotlin.inline() public open fun wrong3(): kotlin.Unit
+    @kotlin.inline() protected abstract fun wrong4(): kotlin.Unit
+    @kotlin.inline() public abstract fun wrong5(): kotlin.Unit
+    @kotlin.inline() public abstract fun wrong6(): kotlin.Unit
 }
 
 public interface B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.inline() private final fun good1(): kotlin.Unit
-    kotlin.inline() public final fun good2(): kotlin.Unit
-    kotlin.inline() protected final fun good3(): kotlin.Unit
-    kotlin.inline() public final fun good4(): kotlin.Unit
+    @kotlin.inline() private final fun good1(): kotlin.Unit
+    @kotlin.inline() public final fun good2(): kotlin.Unit
+    @kotlin.inline() protected final fun good3(): kotlin.Unit
+    @kotlin.inline() public final fun good4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    kotlin.inline() public open fun wrong1(): kotlin.Unit
-    kotlin.inline() protected open fun wrong2(): kotlin.Unit
-    kotlin.inline() public open fun wrong3(): kotlin.Unit
-    kotlin.inline() public open fun wrong4(): kotlin.Unit
-    kotlin.inline() protected abstract fun wrong5(): kotlin.Unit
-    kotlin.inline() public abstract fun wrong6(): kotlin.Unit
-    kotlin.inline() public abstract fun wrong7(): kotlin.Unit
+    @kotlin.inline() public open fun wrong1(): kotlin.Unit
+    @kotlin.inline() protected open fun wrong2(): kotlin.Unit
+    @kotlin.inline() public open fun wrong3(): kotlin.Unit
+    @kotlin.inline() public open fun wrong4(): kotlin.Unit
+    @kotlin.inline() protected abstract fun wrong5(): kotlin.Unit
+    @kotlin.inline() public abstract fun wrong6(): kotlin.Unit
+    @kotlin.inline() public abstract fun wrong7(): kotlin.Unit
 }

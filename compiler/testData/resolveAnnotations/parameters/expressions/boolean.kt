@@ -8,4 +8,4 @@ annotation class Ann(
 
 @Ann(true and false, false or true, true xor false) class MyClass
 
-// EXPECTED: Ann(b1 = false, b2 = true, b3 = true)
+// EXPECTED: @Ann(b1 = false, b2 = true, b3 = true)

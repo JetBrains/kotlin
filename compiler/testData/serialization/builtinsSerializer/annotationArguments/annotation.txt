@@ -1,23 +1,23 @@
 package test
 
-kotlin.annotation.annotation() public final class AnnotationArray : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AnnotationArray : kotlin.Annotation {
     public constructor AnnotationArray(/*0*/ annotationArray: kotlin.Array<test.JustAnnotation>)
     public final val annotationArray: kotlin.Array<test.JustAnnotation>
 }
 
-test.JustAnnotation(annotation = test.Empty()) test.AnnotationArray(annotationArray = {}) public final class C1 {
+@test.JustAnnotation(annotation = test.Empty()) @test.AnnotationArray(annotationArray = {}) public final class C1 {
     public constructor C1()
 }
 
-test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty()), test.JustAnnotation(annotation = test.Empty())}) public final class C2 {
+@test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty()), test.JustAnnotation(annotation = test.Empty())}) public final class C2 {
     public constructor C2()
 }
 
-kotlin.annotation.annotation() public final class Empty : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Empty : kotlin.Annotation {
     public constructor Empty()
 }
 
-kotlin.annotation.annotation() public final class JustAnnotation : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class JustAnnotation : kotlin.Annotation {
     public constructor JustAnnotation(/*0*/ annotation: test.Empty)
     public final val annotation: test.Empty
 }

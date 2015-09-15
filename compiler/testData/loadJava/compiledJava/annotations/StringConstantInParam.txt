@@ -8,7 +8,7 @@ public interface StringConstantInParam {
         public abstract fun value(): kotlin.String
     }
 
-    test.StringConstantInParam.Anno(value = "hello") public open class Class {
+    @test.StringConstantInParam.Anno(value = "hello") public open class Class {
         public constructor Class()
     }
 

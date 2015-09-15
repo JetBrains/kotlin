@@ -1,6 +1,6 @@
 package
 
-public fun @[[ERROR : x]()] A.foo(/*0*/ a: @[[ERROR : x]()] kotlin.Int): kotlin.Unit
+public fun @[ERROR : x]() A.foo(/*0*/ a: @[ERROR : x]() kotlin.Int): kotlin.Unit
 
 public final class A {
     public constructor A()

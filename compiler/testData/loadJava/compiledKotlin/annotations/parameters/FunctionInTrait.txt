@@ -1,9 +1,9 @@
 package test
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
 public interface Trait {
-    public open fun foo(/*0*/ test.Anno() x: kotlin.String): kotlin.Int
+    public open fun foo(/*0*/ @test.Anno() x: kotlin.String): kotlin.Int
 }

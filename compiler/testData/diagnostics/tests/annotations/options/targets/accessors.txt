@@ -2,28 +2,28 @@ package
 
 public final class My {
     public constructor My(/*0*/ x: kotlin.Int)
-    smartget() public final var y: kotlin.Int
+    @smartget() public final var y: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    base() smartget() smartset() public final fun foo(): kotlin.Int
+    @base() @smartget() @smartset() public final fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.annotation() public final class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) kotlin.annotation.annotation() public final class smartget : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.annotation() public final class smartget : kotlin.Annotation {
     public constructor smartget()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.annotation() public final class smartset : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.annotation() public final class smartset : kotlin.Annotation {
     public constructor smartset()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

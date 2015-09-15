@@ -9,7 +9,7 @@ public open class ClassObjectArrayInParam {
         public abstract fun value(): kotlin.Array<kotlin.reflect.KClass<*>>
     }
 
-    test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam::class, test.ClassObjectArrayInParam.Nested::class, kotlin.String::class}) public open class Nested {
+    @test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam::class, test.ClassObjectArrayInParam.Nested::class, kotlin.String::class}) public open class Nested {
         public constructor Nested()
     }
 }

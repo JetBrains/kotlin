@@ -1,6 +1,6 @@
 package
 
-kotlin.data() public open class D {
+@kotlin.data() public open class D {
     public constructor D(/*0*/ x: kotlin.Int)
     private final val x: kotlin.Int
     private final /*synthesized*/ fun component1(): kotlin.Int
@@ -10,7 +10,7 @@ kotlin.data() public open class D {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.data() public final class E : D {
+@kotlin.data() public final class E : D {
     public constructor E(/*0*/ x: kotlin.Int)
     internal open val x: kotlin.Int
     internal final /*synthesized*/ fun component1(): kotlin.Int

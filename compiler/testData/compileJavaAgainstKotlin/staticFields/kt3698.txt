@@ -19,5 +19,5 @@ public open class kt3698 {
     }
 
     // Static members
-    test.kt3698.Foo(value = 10) public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+    @test.kt3698.Foo(value = 10) public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
 }

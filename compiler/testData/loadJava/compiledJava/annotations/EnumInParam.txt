@@ -8,7 +8,7 @@ public interface EnumInParam {
         public abstract fun value(): java.lang.annotation.RetentionPolicy
     }
 
-    test.EnumInParam.MyRetention(value = RetentionPolicy.RUNTIME) public final class RetentionAnnotation : kotlin.Annotation {
+    @test.EnumInParam.MyRetention(value = RetentionPolicy.RUNTIME) public final class RetentionAnnotation : kotlin.Annotation {
         public constructor RetentionAnnotation(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
         public abstract fun value(): kotlin.String

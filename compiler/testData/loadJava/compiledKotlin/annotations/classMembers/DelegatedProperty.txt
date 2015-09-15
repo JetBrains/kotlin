@@ -1,11 +1,11 @@
 package test
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
 public final class Class {
     /*primary*/ public constructor Class()
-    test.Anno() public final val x: kotlin.Int
+    @test.Anno() public final val x: kotlin.Int
         public final fun <get-x>(): kotlin.Int
 }

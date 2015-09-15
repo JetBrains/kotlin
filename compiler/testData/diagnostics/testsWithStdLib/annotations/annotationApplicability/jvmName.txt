@@ -1,45 +1,45 @@
 package
 
-kotlin.jvm.JvmName(name = "c") public val px: kotlin.Int = 1
+@kotlin.jvm.JvmName(name = "c") public val px: kotlin.Int = 1
 public val valx: kotlin.Int
 public var vardef: kotlin.Int
 public var varx: kotlin.Int
-kotlin.jvm.JvmName(name = "d") public val kotlin.Any.px: kotlin.Int
-kotlin.jvm.JvmName(name = "a") public fun foo(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "d") public val kotlin.Any.px: kotlin.Int
+@kotlin.jvm.JvmName(name = "a") public fun foo(): kotlin.Unit
 public fun foo1(): kotlin.Unit
-kotlin.jvm.JvmName(name = "b") public fun kotlin.Any.foo(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "b") public fun kotlin.Any.foo(): kotlin.Unit
 
 public abstract class AB {
     public constructor AB()
-    kotlin.jvm.JvmName(name = "AB_absFun1") public abstract fun absFun1(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_absFun1") public abstract fun absFun1(): kotlin.Unit
     public abstract fun absFun2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    kotlin.jvm.JvmName(name = "AB_openFun") public open fun openFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_openFun") public open fun openFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.jvm.JvmName(name = "C") public final class C {
-    kotlin.jvm.JvmName(name = "primary") public constructor C()
-    kotlin.jvm.JvmName(name = "ctr") public constructor C(/*0*/ x: kotlin.Int)
-    kotlin.jvm.JvmName(name = "c") public final val px: kotlin.Int = 1
+@kotlin.jvm.JvmName(name = "C") public final class C {
+    @kotlin.jvm.JvmName(name = "primary") public constructor C()
+    @kotlin.jvm.JvmName(name = "ctr") public constructor C(/*0*/ x: kotlin.Int)
+    @kotlin.jvm.JvmName(name = "c") public final val px: kotlin.Int = 1
     public final val valx: kotlin.Int
     public final var varx: kotlin.Int
-    kotlin.jvm.JvmName(name = "d") public final val kotlin.Any.px: kotlin.Int
+    @kotlin.jvm.JvmName(name = "d") public final val kotlin.Any.px: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.jvm.JvmName(name = "a") public final fun foo(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "a") public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    kotlin.jvm.JvmName(name = "b") public final fun kotlin.Any.foo(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "b") public final fun kotlin.Any.foo(): kotlin.Unit
 }
 
 public final class D : AB {
     public constructor D()
     public open override /*1*/ fun absFun1(): kotlin.Unit
-    kotlin.jvm.JvmName(name = "D_absFun2") public open override /*1*/ fun absFun2(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "D_absFun2") public open override /*1*/ fun absFun2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.jvm.JvmName(name = "D_finalFun") public final fun finalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "D_finalFun") public final fun finalFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    kotlin.jvm.JvmName(name = "D_openFun") public final override /*1*/ fun openFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "D_openFun") public final override /*1*/ fun openFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

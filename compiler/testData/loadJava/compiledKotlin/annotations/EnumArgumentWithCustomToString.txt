@@ -14,7 +14,7 @@ public final enum class E : kotlin.Enum<test.E> {
     public final /*synthesized*/ fun values(): kotlin.Array<test.E>
 }
 
-kotlin.annotation.annotation() public final class EnumAnno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class EnumAnno : kotlin.Annotation {
     /*primary*/ public constructor EnumAnno(/*0*/ value: test.E)
     public final val value: test.E
         public final fun <get-value>(): test.E
@@ -22,10 +22,10 @@ kotlin.annotation.annotation() public final class EnumAnno : kotlin.Annotation {
 
 public final class EnumArgumentWithCustomToString {
     /*primary*/ public constructor EnumArgumentWithCustomToString()
-    test.EnumAnno(value = E.CAKE) test.EnumArrayAnno(value = {E.CAKE, E.CAKE}) public final fun annotated(): kotlin.Unit
+    @test.EnumAnno(value = E.CAKE) @test.EnumArrayAnno(value = {E.CAKE, E.CAKE}) public final fun annotated(): kotlin.Unit
 }
 
-kotlin.annotation.annotation() public final class EnumArrayAnno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class EnumArrayAnno : kotlin.Annotation {
     /*primary*/ public constructor EnumArrayAnno(/*0*/ vararg value: test.E /*kotlin.Array<out test.E>*/)
     public final val value: kotlin.Array<out test.E>
         public final fun <get-value>(): kotlin.Array<out test.E>

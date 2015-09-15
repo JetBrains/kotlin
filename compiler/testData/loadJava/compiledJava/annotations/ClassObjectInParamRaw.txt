@@ -11,7 +11,7 @@ public open class ClassObjectInParamRaw {
         public abstract fun value(): kotlin.reflect.KClass<*>
     }
 
-    test.ClassObjectInParamRaw.Anno(arg = {}, value = test.ClassObjectInParamRaw::class) public open class Nested {
+    @test.ClassObjectInParamRaw.Anno(arg = {}, value = test.ClassObjectInParamRaw::class) public open class Nested {
         public constructor Nested()
     }
 }

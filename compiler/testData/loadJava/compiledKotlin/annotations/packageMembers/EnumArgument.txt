@@ -2,9 +2,9 @@ package test
 
 @field:test.Anno(t = ElementType.FIELD) public val bar: kotlin.Int = 42
     public fun <get-bar>(): kotlin.Int
-test.Anno(t = ElementType.METHOD) public fun foo(): kotlin.Unit
+@test.Anno(t = ElementType.METHOD) public fun foo(): kotlin.Unit
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ t: java.lang.annotation.ElementType)
     public final val t: java.lang.annotation.ElementType
         public final fun <get-t>(): java.lang.annotation.ElementType

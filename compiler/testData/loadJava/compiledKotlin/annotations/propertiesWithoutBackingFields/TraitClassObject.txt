@@ -1,6 +1,6 @@
 package test
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
@@ -8,7 +8,7 @@ public interface Trait {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        test.Anno() public final val property: kotlin.Int
+        @test.Anno() public final val property: kotlin.Int
             public final fun <get-property>(): kotlin.Int
     }
 }

@@ -9,4 +9,4 @@ annotation class Ann(
 
 @Ann(1 + 1, 1 + 1, 1 + 1, 1 + 1) class MyClass
 
-// EXPECTED: Ann(b = 2.toByte(), i = 2, l = 2.toLong(), s = 2.toShort())
+// EXPECTED: @Ann(b = 2.toByte(), i = 2, l = 2.toLong(), s = 2.toShort())

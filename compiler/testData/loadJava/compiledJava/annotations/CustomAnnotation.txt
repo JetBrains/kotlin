@@ -22,7 +22,7 @@ public interface CustomAnnotation {
         public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
     }
 
-    test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE) public open class MyTest {
+    @test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE) public open class MyTest {
         public constructor MyTest()
     }
 }

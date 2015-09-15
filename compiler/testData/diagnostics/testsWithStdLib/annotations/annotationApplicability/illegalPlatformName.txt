@@ -1,6 +1,6 @@
 package
 
-kotlin.jvm.JvmName(name = ".") public fun foo(): kotlin.Unit
-kotlin.jvm.JvmName(name = "") public fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
-kotlin.jvm.JvmName(name = "<") public fun fooLT(): kotlin.Unit
-kotlin.jvm.JvmName(name = "/") public fun fooSlash(): kotlin.Unit
+@kotlin.jvm.JvmName(name = ".") public fun foo(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "") public fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
+@kotlin.jvm.JvmName(name = "<") public fun fooLT(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "/") public fun fooSlash(): kotlin.Unit
