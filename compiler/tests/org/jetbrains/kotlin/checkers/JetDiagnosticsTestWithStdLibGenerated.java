@@ -128,6 +128,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmName.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("multifileClassPart.kt")
+            public void testMultifileClassPart() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPart.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassPartWithJavaAnnotation.kt")
+            public void testMultifileClassPartWithJavaAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPartWithJavaAnnotation.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
