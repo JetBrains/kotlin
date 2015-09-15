@@ -8,7 +8,7 @@ fun foo(x: Int): Int {
 }
 
 fun box(): String {
-    var result = (0..10).map(::foo).makeString()
+    var result = (0..10).map(::foo).joinToString()
 
     if (result != "4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4") return result
     return "OK"

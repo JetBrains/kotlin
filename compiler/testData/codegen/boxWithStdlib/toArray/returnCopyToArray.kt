@@ -1,6 +1,6 @@
 import java.util.Arrays
 
-fun getCopyToArray(): Array<Int> = Arrays.asList(2, 3, 9).copyToArray()
+fun getCopyToArray(): Array<Int> = Arrays.asList(2, 3, 9).toTypedArray()
 
 fun box(): String {
     val str = Arrays.toString(getCopyToArray())

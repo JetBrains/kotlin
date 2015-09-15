@@ -35,19 +35,19 @@ fun charFoo(x: Char): Int {
 }
 
 fun box(): String {
-    var result = (1..4).map(::intFoo).makeString()
+    var result = (1..4).map(::intFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "int:" + result
 
-    result = (1.toShort()..4.toShort()).map(::shortFoo).makeString()
+    result = (1.toShort()..4.toShort()).map(::shortFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "short:" + result
 
-    result = (1.toByte()..4.toByte()).map(::byteFoo).makeString()
+    result = (1.toByte()..4.toByte()).map(::byteFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "byte:" + result
 
-    result = ('a'..'d').map(::charFoo).makeString()
+    result = ('a'..'d').map(::charFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "int:" + result
     return "OK"

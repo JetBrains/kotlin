@@ -1,7 +1,7 @@
 import kotlin.test.assertEquals
 
 inline fun <reified T> copy(c: Collection<T>): Array<T> {
-    return c.copyToArray()
+    return c.toTypedArray()
 }
 
 fun box(): String {

@@ -13,7 +13,7 @@ World""");
     val list1 = sample().useLines{it.toArrayList()}
     val list2 = sample().useLines<ArrayList<String>>{it.toArrayList()}
 
-    if(arrayList("Hello", "World") != list1) return "fail"
-    if(arrayList("Hello", "World") != list2) return "fail"
+    if(arrayListOf("Hello", "World") != list1) return "fail"
+    if(arrayListOf("Hello", "World") != list2) return "fail"
     return "OK"
   }

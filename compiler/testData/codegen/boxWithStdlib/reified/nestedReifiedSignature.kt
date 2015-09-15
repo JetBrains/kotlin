@@ -11,13 +11,13 @@ inline fun <reified T, reified R> foo(): Array<A<*,*,*>> {
         fun f4() = bar<T, Boolean>()
     }
 
-    return array(x.f1(), x.f2(), x.f3(), x.f4())
+    return arrayOf(x.f1(), x.f2(), x.f3(), x.f4())
 }
 
 fun box(): String {
     val result = foo<Double, Int>()
 
-    val expected = array(
+    val expected = arrayOf(
             Triple("java.lang.Double", "java.lang.Integer", "java.lang.Integer"),
             Triple("java.lang.Integer", "java.lang.Double", "java.lang.Integer"),
             Triple("java.lang.Boolean", "java.lang.Double", "java.lang.Integer"),

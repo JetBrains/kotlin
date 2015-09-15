@@ -4,7 +4,7 @@ fun box(): String {
 }
 
 class A: B() {
-        override var foo = array<Int?>(12, 13)
+        override var foo = arrayOf<Int?>(12, 13)
 }
 
 abstract class B {
