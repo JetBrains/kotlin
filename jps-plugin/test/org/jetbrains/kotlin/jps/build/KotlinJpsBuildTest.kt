@@ -632,7 +632,12 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
         assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
-        assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
+
+        val module2 = File(storageRoot, "targets/java-production/module2/kotlin")
+        if (module2.exists()) {
+            assert(module2.isDirectory) { "Not a directory: $module2" }
+            Assert.assertArrayEquals(arrayOf("format-version.txt"), module2.list())
+        }
     }
 
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
