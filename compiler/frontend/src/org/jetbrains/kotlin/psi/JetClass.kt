@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.navigation.ItemPresentation
-import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
@@ -26,8 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 public open class JetClass : JetClassOrObject {
     public constructor(node: ASTNode) : super(node)
@@ -37,22 +34,6 @@ public open class JetClass : JetClassOrObject {
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
         return visitor.visitClass(this, data)
-    }
-
-    public fun createPrimaryConstructorIfAbsent(): JetPrimaryConstructor {
-        val constructor = getPrimaryConstructor()
-        if (constructor != null) return constructor
-        var anchor: PsiElement? = getTypeParameterList()
-        if (anchor == null) anchor = getNameIdentifier()
-        if (anchor == null) anchor = getLastChild()
-        return addAfter(JetPsiFactory(getProject()).createPrimaryConstructor(), anchor) as JetPrimaryConstructor
-    }
-
-    public fun createPrimaryConstructorParameterListIfAbsent(): JetParameterList {
-        val constructor = createPrimaryConstructorIfAbsent()
-        val parameterList = constructor.getValueParameterList()
-        if (parameterList != null) return parameterList
-        return constructor.add(JetPsiFactory(getProject()).createParameterList("()")) as JetParameterList
     }
 
     public fun getColon(): PsiElement? = findChildByType(JetTokens.COLON)

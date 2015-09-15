@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt.createPrimaryConstructorIfAbsent;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
@@ -295,7 +296,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
         else {
             if (element instanceof JetClass) {
-                JetPrimaryConstructor constructor = ((JetClass) element).createPrimaryConstructorIfAbsent();
+                JetPrimaryConstructor constructor = createPrimaryConstructorIfAbsent((JetClass) element);
                 JetParameterList oldParameterList = constructor.getValueParameterList();
                 assert oldParameterList != null : "primary constructor from factory has parameter list";
                 newParameterList = (JetParameterList) oldParameterList.replace(newParameterList);
@@ -351,7 +352,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             PsiModificationUtilsKt.setVisibility((JetCallableDeclaration)element, newVisibilityToken);
         }
         else if (element instanceof JetClass) {
-            PsiModificationUtilsKt.setVisibility(((JetClass) element).createPrimaryConstructorIfAbsent(), newVisibilityToken);
+            PsiModificationUtilsKt.setVisibility(createPrimaryConstructorIfAbsent((JetClass) element), newVisibilityToken);
         }
         else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
     }

@@ -690,3 +690,19 @@ public fun invokeOnceOnCommandFinish(action: () -> Unit) {
 public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
 public fun FqNameBase.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
+
+public fun JetClass.createPrimaryConstructorIfAbsent(): JetPrimaryConstructor {
+    val constructor = getPrimaryConstructor()
+    if (constructor != null) return constructor
+    var anchor: PsiElement? = typeParameterList
+    if (anchor == null) anchor = nameIdentifier
+    if (anchor == null) anchor = lastChild
+    return addAfter(JetPsiFactory(project).createPrimaryConstructor(), anchor) as JetPrimaryConstructor
+}
+
+public fun JetClass.createPrimaryConstructorParameterListIfAbsent(): JetParameterList {
+    val constructor = createPrimaryConstructorIfAbsent()
+    val parameterList = constructor.valueParameterList
+    if (parameterList != null) return parameterList
+    return constructor.add(JetPsiFactory(project).createParameterList("()")) as JetParameterList
+}
