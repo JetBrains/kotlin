@@ -48,15 +48,16 @@ public annotation class JvmStatic
  * @property name the name of the element.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class JvmName(public val name: String)
 
 /**
- * Instructs the Kotlin compiler to generate a multifile class with this file as one o
+ * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
+ * Name of the corresponding multifile class is provided by the [JvmName] annotation.
  */
 @Target(AnnotationTarget.FILE)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class JvmMultifileClass
 
