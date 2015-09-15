@@ -116,8 +116,6 @@ public class MultifileClassCodegen(
             tasks: Map<CallableMemberDescriptor, () -> Unit>,
             partFqNames: List<FqName>
     ) {
-        if (files.size() == 1 && state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
-
         generateKotlinPackageReflectionField()
         MemberCodegen.generateModuleNameField(state, classBuilder)
 
