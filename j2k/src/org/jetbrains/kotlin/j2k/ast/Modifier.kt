@@ -23,6 +23,7 @@ enum class Modifier(val name: String) {
     PROTECTED("protected"),
     PRIVATE("private"),
     INTERNAL("internal"),
+    ANNOTATION("annotation"),
     ABSTRACT("abstract"),
     OPEN("open"),
     OVERRIDE("override"),

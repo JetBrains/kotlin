@@ -1,6 +1,6 @@
 package pack
 
-internal class C JvmOverloads internal constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0)
+internal class C @JvmOverloads internal constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0)
 
 object User {
     fun main() {

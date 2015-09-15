@@ -1,5 +1,5 @@
 internal class A {
-    Synchronized internal fun foo() {
+    @Synchronized internal fun foo() {
         bar()
     }
 

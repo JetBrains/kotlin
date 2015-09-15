@@ -1,5 +1,5 @@
 object C {
-    JvmStatic fun main(args: Array<String>) {
+    @JvmStatic fun main(args: Array<String>) {
         when (args.size()) {
             1 -> {
                 run {

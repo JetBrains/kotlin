@@ -3,7 +3,7 @@ internal class A {
         println("p = [$p]")
     }
 
-    Synchronized fun foo() {
+    @Synchronized fun foo() {
         foo(calcSomething())
     }
 

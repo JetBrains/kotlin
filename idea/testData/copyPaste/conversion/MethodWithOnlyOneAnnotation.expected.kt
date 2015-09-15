@@ -1,6 +1,6 @@
 package to
 
-SomeAnnotation
+@SomeAnnotation
 fun foo(): String {
     return ""
 }

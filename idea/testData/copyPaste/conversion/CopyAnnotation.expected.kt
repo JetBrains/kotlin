@@ -1,2 +1,2 @@
-Ann(String::class)
+@Ann(String::class)
 class X

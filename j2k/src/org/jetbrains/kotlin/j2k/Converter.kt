@@ -109,7 +109,7 @@ class Converter private constructor(
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element, false)
-        is PsiAnnotation -> annotationConverter.convertAnnotation(element, withAt = false, newLineAfter = false)
+        is PsiAnnotation -> annotationConverter.convertAnnotation(element, newLineAfter = false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: "")).assignPrototype(element)
         is PsiJavaCodeReferenceElement -> {
             if (element.parent is PsiReferenceList) {
@@ -280,10 +280,9 @@ class Converter private constructor(
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members,
                               classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.isEnumBody, classBody.isAnonymousClassBody)
 
-        val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),
-                     convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation)),
-                     convertModifiers(psiClass).without(Modifier.ABSTRACT),
+                     convertAnnotations(psiClass),
+                     convertModifiers(psiClass).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
                      TypeParameterList.Empty,
                      listOf(),
                      null,
@@ -427,7 +426,6 @@ class Converter private constructor(
             function.annotations += Annotations(
                     listOf(Annotation(identifier,
                                       listOf(),
-                                      withAt = false,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
 
@@ -435,7 +433,6 @@ class Converter private constructor(
             function.annotations += Annotations(
                     listOf(Annotation(Identifier("JvmOverloads").assignNoPrototype(),
                                       listOf(),
-                                      withAt = false,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
 
@@ -586,7 +583,7 @@ class Converter private constructor(
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
-        val annotation = Annotation(Identifier("Throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
+        val annotation = Annotation(Identifier("Throws").assignNoPrototype(), arguments, newLineAfter = true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 

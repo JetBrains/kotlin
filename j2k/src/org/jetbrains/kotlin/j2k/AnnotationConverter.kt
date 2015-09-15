@@ -55,7 +55,7 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.map { convertAnnotation(it, withAt = owner is PsiLocalVariable, newLineAfter = newLines) }.filterNotNull() //TODO: '@' is also needed for local classes
+            annotations.map { convertAnnotation(it, newLineAfter = newLines) }.filterNotNull() //TODO: '@' is also needed for local classes
         }
         else {
             listOf()
@@ -77,14 +77,14 @@ class AnnotationConverter(private val converter: Converter) {
             LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
         }
         return Annotation(Identifier("Deprecated").assignPrototype(deprecatedTag.getNameElement()),
-                          listOf(null to deferredExpression), withAt = false, newLineAfter = true)
+                          listOf(null to deferredExpression), newLineAfter = true)
                 .assignPrototype(deprecatedTag)
     }
 
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype() }
+                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), newLineAfter = false).assignNoPrototype() }
         return Annotations(list).assignNoPrototype()
     }
 
@@ -99,11 +99,11 @@ class AnnotationConverter(private val converter: Converter) {
         return expr.referenceName?.let { JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(it) } ?: emptySet()
     }
 
-    public fun convertAnnotation(annotation: PsiAnnotation, withAt: Boolean, newLineAfter: Boolean): Annotation? {
+    public fun convertAnnotation(annotation: PsiAnnotation, newLineAfter: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
             val deferredExpression = converter.deferredElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
-            return Annotation(Identifier("Deprecated").assignNoPrototype(), listOf(null to deferredExpression), withAt, newLineAfter).assignPrototype(annotation) //TODO: insert comment
+            return Annotation(Identifier("Deprecated").assignNoPrototype(), listOf(null to deferredExpression), newLineAfter).assignPrototype(annotation) //TODO: insert comment
         }
         if (qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_TARGET) {
             val attributes = annotation.parameterList.attributes
@@ -129,7 +129,7 @@ class AnnotationConverter(private val converter: Converter) {
                 }
             }
             return Annotation(Identifier("Target").assignNoPrototype(),
-                              deferredExpressionList, true, newLineAfter).assignPrototype(annotation)
+                              deferredExpressionList, newLineAfter).assignPrototype(annotation)
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -148,7 +148,7 @@ class AnnotationConverter(private val converter: Converter) {
 
             attrValues.map { attrName to converter.deferredElement(it) }
         }
-        return Annotation(name, arguments, withAt, newLineAfter).assignPrototype(annotation)
+        return Annotation(name, arguments, newLineAfter).assignPrototype(annotation)
     }
 
     public fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): DeferredElement<Expression>? {

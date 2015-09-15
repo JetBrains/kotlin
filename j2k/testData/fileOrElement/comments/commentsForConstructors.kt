@@ -1,5 +1,5 @@
 internal class A// this is a primary constructor
-JvmOverloads internal constructor(p: Int = 1) {
+@JvmOverloads internal constructor(p: Int = 1) {
     private val v: Int
 
     init {

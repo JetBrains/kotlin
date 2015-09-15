@@ -1,13 +1,13 @@
-annotation internal class Anon(vararg val value: String, val x: Int = 1)
+internal annotation class Anon(vararg val value: String, val x: Int = 1)
 
-Anon("a", "b")
+@Anon("a", "b")
 internal interface I1
 
-Anon("c", "d", x = 1)
+@Anon("c", "d", x = 1)
 internal interface I2
 
-Anon("c", "d", x = 1)
+@Anon("c", "d", x = 1)
 internal interface I3
 
-Anon(value = *arrayOf("c", "d"))
+@Anon(value = *arrayOf("c", "d"))
 internal interface I4

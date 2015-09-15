@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
+import org.jetbrains.kotlin.j2k.buildList
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val withAt: Boolean, val newLineAfter: Boolean) : Element() {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val newLineAfter: Boolean) : Element() {
     override fun generateCode(builder: CodeBuilder) {
-        if (withAt) builder.append("@")
+        builder.append("@")
         if (arguments.isEmpty()) {
             builder.append(name)
         }
