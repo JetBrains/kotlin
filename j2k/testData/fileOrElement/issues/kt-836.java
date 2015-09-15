@@ -18,14 +18,14 @@ public class Language implements Serializable {
 
 class Base {
   void test() {}
-  String toString() {
+  public String toString() {
     return "BASE";
   }
 }
 
 class Child extends Base {
   void test() {}
-  String toString() {
+  public String toString() {
       return "Child";
   }
 }

@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
@@ -28,9 +30,12 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import java.util.ArrayList
+import java.util.*
 
 interface J2kPostProcessing {
     fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)?
@@ -44,6 +49,7 @@ object J2KPostProcessingRegistrar {
 
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
+        _processings.add(RemoveRedundantOverrideVisibilityProcessing())
         _processings.add(MoveLambdaOutsideParenthesesProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
@@ -130,6 +136,16 @@ object J2KPostProcessingRegistrar {
             if (element !is JetTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
             return { element.delete() }
+        }
+    }
+
+    private class RemoveRedundantOverrideVisibilityProcessing : J2kPostProcessing {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallableDeclaration || !element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
+            val descriptor = element.resolveToDescriptor() as? CallableMemberDescriptor ?: return null
+            val visibilityFromSupers = OverridingUtil.findMaxVisibility(descriptor.overriddenDescriptors)?.normalize() ?: return null
+            if (visibilityFromSupers != descriptor.visibility) return null
+            return { element.visibilityModifier()?.delete() }
         }
     }
 

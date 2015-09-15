@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
 abstract class FunctionLike(
         annotations: Annotations,
@@ -43,7 +43,7 @@ class Function(
         }
 
         if (modifiers.contains(Modifier.OVERRIDE)) {
-            modifiers = modifiers.filter { it != Modifier.OPEN && it !in ACCESS_MODIFIERS }
+            modifiers = modifiers.filter { it != Modifier.OPEN }
         }
 
         return modifiers

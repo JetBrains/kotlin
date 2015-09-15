@@ -37,9 +37,12 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
     val modifiers = modifiers.toSet()
 
     override fun generateCode(builder: CodeBuilder) {
-        val text = modifiers
+        val modifiersToInclude = if (modifiers.contains(Modifier.OVERRIDE))
+            modifiers // for override members we remove redundant visibility modifiers in post-processing
+        else
+            modifiers.filter { it != Modifier.PUBLIC }
+        val text = modifiersToInclude
                 .sortedBy { it.ordinal() }
-                .filter { it != Modifier.PUBLIC }
                 .map { it.toKotlin() }
                 .joinToString(" ")
         builder.append(text)
