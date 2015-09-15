@@ -1,10 +1,10 @@
 package foo
 
 class MyCharIterator : CharIterator() {
-    val data = array('O', 'K')
+    val data = arrayOf('O', 'K')
     var i = 0
 
-    override fun hasNext(): Boolean = i < data.size
+    override fun hasNext(): Boolean = i < data.size()
     override fun nextChar(): Char = data[i++]
 }
 

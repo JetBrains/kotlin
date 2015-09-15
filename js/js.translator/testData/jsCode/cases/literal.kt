@@ -5,8 +5,8 @@ package foo
 }
 
 fun assertArrayEquals<T>(expected: Array<T>, actual: Array<T>) {
-    val expectedSize = expected.size
-    val actualSize = actual.size
+    val expectedSize = expected.size()
+    val actualSize = actual.size()
 
     if (expectedSize != actualSize) {
         throw Exception("expected size -- $expectedSize, actual size -- $actualSize")
@@ -32,7 +32,7 @@ fun box(): String {
     val obj: HasName = js("({name: 'OBJ'})")
     assertEquals("OBJ", obj.name, "Object")
 
-    assertArrayEquals(array(1, 2, 3), js("[1, 2, 3]"))
+    assertArrayEquals(arrayOf(1, 2, 3), js("[1, 2, 3]"))
 
     return "OK"
 }

@@ -17,7 +17,7 @@ val baz: Int
     }
 
 fun box(): String {
-    val a = array(0,1,2,3)
+    val a = arrayOf(0,1,2,3)
 
 
     global = ""

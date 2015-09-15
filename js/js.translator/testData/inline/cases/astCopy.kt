@@ -8,7 +8,7 @@ inline fun syntaxTestInline() {
     for (i in 1..10)
         result += 1
 
-    for (i in array(10).indices)
+    for (i in arrayOf(10).indices)
         result += i
 
     while (result < 30)

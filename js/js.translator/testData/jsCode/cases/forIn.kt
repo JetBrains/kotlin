@@ -11,8 +11,8 @@ fun countKeys(a: Array<Int>): Int = js("""
 """)
 
 fun box(): String {
-    assertEquals(3, countKeys(array(1,2,3)))
-    assertEquals(4, countKeys(array(1,2,3,4)))
+    assertEquals(3, countKeys(arrayOf(1,2,3)))
+    assertEquals(4, countKeys(arrayOf(1,2,3,4)))
 
     return "OK"
 }

@@ -20,12 +20,12 @@ fun box(): Boolean {
     assertEquals(8, d)
 
     var s: String = ""
-    for(i in array(0,1,2))
+    for(i in arrayOf(0,1,2))
         try { s += "A${i}:"} finally {}
     assertEquals("A0:A1:A2:", s)
 
     var sLong = 0L
-    var aLong = longArray(1,2,3,4,5,6,7,8,9,10)
+    var aLong = longArrayOf(1,2,3,4,5,6,7,8,9,10)
     for(i in aLong)
         sLong += i
     assertEquals(55L, sLong)

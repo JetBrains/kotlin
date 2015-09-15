@@ -57,7 +57,7 @@ fun box(): String {
     assertEquals(2, i, "break 5")
 
     i = 0
-    var bVarArray = array(true, false)
+    var bVarArray = arrayOf(true, false)
     while(i++<5) {
         if (i==2) {
             bVarArray[try { global += "A"; 0} finally {}] = 10 < (break as Int)

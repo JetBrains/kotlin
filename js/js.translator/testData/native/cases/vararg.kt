@@ -56,7 +56,7 @@ fun testSpreadOperatorWithSureCall(a: Bar?, vararg args: Int): Boolean {
 
 fun testCallOrder(vararg args: Int) =
         Bar.startNewTest() &&
-        Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
+        Bar(args.size(), 0).test(1, 1, *args) && Bar(args.size(), 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
 
 @native
@@ -105,7 +105,7 @@ fun box(): String {
     if (!spreadInPackageMethodCall(2, 1, 2))
         return "failed when call package method using spread operator"
 
-    if (!(testNativeVarargWithFunLit(1, 2, 3) { args -> args.size == 3 }))
+    if (!(testNativeVarargWithFunLit(1, 2, 3) { args -> args.size() == 3 }))
         return "failed when call native function with vararg and fun literal"
 
     if (!(testSpreadOperatorWithSafeCall(null, null)))
@@ -127,23 +127,23 @@ fun box(): String {
     if (!(baz!!)?.test(0, 1, 1))
         return "failed when combined SureCall and SafeCall, maybe we lost cached expression"
 
-    val a = array(1, 2)
+    val a = arrayOf(1, 2)
     assertEquals(2, genericParamCount(*a))
     assertEquals(7, genericParamCount(1, *a, *a, 1, 2))
 
     assertEquals(45, sumOfParameters(1, 2, 3, 4, 5, 6, 7, 8, 9))
-    assertEquals(45, sumOfParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)))
-    assertEquals(45, sumOfParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)))
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7), 8, 9) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5), *intArray(6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4), 5, 6, *intArray(7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7), 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5), *intArrayOf(6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4), 5, 6, *intArrayOf(7, 8, 9)) { 2*it })
 
-    assertEquals(2, idArrayVarArg(array(1), *array(array(2, 3, 4))).size())
-    assertEquals(3, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6))).size())
-    assertEquals(6, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6)), array(7), *array(array(8, 9), array(10, 11))).size())
+    assertEquals(2, idArrayVarArg(arrayOf(1), *arrayOf(arrayOf(2, 3, 4))).size())
+    assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size())
+    assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size())
 
     return "OK"
 }

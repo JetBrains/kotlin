@@ -23,8 +23,8 @@ fun test(expected: Int, d: dynamic, case: String) {
 }
 
 fun box(): String {
-    test(6, array(1, 2, 3), "array")
-    test(64, byteArray(42, 22), "byte array")
+    test(6, arrayOf(1, 2, 3), "array")
+    test(64, byteArrayOf(42, 22), "byte array")
     test(66, listOf(55, 3, 8), "list")
     test(167, setOf(55, 3, 8, 101), "set")
 

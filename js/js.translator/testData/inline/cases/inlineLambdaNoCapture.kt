@@ -20,9 +20,9 @@ internal fun sumEven(a: Array<Int>): Int {
 }
 
 fun box(): String {
-    assertEquals(0, sumEven(array()))
-    assertEquals(6, sumEven(array(1,2,3,4)))
-    assertEquals(12, sumEven(array(1,2,3,4,6,7,9)))
+    assertEquals(0, sumEven(arrayOf()))
+    assertEquals(6, sumEven(arrayOf(1,2,3,4)))
+    assertEquals(12, sumEven(arrayOf(1,2,3,4,6,7,9)))
 
     return "OK"
 }

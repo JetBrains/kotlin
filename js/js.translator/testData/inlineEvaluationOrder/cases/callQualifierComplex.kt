@@ -14,7 +14,7 @@ fun multiplyFunInline(): (Int, Int)->Int {
 }
 
 fun box(): String {
-    assertEquals(6, array(multiplyFun(), multiplyFunInline())[0](fizz(2), fizz(3)))
+    assertEquals(6, arrayOf(multiplyFun(), multiplyFunInline())[0](fizz(2), fizz(3)))
     assertEquals("multiplyFun();multiplyFunInline();fizz(2);fizz(3);", pullLog())
 
     return "OK"
