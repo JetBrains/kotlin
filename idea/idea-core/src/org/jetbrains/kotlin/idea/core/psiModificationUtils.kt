@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getFunctionLiteralArgumentName
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -167,6 +167,7 @@ public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordTo
         (resolveToDescriptor() as? CallableMemberDescriptor)
                 ?.overriddenDescriptors
                 ?.let { OverridingUtil.findMaxVisibility(it) }
+                ?.normalize()
                 ?.toKeyword()
     }
     else {
@@ -174,7 +175,7 @@ public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordTo
     }
 
     if (visibilityModifier == defaultVisibilityKeyword) {
-        this.visibilityModifier()?.let { removeModifier(it.node.elementType as JetModifierKeywordToken) }
+        this.visibilityModifierType()?.let { removeModifier(it) }
         return
     }
 

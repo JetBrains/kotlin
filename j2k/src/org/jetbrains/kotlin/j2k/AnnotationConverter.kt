@@ -55,7 +55,7 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.map { convertAnnotation(it, newLineAfter = newLines) }.filterNotNull() //TODO: '@' is also needed for local classes
+            annotations.map { convertAnnotation(it, newLineAfter = newLines) }.filterNotNull()
         }
         else {
             listOf()

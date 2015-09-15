@@ -402,3 +402,6 @@ public fun JetDeclaration.visibilityModifier(): PsiElement? {
                    .map { modifierList.getModifier(it as JetModifierKeywordToken) }
                    .firstOrNull { it != null }
 }
+
+public fun JetDeclaration.visibilityModifierType(): JetModifierKeywordToken?
+        = visibilityModifier()?.node?.elementType as JetModifierKeywordToken?

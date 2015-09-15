@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
@@ -32,8 +31,7 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
@@ -142,10 +140,8 @@ object J2KPostProcessingRegistrar {
     private class RemoveRedundantOverrideVisibilityProcessing : J2kPostProcessing {
         override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is JetCallableDeclaration || !element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
-            val descriptor = element.resolveToDescriptor() as? CallableMemberDescriptor ?: return null
-            val visibilityFromSupers = OverridingUtil.findMaxVisibility(descriptor.overriddenDescriptors)?.normalize() ?: return null
-            if (visibilityFromSupers != descriptor.visibility) return null
-            return { element.visibilityModifier()?.delete() }
+            val modifier = element.visibilityModifierType() ?: return null
+            return { element.setVisibility(modifier) }
         }
     }
 
