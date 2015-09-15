@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
+import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter.AbiVersionErrorData;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,7 +74,11 @@ public final class AnalyzerWithCompilerReport {
         messageCollector = new MessageSeverityCollector(collector);
     }
 
-    private static boolean reportDiagnostic(@NotNull Diagnostic diagnostic, @NotNull MessageCollector messageCollector) {
+    private static boolean reportDiagnostic(
+            @NotNull Diagnostic diagnostic,
+            @NotNull MessageCollector messageCollector,
+            boolean incompatibleFilesFound
+    ) {
         if (!diagnostic.isValid()) return false;
 
         String render;
@@ -81,6 +87,12 @@ public final class AnalyzerWithCompilerReport {
         }
         else {
             render = DefaultErrorMessages.render(diagnostic);
+        }
+
+        if (incompatibleFilesFound && Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+            render += "\n(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin " +
+                      "were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. " +
+                      "See below for more information)";
         }
 
         PsiFile file = diagnostic.getPsiFile();
@@ -137,15 +149,23 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    private void reportAbiVersionErrors() {
+    @NotNull
+    private List<AbiVersionErrorData> getAbiVersionErrors() {
         assert analysisResult != null;
         BindingContext bindingContext = analysisResult.getBindingContext();
 
         Collection<String> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
+        List<AbiVersionErrorData> result = new ArrayList<AbiVersionErrorData>(errorClasses.size());
         for (String kotlinClass : errorClasses) {
-            TraceBasedErrorReporter.AbiVersionErrorData data = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
-            assert data != null;
-            String path = toSystemDependentName(kotlinClass);
+            result.add(bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass));
+        }
+
+        return result;
+    }
+
+    private void reportAbiVersionErrors(@NotNull List<AbiVersionErrorData> errors) {
+        for (AbiVersionErrorData data : errors) {
+            String path = toSystemDependentName(data.getFilePath());
             messageCollector.report(
                     CompilerMessageSeverity.ERROR,
                     "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
@@ -155,12 +175,20 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector messageCollector) {
+    private static boolean reportDiagnostics(
+            @NotNull Diagnostics diagnostics,
+            @NotNull MessageCollector messageCollector,
+            boolean incompatibleFilesFound
+    ) {
         boolean hasErrors = false;
         for (Diagnostic diagnostic : sortedDiagnostics(diagnostics.all())) {
-            hasErrors |= reportDiagnostic(diagnostic, messageCollector);
+            hasErrors |= reportDiagnostic(diagnostic, messageCollector, incompatibleFilesFound);
         }
         return hasErrors;
+    }
+
+    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector collector) {
+        return reportDiagnostics(diagnostics, collector, false);
     }
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
@@ -194,7 +222,7 @@ public final class AnalyzerWithCompilerReport {
 
             private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
                 MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
-                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
+                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector, false);
                 if (element.getTextRange().getStartOffset() != file.getTextRange().getEndOffset()) {
                     allErrorsAtEof = false;
                 }
@@ -225,10 +253,12 @@ public final class AnalyzerWithCompilerReport {
 
     public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalysisResult> analyzer) {
         analysisResult = analyzer.invoke();
-        reportAbiVersionErrors();
         reportSyntaxErrors(files);
-        //noinspection ConstantConditions
-        reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollector);
+        List<AbiVersionErrorData> abiVersionErrors = getAbiVersionErrors();
+        reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollector, !abiVersionErrors.isEmpty());
+        if (hasErrors()) {
+            reportAbiVersionErrors(abiVersionErrors);
+        }
         reportIncompleteHierarchies();
         reportAlternativeSignatureErrors();
     }
