@@ -1,5 +1,5 @@
 import java.util.*
 
-interface I<T : List<Iterator<String>>>
+internal interface I<T : List<Iterator<String>>>
 
-class C : I<ArrayList<Iterator<String>>>
+internal class C : I<ArrayList<Iterator<String>>>

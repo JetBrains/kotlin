@@ -1,4 +1,4 @@
-fun foo(a: Int): Int {
+internal fun foo(a: Int): Int {
     when (a) {
         1 -> {
             println("1")

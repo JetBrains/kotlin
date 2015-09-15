@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
-import java.util.HashSet
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
 enum class Modifier(val name: String) {
     PUBLIC("public"),
     PROTECTED("protected"),
     PRIVATE("private"),
+    INTERNAL("internal"),
     ABSTRACT("abstract"),
     OPEN("open"),
     OVERRIDE("override"),
@@ -31,13 +31,18 @@ enum class Modifier(val name: String) {
     public fun toKotlin(): String = name
 }
 
-val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE)
+val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE, Modifier.INTERNAL)
 
 class Modifiers(modifiers: Collection<Modifier>) : Element() {
     val modifiers = modifiers.toSet()
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(modifiers.sortBy { it.ordinal() }.map { it.toKotlin() }.joinToString(" "))
+        val text = modifiers
+                .sortedBy { it.ordinal() }
+                .filter { it != Modifier.PUBLIC }
+                .map { it.toKotlin() }
+                .joinToString(" ")
+        builder.append(text)
     }
 
     override val isEmpty: Boolean
@@ -55,7 +60,7 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
     val isPublic: Boolean get() = contains(Modifier.PUBLIC)
     val isPrivate: Boolean get() = contains(Modifier.PRIVATE)
     val isProtected: Boolean get() = contains(Modifier.PROTECTED)
-    val isInternal: Boolean get() = accessModifier() == null
+    val isInternal: Boolean get() = contains(Modifier.INTERNAL)
 
     fun accessModifier(): Modifier? = modifiers.firstOrNull { it in ACCESS_MODIFIERS }
 

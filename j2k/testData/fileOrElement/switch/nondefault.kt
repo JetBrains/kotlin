@@ -1,5 +1,5 @@
-public object NonDefault {
-    JvmStatic public fun main(args: Array<String>) {
+object NonDefault {
+    JvmStatic fun main(args: Array<String>) {
 
         val value = 3
         var valueString = ""

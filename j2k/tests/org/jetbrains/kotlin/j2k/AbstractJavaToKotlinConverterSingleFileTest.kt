@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.j2k
 
-import java.io.File
-import com.intellij.openapi.util.io.FileUtil
-import java.util.regex.Pattern
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.test.JetTestUtils
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
-import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
+import java.util.regex.Pattern
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -111,13 +111,13 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replace("class C {", "").replace("object C {", "")
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replace("internal class C {", "").replace("internal object C {", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val result = methodToKotlin("void main() {" + text + "}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main() {", "").trim()
+        return result.substring(0, result.lastIndexOf("}")).replaceFirst("internal fun main() {", "").trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {

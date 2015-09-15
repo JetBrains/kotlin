@@ -1,7 +1,7 @@
-abstract class A
+internal abstract class A
 
-class C {
-    fun foo() {
+internal class C {
+    internal fun foo() {
         val a = object : A() {
             override fun toString(): String {
                 return "a"

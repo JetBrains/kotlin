@@ -1,9 +1,9 @@
-interface I {
-    public fun getInt(): Int
+internal interface I {
+    fun getInt(): Int
 }
 
-class C {
-    fun getObject(): Any? {
+internal class C {
+    internal fun getObject(): Any? {
         foo(object : I {
             override fun getInt(): Int {
                 return 0
@@ -12,8 +12,8 @@ class C {
         return string
     }
 
-    fun foo(i: I) {
+    internal fun foo(i: I) {
     }
 
-    var string: String? = null
+    internal var string: String? = null
 }

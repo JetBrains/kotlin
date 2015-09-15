@@ -1,4 +1,4 @@
-class C(p: Int) {
+internal class C(p: Int) {
     private val p: Int
 
     init {

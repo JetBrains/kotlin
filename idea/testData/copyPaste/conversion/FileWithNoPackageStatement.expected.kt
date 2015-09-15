@@ -1,7 +1,7 @@
 package to
 
-public object JavaClass {
-    JvmStatic public fun main(args: Array<String>) {
+object JavaClass {
+    JvmStatic fun main(args: Array<String>) {
         println("Hello, world!")
     }
 }

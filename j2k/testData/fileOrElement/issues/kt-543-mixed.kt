@@ -1,10 +1,10 @@
 package demo
 
-class Test {
-    fun putInt(i: Int?) {
+internal class Test {
+    internal fun putInt(i: Int?) {
     }
 
-    fun test() {
+    internal fun test() {
         val i = 10
         putInt(i)
     }

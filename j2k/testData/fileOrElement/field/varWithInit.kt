@@ -1,4 +1,4 @@
 // ERROR: Unresolved reference: Foo
-class C {
-    var f = Foo(1, 2)
+internal class C {
+    internal var f = Foo(1, 2)
 }

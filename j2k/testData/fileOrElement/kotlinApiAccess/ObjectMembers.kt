@@ -1,7 +1,7 @@
 import kotlinApi.KotlinObject
 
-class C {
-    fun foo(): Int {
+internal class C {
+    internal fun foo(): Int {
         KotlinObject.property1 = 1
         KotlinObject.property2 = 2
         return KotlinObject.foo() + KotlinObject.property1 + KotlinObject.property2

@@ -3,40 +3,40 @@ package test
 import javaApi.*
 import java.util.Collections
 
-class Test {
-    public fun memberFun(): Int {
+internal class Test {
+    fun memberFun(): Int {
         return 1
     }
 
-    public constructor(i: Int) : super() {
+    constructor(i: Int) : super() {
     }
 
-    public constructor() {
+    constructor() {
     }
 
     companion object {
-        public var field: Java8Class = Java8Class()
-        public fun staticFun(): Java8Class {
+        var field: Java8Class = Java8Class()
+        fun staticFun(): Java8Class {
             return Java8Class()
         }
 
-        public fun testOverloads(): String {
+        fun testOverloads(): String {
             return "1"
         }
 
-        public fun testOverloads(i: Int): String {
+        fun testOverloads(i: Int): String {
             return "2"
         }
     }
 }
 
-class Test2
+internal class Test2
 
-class Java8Class {
+internal class Java8Class {
     private val field = Java8Class()
     private val h = MethodReferenceHelperClass()
 
-    public fun testStaticFunction() {
+    fun testStaticFunction() {
         val staticFunFromSameClass = JFunction0 { staticFun() }
         staticFunFromSameClass.foo()
         MethodReferenceHelperClass.staticFun0 { staticFun() }
@@ -48,14 +48,14 @@ class Java8Class {
         h.memberFun0 { Test.staticFun() }
     }
 
-    public fun testMemberFunctionThroughClass() {
+    fun testMemberFunctionThroughClass() {
         val memberFunFromClass = JFunction2<Java8Class, Int> { it.memberFun() }
         memberFunFromClass.foo(Java8Class())
         MethodReferenceHelperClass.staticFun2(JFunction2<Any, Any> { memberFun() })
         h.memberFun2(JFunction2<Any, Any> { memberFun() })
     }
 
-    public fun testMemberFunctionThroughObject() {
+    fun testMemberFunctionThroughObject() {
         val obj = Java8Class()
         val memberFunFromSameClass = JFunction0 { obj.memberFun() }
         memberFunFromSameClass.foo()
@@ -84,7 +84,7 @@ class Java8Class {
         h.memberFun0 { Test.staticFun().memberFun() }
     }
 
-    public fun testConstructor() {
+    fun testConstructor() {
         val constructorSameClass = JFunction0 { Java8Class() }
         constructorSameClass.foo()
         MethodReferenceHelperClass.staticFun0 { Java8Class() }
@@ -116,7 +116,7 @@ class Java8Class {
         h.memberFun0 { Test2() }
     }
 
-    public fun testLibraryFunctions() {
+    fun testLibraryFunctions() {
         val memberFunFromClass = JFunction2<String, Int> { it.length() }
         memberFunFromClass.foo("str")
 
@@ -124,7 +124,7 @@ class Java8Class {
         Runnable { System.out.println() }.run()
     }
 
-    public fun testOverloads() {
+    fun testOverloads() {
         val constructorWithoutParams = JFunction1 { Test.testOverloads() }
         constructorWithoutParams.foo()
         MethodReferenceHelperClass.staticFun1 { Test.testOverloads() }
@@ -136,20 +136,20 @@ class Java8Class {
         h.memberFun2(JFunction2<Int, String> { Test.testOverloads(it) })
     }
 
-    public fun testGenericFunctions() {
+    fun testGenericFunctions() {
         val emptyList = JFunction1<List<String>> { Collections.emptyList() }
         emptyList.foo()
         MethodReferenceHelperClass.staticFun1(JFunction1<List<String>> { Collections.emptyList() })
         h.memberFun1(JFunction1<List<String>> { Collections.emptyList() })
     }
 
-    public fun memberFun(): Int {
+    fun memberFun(): Int {
         return 1
     }
 
     companion object {
 
-        public fun staticFun(): Int {
+        fun staticFun(): Int {
             return 1
         }
     }

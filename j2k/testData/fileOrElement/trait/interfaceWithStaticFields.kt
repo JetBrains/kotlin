@@ -1,7 +1,7 @@
-public interface INode {
+interface INode {
     companion object {
-        public val IN: String = "in"
-        public val AT: String = "@"
-        public val COMMA_WITH_SPACE: String = COMMA + SPACE
+        val IN: String = "in"
+        val AT: String = "@"
+        val COMMA_WITH_SPACE: String = COMMA + SPACE
     }
 }

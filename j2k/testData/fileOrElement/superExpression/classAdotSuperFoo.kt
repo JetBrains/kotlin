@@ -1,13 +1,13 @@
 package a.b
 
-open class Base {
-    fun foo() {
+internal open class Base {
+    internal fun foo() {
     }
 }
 
-class A : Base() {
-    inner class C {
-        fun test() {
+internal class A : Base() {
+    internal inner class C {
+        internal fun test() {
             super@A.foo()
         }
     }

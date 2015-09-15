@@ -1,1 +1,1 @@
-public interface Test
+interface Test

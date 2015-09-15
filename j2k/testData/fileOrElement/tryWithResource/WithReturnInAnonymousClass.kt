@@ -1,13 +1,13 @@
 import java.io.*
 
-interface I {
+internal interface I {
     Throws(IOException::class)
-    public fun doIt(stream: InputStream): Int
+    fun doIt(stream: InputStream): Int
 }
 
-public class C {
+class C {
     Throws(IOException::class)
-    fun foo() {
+    internal fun foo() {
         ByteArrayInputStream(ByteArray(10)).use { stream ->
             bar(object : I {
                 Throws(IOException::class)
@@ -19,7 +19,7 @@ public class C {
     }
 
     Throws(IOException::class)
-    fun bar(i: I, stream: InputStream): Int {
+    internal fun bar(i: I, stream: InputStream): Int {
         return i.doIt(stream)
     }
 }

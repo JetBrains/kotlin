@@ -1,5 +1,5 @@
-class C {
-    fun foo(p: Boolean): Int {
+internal class C {
+    internal fun foo(p: Boolean): Int {
         var a: Int
         var b: Int
         a = 10

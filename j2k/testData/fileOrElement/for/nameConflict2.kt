@@ -1,5 +1,5 @@
-class A {
-    fun foo() {
+internal class A {
+    internal fun foo() {
         run {
             var i = 1
             var j = 0

@@ -1,7 +1,7 @@
 import javaApi.Base
 
-class C : Base() {
-    public fun f() {
+internal class C : Base() {
+    fun f() {
         val other = Base()
         val value = other.property + property
         other.property = 1

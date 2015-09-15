@@ -1,4 +1,4 @@
 // ERROR: Unresolved reference: Foo
-class C {
-    val f = Foo(1, 2)
+internal class C {
+    internal val f = Foo(1, 2)
 }

@@ -1,5 +1,5 @@
-class C(x: String) {
-    public var x: Any
+internal class C(x: String) {
+    var x: Any
 
     init {
         this.x = x

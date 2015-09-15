@@ -1,8 +1,8 @@
 import java.io.*
 
-public class C {
+class C {
     Throws(IOException::class)
-    fun foo() {
+    internal fun foo() {
         ByteArrayInputStream(ByteArray(10)).use { stream ->
             // reading something
             val c = stream.read()

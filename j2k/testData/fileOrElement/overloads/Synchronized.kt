@@ -1,9 +1,9 @@
-class A {
-    public fun foo(p: Int) {
+internal class A {
+    fun foo(p: Int) {
         println("p = [$p]")
     }
 
-    Synchronized public fun foo() {
+    Synchronized fun foo() {
         foo(calcSomething())
     }
 

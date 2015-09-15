@@ -1,4 +1,4 @@
-public enum class E {
+enum class E {
     A,
 
     B {
@@ -6,6 +6,6 @@ public enum class E {
         }
     };
 
-    open fun bar() {
+    internal open fun bar() {
     }
 }

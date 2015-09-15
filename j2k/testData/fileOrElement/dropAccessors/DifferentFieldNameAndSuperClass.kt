@@ -1,5 +1,5 @@
-public open class Base(x: Int) {
-    public var x: Int = 42
+open class Base internal constructor(x: Int) {
+    var x: Int = 42
         protected set
 
     init {
@@ -7,4 +7,4 @@ public open class Base(x: Int) {
     }
 }
 
-class Derived(b: Base) : Base(b.x)
+internal class Derived internal constructor(b: Base) : Base(b.x)

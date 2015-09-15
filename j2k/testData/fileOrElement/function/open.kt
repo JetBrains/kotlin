@@ -1,3 +1,3 @@
-fun getString(): String {
+internal fun getString(): String {
     return ""
 }

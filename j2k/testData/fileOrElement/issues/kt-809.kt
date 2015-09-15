@@ -1,20 +1,20 @@
 package demo
 
-class Container {
-    var myInt = 1
+internal class Container {
+    internal var myInt = 1
 }
 
-object One {
-    var myContainer = Container()
+internal object One {
+    internal var myContainer = Container()
 }
 
-class IntContainer(i: Int)
+internal class IntContainer internal constructor(i: Int)
 
-class Test {
-    fun putInt(i: Int) {
+internal class Test {
+    internal fun putInt(i: Int) {
     }
 
-    fun test() {
+    internal fun test() {
         putInt(One.myContainer.myInt)
         IntContainer(One.myContainer.myInt)
     }

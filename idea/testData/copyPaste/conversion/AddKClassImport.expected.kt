@@ -2,4 +2,4 @@ package to
 
 import kotlin.reflect.KClass
 
-annotation class Ann(public val value: KClass<Any>)
+annotation internal class Ann(val value: KClass<Any>)

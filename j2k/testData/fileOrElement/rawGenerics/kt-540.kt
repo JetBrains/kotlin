@@ -3,8 +3,8 @@ package demo
 
 import java.util.ArrayList
 
-class Test {
-    fun main() {
+internal class Test {
+    internal fun main() {
         val common = ArrayList<String>()
         val raw = ArrayList<String>()
         val superRaw = ArrayList()

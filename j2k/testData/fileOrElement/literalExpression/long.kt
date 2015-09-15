@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private var l1 = 1L
     private var l2: Long = 1
     private val l3 = 1L
@@ -8,13 +8,13 @@ class A {
     private val l7 = +1
     private val l8 = +1L
 
-    fun foo1(l: Long) {
+    internal fun foo1(l: Long) {
     }
 
-    fun foo2(l: Long?) {
+    internal fun foo2(l: Long?) {
     }
 
-    fun bar() {
+    internal fun bar() {
         foo1(1)
         foo1(1L)
         foo2(1L)

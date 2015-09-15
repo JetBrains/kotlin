@@ -1,11 +1,11 @@
-open class Base(nested: Base.Nested) {
+internal open class Base internal constructor(nested: Base.Nested) {
 
-    class Nested(p: Int) {
+    internal class Nested internal constructor(p: Int) {
         companion object {
 
-            public val FIELD: Int = 0
+            val FIELD: Int = 0
         }
     }
 }
 
-class Derived : Base(Base.Nested(Base.Nested.FIELD))
+internal class Derived internal constructor() : Base(Base.Nested(Base.Nested.FIELD))

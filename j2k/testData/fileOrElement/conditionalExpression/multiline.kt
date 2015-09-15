@@ -1,4 +1,4 @@
-fun foo(b: Boolean) {
+internal fun foo(b: Boolean) {
     if (b)
         println("true")
     else

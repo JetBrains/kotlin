@@ -1,11 +1,11 @@
-public class AAA {
-    public var x: Int = 42
+class AAA {
+    var x: Int = 42
 
-    public fun foo() {
+    fun foo() {
         x = x + 1
     }
 
-    public fun bar(b: B) {
+    fun bar(b: B) {
         println(b.YY)
     }
 }

@@ -1,11 +1,11 @@
-class A {
-    public class Nested {
-        fun foo() {
+internal class A {
+    class Nested {
+        internal fun foo() {
             privateStatic1()
         }
     }
 
-    fun bar() {
+    internal fun bar() {
         privateStatic2()
     }
 

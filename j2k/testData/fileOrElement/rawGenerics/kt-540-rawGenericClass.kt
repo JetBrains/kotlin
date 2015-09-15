@@ -1,13 +1,13 @@
 package demo
 
-class Collection<E>(e: E) {
+internal class Collection<E> internal constructor(e: E) {
     init {
         println(e)
     }
 }
 
-class Test {
-    fun main() {
+internal class Test {
+    internal fun main() {
         val raw1 = Collection(1)
         val raw2 = Collection(1)
         val raw3 = Collection("1")

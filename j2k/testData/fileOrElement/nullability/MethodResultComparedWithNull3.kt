@@ -1,9 +1,9 @@
-interface I {
-    public fun getString(): String?
+internal interface I {
+    fun getString(): String?
 }
 
-class C {
-    fun foo(i: I) {
+internal class C {
+    internal fun foo(i: I) {
         val result = i.getString()
         if (result != null) {
             print(result)

@@ -1,5 +1,5 @@
 package to
 
-public fun foo(): String {
+fun foo(): String {
     return ""
 }

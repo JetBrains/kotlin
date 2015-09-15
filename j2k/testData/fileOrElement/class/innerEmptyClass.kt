@@ -1,3 +1,3 @@
-class A {
-    inner class B
+internal class A {
+    internal inner class B
 }

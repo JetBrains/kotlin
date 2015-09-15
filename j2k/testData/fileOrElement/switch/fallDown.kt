@@ -1,7 +1,7 @@
 package switch_demo
 
-public object SwitchDemo {
-    JvmStatic public fun main(args: Array<String>) {
+object SwitchDemo {
+    JvmStatic fun main(args: Array<String>) {
         val month = 8
         val monthString: String
         when (month) {

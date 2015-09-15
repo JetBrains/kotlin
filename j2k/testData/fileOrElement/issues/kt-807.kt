@@ -4,8 +4,8 @@
 // ERROR: Unresolved reference: close
 import java.io.*
 
-object FileRead {
-    JvmStatic public fun main(args: Array<String>) {
+internal object FileRead {
+    JvmStatic fun main(args: Array<String>) {
         try {
             val fstream = FileInputStream()
             val `in` = DataInputStream(fstream)

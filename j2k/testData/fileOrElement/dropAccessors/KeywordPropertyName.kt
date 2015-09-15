@@ -1,7 +1,7 @@
-class C {
-    public val `this`: Int = 0
+internal class C {
+    val `this`: Int = 0
 
-    fun foo() {
+    internal fun foo() {
         println(`this`)
     }
 }

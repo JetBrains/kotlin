@@ -1,7 +1,7 @@
-object Outer {
+internal object Outer {
     private class Nested1() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -13,7 +13,7 @@ object Outer {
 
     protected class Nested2() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -24,9 +24,9 @@ object Outer {
 
     }
 
-    class Nested3() {
+    internal class Nested3() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -36,9 +36,9 @@ object Outer {
         }
     }
 
-    public class Nested4() {
+    class Nested4() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -48,7 +48,7 @@ object Outer {
         }
     }
 
-    fun foo() {
+    internal fun foo() {
         val nested1 = Nested1(1)
         val nested2 = Nested2(2)
         val nested3 = Nested3(3)

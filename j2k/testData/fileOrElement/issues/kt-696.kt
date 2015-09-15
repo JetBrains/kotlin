@@ -1,6 +1,6 @@
 package test
 
-open class Base {
+internal open class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -14,7 +14,7 @@ open class Base {
     }
 }
 
-class Child : Base() {
+internal class Child : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }

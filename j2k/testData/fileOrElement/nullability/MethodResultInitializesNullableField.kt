@@ -1,10 +1,10 @@
 // ERROR: Unresolved reference: x
-class C {
+internal class C {
     private val string = getString()
 
     companion object {
 
-        fun getString(): String? {
+        internal fun getString(): String? {
             return x()
         }
     }

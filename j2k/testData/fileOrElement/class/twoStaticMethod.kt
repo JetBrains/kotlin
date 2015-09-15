@@ -1,9 +1,9 @@
-object S {
-    fun sB(): Boolean {
+internal object S {
+    internal fun sB(): Boolean {
         return true
     }
 
-    fun sI(): Int {
+    internal fun sI(): Int {
         return 1
     }
 }

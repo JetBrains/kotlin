@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private var f1 = 1.0f
     private val f2 = 1.0f
     private val f3 = 1f
@@ -8,13 +8,13 @@ class A {
     private val f7 = -1f
     private val f8 = +1f
 
-    fun foo1(f: Float) {
+    internal fun foo1(f: Float) {
     }
 
-    fun foo2(f: Float?) {
+    internal fun foo2(f: Float?) {
     }
 
-    fun bar() {
+    internal fun bar() {
         foo1(1f)
         foo2(1f)
         foo1(1f)

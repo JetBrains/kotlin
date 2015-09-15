@@ -1,31 +1,31 @@
 // ERROR: Property must be initialized or be abstract
-public class Test {
+class Test {
     private val myName: String
-    var a: Boolean = false
-    var b: Double = 0.toDouble()
-    var c: Float = 0.toFloat()
-    var d: Long = 0
-    var e: Int = 0
+    internal var a: Boolean = false
+    internal var b: Double = 0.toDouble()
+    internal var c: Float = 0.toFloat()
+    internal var d: Long = 0
+    internal var e: Int = 0
     protected var f: Short = 0
     protected var g: Char = ' '
 
-    public constructor() {
+    constructor() {
     }
 
-    public constructor(name: String) {
+    constructor(name: String) {
         myName = foo(name)
     }
 
     companion object {
 
-        fun foo(n: String): String {
+        internal fun foo(n: String): String {
             return ""
         }
     }
 }
 
-public object User {
-    public fun main() {
+object User {
+    fun main() {
         val t = Test("name")
     }
 }

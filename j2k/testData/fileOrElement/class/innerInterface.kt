@@ -1,3 +1,3 @@
-class A {
-    interface I
+internal class A {
+    internal interface I
 }

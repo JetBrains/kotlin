@@ -1,7 +1,7 @@
 import java.util.ArrayList
 
-class Boxing {
-    fun test() {
+internal class Boxing {
+    internal fun test() {
         var i: Int? = 0
         val n = 0.0f
         i = 1

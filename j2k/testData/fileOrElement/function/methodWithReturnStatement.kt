@@ -1,3 +1,3 @@
-fun isTrue(): Boolean {
+internal fun isTrue(): Boolean {
     return true
 }

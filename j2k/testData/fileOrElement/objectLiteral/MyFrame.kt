@@ -1,23 +1,23 @@
 package demo
 
-interface WindowListener {
-    public fun windowClosing()
+internal interface WindowListener {
+    fun windowClosing()
 }
 
-interface EmptyWindowListener
-open class EmptyWindowAdapter
+internal interface EmptyWindowListener
+internal open class EmptyWindowAdapter
 
-open class WindowAdapter : WindowListener {
+internal open class WindowAdapter : WindowListener {
     override fun windowClosing() {
     }
 }
 
-open class Frame {
-    public fun addWindowListener(listener: WindowListener) {
+internal open class Frame {
+    fun addWindowListener(listener: WindowListener) {
     }
 }
 
-public class Client : Frame() {
+class Client internal constructor() : Frame() {
     init {
         val a = object : WindowAdapter() {
             override fun windowClosing() {

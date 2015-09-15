@@ -1,5 +1,5 @@
 // !specifyLocalVariableTypeByDefault: true
-fun foo(b: Boolean) {
+internal fun foo(b: Boolean) {
     var s: String? = "abc"
     if (b) {
         s = null

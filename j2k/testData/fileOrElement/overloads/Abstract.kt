@@ -1,7 +1,7 @@
-abstract class A {
-    public abstract fun foo(p: Int)
+internal abstract class A {
+    abstract fun foo(p: Int)
 
-    public fun foo() {
+    fun foo() {
         foo(1)
     }
 }

@@ -1,4 +1,4 @@
-fun foo() {
+internal fun foo() {
     var o: Any? = ""
     if (p) o = null
 }

@@ -1,10 +1,10 @@
-class F {
+internal class F {
 
     //c1
 
     /*c2*/
 
-    fun f1() {
+    internal fun f1() {
     }
 
 
@@ -13,12 +13,12 @@ class F {
 
     //c4
 
-    fun f2() {
+    internal fun f2() {
     }
 
-    var i: Int? = 0
+    internal var i: Int? = 0
 
-    fun f3() {
+    internal fun f3() {
     }
 
     //c5

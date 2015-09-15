@@ -1,15 +1,15 @@
 package demo
 
-class Container {
-    var myInt = 1
+internal class Container {
+    internal var myInt = 1
 }
 
-object One {
-    var myContainer = Container()
+internal object One {
+    internal var myContainer = Container()
 }
 
-class Test {
-    fun test() {
+internal class Test {
+    internal fun test() {
         val b = One.myContainer.myInt.toByte()
     }
 }

@@ -1,2 +1,2 @@
-fun fromArrayToCollection(a: Array<Foo>) {
+internal fun fromArrayToCollection(a: Array<Foo>) {
 }

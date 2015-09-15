@@ -1,10 +1,10 @@
-class T {
-    fun main() {
+internal class T {
+    internal fun main() {
     }
 
-    fun i(): Int {
+    internal fun i(): Int {
     }
 
-    fun s(): String {
+    internal fun s(): String {
     }
 }

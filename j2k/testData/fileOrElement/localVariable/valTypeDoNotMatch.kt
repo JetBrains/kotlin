@@ -1,3 +1,3 @@
-fun foo() {
+internal fun foo() {
     val o = ""
 }

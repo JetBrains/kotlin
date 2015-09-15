@@ -1,2 +1,2 @@
-fun main(): String {
+internal fun main(): String {
 }

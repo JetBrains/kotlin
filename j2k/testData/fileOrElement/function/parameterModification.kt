@@ -1,4 +1,4 @@
-fun foo(p1: Int, p2: Int, p3: Int): Int {
+internal fun foo(p1: Int, p2: Int, p3: Int): Int {
     var p1 = p1
     var p3 = p3
     p1++

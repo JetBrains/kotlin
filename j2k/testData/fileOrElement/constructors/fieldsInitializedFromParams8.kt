@@ -1,3 +1,3 @@
-open class Base(o: Any, l: Int)
+internal open class Base internal constructor(o: Any, l: Int)
 
-class C(private val string: String) : Base(string, string.length())
+internal class C(private val string: String) : Base(string, string.length())

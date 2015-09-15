@@ -1,8 +1,8 @@
 package demo
 
-class Test(i: Int) {
+internal class Test internal constructor(i: Int) {
 
-    fun test() {
+    internal fun test() {
         val b = 10
         Test(b.toInt())
     }

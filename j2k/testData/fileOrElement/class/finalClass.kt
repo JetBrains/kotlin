@@ -1,1 +1,1 @@
-class Test
+internal class Test

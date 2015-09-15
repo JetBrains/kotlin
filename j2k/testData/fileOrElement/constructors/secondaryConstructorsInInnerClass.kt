@@ -1,7 +1,7 @@
-class Outer {
+internal class Outer {
     private inner class Inner1() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -13,7 +13,7 @@ class Outer {
 
     protected inner class Inner2() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -24,9 +24,9 @@ class Outer {
 
     }
 
-    inner class Inner3() {
+    internal inner class Inner3() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -36,9 +36,9 @@ class Outer {
         }
     }
 
-    public inner class Inner4() {
+    inner class Inner4() {
 
-        public constructor(a: Int) : this() {
+        constructor(a: Int) : this() {
         }
 
         protected constructor(c: Char) : this() {
@@ -48,7 +48,7 @@ class Outer {
         }
     }
 
-    fun foo() {
+    internal fun foo() {
         val inner1 = Inner1(1)
         val inner2 = Inner2(2)
         val inner3 = Inner3(3)

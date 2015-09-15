@@ -1,13 +1,13 @@
 package demo
 
-class Container {
-    var myInt = 1
+internal class Container {
+    internal var myInt = 1
 }
 
-object One {
-    var myContainer = Container()
+internal object One {
+    internal var myContainer = Container()
 }
 
-class Test {
-    var b = One.myContainer.myInt.toByte()
+internal class Test {
+    internal var b = One.myContainer.myInt.toByte()
 }

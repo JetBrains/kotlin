@@ -1,9 +1,9 @@
-class C {
-    public var s: String? = ""
+internal class C {
+    var s: String? = ""
 }
 
-class D {
-    fun foo(c: C) {
+internal class D {
+    internal fun foo(c: C) {
         if (null == c.s) {
             println("null")
         }

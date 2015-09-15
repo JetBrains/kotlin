@@ -1,1 +1,1 @@
-class CC<T : INode, K : Node> : A() where T : Comparable<T>, K : Collection<in K>
+internal class CC<T : INode, K : Node> : A() where T : Comparable<T>, K : Collection<in K>

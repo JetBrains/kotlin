@@ -572,7 +572,8 @@ class Converter private constructor(
             PsiModifier.ABSTRACT to Modifier.ABSTRACT,
             PsiModifier.PUBLIC to Modifier.PUBLIC,
             PsiModifier.PROTECTED to Modifier.PROTECTED,
-            PsiModifier.PRIVATE to Modifier.PRIVATE
+            PsiModifier.PRIVATE to Modifier.PRIVATE,
+            PsiModifier.PACKAGE_LOCAL to Modifier.INTERNAL
     )
 
     private fun convertThrows(method: PsiMethod): Annotations {

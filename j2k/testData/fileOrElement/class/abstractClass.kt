@@ -1,7 +1,7 @@
-abstract class A {
-    abstract fun callme()
+internal abstract class A {
+    internal abstract fun callme()
 
-    fun callmetoo() {
+    internal fun callmetoo() {
         print("This is a concrete method.")
     }
 }

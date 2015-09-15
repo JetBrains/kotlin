@@ -1,11 +1,11 @@
 // ERROR: Type mismatch: inferred type is T? but T was expected
 import java.util.*
 
-class A<T> {
-    fun foo(nonMutableCollection: Collection<String>,
-            mutableCollection: MutableCollection<String>,
-            mutableSet: MutableSet<T>,
-            mutableMap: MutableMap<String, T>) {
+internal class A<T> {
+    internal fun foo(nonMutableCollection: Collection<String>,
+                     mutableCollection: MutableCollection<String>,
+                     mutableSet: MutableSet<T>,
+                     mutableMap: MutableMap<String, T>) {
         mutableCollection.addAll(nonMutableCollection)
         mutableSet.add(mutableMap.remove("a"))
     }

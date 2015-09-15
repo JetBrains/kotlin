@@ -1,7 +1,7 @@
-class A {
-    var list: List<String>? = null
+internal class A {
+    internal var list: List<String>? = null
 
-    fun foo() {
+    internal fun foo() {
         for (e in list!!) {
             println(e)
         }

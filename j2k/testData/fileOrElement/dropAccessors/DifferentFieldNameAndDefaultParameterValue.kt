@@ -1,1 +1,1 @@
-public class C JvmOverloads constructor(c: C, public val x: Int = c.x)
+class C JvmOverloads internal constructor(c: C, val x: Int = c.x)

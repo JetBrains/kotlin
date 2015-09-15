@@ -9,7 +9,7 @@ This is a block comment
 //one line comment of class
 //another one
 /*another doc*/
-class C {
+internal class C {
     // This is a class comment
 
     /**
@@ -20,25 +20,25 @@ class C {
     /**
      * This is a function doc comment.
      */
-    public fun foo() {
+    fun foo() {
         /* This is a function comment */
     }
 
     //simple one line comment for function
-    fun f1() {
+    internal fun f1() {
     }
 
     //simple one line comment for field
-    var j: Int = 0
+    internal var j: Int = 0
 
     //double c style
     //comment before function
-    fun f2() {
+    internal fun f2() {
     }
 
     //double c style
     //comment before field
-    var k: Int = 0
+    internal var k: Int = 0
 
     //combination
     /** of
@@ -48,7 +48,7 @@ class C {
      * different
      */
     //comments
-    fun f3() {
+    internal fun f3() {
     }
 
     //combination
@@ -59,8 +59,8 @@ class C {
      * different
      */
     //comments
-    var l: Int = 0
+    internal var l: Int = 0
 
     /*two*/ /*comments*//*line*/
-    var z: Int = 0
+    internal var z: Int = 0
 }

@@ -1,5 +1,5 @@
-class Test {
-    fun test() {
+internal class Test {
+    internal fun test() {
         val l1 = 10L
         val d1 = 10.0
         val f1 = 10.0f
@@ -9,7 +9,7 @@ class Test {
         val f2 = 10.0f
     }
 
-    fun testBoxed() {
+    internal fun testBoxed() {
         val l1 = 10L
         val d1 = 10.0
         val f1 = 10.0f

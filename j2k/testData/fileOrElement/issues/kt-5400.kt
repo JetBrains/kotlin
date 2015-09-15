@@ -1,8 +1,8 @@
 // ERROR: Property must be initialized or be abstract
-open class Base {
-    inner class Nested
+internal open class Base {
+    internal inner class Nested
 }
 
-class Derived : Base() {
-    var field: Base.Nested
+internal class Derived : Base() {
+    internal var field: Base.Nested
 }

@@ -1,3 +1,3 @@
 package to
 
-fun foo(p: Int)
+internal fun foo(p: Int)

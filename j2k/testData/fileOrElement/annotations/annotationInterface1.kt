@@ -1,12 +1,12 @@
-annotation class Anon(public val stringArray: Array<String>, public val intArray: IntArray, // string
-                      public val string: String)
+annotation internal class Anon(val stringArray: Array<String>, val intArray: IntArray, // string
+                               val string: String)
 
 Anon(string = "a", stringArray = arrayOf("a", "b"), intArray = intArrayOf(1, 2))
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FIELD)
-annotation class I
+annotation internal class I
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-annotation class J
+annotation internal class J
 
 @Target
-annotation class K
+annotation internal class K

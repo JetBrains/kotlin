@@ -1,8 +1,8 @@
 // ERROR: Unresolved reference: bar
 import java.io.IOException
 
-class A {
-    fun foo() {
+internal class A {
+    internal fun foo() {
         try {
             bar()
         } catch (e: RuntimeException) {

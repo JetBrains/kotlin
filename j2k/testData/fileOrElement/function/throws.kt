@@ -1,2 +1,2 @@
 Throws(IOException::class, SerializationException::class)
-fun foo()
+internal fun foo()

@@ -2,8 +2,8 @@
 // ERROR: Null can not be a value of a non-null type kotlin.String
 import java.util.*
 
-class A {
-    fun foo() {
+internal class A {
+    internal fun foo() {
         val list = listOf<String>(null)
         val set = setOf<String>(null)
     }

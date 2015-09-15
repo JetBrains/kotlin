@@ -1,2 +1,2 @@
-fun <U> putU(u: U) {
+internal fun <U> putU(u: U) {
 }

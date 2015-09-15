@@ -1,10 +1,10 @@
 // ERROR: Variable cannot be initialized before declaration
 package demo
 
-class C(a: Int) {
+internal class C(a: Int) {
     init {
         abc = a * 2
     }
 
-    var abc = 0
+    internal var abc = 0
 }

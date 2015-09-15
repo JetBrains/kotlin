@@ -1,10 +1,10 @@
-public class AAA {
-    public fun foo() {
+class AAA {
+    fun foo() {
         x = x + 1
     }
 
     companion object {
 
-        public var x: Int = 42
+        var x: Int = 42
     }
 }

@@ -1,7 +1,7 @@
 /**
  * [the best foo method ever][C.foo]
  */
-class C {
-    fun foo(i: Int) {
+internal class C {
+    internal fun foo(i: Int) {
     }
 }

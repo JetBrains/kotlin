@@ -1,18 +1,18 @@
-public enum class TestEnum {
+enum class TestEnum {
     A,
     B;
 
 
     companion object {
 
-        public fun parse(): TestEnum {
+        fun parse(): TestEnum {
             return A
         }
     }
 }
 
-class Go {
-    fun fn() {
+internal class Go {
+    internal fun fn() {
         val x = TestEnum.parse()
     }
 }

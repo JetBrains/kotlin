@@ -1,1 +1,1 @@
-interface CommandHandler<T : Command>
+internal interface CommandHandler<T : Command>

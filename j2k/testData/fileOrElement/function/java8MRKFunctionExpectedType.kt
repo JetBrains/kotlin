@@ -3,31 +3,31 @@ package test
 
 import java.util.Collections
 
-class Test {
-    public fun memberFun(): Int {
+internal class Test {
+    fun memberFun(): Int {
         return 1
     }
 
     companion object {
-        public var field: Java8Class = Java8Class()
-        public fun staticFun(): Java8Class {
+        var field: Java8Class = Java8Class()
+        fun staticFun(): Java8Class {
             return Java8Class()
         }
 
-        public fun testOverloads(): String {
+        fun testOverloads(): String {
             return "1"
         }
 
-        public fun testOverloads(i: Int): String {
+        fun testOverloads(i: Int): String {
             return "2"
         }
     }
 }
 
-class Java8Class {
+internal class Java8Class {
     private val field = Java8Class()
 
-    public fun testStaticFunction() {
+    fun testStaticFunction() {
         val staticFunFromSameClass = { staticFun() }
         staticFunFromSameClass.invoke()
 
@@ -35,12 +35,12 @@ class Java8Class {
         staticFunFromAnotherClass.invoke()
     }
 
-    public fun testMemberFunctionThroughClass() {
+    fun testMemberFunctionThroughClass() {
         val memberFunFromClass = { obj: Java8Class -> obj.memberFun() }
         memberFunFromClass.invoke(Java8Class())
     }
 
-    public fun testMemberFunctionThroughObject() {
+    fun testMemberFunctionThroughObject() {
         val obj = Java8Class()
         val memberFunFromSameClass = { obj.memberFun() }
         memberFunFromSameClass.invoke()
@@ -57,7 +57,7 @@ class Java8Class {
         memberFunThroughObj3.invoke()
     }
 
-    public fun testConstructor() {
+    fun testConstructor() {
         val constructorSameClass = { Java8Class() }
         constructorSameClass.invoke()
 
@@ -71,12 +71,12 @@ class Java8Class {
         qualifiedConstructorAnotherClass.invoke()
     }
 
-    public fun testLibraryFunctions() {
+    fun testLibraryFunctions() {
         val memberFunFromClass = { obj: String -> obj.length() }
         memberFunFromClass.invoke("str")
     }
 
-    public fun testOverloads() {
+    fun testOverloads() {
         val constructorWithoutParams = { Test.testOverloads() }
         constructorWithoutParams.invoke()
 
@@ -84,18 +84,18 @@ class Java8Class {
         constructorWithParam.invoke(2)
     }
 
-    public fun testGenericFunctions() {
+    fun testGenericFunctions() {
         val emptyList = { Collections.emptyList() }
         emptyList.invoke()
     }
 
-    public fun memberFun(): Int {
+    fun memberFun(): Int {
         return 1
     }
 
     companion object {
 
-        public fun staticFun(): Int {
+        fun staticFun(): Int {
             return 1
         }
     }

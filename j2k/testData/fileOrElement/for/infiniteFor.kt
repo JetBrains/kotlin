@@ -1,4 +1,4 @@
-fun foo() {
+internal fun foo() {
     while (true) {
         if (!stop()) break
     }

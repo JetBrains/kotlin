@@ -1,8 +1,8 @@
-public class AAA {
-    public var x: Int = 42
+class AAA {
+    var x: Int = 42
         private set
 
-    public fun setX(x: Int) {
+    fun setX(x: Int) {
         this.x += x
     }
 }

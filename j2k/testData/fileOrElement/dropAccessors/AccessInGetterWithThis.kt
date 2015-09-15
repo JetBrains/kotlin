@@ -1,3 +1,3 @@
-public class AAA {
-    public val x: Int = 42
+class AAA {
+    val x: Int = 42
 }

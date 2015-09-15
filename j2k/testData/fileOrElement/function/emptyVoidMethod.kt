@@ -1,2 +1,2 @@
-fun main() {
+internal fun main() {
 }

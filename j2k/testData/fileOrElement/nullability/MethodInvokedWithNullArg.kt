@@ -1,8 +1,8 @@
-class C {
+internal class C {
     private fun foo(s: String?) {
     }
 
-    fun bar() {
+    internal fun bar() {
         foo(null)
     }
 }

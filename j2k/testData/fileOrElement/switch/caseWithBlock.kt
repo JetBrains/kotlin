@@ -1,4 +1,4 @@
-fun foo() {
+internal fun foo() {
     when (a) {
         1 -> {
             val x = 1

@@ -1,7 +1,7 @@
 // ERROR: Unresolved reference: clone
-open class Base
+internal open class Base
 
-class X : Base() {
+internal class X : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }

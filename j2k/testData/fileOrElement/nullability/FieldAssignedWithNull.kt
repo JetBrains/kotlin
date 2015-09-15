@@ -1,7 +1,7 @@
-class C {
+internal class C {
     private var s: String? = ""
 
-    fun foo() {
+    internal fun foo() {
         s = null
     }
 }

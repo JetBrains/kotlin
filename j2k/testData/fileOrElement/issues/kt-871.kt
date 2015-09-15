@@ -1,7 +1,7 @@
 package demo
 
-object Program {
-    JvmStatic public fun main(args: Array<String>) {
+internal object Program {
+    JvmStatic fun main(args: Array<String>) {
         println("Halo!")
     }
 }

@@ -4,19 +4,19 @@ interface Z<T>
 
 open class A<T : I, U : I, V> {
     // INFO: {"checked": "true"}
-    var foo1: T
+    internal var foo1: T
     // INFO: {"checked": "true"}
-    var foo2: Z<T>
+    internal var foo2: Z<T>
     // INFO: {"checked": "true"}
-    var foo3: Any
+    internal var foo3: Any
     // INFO: {"checked": "true"}
-    var foo4: Z<Any>
+    internal var foo4: Z<Any>
 
     // INFO: {"checked": "true"}
-    inner class Foo<S> : A<T, I, Z<Any>>(), Z<I>
+    internal inner class Foo<S> : A<T, I, Z<Any>>(), Z<I>
 
     // INFO: {"checked": "true"}
-    fun <S : T> foo(x1: T, x2: Z<T>, y1: Any, y2: Z<Any>, w1: I, w2: Z<I>, s1: S, s2: Z<S>) {
+    internal fun <S : T> foo(x1: T, x2: Z<T>, y1: Any, y2: Z<Any>, w1: I, w2: Z<I>, s1: S, s2: Z<S>) {
 
     }
 }

@@ -1,4 +1,4 @@
-fun foo(s: String?) {
+internal fun foo(s: String?) {
     if (s != null) {
         zoo(s)
     }

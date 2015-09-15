@@ -1,5 +1,5 @@
-class Test {
-    var str: String
+internal class Test {
+    internal var str: String
 
     init {
         str = "Ola"

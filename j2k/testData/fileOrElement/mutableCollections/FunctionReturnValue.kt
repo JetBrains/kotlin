@@ -1,11 +1,11 @@
 import java.util.*
 
-class A {
-    fun createCollection(): MutableCollection<String> {
+internal class A {
+    internal fun createCollection(): MutableCollection<String> {
         return ArrayList()
     }
 
-    fun foo(): Collection<String> {
+    internal fun foo(): Collection<String> {
         val collection = createCollection()
         collection.add("a")
         return collection

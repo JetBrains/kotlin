@@ -1,3 +1,3 @@
 package to
 
-Volatile var field = 1
+Volatile internal var field = 1

@@ -1,3 +1,3 @@
-interface A {
-    public class B
+internal interface A {
+    class B
 }

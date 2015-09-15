@@ -1,9 +1,9 @@
-interface I {
-    public fun getString(): String
+internal interface I {
+    fun getString(): String
 }
 
-class C {
-    fun foo(i: I, b: Boolean) {
+internal class C {
+    internal fun foo(i: I, b: Boolean) {
         var result: String? = i.getString()
         if (b) result = null
         if (result != null) {

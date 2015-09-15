@@ -2,7 +2,7 @@
 // ERROR: Unresolved reference: finalize
 package test
 
-class Test : Base() {
+internal class Test : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -26,7 +26,7 @@ class Test : Base() {
     }
 }
 
-open class Base {
+internal open class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }

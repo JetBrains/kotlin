@@ -1,5 +1,5 @@
-public object A {
-    JvmStatic public fun main(args: Array<String>) {
+object A {
+    JvmStatic fun main(args: Array<String>) {
         println(Void.TYPE)
         println(Integer.TYPE)
         println(java.lang.Double.TYPE)

@@ -1,3 +1,3 @@
 package demo
 
-enum class Color private constructor(public val code: Int)
+internal enum class Color private constructor(val code: Int)

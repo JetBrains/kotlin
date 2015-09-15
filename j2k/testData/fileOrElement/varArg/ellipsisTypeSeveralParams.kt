@@ -1,1 +1,1 @@
-fun format(pattern: String, vararg arguments: Any): String
+internal fun format(pattern: String, vararg arguments: Any): String

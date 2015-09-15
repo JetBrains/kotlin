@@ -1,29 +1,29 @@
-interface I
+internal interface I
 
-class C
+internal class C
 
-class O
+internal class O
 
-class E {
+internal class E {
     override fun equals(o: Any?): Boolean {
         return super.equals(o)
     }
 }
 
-open class B {
+internal open class B {
     override fun equals(o: Any?): Boolean {
         return super.equals(o)
     }
 }
 
-class BB : B()
+internal class BB : B()
 
-enum class EE {
+internal enum class EE {
     A, B, C
 }
 
-class X {
-    fun foo(i1: I?, i2: I?, s1: String, s2: String, c1: C, c2: C, i: Int, o1: O, o2: O, e1: E, e2: E, bb1: BB, bb2: BB, arr1: IntArray, arr2: IntArray, ee1: EE?, ee2: EE) {
+internal class X {
+    internal fun foo(i1: I?, i2: I?, s1: String, s2: String, c1: C, c2: C, i: Int, o1: O, o2: O, e1: E, e2: E, bb1: BB, bb2: BB, arr1: IntArray, arr2: IntArray, ee1: EE?, ee2: EE) {
         if (i1 === i2) return
         if (s1 === s2) return
         if (c1 == c2) return

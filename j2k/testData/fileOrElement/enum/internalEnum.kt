@@ -1,1 +1,1 @@
-enum class Test
+internal enum class Test

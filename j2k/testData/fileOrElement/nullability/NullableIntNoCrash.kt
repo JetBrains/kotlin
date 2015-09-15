@@ -1,7 +1,7 @@
-class A {
-    var field = foo()
+internal class A {
+    internal var field = foo()
 
-    fun foo(): Int {
+    internal fun foo(): Int {
         return 1
     }
 }

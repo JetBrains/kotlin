@@ -1,7 +1,7 @@
 import kotlinApi.KotlinTrait
 
-class C {
-    fun foo() {
+internal class C {
+    internal fun foo() {
         val t = object : KotlinTrait {
             override fun nullableFun(): String? {
                 return null

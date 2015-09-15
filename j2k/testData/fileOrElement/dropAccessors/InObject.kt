@@ -1,13 +1,13 @@
-public object AAA {
-    public var x: Int = 42
-    public var y: Int = 0
-    public val z: Int = 0
+object AAA {
+    var x: Int = 42
+    var y: Int = 0
+    val z: Int = 0
 
-    public fun setZ(z: Int) {
+    fun setZ(z: Int) {
         Other.z = z
     }
 }
 
-object Other {
-    public var z: Int = 0
+internal object Other {
+    var z: Int = 0
 }

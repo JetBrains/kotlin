@@ -1,7 +1,7 @@
-class A {
-    var i = 1
+internal class A {
+    internal var i = 1
 
-    fun foo() {
+    internal fun foo() {
         run {
             var i = 1
             while (i < 1000) {

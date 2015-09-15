@@ -1,4 +1,4 @@
-class X(private val list: List<X.Y>) {
+internal class X internal constructor(private val list: List<X.Y>) {
 
-    inner class Y
+    internal inner class Y
 }

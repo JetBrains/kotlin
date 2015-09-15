@@ -4,16 +4,16 @@ package demo
 
 import java.util.HashMap
 
-class Test {
-    constructor() {
+internal class Test {
+    internal constructor() {
     }
 
-    constructor(s: String) {
+    internal constructor(s: String) {
     }
 }
 
-class User {
-    fun main() {
+internal class User {
+    internal fun main() {
         val m = HashMap(1)
         val m2 = HashMap(10)
 

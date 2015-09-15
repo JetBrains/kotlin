@@ -1,5 +1,5 @@
-object Test {
-    public fun foo(args: Array<String>): Int {
+internal object Test {
+    fun foo(args: Array<String>): Int {
         return args.size()
     }
 }

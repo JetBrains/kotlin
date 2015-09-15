@@ -1,16 +1,16 @@
 // ERROR: Property must be initialized or be abstract
 import A.Nested
 
-class A JvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)) {
+internal class A JvmOverloads internal constructor(nested: Nested = Nested(Nested.FIELD)) {
 
-    class Nested(p: Int) {
+    internal class Nested internal constructor(p: Int) {
         companion object {
 
-            public val FIELD: Int = 0
+            val FIELD: Int = 0
         }
     }
 }
 
-class B {
-    var nested: Nested
+internal class B {
+    internal var nested: Nested
 }

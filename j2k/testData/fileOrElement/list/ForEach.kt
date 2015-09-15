@@ -1,8 +1,8 @@
 // ERROR: Unresolved reference: LinkedList
 import java.util.*
 
-public class ForEach {
-    public fun test() {
+class ForEach {
+    fun test() {
         val xs = ArrayList<Any>()
         val ys = LinkedList<Any>()
         for (x in xs) {

@@ -1,6 +1,6 @@
-class C(private val s: String?) {
+internal class C(private val s: String?) {
 
-    fun foo() {
+    internal fun foo() {
         if (s != null) {
             print("not null")
         }

@@ -1,11 +1,11 @@
 import java.util.*
 
-class A {
-    fun foo(set: MutableSet<String>) {
+internal class A {
+    internal fun foo(set: MutableSet<String>) {
         bar(set)
     }
 
-    fun bar(collection: MutableCollection<String>) {
+    internal fun bar(collection: MutableCollection<String>) {
         collection.add("a")
     }
 }

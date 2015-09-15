@@ -1,20 +1,20 @@
 package demo
 
-class Container {
-    var myString = "1"
+internal class Container {
+    internal var myString = "1"
 }
 
-object One {
-    var myContainer = Container()
+internal object One {
+    internal var myContainer = Container()
 }
 
-class StringContainer(s: String)
+internal class StringContainer internal constructor(s: String)
 
-class Test {
-    fun putString(s: String) {
+internal class Test {
+    internal fun putString(s: String) {
     }
 
-    fun test() {
+    internal fun test() {
         putString(One.myContainer.myString)
         StringContainer(One.myContainer.myString)
     }

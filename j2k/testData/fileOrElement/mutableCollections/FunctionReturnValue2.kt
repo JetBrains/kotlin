@@ -1,21 +1,21 @@
 import java.util.*
 
-class A {
+internal class A internal constructor() {
     private val collection: MutableCollection<String>
 
     init {
         collection = createCollection()
     }
 
-    fun createCollection(): MutableCollection<String> {
+    internal fun createCollection(): MutableCollection<String> {
         return ArrayList()
     }
 
-    public fun foo() {
+    fun foo() {
         collection.add("1")
     }
 
-    public fun getCollection(): Collection<String> {
+    fun getCollection(): Collection<String> {
         return collection
     }
 }

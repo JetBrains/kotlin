@@ -1,4 +1,4 @@
-public class Test(public var id: String?, public val name: String, public val age: Int) {
+class Test(var id: String?, val name: String, val age: Int) {
 
     init {
         println(age)

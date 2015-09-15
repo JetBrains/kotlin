@@ -2,7 +2,7 @@ package com.voltvoodoo.saplo4j.model
 
 import java.io.Serializable
 
-public class Language(protected var code: String) : Serializable {
+class Language(protected var code: String) : Serializable {
 
     override fun toString(): String {
         return this.code
@@ -10,8 +10,8 @@ public class Language(protected var code: String) : Serializable {
 }
 
 
-open class Base {
-    open fun test() {
+internal open class Base {
+    internal open fun test() {
     }
 
     override fun toString(): String {
@@ -19,7 +19,7 @@ open class Base {
     }
 }
 
-class Child : Base() {
+internal class Child : Base() {
     override fun test() {
     }
 

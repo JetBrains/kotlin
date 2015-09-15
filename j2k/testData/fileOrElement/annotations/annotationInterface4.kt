@@ -1,13 +1,13 @@
-annotation class Anon(public vararg val value: String, public val x: Int = 1)
+annotation internal class Anon(vararg val value: String, val x: Int = 1)
 
 Anon("a", "b")
-interface I1
+internal interface I1
 
 Anon("c", "d", x = 1)
-interface I2
+internal interface I2
 
 Anon("c", "d", x = 1)
-interface I3
+internal interface I3
 
 Anon(value = *arrayOf("c", "d"))
-interface I4
+internal interface I4

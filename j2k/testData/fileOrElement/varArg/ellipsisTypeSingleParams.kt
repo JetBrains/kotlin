@@ -1,2 +1,2 @@
-fun pushAll(vararg objs: Any) {
+internal fun pushAll(vararg objs: Any) {
 }

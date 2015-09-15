@@ -7,8 +7,8 @@ package foo
 import java.util.ArrayList // we need ArrayList
 
 // let's declare a class:
-class A /* just a sample name*/ : Runnable /* let's implement Runnable */ {
-    fun foo/* again a sample name */(p: Int /* parameter p */, c: Char /* parameter c */) {
+internal class A /* just a sample name*/ : Runnable /* let's implement Runnable */ {
+    internal fun foo/* again a sample name */(p: Int /* parameter p */, c: Char /* parameter c */) {
         // let's print something:
         println("1") // print 1
         println("2") // print 2

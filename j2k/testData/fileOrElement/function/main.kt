@@ -1,2 +1,2 @@
-JvmStatic public fun main(args: Array<String>) {
+JvmStatic fun main(args: Array<String>) {
 }

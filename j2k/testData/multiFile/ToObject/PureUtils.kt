@@ -1,10 +1,10 @@
 package test
 
-object PureUtils {
-    public fun foo1(p: Int) {
+internal object PureUtils {
+    fun foo1(p: Int) {
     }
 
-    public fun foo2(): Int {
+    fun foo2(): Int {
         return 1
     }
 }

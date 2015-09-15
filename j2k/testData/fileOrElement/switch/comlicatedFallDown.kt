@@ -1,11 +1,11 @@
 package demo
 
-public object SwitchDemo {
-    public fun print(o: Any) {
+object SwitchDemo {
+    fun print(o: Any) {
         println(o)
     }
 
-    public fun test(i: Int) {
+    fun test(i: Int) {
         var monthString = "<empty>"
         when (i) {
             1 -> {
@@ -76,7 +76,7 @@ public object SwitchDemo {
         println(monthString)
     }
 
-    JvmStatic public fun main(args: Array<String>) {
+    JvmStatic fun main(args: Array<String>) {
         for (i in 1..12)
             test(i)
     }

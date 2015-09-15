@@ -1,16 +1,16 @@
 package test
 
-open class ClassWithStatics {
-    public fun instanceMethod() {
+internal open class ClassWithStatics {
+    fun instanceMethod() {
     }
 
     companion object {
 
-        public fun staticMethod(p: Int) {
+        fun staticMethod(p: Int) {
         }
 
-        public val staticField: Int = 1
+        val staticField: Int = 1
 
-        public var value: Int = 0
+        var value: Int = 0
     }
 }

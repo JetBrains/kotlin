@@ -1,7 +1,7 @@
 import java.io.*
 
-public class C {
-    fun foo(): Int {
+class C {
+    internal fun foo(): Int {
         try {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something

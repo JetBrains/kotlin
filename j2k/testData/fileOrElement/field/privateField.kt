@@ -1,4 +1,4 @@
 // ERROR: Unresolved reference: Foo
-class C {
+internal class C {
     private val f: Foo? = null
 }

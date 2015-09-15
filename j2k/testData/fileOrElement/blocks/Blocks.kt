@@ -1,4 +1,4 @@
-fun foo() {
+internal fun foo() {
     run {
         val a = 1
         bar(a)

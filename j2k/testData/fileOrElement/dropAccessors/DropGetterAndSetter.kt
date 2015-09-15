@@ -1,3 +1,3 @@
-public class AAA {
-    public var x: Int = 42
+class AAA {
+    var x: Int = 42
 }

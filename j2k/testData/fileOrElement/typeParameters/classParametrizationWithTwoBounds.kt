@@ -1,1 +1,1 @@
-class C<T : INode> where T : Comparable<T>
+internal class C<T : INode> where T : Comparable<T>

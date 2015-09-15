@@ -1,12 +1,12 @@
-class A {
-    public fun foo() {
+internal class A {
+    fun foo() {
         privateStatic1()
         privateStatic2()
     }
 
     companion object {
 
-        public fun publicStatic() {
+        fun publicStatic() {
             privateStatic1()
         }
 

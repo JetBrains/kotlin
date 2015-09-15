@@ -1,7 +1,7 @@
 import java.io.File
 
-class C {
-    fun foo(file: File?) {
+internal class C {
+    internal fun foo(file: File?) {
         file?.delete()
     }
 }

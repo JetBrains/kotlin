@@ -1,10 +1,10 @@
 class A {
 
 
-    fun foo() {
+    internal fun foo() {
     }
 
-    fun bar() {
+    internal fun bar() {
     }
 
 

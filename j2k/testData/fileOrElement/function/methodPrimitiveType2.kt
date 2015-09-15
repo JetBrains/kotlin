@@ -1,2 +1,2 @@
-fun main(): Boolean {
+internal fun main(): Boolean {
 }

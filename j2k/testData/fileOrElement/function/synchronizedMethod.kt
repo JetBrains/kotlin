@@ -1,8 +1,8 @@
-class A {
-    Synchronized fun foo() {
+internal class A {
+    Synchronized internal fun foo() {
         bar()
     }
 
-    fun bar() {
+    internal fun bar() {
     }
 }

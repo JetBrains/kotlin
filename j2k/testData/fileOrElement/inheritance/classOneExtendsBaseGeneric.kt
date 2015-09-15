@@ -1,3 +1,3 @@
-open class Base<T>(name: T)
+internal open class Base<T> internal constructor(name: T)
 
-class One<T, K>(name: T, private val mySecond: K) : Base<T>(name)
+internal class One<T, K> internal constructor(name: T, private val mySecond: K) : Base<T>(name)

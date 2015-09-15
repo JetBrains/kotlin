@@ -1,9 +1,9 @@
-class S {
-    fun sB(): Boolean {
+internal class S {
+    internal fun sB(): Boolean {
         return true
     }
 
     companion object {
-        var myI = 10
+        internal var myI = 10
     }
 }

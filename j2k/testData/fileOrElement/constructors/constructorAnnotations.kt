@@ -1,16 +1,16 @@
 import javaApi.Anon5
 
-class A
+internal class A
 Anon5(10)
 constructor(private val a: Int, private val b: Int) {
 
     Deprecated("") // this constructor will not be replaced by default parameter value in primary because of this annotation
-    public constructor(a: Int) : this(a, 1) {
+    constructor(a: Int) : this(a, 1) {
     }
 }
 
-class B Anon5(11)
+internal class B Anon5(11)
 constructor()
 
-class C Anon5(12)
+internal class C Anon5(12)
 private constructor()

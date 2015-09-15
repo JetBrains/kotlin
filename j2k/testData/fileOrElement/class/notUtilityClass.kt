@@ -1,10 +1,10 @@
-open class Base {
+internal open class Base {
     companion object {
-        public val CONSTANT: Int = 10
+        val CONSTANT: Int = 10
     }
 }
 
-class Derived : Base() {
-    fun foo() {
+internal class Derived : Base() {
+    internal fun foo() {
     }
 }

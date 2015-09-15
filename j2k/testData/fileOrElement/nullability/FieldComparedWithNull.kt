@@ -1,8 +1,8 @@
 // ERROR: Unresolved reference: x
-class C {
+internal class C {
     private val s = x()
 
-    fun foo() {
+    internal fun foo() {
         if (s == null) {
             print("null")
         }

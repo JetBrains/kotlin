@@ -1,7 +1,7 @@
-class C {
-    public val default: Int = 0
+internal class C {
+    val default: Int = 0
 
-    fun foo() {
+    internal fun foo() {
         println(default)
     }
 }

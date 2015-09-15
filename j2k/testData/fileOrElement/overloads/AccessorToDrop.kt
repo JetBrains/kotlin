@@ -1,7 +1,7 @@
-class A {
-    public var field: Int = 0
+internal class A {
+    var field: Int = 0
 
-    public fun setField() {
+    fun setField() {
         field = 0
     }
 }

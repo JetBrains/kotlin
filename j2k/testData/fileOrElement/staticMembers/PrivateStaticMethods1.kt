@@ -1,5 +1,5 @@
-class A {
-    public fun foo() {
+internal class A {
+    fun foo() {
         privateStatic1()
         privateStatic2()
     }

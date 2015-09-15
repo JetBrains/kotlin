@@ -1,1 +1,1 @@
-interface I
+internal interface I
