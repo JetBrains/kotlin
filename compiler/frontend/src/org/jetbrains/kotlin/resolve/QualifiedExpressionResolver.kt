@@ -51,7 +51,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             scope: LexicalScope,
             trace: BindingTrace
     ): ClassifierDescriptor? {
-        if (userType.qualifier == null) { // optimization for non-qualified types
+        if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
             return userType.referenceExpression?.let {
                 val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor)
@@ -65,14 +65,14 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             resolveToPackageOrClass(qualifierPartList, module, trace, scope.ownerDescriptor)
             return null
         }
-        assert(qualifierPartList.size() > 1) {
+        assert(qualifierPartList.size() >= 1) {
             "Too short qualifier list for user type $userType : ${qualifierPartList.joinToString()}"
         }
 
         val qualifier = resolveToPackageOrClass(
                 qualifierPartList.subList(0, qualifierPartList.size() - 1), module, trace, scope.ownerDescriptor,
                 firstPartResolver =  {
-                    if (userType.isAbsoluteInRootPackage) {
+                    if (userType.startWithPackage) {
                         null
                     }
                     else {
@@ -90,6 +90,16 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         storageResult(trace, lastPart.expression, listOfNotNull(classifier), scope.ownerDescriptor)
         return classifier
     }
+
+    private val JetUserType.startWithPackage: Boolean
+        get() {
+            var firstPart = this
+            while (firstPart.qualifier != null) {
+                firstPart = firstPart.qualifier!!
+            }
+            return firstPart.isAbsoluteInRootPackage
+        }
+
 
     private fun JetUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
         var hasError = false
