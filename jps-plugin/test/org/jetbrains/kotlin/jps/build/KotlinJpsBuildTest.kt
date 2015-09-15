@@ -651,6 +651,17 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
+    public fun testDoNotCreateUselessKotlinIncrementalCachesForDependentTargets() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
+
+        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
+        assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
+    }
+
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
         val scopeBuilder = CompileScopeTestBuilder.make().all()
         val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))
