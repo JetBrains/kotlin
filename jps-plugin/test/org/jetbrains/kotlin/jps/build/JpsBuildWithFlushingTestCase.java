@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build
+package org.jetbrains.kotlin.jps.build;
 
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
-import org.jetbrains.jps.builders.JpsBuildTestCase
-import org.jetbrains.jps.cmdline.ProjectDescriptor
+import org.jetbrains.jps.builders.BuildResult;
+import org.jetbrains.jps.builders.CompileScopeTestBuilder;
+import org.jetbrains.jps.builders.JpsBuildTestCase;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 
-public abstract class JpsBuildWithFlushingTestCase : JpsBuildTestCase() {
-    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder): BuildResult {
+public abstract class JpsBuildWithFlushingTestCase extends JpsBuildTestCase {
+    @Override
+    protected BuildResult doBuild(ProjectDescriptor descriptor, CompileScopeTestBuilder scopeBuilder) {
         try {
-            return super.doBuild(descriptor, scopeBuilder)
+            return super.doBuild(descriptor, scopeBuilder);
         }
         finally {
-            descriptor.dataManager.flush(false)
+            descriptor.dataManager.flush(false);
         }
     }
 }

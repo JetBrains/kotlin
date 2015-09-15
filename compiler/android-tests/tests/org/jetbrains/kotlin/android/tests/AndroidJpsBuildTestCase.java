@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.android.tests;
 
+import org.jetbrains.jps.builders.BuildResult;
+import org.jetbrains.jps.builders.CompileScopeTestBuilder;
 import org.jetbrains.jps.builders.JpsBuildTestCase;
-import org.jetbrains.kotlin.jps.build.JpsBuildWithFlushingTestCase;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 
 import java.io.File;
 import java.io.IOException;
 
-public class AndroidJpsBuildTestCase extends JpsBuildWithFlushingTestCase {
+public class AndroidJpsBuildTestCase extends JpsBuildTestCase {
     private static final String PROJECT_NAME = "android-module";
     private static final String SDK_NAME = "Android_SDK";
 
@@ -32,6 +34,18 @@ public class AndroidJpsBuildTestCase extends JpsBuildWithFlushingTestCase {
         initProject();
         rebuildAll();
         makeAll().assertSuccessful();
+    }
+
+    @Override
+    protected BuildResult doBuild(
+            ProjectDescriptor descriptor, CompileScopeTestBuilder scopeBuilder
+    ) {
+        try {
+            return super.doBuild(descriptor, scopeBuilder);
+        }
+        finally {
+            descriptor.dataManager.flush(false);
+        }
     }
 
     @Override

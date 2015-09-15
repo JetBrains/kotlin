@@ -21,18 +21,29 @@ import org.jetbrains.jps.android.model.JpsAndroidSdkProperties
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.android.model.JpsAndroidSdkType
+import org.jetbrains.jps.builders.BuildResult
+import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
 import org.jetbrains.jps.model.library.JpsOrderRootType
-import org.jetbrains.kotlin.jps.build.JpsBuildWithFlushingTestCase
+import org.jetbrains.jps.cmdline.ProjectDescriptor
 import java.io.File
 
-public abstract class AbstractAndroidJpsTestCase : JpsBuildWithFlushingTestCase() {
+public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
 
     private val SDK_NAME = "Android API 21 Platform"
 
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
+    }
+
+    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder): BuildResult {
+        try {
+            return super.doBuild(descriptor, scopeBuilder)
+        }
+        finally {
+            descriptor.dataManager.flush(false)
+        }
     }
 
     public fun doTest(path: String) {
