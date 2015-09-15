@@ -82,6 +82,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("fileClassWithFileAnnotation.kt")
+        public void testFileClassWithFileAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/fileClassWithFileAnnotation.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kotlinPropertyFromClassObjectAsParameter.kt")
         public void testKotlinPropertyFromClassObjectAsParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/kotlinPropertyFromClassObjectAsParameter.kt");

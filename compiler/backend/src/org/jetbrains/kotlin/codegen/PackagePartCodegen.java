@@ -19,16 +19,17 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.util.ArrayUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotated;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.*;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
@@ -68,6 +69,20 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         v.visitSource(element.getName(), null);
 
         generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
+
+        generateAnnotationsForPartClass();
+    }
+
+    private void generateAnnotationsForPartClass() {
+        List<AnnotationDescriptor> fileAnnotationDescriptors = new ArrayList<AnnotationDescriptor>();
+        for (JetAnnotationEntry annotationEntry : element.getAnnotationEntries()) {
+            AnnotationDescriptor annotationDescriptor = state.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
+            if (annotationDescriptor != null) {
+                fileAnnotationDescriptors.add(annotationDescriptor);
+            }
+        }
+        Annotated annotatedFile = new AnnotatedSimple(new AnnotationsImpl(fileAnnotationDescriptors));
+        AnnotationCodegen.forClass(v.getVisitor(), state.getTypeMapper()).genAnnotations(annotatedFile, null);
     }
 
     @Override
