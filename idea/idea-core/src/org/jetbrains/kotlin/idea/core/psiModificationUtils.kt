@@ -167,8 +167,7 @@ public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordTo
         (resolveToDescriptor() as? CallableMemberDescriptor)
                 ?.overriddenDescriptors
                 ?.let { OverridingUtil.findMaxVisibility(it) }
-                ?.normalize()
-                ?.toKeyword()
+                ?.toKeywordToken()
     }
     else {
         JetTokens.DEFAULT_VISIBILITY_KEYWORD
@@ -180,14 +179,4 @@ public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordTo
     }
 
     addModifier(visibilityModifier)
-}
-
-private fun Visibility.toKeyword(): JetModifierKeywordToken? {
-    return when (this) {
-        Visibilities.PUBLIC -> JetTokens.PUBLIC_KEYWORD
-        Visibilities.PROTECTED -> JetTokens.PROTECTED_KEYWORD
-        Visibilities.INTERNAL -> JetTokens.INTERNAL_KEYWORD
-        Visibilities.PRIVATE -> JetTokens.PRIVATE_KEYWORD
-        else -> null
-    }
 }

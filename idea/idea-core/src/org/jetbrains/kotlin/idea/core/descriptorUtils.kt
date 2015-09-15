@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -85,4 +87,19 @@ public fun comparePossiblyOverridingDescriptors(project: Project,
     }
 
     return false
+}
+
+public fun Visibility.toKeywordToken(): JetModifierKeywordToken {
+    val normalized = normalize()
+    when (normalized) {
+        Visibilities.PUBLIC -> return JetTokens.PUBLIC_KEYWORD
+        Visibilities.PROTECTED -> return JetTokens.PROTECTED_KEYWORD
+        Visibilities.INTERNAL -> return JetTokens.INTERNAL_KEYWORD
+        else -> {
+            if (Visibilities.isPrivate(normalized)) {
+                return JetTokens.PRIVATE_KEYWORD
+            }
+            error("Unexpected visibility '$normalized'")
+        }
+    }
 }

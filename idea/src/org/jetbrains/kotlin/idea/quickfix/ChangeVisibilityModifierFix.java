@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -104,7 +104,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetDeclarati
             return null;
         }
 
-        return JetRefactoringUtil.getVisibilityToken(maxVisibility);
+        return DescriptorUtilsKt.toKeywordToken(maxVisibility);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

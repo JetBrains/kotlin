@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
+import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
@@ -344,7 +345,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     private static void changeVisibility(JetChangeInfo changeInfo, PsiElement element) {
-        JetModifierKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
+        JetModifierKeywordToken newVisibilityToken = DescriptorUtilsKt.toKeywordToken(changeInfo.getNewVisibility());
 
         if (element instanceof JetCallableDeclaration) {
             PsiModificationUtilsKt.setVisibility((JetCallableDeclaration)element, newVisibilityToken);
