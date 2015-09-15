@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -125,12 +124,9 @@ public class IncrementalPackageFragmentProvider(
                 }
                 else {
                     val scopes = dataOfPackageParts.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it)) }
-                    DecapitalizedAnnotationScope.wrapIfNeeded(
-                            ChainedScope(this,
-                                         "Member scope for incremental compilation: union of package parts data",
-                                         *scopes.toTypedArray<JetScope>()
-                            ),
-                            fqName
+                    ChainedScope(this,
+                                 "Member scope for incremental compilation: union of package parts data",
+                                 *scopes.toTypedArray<JetScope>()
                     )
                 }
             }

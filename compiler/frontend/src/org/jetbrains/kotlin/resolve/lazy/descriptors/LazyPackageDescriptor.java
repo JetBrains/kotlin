@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
@@ -42,8 +41,7 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
         super(module, fqName);
         this.declarationProvider = declarationProvider;
 
-        // Wrapping is just a temporary hack to inject deprecated decapitalized annotation
-        this.memberScope = DecapitalizedAnnotationScope.Companion.wrapIfNeeded(new LazyPackageMemberScope(resolveSession, declarationProvider, this), fqName);
+        this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
 
         for (JetFile file : declarationProvider.getPackageFiles()) {
             resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
