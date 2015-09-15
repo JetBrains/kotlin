@@ -19,49 +19,28 @@ package org.jetbrains.kotlin.jps.incremental.storage
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
-import com.intellij.util.io.PersistentHashMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.utils.Printer
+import java.io.DataOutput
 import java.io.File
-import java.io.IOException
 
 public abstract class BasicMap<K : Comparable<K>, V>(
-        private val storageFile: File,
-        private val keyDescriptor: KeyDescriptor<K>,
-        private val valueExternalizer: DataExternalizer<V>
+        storageFile: File,
+        keyDescriptor: KeyDescriptor<K>,
+        valueExternalizer: DataExternalizer<V>
 ) {
-    protected var storage: PersistentHashMap<K, V> = createMap()
-
-    public fun contains(key: K): Boolean = storage.containsMapping(key)
+    private val storageHolder = StorageHolder(storageFile, keyDescriptor, valueExternalizer)
 
     public fun clean() {
-        try {
-            storage.close()
-        }
-        catch (ignored: IOException) {
-        }
-
-        PersistentHashMap.deleteFilesStartingWith(storage.getBaseFile()!!)
-        try {
-            storage = createMap()
-        }
-        catch (ignored: IOException) {
-        }
+        storageHolder.clean()
     }
 
     public fun flush(memoryCachesOnly: Boolean) {
-        if (memoryCachesOnly) {
-            if (storage.isDirty()) {
-                storage.dropMemoryCaches()
-            }
-        }
-        else {
-            storage.force()
-        }
+        storageHolder.flush(memoryCachesOnly)
     }
 
     public fun close() {
-        storage.close()
+        storageHolder.close()
     }
 
     TestOnly
@@ -71,8 +50,8 @@ public abstract class BasicMap<K : Comparable<K>, V>(
                 println(this@BasicMap.javaClass.getSimpleName())
                 pushIndent()
 
-                for (key in storage.getAllKeysWithExistingMapping().sort()) {
-                    println("${dumpKey(key)} -> ${dumpValue(storage[key])}")
+                for (key in allKeysExistingInStorage.sort()) {
+                    println("${dumpKey(key)} -> ${dumpValue(getFromStorage(key)!!)}")
                 }
 
                 popIndent()
@@ -85,8 +64,26 @@ public abstract class BasicMap<K : Comparable<K>, V>(
     protected abstract fun dumpKey(key: K): String
     protected abstract fun dumpValue(value: V): String
 
-    private fun createMap(): PersistentHashMap<K, V> =
-            PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+    protected val allKeysExistingInStorage: Collection<K>
+        get() = storageHolder.getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
+
+    protected fun storageContains(key: K): Boolean =
+            storageHolder.getStorageIfExists()?.containsMapping(key) ?: false
+
+    protected fun getFromStorage(key: K): V? =
+            storageHolder.getStorageIfExists()?.get(key)
+
+    protected fun putToStorage(key: K, value: V) {
+        storageHolder.getStorageOrCreateNew().put(key, value)
+    }
+
+    protected fun removeFromStorage(key: K) {
+        storageHolder.getStorageIfExists()?.remove(key)
+    }
+
+    protected fun appendDataToStorage(key: K, append: (DataOutput)->Unit) {
+        storageHolder.getStorageOrCreateNew().appendData(key, append)
+    }
 }
 
 public abstract class BasicStringMap<V>(
