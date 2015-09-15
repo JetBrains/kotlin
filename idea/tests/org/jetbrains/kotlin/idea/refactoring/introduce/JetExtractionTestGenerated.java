@@ -1991,6 +1991,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("javaSyntheticProperty.kt")
+                public void testJavaSyntheticProperty() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticProperty.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("missingReceiver.kt")
                 public void testMissingReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/missingReceiver.kt");

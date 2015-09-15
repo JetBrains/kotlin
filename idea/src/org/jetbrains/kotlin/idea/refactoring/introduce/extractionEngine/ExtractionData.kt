@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -44,6 +43,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
@@ -125,6 +126,20 @@ data class ExtractionData(
             return function == null || !function.isInsideOf(originalElements)
         }
 
+        fun getSyntheticPropertyAccessorDeclarationIfAny(descriptor: DeclarationDescriptor): PsiNameIdentifierOwner? {
+            return (descriptor as? SyntheticJavaPropertyDescriptor ?: return null).getMethod.source.getPsi() as? PsiNameIdentifierOwner
+        }
+
+        fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
+            (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
+
+            return when {
+                isExtractableIt(descriptor, context) -> itFakeDeclaration
+                isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
+                else -> getSyntheticPropertyAccessorDeclarationIfAny(descriptor)
+            }
+        }
+
         val originalStartOffset = originalStartOffset
         val context = bindingContext
 
@@ -147,9 +162,7 @@ data class ExtractionData(
 
                     val resolvedCall = ref.getResolvedCall(context)
                     val descriptor = context[BindingContext.REFERENCE_TARGET, ref] ?: return
-                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner
-                                      ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration
-                                      else if (isSynthesizedInvoke(descriptor)) synthesizedInvokeDeclaration else return
+                    val declaration = getDeclaration(descriptor, context) ?: return
 
                     val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset
                     resultMap[offset] = ResolveResult(ref, declaration, descriptor, resolvedCall)
