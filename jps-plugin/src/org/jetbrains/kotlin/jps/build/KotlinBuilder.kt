@@ -102,10 +102,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
         val messageCollector = MessageCollectorAdapter(context)
-        val incrementalCaches = getIncrementalCaches(chunk, context)
 
         try {
-            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, incrementalCaches)
+            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
         }
         catch (e: StopBuildException) {
             throw e
@@ -124,8 +123,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             chunk: ModuleChunk,
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer,
-            incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>
+            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
@@ -139,6 +137,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
             LOG.info("Clearing caches for " + chunk.getTargets().map { it.getPresentableName() }.join())
+            val incrementalCaches = getIncrementalCaches(chunk, context)
             incrementalCaches.values().forEach(StorageOwner::clean)
             return CHUNK_REBUILD_REQUIRED
         }
@@ -158,6 +157,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     it.data
                 } ?: LookupTracker.DO_NOTHING
 
+        val incrementalCaches = getIncrementalCaches(chunk, context)
         val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
