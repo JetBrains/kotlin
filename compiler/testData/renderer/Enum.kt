@@ -1,7 +1,7 @@
 package rendererTest
 
 private enum class TheEnum(val rgb: Int) {
-    VAL1: TheEnum(0xFF0000)
+    VAL1(0xFF0000)
 }
 
 //package rendererTest
