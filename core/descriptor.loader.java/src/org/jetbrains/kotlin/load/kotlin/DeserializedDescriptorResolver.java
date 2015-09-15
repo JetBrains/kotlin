@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin;
 
-import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,16 +36,16 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.CLASS;
-import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.MULTIFILE_CLASS_PART;
+import static kotlin.KotlinPackage.setOf;
+import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public final class DeserializedDescriptorResolver {
     private final ErrorReporter errorReporter;
     private DeserializationComponents components;
 
-    public static final Set<KotlinClassHeader.Kind> KOTLIN_CLASS = KotlinPackage.setOf(CLASS);
-    public static final Set<KotlinClassHeader.Kind> KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
-            KotlinPackage.setOf(KotlinClassHeader.Kind.FILE_FACADE, MULTIFILE_CLASS_PART);
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_CLASS = setOf(CLASS);
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART = setOf(FILE_FACADE, MULTIFILE_CLASS_PART);
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_PACKAGE_FACADE = setOf(PACKAGE_FACADE);
 
     public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
