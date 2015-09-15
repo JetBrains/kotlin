@@ -8,5 +8,5 @@ fun foo(p: Any?) {
             return
         }
     }
-    println(<caret>p.size)
+    println(<caret>p.length())
 }

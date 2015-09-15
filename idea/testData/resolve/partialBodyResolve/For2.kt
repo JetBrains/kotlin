@@ -5,5 +5,5 @@ fun foo(p: Any?, p1: Any?) {
         print(p1!!)
     }
 
-    <caret>p.size
+    <caret>p.length()
 }
