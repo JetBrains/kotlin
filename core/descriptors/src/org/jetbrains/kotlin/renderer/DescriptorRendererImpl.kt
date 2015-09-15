@@ -341,7 +341,6 @@ internal class DescriptorRendererImpl(
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
-        var hasTargetedAnnotations = false
 
         val annotationsBuilder = StringBuilder {
             // Sort is needed just to fix some order when annotations resolved from modifiers
@@ -353,25 +352,12 @@ internal class DescriptorRendererImpl(
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
                 if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                    if (target != null && !hasTargetedAnnotations) {
-                        hasTargetedAnnotations = true
-                    }
                     append(renderAnnotation(annotation, target)).append(" ")
                 }
             }
         }
 
-        if (!needBrackets || hasTargetedAnnotations) {
-            builder.append(annotationsBuilder)
-        }
-        else if (annotationsBuilder.length() > 0) {
-            // remove last whitespace
-            annotationsBuilder.setLength(annotationsBuilder.length() - 1)
-
-            builder.append("@[")
-            builder.append(annotationsBuilder)
-            builder.append("] ")
-        }
+        builder.append(annotationsBuilder)
     }
 
     private fun AnnotationDescriptor.isBuiltinModifier()
@@ -379,8 +365,9 @@ internal class DescriptorRendererImpl(
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {
+            append('@')
             if (target != null) {
-                append("@" + target.renderName + ":")
+                append(target.renderName + ":")
             }
             append(renderType(annotation.getType()))
             if (verbose) {
@@ -411,7 +398,7 @@ internal class DescriptorRendererImpl(
     private fun renderConstant(value: ConstantValue<*>): String {
         return when (value) {
             is ArrayValue -> value.value.map { renderConstant(it) }.joinToString(", ", "{", "}")
-            is AnnotationValue -> renderAnnotation(value.value)
+            is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
             is KClassValue -> renderType(value.value) + "::class"
             else -> value.toString()
         }

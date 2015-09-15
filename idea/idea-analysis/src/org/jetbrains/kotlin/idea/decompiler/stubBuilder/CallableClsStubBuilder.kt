@@ -104,7 +104,7 @@ private class CallableClsStubBuilder(
 
         val kind = callableProto.annotatedCallableKind
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(protoContainer, callableProto, c.nameResolver, kind)
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl, needWrappingAnnotationEntries = isPrimaryConstructor)
+        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     private fun doCreateCallableStub(): StubElement<out PsiElement> {

@@ -216,25 +216,20 @@ fun createModifierListStub(
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>, needWrappingAnnotationEntries: Boolean = false) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent, needWrappingAnnotationEntries)
+fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
         annotationIds: List<ClassIdWithTarget>,
-        parent: KotlinStubBaseImpl<*>,
-        needWrappingAnnotationEntries: Boolean = false
+        parent: KotlinStubBaseImpl<*>
 ) {
     if (annotationIds.isEmpty()) return
-
-    val entriesParent =
-            if (needWrappingAnnotationEntries) KotlinPlaceHolderStubImpl<JetAnnotation>(parent, JetStubElementTypes.ANNOTATION)
-            else parent
 
     annotationIds.forEach { annotation ->
         val (annotationClassId, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
-                entriesParent,
+                parent,
                 shortName = annotationClassId.getShortClassName().ref(),
                 hasValueArguments = false
         )

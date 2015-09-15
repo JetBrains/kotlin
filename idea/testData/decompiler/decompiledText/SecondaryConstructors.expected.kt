@@ -4,7 +4,7 @@
 package test
 
 public final class SecondaryConstructors public constructor(x: kotlin.Boolean) {
-    test.anno public constructor(x: kotlin.String) { /* compiled code */ }
+    @test.anno public constructor(x: kotlin.String) { /* compiled code */ }
 
     private constructor(x: kotlin.Int) { /* compiled code */ }
 
@@ -13,7 +13,7 @@ public final class SecondaryConstructors public constructor(x: kotlin.Boolean) {
     }
 
     public final class Nested {
-        test.anno public constructor(z: kotlin.Int) { /* compiled code */ }
+        @test.anno public constructor(z: kotlin.Int) { /* compiled code */ }
 
         internal constructor() { /* compiled code */ }
     }

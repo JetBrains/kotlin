@@ -94,7 +94,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, annotations: List<ClassId>) {
-        createAnnotationStubs(annotations, parent, needWrappingAnnotationEntries = true)
+        createAnnotationStubs(annotations, parent)
     }
 
     private fun createTypeArgumentListStub(typeStub: KotlinUserTypeStub, typeArgumentProtoList: List<Type.Argument>) {
