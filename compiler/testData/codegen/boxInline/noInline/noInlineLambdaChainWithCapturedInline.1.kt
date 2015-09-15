@@ -2,7 +2,7 @@
 import test.*
 import kotlin.InlineOption.*
 
-inline fun test1(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
+inline fun test1(crossinline param: () -> String): String {
     var result = "fail"
     inlineFun("1")  { c ->
         {
@@ -20,7 +20,7 @@ inline fun test1(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
 }
 
 
-inline fun test2(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
+inline fun test2(crossinline param: () -> String): String {
     var result = "fail"
     inlineFun("2") { a ->
         {
@@ -33,7 +33,7 @@ inline fun test2(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
     return result
 }
 
-inline fun test3(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
+inline fun test3(crossinline param: () -> String): String {
     var result = "fail"
     inlineFun("2") { d ->
         inlineFun("1") { c ->

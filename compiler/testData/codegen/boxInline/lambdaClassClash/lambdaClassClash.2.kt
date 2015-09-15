@@ -2,7 +2,7 @@ package zzz
 
 import kotlin.InlineOption.*
 
-inline fun calc(inlineOptions(ONLY_LOCAL_RETURN) lambda: () -> Int): Int {
+inline fun calc(crossinline lambda: () -> Int): Int {
     return doCalc { lambda() }
 }
 

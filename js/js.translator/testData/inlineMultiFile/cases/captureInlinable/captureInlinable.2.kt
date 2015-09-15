@@ -7,7 +7,7 @@ package test
 
 import kotlin.InlineOption.*
 
-inline fun <R> doWork(inlineOptions(ONLY_LOCAL_RETURN) job: ()-> R) : R {
+inline fun <R> doWork(crossinline job: ()-> R) : R {
     return notInline({job()})
 }
 

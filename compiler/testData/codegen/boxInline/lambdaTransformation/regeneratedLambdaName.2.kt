@@ -2,6 +2,6 @@ package test
 
 import kotlin.InlineOption.*
 
-inline fun <R> call(inlineOptions(ONLY_LOCAL_RETURN) f: () -> R) : R {
+inline fun <R> call(crossinline f: () -> R) : R {
     return {f()} ()
 }

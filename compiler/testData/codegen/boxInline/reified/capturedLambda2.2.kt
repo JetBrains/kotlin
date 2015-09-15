@@ -1,6 +1,6 @@
 package test
 
-inline fun <reified R, T> bar(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) tasksFactory: () -> T) = {
+inline fun <reified R, T> bar(crossinline tasksFactory: () -> T) = {
     null is R
     run(tasksFactory)
 }

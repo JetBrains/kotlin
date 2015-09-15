@@ -1,6 +1,6 @@
 package test
 
-inline fun bar(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) y: () -> String) = {
+inline fun bar(crossinline y: () -> String) = {
     { { call(y) }() }()
 }
 

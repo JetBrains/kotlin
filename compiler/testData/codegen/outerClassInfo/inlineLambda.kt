@@ -4,7 +4,7 @@ import kotlin.InlineOption.*
 
 class Foo {
 
-    inline fun inlineFoo(inlineOptions(ONLY_LOCAL_RETURN) s: () -> Unit) {
+    inline fun inlineFoo(crossinline s: () -> Unit) {
         {
             s()
         }()

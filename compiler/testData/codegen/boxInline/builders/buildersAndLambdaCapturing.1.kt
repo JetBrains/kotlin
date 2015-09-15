@@ -42,7 +42,7 @@ inline fun testAllInline(f: () -> String) : String {
     return result.toString()!!
 }
 
-inline fun testHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
+inline fun testHtmlNoInline(crossinline f: () -> String) : String {
     val args = array("1", "2", "3")
     val result =
             htmlNoInline() {
@@ -82,7 +82,7 @@ inline fun testHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : 
     return result.toString()!!
 }
 
-inline fun testBodyNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
+inline fun testBodyNoInline(crossinline f: () -> String) : String {
     val args = array("1", "2", "3")
     val result =
             html {
@@ -122,7 +122,7 @@ inline fun testBodyNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : 
     return result.toString()!!
 }
 
-inline fun testBodyHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
+inline fun testBodyHtmlNoInline(crossinline f: () -> String) : String {
     val args = array("1", "2", "3")
     val result =
             htmlNoInline {
