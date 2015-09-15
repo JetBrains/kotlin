@@ -71,7 +71,7 @@ public interface Errors {
     DiagnosticFactory3<JetSimpleNameExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
-    DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, JetFile> ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE = DiagnosticFactory3.create(WARNING, CALL_ELEMENT);
+    DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, JetFile> ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
 
     DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
