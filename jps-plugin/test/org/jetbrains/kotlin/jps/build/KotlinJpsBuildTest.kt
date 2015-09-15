@@ -31,6 +31,7 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
@@ -612,6 +613,15 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                     it.messageText.replace(File("").absolutePath, "TEST_PATH").replace("\\", "/")
                 }.sort().toTypedArray()
         )
+    }
+
+    public fun testDoNotCreateUselessKotlinIncrementalCaches() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
+        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
