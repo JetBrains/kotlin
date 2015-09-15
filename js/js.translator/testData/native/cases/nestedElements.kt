@@ -85,14 +85,14 @@ fun box(): String {
     return "OK";
 }
 
-native
+@native
 object Object {
     object Object {
         val a: String = noImpl
         var b: String = noImpl
         fun test(): Int = noImpl
 
-        native("AnotherClass")
+        @native("AnotherClass")
         class Class(val a: String) {
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -133,7 +133,7 @@ object Object {
     fun test(): Int = noImpl
 }
 
-native("SomeClass")
+@native("SomeClass")
 class Class {
     object Object {
         val a: String = noImpl
@@ -170,16 +170,16 @@ class Class {
     }
 
     companion object {
-        native("aaa")
+        @native("aaa")
         val a: Trait = noImpl
         var b: String = noImpl
         fun test(): Int = noImpl
     }
 }
 
-native
+@native
 trait Trait {
-    native("SomeObject")
+    @native("SomeObject")
     object Object {
         val a: String = noImpl
         var b: String = noImpl
@@ -197,7 +197,7 @@ trait Trait {
         }
     }
 
-    native("SomeTrait")
+    @native("SomeTrait")
     trait Trait {
         val a: String
         var b: String

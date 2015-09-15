@@ -1,9 +1,9 @@
 package foo
 
-native
+@native
 class A(val v: String)
 
-native
+@native
 fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
 
 fun box(): String {

@@ -1,36 +1,36 @@
 package foo
 
-native("Object")
+@native("Object")
 class JsObject {
-    nativeGetter
+    @nativeGetter
     fun get(a: String): Any? = noImpl
 
-    nativeSetter
+    @nativeSetter
     fun set(a: String, v: Any?): Unit = noImpl
 
-    nativeGetter
+    @nativeGetter
     fun take(a: Int): Any? = noImpl
 
-    nativeSetter
+    @nativeSetter
     fun put(a: Int, v: Any?): Unit = noImpl
 }
 
-nativeGetter
+@nativeGetter
 fun JsObject.get(a: Int): Any? = noImpl
 
-nativeSetter
+@nativeSetter
 fun JsObject.set(a: Int, v: Any?): Unit = noImpl
 
-nativeGetter
+@nativeGetter
 fun JsObject.take(a: String): Any? = noImpl
 
-nativeSetter
+@nativeSetter
 fun JsObject.put(a: String, v: Any?): Unit = noImpl
 
 
 object t{}
 
-native
+@native
 fun getTestObject(): JsObject = noImpl
 
 fun test(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {

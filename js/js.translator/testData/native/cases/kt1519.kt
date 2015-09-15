@@ -1,12 +1,12 @@
 package foo
 
-native
+@native
 class Wow() {
     val x: Int = noImpl
     val y: Int = noImpl
 }
 
-native
+@native
 fun Wow.sum(): Int = noImpl
 
 fun Wow.dblSum(): Int {

@@ -9,7 +9,7 @@ public trait B : A {
     }
 }
 
-native class Function(vararg args: String)
+@native class Function(vararg args: String)
 
 val hasProp = Function("obj, prop", "return obj[prop] !== undefined") as ((Any, String) -> Boolean)
 

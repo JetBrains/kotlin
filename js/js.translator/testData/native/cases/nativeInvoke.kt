@@ -1,18 +1,18 @@
 package foo
 
-native
+@native
 class Function(vararg argsAndCode: String) {
-    nativeInvoke
+    @nativeInvoke
     fun invoke(a: Any?): Any? = noImpl
 
-    nativeInvoke
+    @nativeInvoke
     fun baz(a: Any?, b: Any?): Any? = noImpl
 }
 
-nativeInvoke
+@nativeInvoke
 fun Function.invoke(a: Any?, b: Any?): Any? = noImpl
 
-nativeInvoke
+@nativeInvoke
 fun Function.bar(a: Any?, b: Any?): Any? = noImpl
 
 object t{}

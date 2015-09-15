@@ -1,9 +1,9 @@
 package foo
 
-native
+@native
 fun <T> _enumerate(o: T): T = noImpl
 
-native
+@native
 fun _findFirst<T>(o: Any): T = noImpl
 
 class Test() {
@@ -12,7 +12,7 @@ class Test() {
 }
 
 class P() {
-    enumerable
+    @enumerable
     val a: Int = 100
     val b: String = "s"
 }

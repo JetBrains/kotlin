@@ -1,6 +1,6 @@
 package foo
 
-native
+@native
 class A(b: Int) {
     fun g(): Int = noImpl
     fun m(): Int = noImpl

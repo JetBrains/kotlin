@@ -6,7 +6,7 @@ fun bar(): Any? {
     return null
 }
 
-native
+@native
 val Exception.message: String get() = noImpl
 
 fun box(): String {

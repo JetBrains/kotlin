@@ -1,6 +1,6 @@
 package foo
 
-native trait HasName {
+@native trait HasName {
     val name: String
 }
 

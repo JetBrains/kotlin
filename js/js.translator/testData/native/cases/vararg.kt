@@ -1,12 +1,12 @@
 package foo
 
-native
+@native
 fun paramCount(vararg a: Int): Int = noImpl
 
-native("paramCount")
+@native("paramCount")
 fun anotherParamCount(vararg a: Int): Int = noImpl
 
-native("paramCount")
+@native("paramCount")
 fun genericParamCount<T>(vararg a: T): Int = noImpl
 
 // test spread operator
@@ -15,13 +15,13 @@ fun count(vararg a: Int) = paramCount(*a)
 // test spread operator
 fun anotherCount(vararg a: Int) = anotherParamCount(*a)
 
-native
+@native
 fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
 
-native
+@native
 fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
 
-native
+@native
 class Bar(val size: Int, order: Int = 0) {
     fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
     companion object {
@@ -30,7 +30,7 @@ class Bar(val size: Int, order: Int = 0) {
     }
 }
 
-native
+@native
 object obj {
     fun test(size: Int, vararg args: Int): Boolean = noImpl
 }
@@ -43,7 +43,7 @@ fun spreadInMethodCallWithReceiver(size: Int, vararg args: Int) = Bar(size).test
 
 fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
-native
+@native
 fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = noImpl
 
 fun testSpreadOperatorWithSafeCall(a: Bar?, expected: Boolean?, vararg args: Int): Boolean {
@@ -59,13 +59,13 @@ fun testCallOrder(vararg args: Int) =
         Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
 
-native
+@native
 fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
 
-native
+@native
 fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
 
-native
+@native
 fun idArrayVarArg<T>(vararg a: Array<T>): Array<T> = noImpl
 
 fun box(): String {

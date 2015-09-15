@@ -1,21 +1,21 @@
 package foo
 
-native
+@native
 trait Chrome {
     val extension: Extension
 }
 
-native
+@native
 trait Extension {
     val lastError: LastError?
 }
 
-native
+@native
 trait LastError {
     val message: String
 }
 
-native
+@native
 val chrome: Chrome = noImpl
 
 fun box(): Boolean {

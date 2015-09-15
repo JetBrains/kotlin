@@ -1,8 +1,8 @@
 package foo
 
-native
+@native
 class A(val c: Int) {
-    native
+    @native
     companion object {
         val g: Int = noImpl
         val c: String = noImpl

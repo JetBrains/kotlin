@@ -2,9 +2,9 @@ package foo
 
 import java.util.HashMap
 
-native
+@native
 val classes: Map<String, Any> = noImpl
-native
+@native
 val classesMutable: HashMap<String, String> = noImpl
 
 fun box(): Boolean {

@@ -1,13 +1,13 @@
 package foo
 
-library class A() {
-    library fun f() {
+@library class A() {
+    @library fun f() {
     }
-    library fun f(a: Int) {
+    @library fun f(a: Int) {
     }
 }
 
-library fun getResult() = false
+@library fun getResult() = false
 
 fun box(): Boolean {
     val a = A()

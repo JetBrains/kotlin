@@ -1,11 +1,11 @@
 package foo
 
-native
+@native
 trait NativeTrait {
     val foo: String
     fun bar(a: Int): Any
 
-    native("boo")
+    @native("boo")
     fun baz(): String
 }
 

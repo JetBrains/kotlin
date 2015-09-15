@@ -2,16 +2,16 @@ package foo
 
 // HACKS
 
-native
+@native
 val ROOT = "Kotlin.modules.JS_TESTS"
-native
+@native
 val PATH_TO_F_CREATOR = "foo.B.far\$f"
-native
+@native
 val PATH_TO_G_CREATOR = "foo.B.gar\$f"
 
-native("$ROOT.$PATH_TO_F_CREATOR")
+@native("$ROOT.$PATH_TO_F_CREATOR")
 val F_CREATOR: Any = noImpl
-native("$ROOT.$PATH_TO_G_CREATOR")
+@native("$ROOT.$PATH_TO_G_CREATOR")
 val G_CREATOR: Any = noImpl
 
 
@@ -48,10 +48,10 @@ fun box(): String {
 
 // Helpers
 
-native
+@native
 fun String.replace(regexp: RegExp, replacement: String): String = noImpl
 
 fun String.replaceAll(regexp: String, replacement: String): String = replace(RegExp(regexp, "g"), replacement)
 
-native
+@native
 class RegExp(regexp: String, flags: String)

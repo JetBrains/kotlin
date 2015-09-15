@@ -1,13 +1,13 @@
 package foo
 
-native
+@native
 internal open class A(val a: Int) {
     fun g(): Int = noImpl
     fun m(): Int = noImpl
 
     public open fun foo(i: Int): String = noImpl
     public fun boo(i: Int): String = noImpl
-    native("bar")
+    @native("bar")
     open fun baz(i: Int): String = noImpl
 }
 

@@ -1,13 +1,13 @@
 package foo
 
-native
+@native
 class A(val v: String) {
     fun m(i:Int, s:String): String = noImpl
 }
-native
+@native
 fun A.nativeExt(i:Int, s:String): String = noImpl
 
-native("nativeExt2AnotherName")
+@native("nativeExt2AnotherName")
 fun A.nativeExt2(i:Int, s:String): String = noImpl
 
 fun bar(a: A, extLambda: A.(Int, String) -> String): String = a.(extLambda)(4, "boo")
