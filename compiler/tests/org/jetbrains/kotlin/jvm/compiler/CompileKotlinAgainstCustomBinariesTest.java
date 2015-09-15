@@ -256,8 +256,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 "-classpath", library.getPath(),
                 "-d", tmpdir.getPath()
         ));
+        String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), pair.first);
+        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
     }
 
     /*test source mapping generation when source info is absent*/
