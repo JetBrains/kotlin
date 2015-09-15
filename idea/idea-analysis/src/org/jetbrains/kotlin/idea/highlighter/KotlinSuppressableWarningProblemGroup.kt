@@ -54,7 +54,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     var current: PsiElement? = element
     var suppressAtStatementAllowed = true
     while (current != null) {
-        if (current is JetDeclaration) {
+        if (current is JetDeclaration && current !is JetMultiDeclaration) {
             val declaration = current
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
@@ -64,14 +64,15 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
         }
         else if (current is JetExpression && suppressAtStatementAllowed) {
             // Add suppress action at first statement
-            if (current.getParent() is JetBlockExpression) {
+            if (current.parent is JetBlockExpression || current.parent is JetMultiDeclaration) {
+                val kind = if (current.parent is JetBlockExpression) "statement" else "initializer"
                 actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
-                                                          AnnotationHostKind("statement", "", true)))
+                                                          AnnotationHostKind(kind, "", true)))
                 suppressAtStatementAllowed = false
             }
         }
 
-        current = current.getParent()
+        current = current.parent
     }
     return actions
 }
