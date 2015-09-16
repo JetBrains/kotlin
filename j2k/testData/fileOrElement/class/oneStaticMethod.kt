@@ -1,5 +1,5 @@
 internal object S {
-    internal fun staticF(): Boolean {
+    fun staticF(): Boolean {
         return true
     }
 }

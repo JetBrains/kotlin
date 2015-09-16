@@ -1,14 +1,14 @@
 internal object Library {
-    internal fun call() {
+    fun call() {
     }
 
-    internal fun getString(): String {
+    fun getString(): String {
         return ""
     }
 }
 
 internal class User {
-    internal fun main() {
+    fun main() {
         Library.call()
         Library.getString().isEmpty()
     }

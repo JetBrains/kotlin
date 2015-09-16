@@ -1,5 +1,5 @@
 internal class A {
-    internal fun foo(p: Boolean) {
+    fun foo(p: Boolean) {
         run {
             var i = 1
             while (i < 1000) {

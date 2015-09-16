@@ -1,14 +1,14 @@
 internal open class Base
 
 internal class C : Base {
-    internal constructor(arg1: Int, arg2: Int, arg3: Int) {
+    constructor(arg1: Int, arg2: Int, arg3: Int) {
     }
 
-    internal constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
+    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
         println()
     }
 
-    internal constructor(arg: Int) {
+    constructor(arg: Int) {
         println(arg)
     }
 }

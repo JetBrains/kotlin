@@ -2,7 +2,7 @@
 internal class C {
     private val s = x()
 
-    internal fun foo() {
+    fun foo() {
         if (s == null) {
             print("null")
         }

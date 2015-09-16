@@ -1,7 +1,7 @@
 import java.util.ArrayList
 
 internal class User {
-    internal fun main() {
+    fun main() {
         val list = ArrayList<String>()
     }
 }

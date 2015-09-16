@@ -2,7 +2,7 @@ internal class `$$$$$`
 
 internal open class `$`
 
-internal class `$$`(internal val `$$$`: `$$$$$`) : `$`() {
+internal class `$$`(val `$$$`: `$$$$$`) : `$`() {
 
     fun `$$$$$$`(): `$$$$$` {
         return `$$$`

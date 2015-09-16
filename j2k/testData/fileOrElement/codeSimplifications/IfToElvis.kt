@@ -1,5 +1,5 @@
 internal class C {
-    internal fun foo(s: String?): String {
+    fun foo(s: String?): String {
         return s ?: ""
     }
 }

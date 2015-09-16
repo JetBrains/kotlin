@@ -2,7 +2,7 @@
 import kotlinApi.*
 
 internal class C : KotlinClass() {
-    internal fun foo() {
+    fun foo() {
         println(property)
         property = "a"
     }

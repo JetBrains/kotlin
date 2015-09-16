@@ -25,20 +25,20 @@ internal class C {
     }
 
     //simple one line comment for function
-    internal fun f1() {
+    fun f1() {
     }
 
     //simple one line comment for field
-    internal var j: Int = 0
+    var j: Int = 0
 
     //double c style
     //comment before function
-    internal fun f2() {
+    fun f2() {
     }
 
     //double c style
     //comment before field
-    internal var k: Int = 0
+    var k: Int = 0
 
     //combination
     /** of
@@ -48,7 +48,7 @@ internal class C {
      * different
      */
     //comments
-    internal fun f3() {
+    fun f3() {
     }
 
     //combination
@@ -59,8 +59,8 @@ internal class C {
      * different
      */
     //comments
-    internal var l: Int = 0
+    var l: Int = 0
 
     /*two*/ /*comments*//*line*/
-    internal var z: Int = 0
+    var z: Int = 0
 }

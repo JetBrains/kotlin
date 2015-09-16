@@ -1,2 +1,2 @@
-internal fun getT(): T {
+fun getT(): T {
 }

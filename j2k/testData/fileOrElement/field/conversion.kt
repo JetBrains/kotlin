@@ -1,13 +1,13 @@
 internal class A {
     private var i: Int? = getByte().toInt()
 
-    internal fun foo() {
+    fun foo() {
         i = 10
     }
 
     companion object {
 
-        internal fun getByte(): Byte {
+        fun getByte(): Byte {
             return 0
         }
     }

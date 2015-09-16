@@ -1,4 +1,4 @@
-internal fun foo() {
+fun foo() {
     if (a)
         println("a")
     else if (b)

@@ -2,7 +2,7 @@ internal class C {
     private fun foo(s: String?) {
     }
 
-    internal fun bar() {
+    fun bar() {
         foo(null)
     }
 }

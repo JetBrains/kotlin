@@ -1,2 +1,2 @@
-internal fun <U, V, W> putUVW(u: U, v: V, w: W) {
+fun <U, V, W> putUVW(u: U, v: V, w: W) {
 }

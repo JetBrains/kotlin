@@ -6,5 +6,5 @@ internal class C(a: Int) {
         abc = a * 2
     }
 
-    internal var abc = 0
+    var abc = 0
 }

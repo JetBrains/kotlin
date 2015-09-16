@@ -7,12 +7,12 @@ internal open class A {
     private fun foo2() {
     }
 
-    internal fun foo3() {
+    fun foo3() {
     }
 }
 
 internal class B {
-    internal fun foo() {
+    fun foo() {
     }
 }
 
@@ -31,7 +31,7 @@ internal open class D : I {
 
 internal enum class E {
     ;
-    internal fun foo(): Int {
+    fun foo(): Int {
         return 0
     }
 }

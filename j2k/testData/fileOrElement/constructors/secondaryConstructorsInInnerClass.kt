@@ -48,7 +48,7 @@ internal class Outer {
         }
     }
 
-    internal fun foo() {
+    fun foo() {
         val inner1 = Inner1(1)
         val inner2 = Inner2(2)
         val inner3 = Inner3(3)

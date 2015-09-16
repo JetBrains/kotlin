@@ -1,7 +1,7 @@
 import java.util.*
 
 internal class A {
-    internal fun foo(): Map<String, String> {
+    fun foo(): Map<String, String> {
         val list1 = emptyList<String>()
         val list2 = listOf(1)
         val set1 = emptySet<String>()

@@ -162,7 +162,7 @@ class Converter private constructor(
         }
 
         val annotations = convertAnnotations(psiClass)
-        var modifiers = convertModifiers(psiClass)
+        var modifiers = convertModifiers(psiClass, false)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
@@ -282,7 +282,7 @@ class Converter private constructor(
 
         return Class(psiClass.declarationIdentifier(),
                      convertAnnotations(psiClass),
-                     convertModifiers(psiClass).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
+                     convertModifiers(psiClass, false).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
                      TypeParameterList.Empty,
                      listOf(),
                      null,
@@ -292,13 +292,14 @@ class Converter private constructor(
 
     public fun convertInitializer(initializer: PsiClassInitializer): Initializer {
         return Initializer(deferredElement { codeConverter -> codeConverter.convertBlock(initializer.getBody()) },
-                           convertModifiers(initializer)).assignPrototype(initializer)
+                           convertModifiers(initializer, false)).assignPrototype(initializer)
     }
 
     public fun convertField(field: PsiField, correction: FieldCorrectionInfo?): Member {
         val annotations = convertAnnotations(field)
 
-        var modifiers = convertModifiers(field)
+        var modifiers = convertModifiers(field, false)
+
         if (correction != null) {
             modifiers = modifiers.without(modifiers.accessModifier()).with(correction.access)
         }
@@ -362,10 +363,7 @@ class Converter private constructor(
 
         val annotations = convertAnnotations(method) + convertThrows(method)
 
-        var modifiers = convertModifiers(method)
-        if (needOpenModifier(method, isInOpenClass, modifiers)) {
-            modifiers = modifiers.with(Modifier.OPEN)
-        }
+        var modifiers = convertModifiers(method, isInOpenClass)
 
         val statementsToInsert = ArrayList<Statement>()
         for (parameter in method.getParameterList().getParameters()) {
@@ -392,11 +390,6 @@ class Converter private constructor(
             constructorConverter.convertConstructor(method, annotations, modifiers, membersToRemove!!, postProcessBody)
         }
         else {
-            val isOverride = isOverride(method)
-            if (isOverride) {
-                modifiers = modifiers.with(Modifier.OVERRIDE)
-            }
-
             val containingClass = method.getContainingClass()
 
             if (settings.openByDefault) {
@@ -555,9 +548,34 @@ class Converter private constructor(
         return Identifier(identifier.getText()!!).assignPrototype(identifier)
     }
 
-    public fun convertModifiers(owner: PsiModifierListOwner): Modifiers {
-        return Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
+    public fun convertModifiers(owner: PsiModifierListOwner, isMethodInOpenClass: Boolean): Modifiers {
+        var modifiers = Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
                 .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance.NO_SPACES)
+
+        if (owner is PsiMethod) {
+            val isOverride = isOverride(owner)
+            if (isOverride) {
+                modifiers = modifiers.with(Modifier.OVERRIDE)
+            }
+
+            if (needOpenModifier(owner, isMethodInOpenClass, modifiers)) {
+                modifiers = modifiers.with(Modifier.OPEN)
+            }
+
+            modifiers = modifiers.adaptForContainingClassVisibility(owner.containingClass)
+        }
+        else if (owner is PsiField) {
+            modifiers = modifiers.adaptForContainingClassVisibility(owner.containingClass)
+        }
+
+        return modifiers
+    }
+
+    // to convert package local members in package local class into public member (when it's not override, open or abstract)
+    private fun Modifiers.adaptForContainingClassVisibility(containingClass: PsiClass?): Modifiers {
+        if (containingClass == null || !containingClass.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)) return this
+        if (!contains(Modifier.INTERNAL) || contains(Modifier.OVERRIDE) || contains(Modifier.OPEN) || contains(Modifier.ABSTRACT)) return this
+        return without(Modifier.INTERNAL).with(Modifier.PUBLIC)
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {

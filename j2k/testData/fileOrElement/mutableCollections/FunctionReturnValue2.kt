@@ -1,13 +1,13 @@
 import java.util.*
 
-internal class A internal constructor() {
+internal class A {
     private val collection: MutableCollection<String>
 
     init {
         collection = createCollection()
     }
 
-    internal fun createCollection(): MutableCollection<String> {
+    fun createCollection(): MutableCollection<String> {
         return ArrayList()
     }
 

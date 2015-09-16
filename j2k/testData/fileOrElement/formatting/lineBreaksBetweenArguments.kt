@@ -1,8 +1,8 @@
 internal class F {
-    internal fun f1(p1: Int, p2: Int, p3: Int, p4: Int, vararg p5: Int) {
+    fun f1(p1: Int, p2: Int, p3: Int, p4: Int, vararg p5: Int) {
     }
 
-    internal fun f2(array: IntArray) {
+    fun f2(array: IntArray) {
         f1(1, 2,
                 3, 4,
                 *array)

@@ -3,13 +3,13 @@
 package foo
 
 internal class A {
-    internal fun /* nothing to return */ foo(/* no parameters at all */) {
+    fun /* nothing to return */ foo(/* no parameters at all */) {
         // let declare a variable
         // with 2 comments before
         val /*int*/ a /* it's a */ = 2 /* it's 2 */ + 1 /* it's 1 */ // variable a declared
     } // end of foo
 
-    internal fun /* we return int*/ foo(/*int*/ p: Int/* parameter p */): Int {
+    fun /* we return int*/ foo(/*int*/ p: Int/* parameter p */): Int {
         /* body is empty */
     }
 

@@ -5,15 +5,15 @@ package demo
 import java.util.HashMap
 
 internal class Test {
-    internal constructor() {
+    constructor() {
     }
 
-    internal constructor(s: String) {
+    constructor(s: String) {
     }
 }
 
 internal class User {
-    internal fun main() {
+    fun main() {
         val m = HashMap(1)
         val m2 = HashMap(10)
 

@@ -1,10 +1,10 @@
 internal class S {
-    internal fun sB(): Boolean {
+    fun sB(): Boolean {
         return true
     }
 
     companion object {
-        internal fun sI(): Int {
+        fun sI(): Int {
             return 1
         }
     }

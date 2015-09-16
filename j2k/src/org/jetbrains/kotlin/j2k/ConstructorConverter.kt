@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.j2k.ast.Annotation
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 class ConstructorConverter(
         private val psiClass: PsiClass,
@@ -208,7 +205,7 @@ class ConstructorConverter(
                         val accessModifiers = if (fieldCorrection != null)
                             Modifiers(listOf()).with(fieldCorrection.access).assignNoPrototype()
                         else
-                            converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS }
+                            converter.convertModifiers(field, false).filter { it in ACCESS_MODIFIERS }
                         FunctionParameter(name,
                                           type,
                                           if (field.isVal(converter.referenceSearcher)) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,

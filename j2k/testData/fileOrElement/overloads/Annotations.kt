@@ -1,17 +1,17 @@
 // ERROR: Type mismatch: inferred type is kotlin.Any? but kotlin.Any was expected
 // ERROR: Type mismatch: inferred type is kotlin.Any? but kotlin.Any was expected
 internal class A {
-    @JvmOverloads internal fun foo(s: String? = null): Any {
+    @JvmOverloads fun foo(s: String? = null): Any {
         println("s = " + s!!)
         return ""
     }
 
-    internal fun bar(s: String?): Any? {
+    fun bar(s: String?): Any? {
         println("s = " + s!!)
         return if (s == null) "" else null
     }
 
-    internal fun bar(): Any {
+    fun bar(): Any {
         return bar(null)
     }
 

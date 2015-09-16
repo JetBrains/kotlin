@@ -7,4 +7,4 @@ open class Base internal constructor(x: Int) {
     }
 }
 
-internal class Derived internal constructor(b: Base) : Base(b.x)
+internal class Derived(b: Base) : Base(b.x)

@@ -5,7 +5,7 @@ internal class A {
         }
     }
 
-    internal fun bar() {
+    fun bar() {
         privateStatic2()
     }
 

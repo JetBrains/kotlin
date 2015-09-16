@@ -1,10 +1,10 @@
-internal class C internal constructor(arg1: Int, arg2: Int, arg3: Int) {
+internal class C(arg1: Int, arg2: Int, arg3: Int) {
 
-    internal constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
+    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
         println()
     }
 
-    internal constructor(arg1: Int) : this(arg1, 0) {
+    constructor(arg1: Int) : this(arg1, 0) {
         println()
     }
 }

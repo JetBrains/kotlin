@@ -1,6 +1,6 @@
 package org.test.customer
 
-internal class Customer internal constructor(val firstName: String, val lastName: String) {
+internal class Customer(val firstName: String, val lastName: String) {
 
     init {
         doSmthBefore()

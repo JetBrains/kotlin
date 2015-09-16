@@ -5,7 +5,7 @@ internal class Foo {
 }
 
 internal class User {
-    internal fun main() {
+    fun main() {
         val boo = Foo.Bar()
     }
 }

@@ -4,7 +4,7 @@ internal class Library {
 }
 
 internal class User {
-    internal fun main() {
+    fun main() {
         Library().myString.isEmpty()
     }
 }

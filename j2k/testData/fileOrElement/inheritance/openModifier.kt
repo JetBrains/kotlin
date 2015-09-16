@@ -37,7 +37,7 @@ internal abstract class E {
     internal open fun f2() {
     }
 
-    internal fun f3() {
+    fun f3() {
     }
 }
 

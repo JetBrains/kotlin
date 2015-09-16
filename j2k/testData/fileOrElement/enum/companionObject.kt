@@ -12,7 +12,7 @@ enum class TestEnum {
 }
 
 internal class Go {
-    internal fun fn() {
+    fun fn() {
         val x = TestEnum.parse()
     }
 }

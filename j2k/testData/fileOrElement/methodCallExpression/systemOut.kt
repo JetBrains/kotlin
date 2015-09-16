@@ -1,5 +1,5 @@
 internal class A {
-    internal fun foo() {
+    fun foo() {
         println()
         println(1)
         println("1")

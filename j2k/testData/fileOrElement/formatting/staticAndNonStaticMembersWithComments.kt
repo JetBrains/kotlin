@@ -6,13 +6,13 @@ internal class F {
 
     //c4
 
-    internal fun f2() {
+    fun f2() {
     }
 
-    internal fun f3() {
+    fun f3() {
     }
 
-    internal fun f4() {
+    fun f4() {
     }
 
     companion object {
@@ -21,14 +21,14 @@ internal class F {
 
         /*c2*/
 
-        internal fun f1() {
+        fun f1() {
         }
 
-        internal var i: Int? = 0
+        var i: Int? = 0
 
         //c5
 
-        internal fun f5() {
+        fun f5() {
         }
     }
 

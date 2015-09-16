@@ -1,4 +1,4 @@
-internal fun foo() {
+fun foo() {
     when (a) {
         -> {
             println("1")

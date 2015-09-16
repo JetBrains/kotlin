@@ -1,7 +1,7 @@
 internal class C {
     val `this` = 0
 
-    internal fun foo() {
+    fun foo() {
         println(`this`)
     }
 }

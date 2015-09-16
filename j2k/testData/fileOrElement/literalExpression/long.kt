@@ -8,13 +8,13 @@ internal class A {
     private val l7 = +1
     private val l8 = +1L
 
-    internal fun foo1(l: Long) {
+    fun foo1(l: Long) {
     }
 
-    internal fun foo2(l: Long?) {
+    fun foo2(l: Long?) {
     }
 
-    internal fun bar() {
+    fun bar() {
         foo1(1)
         foo1(1L)
         foo2(1L)

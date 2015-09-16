@@ -48,7 +48,7 @@ internal object Outer {
         }
     }
 
-    internal fun foo() {
+    fun foo() {
         val nested1 = Nested1(1)
         val nested2 = Nested2(2)
         val nested3 = Nested3(3)

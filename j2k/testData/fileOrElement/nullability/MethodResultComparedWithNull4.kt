@@ -3,7 +3,7 @@ internal interface I {
 }
 
 internal class C {
-    internal fun foo(i: I, b: Boolean) {
+    fun foo(i: I, b: Boolean) {
         var result: String? = i.getString()
         if (b) result = null
         if (result != null) {

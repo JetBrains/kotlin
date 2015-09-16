@@ -1,9 +1,9 @@
-internal class A internal constructor(private val field6: Int, private val field8: Int, a: A) {
+internal class A(private val field6: Int, private val field8: Int, a: A) {
     private val field1 = 0
     private val field2 = 0
     private var field3 = 0
-    internal val field4 = 0
-    internal var field5 = 0
+    val field4 = 0
+    var field5 = 0
     private val field7: Int
     private val field9: Int
     private var field10: Int = 0
@@ -18,7 +18,7 @@ internal class A internal constructor(private val field6: Int, private val field
         a.field11 = 10
     }
 
-    internal fun foo() {
+    fun foo() {
         field3 = field2
     }
 }

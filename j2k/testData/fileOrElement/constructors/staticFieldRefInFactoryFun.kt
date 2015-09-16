@@ -1,6 +1,6 @@
-internal class C internal constructor() {
+internal class C() {
 
-    internal constructor(p: Int) : this() {
+    constructor(p: Int) : this() {
         println(staticField1 + C.staticField2)
     }
 

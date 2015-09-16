@@ -3,7 +3,7 @@ internal class C {
 }
 
 internal class D {
-    internal fun foo(c: C) {
+    fun foo(c: C) {
         if (null == c.s) {
             println("null")
         }

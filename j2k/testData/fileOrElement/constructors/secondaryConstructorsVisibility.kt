@@ -6,7 +6,7 @@ internal class A() {
     protected constructor(c: Char) : this() {
     }
 
-    internal constructor(f: Float) : this() {
+    constructor(f: Float) : this() {
     }
 
     private constructor(d: Double) : this() {

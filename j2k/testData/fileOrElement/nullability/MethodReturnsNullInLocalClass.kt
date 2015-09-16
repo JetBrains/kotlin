@@ -1,7 +1,7 @@
 internal class C {
-    internal fun foo(): String {
+    fun foo(): String {
         internal class Local {
-            internal fun foo(): String? {
+            fun foo(): String? {
                 return null
             }
         }

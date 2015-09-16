@@ -117,7 +117,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val result = methodToKotlin("void main() {" + text + "}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirst("internal fun main() {", "").trim()
+        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main() {", "").trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {

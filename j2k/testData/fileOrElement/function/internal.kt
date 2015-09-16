@@ -1,2 +1,2 @@
-internal fun test() {
+fun test() {
 }

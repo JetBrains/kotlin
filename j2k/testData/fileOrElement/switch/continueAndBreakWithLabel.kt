@@ -1,4 +1,4 @@
-internal fun foo() {
+fun foo() {
     Loop@ while (true) {
         when (take()) {
             1 -> continue

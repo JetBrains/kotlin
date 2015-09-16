@@ -10,7 +10,7 @@ open class AAA {
 }
 
 internal class BBB : AAA() {
-    internal fun bar() {
+    fun bar() {
         println(x)
         x = 10
     }

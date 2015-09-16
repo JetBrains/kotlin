@@ -1,7 +1,7 @@
 package demo
 
 internal object Test {
-    internal fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
+    fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
         if (fromIndex < 0)
             throw IndexOutOfBoundsException("fromIndex = " + fromIndex)
         if (toIndex > size)

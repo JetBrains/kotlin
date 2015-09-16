@@ -1,4 +1,4 @@
-internal class C @JvmOverloads internal constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
+internal class C @JvmOverloads constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
     init {
@@ -10,7 +10,7 @@ internal class C @JvmOverloads internal constructor(arg1: Int, arg2: Int = 0, ar
         arg3++
     }
 
-    internal constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
+    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
         var arg2 = arg2
         arg2++
     }

@@ -1,12 +1,12 @@
 package demo
 
 internal class TestT {
-    internal fun <T> getT() {
+    fun <T> getT() {
     }
 }
 
 internal class U {
-    internal fun main() {
+    fun main() {
         val t = TestT()
         t.getT<String>()
         t.getT<Int>()

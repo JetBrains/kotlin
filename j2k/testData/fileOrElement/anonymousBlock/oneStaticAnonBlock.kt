@@ -1,5 +1,5 @@
 internal object Test {
-    internal var str: String
+    var str: String
 
     init {
         str = "Ola"

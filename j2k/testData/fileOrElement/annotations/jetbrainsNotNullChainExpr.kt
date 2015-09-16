@@ -3,13 +3,13 @@
 package test
 
 internal class Foo {
-    internal fun execute() {
+    fun execute() {
     }
 }
 
 internal class Bar {
-    internal var fooNotNull = Foo()
-    internal var fooNullable: Foo? = null
+    var fooNotNull = Foo()
+    var fooNullable: Foo? = null
 }
 
 internal class Test {

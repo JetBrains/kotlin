@@ -4,7 +4,7 @@ internal class C {
 }
 
 internal class D {
-    internal fun bar(c: C) {
+    fun bar(c: C) {
         c.foo(null)
     }
 }

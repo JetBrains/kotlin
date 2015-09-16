@@ -1,5 +1,5 @@
 internal class B {
-    internal fun foo(a: AAA) {
+    fun foo(a: AAA) {
         a.x = a.x + 1
         YY += "a"
     }

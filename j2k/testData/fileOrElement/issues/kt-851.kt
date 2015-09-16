@@ -1,8 +1,8 @@
 internal class Test {
-    internal fun putInt(i: Int) {
+    fun putInt(i: Int) {
     }
 
-    internal fun test() {
+    fun test() {
         val b = 10
         putInt(b.toInt())
     }

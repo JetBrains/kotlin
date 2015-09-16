@@ -1,6 +1,6 @@
-internal open class Base internal constructor(nested: Base.Nested) {
+internal open class Base(nested: Base.Nested) {
 
-    internal class Nested internal constructor(p: Int) {
+    internal class Nested(p: Int) {
         companion object {
 
             val FIELD = 0
@@ -8,4 +8,4 @@ internal open class Base internal constructor(nested: Base.Nested) {
     }
 }
 
-internal class Derived internal constructor() : Base(Base.Nested(Base.Nested.FIELD))
+internal class Derived : Base(Base.Nested(Base.Nested.FIELD))

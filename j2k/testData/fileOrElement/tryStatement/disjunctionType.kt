@@ -2,7 +2,7 @@
 import java.io.IOException
 
 internal class A {
-    internal fun foo() {
+    fun foo() {
         try {
             bar()
         } catch (e: RuntimeException) {

@@ -1,7 +1,7 @@
 internal enum class E {
     FOO;
 
-    internal fun foo() {
+    fun foo() {
         FOO.toString()
     }
 }

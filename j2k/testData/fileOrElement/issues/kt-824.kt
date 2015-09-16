@@ -1,15 +1,15 @@
 package demo
 
 internal class Container {
-    internal var myBoolean = true
+    var myBoolean = true
 }
 
 internal object One {
-    internal var myContainer = Container()
+    var myContainer = Container()
 }
 
 internal class Test {
-    internal fun test() {
+    fun test() {
         if (One.myContainer.myBoolean)
             println("Ok")
 

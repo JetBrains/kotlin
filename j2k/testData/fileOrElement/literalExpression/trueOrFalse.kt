@@ -1,5 +1,5 @@
 internal class Test {
-    internal fun test() {
+    fun test() {
         val t1 = true
         val t2 = true
 

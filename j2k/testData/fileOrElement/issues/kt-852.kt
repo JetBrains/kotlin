@@ -1,7 +1,7 @@
 package demo
 
 internal class Test {
-    internal fun test(): String {
+    fun test(): String {
         val s1 = ""
         val s2 = ""
         val s3 = ""

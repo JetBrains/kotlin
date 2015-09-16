@@ -4,7 +4,7 @@ internal class C {
 
     companion object {
 
-        internal fun getString(): String? {
+        fun getString(): String? {
             return x()
         }
     }

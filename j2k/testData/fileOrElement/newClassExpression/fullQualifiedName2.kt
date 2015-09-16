@@ -2,7 +2,7 @@
 package test
 
 internal class User {
-    internal fun main() {
+    fun main() {
         val list = java.util.ArrayList()
     }
 }

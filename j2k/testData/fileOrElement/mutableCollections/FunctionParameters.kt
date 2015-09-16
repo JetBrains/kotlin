@@ -2,10 +2,10 @@
 import java.util.*
 
 internal class A<T> {
-    internal fun foo(nonMutableCollection: Collection<String>,
-                     mutableCollection: MutableCollection<String>,
-                     mutableSet: MutableSet<T>,
-                     mutableMap: MutableMap<String, T>) {
+    fun foo(nonMutableCollection: Collection<String>,
+            mutableCollection: MutableCollection<String>,
+            mutableSet: MutableSet<T>,
+            mutableMap: MutableMap<String, T>) {
         mutableCollection.addAll(nonMutableCollection)
         mutableSet.add(mutableMap.remove("a"))
     }

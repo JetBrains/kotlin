@@ -4,7 +4,7 @@ internal interface Getter {
 }
 
 internal class C {
-    internal fun foo(b: Boolean): String {
+    fun foo(b: Boolean): String {
         val getter = object : Getter {
             override fun get(): String? {
                 return null

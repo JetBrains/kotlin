@@ -4,7 +4,7 @@ internal class A {
         return ""
     }
 
-    internal fun bar() {
+    fun bar() {
         if (foo(null, true) == null) {
             println("null")
         }

@@ -4,7 +4,7 @@ package demo
 import java.util.ArrayList
 
 internal class Test {
-    internal fun main() {
+    fun main() {
         val common = ArrayList<String>()
         val raw = ArrayList<String>()
         val superRaw = ArrayList()

@@ -1,5 +1,5 @@
 internal class A {
-    internal fun foo(p: Boolean) {
+    fun foo(p: Boolean) {
         if (p) {
             val i = 10
         }

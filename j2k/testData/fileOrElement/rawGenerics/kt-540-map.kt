@@ -4,7 +4,7 @@ package demo
 import java.util.HashMap
 
 internal class Test {
-    internal fun main() {
+    fun main() {
         val commonMap = HashMap<String, Int>()
         val rawMap = HashMap<String, Int>()
         val superRawMap = HashMap()

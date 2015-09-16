@@ -7,13 +7,13 @@ internal class A {
     private val d6 = 1.0
     private val d7 = Math.sqrt(2.0) - 1
 
-    internal fun foo1(d: Double) {
+    fun foo1(d: Double) {
     }
 
-    internal fun foo2(d: Double?) {
+    fun foo2(d: Double?) {
     }
 
-    internal fun bar() {
+    fun bar() {
         foo1(1.0)
         foo1(1.0)
         foo1(1.0)

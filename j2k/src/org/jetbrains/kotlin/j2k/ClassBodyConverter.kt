@@ -19,16 +19,12 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.MethodIntoObjectProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.ToObjectWithOnlyMethodsProcessing
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.LinkedHashMap
+import java.util.*
 
 class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
     val identifier = Identifier(name).assignNoPrototype()
@@ -189,11 +185,11 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 membersToRemove.add(setterInfo.method)
             }
 
-            val getterAccess = converter.convertModifiers(getterInfo.method).accessModifier()
+            val getterAccess = converter.convertModifiers(getterInfo.method, isOpenClass).accessModifier()
             val setterAccess = if (setterInfo != null)
-                converter.convertModifiers(setterInfo.method).accessModifier()
+                converter.convertModifiers(setterInfo.method, isOpenClass).accessModifier()
             else
-                converter.convertModifiers(field).accessModifier()
+                converter.convertModifiers(field, false).accessModifier()
             //TODO: check that setter access is not bigger
             fieldCorrections[field] = FieldCorrectionInfo(propertyName, getterAccess, setterAccess)
 

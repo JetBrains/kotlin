@@ -17,16 +17,16 @@ internal class C {
     @Anon5(1)
     private val field2 = 0
 
-    @Anon5(1) internal var field3 = 0
+    @Anon5(1) var field3 = 0
 
     @Anon5(1)
-    internal var field4 = 0
+    var field4 = 0
 
     @Anon6
-    internal fun foo(@Deprecated("") p1: Int, @Deprecated("") @Anon5(2) p2: Char) {
+    fun foo(@Deprecated("") p1: Int, @Deprecated("") @Anon5(2) p2: Char) {
         @Deprecated("") @Anon5(3) val c = 'a'
     }
 
-    @Anon5(1) internal fun bar() {
+    @Anon5(1) fun bar() {
     }
 }

@@ -1,12 +1,12 @@
-internal class C internal constructor(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
+internal class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
 
-    internal constructor(arg1: Int, arg2: Int, other: C) : this(arg1, arg2, 0) {
+    constructor(arg1: Int, arg2: Int, other: C) : this(arg1, arg2, 0) {
         println(this.arg1 + other.arg2)
     }
 }
 
 internal class User {
-    internal fun foo() {
+    fun foo() {
         val c1 = C(100, 100, 100)
         val c2 = C(100, 100, c1)
     }

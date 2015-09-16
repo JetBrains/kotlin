@@ -3,7 +3,7 @@ internal class C {
         return false
     }
 
-    internal fun foo(c1: C, c2: C): Boolean {
+    fun foo(c1: C, c2: C): Boolean {
         return c1.equals(c2)
     }
 }

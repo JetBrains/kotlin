@@ -3,7 +3,7 @@ internal interface I {
 }
 
 internal class C {
-    internal fun getObject(): Any? {
+    fun getObject(): Any? {
         foo(object : I {
             override fun getInt(): Int {
                 return 0
@@ -12,8 +12,8 @@ internal class C {
         return string
     }
 
-    internal fun foo(i: I) {
+    fun foo(i: I) {
     }
 
-    internal var string: String? = null
+    var string: String? = null
 }

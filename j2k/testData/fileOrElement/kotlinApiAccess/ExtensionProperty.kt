@@ -1,7 +1,7 @@
 import kotlinApi.*
 
 internal class C {
-    internal fun foo(): Int {
+    fun foo(): Int {
         "a".extensionProperty = 1
         return "b".extensionProperty
     }

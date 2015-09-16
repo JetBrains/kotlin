@@ -8,13 +8,13 @@ internal class A {
     private val f7 = -1f
     private val f8 = +1f
 
-    internal fun foo1(f: Float) {
+    fun foo1(f: Float) {
     }
 
-    internal fun foo2(f: Float?) {
+    fun foo2(f: Float?) {
     }
 
-    internal fun bar() {
+    fun bar() {
         foo1(1f)
         foo2(1f)
         foo1(1f)
