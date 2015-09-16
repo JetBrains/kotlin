@@ -16,34 +16,30 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.descriptors.Named
+import org.jetbrains.kotlin.load.java.structure.JavaNamedElement
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.Named
-import java.util.IdentityHashMap
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import java.util.ArrayList
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.load.java.structure.JavaNamedElement
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.HashMap
-import org.jetbrains.kotlin.types.JetTypeImpl
-import java.util.regex.Pattern
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
-import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
-import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.utils.Printer
+import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Method
-import java.lang.reflect.Constructor
+import java.util.*
+import java.util.regex.Pattern
 
 class LazyOperationsLog(
         val stringSanitizer: (String) -> String
@@ -160,12 +156,11 @@ class LazyOperationsLog(
                 val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
                 val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
-                val typeConstructorData = typeProto.getTypeConstructorData()
-                val text = when (typeConstructorData.kind) {
-                    TypeConstructorKind.CLASS -> context.nameResolver.getFqName(typeConstructorData.id).asString()
-                    TypeConstructorKind.TYPE_PARAMETER -> {
-                        val classifier = (o as JetType).getConstructor().getDeclarationDescriptor()!!
-                        "" + classifier.getName() + " in " + DescriptorUtils.getFqName(classifier.getContainingDeclaration())
+                val text = when {
+                    typeProto.hasClassName() -> context.nameResolver.getFqName(typeProto.className).asString()
+                    typeProto.hasTypeParameter() -> {
+                        val classifier = (o as JetType).constructor.declarationDescriptor!!
+                        "" + classifier.name + " in " + DescriptorUtils.getFqName(classifier.containingDeclaration)
                     }
                     else -> "???"
                 }

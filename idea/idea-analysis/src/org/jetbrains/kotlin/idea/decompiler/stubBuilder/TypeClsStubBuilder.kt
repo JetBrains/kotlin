@@ -36,11 +36,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
-import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.ArrayList
+import java.util.*
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
@@ -56,14 +54,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 if (type.getNullable()) KotlinPlaceHolderStubImpl<JetNullableType>(typeReference, JetStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
-        val typeConstructorData = type.getTypeConstructorData()
-        when (typeConstructorData.kind) {
-            TypeConstructorKind.CLASS -> {
+        when {
+            type.hasClassName() ->
                 createClassReferenceTypeStub(effectiveParent, type, annotations)
-            }
-            TypeConstructorKind.TYPE_PARAMETER -> {
+            type.hasTypeParameter() -> {
                 createTypeAnnotationStubs(effectiveParent, annotations)
-                val typeParameterName = c.typeParameters[typeConstructorData.id]
+                val typeParameterName = c.typeParameters[type.typeParameter]
                 createStubForTypeName(ClassId.topLevel(FqName.topLevel(typeParameterName)), effectiveParent)
             }
         }
@@ -79,7 +75,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
         }
 
-        val classId = c.nameResolver.getClassId(type.getConstructor().getId())
+        val classId = c.nameResolver.getClassId(type.className)
         val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.getArgumentList().none { it.getProjection() == Projection.STAR }
         if (shouldBuildAsFunctionType) {
@@ -240,11 +236,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun Type.isDefaultUpperBound(): Boolean {
-        val typeConstructorData = getTypeConstructorData()
-        if (typeConstructorData.kind != TypeConstructorKind.CLASS) {
-            return false
-        }
-        val classId = c.nameResolver.getClassId(typeConstructorData.id)
-        return KotlinBuiltIns.isAny(classId.asSingleFqName().toUnsafe()) && this.nullable
+        return this.hasClassName() &&
+               c.nameResolver.getClassId(className).let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } &&
+               this.nullable
     }
 }

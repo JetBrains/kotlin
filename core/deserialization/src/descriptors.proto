@@ -101,19 +101,6 @@ message Annotation {
 }
 
 message Type {
-  message Constructor {
-    enum Kind {
-      CLASS = 0;
-      TYPE_PARAMETER = 1;
-    }
-
-    optional Kind kind = 1 [default = CLASS, (skip_in_comparison) = true];
-
-    required int32 id = 2 [(skip_in_comparison) = true]; // CLASS - fqName id, TYPE_PARAMETER - type parameter id
-  }
-
-  required Constructor constructor = 1 [(skip_in_comparison) = true];
-
   message Argument {
     enum Projection {
       IN = 0;
@@ -142,10 +129,8 @@ message Type {
 
   // Only one of the following values should be present. Consider using `oneof` instead when we upgrade to protobuf 2.6.0+
 
-  optional int32 constructor_class_name = 6 [(fq_name_id_in_table) = true]; // fqName id
-
-  optional int32 constructor_type_parameter = 7; // type parameter id
-
+  optional int32 class_name = 6 [(fq_name_id_in_table) = true]; // fqName id
+  optional int32 type_parameter = 7; // type parameter id
 
   extensions 100 to 199;
 }

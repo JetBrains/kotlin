@@ -349,12 +349,23 @@ public class DescriptorSerializer {
     public ProtoBuf.Type.Builder type(@NotNull JetType type) {
         assert !type.isError() : "Can't serialize error types: " + type; // TODO
 
-        if (TypesPackage.isFlexible(type)) return flexibleType(type);
+        if (TypesPackage.isFlexible(type)) {
+            Flexibility flexibility = TypesPackage.flexibility(type);
+
+            return type(flexibility.getLowerBound())
+                    .setFlexibleTypeCapabilitiesId(stringTable.getStringIndex(flexibility.getExtraCapabilities().getId()))
+                    .setFlexibleUpperBound(type(flexibility.getUpperBound()));
+        }
 
         ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 
-        builder.setConstructor(typeConstructor(type.getConstructor()));
-        setTypeConstructorFields(builder, type.getConstructor());
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor) {
+            builder.setClassName(getClassId((ClassDescriptor) descriptor));
+        }
+        if (descriptor instanceof TypeParameterDescriptor) {
+            builder.setTypeParameter(getTypeParameterId((TypeParameterDescriptor) descriptor));
+        }
 
         for (TypeProjection projection : type.getArguments()) {
             builder.addArgument(typeArgument(projection));
@@ -366,33 +377,6 @@ public class DescriptorSerializer {
         }
 
         extension.serializeType(type, builder, stringTable);
-
-        return builder;
-    }
-
-    private void setTypeConstructorFields(@NotNull ProtoBuf.Type.Builder builder, @NotNull TypeConstructor typeConstructor) {
-        ClassifierDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-
-        assert declarationDescriptor instanceof TypeParameterDescriptor || declarationDescriptor instanceof ClassDescriptor
-                : "Unknown declaration descriptor: " + typeConstructor;
-        if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
-            builder.setConstructorTypeParameter(getTypeParameterId(typeParameterDescriptor));
-        }
-        else {
-            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            builder.setConstructorClassName(getClassId(classDescriptor));
-        }
-    }
-
-    private ProtoBuf.Type.Builder flexibleType(@NotNull JetType type) {
-        Flexibility flexibility = TypesPackage.flexibility(type);
-
-        ProtoBuf.Type.Builder builder = type(flexibility.getLowerBound());
-
-        builder.setFlexibleTypeCapabilitiesId(stringTable.getStringIndex(flexibility.getExtraCapabilities().getId()));
-
-        builder.setFlexibleUpperBound(type(flexibility.getUpperBound()));
 
         return builder;
     }
@@ -414,27 +398,6 @@ public class DescriptorSerializer {
             builder.setType(type(typeProjection.getType()));
         }
 
-        return builder;
-    }
-
-    @NotNull
-    private ProtoBuf.Type.Constructor.Builder typeConstructor(@NotNull TypeConstructor typeConstructor) {
-        ProtoBuf.Type.Constructor.Builder builder = ProtoBuf.Type.Constructor.newBuilder();
-
-        ClassifierDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-
-        assert declarationDescriptor instanceof TypeParameterDescriptor || declarationDescriptor instanceof ClassDescriptor
-                : "Unknown declaration descriptor: " + typeConstructor;
-        if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
-            builder.setKind(ProtoBuf.Type.Constructor.Kind.TYPE_PARAMETER);
-            builder.setId(getTypeParameterId(typeParameterDescriptor));
-        }
-        else {
-            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            //default: builder.setKind(Type.Constructor.Kind.CLASS);
-            builder.setId(getClassId(classDescriptor));
-        }
         return builder;
     }
 
