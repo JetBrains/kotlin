@@ -180,16 +180,16 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope))
 
-        val dummyExpression = psiFactory.createExpressionByPattern("x as $0", typeReference) as JetBinaryExpressionWithTypeRHS
-
-        val bindingContext = analyzeInContext(dummyExpression, module, scope, resolutionFacade)
+        val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
+        val bindingTrace = BindingTraceContext()
+        typeResolver.resolvePossiblyBareType(TypeResolutionContext(scope, bindingTrace, false, true), typeReference)
 
         val typesToQualify = ArrayList<Pair<JetNameReferenceExpression, FqName>>()
 
-        dummyExpression.right!!.forEachDescendantOfType<JetNameReferenceExpression> { expression ->
+        typeReference.forEachDescendantOfType<JetNameReferenceExpression> { expression ->
             val parentType = expression.parent as? JetUserType ?: return@forEachDescendantOfType
             if (parentType.qualifier != null) return@forEachDescendantOfType
-            val targetClass = bindingContext[BindingContext.REFERENCE_TARGET, expression] as? ClassDescriptor ?: return@forEachDescendantOfType
+            val targetClass = bindingTrace.bindingContext[BindingContext.REFERENCE_TARGET, expression] as? ClassDescriptor ?: return@forEachDescendantOfType
             val fqName = targetClass.fqNameUnsafe
             if (fqName.isSafe) {
                 typesToQualify.add(expression to fqName.toSafe())
@@ -200,7 +200,7 @@ object ReplaceWithAnnotationAnalyzer {
             nameExpression.mainReference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.NO_SHORTENING)
         }
 
-        return dummyExpression.right!!.typeElement as JetUserType
+        return typeReference.typeElement as JetUserType
     }
 
     private fun buildExplicitImportsScope(annotation: ReplaceWith, resolutionFacade: ResolutionFacade, module: ModuleDescriptor): ExplicitImportsScope {
