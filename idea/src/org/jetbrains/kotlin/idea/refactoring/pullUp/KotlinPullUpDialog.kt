@@ -94,6 +94,8 @@ public class KotlinPullUpDialog(
     override fun createMemberSelectionTable(infos: MutableList<KotlinMemberInfo>) =
             KotlinMemberSelectionTable(infos, null, "Make abstract")
 
+    override fun isOKActionEnabled() = selectedMemberInfos.size() > 0
+
     override fun doAction() {
         val selectedMembers = selectedMemberInfos
         val targetClass = superClass!!
