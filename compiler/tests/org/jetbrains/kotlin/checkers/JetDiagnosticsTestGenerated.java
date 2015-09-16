@@ -1362,6 +1362,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FieldReassignment.kt")
+            public void testFieldReassignment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldReassignment.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FieldShadow.kt")
             public void testFieldShadow() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldShadow.kt");
