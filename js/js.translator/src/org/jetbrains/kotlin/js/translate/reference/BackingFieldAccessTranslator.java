@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -41,6 +42,9 @@ public final class BackingFieldAccessTranslator extends AbstractTranslator imple
     public static BackingFieldAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
                                                     @NotNull TranslationContext context) {
         DeclarationDescriptor referencedProperty = getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        if (referencedProperty instanceof SyntheticFieldDescriptor) {
+            referencedProperty = ((SyntheticFieldDescriptor) referencedProperty).getPropertyDescriptor();
+        }
         assert referencedProperty instanceof PropertyDescriptor;
         return new BackingFieldAccessTranslator((PropertyDescriptor) referencedProperty, context);
     }

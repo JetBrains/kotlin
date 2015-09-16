@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
@@ -103,7 +104,8 @@ public final class ReferenceTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context) {
-        if (isBackingFieldReference(referenceExpression)) {
+        if (getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression) instanceof SyntheticFieldDescriptor
+            || isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (canBePropertyAccess(referenceExpression, context)) {
