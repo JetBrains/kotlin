@@ -25,7 +25,11 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -37,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -649,6 +654,9 @@ public class BodyResolver {
                             trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
                         }
                     }
+                    if (descriptor instanceof SyntheticFieldDescriptor) {
+                        trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+                    }
                 }
             }
         });
@@ -765,6 +773,16 @@ public class BodyResolver {
                 ExpressionTypingContext.newContext(
                         trace, innerScope, outerDataFlowInfo, NO_EXPECTED_TYPE, callChecker)
         );
+
+        // Synthetic "field" creation
+        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+            assert innerScope instanceof WritableScopeStorage : "Expected innerScope as WritableScopeStorage but got " + innerScope;
+            PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
+            JetProperty property = (JetProperty) function.getParent();
+            SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
+            WritableScopeStorage innerScopeStorage = (WritableScopeStorage) innerScope;
+            innerScopeStorage.addVariableOrClassDescriptor(fieldDescriptor);
+        }
 
         DataFlowInfo dataFlowInfo = null;
 

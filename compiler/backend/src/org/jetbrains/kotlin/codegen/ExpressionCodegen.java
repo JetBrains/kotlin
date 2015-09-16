@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -58,10 +59,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -1981,6 +1979,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null : "Couldn't find descriptor for '" + expression.getText() + "'";
         descriptor = descriptor.getOriginal();
 
+        boolean isSyntheticField = descriptor instanceof SyntheticFieldDescriptor;
+        if (isSyntheticField) {
+            descriptor = ((SyntheticFieldDescriptor) descriptor).getPropertyDescriptor();
+        }
         if (descriptor instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
@@ -2009,7 +2011,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             boolean directToField =
-                    expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
+                    (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER || isSyntheticField)
+                    && contextKind() != OwnerKind.TRAIT_IMPL;
             JetSuperExpression superExpression =
                     resolvedCall == null ? null : CallResolverUtilPackage.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);

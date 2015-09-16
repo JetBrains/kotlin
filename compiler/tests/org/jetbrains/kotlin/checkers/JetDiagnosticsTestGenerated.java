@@ -1326,6 +1326,48 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FieldAsProperty.kt")
+            public void testFieldAsProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldAsProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldDerived.kt")
+            public void testFieldDerived() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldDerived.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldInInterface.kt")
+            public void testFieldInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldInLocal.kt")
+            public void testFieldInLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldInLocal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldOnVal.kt")
+            public void testFieldOnVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldOnVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldOnVar.kt")
+            public void testFieldOnVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldOnVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldShadow.kt")
+            public void testFieldShadow() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldShadow.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt462BackingFieldsResolve.kt")
             public void testKt462BackingFieldsResolve() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/kt462BackingFieldsResolve.kt");

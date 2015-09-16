@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
@@ -156,7 +157,7 @@ public class ReferenceVariantsHelper(
             // process non-instance members
             for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
                 if (descriptor is CallableDescriptor) {
-                    assert(descriptor.dispatchReceiverParameter == null) {
+                    assert(descriptor is SyntheticFieldDescriptor || descriptor.dispatchReceiverParameter == null) {
                         "Resolution scope with member descriptor: $descriptor. Scope structure: ${JetScopeUtils.printStructure(resolutionScope)}"
                     }
                 }
@@ -270,7 +271,7 @@ public class ReferenceVariantsHelper(
         }
 
         for (descriptor in resolutionScope.getDescriptors(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter)) {
-            assert(descriptor !is CallableDescriptor || descriptor.dispatchReceiverParameter == null) {
+            assert(descriptor !is CallableDescriptor || descriptor is SyntheticFieldDescriptor || descriptor.dispatchReceiverParameter == null) {
                 "Resolution scope with member descriptor: $descriptor. Scope structure: ${JetScopeUtils.printStructure(resolutionScope)}"
             }
             if (descriptor.isExtension) {

@@ -1,0 +1,3 @@
+package
+
+public val my: kotlin.Int = 21
