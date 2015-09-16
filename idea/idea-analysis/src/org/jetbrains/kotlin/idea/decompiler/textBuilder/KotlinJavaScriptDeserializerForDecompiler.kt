@@ -38,7 +38,7 @@ public class KotlinJavaScriptDeserializerForDecompiler(
         val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(directoryPackageFqName)
         val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
         assert(stringsFile != null) { "strings file not found: $stringsFileName" }
-        NameResolver.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
+        NameResolverImpl.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
     }
 
     private val metaFileFinder = DirectoryBasedKotlinJavaScriptMetaFileFinder(packageDirectory, directoryPackageFqName, nameResolver)

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedKotlinJava
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
 import org.jetbrains.kotlin.serialization.js.toClassData
 import org.jetbrains.kotlin.serialization.js.toPackageData
@@ -57,7 +58,7 @@ public open class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
         assert(stringsFile != null) { "strings file not found: $stringsFileName" }
 
-        val nameResolver = NameResolver.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
+        val nameResolver = NameResolverImpl.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
         val components = createStubBuilderComponents(file, packageFqName, nameResolver)
 
         if (isPackageHeader) {
