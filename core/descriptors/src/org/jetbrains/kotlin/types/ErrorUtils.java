@@ -22,14 +22,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.*;
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -38,17 +43,91 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static kotlin.KotlinPackage.emptyList;
 import static kotlin.KotlinPackage.joinToString;
 
 public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
     static {
-        ERROR_MODULE = new ModuleDescriptorImpl(
-                Name.special("<ERROR MODULE>"),
-                LockBasedStorageManager.NO_LOCKS,
-                ModuleParameters.Empty.INSTANCE$
-        );
+        ERROR_MODULE = new ModuleDescriptor() {
+            @NotNull
+            @Override
+            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                throw new IllegalStateException("Should not be called!");
+            }
+
+            @NotNull
+            @Override
+            public List<ImportPath> getDefaultImports() {
+                return emptyList();
+            }
+
+            @NotNull
+            @Override
+            public Annotations getAnnotations() {
+                return Annotations.EMPTY;
+            }
+
+            @NotNull
+            @Override
+            public Collection<FqName> getSubPackagesOf(
+                    @NotNull FqName fqName, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+            ) {
+                return emptyList();
+            }
+
+            @NotNull
+            @Override
+            public Name getName() {
+                return Name.special("<ERROR MODULE>");
+            }
+
+            @NotNull
+            @Override
+            public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
+                throw new IllegalStateException("Should not be called!");
+            }
+
+            @Override
+            public <R, D> R accept(@NotNull DeclarationDescriptorVisitor<R, D> visitor, D data) {
+                return null;
+            }
+
+            @Override
+            public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+
+            }
+
+            @NotNull
+            @Override
+            public ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+                return this;
+            }
+
+            @Override
+            public boolean isFriend(@NotNull ModuleDescriptor other) {
+                return false;
+            }
+
+            @NotNull
+            @Override
+            public DeclarationDescriptor getOriginal() {
+                return this;
+            }
+
+            @Nullable
+            @Override
+            public DeclarationDescriptor getContainingDeclaration() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public KotlinBuiltIns getBuiltIns() {
+                throw new IllegalStateException("Should not be called!");
+            }
+        };
     }
 
     public static boolean containsErrorType(@NotNull FunctionDescriptor function) {
@@ -330,12 +409,7 @@ public class ErrorUtils {
             JetScope memberScope = createErrorScope(getName().asString());
             errorConstructor.setReturnType(
                     new ErrorTypeImpl(
-                            TypeConstructorImpl.createForClass(
-                                    this, Annotations.EMPTY, false,
-                                    getName().asString(),
-                                    Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                    Collections.singleton(KotlinBuiltIns.getInstance().getAnyType())
-                            ),
+                            createErrorTypeConstructorWithCustomDebugName("<ERROR>", this),
                             memberScope
                     )
             );
@@ -448,14 +522,64 @@ public class ErrorUtils {
 
     @NotNull
     public static TypeConstructor createErrorTypeConstructor(@NotNull String debugMessage) {
-        return createErrorTypeConstructorWithCustomDebugName("[ERROR : " + debugMessage + "]");
+        return createErrorTypeConstructorWithCustomDebugName("[ERROR : " + debugMessage + "]", ERROR_CLASS);
     }
 
     @NotNull
     private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
-        return TypeConstructorImpl.createForClass(ERROR_CLASS, Annotations.EMPTY, false, debugName,
-                                Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+        return createErrorTypeConstructorWithCustomDebugName(debugName, ERROR_CLASS);
+    }
+
+    @NotNull
+    private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(
+            @NotNull final String debugName, @NotNull final ErrorClassDescriptor errorClass
+    ) {
+        return new TypeConstructor() {
+            @NotNull
+            @Override
+            public List<TypeParameterDescriptor> getParameters() {
+                return emptyList();
+            }
+
+            @NotNull
+            @Override
+            public Collection<JetType> getSupertypes() {
+                return emptyList();
+            }
+
+            @Override
+            public boolean isFinal() {
+                return false;
+            }
+
+            @Override
+            public boolean isDenotable() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public ClassifierDescriptor getDeclarationDescriptor() {
+                return errorClass;
+            }
+
+            @NotNull
+            @Override
+            public KotlinBuiltIns getBuiltIns() {
+                throw new IllegalStateException("Should not be called");
+            }
+
+            @NotNull
+            @Override
+            public Annotations getAnnotations() {
+                return Annotations.EMPTY;
+            }
+
+            @Override
+            public String toString() {
+                return debugName;
+            }
+        };
     }
 
     public static boolean containsErrorType(@Nullable JetType type) {
