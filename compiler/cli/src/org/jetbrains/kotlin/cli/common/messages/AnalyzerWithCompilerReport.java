@@ -171,7 +171,11 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull DiagnosticMessageReporter reporter, boolean incompatibleFilesFound) {
+    public static boolean reportDiagnostics(
+            @NotNull Diagnostics diagnostics,
+            @NotNull DiagnosticMessageReporter reporter,
+            boolean incompatibleFilesFound
+    ) {
         boolean hasErrors = false;
         for (Diagnostic diagnostic : sortedDiagnostics(diagnostics.all())) {
             hasErrors |= reportDiagnostic(diagnostic, reporter, incompatibleFilesFound);
@@ -179,8 +183,16 @@ public final class AnalyzerWithCompilerReport {
         return hasErrors;
     }
 
-    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector messageCollector, boolean incompatibleFilesFound) {
+    public static boolean reportDiagnostics(
+            @NotNull Diagnostics diagnostics,
+            @NotNull MessageCollector messageCollector,
+            boolean incompatibleFilesFound
+    ) {
         return reportDiagnostics(diagnostics, new DefaultDiagnosticReporter(messageCollector), incompatibleFilesFound);
+    }
+
+    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector messageCollector) {
+        return reportDiagnostics(diagnostics, new DefaultDiagnosticReporter(messageCollector), false);
     }
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {

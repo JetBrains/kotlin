@@ -406,7 +406,7 @@ public class ReplInterpreter {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
         }
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter);
+        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter, false);
         if (hasErrors) {
             return null;
         }
