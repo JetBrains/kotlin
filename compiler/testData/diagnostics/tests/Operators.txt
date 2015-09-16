@@ -1,0 +1,67 @@
+package
+
+public fun a(): kotlin.Unit
+public fun b(): kotlin.Unit
+
+public open class Anc : Base {
+    public constructor Anc()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun minus(/*0*/ o: Base): Base
+    public open override /*1*/ fun plus(/*0*/ o: Base): Base
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Anc2 : Anc {
+    public constructor Anc2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun minus(/*0*/ o: Base): Base
+    public open override /*1*/ /*fake_override*/ fun plus(/*0*/ o: Base): Base
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun minus(/*0*/ o: Base): Base
+    public abstract operator fun plus(/*0*/ o: Base): Base
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Example {
+    public constructor Example()
+    public final fun compareTo(/*0*/ o: Example): kotlin.Int
+    public final fun contains(/*0*/ o: Example): kotlin.Boolean
+    public final fun dec(): Example
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ i: kotlin.Int): kotlin.String
+    public final operator fun get(/*0*/ s: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun inc(): Example
+    public final fun invoke(): kotlin.Unit
+    public final operator fun minus(/*0*/ o: Example): Example
+    public final fun not(): kotlin.Boolean
+    public final fun plus(/*0*/ o: Example): Example
+    public final fun rangeTo(/*0*/ o: Example): Example
+    public final fun set(/*0*/ i: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
+    public final operator fun set(/*0*/ s: kotlin.String, /*1*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Example2 {
+    public constructor Example2()
+    public final operator fun compareTo(/*0*/ o: Example2): kotlin.Int
+    public final operator fun contains(/*0*/ o: Example2): kotlin.Boolean
+    public final operator fun dec(): Example2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun inc(): Example2
+    public final operator fun invoke(): kotlin.Unit
+    public final operator fun minusAssign(/*0*/ o: Example2): kotlin.Unit
+    public final operator fun not(): kotlin.Boolean
+    public final fun plusAssign(/*0*/ o: Example2): kotlin.Unit
+    public final operator fun rangeTo(/*0*/ o: Example2): Example2
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

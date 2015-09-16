@@ -524,6 +524,10 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> UNDESCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
+
     // Labels
 
     DiagnosticFactory0<JetSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);
