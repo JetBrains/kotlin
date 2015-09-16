@@ -671,6 +671,7 @@
     <macrodef name="new-kotlinc">
         <attribute name="output"/>
         <attribute name="moduleName"/>
+        <attribute name="additionalOptions" default=""/>
         <element name="src"/>
         <element name="class-path"/>
 
@@ -703,7 +704,7 @@
                 <arg value="-d"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
-                <arg value="-Xmultifile-package-facades"/>
+                <arg line="@{additionalOptions}"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
                 <arg value="-module-name"/>
@@ -736,7 +737,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-package-facades">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>
@@ -765,7 +766,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection" additionalOptions="-Xmultifile-package-facades">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>
