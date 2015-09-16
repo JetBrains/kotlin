@@ -69,7 +69,8 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             add(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
         }
 
-        for (ClassDescriptor descriptor : CompanionObjectMapping.allClassesWithIntrinsicCompanions()) {
+        CompanionObjectMapping companionObjectMapping = new CompanionObjectMapping(builtIns);
+        for (ClassDescriptor descriptor : companionObjectMapping.allClassesWithIntrinsicCompanions()) {
             ClassDescriptor companion = descriptor.getCompanionObjectDescriptor();
             assert companion != null : "No companion object found for " + descriptor;
             add(ClassId.topLevel(new FqName("kotlin.jvm.internal." + descriptor.getName().asString() + "CompanionObject")), companion);
