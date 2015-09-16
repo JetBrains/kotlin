@@ -232,14 +232,14 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (!checkEquals(old.flexibleUpperBound, new.flexibleUpperBound)) return false
         }
 
-        if (old.hasConstructorClassName() != new.hasConstructorClassName()) return false
-        if (old.hasConstructorClassName()) {
-            if (!checkClassIdEquals(old.constructorClassName, new.constructorClassName)) return false
+        if (old.hasClassName() != new.hasClassName()) return false
+        if (old.hasClassName()) {
+            if (!checkClassIdEquals(old.className, new.className)) return false
         }
 
-        if (old.hasConstructorTypeParameter() != new.hasConstructorTypeParameter()) return false
-        if (old.hasConstructorTypeParameter()) {
-            if (old.constructorTypeParameter != new.constructorTypeParameter) return false
+        if (old.hasTypeParameter() != new.hasTypeParameter()) return false
+        if (old.hasTypeParameter()) {
+            if (old.typeParameter != new.typeParameter) return false
         }
 
         if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
@@ -746,12 +746,12 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + flexibleUpperBound.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasConstructorClassName()) {
-        hashCode = 31 * hashCode + fqNameIndexes(constructorClassName)
+    if (hasClassName()) {
+        hashCode = 31 * hashCode + fqNameIndexes(className)
     }
 
-    if (hasConstructorTypeParameter()) {
-        hashCode = 31 * hashCode + constructorTypeParameter
+    if (hasTypeParameter()) {
+        hashCode = 31 * hashCode + typeParameter
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
