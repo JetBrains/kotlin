@@ -54,24 +54,13 @@ public class NameResolver {
     }
 
     @NotNull
-    public ProtoBuf.StringTable getStringTable() {
-        return strings;
-    }
-
-    @NotNull
-    public ProtoBuf.QualifiedNameTable getQualifiedNameTable() {
-        return qualifiedNames;
-    }
-
-    @NotNull
     public String getString(int index) {
         return strings.getString(index);
     }
 
     @NotNull
     public Name getName(int index) {
-        String name = strings.getString(index);
-        return Name.guess(name);
+        return Name.guess(strings.getString(index));
     }
 
     @NotNull
