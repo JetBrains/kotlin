@@ -1,3 +1,6 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("SequencesKt")
+
 package kotlin
 
 import java.util.*

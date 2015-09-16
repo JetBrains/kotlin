@@ -1,4 +1,5 @@
 @file:JvmVersion
+@file:JvmName("ConsoleKt")
 package kotlin.io
 
 import java.io.InputStream

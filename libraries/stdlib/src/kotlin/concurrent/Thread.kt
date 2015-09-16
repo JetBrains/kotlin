@@ -1,4 +1,5 @@
 @file:JvmVersion
+@file:JvmName("ThreadsKt")
 package kotlin.concurrent
 
 import java.util.concurrent.*

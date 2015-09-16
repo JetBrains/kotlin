@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("ExtensionsKt")
 package kotlin
 
 import java.lang.reflect.Method

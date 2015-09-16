@@ -1,4 +1,5 @@
 @file:JvmVersion
+@file:JvmName("TextStreamsKt")
 package kotlin.io
 
 import java.io.*

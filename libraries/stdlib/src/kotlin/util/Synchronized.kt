@@ -1,4 +1,6 @@
 @file:JvmVersion
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
 import kotlin.jvm.internal.unsafe.*

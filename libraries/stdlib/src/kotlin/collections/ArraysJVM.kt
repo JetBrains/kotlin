@@ -1,3 +1,6 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("ArraysKt")
+
 package kotlin
 
 import java.io.ByteArrayInputStream

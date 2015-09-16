@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmName("TuplesKt")
 package kotlin
 
 import java.io.Serializable

@@ -1,4 +1,5 @@
 @file:JvmVersion
+@file:JvmName("ByteStreamsKt")
 package kotlin.io
 
 import java.io.*

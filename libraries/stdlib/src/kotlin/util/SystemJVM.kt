@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmName("TimingUtilsKt")
 package kotlin.util
 
 /**

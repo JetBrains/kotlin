@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("DomKt")
 package kotlin.dom
 
 import kotlin.support.*

@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("TestAssertionsKt")
 /**
  * A number of helper methods for writing unit tests.
  */
