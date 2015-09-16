@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.*
 
-public class BuiltInsSerializerExtension() : SerializerExtension() {
-
+public class BuiltInsSerializerExtension : SerializerExtension() {
     private val annotationSerializer = AnnotationSerializer()
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
-        for (annotation in descriptor.getAnnotations()) {
+        for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
@@ -41,7 +40,7 @@ public class BuiltInsSerializerExtension() : SerializerExtension() {
         }
 
         for (descriptor in DescriptorSerializer.sort(classes)) {
-            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.getName()))
+            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.name))
         }
     }
 
@@ -50,11 +49,11 @@ public class BuiltInsSerializerExtension() : SerializerExtension() {
             proto: ProtoBuf.Callable.Builder,
             stringTable: StringTable
     ) {
-        for (annotation in callable.getAnnotations()) {
+        for (annotation in callable.annotations) {
             proto.addExtension(BuiltInsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
         val propertyDescriptor = callable as? PropertyDescriptor ?: return
-        val compileTimeConstant = propertyDescriptor.getCompileTimeInitializer()
+        val compileTimeConstant = propertyDescriptor.compileTimeInitializer
         if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
             val valueProto = annotationSerializer.valueProto(compileTimeConstant, compileTimeConstant.type, stringTable)
             proto.setExtension(BuiltInsProtoBuf.compileTimeValue, valueProto.build())
@@ -66,7 +65,7 @@ public class BuiltInsSerializerExtension() : SerializerExtension() {
             proto: ProtoBuf.Callable.ValueParameter.Builder,
             stringTable: StringTable
     ) {
-        for (annotation in descriptor.getAnnotations()) {
+        for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
