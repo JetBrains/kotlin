@@ -248,12 +248,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             kind = KotlinClass.Kind.LOCAL_CLASS;
         }
 
-        // Temporarily write class kind anyway because old compiler may not expect its absence
-        // TODO: remove after M13
-        if (kind == null) {
-            kind = KotlinClass.Kind.CLASS;
-        }
-
         DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
@@ -261,7 +255,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         JvmCodegenUtil.writeAbiVersion(av);
-        //noinspection ConstantConditions
         if (kind != null) {
             av.visitEnum(
                     JvmAnnotationNames.KIND_FIELD_NAME,
