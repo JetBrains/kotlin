@@ -9,7 +9,7 @@ interface A {
 
 Resolved call:
 
-Resulting descriptor: fun Int.invoke(): Unit defined in kotlin.Function1
+Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1
 
 Explicit receiver kind = BOTH_RECEIVERS
 Dispatch receiver = foo {[@kotlin.Extension] Function1<Int, Unit>}

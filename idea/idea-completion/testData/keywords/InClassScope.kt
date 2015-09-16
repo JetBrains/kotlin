@@ -29,6 +29,7 @@ class TestClass {
 // EXIST:  constructor
 // EXIST:  init
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data

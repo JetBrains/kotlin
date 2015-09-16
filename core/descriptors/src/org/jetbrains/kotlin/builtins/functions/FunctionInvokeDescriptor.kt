@@ -60,7 +60,8 @@ public class FunctionInvokeDescriptor private constructor(
                             .map { createValueParameter(result, it.index, it.value) },
                     typeParameters.last().getDefaultType(),
                     Modality.ABSTRACT,
-                    Visibilities.PUBLIC
+                    Visibilities.PUBLIC,
+                    true
             )
             return result
         }

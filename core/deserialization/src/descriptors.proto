@@ -252,6 +252,7 @@ message Callable {
      hasConstant
      isConst
      lateinit
+     isOperator
    */
   optional int32 flags = 1;
 

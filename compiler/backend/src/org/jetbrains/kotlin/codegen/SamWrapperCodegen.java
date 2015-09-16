@@ -162,8 +162,8 @@ public class SamWrapperCodegen {
 
         descriptorForBridges
                 .initialize(null, originalInterfaceErased.getDispatchReceiverParameter(), originalInterfaceErased.getTypeParameters(),
-                            originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(), Modality.OPEN,
-                            originalInterfaceErased.getVisibility());
+                            originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(),
+                            Modality.OPEN, originalInterfaceErased.getVisibility(), false);
 
         descriptorForBridges.addOverriddenDescriptor(originalInterfaceErased);
         codegen.generateBridges(descriptorForBridges);

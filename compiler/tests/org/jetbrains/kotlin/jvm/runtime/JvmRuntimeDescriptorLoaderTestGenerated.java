@@ -2187,6 +2187,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("OperatorKeyword.kt")
+            public void testOperatorKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PropagateDeepSubclass.kt")
             public void testPropagateDeepSubclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");

@@ -37,6 +37,7 @@ class B {
 // EXIST:  vararg
 /*why?*/
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data

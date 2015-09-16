@@ -66,7 +66,8 @@ public object ModifierCheckerCore {
             EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
             ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
             CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
-            CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY)
+            CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
+            OPERATOR_KEYWORD  to EnumSet.of(FUNCTION)
     )
 
     // NOTE: redundant targets must be possible!

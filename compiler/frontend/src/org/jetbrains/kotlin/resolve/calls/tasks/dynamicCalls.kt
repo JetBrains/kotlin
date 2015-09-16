@@ -129,7 +129,8 @@ object DynamicCallableDescriptors {
                 createValueParameters(functionDescriptor, call),
                 DynamicType,
                 Modality.FINAL,
-                Visibilities.PUBLIC
+                Visibilities.PUBLIC,
+                false
         )
         return functionDescriptor
     }

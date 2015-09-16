@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 58;
+    public static final int STUB_VERSION = 59;
 
     private static final String NAME = "kotlin.FILE";
 

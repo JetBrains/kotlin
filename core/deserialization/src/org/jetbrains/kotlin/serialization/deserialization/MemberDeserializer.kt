@@ -148,9 +148,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
-                local.typeDeserializer.type(proto.getReturnType()),
-                Deserialization.modality(Flags.MODALITY.get(proto.getFlags())),
-                Deserialization.visibility(Flags.VISIBILITY.get(proto.getFlags()))
+                local.typeDeserializer.type(proto.returnType),
+                Deserialization.modality(Flags.MODALITY.get(proto.flags)),
+                Deserialization.visibility(Flags.VISIBILITY.get(proto.flags)),
+                Flags.IS_OPERATOR.get(proto.flags)
         )
         return function
     }

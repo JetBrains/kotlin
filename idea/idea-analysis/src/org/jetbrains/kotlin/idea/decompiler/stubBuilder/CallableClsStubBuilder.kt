@@ -98,7 +98,13 @@ private class CallableClsStubBuilder(
         val modalityModifiers = if (isModalityIrrelevant) listOf() else listOf(MODALITY)
         val constModifiers = if (callableKind == CallableKind.VAL) listOf(CONST) else listOf()
 
-        val relevantModifiers = listOf(VISIBILITY) + constModifiers + modalityModifiers
+        val additionalModifiers = when (callableKind) {
+            CallableKind.FUN -> arrayOf(OPERATOR)
+            CallableKind.VAL, CallableKind.VAR -> arrayOf(LATEINIT)
+            else -> emptyArray<FlagsToModifiers>()
+        }
+
+        val relevantModifiers = listOf(VISIBILITY) + constModifiers + modalityModifiers + additionalModifiers
         val modifierListStubImpl = createModifierListStubForDeclaration(
                 callableStub, callableProto.getFlags(), relevantModifiers
         )

@@ -36,7 +36,8 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
             @NotNull ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull JetType returnType) {
-        super.initialize(null, dispatchReceiverParameter, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.INTERNAL);
+        super.initialize(null, dispatchReceiverParameter, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType,
+                         Modality.FINAL, Visibilities.INTERNAL, /*isOperator =*/ false);
     }
 
     @NotNull

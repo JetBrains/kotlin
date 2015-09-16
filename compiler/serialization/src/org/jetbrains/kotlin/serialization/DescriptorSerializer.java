@@ -180,6 +180,11 @@ public class DescriptorSerializer {
         boolean hasConstant = false;
         boolean lateInit = false;
         boolean isConst = false;
+        boolean isOperator = false;
+
+        if (descriptor instanceof FunctionDescriptor) {
+            isOperator = ((FunctionDescriptor) descriptor).isOperator();
+        }
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -235,7 +240,8 @@ public class DescriptorSerializer {
                 hasSetter,
                 hasConstant,
                 lateInit,
-                isConst
+                isConst,
+                isOperator
         ));
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {

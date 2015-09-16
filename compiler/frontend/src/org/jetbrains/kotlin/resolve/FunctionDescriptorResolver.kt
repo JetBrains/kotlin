@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl.create
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
@@ -170,7 +171,8 @@ class FunctionDescriptorResolver(
                 valueParameterDescriptors,
                 returnType,
                 modality,
-                visibility
+                visibility,
+                function.hasModifier(JetTokens.OPERATOR_KEYWORD)
         )
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {

@@ -126,7 +126,8 @@ public abstract class LazyJavaScope(
                 effectiveSignature.getValueParameters(),
                 effectiveSignature.getReturnType(),
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                method.getVisibility()
+                method.getVisibility(),
+                false
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)

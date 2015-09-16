@@ -176,6 +176,7 @@ public interface JetTokens {
     JetModifierKeywordToken EXTERNAL_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("external");
     JetModifierKeywordToken ANNOTATION_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("annotation");
     JetModifierKeywordToken CROSSINLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("crossinline");
+    JetModifierKeywordToken OPERATOR_KEYWORD = JetModifierKeywordToken.softKeywordModifier("operator");
 
     JetModifierKeywordToken CONST_KEYWORD = JetModifierKeywordToken.softKeywordModifier("const");
 
@@ -196,7 +197,7 @@ public interface JetTokens {
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD,
                                              LATE_INIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
-                                             ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD
+                                             ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD
     );
 
     /*
@@ -210,7 +211,7 @@ public interface JetTokens {
                     PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATE_INIT_KEYWORD,
                     DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
-                    CONST_KEYWORD
+                    CONST_KEYWORD, OPERATOR_KEYWORD
             };
 
     // Please synchronize this array with org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
