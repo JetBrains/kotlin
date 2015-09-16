@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.Variance;
 
 import java.util.*;
 
@@ -61,13 +63,16 @@ public class ControlStructureTypingUtils {
 
     private final CallResolver callResolver;
     private final DataFlowAnalyzer dataFlowAnalyzer;
+    private final ModuleDescriptor moduleDescriptor;
 
     public ControlStructureTypingUtils(
             @NotNull CallResolver callResolver,
-            @NotNull DataFlowAnalyzer dataFlowAnalyzer
+            @NotNull DataFlowAnalyzer dataFlowAnalyzer,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.callResolver = callResolver;
         this.dataFlowAnalyzer = dataFlowAnalyzer;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
@@ -88,7 +93,7 @@ public class ControlStructureTypingUtils {
         return results.getResultingCall();
     }
 
-    private static SimpleFunctionDescriptorImpl createFunctionDescriptorForSpecialConstruction(
+    private SimpleFunctionDescriptorImpl createFunctionDescriptorForSpecialConstruction(
             @NotNull String constructionName,
             @NotNull List<String> argumentNames,
             @NotNull List<Boolean> isArgumentNullable
@@ -98,8 +103,8 @@ public class ControlStructureTypingUtils {
         Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
-                ErrorUtils.getErrorModule(),//todo hack to avoid returning true in 'isError(DeclarationDescriptor)'
-                Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE);
+                moduleDescriptor, Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
+        );
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
                 function, Annotations.EMPTY, false, Variance.INVARIANT,
