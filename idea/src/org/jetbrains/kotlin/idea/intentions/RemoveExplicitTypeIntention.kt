@@ -16,26 +16,8 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.template.*
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
-import java.util.*
 
 public class RemoveExplicitTypeIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Remove explicit type specification") {
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
@@ -44,8 +26,6 @@ public class RemoveExplicitTypeIntention : JetSelfTargetingIntention<JetCallable
 
         val initializer = (element as? JetWithExpressionInitializer)?.getInitializer()
         if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
-
-        if (!element.canRemoveTypeSpecificationByVisibility()) return false
 
         return when (element) {
             is JetProperty -> initializer != null

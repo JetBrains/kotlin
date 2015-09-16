@@ -4117,18 +4117,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("protectedFunNoSelection.kt")
-        public void testProtectedFunNoSelection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/protectedFunNoSelection.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("publicFunNoSelection.kt")
-        public void testPublicFunNoSelection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/publicFunNoSelection.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("returnWithNoValue.kt")
         public void testReturnWithNoValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/returnWithNoValue.kt");
@@ -6115,21 +6103,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("notOnDefaultVisibility.kt")
-        public void testNotOnDefaultVisibility() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnDefaultVisibility.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("notOnParameterOfFunctionType.kt")
         public void testNotOnParameterOfFunctionType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnParameterOfFunctionType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("notOnPublic.kt")
-        public void testNotOnPublic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnPublic.kt");
             doTest(fileName);
         }
 
