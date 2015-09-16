@@ -27,6 +27,8 @@ fun main(args: Array<String>) {
     })
 
     val b = foo { test(1) }
+
+    foo(fun (){ test(1) })
 }
 
 inline fun foo(f: () -> Unit) {
@@ -47,4 +49,4 @@ class A {
 
 fun test(i: Int) = 1
 
-// STEP_OVER: 11
+// STEP_OVER: 13
