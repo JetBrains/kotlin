@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -31,17 +32,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.DynamicType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.createDynamicType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.Printer
-import java.util.ArrayList
+import java.util.*
 
-object DynamicCallableDescriptors {
+class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
 
-    @JvmStatic
+    val dynamicType = createDynamicType(builtIns)
+
     fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
         override fun getContainingDeclaration() = owner
 
@@ -99,7 +101,7 @@ object DynamicCallableDescriptors {
                 /* isConst = */ false
         )
         propertyDescriptor.setType(
-                DynamicType,
+                dynamicType,
                 createTypeParameters(propertyDescriptor, call),
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
                 null: JetType?
@@ -127,7 +129,7 @@ object DynamicCallableDescriptors {
                 createDynamicDispatchReceiverParameter(functionDescriptor),
                 createTypeParameters(functionDescriptor, call),
                 createValueParameters(functionDescriptor, call),
-                DynamicType,
+                dynamicType,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
                 false,
@@ -137,7 +139,7 @@ object DynamicCallableDescriptors {
     }
 
     private fun createDynamicDispatchReceiverParameter(owner: CallableDescriptor): ReceiverParameterDescriptorImpl {
-        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(DynamicType))
+        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType))
     }
 
     private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> = call.getTypeArguments().indices.map {
@@ -175,10 +177,10 @@ object DynamicCallableDescriptors {
         fun getFunctionType(funLiteralExpr: JetFunctionLiteralExpression): JetType {
             val funLiteral = funLiteralExpr.getFunctionLiteral()
 
-            val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
-            val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+            val receiverType = funLiteral.getReceiverTypeReference()?.let { dynamicType }
+            val parameterTypes = funLiteral.getValueParameters().map { dynamicType }
 
-            return owner.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
+            return owner.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, dynamicType)
         }
 
         for (arg in call.getValueArguments()) {
@@ -196,12 +198,12 @@ object DynamicCallableDescriptors {
 
                 arg.getSpreadElement() != null -> {
                     hasSpreadOperator = true
-                    outType = owner.builtIns.getArrayType(Variance.OUT_VARIANCE, DynamicType)
-                    varargElementType = DynamicType
+                    outType = owner.builtIns.getArrayType(Variance.OUT_VARIANCE, dynamicType)
+                    varargElementType = dynamicType
                 }
 
                 else -> {
-                    outType = DynamicType
+                    outType = dynamicType
                     varargElementType = null
                 }
             }

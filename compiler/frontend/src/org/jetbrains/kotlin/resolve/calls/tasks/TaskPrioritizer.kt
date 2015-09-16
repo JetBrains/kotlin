@@ -53,7 +53,8 @@ import org.jetbrains.kotlin.types.isDynamic
 
 public class TaskPrioritizer(
         private val storageManager: StorageManager,
-        private val smartCastManager: SmartCastManager
+        private val smartCastManager: SmartCastManager,
+        private val dynamicCallableDescriptors: DynamicCallableDescriptors
 ) {
 
     public fun <D : CallableDescriptor, F : D> computePrioritizedTasks(
@@ -234,7 +235,7 @@ public class TaskPrioritizer(
         addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit)
 
         c.result.addCandidates {
-            val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.ownerDescriptor)
+            val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.ownerDescriptor)
 
             val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
                 it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c))
