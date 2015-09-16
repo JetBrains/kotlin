@@ -198,7 +198,7 @@ fun JetExpression.guessTypes(
         }
         else -> {
             pseudocode?.getElementValue(this)?.let {
-                getExpectedTypePredicate(it, context).getRepresentativeTypes().toTypedArray()
+                getExpectedTypePredicate(it, context, module.builtIns).getRepresentativeTypes().toTypedArray()
             } ?: arrayOf() // can't infer anything
         }
     }

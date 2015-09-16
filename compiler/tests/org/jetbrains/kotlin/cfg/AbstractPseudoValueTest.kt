@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
+import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
+import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
-import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
-import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
@@ -49,7 +50,9 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
                 element?.getText()?.replace("\\s+".toRegex(), " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
-            val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, bindingContext) }
+            val typePredicate = expectedTypePredicateMap.getOrPut(value) {
+                getExpectedTypePredicate(value, bindingContext, KotlinBuiltIns.getInstance())
+            }
             return "${value.debugName}: $typePredicate"
         }
 
