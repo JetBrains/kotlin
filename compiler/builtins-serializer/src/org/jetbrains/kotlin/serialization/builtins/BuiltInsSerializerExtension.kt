@@ -22,19 +22,18 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.*
 
 public class BuiltInsSerializerExtension : SerializerExtension() {
-    private val annotationSerializer = AnnotationSerializer()
+    private val stringTable = StringTableImpl(this)
+    private val annotationSerializer = AnnotationSerializer(stringTable)
 
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
+    override fun getStringTable(): StringTable = stringTable
+
+    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
         for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 
-    override fun serializePackage(
-            packageFragments: Collection<PackageFragmentDescriptor>,
-            proto: ProtoBuf.Package.Builder,
-            stringTable: StringTable
-    ) {
+    override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
         val classes = packageFragments.flatMap {
             it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
         }
@@ -44,29 +43,21 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeCallable(
-            callable: CallableMemberDescriptor,
-            proto: ProtoBuf.Callable.Builder,
-            stringTable: StringTable
-    ) {
+    override fun serializeCallable(callable: CallableMemberDescriptor, proto: ProtoBuf.Callable.Builder) {
         for (annotation in callable.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
         val propertyDescriptor = callable as? PropertyDescriptor ?: return
         val compileTimeConstant = propertyDescriptor.compileTimeInitializer
         if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
-            val valueProto = annotationSerializer.valueProto(compileTimeConstant, compileTimeConstant.type, stringTable)
+            val valueProto = annotationSerializer.valueProto(compileTimeConstant)
             proto.setExtension(BuiltInsProtoBuf.compileTimeValue, valueProto.build())
         }
     }
 
-    override fun serializeValueParameter(
-            descriptor: ValueParameterDescriptor,
-            proto: ProtoBuf.Callable.ValueParameter.Builder,
-            stringTable: StringTable
-    ) {
+    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.Callable.ValueParameter.Builder) {
         for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 }

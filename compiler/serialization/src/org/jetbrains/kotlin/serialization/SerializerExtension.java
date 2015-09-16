@@ -26,39 +26,25 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.Collection;
 
 public abstract class SerializerExtension {
-    public void serializeClass(
-            @NotNull ClassDescriptor descriptor,
-            @NotNull ProtoBuf.Class.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
+    @NotNull
+    public abstract StringTable getStringTable();
+
+    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
     }
 
-    public void serializePackage(
-            @NotNull Collection<PackageFragmentDescriptor> packageFragments,
-            @NotNull ProtoBuf.Package.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
+    public void serializePackage(@NotNull Collection<PackageFragmentDescriptor> packageFragments, @NotNull ProtoBuf.Package.Builder proto) {
     }
 
-    public void serializeCallable(
-            @NotNull CallableMemberDescriptor callable,
-            @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
+    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
     }
 
     public void serializeValueParameter(
             @NotNull ValueParameterDescriptor descriptor,
-            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
-            @NotNull StringTable stringTable
+            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto
     ) {
     }
 
-    public void serializeType(
-            @NotNull JetType type,
-            @NotNull ProtoBuf.Type.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
+    public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {
     }
 
     @NotNull

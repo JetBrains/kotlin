@@ -23,24 +23,22 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
 
-public class AnnotationSerializer() {
-
-    public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
+public class AnnotationSerializer(private val stringTable: StringTable) {
+    public fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
-            val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as? ClassDescriptor
-                                  ?: error("Annotation type is not a class: ${annotation.getType()}")
+            val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassDescriptor
+                                  ?: error("Annotation type is not a class: ${annotation.type}")
             if (ErrorUtils.isError(annotationClass)) {
-                error("Unresolved annotation type: ${annotation.getType()}")
+                error("Unresolved annotation type: ${annotation.type}")
             }
 
             setId(stringTable.getFqNameIndex(annotationClass))
 
-            for ((parameter, value) in annotation.getAllValueArguments()) {
+            for ((parameter, value) in annotation.allValueArguments) {
                 val argument = ProtoBuf.Annotation.Argument.newBuilder()
-                argument.setNameId(stringTable.getSimpleNameIndex(parameter.getName()))
-                argument.setValue(valueProto(value, parameter.getType(), stringTable))
+                argument.setNameId(stringTable.getStringIndex(parameter.name.asString()))
+                argument.setValue(valueProto(value))
                 addArgument(argument)
             }
 
@@ -48,17 +46,17 @@ public class AnnotationSerializer() {
         }
     }
 
-    fun valueProto(constant: ConstantValue<*>, type: JetType, nameTable: StringTable): Value.Builder = with(Value.newBuilder()) {
+    fun valueProto(constant: ConstantValue<*>): Value.Builder = with(Value.newBuilder()) {
         constant.accept(object : AnnotationArgumentVisitor<Unit, Unit> {
             override fun visitAnnotationValue(value: AnnotationValue, data: Unit) {
                 setType(Type.ANNOTATION)
-                setAnnotation(serializeAnnotation(value.value, nameTable))
+                setAnnotation(serializeAnnotation(value.value))
             }
 
             override fun visitArrayValue(value: ArrayValue, data: Unit) {
                 setType(Type.ARRAY)
                 for (element in value.value) {
-                    addArrayElement(valueProto(element, value.elementType, nameTable).build())
+                    addArrayElement(valueProto(element).build())
                 }
             }
 
@@ -85,8 +83,8 @@ public class AnnotationSerializer() {
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 setType(Type.ENUM)
                 val enumEntry = value.value
-                setClassId(nameTable.getFqNameIndex(enumEntry.getContainingDeclaration() as ClassDescriptor))
-                setEnumValueId(nameTable.getSimpleNameIndex(enumEntry.getName()))
+                setClassId(stringTable.getFqNameIndex(enumEntry.containingDeclaration as ClassDescriptor))
+                setEnumValueId(stringTable.getStringIndex(enumEntry.name.asString()))
             }
 
             override fun visitErrorValue(value: ErrorValue, data: Unit) {
@@ -124,7 +122,7 @@ public class AnnotationSerializer() {
 
             override fun visitStringValue(value: StringValue, data: Unit) {
                 setType(Type.STRING)
-                setStringValue(nameTable.getStringIndex(value.value))
+                setStringValue(stringTable.getStringIndex(value.value))
             }
         }, Unit)
 

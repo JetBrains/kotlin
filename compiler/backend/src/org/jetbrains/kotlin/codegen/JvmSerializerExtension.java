@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities;
 import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.serialization.AnnotationSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.SerializerExtension;
-import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.*;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -47,36 +43,38 @@ import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final JetTypeMapper typeMapper;
-    private final AnnotationSerializer annotationSerializer = new AnnotationSerializer();
+    private final StringTableImpl stringTable = new StringTableImpl(this);
+    private final AnnotationSerializer annotationSerializer = new AnnotationSerializer(stringTable);
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
         this.bindings = bindings;
         this.typeMapper = typeMapper;
     }
 
+    @NotNull
     @Override
-    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto, @NotNull StringTable stringTable) {
+    public StringTable getStringTable() {
+        return stringTable;
+    }
+
+    @Override
+    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
         AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
         if (annotation != null) {
-            proto.addExtension(JvmProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable));
+            proto.addExtension(JvmProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
 
     @Override
-    public void serializeCallable(
-            @NotNull CallableMemberDescriptor callable,
-            @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
-        saveSignature(callable, proto, stringTable);
-        saveImplClassName(callable, proto, stringTable);
+    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
+        saveSignature(callable, proto);
+        saveImplClassName(callable, proto);
     }
 
     @Override
     public void serializeValueParameter(
             @NotNull ValueParameterDescriptor descriptor,
-            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
-            @NotNull StringTable stringTable
+            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto
     ) {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
@@ -85,10 +83,10 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto, @NotNull StringTable stringTable) {
+    public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
         for (AnnotationDescriptor annotation : type.getAnnotations()) {
-            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable));
+            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
 
         if (type.getCapabilities() instanceof RawTypeCapabilities) {
@@ -102,12 +100,8 @@ public class JvmSerializerExtension extends SerializerExtension {
         return shortNameByAsmType(typeMapper.mapClass(descriptor));
     }
 
-    private void saveSignature(
-            @NotNull CallableMemberDescriptor callable,
-            @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
-        SignatureSerializer signatureSerializer = new SignatureSerializer(stringTable);
+    private void saveSignature(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
+        SignatureSerializer signatureSerializer = new SignatureSerializer();
         if (callable instanceof FunctionDescriptor) {
             JvmProtoBuf.JvmMethodSignature signature;
             if (callable instanceof DeserializedSimpleFunctionDescriptor) {
@@ -165,24 +159,14 @@ public class JvmSerializerExtension extends SerializerExtension {
         }
     }
 
-    private void saveImplClassName(
-            @NotNull CallableMemberDescriptor callable,
-            @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull StringTable stringTable
-    ) {
+    private void saveImplClassName(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
         String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
         if (name != null) {
-            proto.setExtension(JvmProtoBuf.implClassName, stringTable.getSimpleNameIndex(Name.identifier(name)));
+            proto.setExtension(JvmProtoBuf.implClassName, stringTable.getStringIndex(name));
         }
     }
 
-    private static class SignatureSerializer {
-        private final StringTable stringTable;
-
-        public SignatureSerializer(@NotNull StringTable stringTable) {
-            this.stringTable = stringTable;
-        }
-
+    private class SignatureSerializer {
         @NotNull
         public JvmProtoBuf.JvmMethodSignature copyMethodSignature(
                 @NotNull JvmProtoBuf.JvmMethodSignature signature,
@@ -301,7 +285,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        private static FqName internalNameToFqName(@NotNull String internalName) {
+        private FqName internalNameToFqName(@NotNull String internalName) {
             return FqName.fromSegments(Arrays.asList(internalName.split("/")));
         }
     }
