@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetProperty;
@@ -42,6 +43,10 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             return;
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+        if (target instanceof SyntheticFieldDescriptor) {
+            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
+            return;
+        }
         if (!(target instanceof PropertyDescriptor)) {
             return;
         }
