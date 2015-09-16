@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -300,7 +302,13 @@ public class TaskPrioritizer(
         }
     }
 
-    private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = KotlinLookupLocation(c.context.call.callElement)
+    private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = KotlinLookupLocation(c.context.call.run {
+        calleeExpression?.let {
+            // Can't use getContainingJetFile() because we can get from IDE an element with JavaDummyHolder as containing file
+            if ((it.containingFile as? JetFile)?.doNotAnalyze == null) it else null
+        }
+        ?: callElement
+    })
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverWithTypes, c: TaskPrioritizerContext<D, F>) {
         val implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope)

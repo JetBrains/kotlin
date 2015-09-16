@@ -35,7 +35,6 @@ public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: N
 
     val containingJetFile = from.element.getContainingJetFile()
 
-    // TODO: provide additionally info for fake elements/files
     if (containingJetFile.doNotAnalyze != null) return
 
     val containingFilePath = containingJetFile.virtualFile.path
