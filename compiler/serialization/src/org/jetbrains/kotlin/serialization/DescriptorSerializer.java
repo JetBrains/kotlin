@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization;
 
+import com.google.protobuf.MessageLite;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,11 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +51,24 @@ public class DescriptorSerializer {
         this.stringTable = stringTable;
         this.typeParameters = typeParameters;
         this.extension = extension;
+    }
+
+    @NotNull
+    public byte[] serialize(@NotNull MessageLite message) {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            serializeStringTable(result);
+            message.writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    public void serializeStringTable(@NotNull OutputStream out) throws IOException {
+        stringTable.serializeSimpleNames().writeDelimitedTo(out);
+        stringTable.serializeQualifiedNames().writeDelimitedTo(out);
     }
 
     @NotNull

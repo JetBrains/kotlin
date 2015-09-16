@@ -66,8 +66,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.serialization.*;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -259,10 +259,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        StringTable strings = serializer.getStringTable();
-        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
-        ClassData data = new ClassData(nameResolver, classProto);
-
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         JvmCodegenUtil.writeAbiVersion(av);
         //noinspection ConstantConditions
@@ -274,7 +270,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             );
         }
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(SerializationUtil.serializeClassData(data))) {
+        for (String string : BitEncoding.encodeBytes(serializer.serialize(classProto))) {
             array.visit(null, string);
         }
         array.visitEnd();

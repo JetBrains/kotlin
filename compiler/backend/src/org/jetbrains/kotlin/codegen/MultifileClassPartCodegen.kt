@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.PackageData
-import org.jetbrains.kotlin.serialization.SerializationUtil
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -98,15 +95,11 @@ public class MultifileClassPartCodegen(
 
         if (packageProto.memberCount == 0) return
 
-        val strings = serializer.stringTable
-        val nameResolver = NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        val data = PackageData(nameResolver, packageProto)
-
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
         JvmCodegenUtil.writeAbiVersion(av)
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassFqName.shortName().asString())
         val dataArray = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME)
-        for (string in BitEncoding.encodeBytes(SerializationUtil.serializePackageData(data))) {
+        for (string in BitEncoding.encodeBytes(serializer.serialize(packageProto))) {
             dataArray.visit(null, string)
         }
         dataArray.visitEnd()
