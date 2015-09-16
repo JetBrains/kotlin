@@ -55,7 +55,7 @@ public class DeserializedClassDescriptor(
     private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
     private val kind = Deserialization.classKind(kindFromProto)
-    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
+    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
     val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)

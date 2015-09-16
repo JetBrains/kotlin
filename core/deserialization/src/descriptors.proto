@@ -171,12 +171,12 @@ message Class {
   enum Kind {
     // 3 bits
     CLASS = 0;
-    TRAIT = 1;
+    INTERFACE = 1;
     ENUM_CLASS = 2;
     ENUM_ENTRY = 3;
     ANNOTATION_CLASS = 4;
     OBJECT = 5;
-    CLASS_OBJECT = 6;
+    COMPANION_OBJECT = 6;
   }
 
   /*

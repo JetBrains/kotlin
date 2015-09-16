@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter
 import org.jetbrains.kotlin.types.Variance
 
@@ -54,11 +54,11 @@ object Deserialization {
     @JvmStatic
     fun classKind(kind: ProtoBuf.Class.Kind): ClassKind = when (kind) {
         ProtoBuf.Class.Kind.CLASS -> ClassKind.CLASS
-        ProtoBuf.Class.Kind.TRAIT -> ClassKind.INTERFACE
+        ProtoBuf.Class.Kind.INTERFACE -> ClassKind.INTERFACE
         ProtoBuf.Class.Kind.ENUM_CLASS -> ClassKind.ENUM_CLASS
         ProtoBuf.Class.Kind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
         ProtoBuf.Class.Kind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
-        ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> ClassKind.OBJECT
+        ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> ClassKind.OBJECT
     }
 
     @JvmStatic

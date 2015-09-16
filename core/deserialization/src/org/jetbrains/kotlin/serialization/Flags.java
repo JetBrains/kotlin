@@ -87,13 +87,13 @@ public class Flags {
     }
 
     private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isCompanionObject) {
-        if (isCompanionObject) return ProtoBuf.Class.Kind.CLASS_OBJECT;
+        if (isCompanionObject) return ProtoBuf.Class.Kind.COMPANION_OBJECT;
 
         switch (kind) {
             case CLASS:
                 return ProtoBuf.Class.Kind.CLASS;
             case INTERFACE:
-                return ProtoBuf.Class.Kind.TRAIT;
+                return ProtoBuf.Class.Kind.INTERFACE;
             case ENUM_CLASS:
                 return ProtoBuf.Class.Kind.ENUM_CLASS;
             case ENUM_ENTRY:

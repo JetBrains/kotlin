@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
         storageManager: StorageManager,
@@ -203,11 +202,11 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val classKind = Flags.CLASS_KIND[classProto.getFlags()]
         val classId = nameResolver.getClassId(classProto.getFqName())
 
-        if (classKind == ProtoBuf.Class.Kind.CLASS_OBJECT && isStaticFieldInOuter(proto) && seekForStaticFieldInOuter) {
+        if (classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT && isStaticFieldInOuter(proto) && seekForStaticFieldInOuter) {
             // Backing fields of properties of a companion object are generated in the outer class
             return kotlinClassFinder.findKotlinClass(classId.getOuterClassId())
         }
-        else if (classKind == ProtoBuf.Class.Kind.TRAIT && (annotatedCallableKind == AnnotatedCallableKind.PROPERTY)) {
+        else if (classKind == ProtoBuf.Class.Kind.INTERFACE && (annotatedCallableKind == AnnotatedCallableKind.PROPERTY)) {
             if (proto.hasExtension(implClassName)) {
                 val parentPackageFqName = classId.getPackageFqName()
                 val tImplName = nameResolver.getName(proto.getExtension(implClassName))
