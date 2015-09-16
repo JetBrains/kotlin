@@ -45,7 +45,6 @@ public fun createBuiltInPackageFragmentProvider(
             BuiltInsAnnotationAndConstantLoader(module),
             provider,
             localClassResolver,
-            ErrorReporter.DO_NOTHING,
             FlexibleTypeCapabilitiesDeserializer.ThrowException,
             classDescriptorFactory
     )
