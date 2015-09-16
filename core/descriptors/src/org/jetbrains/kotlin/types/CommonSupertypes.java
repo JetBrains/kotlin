@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
@@ -67,13 +68,13 @@ public class CommonSupertypes {
         return max;
     }
 
-    private static int depth(@NotNull JetType type) {
+    private static int depth(@NotNull final JetType type) {
         return 1 + maxDepth(KotlinPackage.map(type.getArguments(), new Function1<TypeProjection, JetType>() {
             @Override
             public JetType invoke(TypeProjection projection) {
                 if (projection.isStarProjection()) {
                     // any type is good enough for depth here
-                    return KotlinBuiltIns.getInstance().getAnyType();
+                    return type.getConstructor().getBuiltIns().getAnyType();
                 }
                 return projection.getType();
             }
@@ -136,7 +137,8 @@ public class CommonSupertypes {
         // Everything deleted => it's Nothing or Nothing?
         if (typeSet.isEmpty()) {
             // TODO : attributes
-            return nullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
+            KotlinBuiltIns builtIns = types.iterator().next().getConstructor().getBuiltIns();
+            return nullable ? builtIns.getNullableNothingType() : builtIns.getNothingType();
         }
 
         if (typeSet.size() == 1) {
@@ -256,7 +258,7 @@ public class CommonSupertypes {
         if (recursionDepth >= maxDepth) {
             // If recursion is too deep, we cut it by taking <out Any?> as an ultimate supertype argument
             // Example: class A : Base<A>; class B : Base<B>, commonSuperType(A, B) = Base<out Any?>
-            return new TypeProjectionImpl(OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType());
+            return new TypeProjectionImpl(OUT_VARIANCE, DescriptorUtilsKt.getBuiltIns(parameterDescriptor).getNullableAnyType());
         }
 
         Set<JetType> ins = new HashSet<JetType>();

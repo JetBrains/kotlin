@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
@@ -520,7 +521,7 @@ fun createTypeForFunctionPlaceholder(
         functionPlaceholderTypeConstructor.getArgumentTypes()
     }
     val receiverType = if (isExtension) DONT_CARE else null
-    return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
+    return functionPlaceholder.builtIns.getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
 }
 
 private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {

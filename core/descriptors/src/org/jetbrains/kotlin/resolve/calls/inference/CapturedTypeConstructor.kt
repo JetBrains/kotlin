@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 public class CapturedTypeConstructor(
         public val typeProjection: TypeProjection
@@ -38,7 +39,7 @@ public class CapturedTypeConstructor(
         val superType = if (typeProjection.getProjectionKind() == Variance.OUT_VARIANCE)
             typeProjection.getType()
         else
-            KotlinBuiltIns.getInstance().getNullableAnyType()
+            builtIns.nullableAnyType
         return listOf(superType)
     }
 
@@ -74,10 +75,10 @@ public class CapturedType(
     }
 
     override val subTypeRepresentative: JetType
-        get() = representative(OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType())
+        get() = representative(OUT_VARIANCE, builtIns.nullableAnyType)
 
     override val superTypeRepresentative: JetType
-        get() = representative(IN_VARIANCE, KotlinBuiltIns.getInstance().getNothingType())
+        get() = representative(IN_VARIANCE, builtIns.nothingType)
 
     private fun representative(variance: Variance, default: JetType) =
         if (typeProjection.getProjectionKind() == variance) typeProjection.getType() else default

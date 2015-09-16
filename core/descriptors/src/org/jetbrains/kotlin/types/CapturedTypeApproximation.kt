@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.ArrayList
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import java.util.*
 
 public data class ApproximationBounds<T>(
         public val lower: T,
@@ -38,10 +39,6 @@ private class TypeArgument(
     val isConsistent: Boolean
         get() = JetTypeChecker.DEFAULT.isSubtypeOf(inProjection, outProjection)
 }
-
-private val NULLABLE_ANY = KotlinBuiltIns.getInstance().getNullableAnyType()
-
-private val NOTHING = KotlinBuiltIns.getInstance().getNothingType()
 
 private fun TypeArgument.toTypeProjection(): TypeProjection {
     assert(isConsistent) { "Only consistent enhanced type propection can be converted to type projection" }
@@ -58,8 +55,8 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
 private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor) =
         when (TypeSubstitutor.combine(typeParameter.getVariance(), getProjectionKind()) : Variance) {
             Variance.INVARIANT -> TypeArgument(typeParameter, getType(), getType())
-            Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), typeParameter.builtIns.getNullableAnyType())
-            Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.getNothingType(), getType())
+            Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), typeParameter.builtIns.nullableAnyType)
+            Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)
         }
 
 public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?): TypeProjection? {
@@ -97,8 +94,8 @@ public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType>
         val bound = typeProjection.getType().makeNullableIfNeeded()
 
         return when (typeProjection.getProjectionKind()) {
-            Variance.IN_VARIANCE -> ApproximationBounds(bound, NULLABLE_ANY)
-            Variance.OUT_VARIANCE -> ApproximationBounds(NOTHING.makeNullableIfNeeded(), bound)
+            Variance.IN_VARIANCE -> ApproximationBounds(bound, type.builtIns.nullableAnyType)
+            Variance.OUT_VARIANCE -> ApproximationBounds(type.builtIns.nothingType.makeNullableIfNeeded(), bound)
             else -> throw AssertionError("Only nontrivial projections should have been captured, not: $typeProjection")
         }
     }
@@ -114,7 +111,7 @@ public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType>
     }
     val lowerBoundIsTrivial = lowerBoundArguments.any { !it.isConsistent }
     return ApproximationBounds(
-            if (lowerBoundIsTrivial) NOTHING else type.replaceTypeArguments(lowerBoundArguments),
+            if (lowerBoundIsTrivial) type.builtIns.nothingType else type.replaceTypeArguments(lowerBoundArguments),
             type.replaceTypeArguments(upperBoundArguments))
 }
 
