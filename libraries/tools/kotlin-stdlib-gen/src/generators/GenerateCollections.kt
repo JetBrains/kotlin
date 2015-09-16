@@ -21,7 +21,6 @@ fun generateCollectionsAPI(outDir: File) {
             ::sequences,
             ::specialJVM,
             ::ranges,
-            ::toPrimitiveArrays,
             ::numeric,
             ::comparables
     ).flatMap { it().sortedBy { it.signature }.asSequence() }

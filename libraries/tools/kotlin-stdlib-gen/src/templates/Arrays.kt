@@ -54,13 +54,7 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    return templates
-}
-
-
-
-fun toPrimitiveArrays(): List<GenericFunction> =
-    PrimitiveType.values().map { primitive ->
+    templates addAll PrimitiveType.values().map { primitive ->
         val arrayType = primitive.name + "Array"
         f("to$arrayType()") {
             only(ArraysOfObjects, Collections)
@@ -88,3 +82,6 @@ fun toPrimitiveArrays(): List<GenericFunction> =
             }
         }
     }
+
+    return templates
+}

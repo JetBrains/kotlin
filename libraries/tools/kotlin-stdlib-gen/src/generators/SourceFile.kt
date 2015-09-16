@@ -1,6 +1,6 @@
 package generators
 
-enum class SourceFile(jvmClassName: String? = null) {
+enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true) {
 
     Arrays(),
     Collections(),
@@ -9,7 +9,7 @@ enum class SourceFile(jvmClassName: String? = null) {
     Sequences(),
     Ranges(),
     Strings(),
-    Numbers(),
+    Misc(),
     ;
 
     val name = this.name()

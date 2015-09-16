@@ -113,6 +113,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     }
     val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
     val annotations = FamilyProperty<String>()
+    val sourceFile = FamilyProperty<SourceFile>()
 
     fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: () -> String) {
         include(family)
@@ -185,17 +186,17 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
     }
 
-    private fun sourceFileFor(f: Family) = getDefaultSourceFile(f)
+    private fun sourceFileFor(f: Family) = sourceFile[f] ?: getDefaultSourceFile(f)
 
     private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
         Iterables, Collections, Lists -> SourceFile.Collections
         Sequences -> SourceFile.Sequences
         Sets -> SourceFile.Sets
         Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
-        ArraysOfObjects, ArraysOfObjectsSubtype, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
+        ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
         Maps -> SourceFile.Maps
         Strings -> SourceFile.Strings
-        Primitives, Generic -> SourceFile.Numbers
+        Primitives, Generic -> SourceFile.Misc
     }
 
     fun build(vararg families: Family = Family.values()): String {

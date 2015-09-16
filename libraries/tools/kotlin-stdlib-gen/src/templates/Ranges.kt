@@ -1,5 +1,6 @@
 package templates
 
+import generators.SourceFile
 import templates.Family.*
 
 fun ranges(): List<GenericFunction> {
@@ -47,6 +48,7 @@ fun ranges(): List<GenericFunction> {
     }
 
     fun downTo(fromType: PrimitiveType, toType: PrimitiveType) = f("downTo(to: $toType)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives)
         only(fromType)
         val elementType = PrimitiveType.maxByCapacity(fromType, toType)
@@ -79,6 +81,7 @@ fun ranges(): List<GenericFunction> {
     templates addAll primitivePermutations.map { downTo(it.first, it.second) }
 
     fun until(fromType: PrimitiveType, toType: PrimitiveType) = f("until(to: $toType)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives)
         only(fromType)
         val elementType = PrimitiveType.maxByCapacity(fromType, toType)
