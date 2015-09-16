@@ -121,9 +121,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
                 }
-                is PackageViewDescriptor -> {
-                    if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
-                }
                 is FunctionDescriptor -> {
                     val functions = topLevelScope.getFunctions(name, NoLookupLocation.FROM_IDE)
                     if (functions.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
@@ -132,6 +129,12 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     val properties = topLevelScope.getProperties(name, NoLookupLocation.FROM_IDE)
                     if (properties.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
                 }
+                // todo change this after adding special syntax for package import
+                // now impossible import package
+                //
+                // is PackageViewDescriptor -> {
+                //     if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
+                // }
                 else -> {
                     return ImportDescriptorResult.FAIL
                 }
