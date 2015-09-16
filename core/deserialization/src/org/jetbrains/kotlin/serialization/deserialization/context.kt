@@ -31,7 +31,6 @@ public class DeserializationComponents(
         public val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
         public val packageFragmentProvider: PackageFragmentProvider,
         public val localClassResolver: LocalClassResolver,
-        public val errorReporter: ErrorReporter,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         public val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
         public val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE

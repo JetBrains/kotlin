@@ -64,10 +64,7 @@ public class RuntimeModuleData private constructor(public val deserialization: D
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter)
-            val deserializationComponentsForJava = DeserializationComponentsForJava(
-                    storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,
-                    lazyJavaPackageFragmentProvider, RuntimeErrorReporter
-            )
+            val deserializationComponentsForJava = DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider)
             singleModuleClassResolver.resolver = javaDescriptorResolver
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
 
