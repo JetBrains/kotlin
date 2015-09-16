@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
-    if (!value.isPredictable()) return null
+    if (!value.isPredictable) return null
 
     fun renderId(id: Any?): String? {
         return when (id) {
@@ -36,5 +36,5 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
             else -> null
         }
     }
-    return renderId(value.getId())
+    return renderId(value.id)
 }

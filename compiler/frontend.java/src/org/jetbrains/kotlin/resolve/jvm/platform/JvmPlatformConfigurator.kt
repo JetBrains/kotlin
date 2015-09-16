@@ -418,7 +418,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
 
     private fun <T: Any> doIfNotNull(dataFlowValue: DataFlowValue, c: ResolutionContext<*>, body: () -> T): T? {
         if (c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
-            && dataFlowValue.getType().mustNotBeNull() == NullabilityInformationSource.JAVA) {
+            && dataFlowValue.type.mustNotBeNull() == NullabilityInformationSource.JAVA) {
             return body()
         }
         return null
