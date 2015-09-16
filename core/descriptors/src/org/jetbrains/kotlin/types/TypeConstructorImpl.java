@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,7 +86,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
     private final ClassifierDescriptor classifierDescriptor;
 
     private TypeConstructorImpl(
-            @Nullable ClassifierDescriptor classifierDescriptor,
+            @NotNull ClassifierDescriptor classifierDescriptor,
             @NotNull Annotations annotations,
             boolean isFinal,
             @NotNull String debugName,
@@ -129,6 +131,12 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
     @Nullable
     public ClassifierDescriptor getDeclarationDescriptor() {
         return classifierDescriptor;
+    }
+
+    @NotNull
+    @Override
+    public KotlinBuiltIns getBuiltIns() {
+        return DescriptorUtilsKt.getBuiltIns(classifierDescriptor);
     }
 
     @Override

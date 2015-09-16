@@ -51,6 +51,8 @@ public class CapturedTypeConstructor(
     override fun getAnnotations() = Annotations.EMPTY
 
     override fun toString() = "CapturedTypeConstructor($typeProjection)"
+
+    override fun getBuiltIns(): KotlinBuiltIns = typeProjection.type.constructor.builtIns
 }
 
 public class CapturedType(

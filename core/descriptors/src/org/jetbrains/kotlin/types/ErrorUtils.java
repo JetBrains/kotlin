@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -635,6 +636,12 @@ public class ErrorUtils {
         public Annotations getAnnotations() {
             return errorTypeConstructor.getAnnotations();
         }
+
+        @NotNull
+        @Override
+        public KotlinBuiltIns getBuiltIns() {
+            return DescriptorUtilsKt.getBuiltIns(typeParameterDescriptor);
+        }
     }
 
     public static boolean isFunctionPlaceholder(@Nullable JetType type) {
@@ -705,6 +712,12 @@ public class ErrorUtils {
         @Override
         public String toString() {
             return errorTypeConstructor.toString();
+        }
+
+        @NotNull
+        @Override
+        public KotlinBuiltIns getBuiltIns() {
+            return errorTypeConstructor.getBuiltIns();
         }
     }
 
