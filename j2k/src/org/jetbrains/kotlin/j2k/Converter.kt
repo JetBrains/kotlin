@@ -413,11 +413,8 @@ class Converter private constructor(
         if (function == null) return null
 
         if (PsiMethodUtil.isMainMethod(method)) {
-            val fqName = FqName("kotlin.jvm.JvmStatic")
-            val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
-
             function.annotations += Annotations(
-                    listOf(Annotation(identifier,
+                    listOf(Annotation(Identifier("JvmStatic").assignNoPrototype(),
                                       listOf(),
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
