@@ -84,7 +84,7 @@ class LazyImportResolver(
 
         volatile var importResolveStatus: ImportResolveStatus? = null
 
-        fun scopeForMode(): JetScope {
+        fun scopeForMode(): JetScope { // rename
             val status = importResolveStatus
             if (status != null) {
                 return status.scope
