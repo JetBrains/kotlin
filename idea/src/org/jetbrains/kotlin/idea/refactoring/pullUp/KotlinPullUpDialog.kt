@@ -56,6 +56,7 @@ public class KotlinPullUpDialog(
         override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
             val superClass = superClass ?: return false
             if (superClass is PsiClass) return false
+            if (superClass !is JetClass) return false
             if (!superClass.isInterface()) return true
 
             val member = memberInfo.member
@@ -84,7 +85,7 @@ public class KotlinPullUpDialog(
 
     override fun getDimensionServiceKey() = "#" + javaClass.name
 
-    override fun getSuperClass() = super.getSuperClass() as? JetClass
+    override fun getSuperClass() = super.getSuperClass()
 
     override fun createMemberInfoModel() = MemberInfoModelImpl()
 
