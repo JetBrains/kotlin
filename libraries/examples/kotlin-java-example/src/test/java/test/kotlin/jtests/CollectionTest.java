@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static kotlin.KotlinPackage.*;
-import static kotlin.util.UtilPackage.*;
 
 /**
  * Lets try using the Kotlin standard library from Java code
@@ -15,9 +14,9 @@ import static kotlin.util.UtilPackage.*;
 public class CollectionTest extends TestCase {
 
     public void testCollections() throws Exception {
-        List<String> list = arrayList("foo", "bar");
+        List<String> list = arrayListOf("foo", "bar");
 
-        String text = makeString(list, ",", "(", ")", -1, "...");
+        String text = joinToString(list, ",", "(", ")", -1, "...", null);
         System.out.println("Have text: " + text);
         assertEquals("(foo,bar)", text);
 
@@ -29,6 +28,6 @@ public class CollectionTest extends TestCase {
         });
 
         System.out.println("Filtered list is " + actual);
-        assertEquals("(bar)", makeString(actual, ",", "(", ")", -1, "..."));
+        assertEquals("(bar)", joinToString(actual, ",", "(", ")", -1, "...", null));
     }
 }
