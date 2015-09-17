@@ -21,7 +21,7 @@
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
 
-  <idea-version since-build="141.1009.5" until-build="141.9999"/>
+  <idea-version since-build="141.1009.5" until-build="141.9999999"/>
 
   <project-components>
     <component>
