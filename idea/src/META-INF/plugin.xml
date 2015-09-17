@@ -1191,6 +1191,13 @@
                        level="WARNING"
       />
 
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
+                       displayName="Invalid property key"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="ERROR"
+      />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
