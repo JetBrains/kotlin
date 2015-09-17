@@ -513,18 +513,17 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("sliceArray(indices: Collection<Int>)") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns an array containing elements of this array at specified [indices]." }
         returns("SELF")
-        body(ArraysOfObjectsSubtype) {
+        body(ArraysOfObjects) {
             """
-            if (indices.isEmpty()) return arrayOfNulls(this, 0) as SELF
             val result = arrayOfNulls(this, indices.size()) as Array<T>
             var targetIndex = 0
             for (sourceIndex in indices) {
                 result[targetIndex++] = this[sourceIndex]
             }
-            return result as SELF
+            return result
             """
         }
         body(ArraysOfPrimitives) {
@@ -540,13 +539,13 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("sliceArray(indices: IntRange)") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns a list containing elements at indices in the specified [indices] range." }
         returns("SELF")
-        body(ArraysOfObjectsSubtype) {
+        body(ArraysOfObjects) {
             """
-            if (indices.isEmpty()) return copyOf(0) as SELF
-            return copyOfRange(indices.start, indices.end + 1) as SELF
+            if (indices.isEmpty()) return copyOfRange(0, 0)
+            return copyOfRange(indices.start, indices.end + 1)
             """
         }
         body(ArraysOfPrimitives) {

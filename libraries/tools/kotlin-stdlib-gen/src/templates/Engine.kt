@@ -16,7 +16,6 @@ enum class Family {
     ArraysOfObjects,
     ArraysOfPrimitives,
     InvariantArraysOfObjects,
-    ArraysOfObjectsSubtype,
     Strings,
     Ranges,
     RangesOfPrimitives,
@@ -263,7 +262,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             Sets -> "Set<$isAsteriskOrT>"
             Sequences -> "Sequence<$isAsteriskOrT>"
             InvariantArraysOfObjects -> "Array<T>"
-            ArraysOfObjectsSubtype -> "A"
             ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
             Strings -> "String"
             Ranges -> "Range<$isAsteriskOrT>"
@@ -287,9 +285,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
 
             // TODO: Model for type parameter
             val types = ArrayList(typeParams)
-            if (f == ArraysOfObjectsSubtype) {
-                types.add("A: Array<out T>")
-            }
             if (f == Generic) {
                 // ensure type parameter T, if it's not added to typeParams before
                 if (!types.any { it == "T" || it.startsWith("T:")}) {

@@ -208,13 +208,13 @@ public fun String.reversed(): String {
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public fun <T, A: Array<out T>> A.reversedArray(): A {
+public fun <T> Array<out T>.reversedArray(): Array<out T> {
     if (isEmpty()) return this
     val result = arrayOfNulls(this, size()) as Array<T>
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
-    return result as A
+    return result
 }
 
 /**
@@ -494,9 +494,9 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public fun <T : Comparable<T>, A: Array<out T>> A.sortedArray(): A {
+public fun <T : Comparable<T>> Array<out T>.sortedArray(): Array<out T> {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as A
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -504,7 +504,7 @@ public fun <T : Comparable<T>, A: Array<out T>> A.sortedArray(): A {
  */
 public fun ByteArray.sortedArray(): ByteArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as ByteArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -512,7 +512,7 @@ public fun ByteArray.sortedArray(): ByteArray {
  */
 public fun CharArray.sortedArray(): CharArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as CharArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -520,7 +520,7 @@ public fun CharArray.sortedArray(): CharArray {
  */
 public fun DoubleArray.sortedArray(): DoubleArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as DoubleArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -528,7 +528,7 @@ public fun DoubleArray.sortedArray(): DoubleArray {
  */
 public fun FloatArray.sortedArray(): FloatArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as FloatArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -536,7 +536,7 @@ public fun FloatArray.sortedArray(): FloatArray {
  */
 public fun IntArray.sortedArray(): IntArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as IntArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -544,7 +544,7 @@ public fun IntArray.sortedArray(): IntArray {
  */
 public fun LongArray.sortedArray(): LongArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as LongArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
@@ -552,16 +552,16 @@ public fun LongArray.sortedArray(): LongArray {
  */
 public fun ShortArray.sortedArray(): ShortArray {
     if (isEmpty()) return this
-    return this.copyOf().apply { sort() } as ShortArray
+    return this.copyOf().apply { sort() }
 }
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public fun <T : Comparable<T>, A: Array<out T>> A.sortedArrayDescending(): A {
+public fun <T : Comparable<T>> Array<out T>.sortedArrayDescending(): Array<out T> {
     if (isEmpty()) return this
     // TODO: Use reverseOrder<T>()
-    return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) } as A
+    return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) }
 }
 
 /**
@@ -570,7 +570,7 @@ public fun <T : Comparable<T>, A: Array<out T>> A.sortedArrayDescending(): A {
 public fun ByteArray.sortedArrayDescending(): ByteArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as ByteArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -579,7 +579,7 @@ public fun ByteArray.sortedArrayDescending(): ByteArray {
 public fun CharArray.sortedArrayDescending(): CharArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as CharArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -588,7 +588,7 @@ public fun CharArray.sortedArrayDescending(): CharArray {
 public fun DoubleArray.sortedArrayDescending(): DoubleArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as DoubleArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -597,7 +597,7 @@ public fun DoubleArray.sortedArrayDescending(): DoubleArray {
 public fun FloatArray.sortedArrayDescending(): FloatArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as FloatArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -606,7 +606,7 @@ public fun FloatArray.sortedArrayDescending(): FloatArray {
 public fun IntArray.sortedArrayDescending(): IntArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as IntArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -615,7 +615,7 @@ public fun IntArray.sortedArrayDescending(): IntArray {
 public fun LongArray.sortedArrayDescending(): LongArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as LongArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
@@ -624,15 +624,15 @@ public fun LongArray.sortedArrayDescending(): LongArray {
 public fun ShortArray.sortedArrayDescending(): ShortArray {
     if (isEmpty()) return this
     // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray() as ShortArray
+    return this.copyOf().apply { sort() }.reversedArray()
 }
 
 /**
  * Returns an array with all elements of this array sorted according the specified [comparator].
  */
-public fun <T, A: Array<out T>> A.sortedArrayWith(comparator: Comparator<in T>): A {
+public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array<out T> {
     if (isEmpty()) return this
-    return this.copyOf().apply { sortWith(comparator) } as A
+    return this.copyOf().apply { sortWith(comparator) }
 }
 
 /**
