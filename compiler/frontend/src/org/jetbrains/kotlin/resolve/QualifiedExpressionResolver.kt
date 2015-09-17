@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -42,7 +41,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             trace: BindingTrace
     ) {
         for (nameExpression in packageDirective.packageNames) {
-            storageResult(trace, nameExpression, listOf(module.getPackage(packageDirective.getFqName(nameExpression))), null)
+            storageResult(trace, nameExpression, listOf(module.getPackage(packageDirective.getFqName(nameExpression))),
+                          shouldBeVisibleFrom = null, inImport = false)
         }
     }
 
@@ -54,7 +54,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
             return userType.referenceExpression?.let {
                 val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
-                storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor)
+                storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor, inImport = false)
                 classifier
             }
         }
@@ -62,7 +62,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val module = scope.ownerDescriptor.module
         val (qualifierPartList, hasError) = userType.asQualifierPartList()
         if (hasError) {
-            resolveToPackageOrClass(qualifierPartList, module, trace, scope.ownerDescriptor)
+            resolveToPackageOrClass(qualifierPartList, module, trace, scope.ownerDescriptor, scope)
             return null
         }
         assert(qualifierPartList.size() >= 1) {
@@ -70,15 +70,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
 
         val qualifier = resolveToPackageOrClass(
-                qualifierPartList.subList(0, qualifierPartList.size() - 1), module, trace, scope.ownerDescriptor,
-                firstPartResolver =  {
-                    if (userType.startWithPackage) {
-                        null
-                    }
-                    else {
-                        scope.getClassifier(it.name, it.location)
-                    }
-                }
+                qualifierPartList.subList(0, qualifierPartList.size() - 1), module,
+                trace, scope.ownerDescriptor, scope, userType.startWithPackage
         ) ?: return null
 
         val lastPart = qualifierPartList.last()
@@ -87,7 +80,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getClassifier(lastPart.name, lastPart.location)
             else -> null
         }
-        storageResult(trace, lastPart.expression, listOfNotNull(classifier), scope.ownerDescriptor)
+        storageResult(trace, lastPart.expression, listOfNotNull(classifier), scope.ownerDescriptor, inImport = false)
         return classifier
     }
 
@@ -129,7 +122,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val lastPart = path.lastOrNull() ?: return JetScope.Empty
 
         if (importDirective.isAllUnder) {
-            val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom) ?: return JetScope.Empty
+            val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom,
+                                                                   scopeForFirstPart = null) ?: return JetScope.Empty
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
                 trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
             }
@@ -140,11 +134,12 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         else {
             val aliasName = JetPsiUtil.getAliasName(importDirective)
             if (aliasName == null) { // import kotlin.
-                resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom)
+                resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart = null)
                 return JetScope.Empty
             }
 
-            val packageOrClassDescriptor = resolveToPackageOrClass(path.subList(0, path.size() - 1), moduleDescriptor, trace, shouldBeVisibleFrom)
+            val packageOrClassDescriptor = resolveToPackageOrClass(path.subList(0, path.size() - 1), moduleDescriptor,
+                                                                   trace, shouldBeVisibleFrom, scopeForFirstPart = null)
                                            ?: return JetScope.Empty
             val descriptors = SmartList<DeclarationDescriptor>()
 
@@ -170,7 +165,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
             }
             if (descriptors.isNotEmpty()) {
-                storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom)
+                storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom, inImport = true )
             }
             else {
                 tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
@@ -213,7 +208,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
             else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
         }
-        storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null)
+        storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null, inImport = true )
     }
 
     private fun JetExpression.asQualifierPartList(trace: BindingTrace): List<QualifierPart> {
@@ -253,16 +248,27 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
             shouldBeVisibleFrom: DeclarationDescriptor,
-            firstPartResolver: (QualifierPart) -> DeclarationDescriptor? = { null }
+            scopeForFirstPart: LexicalScope?, // this scope is null for import directive resolve
+            startWithPackageKeyword: Boolean = false
     ): DeclarationDescriptor? {
         if (path.isEmpty()) {
             return moduleDescriptor.getPackage(FqName.ROOT)
         }
 
-        val (currentDescriptor, currentIndex) = firstPartResolver(path.first())?.let {
-            storageResult(trace, path.first().expression, listOf(it), shouldBeVisibleFrom)
-            Pair(it, 1)
-        } ?: moduleDescriptor.quickResolveToPackage(path, trace)
+        val inImport = scopeForFirstPart == null
+        val firstDescriptor =
+            if (scopeForFirstPart != null && !startWithPackageKeyword) {
+                val firstPart = path.first()
+                scopeForFirstPart.getClassifier(firstPart.name, firstPart.location)?.apply {
+                    storageResult(trace, firstPart.expression, listOf(this), shouldBeVisibleFrom, inImport)
+                }
+            }
+            else {
+                null
+            }
+
+        val (currentDescriptor, currentIndex) = firstDescriptor?.let { Pair(it, 1) } ?: moduleDescriptor.quickResolveToPackage(path, trace, inImport)
+
         return path.subList(currentIndex, path.size()).fold<QualifierPart, DeclarationDescriptor?>(currentDescriptor) {
             descriptor, qualifierPart ->
             // report unresolved reference only for first unresolved qualifier
@@ -286,14 +292,15 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 }
                 else -> null
             }
-            storageResult(trace, qualifierPart.expression, listOfNotNull(nextDescriptor), shouldBeVisibleFrom)
+            storageResult(trace, qualifierPart.expression, listOfNotNull(nextDescriptor), shouldBeVisibleFrom, inImport)
             nextDescriptor
         }
     }
 
     private fun ModuleDescriptor.quickResolveToPackage(
             path: List<QualifierPart>,
-            trace: BindingTrace
+            trace: BindingTrace,
+            inImport: Boolean
     ): Pair<PackageViewDescriptor, Int> {
         val possiblePackagePrefixSize = path.indexOfFirst { it.typeArguments != null }.let { if (it == -1) path.size() else it + 1 }
         var fqName = path.subList(0, possiblePackagePrefixSize).fold(FqName.ROOT) { fqName, qualifierPart ->
@@ -303,7 +310,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         while (!fqName.isRoot) {
             val packageDescriptor = getPackage(fqName)
             if (!packageDescriptor.isEmpty()) {
-                recordPackageViews(path.subList(0, prefixSize), packageDescriptor, trace)
+                recordPackageViews(path.subList(0, prefixSize), packageDescriptor, trace, inImport)
                 return Pair(packageDescriptor, prefixSize)
             }
             fqName = fqName.parent()
@@ -315,10 +322,11 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     private fun recordPackageViews(
             path: List<QualifierPart>,
             packageView: PackageViewDescriptor,
-            trace: BindingTrace
+            trace: BindingTrace,
+            inImport: Boolean
     ) {
         path.foldRight(packageView) { qualifierPart, currentView ->
-            storageResult(trace, qualifierPart.expression, listOfNotNull(currentView), null)
+            storageResult(trace, qualifierPart.expression, listOfNotNull(currentView), shouldBeVisibleFrom = null, inImport = inImport)
             val parentView = currentView.containingDeclaration
             assert(parentView != null) {
                 "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
@@ -332,7 +340,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             trace: BindingTrace,
             referenceExpression: JetSimpleNameExpression,
             descriptors: Collection<DeclarationDescriptor>,
-            shouldBeVisibleFrom: DeclarationDescriptor?
+            shouldBeVisibleFrom: DeclarationDescriptor?,
+            inImport: Boolean
     ) {
         if (descriptors.isEmpty()) {
             trace.report(Errors.UNRESOLVED_REFERENCE.on(referenceExpression, referenceExpression))
@@ -348,7 +357,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 symbolUsageValidator.validateTypeUsage(descriptor, trace, referenceExpression)
             }
             if (descriptor is DeclarationDescriptorWithVisibility && shouldBeVisibleFrom != null) {
-                checkVisibility(descriptor, trace, referenceExpression, shouldBeVisibleFrom)
+                checkVisibility(descriptor, trace, referenceExpression, shouldBeVisibleFrom, inImport)
             }
 
             storageQualifier(trace, referenceExpression, descriptor)
@@ -366,9 +375,11 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             descriptor: DeclarationDescriptorWithVisibility,
             trace: BindingTrace,
             referenceExpression: JetSimpleNameExpression,
-            shouldBeVisibleFrom: DeclarationDescriptor) {
+            shouldBeVisibleFrom: DeclarationDescriptor,
+            inImport: Boolean
+    ) {
         val visibility = descriptor.visibility
-        if (PsiTreeUtil.getParentOfType(referenceExpression, JetImportDirective::class.java) != null && !visibility.mustCheckInImports()) {
+        if (inImport && !visibility.mustCheckInImports()) {
             return
         }
         if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)) {
