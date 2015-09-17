@@ -242,7 +242,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
                 is JetNamedFunction, is JetSecondaryConstructor -> {
                     val function = element as JetFunction
-                    val name = function.getName()
+                    val name = runReadAction { function.getName() }
                     if (name != null) {
                         val methods = runReadAction { LightClassUtil.getLightClassMethods(function) }
                         for (method in methods) {
