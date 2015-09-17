@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
@@ -70,7 +72,8 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
                 OverloadsAnnotationChecker(),
-                PublicFieldAnnotationChecker()
+                PublicFieldAnnotationChecker(),
+                TypeParameterBoundIsNotArrayChecker()
         ),
 
         additionalCallCheckers = listOf(
@@ -264,6 +267,26 @@ public class PublicFieldAnnotationChecker: DeclarationChecker {
         if (descriptor is PropertyDescriptor
             && !bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
             report()
+        }
+    }
+}
+
+public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
+        val typeParameters = (descriptor as? CallableDescriptor)?.typeParameters
+                             ?: (descriptor as? ClassDescriptor)?.typeConstructor?.parameters
+                             ?: return
+
+        for (typeParameter in typeParameters) {
+            if (typeParameter.upperBounds.any { KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it) }) {
+                val element = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) ?: declaration
+                diagnosticHolder.report(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY.on(element))
+            }
         }
     }
 }
