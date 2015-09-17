@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import java.util.ArrayList
 import java.util.LinkedHashSet
@@ -65,6 +67,12 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
             return descriptor.canBeReferencedViaImport()
                    && ImportInsertHelper.getInstance(file.getProject()).mayImportByCodeStyle(descriptor)
+        }
+
+        private fun commitChanges(file: JetFile) {
+            val documentManager = PsiDocumentManager.getInstance(file.getProject())
+            val document = documentManager.getDocument(file)!!
+            documentManager.commitDocument(document)
         }
     }
 
@@ -137,7 +145,8 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             elementFilter: (PsiElement) -> FilterResult
     ): Collection<JetElement> {
         //TODO: that's not correct since we have options!
-        val elementsToUse = dropNestedElements(elements)
+        val dropNestedElements = dropNestedElements(elements)
+        val elementsToUse = CollectInterestingElementsAndAddPackageKeywordVisitor.collect(file, elementFilter, dropNestedElements)
 
         val helper = ImportInsertHelper.getInstance(file.getProject())
 
@@ -167,8 +176,11 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                     failedToImportDescriptors.add(descriptor)
                 }
             }
-            if (!anyChange) break
+            if (!anyChange) break else commitChanges(file)
         }
+
+        RemoveUnnecessaryPackageKeywordVisitor.process(file, elementFilter, elementsToUse)
+
 
         return elementsToUse
     }
@@ -267,10 +279,13 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             if (type.getQualifier() == null) return
             val referenceExpression = type.getReferenceExpression() ?: return
 
+            val typeReference = type.getStrictParentOfType<JetTypeReference>() ?: return
+
             val bindingContext = resolutionFacade.analyze(referenceExpression)
+            ForceResolveUtil.forceResolveAllContents(bindingContext[BindingContext.TYPE, typeReference])
+
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
 
-            val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
             val scope = bindingContext[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference] ?: return
             val name = target.getName()
             val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, NoLookupLocation.FROM_IDE) else scope.getPackage(name)
@@ -449,6 +464,110 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
 
         override fun shortenElement(element: JetDotQualifiedExpression): JetElement {
             return element.replace(element.getReceiverExpression()) as JetElement
+        }
+    }
+
+    private class CollectInterestingElementsAndAddPackageKeywordVisitor(
+            private val file: JetFile,
+            private val elementFilter: (PsiElement) -> FilterResult
+    ): JetVisitor<Void, Boolean>() {
+        private val elements = LinkedHashSet<JetElement>()
+        private val psiFactory = JetPsiFactory(file)
+
+        override fun visitJetElement(element: JetElement, data: Boolean): Void? {
+            if (elementFilter(element) != FilterResult.SKIP) {
+                element.acceptChildren(this, data)
+            }
+            return null
+        }
+
+        override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression, data: Boolean): Void? {
+            if (data) elements.add(expression)
+            return null
+        }
+
+        override fun visitUserType(type: JetUserType, data: Boolean): Void? {
+            val newType =
+                if (type.qualifier == null && !type.isAbsoluteInRootPackage && elementFilter(type) == FilterResult.PROCESS) {
+                    val newUserType = psiFactory.createUserType("package.${type.text}")
+                    type.replace(newUserType) as JetUserType
+                } else {
+                    type
+                }
+
+            if (data) elements.add(newType)
+            super.visitUserType(type, false)
+            return null
+        }
+
+        override fun visitThisExpression(expression: JetThisExpression, data: Boolean): Void? {
+            if (data) elements.add(expression)
+            return null
+        }
+
+        override fun visitJetFile(file: JetFile, data: Boolean): Void? {
+            file.acceptChildren(this, data)
+            return null
+        }
+
+        companion object {
+            fun collect(
+                    file: JetFile,
+                    elementFilter: (PsiElement) -> FilterResult,
+                    baseElements: Iterable<JetElement>
+            ): MutableSet<JetElement> {
+                val visitor = CollectInterestingElementsAndAddPackageKeywordVisitor(file, elementFilter)
+                for (element in baseElements) {
+                    element.accept(visitor, true)
+                }
+                commitChanges(file)
+                return visitor.elements
+            }
+        }
+    }
+
+    private class RemoveUnnecessaryPackageKeywordVisitor(
+            file: JetFile,
+            elementFilter: (PsiElement) -> FilterResult
+    ): ShorteningVisitor<JetElement>(file, elementFilter, setOf()) {
+        override fun qualifier(element: JetElement): JetElement
+                = throw AssertionError("Qualifier requested: ${element.getElementTextWithContext()}")
+
+        override fun visitUserType(type: JetUserType) {
+            if (type.isAbsoluteInRootPackage) {
+                val bindingContext = resolutionFacade.analyze(type)
+
+                val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
+                val type1 = bindingContext[BindingContext.TYPE, typeReference]
+                ForceResolveUtil.forceResolveAllContents(type1)
+
+                val scope = bindingContext[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference] ?: return
+                val name = Name.identifier(type.referencedName ?: return)
+
+                if (scope.getClassifier(name, NoLookupLocation.FROM_IDE) == null || (scope.getPackage(name)?.isEmpty() ?: true)) {
+                    addElementToShorten(type)
+                }
+            }
+            super.visitUserType(type)
+        }
+
+        override fun shortenElement(element: JetElement): JetElement {
+            if (element is JetUserType) {
+                element.deletePackageKeyword()
+            }
+            return element
+        }
+
+        companion object {
+            fun process(
+                    file: JetFile,
+                    elementFilter: (PsiElement) -> FilterResult,
+                    elementsToUse: MutableSet<JetElement>
+            ) {
+                val visitor = RemoveUnnecessaryPackageKeywordVisitor(file) { FilterResult.PROCESS }
+                file.accept(visitor)
+                visitor.shortenElements(elementsToUse)
+            }
         }
     }
 }

@@ -91,6 +91,15 @@ public class JetUserType extends JetElementImplStub<KotlinUserTypeStub> implemen
         dot.delete();
     }
 
+    public void deletePackageKeyword() {
+        PsiElement packageKeyword = findChildByType(JetTokens.PACKAGE_KEYWORD);
+        assert packageKeyword != null;
+        PsiElement dot = findChildByType(JetTokens.DOT);
+        assert dot != null;
+        packageKeyword.delete();
+        dot.delete();
+    }
+
     @Nullable
     public String getReferencedName() {
         JetSimpleNameExpression referenceExpression = getReferenceExpression();

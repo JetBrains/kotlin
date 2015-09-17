@@ -64,7 +64,7 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
     val elementToReplace = getQualifiedElement()
     return when (elementToReplace) {
         is JetUserType -> {
-            val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
+            val typeText = "package.$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
             elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
         }
         else -> elementToReplace.replace(psiFactory.createExpression(text))
