@@ -29,8 +29,9 @@ public class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
             MAP.put(ErrorsAndroid.SYNTHETIC_INVALID_WIDGET_TYPE,
                     "Widget has an invalid type ''{0}''. Please specify the fully qualified widget class name in XML",
                     Renderers.TO_STRING)
+
             MAP.put(ErrorsAndroid.SYNTHETIC_UNRESOLVED_WIDGET_TYPE,
-                    "Widget has an unresolved type ''{0}'', and thus it was upcasted to ''android.view.View''.",
+                    "Widget has an unresolved type ''{0}'', and thus it was upcasted to ''android.view.View''",
                     Renderers.TO_STRING)
         }
     }

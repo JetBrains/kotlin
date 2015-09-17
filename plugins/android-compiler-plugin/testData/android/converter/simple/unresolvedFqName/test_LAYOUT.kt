@@ -3,10 +3,10 @@ package kotlinx.android.synthetic.test
 import kotlin.internal.flexible.ft
 
 @kotlin.internal.flexible.InvalidWidgetType("a.b.c")
-val android.app.Activity.MyView: ft<android.view.View, android.view.View?>
-    get() = findViewById(0) as? android.view.View
+val android.app.Activity.MyView: ft<a.b.c, a.b.c?>
+    get() = findViewById(0) as? a.b.c
 
 @kotlin.internal.flexible.InvalidWidgetType("a.b.c")
-val android.app.Fragment.MyView: ft<android.view.View, android.view.View?>
-    get() = getView().findViewById(0) as? android.view.View
+val android.app.Fragment.MyView: ft<a.b.c, a.b.c?>
+    get() = getView().findViewById(0) as? a.b.c
 

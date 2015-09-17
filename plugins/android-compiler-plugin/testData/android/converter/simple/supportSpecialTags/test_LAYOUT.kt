@@ -3,13 +3,13 @@ package kotlinx.android.synthetic.test
 import kotlin.internal.flexible.ft
 
 val android.app.Activity.includeTag: ft<android.view.View, android.view.View?>
-    get() = findViewById(0) as? android.view.View
+    get() = findViewById(0)
 
 val android.app.Fragment.includeTag: ft<android.view.View, android.view.View?>
-    get() = getView().findViewById(0) as? android.view.View
+    get() = getView().findViewById(0)
 
 val android.support.v4.app.Fragment.includeTag: ft<android.view.View, android.view.View?>
-    get() = getView().findViewById(0) as? android.view.View
+    get() = getView().findViewById(0)
 
 val android.app.Activity.fragmentTag: ft<android.app.Fragment, android.app.Fragment?>
     get() = getFragmentManager().findFragmentById(0) as? android.app.Fragment

@@ -25,8 +25,8 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
-import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
 import org.jetbrains.kotlin.android.synthetic.res.AndroidResource
+import org.jetbrains.kotlin.android.synthetic.res.AndroidWidget
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.psi.JetFile
 
@@ -60,6 +60,12 @@ class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(mod
 
         files.forEach { it.accept(visitor) }
         return filterDuplicates(widgets)
+    }
+
+    override fun parseAndroidWidget(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource {
+        val fqName = fqNameResolver(tag)
+        val invalidType = if (fqName != null) null else tag
+        return AndroidWidget(id, fqName ?: AndroidConst.VIEW_FQNAME, invalidType)
     }
 
     override fun checkIfClassExist(fqName: String): Boolean {

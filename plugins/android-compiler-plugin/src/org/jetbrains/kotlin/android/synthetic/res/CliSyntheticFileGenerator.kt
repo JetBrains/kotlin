@@ -23,9 +23,8 @@ import com.intellij.psi.PsiFile
 import java.io.ByteArrayInputStream
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
-import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.psi.JetFile
 
 public open class CliSyntheticFileGenerator(
@@ -76,6 +75,13 @@ public open class CliSyntheticFileGenerator(
             if (clazz != null) return true
         }
         return false
+    }
+
+    override fun parseAndroidWidget(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource {
+        val fqName = fqNameResolver(tag)
+        val invalidType = if (fqName != null) null else tag
+        val type = fqName ?: (if ('.' in tag) tag else AndroidConst.VIEW_FQNAME)
+        return AndroidWidget(id, type, invalidType)
     }
 
     private companion object {
