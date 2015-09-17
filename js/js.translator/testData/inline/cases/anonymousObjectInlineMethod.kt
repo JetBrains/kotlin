@@ -2,7 +2,7 @@ package foo
 
 fun add(a: Int, b: Int): Int {
     val o = object {
-        @inline fun add(a: Int, b: Int): Int = a + b
+        inline fun add(a: Int, b: Int): Int = a + b
     }
 
     return o.add(a, b)

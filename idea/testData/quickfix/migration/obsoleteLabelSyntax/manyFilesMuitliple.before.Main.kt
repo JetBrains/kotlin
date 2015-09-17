@@ -1,7 +1,7 @@
 // "Update obsolete label syntax in whole project" "true"
 // ERROR: Unresolved reference: @abc
+// ERROR: Unresolved reference: @ann
 // ERROR: Unresolved reference: @cde
-// ERROR: Unresolved reference: @data
 // ERROR: Unresolved reference: @labeled
 // ERROR: Unresolved reference: @loop
 // ERROR: Unresolved reference: @loop2
@@ -22,8 +22,8 @@
 // ERROR: Unresolved reference: notLabelAnnotation
 // ERROR: Unresolved reference: notLoop
 // ERROR: The label '@abc' does not denote a loop
+// ERROR: The label '@ann' does not denote a loop
 // ERROR: The label '@cde' does not denote a loop
-// ERROR: The label '@data' does not denote a loop
 // ERROR: The label '@loop' does not denote a loop
 // ERROR: The label '@loop2' does not denote a loop
 // ERROR: The label '@loop3' does not denote a loop
@@ -31,6 +31,8 @@
 // ERROR: The label '@loop5' does not denote a loop
 
 fun run(block: () -> Unit) = block()
+
+annotation class ann
 
 notLabelAnnotation class A {
     fun foo() {
@@ -64,8 +66,8 @@ notLabelAnnotation class A {
             return@labeled
         }
 
-        @data for (i in 1..100) {
-            continue@data
+        @ann for (i in 1..100) {
+            continue@ann
         }
 
         @ for (i in 1..100) {

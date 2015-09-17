@@ -1,5 +1,5 @@
 fun test1(str: String): String {
-    @data class A(val x: Int) {
+    data class A(val x: Int) {
         fun foo() = str
     }
     return A(0).copy().foo()
@@ -7,7 +7,7 @@ fun test1(str: String): String {
 
 class TestClass(val x: String) {
     fun foo(): String {
-        @data class A(val x: Int) {
+        data class A(val x: Int) {
             fun foo() = this@TestClass.x
         }
         return A(0).copy().foo()
@@ -18,7 +18,7 @@ fun test2(str: String): String = TestClass(str).foo()
 
 fun test3(str: String): String {
     var xx = ""
-    @data class A(val x: Int) {
+    data class A(val x: Int) {
         fun foo(): String { xx = str; return xx }
     }
     return A(0).copy().foo()
@@ -27,7 +27,7 @@ fun test3(str: String): String {
 fun test4(str: String): String {
     var xx = ""
     fun bar(s: String): String { xx = s; return xx }
-    @data class A(val x: Int) {
+    data class A(val x: Int) {
         fun foo(): String = bar(str)
     }
     return A(0).copy().foo()

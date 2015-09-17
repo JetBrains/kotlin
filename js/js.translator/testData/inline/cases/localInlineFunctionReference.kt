@@ -1,7 +1,7 @@
 package foo
 
 fun multiplyBy(a: Int): (Int) -> Int {
-    @inline fun multiply(b: Int): Int = a * b
+    inline fun multiply(b: Int): Int = a * b
 
     return ::multiply
 }
