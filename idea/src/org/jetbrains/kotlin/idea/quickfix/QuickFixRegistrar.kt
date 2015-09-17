@@ -196,7 +196,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         FINAL_SUPERTYPE.registerFactory(addOpenModifierToClassDeclarationFix)
         FINAL_UPPER_BOUND.registerFactory(addOpenModifierToClassDeclarationFix)
 
-        OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix.createFactory())
+        OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix)
 
         PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix.createFactory())
 

@@ -14,149 +14,108 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.google.common.collect.Sets;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.JetCallableDeclaration;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import java.util.*
 
-import java.util.*;
+public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : JetIntentionAction<JetDeclaration>(declaration) {
+    private val overriddenNonOverridableMembers = ArrayList<JetCallableDeclaration>()
+    private val containingDeclarationsNames = ArrayList<String>()
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-
-public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {
-    private final List<JetCallableDeclaration> overriddenNonOverridableMembers = new ArrayList<JetCallableDeclaration>();
-    private final List<String> containingDeclarationsNames = new ArrayList<String>();
-
-    public MakeOverriddenMemberOpenFix(@NotNull JetDeclaration declaration) {
-        super(declaration);
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        if (!super.isAvailable(project, editor, file) || !(file instanceof JetFile)) {
-            return false;
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+        if (!super.isAvailable(project, editor, file) || file !is JetFile) {
+            return false
         }
 
         // When running single test 'isAvailable()' is invoked multiple times, so we need to clear lists.
-        overriddenNonOverridableMembers.clear();
-        containingDeclarationsNames.clear();
+        overriddenNonOverridableMembers.clear()
+        containingDeclarationsNames.clear()
 
-        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(element);
-        if (!(descriptor instanceof CallableMemberDescriptor)) return false;
+        val descriptor = element.resolveToDescriptor()
+        if (descriptor !is CallableMemberDescriptor) return false
 
-        for (CallableMemberDescriptor overriddenDescriptor : getAllDeclaredNonOverridableOverriddenDescriptors(
-                (CallableMemberDescriptor) descriptor)) {
-            assert overriddenDescriptor.getKind() == DECLARATION : "Can only be applied to declarations.";
-            PsiElement overriddenMember = descriptorToDeclaration(overriddenDescriptor);
-            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || !(overriddenMember instanceof JetCallableDeclaration)) {
-                return false;
+        for (overriddenDescriptor in getAllDeclaredNonOverridableOverriddenDescriptors(
+                descriptor)) {
+            assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
+            val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
+            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || overriddenMember !is JetCallableDeclaration) {
+                return false
             }
-            String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().asString();
-            overriddenNonOverridableMembers.add((JetCallableDeclaration) overriddenMember);
-            containingDeclarationsNames.add(containingDeclarationName);
+            val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
+            overriddenNonOverridableMembers.add(overriddenMember)
+            containingDeclarationsNames.add(containingDeclarationName)
         }
-        return overriddenNonOverridableMembers.size() > 0;
+        return overriddenNonOverridableMembers.size() > 0
     }
 
-    @NotNull
-    private static Collection<CallableMemberDescriptor> getAllDeclaredNonOverridableOverriddenDescriptors(
-            @NotNull CallableMemberDescriptor callableMemberDescriptor
-    ) {
-        Set<CallableMemberDescriptor> result = Sets.newHashSet();
-        Collection<CallableMemberDescriptor>
-                nonOverridableOverriddenDescriptors = retainNonOverridableMembers(callableMemberDescriptor.getOverriddenDescriptors());
-        for (CallableMemberDescriptor overriddenDescriptor : nonOverridableOverriddenDescriptors) {
-            CallableMemberDescriptor.Kind kind = overriddenDescriptor.getKind();
-            if (kind == DECLARATION) {
-                result.add(overriddenDescriptor);
-            }
-            else if (kind == FAKE_OVERRIDE || kind == DELEGATION) {
-                result.addAll(getAllDeclaredNonOverridableOverriddenDescriptors(overriddenDescriptor));
-            }
-            else if (kind == SYNTHESIZED) {
-                // do nothing, final synthesized members can't be made open
-            }
-            else {
-                throw new UnsupportedOperationException("Unexpected callable kind " + kind);
-            }
-        }
-        return result;
-    }
-
-    @NotNull
-    private static Collection<CallableMemberDescriptor> retainNonOverridableMembers(
-            @NotNull Collection<? extends CallableMemberDescriptor> callableMemberDescriptors
-    ) {
-        return ContainerUtil.filter(callableMemberDescriptors, new Condition<CallableMemberDescriptor>() {
-            @Override
-            public boolean value(CallableMemberDescriptor descriptor) {
-                return !descriptor.getModality().isOverridable();
-            }
-        });
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
+    override fun getText(): String {
         if (overriddenNonOverridableMembers.size() == 1) {
-            return JetBundle.message("make.element.modifier", containingDeclarationsNames.get(0) + "." + element.getName(), OPEN_KEYWORD);
+            val name = containingDeclarationsNames.get(0) + "." + element.name
+            return "Make $name $OPEN_KEYWORD"
         }
 
-        StringBuilder declarations = new StringBuilder();
-        Collections.sort(containingDeclarationsNames);
-        for (int i = 0; i < containingDeclarationsNames.size() - 2; i++) {
-            declarations.append(containingDeclarationsNames.get(i));
-            declarations.append(", ");
-        }
-        declarations.append(containingDeclarationsNames.get(containingDeclarationsNames.size() - 2));
-        declarations.append(" and ");
-        declarations.append(containingDeclarationsNames.get(containingDeclarationsNames.size() - 1));
-        return JetBundle.message("make.element.in.classifiers.open", element.getName(), declarations.toString());
+        Collections.sort(containingDeclarationsNames)
+        val declarations = containingDeclarationsNames.subList(0, containingDeclarationsNames.size()-1).join(", ") + " and " +
+            containingDeclarationsNames.last()
+        return "Make '${element.name}' in $declarations open"
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return JetBundle.message("add.modifier.family");
-    }
+    override fun getFamilyName(): String = "Add Modifier"
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        for (JetCallableDeclaration overriddenMember : overriddenNonOverridableMembers) {
-            overriddenMember.addModifier(OPEN_KEYWORD);
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+        for (overriddenMember in overriddenNonOverridableMembers) {
+            overriddenMember.addModifier(OPEN_KEYWORD)
         }
     }
 
-    @NotNull
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetDeclaration declaration = QuickFixUtil.getParentElementOfType(diagnostic, JetDeclaration.class);
-                assert declaration != null;
-                return new MakeOverriddenMemberOpenFix(declaration);
+    companion object : JetSingleIntentionActionFactory() {
+
+        private fun getAllDeclaredNonOverridableOverriddenDescriptors(
+                callableMemberDescriptor: CallableMemberDescriptor): Collection<CallableMemberDescriptor> {
+            val result = hashSetOf<CallableMemberDescriptor>()
+            val nonOverridableOverriddenDescriptors = retainNonOverridableMembers(callableMemberDescriptor.overriddenDescriptors)
+            for (overriddenDescriptor in nonOverridableOverriddenDescriptors) {
+                when (overriddenDescriptor.kind) {
+                    DECLARATION ->
+                        result.add(overriddenDescriptor)
+
+                    FAKE_OVERRIDE, DELEGATION ->
+                        result.addAll(getAllDeclaredNonOverridableOverriddenDescriptors(overriddenDescriptor))
+
+                    SYNTHESIZED -> {} /* do nothing */
+
+                    else -> throw UnsupportedOperationException("Unexpected callable kind ${overriddenDescriptor.kind}")
+                }
             }
-        };
+            return result
+        }
+
+        private fun retainNonOverridableMembers(
+                callableMemberDescriptors: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor> {
+            return callableMemberDescriptors.filter { !it.modality.isOverridable }
+        }
+
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val declaration = diagnostic.psiElement.getNonStrictParentOfType<JetDeclaration>()!!
+            return MakeOverriddenMemberOpenFix(declaration)
+        }
     }
 }
