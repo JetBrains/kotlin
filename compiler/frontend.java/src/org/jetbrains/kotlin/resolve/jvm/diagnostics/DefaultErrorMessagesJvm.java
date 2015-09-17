@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
-
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
@@ -86,6 +84,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
 
         MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
+
+        MAP.put(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
     }
 
     @NotNull

@@ -819,7 +819,7 @@ class ArraysTest {
 
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
-            checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
+            checkSorted<Array<out String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
         }
 
         with (arrayData(3, 7, 1) { toIntArray() }) {
@@ -873,7 +873,7 @@ class ArraysTest {
                 .checkSorted<List<Int>>( { sortedWith(comparator) }, { sortedWith(comparator.reversed()) }, { iterator() })
 
         arrayData(arrayOf(0, 1, 2, 3, 4, 5), comparator)
-                .checkSorted<Array<Int>>( { sortedArrayWith(comparator) }, { sortedArrayWith(comparator.reversed()) }, { iterator() })
+                .checkSorted<Array<out Int>>( { sortedArrayWith(comparator) }, { sortedArrayWith(comparator.reversed()) }, { iterator() })
     }
 }
 
