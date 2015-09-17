@@ -23,7 +23,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
-import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -47,8 +45,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
-    override fun getQuickNavigateInfo(element: PsiElement, originalElement: PsiElement): String? {
-        return getText(element, originalElement, true)
+    override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
+        return if (element == null) null else getText(element, originalElement, true)
     }
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
