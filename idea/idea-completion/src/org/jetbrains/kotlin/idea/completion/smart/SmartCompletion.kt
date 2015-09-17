@@ -220,7 +220,7 @@ class SmartCompletion(
 
     private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
         if (shouldCompleteThisItems(prefixMatcher)) {
-            val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix())
+            val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix(), resolutionFacade)
             for (item in items) {
                 val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
                 val classifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }

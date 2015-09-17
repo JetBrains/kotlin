@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import java.util.*
@@ -119,8 +119,8 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val diagnostics = bindingContext.getDiagnostics().forElement(element)
         if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
 
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return listOf()
-        val containingDescriptor = resolutionScope.getContainingDeclaration()
+        val resolutionScope = element.getResolutionScope(bindingContext, resolutionFacade)
+        val containingDescriptor = resolutionScope.ownerDescriptor
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is DeclarationDescriptorWithVisibility) {
