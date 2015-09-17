@@ -26,7 +26,7 @@ public interface Logger {
 public object SystemOutLogger : Logger {
     private fun out(level: String, msg: CharSequence) = println("[$level] $msg")
 
-    public var isDebugEnabled: Boolean = false
+    public var isDebugEnabled: Boolean = true
     override fun debug(msg: CharSequence) = if (isDebugEnabled) out("DEBUG", msg)
     override fun info(msg: CharSequence) = out("INFO", msg)
     override fun warn(msg: CharSequence) = out("WARN", msg)
