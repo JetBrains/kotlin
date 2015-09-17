@@ -405,3 +405,5 @@ public fun JetDeclaration.visibilityModifier(): PsiElement? {
 
 public fun JetDeclaration.visibilityModifierType(): JetModifierKeywordToken?
         = visibilityModifier()?.node?.elementType as JetModifierKeywordToken?
+
+public fun JetStringTemplateExpression.isPlain() = entries.all { it is JetLiteralStringTemplateEntry }

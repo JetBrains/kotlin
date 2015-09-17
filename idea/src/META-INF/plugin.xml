@@ -361,6 +361,7 @@
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
+    <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"

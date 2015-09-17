@@ -158,7 +158,7 @@ public final class InTextDirectivesUtils {
         List<String> resultPrefixes = Lists.newArrayList();
 
         for (String prefix : prefixes) {
-            if (prefix.startsWith("//")) {
+            if (prefix.startsWith("//") || prefix.startsWith("##")) {
                 resultPrefixes.add(StringUtil.trimLeading(prefix.substring(2)));
             }
             else {
@@ -181,7 +181,7 @@ public final class InTextDirectivesUtils {
 
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
-                    if (line.startsWith("//")) {
+                    if (line.startsWith("//") || line.startsWith("##")) {
                         String uncommentedLine = line.substring(2).trim();
                         if (!uncommentedLine.isEmpty()) {
                             result.add(uncommentedLine);

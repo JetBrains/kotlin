@@ -17,22 +17,17 @@
 package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiReferenceExpression
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object UsageTypeUtils {
@@ -41,6 +36,7 @@ public object UsageTypeUtils {
             is JetForExpression -> return IMPLICIT_ITERATION
             is JetMultiDeclaration -> return READ
             is JetPropertyDelegate -> return PROPERTY_DELEGATION
+            is JetStringTemplateExpression -> return USAGE_IN_STRING_LITERAL
         }
 
         val refExpr = element?.getNonStrictParentOfType<JetReferenceExpression>()
@@ -249,5 +245,7 @@ enum class UsageTypeEnum {
     CLASS_CAST_TO,
     ANNOTATION,
     CLASS_NEW_OPERATOR,
-    NAMED_ARGUMENT
+    NAMED_ARGUMENT,
+
+    USAGE_IN_STRING_LITERAL
 }
