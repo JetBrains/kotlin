@@ -8,6 +8,12 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
+    <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
+    <!--
+    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,status:SUCCESS,branch:M13,count:1"/>
+    -->
+    <!--<property name="override.version.disabled" value="true"/>-->
+
     <condition property="isWindows">
         <os family="windows"/>
     </condition>
@@ -102,7 +108,7 @@
         </sequential>
     </macrodef>
 
-    <target name="fetch-third-party">
+    <target name="fetch-third-party" depends="override-version">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
 
@@ -774,5 +780,35 @@
             <arg path="${android.destination.dir}/bin/studio.sh"/>
             <arg path="${android.destination.dir}/bin/update_studio.sh"/>
         </exec>
+    </target>
+
+    <target name="override-version">
+        <sequential if:set="override.version.url">
+            <sequential unless:set="override.version.disabled">
+                <local name="override.version.build.number"/>
+                <loadresource property="override.version.build.number">
+                    <url url="${override.version.url}"/>
+                    <filterchain>
+                        <tokenfilter>
+                            <filetokenizer/>
+                            <replaceregex pattern="^(.*)\snumber=&quot;([.\d]+)&quot;(.*)$" replace="\2" flags="s"/>
+                        </tokenfilter>
+                    </filterchain>
+                </loadresource>
+
+                <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
+                    <arg value="-cp"/>
+                    <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
+                    <arg value="-script"/>
+                    <arg value="generators/infrastructure/increment-version.kts"/>
+                    <arg value="${override.version.build.number}"/>
+                    <arg value="${basedir}/dependencies/updated-version.txt"/>
+                </exec>
+
+                <loadfile property="updated.version.number" srcFile="${basedir}/dependencies/updated-version.txt"/>
+
+                <echo message="##teamcity[buildNumber '${updated.version.number}']"/>
+            </sequential>
+        </sequential>
     </target>
 </project>
