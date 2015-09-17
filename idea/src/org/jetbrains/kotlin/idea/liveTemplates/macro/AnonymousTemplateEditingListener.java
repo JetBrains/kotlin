@@ -22,6 +22,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -36,18 +37,14 @@ import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
-import java.util.HashMap;
-import java.util.Map;
-
 class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
     private JetReferenceExpression classRef;
     private ClassDescriptor classDescriptor;
     private final Editor editor;
     private final PsiFile psiFile;
-    
-    private static final Map<Editor, AnonymousTemplateEditingListener> ourAddedListeners =
-            new HashMap<Editor, AnonymousTemplateEditingListener>();
 
+    private static final Key<AnonymousTemplateEditingListener> LISTENER_KEY = Key.create("kotlin.AnonymousTemplateEditingListener");
+    
     public AnonymousTemplateEditingListener(PsiFile psiFile, Editor editor) {
         this.psiFile = psiFile;
         this.editor = editor;
@@ -71,7 +68,10 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
 
     @Override
     public void templateFinished(Template template, boolean brokenOff) {
-        ourAddedListeners.remove(editor);
+        editor.putUserData(LISTENER_KEY, null);
+        if (brokenOff) {
+            return;
+        }
 
         if (classDescriptor != null) {
             if (classDescriptor.getKind() == ClassKind.CLASS) {
@@ -94,7 +94,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
     }
     
     static void registerListener(Editor editor, Project project) {
-        if (ourAddedListeners.containsKey(editor)) {
+        if (editor.getUserData(LISTENER_KEY) != null) {
             return;
         }
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
@@ -102,7 +102,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
         if (templateState != null) {
             AnonymousTemplateEditingListener listener = new AnonymousTemplateEditingListener(psiFile, editor);
-            ourAddedListeners.put(editor, listener);
+            editor.putUserData(LISTENER_KEY, listener);
             templateState.addTemplateStateListener(listener);
         }
     }
