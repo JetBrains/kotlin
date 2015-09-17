@@ -6,7 +6,7 @@ val z : Int = 34
 
 val y : Int = 11
 get() {
-    return $y
+    return field
 }
 
 val x : Int

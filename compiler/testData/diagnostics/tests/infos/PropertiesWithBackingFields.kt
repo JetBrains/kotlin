@@ -16,7 +16,7 @@ abstract class Test() {
     val c4 : Int
         get() = 1
     <!MUST_BE_INITIALIZED!>val c5 : Int<!>
-        get() = $c5 + 1
+        get() = field + 1
 
     abstract var y : Int
     abstract var y1 : Int get
@@ -32,8 +32,8 @@ abstract class Test() {
     <!MUST_BE_INITIALIZED!>var v3 : Int<!> get() = 1; set
     var v4 : Int get() = 1; set(x){}
 
-    <!MUST_BE_INITIALIZED!>var v5 : Int<!> get() = 1; set(x){$v5 = x}
-    <!MUST_BE_INITIALIZED!>var v6 : Int<!> get() = $v6 + 1; set(x){}
+    <!MUST_BE_INITIALIZED!>var v5 : Int<!> get() = 1; set(x){field = x}
+    <!MUST_BE_INITIALIZED!>var v6 : Int<!> get() = field + 1; set(x){}
 
   abstract val v7 : Int get
   abstract var v8 : Int get set

@@ -3,14 +3,14 @@ package foo
 open class A {
     open val a = 2
         get() {
-            return $a + 1
+            return field + 1
         }
 }
 
 class B : A() {
     override val a: Int = 5
         get() {
-            return super.a + 10 * $a + 100
+            return super.a + 10 * field + 100
         }
 }
 

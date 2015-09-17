@@ -1,5 +1,5 @@
 var collector: String = ""
-  set(it) { $collector += it }
+  set(it) { field += it }
 
 fun append(s: String): String {
   collector = s;

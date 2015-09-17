@@ -9,7 +9,7 @@ class Test {
 
         public val prop3: Int = 12
             get() {
-                return  $prop3
+                return field
             }
 
         var prop4 : Int = 13
@@ -23,7 +23,7 @@ class Test {
 
         public var prop7 : Int = 20
             set(i: Int) {
-                $prop7++
+                field++
             }
     }
 

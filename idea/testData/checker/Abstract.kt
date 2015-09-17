@@ -13,10 +13,10 @@ class MyClass() {
     <error>abstract</error> var b2: Int      private set
     <error>abstract</error> var b3: Int = 0; private set
 
-    <error>var c: Int</error>                set(v: Int) { $c = v }
-    var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
-    <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
+    <error>var c: Int</error>                set(v: Int) { field = v }
+    var c1: Int = 0;                         set(v: Int) { field = v }
+    <error>abstract</error> var c2: Int      set(v: Int) { field = v }
+    <error>abstract</error> var c3: Int = 0; set(v: Int) { field = v }
 
     val e: Int                               get() = a
     val e1: Int = <error>0</error>;          get() = a
@@ -44,10 +44,10 @@ abstract class MyAbstractClass() {
     abstract var b2: Int      private set
     abstract var b3: Int = <error>0</error>; private set
 
-    <error>var c: Int</error>                set(v: Int) { $c = v }
-    var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
-    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+    <error>var c: Int</error>                set(v: Int) { field = v }
+    var c1: Int = 0;                         set(v: Int) { field = v }
+    abstract var c2: Int                     <error>set(v: Int) { field = v }</error>
+    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { field = v }</error>
 
     val e: Int                               get() = a
     val e1: Int = <error>0</error>;          get() = a
@@ -75,10 +75,10 @@ interface MyTrait {
     <warning>abstract</warning> var b2: Int                     private set
     <warning>abstract</warning> var b3: Int = <error>0</error>; private set
 
-    <error>var c: Int</error>                                   set(v: Int) { $c = v }
-    <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { $c1 = v }
-    <warning>abstract</warning> var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
-    <warning>abstract</warning> var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+    <error>var c: Int</error>                                   set(v: Int) { field = v }
+    <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { field = v }
+    <warning>abstract</warning> var c2: Int                     <error>set(v: Int) { field = v }</error>
+    <warning>abstract</warning> var c3: Int = <error>0</error>; <error>set(v: Int) { field = v }</error>
 
     val e: Int                                                  get() = a
     val e1: Int = <error>0</error>;                             get() = a
@@ -107,10 +107,10 @@ enum class MyEnum() {
     abstract var b2: Int      private set
     abstract var b3: Int = <error>0</error>; private set
 
-    <error>var c: Int</error>                set(v: Int) { $c = v }
-    var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
-    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+    <error>var c: Int</error>                set(v: Int) { field = v }
+    var c1: Int = 0;                         set(v: Int) { field = v }
+    abstract var c2: Int                     <error>set(v: Int) { field = v }</error>
+    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { field = v }</error>
 
     val e: Int                               get() = a
     val e1: Int = <error>0</error>;          get() = a
@@ -139,10 +139,10 @@ var b1: Int = 0;                         private set
 <error><error>abstract</error> var b2: Int</error>      private set
 <error>abstract</error> var b3: Int = 0; private set
 
-<error>var c: Int</error>                set(v: Int) { $c = v }
-var c1: Int = 0;                         set(v: Int) { $c1 = v }
-<error><error>abstract</error> var c2: Int</error>      set(v: Int) { $c2 = v }
-<error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
+<error>var c: Int</error>                set(v: Int) { field = v }
+var c1: Int = 0;                         set(v: Int) { field = v }
+<error><error>abstract</error> var c2: Int</error>      set(v: Int) { field = v }
+<error>abstract</error> var c3: Int = 0; set(v: Int) { field = v }
 
 val e: Int                               get() = a
 val e1: Int = <error>0</error>;          get() = a

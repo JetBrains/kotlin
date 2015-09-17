@@ -16,7 +16,7 @@
     val c4 : Int
         <info>get</info>() = 1
     <error>val c5 : Int</error>
-        <info>get</info>() = $c5 + 1
+        <info>get</info>() = field + 1
 
     <info>abstract</info> var y : Int
     <info>abstract</info> var y1 : Int <info>get</info>
@@ -32,8 +32,8 @@
     <error>var v3 : Int</error> <info>get</info>() = 1; <info>set</info>
     var v4 : Int <info>get</info>() = 1; <info>set</info>(x){}
 
-    <error>var v5 : Int</error> <info>get</info>() = 1; <info>set</info>(x){$v5 = x}
-    <error>var v6 : Int</error> <info>get</info>() = $v6 + 1; <info>set</info>(x){}
+    <error>var v5 : Int</error> <info>get</info>() = 1; <info>set</info>(x){field = x}
+    <error>var v6 : Int</error> <info>get</info>() = field + 1; <info>set</info>(x){}
 
   <error>var v9 : Int</error> <info>set</info>
   <error>var v10 : Int</error> <info>get</info>

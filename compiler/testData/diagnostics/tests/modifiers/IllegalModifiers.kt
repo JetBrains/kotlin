@@ -15,7 +15,7 @@ abstract class A() {
 class FinalClass() {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun foo() {}
     val i: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = $i
+        <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = field
     var j: Int = 1
         <!WRONG_MODIFIER_TARGET!>open<!> set(v: Int) {}
 }

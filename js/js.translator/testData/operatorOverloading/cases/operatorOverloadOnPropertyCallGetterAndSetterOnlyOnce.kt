@@ -17,7 +17,7 @@ class A() {
     var b = MyInt(0)
         get() {
             gc = gc + 1;
-            return $b;
+            return field;
         }
         set(a: MyInt) {
             sc = sc + 1;

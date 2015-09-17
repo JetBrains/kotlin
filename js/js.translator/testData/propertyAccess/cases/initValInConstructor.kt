@@ -4,7 +4,7 @@ class A {
     val a: Int
     val aa: Int
         get() {
-            return $aa
+            return field
         }
 
     var aR = 0
@@ -22,7 +22,7 @@ class B {
     private val a: Int
     private val aa: Int
         get() {
-            return $aa
+            return field
         }
 
     var aR = 0

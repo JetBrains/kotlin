@@ -1,8 +1,8 @@
 var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
    get() : Int = 1
    set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
-      $x = value.toInt()
-      $x = <!TYPE_MISMATCH!>1.toLong()<!>
+      field = value.toInt()
+      field = <!TYPE_MISMATCH!>1.toLong()<!>
     }
 
  val xx : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1 + x<!>

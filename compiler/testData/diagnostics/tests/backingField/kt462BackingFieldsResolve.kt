@@ -27,7 +27,7 @@ abstract class TestInitializationWithoutBackingField() {
 
     var varWithCustomSetter : Int
     set(v: Int) {
-        $varWithCustomSetter = v
+        field = v
     }
     init {
         <!INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER!>varWithCustomSetter<!> = 3
@@ -70,7 +70,7 @@ abstract class TestInitializationThroughBackingField() {
 
     var varWithCustomSetter : Int
     set(v: Int) {
-        $varWithCustomSetter = v
+        field = v
     }
     init {
         $varWithCustomSetter = 3
@@ -114,7 +114,7 @@ class TestBackingFieldsVisibility() {
     }
 
     <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> val w = 11
-    get() = $w //test there is no second error here
+    get() = field //test there is no second error here
 }
 
 val topLevelVar = 11
@@ -141,10 +141,10 @@ class T() {
     get() {
         val <!UNUSED_VARIABLE!>o<!> = object {
             init {
-                $x = 34
+                field = 34
             }
             fun foo() {
-                $x = 23
+                field = 23
             }
         }
         return 1
@@ -153,10 +153,10 @@ class T() {
     var r: Int = $x
     set(v: Int) {
         if (true) {
-            $r = 33
+            field = 33
         }
         else {
-            $r = 35
+            field = 35
         }
     }
 

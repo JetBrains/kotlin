@@ -2,7 +2,7 @@ package a
 
 val prop: Int = 0
     get() {
-        return $prop + 1
+        return field + 1
     }
 
 // 2 INVOKESTATIC a/_1Kt.getProp \(\)I

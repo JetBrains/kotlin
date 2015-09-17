@@ -15,7 +15,7 @@ trait Base2 : Base1 {
 class Base2Impl() : Base2 {
     override var prop: String = ""
         set(value) {
-            $prop = "prop:${value}"
+            field = "prop:${value}"
         }
 }
 

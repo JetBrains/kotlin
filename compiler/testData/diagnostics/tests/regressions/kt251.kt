@@ -2,7 +2,7 @@ class A() {
     var x: Int = 0
         get() = <!TYPE_MISMATCH!>"s"<!>
         set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
-            $x = <!TYPE_MISMATCH!>value<!>
+            field = <!TYPE_MISMATCH!>value<!>
         }
     val y: Int
         get(): <!WRONG_GETTER_RETURN_TYPE!>String<!> = "s"
@@ -13,7 +13,7 @@ class A() {
 
     var a: Any = 1
         set(v: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
-            $a = v
+            field = v
         }
     val b: Int
         get(): <!WRONG_GETTER_RETURN_TYPE!>Any<!> = "s"
@@ -23,11 +23,11 @@ class A() {
         }
     val d = 1
         get() {
-            return $d
+            return field
         }
     val e = 1
         get(): <!WRONG_GETTER_RETURN_TYPE!>String<!> {
-            return <!TYPE_MISMATCH!>$e<!>
+            return <!TYPE_MISMATCH!>field<!>
         }
 
 }

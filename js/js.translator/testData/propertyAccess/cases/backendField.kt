@@ -2,7 +2,7 @@ package foo
 
 class A {
     val a: Int = 1
-        get() = $a + 1
+        get() = field + 1
 
     fun getA(): Int {
         return $a

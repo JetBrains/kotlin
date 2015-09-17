@@ -8,7 +8,7 @@ trait Holder {
 
 open class BasicHolder : Holder {
     override val element: String
-        get() = $element + $element
+        get() = field + field
 
     init {
         element = "1"

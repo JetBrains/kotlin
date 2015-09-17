@@ -2,7 +2,7 @@ var holder = ""
 var globalA: A = A(-1)
     get(): A {
         holder += "getA"
-        return $globalA
+        return field
     }
 
 

@@ -9,7 +9,7 @@ class BaseImpl(val s: String) : Base {
     override fun foo(x: String) = "BaseImpl.foo: ${s}:${x}"
     override var prop: String = "init"
         set(value) {
-            $prop = "prop:${value}"
+            field = "prop:${value}"
         }
 }
 

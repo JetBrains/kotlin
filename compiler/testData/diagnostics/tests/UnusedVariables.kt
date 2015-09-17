@@ -35,7 +35,7 @@ class MyTest() {
             var i: Int = 23
             doSmth(i)
             <!UNUSED_VALUE!>i =<!> 34
-            $a = v
+            field = v
         }
 
     init {
