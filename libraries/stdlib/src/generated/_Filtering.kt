@@ -1229,14 +1229,13 @@ public fun String.slice(indices: Iterable<Int>): String {
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public fun <T, A: Array<out T>> A.sliceArray(indices: Collection<Int>): A {
-    if (indices.isEmpty()) return arrayOfNulls(this, 0) as A
+public fun <T> Array<out T>.sliceArray(indices: Collection<Int>): Array<out T> {
     val result = arrayOfNulls(this, indices.size()) as Array<T>
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
     }
-    return result as A
+    return result
 }
 
 /**
@@ -1338,9 +1337,9 @@ public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public fun <T, A: Array<out T>> A.sliceArray(indices: IntRange): A {
-    if (indices.isEmpty()) return copyOf(0) as A
-    return copyOfRange(indices.start, indices.end + 1) as A
+public fun <T> Array<out T>.sliceArray(indices: IntRange): Array<out T> {
+    if (indices.isEmpty()) return copyOfRange(0, 0)
+    return copyOfRange(indices.start, indices.end + 1)
 }
 
 /**
