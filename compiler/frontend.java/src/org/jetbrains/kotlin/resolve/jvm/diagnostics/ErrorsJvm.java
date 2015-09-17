@@ -71,6 +71,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory2<PsiElement, String, String> DUPLICATE_CLASS_NAMES = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> UPPER_BOUND_CANNOT_BE_ARRAY = DiagnosticFactory0.create(ERROR);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull
