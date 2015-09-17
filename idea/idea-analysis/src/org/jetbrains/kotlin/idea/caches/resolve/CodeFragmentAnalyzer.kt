@@ -132,7 +132,7 @@ public class CodeFragmentAnalyzer(
 
         val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
         val chainedScope = LexicalChainedScope(
-                scopeForContextElement, scopeForContextElement.ownerDescriptor,
+                scopeForContextElement, LexicalScope.Position.OTHER, scopeForContextElement.ownerDescriptor,
                 false, null,
                 "Scope for resolve code fragment",
                 codeFragmentScope)

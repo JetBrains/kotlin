@@ -169,7 +169,7 @@ public class ExpressionTypingServices {
                 containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
             }
         }
-        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, LexicalScope.Position.BODY, containingDescriptor, false, null,
                                                               new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 

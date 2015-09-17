@@ -139,7 +139,7 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             expectedFunctionType: JetType
     ) {
-        val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
+        val innerScope = LexicalWritableScope(scope, LexicalScope.Position.FUNCTION_HEADER, functionDescriptor, true, null,
                                               TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
 
         val typeParameterDescriptors = descriptorResolver.
@@ -273,6 +273,7 @@ class FunctionDescriptorResolver(
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
                 scope,
+                LexicalScope.Position.CONSTRUCTOR_HEADER,
                 constructorDescriptor,
                 false, null,
                 TraceBasedRedeclarationHandler(trace),

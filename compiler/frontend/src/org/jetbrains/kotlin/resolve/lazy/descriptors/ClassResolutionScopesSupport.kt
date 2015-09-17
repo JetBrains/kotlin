@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope.Position.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -30,7 +31,7 @@ class ClassResolutionScopesSupport(
         private val primaryConstructorParameters: List<JetParameter>? = null
 ) {
     private fun scopeWithGenerics(parent: LexicalScope, debugName: String): LexicalScopeImpl {
-        return LexicalScopeImpl(parent, classDescriptor, false, null, debugName) {
+        return LexicalScopeImpl(parent, CLASS_HEADER, classDescriptor, false, null, debugName) {
             classDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
         }
     }
@@ -44,7 +45,7 @@ class ClassResolutionScopesSupport(
             arrayOf(classDescriptor.staticScope, it.unsubstitutedInnerClassesScope)
         } ?: arrayOf(classDescriptor.staticScope)
 
-        LexicalChainedScope(getOuterScope(), classDescriptor, false,
+        LexicalChainedScope(getOuterScope(), OTHER, classDescriptor, false,
                             classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter,
                             "Scope with static members and companion object for ${classDescriptor.name}",
                             memberScopes = *staticScopes)
@@ -53,7 +54,7 @@ class ClassResolutionScopesSupport(
     public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
         val scopeWithGenerics = scopeWithGenerics(scopeWithStaticMembersAndCompanionObjectReceiver(),
                                                   "Scope with generics for ${classDescriptor.name}")
-        LexicalChainedScope(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
+        LexicalChainedScope(scopeWithGenerics, CLASS_MEMBERS, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
                             "Scope for member declaration resolution: ${classDescriptor.name}",
                             classDescriptor.unsubstitutedInnerClassesScope)
     }
@@ -63,7 +64,7 @@ class ClassResolutionScopesSupport(
             scopeForMemberDeclarationResolution()
         }
         else {
-            LexicalChainedScope(scopeWithStaticMembersAndCompanionObjectReceiver(), classDescriptor, false, null,
+            LexicalChainedScope(scopeWithStaticMembersAndCompanionObjectReceiver(), CLASS_MEMBERS, classDescriptor, false, null,
                                 "Scope for static member declaration resolution: ${classDescriptor.name}",
                                 classDescriptor.unsubstitutedInnerClassesScope)
         }
@@ -75,7 +76,7 @@ class ClassResolutionScopesSupport(
         assert(primaryConstructorParameters != null) {
             "primary constructor parameters must be not null, because primary constructor exist: $primaryConstructor"
         }
-        LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
+        LexicalScopeImpl(scopeForMemberDeclarationResolution(), BODY, primaryConstructor, false, null,
                          "Scope for initializer resolution: ${classDescriptor.name}") {
             primaryConstructorParameters!!.forEachIndexed {
                 index, parameter ->

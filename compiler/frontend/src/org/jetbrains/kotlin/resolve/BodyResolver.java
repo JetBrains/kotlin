@@ -537,7 +537,7 @@ public class BodyResolver {
             LexicalScope originalScope,
             final ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
-        return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
+        return new LexicalScopeImpl(originalScope, LexicalScope.Position.CONSTRUCTOR_HEADER, unsubstitutedPrimaryConstructor, false, null,
                                     "Scope with value parameters of a constructor", RedeclarationHandler.DO_NOTHING,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override

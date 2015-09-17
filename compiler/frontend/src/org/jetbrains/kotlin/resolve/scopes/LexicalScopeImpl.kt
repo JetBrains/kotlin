@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public class LexicalScopeImpl jvmOverloads constructor(
         parent: LexicalScope,
+        override val position: LexicalScope.Position,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,

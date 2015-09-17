@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 class LexicalWritableScope(
         parent: LexicalScope,
+        override val position: LexicalScope.Position,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
@@ -94,6 +95,8 @@ class LexicalWritableScope(
     private inner class Snapshot(val descriptorLimit: Int) : LexicalScope {
         override val parent: LexicalScope?
             get() = this@LexicalWritableScope.parent
+        override val position: LexicalScope.Position
+            get() = this@LexicalWritableScope.position
         override val ownerDescriptor: DeclarationDescriptor
             get() = this@LexicalWritableScope.ownerDescriptor
         override val isOwnerDescriptorAccessibleByLabel: Boolean

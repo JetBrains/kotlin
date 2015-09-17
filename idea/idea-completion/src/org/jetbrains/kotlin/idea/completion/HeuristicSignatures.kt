@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
@@ -77,9 +78,10 @@ public class HeuristicSignatures(
     private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): JetType {
         val typeRef = JetPsiFactory(project).createType(text)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsFileScope()
-        val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, "Root packages + type parameters") {
-                        typeParameters.forEach { addClassifierDescriptor(it) }
-                    }
+        val scope = LexicalScopeImpl(rootPackagesScope, LexicalScope.Position.OTHER, moduleDescriptor,
+                                     false, null, "Root packages + type parameters") {
+                                        typeParameters.forEach { addClassifierDescriptor(it) }
+                                    }
         val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
         assert(!type.isError()) { "No type resolved from '$text'" }
         return type

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public interface LexicalScope {
     public val parent: LexicalScope?
+    public val position: Position
 
     public val ownerDescriptor: DeclarationDescriptor
     public val isOwnerDescriptorAccessibleByLabel: Boolean
@@ -42,11 +43,26 @@ public interface LexicalScope {
     public fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     public fun printStructure(p: Printer)
+
+    public enum class Position {
+        FILE,
+        SCRIPT,
+        CLASS_HEADER,
+        CLASS_MEMBERS,
+        FUNCTION_HEADER,
+        CONSTRUCTOR_HEADER,
+        PROPERTY_HEADER,
+        BODY,
+        OTHER
+    }
 }
 
 public interface FileScope: LexicalScope {
     override val parent: LexicalScope?
         get() = null
+
+    override val position: LexicalScope.Position
+        get() = LexicalScope.Position.FILE
 
     override val isOwnerDescriptorAccessibleByLabel: Boolean
         get() = false

@@ -103,7 +103,8 @@ public class ExpressionTypingUtils {
     @NotNull
     public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
         LexicalWritableScope scope = new LexicalWritableScope(
-                context.scope, context.scope.getOwnerDescriptor(), false, null, new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
+                context.scope, context.scope.getPosition(), context.scope.getOwnerDescriptor(),
+                false, null, new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return scope;
     }
