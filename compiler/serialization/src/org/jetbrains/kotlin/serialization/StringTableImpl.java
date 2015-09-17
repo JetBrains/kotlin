@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -78,41 +77,34 @@ public class StringTableImpl implements StringTable {
     }
 
     @Override
-    public int getFqNameIndex(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
+    public int getFqNameIndex(@NotNull ClassDescriptor descriptor) {
         if (ErrorUtils.isError(descriptor)) {
             throw new IllegalStateException("Cannot get FQ name of error class: " + descriptor);
         }
 
         QualifiedName.Builder builder = QualifiedName.newBuilder();
-        if (descriptor instanceof ClassDescriptor) {
-            builder.setKind(QualifiedName.Kind.CLASS);
-        }
+        builder.setKind(QualifiedName.Kind.CLASS);
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        int shortName;
+        String shortName;
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            shortName = getSimpleNameIndex(descriptor.getName());
-            PackageFragmentDescriptor fragment = (PackageFragmentDescriptor) containingDeclaration;
-            if (!fragment.getFqName().isRoot()) {
-                builder.setParentQualifiedName(getFqNameIndex(fragment.getFqName()));
+            shortName = descriptor.getName().asString();
+            FqName packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
+            if (!packageFqName.isRoot()) {
+                builder.setParentQualifiedName(getFqNameIndex(packageFqName));
             }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
-            shortName = getSimpleNameIndex(descriptor.getName());
+            shortName = descriptor.getName().asString();
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
         }
         else {
-            if (descriptor instanceof ClassDescriptor) {
-                builder.setKind(QualifiedName.Kind.LOCAL);
-                shortName = getStringIndex(extension.getLocalClassName((ClassDescriptor) descriptor));
-            }
-            else {
-                throw new IllegalStateException("Package container should be a package: " + descriptor);
-            }
+            builder.setKind(QualifiedName.Kind.LOCAL);
+            shortName = extension.getLocalClassName(descriptor);
         }
 
-        builder.setShortName(shortName);
+        builder.setShortName(getStringIndex(shortName));
 
         return qualifiedNames.intern(new FqNameProto(builder));
     }
