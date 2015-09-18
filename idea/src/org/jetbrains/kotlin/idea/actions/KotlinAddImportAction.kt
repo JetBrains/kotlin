@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -80,7 +79,7 @@ public class KotlinAddImportAction(
     }
 
     private val variants = candidates
-            .groupBy { DescriptorUtils.getFqNameSafe(it) }
+            .groupBy { it.importableFqName!! }
             .map { Variant(it.key, it.value) }
             .sortBy { it.priority }
 
