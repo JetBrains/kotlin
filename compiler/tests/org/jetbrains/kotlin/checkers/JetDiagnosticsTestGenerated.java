@@ -6537,6 +6537,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("CheckJavaVisibility.kt")
+            public void testCheckJavaVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/CheckJavaVisibility.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("CheckVisibility.kt")
+            public void testCheckVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/CheckVisibility.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ClassClash.kt")
             public void testClassClash() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ClassClash.kt");

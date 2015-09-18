@@ -70,7 +70,8 @@ class LazyImportResolver(
         val fileScopeProvider: FileScopeProvider,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
-        private val traceForImportResolve: BindingTrace
+        private val traceForImportResolve: BindingTrace,
+        private val packageFragment: PackageFragmentDescriptor
 ) {
     private val importedScopesProvider = storageManager.createMemoizedFunction {
         directive: JetImportDirective -> ImportDirectiveResolveCache(directive)
@@ -99,9 +100,8 @@ class LazyImportResolver(
                     directiveUnderResolve = directive
 
                     try {
-                        // todo use packageViewFragment for visibility
                         val directiveImportScope = qualifiedExpressionResolver.processImportReference(
-                                directive, moduleDescriptor, traceForImportResolve, moduleDescriptor)
+                                directive, moduleDescriptor, traceForImportResolve, packageFragment)
                         val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
 
                         PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(moduleDescriptor, traceForImportResolve, directive, descriptors)

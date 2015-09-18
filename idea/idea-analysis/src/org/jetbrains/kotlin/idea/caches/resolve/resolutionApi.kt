@@ -74,6 +74,7 @@ public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): Anal
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
 }
 
+// this method don't check visibility and collect all descriptors with given fqName
 public fun ResolutionFacade.resolveImportReference(
         moduleDescriptor: ModuleDescriptor,
         fqName: FqName
@@ -81,7 +82,7 @@ public fun ResolutionFacade.resolveImportReference(
     val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
     val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
-            importDirective, moduleDescriptor, BindingTraceContext(), moduleDescriptor).getAllDescriptors()
+            importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null).getAllDescriptors()
 }
 
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )

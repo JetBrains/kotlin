@@ -117,14 +117,14 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             importDirective: JetImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            shouldBeVisibleFrom: DeclarationDescriptor // todo
+            packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): JetScope {
         val importedReference = importDirective.importedReference ?: return JetScope.Empty
         val path = importedReference.asQualifierPartList(trace)
         val lastPart = path.lastOrNull() ?: return JetScope.Empty
 
         if (importDirective.isAllUnder) {
-            val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom,
+            val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck,
                                                                    scopeForFirstPart = null, inImport = true) ?: return JetScope.Empty
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
                 trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
@@ -136,12 +136,12 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         else {
             val aliasName = JetPsiUtil.getAliasName(importDirective)
             if (aliasName == null) { // import kotlin.
-                resolveToPackageOrClass(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart = null, inImport = true)
+                resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck, scopeForFirstPart = null, inImport = true)
                 return JetScope.Empty
             }
 
             val packageOrClassDescriptor = resolveToPackageOrClass(path.subList(0, path.size() - 1), moduleDescriptor,
-                                                                   trace, shouldBeVisibleFrom, scopeForFirstPart = null, inImport = true)
+                                                                   trace, packageFragmentForVisibilityCheck, scopeForFirstPart = null, inImport = true)
                                            ?: return JetScope.Empty
             val descriptors = SmartList<DeclarationDescriptor>()
 
@@ -167,7 +167,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
             }
             if (descriptors.isNotEmpty()) {
-                storageResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom, inImport = true, isQualifier = false)
+                storageResult(trace, lastPart.expression, descriptors, packageFragmentForVisibilityCheck, inImport = true, isQualifier = false)
             }
             else {
                 tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
@@ -249,7 +249,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             path: List<QualifierPart>,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            shouldBeVisibleFrom: DeclarationDescriptor,
+            shouldBeVisibleFrom: DeclarationDescriptor?,
             scopeForFirstPart: LexicalScope?,
             inImport: Boolean
     ): DeclarationDescriptor? {

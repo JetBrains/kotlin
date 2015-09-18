@@ -60,10 +60,13 @@ public class FileScopeProviderImpl(
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.getPackageFqName())
                 .sure { "Could not find fragment ${file.getPackageFqName()} for file ${file.getName()}" }
 
-        val aliasImportResolver = LazyImportResolver(storageManager, qualifiedExpressionResolver, this, moduleDescriptor, AliasImportsIndexed(imports), bindingTrace)
-        val allUnderImportResolver = LazyImportResolver(storageManager, qualifiedExpressionResolver, this, moduleDescriptor, AllUnderImportsIndexed(imports), bindingTrace)
-        val defaultAliasImportResolver = LazyImportResolver(storageManager, qualifiedExpressionResolver, this, moduleDescriptor, AliasImportsIndexed(defaultImports), tempTrace)
-        val defaultAllUnderImportResolver = LazyImportResolver(storageManager, qualifiedExpressionResolver, this, moduleDescriptor, AllUnderImportsIndexed(defaultImports), tempTrace)
+        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
+                = LazyImportResolver(storageManager, qualifiedExpressionResolver, this, moduleDescriptor, indexedImports, trace, packageFragment)
+
+        val aliasImportResolver = createImportResolver(AliasImportsIndexed(imports), bindingTrace)
+        val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
+        val defaultAliasImportResolver = createImportResolver(AliasImportsIndexed(defaultImports), tempTrace)
+        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImports), tempTrace)
 
         val scopeChain = ArrayList<JetScope>()
 

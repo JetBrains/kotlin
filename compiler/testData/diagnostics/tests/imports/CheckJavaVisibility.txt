@@ -1,0 +1,52 @@
+package
+
+package j {
+
+    public/*package*/ open class JavaPackageLocal {
+        public/*package*/ constructor JavaPackageLocal()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public/*package*/ final var javaPPackage: kotlin.Int
+        public/*package*/ open fun javaMPackage(): kotlin.Unit
+    }
+
+    public open class JavaPrivate {
+        public constructor JavaPrivate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        private final var javaPPrivate: kotlin.Int
+        private open fun javaMPrivate(): kotlin.Unit
+    }
+
+    public open class JavaProtected {
+        public constructor JavaProtected()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        protected/*protected static*/ final var javaPProtected: kotlin.Int
+        protected/*protected static*/ open fun javaMProtected(): kotlin.Unit
+    }
+
+    public open class JavaPublic {
+        public constructor JavaPublic()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final var javaP: kotlin.Int
+        public/*package*/ final var javaPackageLocal: kotlin.Int
+        public open fun javaM(): kotlin.Unit
+    }
+}
+
+package k {
+}
