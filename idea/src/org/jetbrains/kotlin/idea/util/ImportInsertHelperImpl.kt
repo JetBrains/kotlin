@@ -89,7 +89,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {
         val importable = descriptor.getImportableDescriptor()
         return when (importable) {
-            is PackageViewDescriptor -> codeStyleSettings.IMPORT_PACKAGES
+            is PackageViewDescriptor -> false // now package cannot be imported
 
             is ClassDescriptor -> {
                 importable.getContainingDeclaration() is PackageFragmentDescriptor

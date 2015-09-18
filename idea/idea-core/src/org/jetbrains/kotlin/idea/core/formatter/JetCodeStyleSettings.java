@@ -43,7 +43,6 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean LBRACE_ON_NEXT_LINE = false;
 
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
-    public boolean IMPORT_PACKAGES = true;
     public boolean IMPORT_NESTED_CLASSES = false;
     public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
 

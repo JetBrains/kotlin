@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.application.options.ImportLayoutPanel
 import com.intellij.application.options.PackagePanel
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -68,7 +67,6 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportLimitModel = SpinnerNumberModel(4, 1, 100, 1)
     private val starImportLimitField = JSpinner(starImportLimitModel)
     private val cbImportNestedClasses = JCheckBox("Insert imports for nested classes")
-    private val cbImportPackages = JCheckBox("Insert imports for packages")
 
     private val starImportPackageEntryTable = PackageEntryTable()
     private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
@@ -121,7 +119,6 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             }, true)
 
             add(cbImportNestedClasses)
-            add(cbImportPackages)
         }.createPanel()
     }
 
@@ -138,7 +135,6 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
 
         cbImportNestedClasses.setSelected(settings.IMPORT_NESTED_CLASSES)
-        cbImportPackages.setSelected(settings.IMPORT_PACKAGES)
 
         starImportPackageEntryTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
         (starImportPackageTable.getModel() as AbstractTableModel).fireTableDataChanged()
@@ -154,7 +150,6 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             else -> (starImportLimitModel.getNumber() as Int) + 1
         }
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected()
-        settings.IMPORT_PACKAGES = cbImportPackages.isSelected()
 
         if (dropEmptyPackages) {
             starImportPackageEntryTable.removeEmptyPackages()
