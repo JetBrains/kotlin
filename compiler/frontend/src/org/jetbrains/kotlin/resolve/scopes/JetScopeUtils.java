@@ -122,7 +122,7 @@ public final class JetScopeUtils {
             boolean addLabelForProperty
     ) {
         return new LexicalScopeImpl(
-                outerScope, LexicalScope.Position.PROPERTY_HEADER, propertyDescriptor, addLabelForProperty, receiver,
+                outerScope, LexicalScope.Position.BODY, propertyDescriptor, addLabelForProperty, receiver,
                 "Property declaration inner scope",
                 redeclarationHandler, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
             @Override

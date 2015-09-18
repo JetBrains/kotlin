@@ -80,7 +80,7 @@ public class TypeResolver(
             return type(debugType)
         }
 
-        if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy()) {
+        if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy() && c.scope.position != LexicalScope.Position.BODY) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
             class LazyKotlinType : DelegatingType(), LazyEntity {
                 private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }
