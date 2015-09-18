@@ -22,6 +22,7 @@ import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.ExpressionContext;
 import com.intellij.codeInsight.template.Macro;
 import com.intellij.codeInsight.template.Result;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -61,7 +62,10 @@ public class JetAnonymousSuperMacro extends Macro {
 
     @Override
     public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
-        AnonymousTemplateEditingListener.registerListener(context.getEditor(), context.getProject());
+        Editor editor = context.getEditor();
+        if (editor != null) {
+            AnonymousTemplateEditingListener.registerListener(editor, context.getProject());
+        }
 
         PsiNamedElement[] vars = getSupertypes(params, context);
         if (vars == null || vars.length == 0) return null;
