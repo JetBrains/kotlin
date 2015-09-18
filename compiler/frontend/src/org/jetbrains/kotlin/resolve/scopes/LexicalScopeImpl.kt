@@ -56,7 +56,7 @@ public class LexicalScopeImpl @JvmOverloads constructor(
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
-                  " with implicitReceiver: ", implicitReceiver?.value, " {")
+                  " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 
         p.print("parent = ")
