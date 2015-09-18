@@ -123,7 +123,7 @@ public class KotlinReplOutputHighlighter(
         }.values().map { messages ->
             val highlighters = messages.map { message ->
                 val cmdStart = lastCommandStartOffset + message.range.startOffset
-                val cmdEnd = lastCommandStartOffset + message.range.endOffset
+                val cmdEnd = lastCommandStartOffset + Math.max(message.range.endOffset, message.range.startOffset + 1)
 
                 val textAttributes = getAttributesForSeverity(cmdStart, cmdEnd, message.severity)
                 historyMarkup.addRangeHighlighter(
