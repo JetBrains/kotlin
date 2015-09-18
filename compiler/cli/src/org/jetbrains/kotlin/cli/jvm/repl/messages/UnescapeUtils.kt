@@ -34,9 +34,5 @@ fun parseXml(inputMessage: String): String {
     val input = docBuilder.parse(strToSource(inputMessage))
 
     val root = input.firstChild as Element
-    return root.textContent
-}
-
-public object IdeLinebreaksUnescaper {
-    @JvmStatic fun unescapeFromDiez(inputMessage: String) = StringUtil.replace(inputMessage, XML_REPLACEMENTS, SOURCE_CHARS)
+    return StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
 }

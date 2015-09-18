@@ -50,7 +50,7 @@ public class KotlinConsoleExecutor(
         val xmlRes = "$XML_PREAMBLE" +
                      "<input>" +
                      "${StringUtil.escapeXml(
-                             StringUtil.replace("$command\n", SOURCE_CHARS, XML_REPLACEMENTS)
+                             StringUtil.replace(command, SOURCE_CHARS, XML_REPLACEMENTS)
                      )}" +
                      "</input>"
 

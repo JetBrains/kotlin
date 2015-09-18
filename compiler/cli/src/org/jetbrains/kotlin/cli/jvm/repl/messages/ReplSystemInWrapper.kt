@@ -54,11 +54,11 @@ public class ReplSystemInWrapper(
 
             byteBuilder.write(stdin.read())
 
-            if (byteBuilder.toString().endsWith(END_LINE)) {
+            if (byteBuilder.toString().endsWith('\n')) {
                 isXmlIncomplete = false
                 isLastByteProcessed = false
 
-                inputByteArray = unescapedInput().toByteArray()
+                inputByteArray = parseInput().toByteArray()
             }
         }
 
@@ -67,16 +67,9 @@ public class ReplSystemInWrapper(
         return nextByte
     }
 
-    private fun unescapedInput(): String {
+    private fun parseInput(): String {
         val xmlInput = byteBuilder.toString()
-        val unescapedXml = parseXml(xmlInput)
-
-        val inputMessage = if (isReplScriptExecuting)
-            IdeLinebreaksUnescaper.unescapeFromDiez(unescapedXml)
-        else
-            "$unescapedXml$END_LINE"
-
-        return inputMessage
+        return "${parseXml(xmlInput)}$END_LINE"
     }
 
     private fun resetBufferIfNeeded() {

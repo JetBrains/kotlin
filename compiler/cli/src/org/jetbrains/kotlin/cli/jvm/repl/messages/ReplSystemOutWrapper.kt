@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.LineSeparator
 import java.io.PrintStream
 
-public val END_LINE: String = "\n"
-
-private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
+val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: PrintStream) : PrintStream(standardOut, true) {
     private enum class EscapeType {
@@ -46,7 +46,7 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
     override fun print(x: String) = printWithEscaping(x)
     override fun print(x: Any?) = printWithEscaping(x.toString())
 
-    private fun printlnWithEscaping(text: String, escapeType: EscapeType = EscapeType.USER_OUTPUT) = printWithEscaping("$text$END_LINE", escapeType)
+    private fun printlnWithEscaping(text: String, escapeType: EscapeType = EscapeType.USER_OUTPUT) = printWithEscaping("$text\n", escapeType)
 
     private fun printWithEscaping(text: String, escapeType: EscapeType = EscapeType.USER_OUTPUT) {
         if (ideMode)
