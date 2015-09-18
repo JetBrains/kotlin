@@ -106,7 +106,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         catch (e: ProcessCanceledException) {
             // supposedly analysis can only be canceled from another thread
             // do not log ProcessCanceledException as it is rethrown by IdeaLogger and code won't be copied
-            LOG.error("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
+            LOG.debug("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
             return listOf()
         }
         catch (e: Throwable) {
