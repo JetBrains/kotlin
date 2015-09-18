@@ -388,8 +388,8 @@ class LazyJavaTypeAttributes(
     private fun hasAnnotation(fqName: FqName) = typeAnnotations.findAnnotation(fqName) != null
 }
 
-internal fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
-internal fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
+public fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
+public fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(
         allowFlexible: Boolean = true,
