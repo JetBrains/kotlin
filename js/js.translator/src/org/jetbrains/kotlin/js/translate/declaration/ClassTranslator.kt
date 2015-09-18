@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorPar
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor
