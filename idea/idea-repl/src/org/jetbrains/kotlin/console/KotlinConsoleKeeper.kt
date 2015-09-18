@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.console
 
-import com.intellij.execution.Platform
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.ParametersList
@@ -33,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -105,11 +103,9 @@ public class KotlinConsoleKeeper(val project: Project) {
     }
 
     private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
-        val pathSeparator = Platform.current().pathSeparator.toString()
-
-        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).join(pathSeparator)
+        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).join(File.pathSeparator)
         val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
-        val compiledOutputClasspath = "$compiledModulePath$pathSeparator$moduleDependencies"
+        val compiledOutputClasspath = "$compiledModulePath${File.pathSeparator}$moduleDependencies"
 
         paramList.add("-cp")
         paramList.add(compiledOutputClasspath)
