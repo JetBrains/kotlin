@@ -39,7 +39,7 @@ public abstract class TargetPlatform(
     }
 }
 
-private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker(), ConstModifierChecker, UnderscoreChecker)
+private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker(), ConstModifierChecker, UnderscoreChecker, OperatorModifierChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), AccessToPrivateTopLevelSymbolValidator(), OperatorValidator())

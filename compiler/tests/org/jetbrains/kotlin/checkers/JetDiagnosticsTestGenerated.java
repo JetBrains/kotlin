@@ -343,6 +343,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OperatorsWithWrongNames.kt")
+        public void testOperatorsWithWrongNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OperatorsWithWrongNames.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OverrideFunctionWithParamDefaultValue.kt")
         public void testOverrideFunctionWithParamDefaultValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OverrideFunctionWithParamDefaultValue.kt");

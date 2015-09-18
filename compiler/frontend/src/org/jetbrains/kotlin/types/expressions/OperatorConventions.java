@@ -32,6 +32,7 @@ public class OperatorConventions {
     public static final Name COMPARE_TO = Name.identifier("compareTo");
     public static final Name CONTAINS = Name.identifier("contains");
     public static final Name INVOKE = Name.identifier("invoke");
+    public static final Name ITERATOR = Name.identifier("iterator");
 
     private OperatorConventions() {}
 
