@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -76,6 +77,8 @@ import static org.jetbrains.kotlin.descriptors.DescriptorsPackage.ModuleParamete
 import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
+    private static final Logger LOG = Logger.getInstance(JetSourceNavigationHelper.class);
+
     public enum NavigationKind {
         CLASS_FILES_TO_SOURCES,
         SOURCES_TO_CLASS_FILES
@@ -162,7 +165,10 @@ public class JetSourceNavigationHelper {
         }
 
         String memberNameAsString = declaration.getName();
-        assert memberNameAsString != null;
+        if (memberNameAsString == null) {
+            LOG.debug("JetSourceNavigationHelper.convertPropertyOrFunction(): null name for declaration " + declaration);
+            return null;
+        }
         Name memberName = Name.identifier(memberNameAsString);
 
         PsiElement decompiledContainer = declaration.getParent();
