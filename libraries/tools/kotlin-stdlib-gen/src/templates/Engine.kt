@@ -105,6 +105,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     val inline = FamilyProperty<Boolean>()
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
+    val operator = FamilyProperty<Boolean>()
     val body = object : FamilyProperty<String>() {
         override fun onKeySet(key: Family) = include(key)
     }
@@ -335,6 +336,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         builder.append("public ")
         if (inline[f] == true)
             builder.append("inline ")
+        if (operator[f] == true)
+            builder.append("operator ")
 
         builder.append("$keyword ")
 

@@ -24,7 +24,7 @@ public class Boolean private () : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.
      */
-    public fun not(): Boolean
+    public operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one.

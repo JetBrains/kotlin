@@ -6,6 +6,8 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
+        operator(true)
+
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
         returns("List<T>")
@@ -49,6 +51,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
+        operator(true)
+
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [collection]." }
         returns("List<T>")
@@ -104,6 +108,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(array: Array<out T>)") {
+        operator(true)
+
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [array]." }
         returns("List<T>")
@@ -151,6 +157,8 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("plus(sequence: Sequence<T>)") {
+        operator(true)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [sequence]." }
         returns("List<T>")
@@ -199,6 +207,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("minus(element: T)") {
+        operator(true)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
         returns("List<T>")
@@ -236,6 +246,8 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("minus(collection: Iterable<T>)") {
+        operator(true)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [collection]." }
         returns("List<T>")
@@ -289,6 +301,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("minus(array: Array<out T>)") {
+        operator(true)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [array]." }
         returns("List<T>")
@@ -331,6 +345,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("minus(sequence: Sequence<T>)") {
+        operator(true)
+
         only(Iterables, Sets)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [sequence]." }
         returns("List<T>")

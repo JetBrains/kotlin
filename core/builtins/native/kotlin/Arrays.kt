@@ -24,15 +24,15 @@ package kotlin
  */
 public class ByteArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Byte
+    public operator fun get(index: Int): Byte
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Byte): Unit
+    public operator fun set(index: Int, value: Byte): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): ByteIterator
+    public operator fun iterator(): ByteIterator
 
     public override fun clone(): ByteArray
 }
@@ -43,15 +43,15 @@ public class ByteArray(size: Int) : Cloneable {
  */
 public class CharArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Char
+    public operator fun get(index: Int): Char
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Char): Unit
+    public operator fun set(index: Int, value: Char): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): CharIterator
+    public operator fun iterator(): CharIterator
 
     public override fun clone(): CharArray
 }
@@ -62,15 +62,15 @@ public class CharArray(size: Int) : Cloneable {
  */
 public class ShortArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Short
+    public operator fun get(index: Int): Short
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Short): Unit
+    public operator fun set(index: Int, value: Short): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): ShortIterator
+    public operator fun iterator(): ShortIterator
 
     public override fun clone(): ShortArray
 }
@@ -81,15 +81,15 @@ public class ShortArray(size: Int) : Cloneable {
  */
 public class IntArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Int
+    public operator fun get(index: Int): Int
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Int): Unit
+    public operator fun set(index: Int, value: Int): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): IntIterator
+    public operator fun iterator(): IntIterator
 
     public override fun clone(): IntArray
 }
@@ -100,15 +100,15 @@ public class IntArray(size: Int) : Cloneable {
  */
 public class LongArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Long
+    public operator fun get(index: Int): Long
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Long): Unit
+    public operator fun set(index: Int, value: Long): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): LongIterator
+    public operator fun iterator(): LongIterator
 
     public override fun clone(): LongArray
 }
@@ -119,15 +119,15 @@ public class LongArray(size: Int) : Cloneable {
  */
 public class FloatArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Float
+    public operator fun get(index: Int): Float
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Float): Unit
+    public operator fun set(index: Int, value: Float): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): FloatIterator
+    public operator fun iterator(): FloatIterator
 
     public override fun clone(): FloatArray
 }
@@ -138,15 +138,15 @@ public class FloatArray(size: Int) : Cloneable {
  */
 public class DoubleArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Double
+    public operator fun get(index: Int): Double
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Double): Unit
+    public operator fun set(index: Int, value: Double): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): DoubleIterator
+    public operator fun iterator(): DoubleIterator
 
     public override fun clone(): DoubleArray
 }
@@ -157,15 +157,15 @@ public class DoubleArray(size: Int) : Cloneable {
  */
 public class BooleanArray(size: Int) : Cloneable {
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    public fun get(index: Int): Boolean
+    public operator fun get(index: Int): Boolean
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    public fun set(index: Int, value: Boolean): Unit
+    public operator fun set(index: Int, value: Boolean): Unit
 
     /** Returns the number of elements in the array. */
     public fun size(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public fun iterator(): BooleanIterator
+    public operator fun iterator(): BooleanIterator
 
     public override fun clone(): BooleanArray
 }

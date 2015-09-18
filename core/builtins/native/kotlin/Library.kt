@@ -32,7 +32,7 @@ public fun Any?.toString(): String
  * Concatenates this string with the string representation of the given [other] object. If either the receiver
  * or the [other] object are null, they are represented as the string "null".
  */
-public fun String?.plus(other: Any?): String
+public operator fun String?.plus(other: Any?): String
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.

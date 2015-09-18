@@ -377,7 +377,7 @@ public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [array].
  */
-public fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
+public operator fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
     if (array.isEmpty()) return this.toList()
     val other = array.toHashSet()
     return this.filterNot { it in other }
@@ -388,7 +388,7 @@ public fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
  * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
     if (array.isEmpty()) return this
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
@@ -401,7 +401,7 @@ public fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [array].
  */
-public fun <T> Set<T>.minus(array: Array<out T>): Set<T> {
+public operator fun <T> Set<T>.minus(array: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(this)
     result.removeAll(array)
     return result
@@ -410,7 +410,7 @@ public fun <T> Set<T>.minus(array: Array<out T>): Set<T> {
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [collection].
  */
-public fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
+public operator fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
     val other = collection.convertToSetForSetOperationWith(this)
     if (other.isEmpty())
         return this.toList()
@@ -422,7 +422,7 @@ public fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
  * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
             val other = collection.convertToSetForSetOperation()
@@ -437,7 +437,7 @@ public fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [collection].
  */
-public fun <T> Set<T>.minus(collection: Iterable<T>): Set<T> {
+public operator fun <T> Set<T>.minus(collection: Iterable<T>): Set<T> {
     val other = collection.convertToSetForSetOperationWith(this)
     if (other.isEmpty())
         return this.toSet()
@@ -451,7 +451,7 @@ public fun <T> Set<T>.minus(collection: Iterable<T>): Set<T> {
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
-public fun <T> Iterable<T>.minus(element: T): List<T> {
+public operator fun <T> Iterable<T>.minus(element: T): List<T> {
     val result = ArrayList<T>(collectionSizeOrDefault(10))
     var removed = false
     return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
@@ -460,7 +460,7 @@ public fun <T> Iterable<T>.minus(element: T): List<T> {
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  */
-public fun <T> Sequence<T>.minus(element: T): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
             var removed = false
@@ -472,7 +472,7 @@ public fun <T> Sequence<T>.minus(element: T): Sequence<T> {
 /**
  * Returns a set containing all elements of the original set except the given [element].
  */
-public fun <T> Set<T>.minus(element: T): Set<T> {
+public operator fun <T> Set<T>.minus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size()))
     var removed = false
     return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
@@ -481,7 +481,7 @@ public fun <T> Set<T>.minus(element: T): Set<T> {
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [sequence].
  */
-public fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
+public operator fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
     val other = sequence.toHashSet()
     if (other.isEmpty())
         return this.toList()
@@ -493,7 +493,7 @@ public fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
  * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
             val other = sequence.toHashSet()
@@ -508,7 +508,7 @@ public fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [sequence].
  */
-public fun <T> Set<T>.minus(sequence: Sequence<T>): Set<T> {
+public operator fun <T> Set<T>.minus(sequence: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(this)
     result.removeAll(sequence)
     return result
@@ -733,7 +733,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [array].
  */
-public fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
+public operator fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
     val result = ArrayList<T>(this.size() + array.size())
     result.addAll(this)
     result.addAll(array)
@@ -743,7 +743,7 @@ public fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [array].
  */
-public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
+public operator fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
     if (this is Collection) return this.plus(array)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -756,14 +756,14 @@ public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
  * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
+public operator fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
     return this.plus(array.asList())
 }
 
 /**
  * Returns a set containing all elements both of the original set and the given [array].
  */
-public fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
+public operator fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
     result.addAll(this)
     result.addAll(array)
@@ -773,7 +773,7 @@ public fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
+public operator fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
     if (collection is Collection) {
         val result = ArrayList<T>(this.size() + collection.size())
         result.addAll(this)
@@ -789,7 +789,7 @@ public fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
+public operator fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
     if (this is Collection) return this.plus(collection)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -802,14 +802,14 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
  * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
     return sequenceOf(this, collection.asSequence()).flatten()
 }
 
 /**
  * Returns a set containing all elements both of the original set and the given [collection].
  */
-public fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
+public operator fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
     result.addAll(this)
     result.addAll(collection)
@@ -819,7 +819,7 @@ public fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Collection<T>.plus(element: T): List<T> {
+public operator fun <T> Collection<T>.plus(element: T): List<T> {
     val result = ArrayList<T>(size() + 1)
     result.addAll(this)
     result.add(element)
@@ -829,7 +829,7 @@ public fun <T> Collection<T>.plus(element: T): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Iterable<T>.plus(element: T): List<T> {
+public operator fun <T> Iterable<T>.plus(element: T): List<T> {
     if (this is Collection) return this.plus(element)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -840,14 +840,14 @@ public fun <T> Iterable<T>.plus(element: T): List<T> {
 /**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
-public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
+public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
     return sequenceOf(this, sequenceOf(element)).flatten()
 }
 
 /**
  * Returns a set containing all elements of the original set and then the given [element].
  */
-public fun <T> Set<T>.plus(element: T): Set<T> {
+public operator fun <T> Set<T>.plus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size() + 1))
     result.addAll(this)
     result.add(element)
@@ -857,7 +857,7 @@ public fun <T> Set<T>.plus(element: T): Set<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
  */
-public fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
+public operator fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
     val result = ArrayList<T>(this.size() + 10)
     result.addAll(this)
     result.addAll(sequence)
@@ -867,7 +867,7 @@ public fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
  */
-public fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
+public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
     val result = ArrayList<T>()
     result.addAll(this)
     result.addAll(sequence)
@@ -879,14 +879,14 @@ public fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
  * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
     return sequenceOf(this, sequence).flatten()
 }
 
 /**
  * Returns a set containing all elements both of the original set and the given [sequence].
  */
-public fun <T> Set<T>.plus(sequence: Sequence<T>): Set<T> {
+public operator fun <T> Set<T>.plus(sequence: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
     result.addAll(this)
     result.addAll(sequence)

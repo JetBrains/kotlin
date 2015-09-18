@@ -215,7 +215,7 @@ public val String.lastIndex: Int
  * val c = charSequence[5]
  * ```
  */
-public fun CharSequence.get(index: Int): Char = this.charAt(index)
+public operator fun CharSequence.get(index: Int): Char = this.charAt(index)
 
 /**
  * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index].
@@ -779,7 +779,7 @@ public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignor
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
+public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
         indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
 
 
@@ -788,7 +788,7 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
-public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
 // rangesDelimitedBy

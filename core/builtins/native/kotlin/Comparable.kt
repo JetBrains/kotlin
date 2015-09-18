@@ -25,5 +25,5 @@ public interface Comparable<in T> {
      * to the specified [other] object, a negative number if it's less than [other], or a positive number
      * if it's greater than [other].
      */
-    public fun compareTo(other: T): Int
+    public operator fun compareTo(other: T): Int
 }

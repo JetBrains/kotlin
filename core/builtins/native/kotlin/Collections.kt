@@ -25,7 +25,7 @@ public interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
      */
-    public fun iterator(): Iterator<T>
+    public operator fun iterator(): Iterator<T>
 }
 
 /**
@@ -59,7 +59,7 @@ public interface Collection<out E> : Iterable<E> {
     /**
      * Checks if the specified element is contained in this collection.
      */
-    public fun contains(o: Any?): Boolean
+    public operator fun contains(o: Any?): Boolean
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
@@ -140,7 +140,7 @@ public interface List<out E> : Collection<E> {
     /**
      * Returns the element at the specified index in the list.
      */
-    public fun get(index: Int): E
+    public operator fun get(index: Int): E
 
     // Search Operations
     /**
@@ -202,7 +202,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return the element previously at the specified position.
      */
-    public fun set(index: Int, element: E): E
+    public operator fun set(index: Int, element: E): E
 
     /**
      * Inserts an element into the list at the specified [index].
@@ -294,7 +294,7 @@ public interface Map<K, out V> {
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      */
-    public fun get(key: Any?): V?
+    public operator fun get(key: Any?): V?
 
     // Views
     /**

@@ -13,7 +13,7 @@ public interface Sequence<out T> {
     /**
      * Returns an iterator that returns the values from the sequence.
      */
-    public fun iterator(): Iterator<T>
+    public operator fun iterator(): Iterator<T>
 }
 
 /**

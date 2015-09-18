@@ -34,7 +34,7 @@ public interface Range<T : Comparable<T>> {
     /**
      * Checks if the specified value belongs to the range.
      */
-    public fun contains(item: T): Boolean
+    public operator fun contains(item: T): Boolean
 
     /**
      * Checks if the range is empty.

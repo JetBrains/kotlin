@@ -24,12 +24,12 @@ public interface Iterator<out T> {
     /**
      * Returns the next element in the iteration.
      */
-    public fun next(): T
+    public operator fun next(): T
 
     /**
      * Returns `true` if the iteration has more elements.
      */
-    public fun hasNext(): Boolean
+    public operator fun hasNext(): Boolean
 }
 
 /**

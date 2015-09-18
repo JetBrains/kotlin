@@ -411,7 +411,7 @@ public fun String.toCharList(): List<Char> = toCharArray().toList()
  * @param start the start index (inclusive).
  * @param end the end index (exclusive).
  */
-public fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
+public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.

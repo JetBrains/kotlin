@@ -35,7 +35,7 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         }
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
-            out.println("public fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
+            out.println("public operator fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
         }
     }
 }

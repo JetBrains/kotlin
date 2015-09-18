@@ -118,6 +118,8 @@ fun ranges(): List<GenericFunction> {
             .map { until(it.first, it.second) }
 
     fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
+        operator(true)
+
         val meaningless = (rangeType.isNumeric() != itemType.isNumeric())
         if (!meaningless) {
             only(Ranges)

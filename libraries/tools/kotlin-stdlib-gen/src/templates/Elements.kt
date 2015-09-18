@@ -6,6 +6,8 @@ fun elements(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("contains(element: T)") {
+        operator(true)
+
         doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
         body {
@@ -761,6 +763,7 @@ fun elements(): List<GenericFunction> {
 
     templates addAll (1..5).map { n ->
         f("component$n()") {
+            operator(true)
             inline(true)
             annotations("""@Suppress("NOTHING_TO_INLINE")""")
             fun getOrdinal(n: Int) = n.toString() + when (n) {

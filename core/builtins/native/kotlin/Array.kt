@@ -31,7 +31,7 @@ public class Array<reified T> private (): Cloneable {
      * value = arr[index]
      * ```
      */
-    public fun get(index: Int): T
+    public operator fun get(index: Int): T
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
@@ -40,7 +40,7 @@ public class Array<reified T> private (): Cloneable {
      * arr[index] = value
      * ```
      */
-    public fun set(index: Int, value: T): Unit
+    public operator fun set(index: Int, value: T): Unit
 
     /**
      * Returns the number of elements in the array.
@@ -50,7 +50,7 @@ public class Array<reified T> private (): Cloneable {
     /**
      * Creates an iterator for iterating over the elements of the array.
      */
-    public fun iterator(): Iterator<T>
+    public operator fun iterator(): Iterator<T>
 
     /**
      * Creates a shallow copy of the array.

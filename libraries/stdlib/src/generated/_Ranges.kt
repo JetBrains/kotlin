@@ -14,7 +14,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public fun Range<Int>.contains(item: Byte): Boolean {
+public operator fun Range<Int>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
 
@@ -22,7 +22,7 @@ public fun Range<Int>.contains(item: Byte): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public fun Range<Long>.contains(item: Byte): Boolean {
+public operator fun Range<Long>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
 
@@ -30,7 +30,7 @@ public fun Range<Long>.contains(item: Byte): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public fun Range<Short>.contains(item: Byte): Boolean {
+public operator fun Range<Short>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
 
@@ -38,7 +38,7 @@ public fun Range<Short>.contains(item: Byte): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public fun Range<Double>.contains(item: Byte): Boolean {
+public operator fun Range<Double>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
 
@@ -46,42 +46,42 @@ public fun Range<Double>.contains(item: Byte): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public fun Range<Float>.contains(item: Byte): Boolean {
+public operator fun Range<Float>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Byte item is not supported and should not be used.")
-public fun CharRange.contains(item: Byte): Nothing {
+public operator fun CharRange.contains(item: Byte): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Int and Char item is not supported and should not be used.")
-public fun IntRange.contains(item: Char): Nothing {
+public operator fun IntRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Long and Char item is not supported and should not be used.")
-public fun LongRange.contains(item: Char): Nothing {
+public operator fun LongRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Byte and Char item is not supported and should not be used.")
-public fun ByteRange.contains(item: Char): Nothing {
+public operator fun ByteRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Short and Char item is not supported and should not be used.")
-public fun ShortRange.contains(item: Char): Nothing {
+public operator fun ShortRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Double and Char item is not supported and should not be used.")
-public fun DoubleRange.contains(item: Char): Nothing {
+public operator fun DoubleRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
 @Deprecated("The 'contains' operation for a range of Float and Char item is not supported and should not be used.")
-public fun FloatRange.contains(item: Char): Nothing {
+public operator fun FloatRange.contains(item: Char): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -89,7 +89,7 @@ public fun FloatRange.contains(item: Char): Nothing {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public fun Range<Int>.contains(item: Double): Boolean {
+public operator fun Range<Int>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
 
@@ -97,7 +97,7 @@ public fun Range<Int>.contains(item: Double): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public fun Range<Long>.contains(item: Double): Boolean {
+public operator fun Range<Long>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
 
@@ -105,7 +105,7 @@ public fun Range<Long>.contains(item: Double): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public fun Range<Byte>.contains(item: Double): Boolean {
+public operator fun Range<Byte>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
 
@@ -113,7 +113,7 @@ public fun Range<Byte>.contains(item: Double): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public fun Range<Short>.contains(item: Double): Boolean {
+public operator fun Range<Short>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
 
@@ -121,12 +121,12 @@ public fun Range<Short>.contains(item: Double): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public fun Range<Float>.contains(item: Double): Boolean {
+public operator fun Range<Float>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Double item is not supported and should not be used.")
-public fun CharRange.contains(item: Double): Nothing {
+public operator fun CharRange.contains(item: Double): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -134,7 +134,7 @@ public fun CharRange.contains(item: Double): Nothing {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public fun Range<Int>.contains(item: Float): Boolean {
+public operator fun Range<Int>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
 
@@ -142,7 +142,7 @@ public fun Range<Int>.contains(item: Float): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public fun Range<Long>.contains(item: Float): Boolean {
+public operator fun Range<Long>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
 
@@ -150,7 +150,7 @@ public fun Range<Long>.contains(item: Float): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public fun Range<Byte>.contains(item: Float): Boolean {
+public operator fun Range<Byte>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
 
@@ -158,7 +158,7 @@ public fun Range<Byte>.contains(item: Float): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public fun Range<Short>.contains(item: Float): Boolean {
+public operator fun Range<Short>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
 
@@ -166,12 +166,12 @@ public fun Range<Short>.contains(item: Float): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public fun Range<Double>.contains(item: Float): Boolean {
+public operator fun Range<Double>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Float item is not supported and should not be used.")
-public fun CharRange.contains(item: Float): Nothing {
+public operator fun CharRange.contains(item: Float): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -179,7 +179,7 @@ public fun CharRange.contains(item: Float): Nothing {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public fun Range<Long>.contains(item: Int): Boolean {
+public operator fun Range<Long>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
 
@@ -187,7 +187,7 @@ public fun Range<Long>.contains(item: Int): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public fun Range<Byte>.contains(item: Int): Boolean {
+public operator fun Range<Byte>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
 
@@ -195,7 +195,7 @@ public fun Range<Byte>.contains(item: Int): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public fun Range<Short>.contains(item: Int): Boolean {
+public operator fun Range<Short>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
 
@@ -203,7 +203,7 @@ public fun Range<Short>.contains(item: Int): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public fun Range<Double>.contains(item: Int): Boolean {
+public operator fun Range<Double>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
 
@@ -211,12 +211,12 @@ public fun Range<Double>.contains(item: Int): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public fun Range<Float>.contains(item: Int): Boolean {
+public operator fun Range<Float>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Int item is not supported and should not be used.")
-public fun CharRange.contains(item: Int): Nothing {
+public operator fun CharRange.contains(item: Int): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -224,7 +224,7 @@ public fun CharRange.contains(item: Int): Nothing {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public fun Range<Int>.contains(item: Long): Boolean {
+public operator fun Range<Int>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
 
@@ -232,7 +232,7 @@ public fun Range<Int>.contains(item: Long): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public fun Range<Byte>.contains(item: Long): Boolean {
+public operator fun Range<Byte>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
 
@@ -240,7 +240,7 @@ public fun Range<Byte>.contains(item: Long): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public fun Range<Short>.contains(item: Long): Boolean {
+public operator fun Range<Short>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
 
@@ -248,7 +248,7 @@ public fun Range<Short>.contains(item: Long): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public fun Range<Double>.contains(item: Long): Boolean {
+public operator fun Range<Double>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
 
@@ -256,12 +256,12 @@ public fun Range<Double>.contains(item: Long): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public fun Range<Float>.contains(item: Long): Boolean {
+public operator fun Range<Float>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Long item is not supported and should not be used.")
-public fun CharRange.contains(item: Long): Nothing {
+public operator fun CharRange.contains(item: Long): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -269,7 +269,7 @@ public fun CharRange.contains(item: Long): Nothing {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public fun Range<Int>.contains(item: Short): Boolean {
+public operator fun Range<Int>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
 
@@ -277,7 +277,7 @@ public fun Range<Int>.contains(item: Short): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public fun Range<Long>.contains(item: Short): Boolean {
+public operator fun Range<Long>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
 
@@ -285,7 +285,7 @@ public fun Range<Long>.contains(item: Short): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public fun Range<Byte>.contains(item: Short): Boolean {
+public operator fun Range<Byte>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
 
@@ -293,7 +293,7 @@ public fun Range<Byte>.contains(item: Short): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public fun Range<Double>.contains(item: Short): Boolean {
+public operator fun Range<Double>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
 
@@ -301,12 +301,12 @@ public fun Range<Double>.contains(item: Short): Boolean {
  * Checks if the specified [item] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public fun Range<Float>.contains(item: Short): Boolean {
+public operator fun Range<Float>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
 
 @Deprecated("The 'contains' operation for a range of Char and Short item is not supported and should not be used.")
-public fun CharRange.contains(item: Short): Nothing {
+public operator fun CharRange.contains(item: Short): Nothing {
     throw UnsupportedOperationException()
 }
 

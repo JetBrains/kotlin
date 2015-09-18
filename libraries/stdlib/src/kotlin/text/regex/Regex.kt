@@ -35,7 +35,7 @@ public interface MatchGroupCollection : Collection<MatchGroup?> {
      * Groups are indexed from 1 to the count of groups in the regular expression. A group with the index 0
      * corresponds to the entire match.
      */
-    public fun get(index: Int): MatchGroup?
+    public operator fun get(index: Int): MatchGroup?
 
     // TODO: Provide get(name: String) on JVM 7+
 }
