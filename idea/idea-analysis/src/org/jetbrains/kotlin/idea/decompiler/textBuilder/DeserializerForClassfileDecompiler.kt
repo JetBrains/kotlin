@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderImpl
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -56,7 +57,7 @@ public class DeserializerForClassfileDecompiler(
     override val deserializationComponents: DeserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), errorReporter,
-            JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
+            LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {

@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -54,7 +55,7 @@ public class KotlinJavaScriptDeserializerForDecompiler(
     override val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), ErrorReporter.DO_NOTHING,
-            FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
+            LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -45,6 +46,7 @@ public fun createKotlinJavascriptPackageFragmentProvider(
             provider,
             localClassResolver,
             ErrorReporter.DO_NOTHING,
+            LookupTracker.DO_NOTHING,
             FlexibleTypeCapabilitiesDeserializer.Dynamic,
             ClassDescriptorFactory.EMPTY
     )

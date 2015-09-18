@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
@@ -68,7 +69,7 @@ public class RuntimeModuleData private constructor(public val deserialization: D
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter)
             val deserializationComponentsForJava = DeserializationComponentsForJava(
                     storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,
-                    lazyJavaPackageFragmentProvider, RuntimeErrorReporter
+                    lazyJavaPackageFragmentProvider, RuntimeErrorReporter, LookupTracker.DO_NOTHING
             )
             singleModuleClassResolver.resolver = javaDescriptorResolver
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
