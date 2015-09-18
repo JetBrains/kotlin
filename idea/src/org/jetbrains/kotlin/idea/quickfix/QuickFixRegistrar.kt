@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
-import org.jetbrains.kotlin.idea.quickfix.migration.*
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
 import org.jetbrains.kotlin.lexer.JetTokens.*
@@ -131,9 +130,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_BACKING_FIELD_CUSTOM_ACCESSORS.registerFactory(changeToPropertyNameFactory)
         INACCESSIBLE_BACKING_FIELD.registerFactory(changeToPropertyNameFactory)
 
-        val unresolvedReferenceFactory = AutoImportFix.createFactory()
-        UNRESOLVED_REFERENCE.registerFactory(unresolvedReferenceFactory)
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(unresolvedReferenceFactory)
+        UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
 
         val removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory()
         CONFLICTING_IMPORT.registerFactory(removeImportFixFactory)

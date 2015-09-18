@@ -97,25 +97,20 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
-    companion object {
-        private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
-
-        public fun createFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetSimpleNameExpression>? {
-                    // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
-                    val psiElement = diagnostic.getPsiElement()
-                    if (psiElement is JetSimpleNameExpression) {
-                        return AutoImportFix(psiElement)
-                    }
-
-                    return null
-                }
-
-                override fun isApplicableForCodeFragment()
-                        = true
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetSimpleNameExpression>? {
+            // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
+            val psiElement = diagnostic.getPsiElement()
+            if (psiElement is JetSimpleNameExpression) {
+                return AutoImportFix(psiElement)
             }
+
+            return null
         }
+
+        override fun isApplicableForCodeFragment() = true
+
+        private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
 
         public fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
             if (!element.isValid()) return listOf()
