@@ -23,6 +23,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -50,7 +51,6 @@ public class KotlinReferenceImporter : ReferenceImporter {
     companion object {
 
         // TODO: use in table cell
-        // TODO: filter out non-top level
         public fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile, allowCaretNearRef: Boolean): Boolean {
             if (file !is JetFile) return false
 
@@ -87,9 +87,12 @@ public class KotlinReferenceImporter : ReferenceImporter {
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
             if (mainReference.resolveToDescriptors(bindingContext).isNotEmpty()) return false
 
-            val suggestions = AutoImportFix.computeSuggestions(this)
+            var suggestions = AutoImportFix.computeSuggestions(this)
 
             if (suggestions.distinctBy { it.importableFqName!! }.size() != 1) return false
+
+            // we do not auto-import nested classes because this will probably add qualification into the text and this will confuse the user
+            if (suggestions.any { it is ClassDescriptor && it.containingDeclaration is ClassDescriptor }) return false
 
             var result = false
             CommandProcessor.getInstance().runUndoTransparentAction {
