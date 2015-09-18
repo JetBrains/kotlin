@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -96,59 +97,6 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
-    private fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
-        if (!element.isValid()) return listOf()
-
-        val file = element.getContainingFile() as? JetFile ?: return listOf()
-
-        var referenceName = element.getReferencedName()
-        if (element.getIdentifier() == null) {
-            val conventionName = JetPsiUtil.getConventionName(element)
-            if (conventionName != null) {
-                referenceName = conventionName.asString()
-            }
-        }
-        if (referenceName.isEmpty()) return listOf()
-
-        val resolutionFacade = element.getResolutionFacade()
-
-        val searchScope = getResolveScope(file)
-
-        val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
-
-        val diagnostics = bindingContext.getDiagnostics().forElement(element)
-        if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
-
-        val resolutionScope = element.getResolutionScope(bindingContext, resolutionFacade)
-        val containingDescriptor = resolutionScope.ownerDescriptor
-
-        fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            if (descriptor is DeclarationDescriptorWithVisibility) {
-                return descriptor.isVisible(containingDescriptor, bindingContext, element)
-            }
-
-            return true
-        }
-
-        val result = ArrayList<DeclarationDescriptor>()
-
-        val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible, true)
-
-        if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
-            if (ProjectStructureUtil.isJsKotlinModule(file)) {
-                result.addAll(indicesHelper.getKotlinClasses({ it == referenceName }, { true }))
-            }
-            else {
-                result.addAll(indicesHelper.getJvmClassesByName(referenceName))
-            }
-            result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
-        }
-
-        result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
-
-        return result
-    }
-
     companion object {
         private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
 
@@ -167,6 +115,57 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
                 override fun isApplicableForCodeFragment()
                         = true
             }
+        }
+
+        public fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
+            if (!element.isValid()) return listOf()
+
+            val file = element.getContainingFile() as? JetFile ?: return listOf()
+
+            var referenceName = element.getReferencedName()
+            if (element.getIdentifier() == null) {
+                val conventionName = JetPsiUtil.getConventionName(element)
+                if (conventionName != null) {
+                    referenceName = conventionName.asString()
+                }
+            }
+            if (referenceName.isEmpty()) return listOf()
+
+            val searchScope = getResolveScope(file)
+
+            val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+
+            val diagnostics = bindingContext.getDiagnostics().forElement(element)
+            if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
+
+        val resolutionScope = element.getResolutionScope(bindingContext, file.getResolutionFacade())
+        val containingDescriptor = resolutionScope.ownerDescriptor
+
+            fun isVisible(descriptor: DeclarationDescriptor): Boolean {
+                if (descriptor is DeclarationDescriptorWithVisibility) {
+                    return descriptor.isVisible(containingDescriptor, bindingContext, element)
+                }
+
+                return true
+            }
+
+            val result = ArrayList<DeclarationDescriptor>()
+
+            val indicesHelper = KotlinIndicesHelper(element.getResolutionFacade(), searchScope, ::isVisible, true)
+
+            if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
+                if (ProjectStructureUtil.isJsKotlinModule(file)) {
+                    result.addAll(indicesHelper.getKotlinClasses({ it == referenceName }, { true }))
+                }
+                else {
+                    result.addAll(indicesHelper.getJvmClassesByName(referenceName))
+                }
+                result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
+            }
+
+            result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
+
+            return result
         }
     }
 }
