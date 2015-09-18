@@ -108,7 +108,7 @@ public class KotlinAddImportAction(
             override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: Variant?, finalChoice: Boolean): PopupStep<String>? {
-                if (selectedValue == null) return null
+                if (selectedValue == null || project.isDisposed) return null
 
                 if (finalChoice) {
                     addImport(selectedValue)
@@ -123,7 +123,7 @@ public class KotlinAddImportAction(
                     }
 
                     override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<Any>? {
-                        if (finalChoice) {
+                        if (finalChoice && !project.isDisposed) {
                             AddImportAction.excludeFromImport(project, selectedValue)
                         }
                         return null
