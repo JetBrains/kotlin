@@ -1,8 +1,8 @@
-trait A {
+interface A {
     fun foo(): Int
 }
 
-trait B: A {
+interface B: A {
     override fun foo(): Int
     override fun foo1(): Int
 }

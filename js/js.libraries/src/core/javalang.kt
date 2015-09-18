@@ -28,7 +28,7 @@ public class NumberFormatException(message: String? = null) : RuntimeException(m
 public class NullPointerException(message: String? = null) : RuntimeException(message) {}
 
 @library
-public trait Runnable {
+public interface Runnable {
     public open fun run() : Unit;
 }
 
@@ -37,7 +37,7 @@ public fun Runnable(action: () -> Unit): Runnable = object : Runnable {
 }
 
 @library
-public trait Appendable {
+public interface Appendable {
     public open fun append(csq: CharSequence?): Appendable
     public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable
     public open fun append(c: Char): Appendable

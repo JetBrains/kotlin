@@ -1,6 +1,6 @@
 package first
 
-trait TestedTrait() {
+interface TestedTrait() {
 }
 
 fun firstFun() {

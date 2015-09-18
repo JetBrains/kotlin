@@ -60,7 +60,6 @@ fun box(): String {
             commonCasesWithTestNotRenamed()
 
             case("class", "class $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
-            case("trait", "trait $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
             case("interface", "interface $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
             case("enum", "enum class $KEYWORD_MARKER { foo }", "", testNotRenamed("$KEYWORD_MARKER.foo"))
             case("object", "object $KEYWORD_MARKER {}", "", testNotRenamedByName)
@@ -165,7 +164,7 @@ fun box(): String {
 
         suite("delegated",
 """
-trait Trait {
+interface Trait {
     $DECLARATION_MARKER
 }
 

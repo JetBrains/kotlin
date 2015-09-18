@@ -1,10 +1,10 @@
 package foo
 
-trait A {
+interface A {
     fun foo(i: Int) = "A"
 }
 
-trait B {
+interface B {
     fun foo(s: String) = "B"
 }
 

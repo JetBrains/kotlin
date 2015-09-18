@@ -5,7 +5,7 @@
 
 package test
 
-internal trait InlineTrait {
+internal interface InlineTrait {
 
     internal inline final fun finalInline(s: () -> String): String {
         return s()

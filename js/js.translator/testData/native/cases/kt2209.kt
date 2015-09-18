@@ -1,17 +1,17 @@
 package foo
 
 @native
-trait Chrome {
+interface Chrome {
     val extension: Extension
 }
 
 @native
-trait Extension {
+interface Extension {
     val lastError: LastError?
 }
 
 @native
-trait LastError {
+interface LastError {
     val message: String
 }
 

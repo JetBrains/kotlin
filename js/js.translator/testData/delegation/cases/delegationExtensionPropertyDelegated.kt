@@ -2,7 +2,7 @@ package foo
 
 class State(var value: Int)
 
-trait Base {
+interface Base {
     var State.multiplied: Int
 }
 

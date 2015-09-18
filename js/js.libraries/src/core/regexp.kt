@@ -40,7 +40,7 @@ public fun RegExp.reset() {
 }
 
 
-@native public trait RegExpMatch {
+@native public interface RegExpMatch {
     public val index: Int
     public val input: String
 }

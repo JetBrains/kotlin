@@ -10,7 +10,7 @@ open class C {
     }
 }
 
-trait T
+interface T
 
 // EXIST: { itemText: "extFunForT", attributes: "bold" }
 // EXIST: { itemText: "extFunForC", attributes: "bold" }

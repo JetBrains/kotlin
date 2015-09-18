@@ -1,6 +1,6 @@
 package foo
 
-trait Named {
+interface Named {
     companion object Bar {
         val g = "a";
     }

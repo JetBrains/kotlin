@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,11 +232,6 @@ public class DeclarationsChecker {
         checkTypeParameters(aClass);
 
         if (aClass.isInterface()) {
-            ASTNode traitKeyword = aClass.getNode().findChildByType(JetTokens.TRAIT_KEYWORD);
-            if (traitKeyword != null) {
-                trace.report(Errors.DEPRECATED_TRAIT_KEYWORD.on(traitKeyword.getPsi()));
-            }
-
             checkConstructorInTrait(aClass);
         }
         else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {

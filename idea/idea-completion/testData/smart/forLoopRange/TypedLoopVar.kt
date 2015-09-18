@@ -1,6 +1,6 @@
-trait X
-trait Y: X
-trait Z
+interface X
+interface Y: X
+interface Z
 
 fun foo(p1: Collection<X>, p2: Collection<Y>, p3: Collection<Z>, p4: Collection<X?>) {
     for (i: X in <caret>)

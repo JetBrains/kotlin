@@ -1,6 +1,6 @@
 package foo
 
-trait Test {
+interface Test {
     fun addFoo(s: String): String {
         return s + "FOO"
     }

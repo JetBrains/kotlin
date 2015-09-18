@@ -4,8 +4,8 @@ package java.io
 public class IOException(message: String = "") : Exception() {}
 
 @library
-public trait Closeable {
+public interface Closeable {
     public open fun close() : Unit;
 }
 
-trait Serializable
+interface Serializable

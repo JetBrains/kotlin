@@ -1,6 +1,6 @@
 package foo
 
-trait Foo {
+interface Foo {
     fun execute(handler: () -> Unit) {
         execute(false, handler)
     }

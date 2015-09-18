@@ -1,9 +1,9 @@
 class X
 class Y
 
-trait T1
-trait T2<T>
-trait T3<T>
+interface T1
+interface T2<T>
+interface T3<T>
 
 class C1 : T1
 class C2<T> : T2<T>, T3<T>

@@ -1,4 +1,4 @@
-trait Trait<T>
+interface Trait<T>
 
 fun<T> Trait<T>.extension(t: T): T = t
 

@@ -1,4 +1,4 @@
-trait KTrait {
+interface KTrait {
     fun test(): String {
         return "base";
     }

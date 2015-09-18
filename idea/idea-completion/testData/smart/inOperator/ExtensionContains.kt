@@ -1,6 +1,6 @@
-trait X
-trait Y : X
-trait Z
+interface X
+interface Y : X
+interface Z
 
 fun X.contains(s: String): Boolean
 

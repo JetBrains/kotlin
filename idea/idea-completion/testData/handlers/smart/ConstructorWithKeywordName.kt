@@ -1,8 +1,8 @@
 class `class`<T>
 
-trait `trait`
+interface `interface`
 
-fun foo(p: `class`<`trait`>){}
+fun foo(p: `class`<`interface`>){}
 
 fun f(){
     foo(<caret>)

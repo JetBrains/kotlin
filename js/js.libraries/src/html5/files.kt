@@ -41,6 +41,6 @@ public open class Blob(blobParts: Array<Any>? = undefined, options: BlobProperty
 
 @native
 @Deprecated("Use org.w3c.dom")
-public trait BlobPropertyBag {
+public interface BlobPropertyBag {
     public val type: String
 }

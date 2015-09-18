@@ -1,4 +1,4 @@
-trait T
+interface T
 
 class C {
     inner class Inner1(s: String) : T

@@ -30,7 +30,7 @@ class Color(r: Int, g: Int, b: Int) : ColorLike {
     override val blue: Int = b
 }
 
-trait ColorLike {
+interface ColorLike {
     val red: Int;
     val green: Int;
     val blue: Int;

@@ -1,11 +1,11 @@
 // This test was adapted from compiler/testData/codegen/box/classes
 package foo
 
-trait Trait1 {
+interface Trait1 {
     fun foo(): String
 }
 
-trait Trait2 {
+interface Trait2 {
     fun bar(): String
 }
 

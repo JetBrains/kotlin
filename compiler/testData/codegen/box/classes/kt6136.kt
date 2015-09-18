@@ -1,4 +1,4 @@
-trait Id<T> {
+interface Id<T> {
     val id: T
 }
 

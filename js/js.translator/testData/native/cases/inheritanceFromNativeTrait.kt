@@ -1,7 +1,7 @@
 package foo
 
 @native
-trait NativeTrait {
+interface NativeTrait {
     val foo: String
     fun bar(a: Int): Any
 
@@ -9,7 +9,7 @@ trait NativeTrait {
     fun baz(): String
 }
 
-trait Trait : NativeTrait
+interface Trait : NativeTrait
 
 class Class : NativeTrait {
     override val foo: String = "Class().foo"

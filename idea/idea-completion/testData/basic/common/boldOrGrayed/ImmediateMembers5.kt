@@ -1,6 +1,6 @@
 fun globalFun(){}
 
-trait T {
+interface T {
     fun fromTrait(){}
 }
 

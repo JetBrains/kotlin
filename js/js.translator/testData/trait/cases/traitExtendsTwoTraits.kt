@@ -1,18 +1,18 @@
 package foo
 
-trait A {
+interface A {
     fun addFoo(s: String): String {
         return s + "FOO"
     }
 }
 
-trait B {
+interface B {
     fun hooray(): String {
         return "hooray"
     }
 }
 
-trait AD : A, B {
+interface AD : A, B {
 
 }
 

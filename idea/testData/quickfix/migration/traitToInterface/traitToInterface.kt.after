@@ -1,5 +1,0 @@
-// "Replace 'trait' with 'interface'" "true"
-
-<caret>interface Foo {
-
-}

@@ -1,4 +1,4 @@
-trait Expr
+interface Expr
 class Num(val value : Int) : Expr
 
 fun eval(e : Expr) {

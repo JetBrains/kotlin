@@ -1,10 +1,10 @@
 package foo
 
-trait A
-trait B : A
-trait C : A
-trait D : B, C
-trait E : C
+interface A
+interface B : A
+interface C : A
+interface D : B, C
+interface E : C
 
 open class CB : B
 class CB2 : CB()

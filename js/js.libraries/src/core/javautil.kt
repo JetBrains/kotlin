@@ -7,7 +7,7 @@ private val DEFAULT_INITIAL_CAPACITY = 16
 private val DEFAULT_LOAD_FACTOR = 0.75f
 
 @library
-public trait Comparator<T> {
+public interface Comparator<T> {
     public fun compare(obj1: T, obj2: T): Int;
 }
 
@@ -85,7 +85,7 @@ public open class HashSet<E>(
 }
 
 @library
-public trait SortedSet<E> : Set<E> {
+public interface SortedSet<E> : Set<E> {
 }
 
 @library
@@ -128,7 +128,7 @@ public open class LinkedHashMap<K, V>(
 public open class NoSuchElementException(message: String? = null) : Exception() {}
 
 @library
-public trait Enumeration<E> {
+public interface Enumeration<E> {
     public fun hasMoreElements(): Boolean
     public fun nextElement(): E
 }
