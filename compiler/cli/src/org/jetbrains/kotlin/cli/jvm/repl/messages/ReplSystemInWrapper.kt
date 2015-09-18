@@ -24,7 +24,7 @@ public class ReplSystemInWrapper(
         private val replWriter: ReplSystemOutWrapper
 ) : InputStream() {
     private var isXmlIncomplete = true
-    private var isLastScriptByteProcessed = false
+    private var isLastByteProcessed = false
     private var isReadLineStartSent = false
     private var byteBuilder = ByteArrayOutputStream()
     private var curBytePos = 0
@@ -36,10 +36,13 @@ public class ReplSystemInWrapper(
     var isReplScriptExecuting = false
 
     override fun read(): Int {
-        if (isLastScriptByteProcessed && isReplScriptExecuting) {
-            isLastScriptByteProcessed = false
-            isReadLineStartSent = false
-            replWriter.printlnReadLineEnd()
+        if (isLastByteProcessed) {
+            if (isReplScriptExecuting) {
+                isReadLineStartSent = false
+                replWriter.printlnReadLineEnd()
+            }
+
+            isLastByteProcessed = false
             return -1
         }
 
@@ -53,7 +56,7 @@ public class ReplSystemInWrapper(
 
             if (byteBuilder.toString().endsWith(END_LINE)) {
                 isXmlIncomplete = false
-                isLastScriptByteProcessed = false
+                isLastByteProcessed = false
 
                 inputByteArray = unescapedInput().toByteArray()
             }
@@ -81,8 +84,7 @@ public class ReplSystemInWrapper(
             isXmlIncomplete = true
             byteBuilder = ByteArrayOutputStream()
             curBytePos = 0
-
-            if (isReplScriptExecuting) isLastScriptByteProcessed = true
+            isLastByteProcessed = true
         }
     }
 }

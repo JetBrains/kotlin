@@ -18,21 +18,19 @@ package org.jetbrains.kotlin.cli.jvm.repl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightVirtualFile;
-import jline.console.ConsoleReader;
-import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeLinebreaksUnescaper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +45,7 @@ public class ReplFromTerminal {
     private final ReplSystemOutWrapper replWriter;
     private final ReplErrorLogger replErrorLogger;
 
-    private ConsoleReader consoleReader;
+    private ReplCommandReader commandReader;
 
     public ReplFromTerminal(
             @NotNull final Disposable disposable,
@@ -87,22 +85,17 @@ public class ReplFromTerminal {
         }.start();
 
         try {
-            OutputStream outStream = System.out;
-            if (ideMode) {
-                // consoleReader duplicates his input in his output stream;
-                // to prevent such behaviour we redirect his output to dummy output stream
-                VirtualFile consoleOutputRedirect = new LightVirtualFile("kotlinConsoleReplRedirect");
-                outStream = consoleOutputRedirect.getOutputStream(null);
-            }
-
-            consoleReader = new ConsoleReader("kotlin", System.in, outStream, null);
-            consoleReader.setHistoryEnabled(true);
-            consoleReader.setExpandEvents(false);
-            consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
+            commandReader = createCommandReader();
         }
         catch (Exception e) {
             replErrorLogger.logException(e);
         }
+    }
+
+    @NotNull
+    private ReplCommandReader createCommandReader() {
+        return ideMode ? new IdeReplCommandReader()
+                       : new ConsoleReplCommandReader();
     }
 
     private ReplInterpreter getReplInterpreter() {
@@ -143,7 +136,9 @@ public class ReplFromTerminal {
         }
         finally {
             try {
-                ((FileHistory) consoleReader.getHistory()).flush();
+                if (commandReader instanceof ConsoleReplCommandReader) {
+                    ((ConsoleReplCommandReader) commandReader).getFileHistory().flush();
+                }
             }
             catch (Exception e) {
                 replErrorLogger.logException(e);
@@ -160,8 +155,8 @@ public class ReplFromTerminal {
     @NotNull
     private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
-            String prompt = getPrompt(next);
-            String line = readLine(prompt);
+            String prompt = next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ";
+            String line = commandReader.readLine(prompt);
 
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
@@ -183,25 +178,6 @@ public class ReplFromTerminal {
         catch (Exception e) {
             throw UtilsPackage.rethrow(e);
         }
-    }
-
-    @Nullable
-    private String getPrompt(@NotNull WhatNextAfterOneLine next) {
-        String prompt = null;
-        // consoleReader always print prompt; in [ideMode] we don't allow it
-        if (!ideMode) {
-            prompt = next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ";
-        }
-        return prompt;
-    }
-
-    @Nullable
-    private String readLine(@Nullable String prompt) throws IOException {
-        String line = consoleReader.readLine(prompt);
-        if (ideMode && line != null) {
-            line = IdeLinebreaksUnescaper.unescapeFromDiez(line).trim();
-        }
-        return line;
     }
 
     @NotNull
