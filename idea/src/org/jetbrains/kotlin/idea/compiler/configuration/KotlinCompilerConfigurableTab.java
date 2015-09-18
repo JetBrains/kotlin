@@ -20,9 +20,9 @@ import com.intellij.compiler.options.ComparingUtils;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
@@ -45,7 +45,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
-    private final ConfigurableEP extPoint;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
@@ -61,12 +60,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JCheckBox copyRuntimeFilesCheckBox;
     private JCheckBox keepAliveCheckBox;
 
-    public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
-        this.extPoint = ep;
-        this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
-        this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
-        this.compilerSettings = KotlinCompilerSettings.getInstance(ep.getProject()).getSettings();
-        this.compilerWorkspaceSettings = ServiceManager.getService(ep.getProject(), KotlinCompilerWorkspaceSettings.class);
+    public KotlinCompilerConfigurableTab(Project project) {
+        this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
+        this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings();
+        this.compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
+        this.compilerWorkspaceSettings = ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class);
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -88,7 +86,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @NotNull
     @Override
     public String getId() {
-        return extPoint.id;
+        return "project.kotlinCompiler";
     }
 
     @Nullable
@@ -160,7 +158,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Nls
     @Override
     public String getDisplayName() {
-        return extPoint.displayName;
+        return "Kotlin Compiler";
     }
 
     @Nullable
