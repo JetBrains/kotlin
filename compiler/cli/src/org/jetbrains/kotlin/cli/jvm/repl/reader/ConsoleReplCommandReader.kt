@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.reader
 
 import jline.console.ConsoleReader
 import jline.console.history.FileHistory
+import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import java.io.File
 
 public class ConsoleReplCommandReader : ReplCommandReader {
@@ -27,8 +28,10 @@ public class ConsoleReplCommandReader : ReplCommandReader {
         history = FileHistory(File(File(System.getProperty("user.home")), ".kotlin_history"))
     }
 
-    public val fileHistory: FileHistory
-        get() = consoleReader.history as FileHistory
+    override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String? {
+        val prompt = if (next == ReplFromTerminal.WhatNextAfterOneLine.INCOMPLETE) "... " else ">>> ";
+        return consoleReader.readLine(prompt)
+    }
 
-    override fun readLine(prompt: String?) = consoleReader.readLine(prompt)
+    override fun flushHistory() = (consoleReader.history as FileHistory).flush()
 }

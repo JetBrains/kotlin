@@ -136,9 +136,7 @@ public class ReplFromTerminal {
         }
         finally {
             try {
-                if (commandReader instanceof ConsoleReplCommandReader) {
-                    ((ConsoleReplCommandReader) commandReader).getFileHistory().flush();
-                }
+                commandReader.flushHistory();
             }
             catch (Exception e) {
                 replErrorLogger.logException(e);
@@ -146,7 +144,7 @@ public class ReplFromTerminal {
         }
     }
 
-    private enum WhatNextAfterOneLine {
+    public enum WhatNextAfterOneLine {
         READ_LINE,
         INCOMPLETE,
         QUIT,
@@ -155,8 +153,7 @@ public class ReplFromTerminal {
     @NotNull
     private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
-            String prompt = next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ";
-            String line = commandReader.readLine(prompt);
+            String line = commandReader.readLine(next);
 
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
