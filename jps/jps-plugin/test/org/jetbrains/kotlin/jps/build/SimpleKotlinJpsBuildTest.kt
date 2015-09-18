@@ -35,7 +35,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                """
                                    package m1;
 
-                                   trait K {
+                                   interface K {
                                    }
                                """)
         createFile("m1/J.java",
@@ -53,7 +53,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                     import m1.J;
                                     import m1.K;
 
-                                    trait M2: J {
+                                    interface M2: J {
                                         override fun bar(): K
                                     }
                                """)

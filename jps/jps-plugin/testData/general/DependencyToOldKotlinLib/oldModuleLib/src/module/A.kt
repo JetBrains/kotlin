@@ -1,5 +1,5 @@
 package module
 
-public trait A {
+public interface A {
     fun oldFun(): Int = 1
 }
