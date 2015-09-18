@@ -35,843 +35,843 @@ public class ReservedWordTestGenerated extends AbstractReservedWordTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/reservedWords/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("dataClassParamArguments.kt")
-    public void testDataClassParamArguments() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamArguments.kt");
+    @TestMetadata("dataClassParamElse.kt")
+    public void testDataClassParamElse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamElse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassParamFor.kt")
-    public void testDataClassParamFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamFor.kt");
+    @TestMetadata("dataClassParamFalse.kt")
+    public void testDataClassParamFalse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamFalse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassParamIf.kt")
-    public void testDataClassParamIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamIf.kt");
+    @TestMetadata("dataClassParamInfinity.kt")
+    public void testDataClassParamInfinity() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamInfinity.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassParamNaN.kt")
-    public void testDataClassParamNaN() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamNaN.kt");
+    @TestMetadata("dataClassParamKotlin.kt")
+    public void testDataClassParamKotlin() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamKotlin.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassValContinue.kt")
-    public void testDataClassValContinue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValContinue.kt");
+    @TestMetadata("dataClassValBreak.kt")
+    public void testDataClassValBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValBreak.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassValDo.kt")
-    public void testDataClassValDo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValDo.kt");
+    @TestMetadata("dataClassValClass.kt")
+    public void testDataClassValClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassValWith.kt")
-    public void testDataClassValWith() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValWith.kt");
+    @TestMetadata("dataClassValUndefined.kt")
+    public void testDataClassValUndefined() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValUndefined.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassValYield.kt")
-    public void testDataClassValYield() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValYield.kt");
+    @TestMetadata("dataClassValVoid.kt")
+    public void testDataClassValVoid() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValVoid.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassVarElse.kt")
-    public void testDataClassVarElse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarElse.kt");
+    @TestMetadata("dataClassVarContinue.kt")
+    public void testDataClassVarContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarContinue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassVarFalse.kt")
-    public void testDataClassVarFalse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarFalse.kt");
+    @TestMetadata("dataClassVarDo.kt")
+    public void testDataClassVarDo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarDo.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassVarInfinity.kt")
-    public void testDataClassVarInfinity() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarInfinity.kt");
+    @TestMetadata("dataClassVarWith.kt")
+    public void testDataClassVarWith() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarWith.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("dataClassVarKotlin.kt")
-    public void testDataClassVarKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarKotlin.kt");
+    @TestMetadata("dataClassVarYield.kt")
+    public void testDataClassVarYield() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassVarYield.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunDebugger.kt")
-    public void testDelegatedFunDebugger() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunDebugger.kt");
+    @TestMetadata("delegatedFunCatch.kt")
+    public void testDelegatedFunCatch() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunCatch.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunDefault.kt")
-    public void testDelegatedFunDefault() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunDefault.kt");
+    @TestMetadata("delegatedFunConst.kt")
+    public void testDelegatedFunConst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunConst.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunParamDelete.kt")
-    public void testDelegatedFunParamDelete() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamDelete.kt");
+    @TestMetadata("delegatedFunNull.kt")
+    public void testDelegatedFunNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunNull.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunParamEnum.kt")
-    public void testDelegatedFunParamEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamEnum.kt");
+    @TestMetadata("delegatedFunPackage.kt")
+    public void testDelegatedFunPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunPackage.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunParamThis.kt")
-    public void testDelegatedFunParamThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamThis.kt");
+    @TestMetadata("delegatedFunParamDebugger.kt")
+    public void testDelegatedFunParamDebugger() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamDebugger.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunParamThrow.kt")
-    public void testDelegatedFunParamThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamThrow.kt");
+    @TestMetadata("delegatedFunParamDefault.kt")
+    public void testDelegatedFunParamDefault() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamDefault.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunReturn.kt")
-    public void testDelegatedFunReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunReturn.kt");
+    @TestMetadata("delegatedFunParamReturn.kt")
+    public void testDelegatedFunParamReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamReturn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedFunSuper.kt")
-    public void testDelegatedFunSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunSuper.kt");
+    @TestMetadata("delegatedFunParamSuper.kt")
+    public void testDelegatedFunParamSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedFunParamSuper.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedLabelEval.kt")
-    public void testDelegatedLabelEval() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelEval.kt");
+    @TestMetadata("delegatedLabelDelete.kt")
+    public void testDelegatedLabelDelete() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelDelete.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedLabelExport.kt")
-    public void testDelegatedLabelExport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelExport.kt");
+    @TestMetadata("delegatedLabelEnum.kt")
+    public void testDelegatedLabelEnum() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelEnum.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedLabelTrue.kt")
-    public void testDelegatedLabelTrue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelTrue.kt");
+    @TestMetadata("delegatedLabelThis.kt")
+    public void testDelegatedLabelThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelThis.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedLabelTry.kt")
-    public void testDelegatedLabelTry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelTry.kt");
+    @TestMetadata("delegatedLabelThrow.kt")
+    public void testDelegatedLabelThrow() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedLabelThrow.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedValAwait.kt")
-    public void testDelegatedValAwait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValAwait.kt");
+    @TestMetadata("delegatedValArguments.kt")
+    public void testDelegatedValArguments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValArguments.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedValCase.kt")
-    public void testDelegatedValCase() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValCase.kt");
+    @TestMetadata("delegatedValFor.kt")
+    public void testDelegatedValFor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValFor.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedValIn.kt")
-    public void testDelegatedValIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValIn.kt");
+    @TestMetadata("delegatedValIf.kt")
+    public void testDelegatedValIf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValIf.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedValInterface.kt")
-    public void testDelegatedValInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValInterface.kt");
+    @TestMetadata("delegatedValNaN.kt")
+    public void testDelegatedValNaN() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedValNaN.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedVarCatch.kt")
-    public void testDelegatedVarCatch() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarCatch.kt");
+    @TestMetadata("delegatedVarAwait.kt")
+    public void testDelegatedVarAwait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarAwait.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedVarConst.kt")
-    public void testDelegatedVarConst() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarConst.kt");
+    @TestMetadata("delegatedVarCase.kt")
+    public void testDelegatedVarCase() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarCase.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedVarNull.kt")
-    public void testDelegatedVarNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarNull.kt");
+    @TestMetadata("delegatedVarIn.kt")
+    public void testDelegatedVarIn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarIn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("delegatedVarPackage.kt")
-    public void testDelegatedVarPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarPackage.kt");
+    @TestMetadata("delegatedVarInterface.kt")
+    public void testDelegatedVarInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/delegatedVarInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumEntryIn.kt")
-    public void testEnumEntryIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryIn.kt");
+    @TestMetadata("enumEntryFor.kt")
+    public void testEnumEntryFor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryFor.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumEntryInterface.kt")
-    public void testEnumEntryInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryInterface.kt");
+    @TestMetadata("enumEntryIf.kt")
+    public void testEnumEntryIf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryIf.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumEntryPublic.kt")
-    public void testEnumEntryPublic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryPublic.kt");
+    @TestMetadata("enumEntryPrivate.kt")
+    public void testEnumEntryPrivate() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryPrivate.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumEntryStatic.kt")
-    public void testEnumEntryStatic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryStatic.kt");
+    @TestMetadata("enumEntryProtected.kt")
+    public void testEnumEntryProtected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumEntryProtected.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunContinue.kt")
-    public void testEnumFunContinue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunContinue.kt");
+    @TestMetadata("enumFunBreak.kt")
+    public void testEnumFunBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunBreak.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunDo.kt")
-    public void testEnumFunDo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunDo.kt");
+    @TestMetadata("enumFunClass.kt")
+    public void testEnumFunClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunImport.kt")
-    public void testEnumFunImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunImport.kt");
+    @TestMetadata("enumFunFunction.kt")
+    public void testEnumFunFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunFunction.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunInstanceof.kt")
-    public void testEnumFunInstanceof() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunInstanceof.kt");
+    @TestMetadata("enumFunImplements.kt")
+    public void testEnumFunImplements() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunImplements.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunParamElse.kt")
-    public void testEnumFunParamElse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamElse.kt");
+    @TestMetadata("enumFunParamContinue.kt")
+    public void testEnumFunParamContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamContinue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunParamFalse.kt")
-    public void testEnumFunParamFalse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamFalse.kt");
+    @TestMetadata("enumFunParamDo.kt")
+    public void testEnumFunParamDo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamDo.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunParamLet.kt")
-    public void testEnumFunParamLet() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamLet.kt");
+    @TestMetadata("enumFunParamImport.kt")
+    public void testEnumFunParamImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamImport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumFunParamNew.kt")
-    public void testEnumFunParamNew() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamNew.kt");
+    @TestMetadata("enumFunParamInstanceof.kt")
+    public void testEnumFunParamInstanceof() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumFunParamInstanceof.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumLabelFor.kt")
-    public void testEnumLabelFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelFor.kt");
+    @TestMetadata("enumLabelElse.kt")
+    public void testEnumLabelElse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelElse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumLabelIf.kt")
-    public void testEnumLabelIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelIf.kt");
+    @TestMetadata("enumLabelFalse.kt")
+    public void testEnumLabelFalse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelFalse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumLabelPrivate.kt")
-    public void testEnumLabelPrivate() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelPrivate.kt");
+    @TestMetadata("enumLabelLet.kt")
+    public void testEnumLabelLet() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelLet.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumLabelProtected.kt")
-    public void testEnumLabelProtected() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelProtected.kt");
+    @TestMetadata("enumLabelNew.kt")
+    public void testEnumLabelNew() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumLabelNew.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumValExtends.kt")
-    public void testEnumValExtends() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValExtends.kt");
+    @TestMetadata("enumValEval.kt")
+    public void testEnumValEval() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValEval.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumValFinally.kt")
-    public void testEnumValFinally() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValFinally.kt");
+    @TestMetadata("enumValExport.kt")
+    public void testEnumValExport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValExport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumValVar.kt")
-    public void testEnumValVar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValVar.kt");
+    @TestMetadata("enumValTrue.kt")
+    public void testEnumValTrue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValTrue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumValWhile.kt")
-    public void testEnumValWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValWhile.kt");
+    @TestMetadata("enumValTry.kt")
+    public void testEnumValTry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumValTry.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumVarBreak.kt")
-    public void testEnumVarBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarBreak.kt");
+    @TestMetadata("enumVarExtends.kt")
+    public void testEnumVarExtends() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarExtends.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumVarClass.kt")
-    public void testEnumVarClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarClass.kt");
+    @TestMetadata("enumVarFinally.kt")
+    public void testEnumVarFinally() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarFinally.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumVarFunction.kt")
-    public void testEnumVarFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarFunction.kt");
+    @TestMetadata("enumVarVar.kt")
+    public void testEnumVarVar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarVar.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("enumVarImplements.kt")
-    public void testEnumVarImplements() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarImplements.kt");
+    @TestMetadata("enumVarWhile.kt")
+    public void testEnumVarWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/enumVarWhile.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunAwait.kt")
-    public void testInsideClassFunAwait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunAwait.kt");
+    @TestMetadata("insideClassFunArguments.kt")
+    public void testInsideClassFunArguments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunArguments.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunCase.kt")
-    public void testInsideClassFunCase() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunCase.kt");
+    @TestMetadata("insideClassFunNaN.kt")
+    public void testInsideClassFunNaN() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunNaN.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunParamCatch.kt")
-    public void testInsideClassFunParamCatch() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamCatch.kt");
+    @TestMetadata("insideClassFunParamAwait.kt")
+    public void testInsideClassFunParamAwait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamAwait.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunParamConst.kt")
-    public void testInsideClassFunParamConst() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamConst.kt");
+    @TestMetadata("insideClassFunParamCase.kt")
+    public void testInsideClassFunParamCase() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamCase.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunParamVar.kt")
-    public void testInsideClassFunParamVar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamVar.kt");
+    @TestMetadata("insideClassFunParamTrue.kt")
+    public void testInsideClassFunParamTrue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamTrue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunParamWhile.kt")
-    public void testInsideClassFunParamWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamWhile.kt");
+    @TestMetadata("insideClassFunParamTry.kt")
+    public void testInsideClassFunParamTry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunParamTry.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunTrue.kt")
-    public void testInsideClassFunTrue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunTrue.kt");
+    @TestMetadata("insideClassFunThis.kt")
+    public void testInsideClassFunThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunThis.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassFunTry.kt")
-    public void testInsideClassFunTry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunTry.kt");
+    @TestMetadata("insideClassFunThrow.kt")
+    public void testInsideClassFunThrow() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassFunThrow.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassLabelBreak.kt")
-    public void testInsideClassLabelBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelBreak.kt");
+    @TestMetadata("insideClassLabelCatch.kt")
+    public void testInsideClassLabelCatch() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelCatch.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassLabelClass.kt")
-    public void testInsideClassLabelClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelClass.kt");
+    @TestMetadata("insideClassLabelConst.kt")
+    public void testInsideClassLabelConst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelConst.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassLabelDebugger.kt")
-    public void testInsideClassLabelDebugger() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelDebugger.kt");
+    @TestMetadata("insideClassLabelVar.kt")
+    public void testInsideClassLabelVar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelVar.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassLabelDefault.kt")
-    public void testInsideClassLabelDefault() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelDefault.kt");
+    @TestMetadata("insideClassLabelWhile.kt")
+    public void testInsideClassLabelWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassLabelWhile.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunExtends.kt")
-    public void testInsideClassObjectFunExtends() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunExtends.kt");
+    @TestMetadata("insideClassObjectFunElse.kt")
+    public void testInsideClassObjectFunElse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunElse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunFinally.kt")
-    public void testInsideClassObjectFunFinally() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunFinally.kt");
+    @TestMetadata("insideClassObjectFunEval.kt")
+    public void testInsideClassObjectFunEval() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunEval.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunFor.kt")
-    public void testInsideClassObjectFunFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunFor.kt");
+    @TestMetadata("insideClassObjectFunExport.kt")
+    public void testInsideClassObjectFunExport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunExport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunIf.kt")
-    public void testInsideClassObjectFunIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunIf.kt");
+    @TestMetadata("insideClassObjectFunFalse.kt")
+    public void testInsideClassObjectFunFalse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunFalse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunParamFunction.kt")
-    public void testInsideClassObjectFunParamFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamFunction.kt");
+    @TestMetadata("insideClassObjectFunParamExtends.kt")
+    public void testInsideClassObjectFunParamExtends() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamExtends.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunParamImplements.kt")
-    public void testInsideClassObjectFunParamImplements() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamImplements.kt");
+    @TestMetadata("insideClassObjectFunParamFinally.kt")
+    public void testInsideClassObjectFunParamFinally() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamFinally.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunParamIn.kt")
-    public void testInsideClassObjectFunParamIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamIn.kt");
+    @TestMetadata("insideClassObjectFunParamFor.kt")
+    public void testInsideClassObjectFunParamFor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamFor.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectFunParamInterface.kt")
-    public void testInsideClassObjectFunParamInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamInterface.kt");
+    @TestMetadata("insideClassObjectFunParamIf.kt")
+    public void testInsideClassObjectFunParamIf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectFunParamIf.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectLabelImport.kt")
-    public void testInsideClassObjectLabelImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelImport.kt");
+    @TestMetadata("insideClassObjectLabelFunction.kt")
+    public void testInsideClassObjectLabelFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelFunction.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectLabelInstanceof.kt")
-    public void testInsideClassObjectLabelInstanceof() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelInstanceof.kt");
+    @TestMetadata("insideClassObjectLabelImplements.kt")
+    public void testInsideClassObjectLabelImplements() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelImplements.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectLabelNull.kt")
-    public void testInsideClassObjectLabelNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelNull.kt");
+    @TestMetadata("insideClassObjectLabelIn.kt")
+    public void testInsideClassObjectLabelIn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelIn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectLabelPackage.kt")
-    public void testInsideClassObjectLabelPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelPackage.kt");
+    @TestMetadata("insideClassObjectLabelInterface.kt")
+    public void testInsideClassObjectLabelInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectLabelInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectValContinue.kt")
-    public void testInsideClassObjectValContinue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValContinue.kt");
+    @TestMetadata("insideClassObjectValBreak.kt")
+    public void testInsideClassObjectValBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValBreak.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectValDelete.kt")
-    public void testInsideClassObjectValDelete() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValDelete.kt");
+    @TestMetadata("insideClassObjectValClass.kt")
+    public void testInsideClassObjectValClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectValDo.kt")
-    public void testInsideClassObjectValDo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValDo.kt");
+    @TestMetadata("insideClassObjectValDebugger.kt")
+    public void testInsideClassObjectValDebugger() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValDebugger.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectValEnum.kt")
-    public void testInsideClassObjectValEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValEnum.kt");
+    @TestMetadata("insideClassObjectValDefault.kt")
+    public void testInsideClassObjectValDefault() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectValDefault.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectVarElse.kt")
-    public void testInsideClassObjectVarElse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarElse.kt");
+    @TestMetadata("insideClassObjectVarContinue.kt")
+    public void testInsideClassObjectVarContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarContinue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectVarEval.kt")
-    public void testInsideClassObjectVarEval() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarEval.kt");
+    @TestMetadata("insideClassObjectVarDelete.kt")
+    public void testInsideClassObjectVarDelete() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarDelete.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectVarExport.kt")
-    public void testInsideClassObjectVarExport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarExport.kt");
+    @TestMetadata("insideClassObjectVarDo.kt")
+    public void testInsideClassObjectVarDo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarDo.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassObjectVarFalse.kt")
-    public void testInsideClassObjectVarFalse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarFalse.kt");
+    @TestMetadata("insideClassObjectVarEnum.kt")
+    public void testInsideClassObjectVarEnum() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassObjectVarEnum.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassValInfinity.kt")
-    public void testInsideClassValInfinity() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValInfinity.kt");
+    @TestMetadata("insideClassValNull.kt")
+    public void testInsideClassValNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValNull.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassValKotlin.kt")
-    public void testInsideClassValKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValKotlin.kt");
+    @TestMetadata("insideClassValPackage.kt")
+    public void testInsideClassValPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValPackage.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassValReturn.kt")
-    public void testInsideClassValReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValReturn.kt");
+    @TestMetadata("insideClassValWith.kt")
+    public void testInsideClassValWith() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValWith.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassValSuper.kt")
-    public void testInsideClassValSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValSuper.kt");
+    @TestMetadata("insideClassValYield.kt")
+    public void testInsideClassValYield() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassValYield.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassVarArguments.kt")
-    public void testInsideClassVarArguments() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarArguments.kt");
+    @TestMetadata("insideClassVarInfinity.kt")
+    public void testInsideClassVarInfinity() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarInfinity.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassVarNaN.kt")
-    public void testInsideClassVarNaN() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarNaN.kt");
+    @TestMetadata("insideClassVarKotlin.kt")
+    public void testInsideClassVarKotlin() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarKotlin.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassVarThis.kt")
-    public void testInsideClassVarThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarThis.kt");
+    @TestMetadata("insideClassVarReturn.kt")
+    public void testInsideClassVarReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarReturn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideClassVarThrow.kt")
-    public void testInsideClassVarThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarThrow.kt");
+    @TestMetadata("insideClassVarSuper.kt")
+    public void testInsideClassVarSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideClassVarSuper.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunParamSwitch.kt")
-    public void testInsideObjectFunParamSwitch() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamSwitch.kt");
+    @TestMetadata("insideObjectFunParamPublic.kt")
+    public void testInsideObjectFunParamPublic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamPublic.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunParamTypeof.kt")
-    public void testInsideObjectFunParamTypeof() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamTypeof.kt");
+    @TestMetadata("insideObjectFunParamStatic.kt")
+    public void testInsideObjectFunParamStatic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamStatic.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunParamVar.kt")
-    public void testInsideObjectFunParamVar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamVar.kt");
+    @TestMetadata("insideObjectFunParamTrue.kt")
+    public void testInsideObjectFunParamTrue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamTrue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunParamWhile.kt")
-    public void testInsideObjectFunParamWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamWhile.kt");
+    @TestMetadata("insideObjectFunParamTry.kt")
+    public void testInsideObjectFunParamTry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunParamTry.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunPublic.kt")
-    public void testInsideObjectFunPublic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunPublic.kt");
+    @TestMetadata("insideObjectFunPrivate.kt")
+    public void testInsideObjectFunPrivate() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunPrivate.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunStatic.kt")
-    public void testInsideObjectFunStatic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunStatic.kt");
+    @TestMetadata("insideObjectFunProtected.kt")
+    public void testInsideObjectFunProtected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunProtected.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunTrue.kt")
-    public void testInsideObjectFunTrue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunTrue.kt");
+    @TestMetadata("insideObjectFunThis.kt")
+    public void testInsideObjectFunThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunThis.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectFunTry.kt")
-    public void testInsideObjectFunTry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunTry.kt");
+    @TestMetadata("insideObjectFunThrow.kt")
+    public void testInsideObjectFunThrow() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectFunThrow.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectLabelBreak.kt")
-    public void testInsideObjectLabelBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelBreak.kt");
+    @TestMetadata("insideObjectLabelSwitch.kt")
+    public void testInsideObjectLabelSwitch() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelSwitch.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectLabelClass.kt")
-    public void testInsideObjectLabelClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelClass.kt");
+    @TestMetadata("insideObjectLabelTypeof.kt")
+    public void testInsideObjectLabelTypeof() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelTypeof.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectLabelUndefined.kt")
-    public void testInsideObjectLabelUndefined() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelUndefined.kt");
+    @TestMetadata("insideObjectLabelVar.kt")
+    public void testInsideObjectLabelVar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelVar.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectLabelVoid.kt")
-    public void testInsideObjectLabelVoid() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelVoid.kt");
+    @TestMetadata("insideObjectLabelWhile.kt")
+    public void testInsideObjectLabelWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectLabelWhile.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectValLet.kt")
-    public void testInsideObjectValLet() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValLet.kt");
+    @TestMetadata("insideObjectValImport.kt")
+    public void testInsideObjectValImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValImport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectValNew.kt")
-    public void testInsideObjectValNew() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValNew.kt");
+    @TestMetadata("insideObjectValInstanceof.kt")
+    public void testInsideObjectValInstanceof() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValInstanceof.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectValReturn.kt")
-    public void testInsideObjectValReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValReturn.kt");
+    @TestMetadata("insideObjectValNull.kt")
+    public void testInsideObjectValNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValNull.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectValSuper.kt")
-    public void testInsideObjectValSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValSuper.kt");
+    @TestMetadata("insideObjectValPackage.kt")
+    public void testInsideObjectValPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectValPackage.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectVarPrivate.kt")
-    public void testInsideObjectVarPrivate() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarPrivate.kt");
+    @TestMetadata("insideObjectVarLet.kt")
+    public void testInsideObjectVarLet() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarLet.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectVarProtected.kt")
-    public void testInsideObjectVarProtected() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarProtected.kt");
+    @TestMetadata("insideObjectVarNew.kt")
+    public void testInsideObjectVarNew() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarNew.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectVarThis.kt")
-    public void testInsideObjectVarThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarThis.kt");
+    @TestMetadata("insideObjectVarReturn.kt")
+    public void testInsideObjectVarReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarReturn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("insideObjectVarThrow.kt")
-    public void testInsideObjectVarThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarThrow.kt");
+    @TestMetadata("insideObjectVarSuper.kt")
+    public void testInsideObjectVarSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/insideObjectVarSuper.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localCatchNull.kt")
-    public void testLocalCatchNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchNull.kt");
+    @TestMetadata("localCatchIn.kt")
+    public void testLocalCatchIn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchIn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localCatchPackage.kt")
-    public void testLocalCatchPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchPackage.kt");
+    @TestMetadata("localCatchInterface.kt")
+    public void testLocalCatchInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localCatchWith.kt")
-    public void testLocalCatchWith() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchWith.kt");
+    @TestMetadata("localCatchUndefined.kt")
+    public void testLocalCatchUndefined() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchUndefined.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localCatchYield.kt")
-    public void testLocalCatchYield() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchYield.kt");
+    @TestMetadata("localCatchVoid.kt")
+    public void testLocalCatchVoid() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localCatchVoid.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunElse.kt")
-    public void testLocalFunElse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunElse.kt");
+    @TestMetadata("localFunContinue.kt")
+    public void testLocalFunContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunContinue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunFalse.kt")
-    public void testLocalFunFalse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunFalse.kt");
+    @TestMetadata("localFunDo.kt")
+    public void testLocalFunDo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunDo.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunParamFor.kt")
-    public void testLocalFunParamFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamFor.kt");
+    @TestMetadata("localFunParamElse.kt")
+    public void testLocalFunParamElse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamElse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunParamIf.kt")
-    public void testLocalFunParamIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamIf.kt");
+    @TestMetadata("localFunParamFalse.kt")
+    public void testLocalFunParamFalse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamFalse.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunParamSwitch.kt")
-    public void testLocalFunParamSwitch() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamSwitch.kt");
+    @TestMetadata("localFunParamPublic.kt")
+    public void testLocalFunParamPublic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamPublic.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunParamTypeof.kt")
-    public void testLocalFunParamTypeof() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamTypeof.kt");
+    @TestMetadata("localFunParamStatic.kt")
+    public void testLocalFunParamStatic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunParamStatic.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunPublic.kt")
-    public void testLocalFunPublic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunPublic.kt");
+    @TestMetadata("localFunPrivate.kt")
+    public void testLocalFunPrivate() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunPrivate.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localFunStatic.kt")
-    public void testLocalFunStatic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunStatic.kt");
+    @TestMetadata("localFunProtected.kt")
+    public void testLocalFunProtected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localFunProtected.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localLabelIn.kt")
-    public void testLocalLabelIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelIn.kt");
+    @TestMetadata("localLabelFor.kt")
+    public void testLocalLabelFor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelFor.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localLabelInterface.kt")
-    public void testLocalLabelInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelInterface.kt");
+    @TestMetadata("localLabelIf.kt")
+    public void testLocalLabelIf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelIf.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localLabelUndefined.kt")
-    public void testLocalLabelUndefined() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelUndefined.kt");
+    @TestMetadata("localLabelSwitch.kt")
+    public void testLocalLabelSwitch() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelSwitch.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localLabelVoid.kt")
-    public void testLocalLabelVoid() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelVoid.kt");
+    @TestMetadata("localLabelTypeof.kt")
+    public void testLocalLabelTypeof() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localLabelTypeof.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localValBreak.kt")
-    public void testLocalValBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValBreak.kt");
+    @TestMetadata("localValImport.kt")
+    public void testLocalValImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValImport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localValClass.kt")
-    public void testLocalValClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValClass.kt");
+    @TestMetadata("localValInstanceof.kt")
+    public void testLocalValInstanceof() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValInstanceof.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localValLet.kt")
-    public void testLocalValLet() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValLet.kt");
+    @TestMetadata("localValVar.kt")
+    public void testLocalValVar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValVar.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localValNew.kt")
-    public void testLocalValNew() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValNew.kt");
+    @TestMetadata("localValWhile.kt")
+    public void testLocalValWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localValWhile.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localVarContinue.kt")
-    public void testLocalVarContinue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarContinue.kt");
+    @TestMetadata("localVarBreak.kt")
+    public void testLocalVarBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarBreak.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localVarDo.kt")
-    public void testLocalVarDo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarDo.kt");
+    @TestMetadata("localVarClass.kt")
+    public void testLocalVarClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localVarPrivate.kt")
-    public void testLocalVarPrivate() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarPrivate.kt");
+    @TestMetadata("localVarLet.kt")
+    public void testLocalVarLet() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarLet.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localVarProtected.kt")
-    public void testLocalVarProtected() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarProtected.kt");
+    @TestMetadata("localVarNew.kt")
+    public void testLocalVarNew() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/localVarNew.kt");
         doTest(fileName);
     }
 
@@ -899,27 +899,27 @@ public class ReservedWordTestGenerated extends AbstractReservedWordTest {
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelEnumFunction.kt")
-    public void testToplevelEnumFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumFunction.kt");
+    @TestMetadata("toplevelEnumExtends.kt")
+    public void testToplevelEnumExtends() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumExtends.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelEnumImplements.kt")
-    public void testToplevelEnumImplements() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumImplements.kt");
+    @TestMetadata("toplevelEnumFinally.kt")
+    public void testToplevelEnumFinally() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumFinally.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelEnumTrue.kt")
-    public void testToplevelEnumTrue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumTrue.kt");
+    @TestMetadata("toplevelEnumThis.kt")
+    public void testToplevelEnumThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumThis.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelEnumTry.kt")
-    public void testToplevelEnumTry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumTry.kt");
+    @TestMetadata("toplevelEnumThrow.kt")
+    public void testToplevelEnumThrow() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelEnumThrow.kt");
         doTest(fileName);
     }
 
@@ -971,27 +971,27 @@ public class ReservedWordTestGenerated extends AbstractReservedWordTest {
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelInterfaceExtends.kt")
-    public void testToplevelInterfaceExtends() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceExtends.kt");
+    @TestMetadata("toplevelInterfaceEval.kt")
+    public void testToplevelInterfaceEval() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceEval.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelInterfaceFinally.kt")
-    public void testToplevelInterfaceFinally() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceFinally.kt");
+    @TestMetadata("toplevelInterfaceExport.kt")
+    public void testToplevelInterfaceExport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceExport.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelInterfaceThis.kt")
-    public void testToplevelInterfaceThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceThis.kt");
+    @TestMetadata("toplevelInterfaceReturn.kt")
+    public void testToplevelInterfaceReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceReturn.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelInterfaceThrow.kt")
-    public void testToplevelInterfaceThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceThrow.kt");
+    @TestMetadata("toplevelInterfaceSuper.kt")
+    public void testToplevelInterfaceSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelInterfaceSuper.kt");
         doTest(fileName);
     }
 
@@ -1019,51 +1019,27 @@ public class ReservedWordTestGenerated extends AbstractReservedWordTest {
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelObjectImport.kt")
-    public void testToplevelObjectImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectImport.kt");
+    @TestMetadata("toplevelObjectFunction.kt")
+    public void testToplevelObjectFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectFunction.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelObjectInstanceof.kt")
-    public void testToplevelObjectInstanceof() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectInstanceof.kt");
+    @TestMetadata("toplevelObjectImplements.kt")
+    public void testToplevelObjectImplements() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectImplements.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelObjectVar.kt")
-    public void testToplevelObjectVar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectVar.kt");
+    @TestMetadata("toplevelObjectTrue.kt")
+    public void testToplevelObjectTrue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectTrue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toplevelObjectWhile.kt")
-    public void testToplevelObjectWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectWhile.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("toplevelTraitEval.kt")
-    public void testToplevelTraitEval() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelTraitEval.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("toplevelTraitExport.kt")
-    public void testToplevelTraitExport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelTraitExport.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("toplevelTraitReturn.kt")
-    public void testToplevelTraitReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelTraitReturn.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("toplevelTraitSuper.kt")
-    public void testToplevelTraitSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelTraitSuper.kt");
+    @TestMetadata("toplevelObjectTry.kt")
+    public void testToplevelObjectTry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/toplevelObjectTry.kt");
         doTest(fileName);
     }
 
