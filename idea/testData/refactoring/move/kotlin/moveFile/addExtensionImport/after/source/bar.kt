@@ -1,6 +1,6 @@
 package source
 
-import target.C
+import bas.C
 
 fun C.foo() {
 

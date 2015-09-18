@@ -5,7 +5,7 @@ class a {
     }
 }
 
-<selection>fun f(i: a) {
+<selection>fun f(i: a) { // todo must be i: a
     a
     a()
 }</selection>

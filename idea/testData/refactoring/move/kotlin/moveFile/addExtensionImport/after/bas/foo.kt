@@ -1,4 +1,4 @@
-package target
+package bas
 
 import source.foo
 
