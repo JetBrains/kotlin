@@ -12,7 +12,7 @@ class Creature() {
         var bbb : Int
 
         init {
-            $bbb = 1
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$bbb<!> = 1
         }
     }
 
@@ -20,7 +20,7 @@ class Creature() {
         var ccc : Int
 
         init {
-            $ccc = 2
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$ccc<!> = 2
         }
     }
 

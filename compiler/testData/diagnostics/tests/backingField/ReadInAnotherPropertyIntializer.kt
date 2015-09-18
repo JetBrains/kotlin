@@ -1,4 +1,4 @@
 class ReadByAnotherPropertyInitializer() {
     val a = 1
-    val b = $a
+    val b = <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!>
 }

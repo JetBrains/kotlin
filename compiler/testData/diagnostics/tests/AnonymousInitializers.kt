@@ -13,7 +13,7 @@ interface NoC {
 class WithC() {
   val x : Int
   init {
-    $x = 1
+    <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
     <!UNRESOLVED_REFERENCE!>$y<!> = 2
     val <!UNUSED_VARIABLE!>b<!> = x
 

@@ -113,16 +113,16 @@ val z = 10
 
 class AnonymousInitializers(var a: String, val b: String) {
     init {
-        $a = "30"
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!> = "30"
         a = "s"
 
-        <!VAL_REASSIGNMENT!>$b<!> = "3"
+        <!BACKING_FIELD_USAGE_DEPRECATED, VAL_REASSIGNMENT!>$b<!> = "3"
         b = "tt" //repeat for b
     }
 
     val i: Int
     init {
-        $i = 121
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$i<!> = 121
     }
 
     init {
@@ -134,7 +134,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     get() = 20
 
     init {
-        <!VAL_REASSIGNMENT!>$i<!> = 13
+        <!BACKING_FIELD_USAGE_DEPRECATED, VAL_REASSIGNMENT!>$i<!> = 13
         <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$j<!> = 30
         <!VAL_REASSIGNMENT!>j<!> = 34
     }
@@ -145,31 +145,31 @@ class AnonymousInitializers(var a: String, val b: String) {
             k = "a"
         }
         else {
-            $k = "b"
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$k<!> = "b"
         }
     }
 
     val l: String
     init {
         if (1 < 3) {
-            $l = "a"
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$l<!> = "a"
         }
         else {
-            $l = "b"
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$l<!> = "b"
         }
     }
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val o: String<!>
     init {
         if (1 < 3) {
-            $o = "a"
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$o<!> = "a"
         }
     }
 
     var m: Int = 30
 
     init {
-        $m = 400
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$m<!> = 400
     }
 
     val n: Int
@@ -177,7 +177,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     init {
         while (<!UNINITIALIZED_VARIABLE!>n<!> == 0) {
         }
-        $n = 10
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$n<!> = 10
         while (n == 0) {
         }
     }
@@ -198,7 +198,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
-        $x = 1
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
         val <!UNUSED_VARIABLE!>b<!> = x
     }
     val b = a
@@ -214,7 +214,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     var yy : Int
     init {
         <!VAL_REASSIGNMENT!>w<!> += 1
-        $yy = w
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$yy<!> = w
     }
 }
 
@@ -223,8 +223,8 @@ class Outer() {
     var b : Int
 
     init {
-        $a = 1
-        $b = 1
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!> = 1
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$b<!> = 1
     }
 
     inner class Inner() {
@@ -242,7 +242,7 @@ class Outer() {
 
 class ForwardAccessToBackingField() { //kt-147
     val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>$a<!> // error
-    val b = <!UNINITIALIZED_VARIABLE!>$c<!> // error
+    val b = <!BACKING_FIELD_USAGE_DEPRECATED, UNINITIALIZED_VARIABLE!>$c<!> // error
     val c = 1
 }
 
@@ -251,7 +251,7 @@ class ClassObject() {
         val x : Int
 
         init {
-            $x = 1
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
         }
 
 
@@ -268,8 +268,8 @@ fun foo() {
         <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
         val z : Int
         init {
-            $x = 1
-            $z = 3
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$z<!> = 3
         }
         fun foo() {
             <!VAL_REASSIGNMENT!>y<!> = 10
@@ -288,7 +288,7 @@ class TestObjectExpression() {
                 if (true)
                     x = 12
                 else
-                    $x = 1
+                    <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
             }
             fun inner1() {
                 <!VAL_REASSIGNMENT!>y<!> = 101
@@ -308,7 +308,7 @@ object TestObjectDeclaration {
     val x : Int
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
-        $x = 1
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
     }
 
     fun foo() {

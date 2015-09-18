@@ -557,6 +557,9 @@ public class JetFlowInformationProvider {
         DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
         if ((containingDeclaration instanceof ClassDescriptor)
                 && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
+            if (element instanceof JetSimpleNameExpression) {
+                report(Errors.BACKING_FIELD_USAGE_DEPRECATED.on((JetSimpleNameExpression) element), cxtx);
+            }
             return false;
         }
         report(Errors.INACCESSIBLE_BACKING_FIELD.on(element), cxtx);
