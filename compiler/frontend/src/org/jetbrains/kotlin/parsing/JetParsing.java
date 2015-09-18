@@ -46,7 +46,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
-            TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
+            TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
             FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet DECLARATION_FIRST = TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                                                      TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD));
@@ -399,7 +399,7 @@ public class JetParsing extends AbstractJetParsing {
 //            declType = parsePackageBlock();
 //        }
 //        else
-        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(detector.isEnumDetected(), TOP_LEVEL);
         }
         else if (keywordToken == FUN_KEYWORD) {
@@ -774,9 +774,9 @@ public class JetParsing extends AbstractJetParsing {
             assert _at(OBJECT_KEYWORD);
         }
         else {
-            assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD);
+            assert _atSet(CLASS_KEYWORD, INTERFACE_KEYWORD);
         }
-        advance(); // CLASS_KEYWORD, TRAIT_KEYWORD or OBJECT_KEYWORD
+        advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
             OptionalMarker marker = new OptionalMarker(object);
@@ -1068,7 +1068,7 @@ public class JetParsing extends AbstractJetParsing {
     private IElementType parseMemberDeclarationRest(boolean isEnum, boolean isDefault) {
         IElementType keywordToken = tt();
         IElementType declType = null;
-        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(isEnum, CLASS_MEMBER);
         }
         else if (keywordToken == FUN_KEYWORD) {

@@ -1,6 +1,6 @@
 package foo
 
-trait Base {
+interface Base {
     var prop: String
     var Int.foo: String
 }

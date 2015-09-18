@@ -127,7 +127,7 @@ public fun A.boo(): Int = 2
 val public_ext_f = { A.(): Int -> this.foo() + this.foo }
 val public_ext_b = { A.(): Int -> this.boo() + this.boo }
 
-trait TestPublicInTrait {
+interface TestPublicInTrait {
     public fun foo(): Int = 2
     public val foo: Int
     public val boo: Int
@@ -137,7 +137,7 @@ trait TestPublicInTrait {
 val public_in_trait_f = { obj: TestPublicInTrait -> obj.foo() + obj.foo }
 val public_in_trait_b = { obj: TestPublicInTrait -> obj.boo() + obj.boo }
 
-trait TestInternalInTrait {
+interface TestInternalInTrait {
     fun foo(): Int = 2
     val foo: Int
     val boo: Int

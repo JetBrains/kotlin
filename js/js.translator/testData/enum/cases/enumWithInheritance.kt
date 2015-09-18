@@ -14,7 +14,7 @@ enum class B(open val bar: Int) {
     var y = 12;
 }
 
-trait X {
+interface X {
     val foo: Int
     fun bar(): Int {
         return foo;

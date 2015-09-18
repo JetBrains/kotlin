@@ -1,6 +1,6 @@
-trait A
-trait B : A
-trait C
+interface A
+interface B : A
+interface C
 
 fun foo(a: A?){}
 fun foo(c: C?){}

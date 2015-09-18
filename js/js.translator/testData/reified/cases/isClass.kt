@@ -2,8 +2,8 @@ package foo
 
 // CHECK_NOT_CALLED: isInstance
 
-trait A
-trait B
+interface A
+interface B
 
 open class C : A, B
 

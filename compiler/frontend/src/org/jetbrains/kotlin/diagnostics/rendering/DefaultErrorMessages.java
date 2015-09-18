@@ -280,7 +280,6 @@ public class DefaultErrorMessages {
 
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
-        MAP.put(DEPRECATED_TRAIT_KEYWORD, "'trait' keyword is deprecated, use 'interface' instead");
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");

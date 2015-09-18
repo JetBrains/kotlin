@@ -1,2 +1,2 @@
 //statement
-when(open, trait);
+when(open);

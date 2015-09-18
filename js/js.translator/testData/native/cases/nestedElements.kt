@@ -116,7 +116,7 @@ object Object {
         }
     }
 
-    trait Trait {
+    interface Trait {
         val a: String
         var b: String
         fun test(): Int = noImpl
@@ -157,7 +157,7 @@ class Class {
         fun test(): Int = noImpl
     }
 
-    trait Trait {
+    interface Trait {
         val a: String
         var b: String
         fun test(): Int = noImpl
@@ -178,7 +178,7 @@ class Class {
 }
 
 @native
-trait Trait {
+interface Trait {
     @native("SomeObject")
     object Object {
         val a: String = noImpl
@@ -198,7 +198,7 @@ trait Trait {
     }
 
     @native("SomeTrait")
-    trait Trait {
+    interface Trait {
         val a: String
         var b: String
         fun test(): Int = noImpl

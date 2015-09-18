@@ -1,8 +1,8 @@
 import java.util.ArrayList
 
-trait A
-trait B : A
-trait C
+interface A
+interface B : A
+interface C
 
 fun foo(a: A,  cA: Collection<A>, cB: Collection<B>, cC: Collection<C>, cAny: Collection<Any>,
         lA: List<A>, lb: List<B>, lC: List<C>, lAny: List<Any>,

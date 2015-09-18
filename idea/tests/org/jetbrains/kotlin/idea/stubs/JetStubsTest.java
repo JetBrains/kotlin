@@ -46,7 +46,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testClassIsTrait() {
-        PsiFile psiFile = myFixture.configureByText("foo.kt", "trait Test { }");
+        PsiFile psiFile = myFixture.configureByText("foo.kt", "interface Test { }");
         List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
         JetClass jetClass = (JetClass) declarations.get(0);
         KotlinClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);

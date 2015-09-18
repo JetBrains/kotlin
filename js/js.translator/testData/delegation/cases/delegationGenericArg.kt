@@ -1,7 +1,7 @@
 // This test was adapted from compiler/testData/codegen/box/classes
 package foo
 
-trait A<T> {
+interface A<T> {
     fun foo(t: T): String
 }
 

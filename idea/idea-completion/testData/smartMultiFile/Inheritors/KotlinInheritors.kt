@@ -1,6 +1,6 @@
 package p2
 
-trait KotlinTrait
+interface KotlinTrait
 
 open class KotlinInheritor1 : KotlinTrait
 

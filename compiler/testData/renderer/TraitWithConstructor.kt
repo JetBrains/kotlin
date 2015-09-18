@@ -1,10 +1,10 @@
-trait A1() {
+interface  A1() {
     constructor(x: Int = "", y: Int) : this() {
         x + y
     }
 }
 
-trait A2 private constructor(private val prop: Int) {
+interface  A2 private constructor(private val prop: Int) {
     constructor(x: Int = "", y: Int) : this(x * y) {
         x + y
     }

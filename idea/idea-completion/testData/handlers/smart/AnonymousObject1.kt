@@ -1,4 +1,4 @@
-trait Foo
+interface Foo
 
 var a : Foo = <caret>
 

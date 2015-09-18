@@ -1,6 +1,6 @@
 package foo
 
-trait Getter<T> {
+interface Getter<T> {
     fun get(): T
 }
 

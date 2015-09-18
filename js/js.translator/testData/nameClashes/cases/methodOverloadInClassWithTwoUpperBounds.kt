@@ -1,7 +1,7 @@
 package foo
 
-trait TraitA
-trait TraitB
+interface TraitA
+interface TraitB
 
 public open abstract class Node<T : TraitA>() where T : TraitB {
     public abstract fun bar(arg: T): String

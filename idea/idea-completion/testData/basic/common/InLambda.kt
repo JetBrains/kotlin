@@ -2,7 +2,7 @@ fun foo(p: Iterable<D>) {
     p.filter { it.<caret> }
 }
 
-trait D {
+interface D {
     fun bar()
 }
 

@@ -3,7 +3,7 @@ package foo
 
 open class A
 
-trait B
+interface B
 
 class C : A(), B
 

@@ -4,7 +4,7 @@ import kotlin.js.dom.html.HTMLElement
 import org.w3c.dom.Element
 
 @Deprecated("Use declarations from org.w3c.dom instead")
-public @native trait HTMLCanvasElement : HTMLElement {
+public @native interface HTMLCanvasElement : HTMLElement {
     public var width: Double
     public var height: Double
     public fun getContext(contextId: String, vararg attributes: Any): CanvasContext?
@@ -14,7 +14,7 @@ public @native trait HTMLCanvasElement : HTMLElement {
 }
 
 @Deprecated("Use declarations from org.w3c.dom instead. See CanvasRenderingContext2D")
-public @native trait CanvasContext {
+public @native interface CanvasContext {
     public var canvas: HTMLCanvasElement
     public fun save(): Unit
     public fun restore(): Unit
@@ -79,23 +79,23 @@ public @native trait CanvasContext {
 }
 
 @Deprecated("Use declarations from org.w3c.dom instead")
-public @native trait CanvasGradient {
+public @native interface CanvasGradient {
     public fun addColorStop(offset: Number, color: String): Unit
 }
 
 @Deprecated("Use declarations from org.w3c.dom instead")
-public @native trait ImageData {
+public @native interface ImageData {
     public var data: CanvasPixelArray
     public var width: Double
     public var height: Double
 }
 
-public @native trait CanvasPixelArray {
+public @native interface CanvasPixelArray {
     public var length: Double
 }
 
 @Deprecated("Use declarations from org.w3c.dom instead")
-public @native trait TextMetrics {
+public @native interface TextMetrics {
     public var width: Double
 }
 

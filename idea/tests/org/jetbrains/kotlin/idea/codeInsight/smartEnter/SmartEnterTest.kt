@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.smartEnter
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.actionSystem.IdeActions
-import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 
 class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
     fun testIfCondition() = doFunTest(
@@ -878,13 +878,13 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
 
     fun testFunBody3() = doFileTest(
             """
-            trait Some {
+            interface Some {
                 fun (<caret>p: Int)
             }
             """
             ,
             """
-            trait Some {
+            interface Some {
                 fun(p: Int)
                 <caret>
             }

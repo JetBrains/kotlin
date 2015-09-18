@@ -1,10 +1,10 @@
 package foo
 
-public trait A {
+public interface A {
     fun foo() {
     }
 }
-public trait B : A {
+public interface B : A {
     fun boo() {
     }
 }

@@ -1,4 +1,4 @@
-trait KTrait : Simple {
+interface KTrait : Simple {
     fun bar(): String {
         return test("O") + Simple.testStatic("O")
     }

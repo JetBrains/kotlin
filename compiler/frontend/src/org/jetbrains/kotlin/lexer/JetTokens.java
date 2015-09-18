@@ -72,7 +72,6 @@ public interface JetTokens {
     JetKeywordToken WHILE_KEYWORD            = JetKeywordToken.keyword("while");
     JetKeywordToken DO_KEYWORD               = JetKeywordToken.keyword("do");
     JetKeywordToken WHEN_KEYWORD             = JetKeywordToken.keyword("when");
-    JetKeywordToken TRAIT_KEYWORD            = JetKeywordToken.keyword("trait");
     JetKeywordToken INTERFACE_KEYWORD        = JetKeywordToken.keyword("interface");
     // TODO: Discuss "This" keyword
     JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
@@ -178,7 +177,7 @@ public interface JetTokens {
     JetModifierKeywordToken ANNOTATION_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("annotation");
     JetModifierKeywordToken CROSSINLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("crossinline");
 
-    TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD,
+    TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, INTERFACE_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
                                         NULL_KEYWORD,
                                         TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,

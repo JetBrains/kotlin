@@ -1,4 +1,4 @@
-trait Foo{
+interface Foo{
     fun foo1() : String
     fun foo2() : Object
     val prop : String

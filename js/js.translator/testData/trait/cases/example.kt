@@ -1,6 +1,6 @@
 package foo
 
-trait AL {
+interface AL {
     fun get(index: Int): Any? = null
 }
 

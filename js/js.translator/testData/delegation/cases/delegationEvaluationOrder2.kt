@@ -1,6 +1,6 @@
 package foo
 
-trait Base {
+interface Base {
     abstract fun foo(x: String): String
 }
 
@@ -8,7 +8,7 @@ class BaseImpl(val s: String) : Base {
     override fun foo(x: String): String = "Base: ${s}:${x}"
 }
 
-trait Base2 {
+interface Base2 {
     abstract fun bar(x: String): String
 }
 

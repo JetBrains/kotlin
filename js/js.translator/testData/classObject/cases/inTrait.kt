@@ -1,6 +1,6 @@
 package foo
 
-trait A {
+interface A {
     companion object {
         val OK: String = "OK"
     }

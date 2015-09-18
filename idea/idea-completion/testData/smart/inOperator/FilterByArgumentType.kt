@@ -1,12 +1,12 @@
-trait X {
+interface X {
     fun contains(s: String): Boolean
 }
 
-trait Y {
+interface Y {
     fun contains(i: Int): Boolean
 }
 
-trait Z {
+interface Z {
     fun contains(o: Any): Boolean
 }
 

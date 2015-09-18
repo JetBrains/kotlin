@@ -2,7 +2,7 @@
 
 package foo
 
-trait Holder {
+interface Holder {
     val element: String
 }
 
