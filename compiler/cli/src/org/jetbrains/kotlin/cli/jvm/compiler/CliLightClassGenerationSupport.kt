@@ -181,7 +181,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
 
     public class NoScopeRecordCliBindingTrace : CliBindingTrace() {
         override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
-            if (slice === BindingContext.RESOLUTION_SCOPE || slice === BindingContext.TYPE_RESOLUTION_SCOPE || slice === BindingContext.LEXICAL_SCOPE) {
+            if (slice === BindingContext.RESOLUTION_SCOPE || slice === BindingContext.LEXICAL_SCOPE) {
                 // In the compiler there's no need to keep scopes
                 return
             }

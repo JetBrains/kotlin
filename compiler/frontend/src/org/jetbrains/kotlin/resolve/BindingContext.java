@@ -137,12 +137,8 @@ public interface BindingContext {
 
     WritableSlice<JetWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 
-    /**
-     * A scope where type of expression has been resolved
-     */
-    WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
     @Deprecated WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
+    WritableSlice<JetElement, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
 
     WritableSlice<ScriptDescriptor, JetScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
 

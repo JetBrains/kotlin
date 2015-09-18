@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -178,7 +179,7 @@ public class ReferenceVariantsHelper(
         }
         else {
             val lexicalScope = expression.getParentOfType<JetTypeReference>(strict = true)?.let {
-                context[BindingContext.TYPE_RESOLUTION_SCOPE, it]
+                context[BindingContext.LEXICAL_SCOPE, it]
             } ?: return emptyList()
             return lexicalScope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
         }

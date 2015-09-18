@@ -109,7 +109,7 @@ public class TypeResolver(
         val typeElement = typeReference.getTypeElement()
 
         val type = resolveTypeElement(c, annotations, typeElement)
-        c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope.asJetScope())
+        c.trace.record(BindingContext.LEXICAL_SCOPE, typeReference, c.scope)
 
         if (!type.isBare) {
             for (argument in type.actualType.arguments) {
