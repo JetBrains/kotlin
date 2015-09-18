@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.packageDependencies.DependencyValidationManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
@@ -160,7 +162,19 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
             result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
 
-            return result
+            return if (result.size() > 1)
+                reduceCandidatesBasedOnDependencyRuleViolation(result, file)
+            else
+                result
+        }
+
+        private fun reduceCandidatesBasedOnDependencyRuleViolation(candidates: Collection<DeclarationDescriptor>, file: PsiFile): Collection<DeclarationDescriptor> {
+            val project = file.project
+            val validationManager = DependencyValidationManager.getInstance(project)
+            return candidates.filter {
+                val targetFile = DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)?.containingFile ?: return@filter true
+                validationManager.getViolatorDependencyRules(file, targetFile).isEmpty()
+            }
         }
     }
 }

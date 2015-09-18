@@ -50,7 +50,6 @@ public class KotlinReferenceImporter : ReferenceImporter {
     companion object {
 
         // TODO: use in table cell
-        // TODO: DependencyValidationManager
         // TODO: filter out non-top level
         public fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile, allowCaretNearRef: Boolean): Boolean {
             if (file !is JetFile) return false
