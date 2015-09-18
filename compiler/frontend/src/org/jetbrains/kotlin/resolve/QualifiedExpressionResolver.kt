@@ -129,9 +129,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
                 trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
             }
-            val scope = AllUnderImportsScope()
-            scope.addAllUnderImport(packageOrClassDescriptor)
-            return scope
+            return AllUnderImportsScope(packageOrClassDescriptor)
         }
         else {
             val aliasName = JetPsiUtil.getAliasName(importDirective)

@@ -17,25 +17,22 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
-import java.util.ArrayList
 
-class AllUnderImportsScope : JetScope {
-    private val scopes = ArrayList<JetScope>()
-
-    public fun addAllUnderImport(descriptor: DeclarationDescriptor) {
-        if (descriptor is PackageViewDescriptor) {
-            scopes.add(NoSubpackagesInPackageScope(descriptor))
+class AllUnderImportsScope(descriptor: DeclarationDescriptor) : JetScope {
+    private val scopes = if (descriptor is ClassDescriptor) {
+        listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
+    }
+    else {
+        assert(descriptor is PackageViewDescriptor) {
+            "Must be class or package view descriptor: $descriptor"
         }
-        else if (descriptor is ClassDescriptor) {
-            scopes.add(descriptor.getStaticScope())
-            scopes.add(descriptor.getUnsubstitutedInnerClassesScope())
-        }
+        listOf(NoSubpackagesInPackageScope(descriptor as PackageViewDescriptor))
     }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
