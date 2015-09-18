@@ -329,17 +329,42 @@ public class DeclarationsChecker {
         PsiElement modifier = modifierList.getModifier(JetTokens.LATE_INIT_KEYWORD);
         if (modifier == null) return;
 
+        if (!propertyDescriptor.isVar()) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE.on(modifier));
+            return;
+        }
+
+        boolean returnTypeIsNullable = true;
+        boolean returnTypeIsPrimitive = true;
+
+        JetType returnType = propertyDescriptor.getReturnType();
+        if (returnType != null) {
+            returnTypeIsNullable = TypeUtils.isNullableType(returnType);
+            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);
+        }
+
+        if (returnTypeIsNullable) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE.on(modifier));
+            return;
+        }
+
+        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY.on(modifier));
+            return;
+        }
+
+        if (property instanceof JetParameter) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER.on(modifier));
+            return;
+        }
+
         boolean hasBackingField =
                 Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
 
         boolean hasDelegateOrInitializer = false;
-        boolean hasCorrespondingValueParameter = false;
 
         if (property instanceof JetProperty) {
             hasDelegateOrInitializer = ((JetProperty) property).hasDelegateExpressionOrInitializer();
-        }
-        else if (property instanceof JetParameter) {
-            hasCorrespondingValueParameter = true;
         }
 
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
@@ -353,17 +378,8 @@ public class DeclarationsChecker {
             customGetterOrSetter |= setter.hasBody();
         }
 
-        boolean returnTypeIsNullable = true;
-        boolean returnTypeIsPrimitive = true;
-
-        JetType returnType = propertyDescriptor.getReturnType();
-        if (returnType != null) {
-            returnTypeIsNullable = TypeUtils.isNullableType(returnType);
-            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);
-        }
-
-        if (!hasBackingField || hasCorrespondingValueParameter || hasDelegateOrInitializer || customGetterOrSetter
-                || returnTypeIsNullable || returnTypeIsPrimitive || propertyDescriptor.getExtensionReceiverParameter() != null) {
+        if (!hasBackingField || hasDelegateOrInitializer || customGetterOrSetter
+                || returnTypeIsPrimitive || propertyDescriptor.getExtensionReceiverParameter() != null) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier));
         }
     }
