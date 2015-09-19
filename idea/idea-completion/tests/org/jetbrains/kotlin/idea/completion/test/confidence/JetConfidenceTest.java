@@ -26,6 +26,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.TestPackage;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
@@ -51,6 +52,12 @@ public class JetConfidenceTest extends LightCompletionTestCase {
 
     public void testNoAutoCompletionForRangeOperator() {
         doTest();
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestUtilsKt.invalidateLibraryCache(getProject());
     }
 
     protected void doTest() {

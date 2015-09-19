@@ -17,25 +17,22 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.util.Computable
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 
 public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+
+        invalidateLibraryCache(project)
 
         addFile("KotlinApi.kt", "kotlinApi")
         addFile("JavaApi.java", "javaApi")

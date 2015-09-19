@@ -25,6 +25,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
@@ -34,6 +35,11 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCase {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        TestUtilsKt.invalidateLibraryCache(getProject());
+    }
 
     protected PsiClass getPsiClass(String className) {
         PsiClass psiClass = JavaPsiFacade.getInstance(getProject()).findClass(className, getGlobalScope());

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.kotlin.idea.test.RunnableWithException;
 import org.jetbrains.kotlin.idea.test.TestPackage;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 abstract public class KotlinLightQuickFixTestCase extends LightQuickFixTestCase {
@@ -27,6 +28,7 @@ abstract public class KotlinLightQuickFixTestCase extends LightQuickFixTestCase 
     protected void setUp() throws Exception {
         super.setUp();
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        TestUtilsKt.invalidateLibraryCache(getProject());
     }
 
     @Override

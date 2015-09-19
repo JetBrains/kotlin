@@ -27,6 +27,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
@@ -94,4 +95,8 @@ public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithExceptio
 
 public fun unInvalidateBuiltins(project: Project, runnable: () -> Unit) {
     unInvalidateBuiltins(project, RunnableWithException { runnable() })
+}
+
+public fun invalidateLibraryCache(project: Project) {
+    LibraryModificationTracker.getInstance(project).incModificationCount()
 }

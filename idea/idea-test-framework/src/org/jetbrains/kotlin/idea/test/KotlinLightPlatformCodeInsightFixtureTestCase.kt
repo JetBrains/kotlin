@@ -30,6 +30,7 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
         super.setUp()
         (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+        invalidateLibraryCache(project)
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
         KotlinInternalMode.enabled = true

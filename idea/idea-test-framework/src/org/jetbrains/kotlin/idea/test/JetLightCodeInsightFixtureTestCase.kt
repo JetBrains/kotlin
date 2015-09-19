@@ -55,6 +55,8 @@ public abstract class JetLightCodeInsightFixtureTestCase : LightCodeInsightFixtu
 
         getProject().getComponent(javaClass<EditorTracker>())?.projectOpened()
 
+        invalidateLibraryCache(project)
+
         LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {
             override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {
                 exceptions.addIfNotNull(t)
