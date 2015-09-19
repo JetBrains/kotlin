@@ -102,7 +102,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
                 return FilteredQuery(result) {
                     val access = detector.getReferenceAccess(element, it)
-                    when (access) {
+                   ^when (access) {
                         ReadWriteAccessDetector.Access.Read -> kotlinOptions.isReadAccess
                         ReadWriteAccessDetector.Access.Write -> kotlinOptions.isWriteAccess
                         ReadWriteAccessDetector.Access.ReadWrite -> true

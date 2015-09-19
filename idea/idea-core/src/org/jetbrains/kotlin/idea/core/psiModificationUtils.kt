@@ -107,7 +107,7 @@ public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
     val rBrace = getRBrace()
     val anchor = if (rBrace == null) {
         val lastChild = getLastChild()
-        if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
+       ^if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
     }
     else {
         rBrace.getPrevSibling()!!

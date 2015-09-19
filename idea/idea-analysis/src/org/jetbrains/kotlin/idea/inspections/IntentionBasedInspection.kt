@@ -64,7 +64,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
                         val range = intention.applicabilityRange(targetElement)?.let { range ->
                             val elementRange = targetElement.getTextRange()
                             assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
-                            range.shiftRight(-elementRange.getStartOffset())
+                           ^range.shiftRight(-elementRange.getStartOffset())
                         }
 
                         if (range != null && additionalChecker(targetElement)) {

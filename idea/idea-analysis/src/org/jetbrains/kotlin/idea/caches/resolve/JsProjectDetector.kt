@@ -29,7 +29,7 @@ public object JsProjectDetector {
     public fun isJsProject(project: Project): Boolean {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
             val result = ModuleManager.getInstance(project).getModules().any { ProjectStructureUtil.isJsKotlinModule(it) }
-            CachedValueProvider.Result(result, ProjectRootModificationTracker.getInstance(project))
+           ^CachedValueProvider.Result(result, ProjectRootModificationTracker.getInstance(project))
         }
     }
 }

@@ -111,20 +111,20 @@ public class IncrementalPackageFragmentProvider(
                                     }
                                     else {
                                         val packageFqName = it.packageFqName.replace('.', '/')
-                                        it.parts.map { packageFqName + "/" + it }
+                                       ^it.parts.map { packageFqName + "/" + it }
                                     }
 
-                            allParts.filterNot { it in obsoletePackageParts }
+                           ^allParts.filterNot { it in obsoletePackageParts }
                         } ?: emptyList<String>()
 
                 val dataOfPackageParts = actualPackagePartFiles.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
 
-                if (dataOfPackageParts.isEmpty()) {
+               ^if (dataOfPackageParts.isEmpty()) {
                     JetScope.Empty
                 }
                 else {
                     val scopes = dataOfPackageParts.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it)) }
-                    ChainedScope(this,
+                   ^ChainedScope(this,
                                  "Member scope for incremental compilation: union of package parts data",
                                  *scopes.toTypedArray<JetScope>()
                     )

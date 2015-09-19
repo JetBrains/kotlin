@@ -72,7 +72,7 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
             substitution[subClassTypeParameter.typeConstructor] = TypeProjectionImpl(superClassTypeParameter.defaultType)
         }
 
-        TypeSubstitutor.create(substitution)
+       ^TypeSubstitutor.create(substitution)
     }
 
     val isInterfaceTarget: Boolean = targetClassDescriptor.kind == ClassKind.INTERFACE

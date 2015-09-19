@@ -63,12 +63,12 @@ class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess:
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
             node.end = splitBy.startLabel
-            Pair(splitBy.endLabel, oldEnd)
+           ^Pair(splitBy.endLabel, oldEnd)
         }
         else {
             val oldStart = startLabel
             node.start = splitBy.endLabel
-            Pair(oldStart, splitBy.startLabel)
+           ^Pair(oldStart, splitBy.startLabel)
         }
         return SplitPair(
                 this,

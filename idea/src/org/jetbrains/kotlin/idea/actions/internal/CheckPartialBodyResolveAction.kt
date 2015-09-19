@@ -193,7 +193,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
 
             is JetContainerNode -> { //TODO - not quite correct
                 val pparent = parent.getParent() as? JetExpression
-                pparent != null && isValueNeeded(pparent)
+               ^pparent != null && isValueNeeded(pparent)
             }
 
             is JetDeclarationWithBody -> {

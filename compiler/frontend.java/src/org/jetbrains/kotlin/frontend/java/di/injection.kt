@@ -115,7 +115,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
 }.let {
     it.javaAnalysisInit()
 
-    ContainerForTopDownAnalyzerForJvm(it)
+   ^ContainerForTopDownAnalyzerForJvm(it)
 }
 
 private fun StorageComponentContainer.javaAnalysisInit() {

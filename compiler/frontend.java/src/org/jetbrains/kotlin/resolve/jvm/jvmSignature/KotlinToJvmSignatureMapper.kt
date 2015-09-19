@@ -30,6 +30,6 @@ fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: JvmMethodSignature, su
 
     return subParams.zip(superParams).all {
         p -> val (subParam, superParam) = p
-        subParam.getAsmType() == superParam.getAsmType()
+       ^subParam.getAsmType() == superParam.getAsmType()
     }
 }

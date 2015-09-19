@@ -159,7 +159,7 @@ public class CallCompleter(
             updateSystemIfSuccessful {
                 system ->
                 constraintSystemCompleter.completeConstraintSystem(system, this)
-                !system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().hasOnlyErrorsDerivedFrom(FROM_COMPLETER)
+               ^!system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().hasOnlyErrorsDerivedFrom(FROM_COMPLETER)
             }
         }
 
@@ -167,7 +167,7 @@ public class CallCompleter(
             updateSystemIfSuccessful {
                 system ->
                 system.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
-                system.getStatus().isSuccessful()
+               ^system.getStatus().isSuccessful()
             }
         }
 

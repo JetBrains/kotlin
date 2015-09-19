@@ -181,9 +181,9 @@ public class CandidateResolver(
         val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidateCall.getDispatchReceiver(),
                                                                                       trace.getBindingContext())
         val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, scope.ownerDescriptor)
-        if (invisibleMember != null) {
+       ^if (invisibleMember != null) {
             tracing.invisibleMember(trace, invisibleMember)
-            OTHER_ERROR
+           ^OTHER_ERROR
         } else {
             SUCCESS
         }
@@ -192,13 +192,13 @@ public class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.checkExtensionReceiver() = checkAndReport {
         val receiverParameter = candidateCall.getCandidateDescriptor().getExtensionReceiverParameter()
         val receiverArgument = candidateCall.getExtensionReceiver()
-        if (receiverParameter != null && !receiverArgument.exists()) {
+       ^if (receiverParameter != null && !receiverArgument.exists()) {
             tracing.missingReceiver(candidateCall.getTrace(), receiverParameter)
-            OTHER_ERROR
+           ^OTHER_ERROR
         }
         else if (receiverParameter == null && receiverArgument.exists()) {
             tracing.noReceiverAllowed(candidateCall.getTrace())
-            if (call.getCalleeExpression() is JetSimpleNameExpression) {
+           ^if (call.getCalleeExpression() is JetSimpleNameExpression) {
                 RECEIVER_PRESENCE_ERROR
             }
             else {
@@ -233,7 +233,7 @@ public class CandidateResolver(
             "Shouldn't happen because of TaskPrioritizer: $candidateDescriptor"
         }
 
-        SUCCESS
+       ^SUCCESS
     }
 
     private fun checkOuterClassMemberIsAccessible(context: CallCandidateResolutionContext<*>): Boolean {
@@ -282,7 +282,7 @@ public class CandidateResolver(
             && !KotlinBuiltIns.isExtensionFunctionType(candidateCall.getDispatchReceiver().getType())
         ) {
             tracing.freeFunctionCalledAsExtension(trace)
-            OTHER_ERROR
+           ^OTHER_ERROR
         } else {
             SUCCESS
         }
@@ -399,7 +399,7 @@ public class CandidateResolver(
 
         val erasedReceiverType = getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor)
 
-        if (!smartCastManager.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, this)) {
+       ^if (!smartCastManager.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, this)) {
             RECEIVER_TYPE_ERROR
         } else {
             SUCCESS

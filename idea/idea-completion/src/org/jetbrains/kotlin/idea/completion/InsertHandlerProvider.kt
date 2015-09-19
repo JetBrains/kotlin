@@ -33,7 +33,7 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
             is FunctionDescriptor -> {
                 val needTypeArguments = needTypeArguments(descriptor)
                 val parameters = descriptor.valueParameters
-                when (parameters.size()) {
+               ^when (parameters.size()) {
                     0 -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false)
 
                     1 -> {
@@ -45,7 +45,7 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
                                 return KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
                             }
                         }
-                        KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
+                       ^KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
                     }
 
                     else -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)

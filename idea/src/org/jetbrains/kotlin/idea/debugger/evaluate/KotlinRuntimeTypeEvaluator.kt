@@ -68,7 +68,7 @@ public abstract class KotlinRuntimeTypeEvaluator(
         val evaluator = DebuggerInvocationUtil.commitAndRunReadAction<ExpressionEvaluator>(project, EvaluatingComputable {
                 val codeFragment = JetPsiFactory(myElement.getProject()).createExpressionCodeFragment(
                         myElement.getText(), myElement.getContainingFile().getContext())
-                KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
+               ^KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
         })
 
         val value = evaluator.evaluate(evaluationContext)

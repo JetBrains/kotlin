@@ -80,7 +80,7 @@ private fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
         is JetBinaryExpression -> {
             val lhs = getLeft()
             val op = getOperationToken()
-            when (op) {
+           ^when (op) {
                 JetTokens.IN_KEYWORD, JetTokens.NOT_IN -> lhs
                 JetTokens.EQEQ -> lhs as? JetSimpleNameExpression ?: getRight()
                 else -> null

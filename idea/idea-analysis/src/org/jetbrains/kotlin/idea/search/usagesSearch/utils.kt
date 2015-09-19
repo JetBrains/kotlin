@@ -62,7 +62,7 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
             .filterIsInstance<JetDeclaration>()
             .any {
                 val usageDescriptor = declarationToDescriptor(it)
-                usageDescriptor != null && checker(usageDescriptor, targetDescriptor)
+               ^usageDescriptor != null && checker(usageDescriptor, targetDescriptor)
             }
 }
 
@@ -85,7 +85,7 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
         return declaration == jetClassOrObject || (declaration is JetConstructor<*> && declaration.getContainingClassOrObject() == jetClassOrObject)
     }
 
-    checkJavaUsage() || checkKotlinUsage()
+   ^checkJavaUsage() || checkKotlinUsage()
 }
 
 private fun JetElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
@@ -145,7 +145,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 ): Boolean {
     return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         val unwrapped = it.unwrapped
-        if (unwrapped is JetClass) {
+       ^if (unwrapped is JetClass) {
             processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
         } else
             true
@@ -186,7 +186,7 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
                         usageDescriptor.getExtensionReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
                 val containingDescriptor = targetDescriptor.getContainingDeclaration()
 
-                containingDescriptor == receiverDescriptor
+               ^containingDescriptor == receiverDescriptor
                 || (containingDescriptor is ClassDescriptor
                     && receiverDescriptor is ClassDescriptor
                     && DescriptorUtils.isSubclass(containingDescriptor, receiverDescriptor))

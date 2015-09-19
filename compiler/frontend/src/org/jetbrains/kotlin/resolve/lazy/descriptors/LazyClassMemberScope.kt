@@ -256,7 +256,7 @@ public open class LazyClassMemberScope(
 
             result.addAll(functions)
 
-            n++
+           ^n++
         }
         result.addAll(getFunctions(Name.identifier("copy"), location))
     }
@@ -303,7 +303,7 @@ public open class LazyClassMemberScope(
                     thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, constructor, trace
             )
             setDeferredReturnType(descriptor)
-            descriptor
+           ^descriptor
         }
     }
 

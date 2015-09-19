@@ -58,7 +58,7 @@ private class ClassClsStubBuilder(
         type ->
         val typeConstructorData = type.getTypeConstructorData()
         assert(typeConstructorData.kind == TypeConstructorKind.CLASS)
-        c.nameResolver.getClassId(typeConstructorData.id)
+       ^c.nameResolver.getClassId(typeConstructorData.id)
     }.let {
         supertypeIds ->
         //empty supertype list if single supertype is Any

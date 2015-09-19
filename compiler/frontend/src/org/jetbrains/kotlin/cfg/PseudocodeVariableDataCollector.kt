@@ -68,7 +68,7 @@ public class PseudocodeVariableDataCollector(
             val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = lexicalScope?.depth ?: -1
-            depth <= toDepth
+           ^depth <= toDepth
         }
     }
 

@@ -60,7 +60,7 @@ public object Renderers {
                      + "This is usually a bad idea, because descriptors' toString() includes some debug information, "
                      + "which should not be seen by the user.\nDescriptor: " + element)
         }
-        element.toString()
+       ^element.toString()
     }
 
     public val STRING: Renderer<String> = Renderer { it }
@@ -68,7 +68,7 @@ public object Renderers {
     public val THROWABLE: Renderer<Throwable> = Renderer {
         val writer = StringWriter()
         it.printStackTrace(PrintWriter(writer))
-        StringUtil.first(writer.toString(), 2048, true)
+       ^StringUtil.first(writer.toString(), 2048, true)
     }
 
     public val NAME: Renderer<Named> = Renderer { it.getName().asString() }
@@ -80,7 +80,7 @@ public object Renderers {
     public val RENDER_CLASS_OR_OBJECT: Renderer<JetClassOrObject> = Renderer {
         classOrObject: JetClassOrObject ->
         val name = if (classOrObject.getName() != null) " '" + classOrObject.getName() + "'" else ""
-        if (classOrObject is JetClass) "Class" + name else "Object" + name
+       ^if (classOrObject is JetClass) "Class" + name else "Object" + name
     }
 
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
@@ -373,7 +373,7 @@ public object Renderers {
             val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
             val renderer = if (short) DescriptorRenderer.SHORT_NAMES_IN_TYPES else DescriptorRenderer.FQ_NAMES_IN_TYPES
             val renderedBound = arrow + renderer.renderType(bound.constrainingType) +  if (!bound.isProper) "*" else ""
-            if (short) renderedBound else renderedBound + '(' + bound.position + ')'
+           ^if (short) renderedBound else renderedBound + '(' + bound.position + ')'
         }
         val typeVariableName = typeBounds.typeVariable.getName()
         return if (typeBounds.bounds.isEmpty()) {

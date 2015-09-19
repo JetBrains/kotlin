@@ -153,7 +153,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             custom {
                 inPosition(right = PRIMARY_CONSTRUCTOR).customRule { p, l, r ->
                     val spacesCount = if (r.getNode().findLeafElementAt(0)?.getElementType() != LPAR) 1 else 0
-                    Spacing.createSpacing(spacesCount, spacesCount, 0, true, 0)
+                   ^Spacing.createSpacing(spacesCount, spacesCount, 0, true, 0)
                 }
             }
 
@@ -227,7 +227,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                         } else null
 
                         val removeLineBreaks = leftBlock != null && afterBlockFilter(right.getNode()?.getTreeParent()!!, leftBlock)
-                        Spacing.createSpacing(1, 1, 0, !removeLineBreaks, 0)
+                       ^Spacing.createSpacing(1, 1, 0, !removeLineBreaks, 0)
                     }
                 }
             }
@@ -325,7 +325,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                     }
                 }
 
-                Spacing.createSpacing(numSpaces, numSpaces, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
+               ^Spacing.createSpacing(numSpaces, numSpaces, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
             }
 
             inPosition(parent = CLASS_BODY, right = RBRACE).lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)

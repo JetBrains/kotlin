@@ -100,7 +100,7 @@ public class KotlinInplacePropertyIntroducer(
 
                             setSelectedIndex(availableTargets.indexOf(currentTarget))
 
-                            this
+                           ^this
                         }
 
                         val propertyKindLabel = JLabel("Introduce as: ")
@@ -111,7 +111,7 @@ public class KotlinInplacePropertyIntroducer(
                         panel.add(propertyKindLabel)
                         panel.add(propertyKindComboBox)
 
-                        panel
+                       ^panel
                     }
             )
         }
@@ -146,7 +146,7 @@ public class KotlinInplacePropertyIntroducer(
                         replaceAllCheckBox.setSelected(replaceAll)
                         replaceAllCheckBox.setMnemonic('R')
                         replaceAllCheckBox.addActionListener { replaceAll = replaceAllCheckBox.isSelected() }
-                        replaceAllCheckBox
+                       ^replaceAllCheckBox
                     }
             )
         }

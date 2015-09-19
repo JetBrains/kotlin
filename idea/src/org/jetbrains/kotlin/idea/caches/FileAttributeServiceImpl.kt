@@ -49,7 +49,7 @@ public class FileAttributeServiceImpl : FileAttributeService {
             val timeStamp = DataInputOutputUtil.readTIME(it)
             val intValue = DataInputOutputUtil.readINT(it)
 
-            if (file.timeStamp == timeStamp) {
+           ^if (file.timeStamp == timeStamp) {
                 CachedAttributeData(deserializeEnumValue(intValue, klass), timeStamp)
             }
             else {

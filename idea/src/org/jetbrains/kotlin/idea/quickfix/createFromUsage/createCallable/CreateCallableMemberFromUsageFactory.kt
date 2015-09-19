@@ -38,7 +38,7 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
         val delegateFactory = {
             val data = quickFixDataFactory(originalElementPointer).orEmpty()
             val originalElement = originalElementPointer.element
-            if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else NullQuickFix
+           ^if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else NullQuickFix
         }
         return if (lowPriority) LowPriorityQuickFixWithDelegateFactory(delegateFactory) else QuickFixWithDelegateFactory(delegateFactory)
     }

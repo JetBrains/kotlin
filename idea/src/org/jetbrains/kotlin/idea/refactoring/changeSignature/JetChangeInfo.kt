@@ -78,12 +78,12 @@ public open class JetChangeInfo(
         val parameters = methodDescriptor.baseDescriptor.getValueParameters()
         parameters.indices.forEach { i -> map[parameters.get(i).getName().asString()] = i }
 
-        map
+       ^map
     }
 
     public val isParameterSetOrOrderChanged: Boolean by lazy {
         val signatureParameters = getNonReceiverParameters()
-        methodDescriptor.receiver != receiverParameterInfo ||
+       ^methodDescriptor.receiver != receiverParameterInfo ||
         signatureParameters.size() != methodDescriptor.getParametersCount() ||
         signatureParameters.indices.any { i -> signatureParameters[i].getOldIndex() != i }
     }
@@ -170,7 +170,7 @@ public open class JetChangeInfo(
                             return
                     }
 
-                    result.add(usageInfo)
+                   ^result.add(usageInfo)
                 }
             }
 
@@ -319,7 +319,7 @@ public open class JetChangeInfo(
                     else -> -1
                 }
 
-                ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
+               ^ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
             }
         }
 
@@ -357,12 +357,12 @@ public open class JetChangeInfo(
             javaChangeInfos = (filterLightMethods(originalPsiMethods) zip filterLightMethods(method.toLightMethods())).map {
                 val (originalPsiMethod, currentPsiMethod) = it
 
-                when (method) {
+               ^when (method) {
                     is JetFunction, is JetClassOrObject ->
                         createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, false)
                     is JetProperty, is JetParameter -> {
                         val accessorName = originalPsiMethod.getName()
-                        when {
+                       ^when {
                             accessorName.startsWith(JvmAbi.GETTER_PREFIX) ->
                                 createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, true)
                             accessorName.startsWith(JvmAbi.SETTER_PREFIX) ->
@@ -415,13 +415,13 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
                     else -> null
                 }
 
-        with(JetParameterInfo(callableDescriptor = functionDescriptor,
+       ^with(JetParameterInfo(callableDescriptor = functionDescriptor,
                               originalIndex = oldIndex,
                               name = info.getName(),
                               type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
                               defaultValueForCall = defaultValueExpr)) {
             currentTypeText = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(currentType)
-            this
+           ^this
         }
     }
 

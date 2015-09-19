@@ -231,7 +231,7 @@ object ReplaceWithAnnotationAnalyzer {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.containingDeclaration
-                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
+               ^getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
             }
 
             is PackageViewDescriptor ->
@@ -239,17 +239,17 @@ object ReplaceWithAnnotationAnalyzer {
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
+               ^ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
             }
 
             is FunctionDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, RedeclarationHandler.DO_NOTHING)
+               ^FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, RedeclarationHandler.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                JetScopeUtils.getPropertyDeclarationInnerScope(descriptor, outerScope, RedeclarationHandler.DO_NOTHING)
+               ^JetScopeUtils.getPropertyDeclarationInnerScope(descriptor, outerScope, RedeclarationHandler.DO_NOTHING)
             }
 
             else -> return null // something local, should not work with ReplaceWith

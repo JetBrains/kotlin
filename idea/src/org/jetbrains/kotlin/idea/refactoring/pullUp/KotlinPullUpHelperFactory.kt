@@ -88,7 +88,7 @@ public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
             if (!(it is JetClass && it.isInner())) {
                 psiClass.modifierList!!.setModifierProperty(PsiModifier.STATIC, true)
             }
-            psiClass
+           ^psiClass
         }
         return outerPsiClasses
                 .drop(1)

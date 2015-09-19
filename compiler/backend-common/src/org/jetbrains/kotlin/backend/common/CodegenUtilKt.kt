@@ -58,14 +58,14 @@ public object CodegenUtilKt {
                             val name = overriddenDescriptor.getName()
 
                             // this is the actual member of delegateExpressionType that we are delegating to
-                            (scope.getFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getProperties(name, NoLookupLocation.FROM_BACKEND))
+                           ^(scope.getFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getProperties(name, NoLookupLocation.FROM_BACKEND))
                                     .first {
                                         (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it)).map { it.getOriginal() }.contains(overriddenDescriptor.getOriginal())
                                     }
                         }
                 assert(actualDelegates.size() <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
 
-                actualDelegates.firstOrNull()
+               ^actualDelegates.firstOrNull()
             }
     }
 }

@@ -44,7 +44,7 @@ public object IdeRenderers {
         calls: Collection<ResolvedCall<*>> ->
             // TODO: compareBy(comparator, selector) in stdlib
             val comparator = comparator<ResolvedCall<*>> { c1, c2 -> MemberComparator.INSTANCE.compare(c1.getResultingDescriptor(), c2.getResultingDescriptor()) }
-            calls
+           ^calls
                 .sortBy(comparator)
                 .joinToString("") { "<li>" + renderResolvedCall(it) + "</li>" }
     }
@@ -67,7 +67,7 @@ public object IdeRenderers {
 
     public val HTML_RENDER_RETURN_TYPE: Renderer<CallableMemberDescriptor> = Renderer {
         val returnType = it.getReturnType()!!
-        DescriptorRenderer.HTML.renderType(returnType)
+       ^DescriptorRenderer.HTML.renderType(returnType)
     }
 
     public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = DescriptorRenderer.HTML.withOptions {
@@ -83,7 +83,7 @@ public object IdeRenderers {
             .sortBy(MemberComparator.INSTANCE)
             .joinToString("") { "<li>" + HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
 
-        "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
+       ^"The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }
 
     public val HTML_THROWABLE: Renderer<Throwable> = Renderer {

@@ -40,7 +40,7 @@ public class LazyScriptClassMemberScope protected constructor(
 
     private val scriptResultProperty: NotNullLazyValue<PropertyDescriptor> = resolveSession.getStorageManager().createLazyValue {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
-        createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
+       ^createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
     }
 
     override fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {

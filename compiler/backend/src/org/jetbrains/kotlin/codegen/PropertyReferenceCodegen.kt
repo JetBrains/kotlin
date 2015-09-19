@@ -116,7 +116,7 @@ public class PropertyReferenceCodegen(
             val getter = target.getGetter() ?: run {
                 val defaultGetter = DescriptorFactory.createDefaultGetter(target, Annotations.EMPTY)
                 defaultGetter.initialize(target.getType())
-                defaultGetter
+               ^defaultGetter
             }
 
             val method = typeMapper.mapSignature(getter).getAsmMethod()

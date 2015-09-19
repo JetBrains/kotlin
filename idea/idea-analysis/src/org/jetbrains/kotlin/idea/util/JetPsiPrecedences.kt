@@ -51,9 +51,9 @@ public object JetPsiPrecedences {
             is JetOperationExpression -> {
                 val operation = expression.getOperationReference().getReferencedNameElementType()
                 val precedenceNumber = precedence[operation]
-                if (precedenceNumber == null) {
+               ^if (precedenceNumber == null) {
                     LOG.error("No precedence for operation: " + operation)
-                    precedence.size()
+                   ^precedence.size()
                 }
                 else precedenceNumber
             }

@@ -61,7 +61,7 @@ public object AstAccessControl {
             }
             else {
                 val text = VfsUtilCore.loadText(file)
-                !InTextDirectivesUtils.isDirectiveDefined(text, ALLOW_AST_ACCESS_DIRECTIVE)
+               ^!InTextDirectivesUtils.isDirectiveDefined(text, ALLOW_AST_ACCESS_DIRECTIVE)
             }
         }
         manager.setAssertOnFileLoadingFilter(filter, disposable)

@@ -69,7 +69,7 @@ public object PackageIndexUtil {
                 JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<JetFile>()
         ) {
             result = true
-            false
+           ^false
         }
         return result
     }

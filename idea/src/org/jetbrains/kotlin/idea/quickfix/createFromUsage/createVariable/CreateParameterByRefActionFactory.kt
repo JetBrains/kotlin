@@ -88,11 +88,11 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
                                         it is JetClassInitializer -> it.parent?.parent as? JetClass
                                         it is JetDelegationSpecifier -> {
                                             val klass = it.getStrictParentOfType<JetClass>()
-                                            if (klass != null && !klass.isInterface() && klass !is JetEnumEntry) klass else null
+                                           ^if (klass != null && !klass.isInterface() && klass !is JetEnumEntry) klass else null
                                         }
                                         it is JetClassBody -> {
                                             val klass = it.parent as? JetClass
-                                            when {
+                                           ^when {
                                                 klass is JetEnumEntry -> chooseContainingClass(klass)
                                                 klass != null && klass.isInterface() -> null
                                                 else -> klass
@@ -132,7 +132,7 @@ fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, conte
 
                 is FunctionDescriptor -> {
                     val function = functionDescriptor.source.getPsi() as? JetFunction
-                    function?.let { context[BindingContext.RESOLUTION_SCOPE, it.bodyExpression] }
+                   ^function?.let { context[BindingContext.RESOLUTION_SCOPE, it.bodyExpression] }
                 }
 
                 else -> null

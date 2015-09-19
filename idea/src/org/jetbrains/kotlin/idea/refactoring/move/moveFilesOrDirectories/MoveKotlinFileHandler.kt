@@ -76,7 +76,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
             else -> DeferredJetFileKotlinMoveTarget(project, newPackageName.toSafe()) {
                 MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
-                newParent?.findFile(psiFile.name) as? JetFile
+               ^newParent?.findFile(psiFile.name) as? JetFile
             }
         }
 

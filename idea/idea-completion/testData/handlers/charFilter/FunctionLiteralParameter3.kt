@@ -1,6 +1,6 @@
 fun bar() {
     val handler = { p<caret>
-        foo()
+       ^foo()
     }
 }
 

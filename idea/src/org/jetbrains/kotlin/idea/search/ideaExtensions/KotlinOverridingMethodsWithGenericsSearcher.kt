@@ -55,7 +55,7 @@ public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMeth
                 findOverridingMethod(inheritor, declaration)
             }
 
-            found == null || (consumer.process(found) && p.isCheckDeep)
+           ^found == null || (consumer.process(found) && p.isCheckDeep)
         })
     }
 

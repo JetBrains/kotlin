@@ -111,7 +111,7 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
                     doc.insertString(stringTemplate.endOffset, ")")
                     doc.insertString(stringTemplate.startOffset, "(")
                     caretOffset++
-                    caretAdvance++
+                   ^caretAdvance++
                 }
                 doc.insertString(caretOffset, "\" + \"")
                 caretOffsetRef.set(caretOffset + 3)

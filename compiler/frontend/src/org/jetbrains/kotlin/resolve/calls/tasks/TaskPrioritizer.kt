@@ -200,7 +200,7 @@ public class TaskPrioritizer(
                             c.context.call
                     )
                 }
-                members
+               ^members
             }
         }
     }
@@ -221,7 +221,7 @@ public class TaskPrioritizer(
                 it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c))
             }
 
-            convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
+           ^convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
         }
     }
 
@@ -240,7 +240,7 @@ public class TaskPrioritizer(
         c.result.addCandidates {
             val memberExtensions =
                     callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, createLookupLocation(c))
-            convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
+           ^convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }
 
@@ -273,7 +273,7 @@ public class TaskPrioritizer(
             c.result.addCandidates {
                 val descriptors = it.getNonExtensionsByName(c.scope.asJetScope(), c.name, lookupLocation)
                         .filter { !ExpressionTypingUtils.isLocal(c.scope.ownerDescriptor, it) }
-                convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
+               ^convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
             }
         }
 

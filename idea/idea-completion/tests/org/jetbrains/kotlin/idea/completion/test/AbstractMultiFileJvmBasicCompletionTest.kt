@@ -26,7 +26,7 @@ public abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletion
         AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
             testCompletion(getFile().getText(), JvmPlatform, { invocationCount ->
                 complete(invocationCount)
-                myItems
+               ^myItems
             }, 0)
         })
     }

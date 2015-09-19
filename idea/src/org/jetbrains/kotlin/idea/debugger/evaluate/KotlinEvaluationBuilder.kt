@@ -135,7 +135,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
                 fragment, position ->
                 isCompiledDataFromCache = false
-                extractAndCompile(fragment, position, context)
+               ^extractAndCompile(fragment, position, context)
             }
             val result = runEval4j(context, compiledData)
 
@@ -325,7 +325,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     }
                     parameters.add(paramName, param.getParameterType(true), valuesForLabels[paramName])
                 }
-                parameters
+               ^parameters
             }
         }
 
@@ -395,7 +395,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
 
-                state.factory
+               ^state.factory
             }
         }
 
@@ -443,9 +443,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.render(it))
                 }
 
-                if (analyzeInlineFunctions) {
+               ^if (analyzeInlineFunctions) {
                     val (newBindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, bindingContext, this, false)
-                    ExtendedAnalysisResult(newBindingContext, analysisResult.moduleDescriptor, files)
+                   ^ExtendedAnalysisResult(newBindingContext, analysisResult.moduleDescriptor, files)
                 }
                 else {
                     ExtendedAnalysisResult(bindingContext, analysisResult.moduleDescriptor, Collections.singletonList(this))
@@ -530,7 +530,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
 
     return runReadAction {
         val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
-        if (classes.isEmpty()) null
+       ^if (classes.isEmpty()) null
         else {
             classes.first().getJavaClassDescriptor()
         }

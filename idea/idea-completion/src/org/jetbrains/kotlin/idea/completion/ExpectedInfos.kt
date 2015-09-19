@@ -300,12 +300,12 @@ class ExpectedInfos(
         else {
             val namedArgumentCandidates = if (!isFunctionLiteralArgument && descriptor.hasStableParameterNames()) {
                 val usedParameters = argumentToParameter.filter { it.key != argument }.map { it.value }.toSet()
-                descriptor.valueParameters.filter { it !in usedParameters }
+               ^descriptor.valueParameters.filter { it !in usedParameters }
             }
             else {
                 emptyList()
             }
-            ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
+           ^ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
         }
 
         if (parameter == null) {
@@ -428,7 +428,7 @@ class ExpectedInfos(
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
-                if (thenType != null && !thenType.isError())
+               ^if (thenType != null && !thenType.isError())
                     ifExpectedInfo.filter { it.matchingSubstitutor(thenType) != null }
                 else
                     ifExpectedInfo
@@ -474,7 +474,7 @@ class ExpectedInfos(
                     .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
                     .map {
                         val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)
-                        ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
+                       ^ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
                     }
         }
         else {
@@ -531,14 +531,14 @@ class ExpectedInfos(
         return when (descriptor) {
             is SimpleFunctionDescriptor -> {
                 val expectedType = if (expectType) descriptor.returnType else null
-                ExpectedInfo.createForReturnValue(expectedType, descriptor)
+               ^ExpectedInfo.createForReturnValue(expectedType, descriptor)
             }
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.getCorrespondingProperty()
                 val expectedType = if (expectType) property.type else null
-                ExpectedInfo.createForReturnValue(expectedType, property)
+               ^ExpectedInfo.createForReturnValue(expectedType, property)
             }
 
             else -> null

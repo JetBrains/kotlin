@@ -89,7 +89,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                     val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
 
                     val elementRange = element.getTextRange()!!
-                    when {
+                   ^when {
                         range.contains(elementRange) -> FilterResult.PROCESS
 
                         range.intersects(elementRange) -> {
@@ -97,9 +97,9 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                             val calleeExpression = ((element as? JetDotQualifiedExpression)
                                     ?.getSelectorExpression() as? JetCallExpression)
                                     ?.getCalleeExpression()
-                            if (calleeExpression != null) {
+                           ^if (calleeExpression != null) {
                                 val rangeWithoutParenthesis = TextRange(elementRange.getStartOffset(), calleeExpression.getTextRange()!!.getEndOffset())
-                                if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
+                               ^if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
                             }
                             else {
                                 FilterResult.GO_INSIDE

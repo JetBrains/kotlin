@@ -49,11 +49,11 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, pro
         }
         is LibraryOrderEntry -> {
             val library = orderEntry.getLibrary() ?: return listOf()
-            emptyOrSingletonList(LibraryInfo(project, library))
+           ^emptyOrSingletonList(LibraryInfo(project, library))
         }
         is JdkOrderEntry -> {
             val sdk = orderEntry.getJdk() ?: return listOf()
-            emptyOrSingletonList(SdkInfo(project, sdk))
+           ^emptyOrSingletonList(SdkInfo(project, sdk))
         }
         else -> {
             throw IllegalStateException("Unexpected order entry $orderEntry")
@@ -75,7 +75,7 @@ fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaMod
     dependencyEnumerator.forEach {
         orderEntry ->
         result.addAll(orderEntryToModuleInfo(module.getProject(), orderEntry!!, productionOnly))
-        true
+       ^true
     }
     return result.toList()
 }

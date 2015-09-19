@@ -46,7 +46,7 @@ public class ShowExpressionTypeAction : AnAction() {
             val startOffset = editor.getSelectionModel().getSelectionStart()
             val endOffset = editor.getSelectionModel().getSelectionEnd()
             val expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), JetLanguage.INSTANCE) ?: return
-            typeByExpression(expression)
+           ^typeByExpression(expression)
         }
         else {
             val offset = editor.getCaretModel().getOffset()
@@ -57,7 +57,7 @@ public class ShowExpressionTypeAction : AnAction() {
                                .firstOrNull { it.second != null } ?: return
             val (expression, type) = pair
             editor.getSelectionModel().setSelection(expression.startOffset, expression.endOffset)
-            type
+           ^type
         }
 
         if (type != null) {

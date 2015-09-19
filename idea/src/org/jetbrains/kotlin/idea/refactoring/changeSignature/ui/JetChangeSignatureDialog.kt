@@ -240,7 +240,7 @@ public class JetChangeSignatureDialog(
                     panel.add(component)
                     add(panel)
                     IJSwingUtilities.adjustComponentsOnMac(label, component)
-                    column++
+                   ^column++
                 }
             }
 
@@ -303,7 +303,7 @@ public class JetChangeSignatureDialog(
             override fun getFocusableComponents(): Array<JComponent> {
                 return Array(components.size()) {
                     val component = components.get(it)
-                    (component as? EditorTextField)?.getFocusTarget() ?: component
+                   ^(component as? EditorTextField)?.getFocusTarget() ?: component
                 }
             }
         }
@@ -420,7 +420,7 @@ public class JetChangeSignatureDialog(
                     parameterInfo.defaultValueForCall = codeFragment.getContentElement()
                 }
 
-                parameterInfo
+               ^parameterInfo
             }
 
             val returnTypeText = if (returnTypeCodeFragment != null) returnTypeCodeFragment.getText().trim() else ""

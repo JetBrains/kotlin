@@ -233,7 +233,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         return groupedByFqNameAndModuleInfo.flatMap {
             val (key, files) = it
             val (fqName, moduleInfo) = key
-            createLightClassForFileFacade(fqName, files, moduleInfo)
+           ^createLightClassForFileFacade(fqName, files, moduleInfo)
         }
     }
 

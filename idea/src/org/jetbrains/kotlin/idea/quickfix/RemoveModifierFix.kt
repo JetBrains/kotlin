@@ -38,7 +38,7 @@ public class RemoveModifierFix(
 
     private val text = run {
         val modifierText = modifier.value
-        when {
+       ^when {
             isRedundant ->
                 "Remove redundant '$modifierText' modifier"
             modifier === JetTokens.ABSTRACT_KEYWORD || modifier === JetTokens.OPEN_KEYWORD ->

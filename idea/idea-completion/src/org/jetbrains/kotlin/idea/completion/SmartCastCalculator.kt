@@ -85,7 +85,7 @@ class SmartCastCalculator(
             val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).id
             dataFlowValueToEntity = { value ->
                 val id = value.id
-                if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+               ^if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
             }
         }
         else {

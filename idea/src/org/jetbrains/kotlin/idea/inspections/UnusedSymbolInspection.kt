@@ -171,7 +171,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 val (inspectionTarget, textRange) = if (isCompanionObject && declaration.getNameIdentifier() == null) {
                     val objectKeyword = (declaration as JetObjectDeclaration).getObjectKeyword()
-                    Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
+                   ^Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
                 } else {
                     Pair(declaration.getNameIdentifier()!!, null)
                 }
@@ -198,7 +198,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             val findClassUsagesHandler = KotlinFindClassUsagesHandler(classOrObject, KotlinFindUsagesHandlerFactory(classOrObject.getProject()))
             findClassUsagesHandler.processUsagesInText(
                     classOrObject,
-                    { hasTextUsages = true; false },
+                    { hasTextUsages = true;^false },
                     GlobalSearchScope.projectScope(classOrObject.getProject())
             )
         }
@@ -247,7 +247,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun hasReferences(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
         return !ReferencesSearch.search(declaration, useScope).forEach(Processor {
             assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() })
-            declaration.isAncestor(it.getElement()) ||
+           ^declaration.isAncestor(it.getElement()) ||
             it.element.parent is JetValueArgumentName ||
             it.element.getParentOfType<JetImportDirective>(false) != null
         })

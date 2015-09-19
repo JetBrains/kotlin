@@ -103,7 +103,7 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
             is JetClassOrObject -> {
                 if (container is JetObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<JetClass>(true)
-                    containerClass?.getFqName()
+                   ^containerClass?.getFqName()
                 } else {
                     container.getFqName()
                 }

@@ -128,7 +128,7 @@ public object KotlinNameSuggester {
                 val candidate = if (i > 0) name + i else name
                 if (validator(candidate)) return candidate
             }
-            i++
+           ^i++
         }
     }
 

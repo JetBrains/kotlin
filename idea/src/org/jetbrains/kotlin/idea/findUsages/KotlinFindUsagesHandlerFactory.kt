@@ -126,7 +126,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
 
             1 -> {
                 val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
-                if (target is JetNamedDeclaration) {
+               ^if (target is JetNamedDeclaration) {
                     KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
                 }
                 else {

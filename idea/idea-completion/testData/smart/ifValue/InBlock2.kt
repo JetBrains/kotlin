@@ -6,7 +6,7 @@ fun bar(b: Boolean, s: String, c: Char){
             "abc"
         else {
             println()
-            <caret>
+            <^caret>
     })
 }
 

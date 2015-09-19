@@ -272,7 +272,7 @@ public class ResolveElementCache(
             is JetImportList -> {
                 val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
                 scope.forceResolveAllImports()
-                resolveSession.getTrace()
+               ^resolveSession.getTrace()
             }
 
             is JetAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
@@ -432,7 +432,7 @@ public class ResolveElementCache(
 
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
             assert(declaration.getParent() == jetProperty) { "Must be called only for property accessors, but called for $declaration" }
-            resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(declaration)
+           ^resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(declaration)
         })
 
         bodyResolver.resolvePropertyAccessors(bodyResolveContext, jetProperty, descriptor)

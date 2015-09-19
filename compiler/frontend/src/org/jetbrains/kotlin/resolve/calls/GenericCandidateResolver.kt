@@ -209,7 +209,7 @@ class GenericCandidateResolver(
                     ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, context)?.let { functionLiteral ->
                         addConstraintForFunctionLiteral(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, context)
                     }
-                    ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, context)?.let { callableReference ->
+                   ^ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, context)?.let { callableReference ->
                         addConstraintForCallableReference(callableReference, valueArgument, valueParameterDescriptor, constraintSystem, context)
                     }
                 }

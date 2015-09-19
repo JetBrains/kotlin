@@ -176,7 +176,7 @@ object KeywordCompletion {
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length())!!
 
-            when {
+           ^when {
                 !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> false
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false

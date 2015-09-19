@@ -120,7 +120,7 @@ public class JetChangePropertySignatureDialog(
                 updateReceiverUI()
             }
 
-            getPanel()
+           ^getPanel()
         }
     }
 

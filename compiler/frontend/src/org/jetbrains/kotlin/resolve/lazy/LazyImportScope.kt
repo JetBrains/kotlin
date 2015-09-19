@@ -58,7 +58,7 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
             builder.put(importedName, directive)
         }
 
-        builder.build()
+       ^builder.build()
     }
 
     override fun importsForName(name: Name) = nameToDirectives.get(name)
@@ -92,13 +92,13 @@ class LazyImportResolver(
 
             return storageManager.compute {
                 val cachedStatus = importResolveStatus
-                if (cachedStatus != null) {
+               ^if (cachedStatus != null) {
                     cachedStatus.scope
                 }
                 else {
                     directiveUnderResolve = directive
 
-                    try {
+                   ^try {
                         // todo use packageViewFragment for visibility
                         val directiveImportScope = qualifiedExpressionResolver.processImportReference(
                                 directive, moduleDescriptor, traceForImportResolve, moduleDescriptor)
@@ -107,7 +107,7 @@ class LazyImportResolver(
                         PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(moduleDescriptor, traceForImportResolve, directive, descriptors)
 
                         importResolveStatus = ImportResolveStatus(directiveImportScope, descriptors)
-                        directiveImportScope
+                       ^directiveImportScope
                     }
                     finally {
                         directiveUnderResolve = null
@@ -200,7 +200,7 @@ class LazyImportResolver(
                 descriptors = descriptors.concat(descriptorsForImport)
             }
 
-            descriptors ?: emptySet<D>()
+           ^descriptors ?: emptySet<D>()
         }
     }
 
@@ -233,7 +233,7 @@ class LazyImportScope(
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name) { scope, name ->
             val descriptor = scope.getClassifier(name, location)
-            if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
+           ^if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
         }
     }
 
@@ -301,7 +301,7 @@ class LazyImportScope(
                     descriptors.addAll(importResolver.getImportScope(directive).getDescriptors(kindFilter, nameFilter))
                 }
             }
-            descriptors
+           ^descriptors
         }
     }
 

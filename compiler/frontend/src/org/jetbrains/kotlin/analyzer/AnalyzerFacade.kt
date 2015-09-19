@@ -184,7 +184,7 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val computeResolverForModule = storageManager.createLazyValue {
                     val content = modulesContent(module)
-                    createResolverForModule(
+                   ^createResolverForModule(
                             module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
                             platformParameters, targetEnvironment, resolverForProject,
                             packagePartProviderFactory(module, content)

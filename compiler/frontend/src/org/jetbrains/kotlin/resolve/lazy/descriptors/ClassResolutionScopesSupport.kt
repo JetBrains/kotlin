@@ -44,7 +44,7 @@ class ClassResolutionScopesSupport(
             arrayOf(classDescriptor.staticScope, it.unsubstitutedInnerClassesScope)
         } ?: arrayOf(classDescriptor.staticScope)
 
-        LexicalChainedScope(getOuterScope(), classDescriptor, false,
+       ^LexicalChainedScope(getOuterScope(), classDescriptor, false,
                             classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter,
                             "Scope with static members and companion object for ${classDescriptor.name}",
                             memberScopes = *staticScopes)
@@ -53,7 +53,7 @@ class ClassResolutionScopesSupport(
     public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
         val scopeWithGenerics = scopeWithGenerics(scopeWithStaticMembersAndCompanionObjectReceiver(),
                                                   "Scope with generics for ${classDescriptor.name}")
-        LexicalChainedScope(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
+       ^LexicalChainedScope(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
                             "Scope for member declaration resolution: ${classDescriptor.name}",
                             classDescriptor.unsubstitutedInnerClassesScope)
     }
@@ -75,7 +75,7 @@ class ClassResolutionScopesSupport(
         assert(primaryConstructorParameters != null) {
             "primary constructor parameters must be not null, because primary constructor exist: $primaryConstructor"
         }
-        LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
+       ^LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
                          "Scope for initializer resolution: ${classDescriptor.name}") {
             primaryConstructorParameters!!.forEachIndexed {
                 index, parameter ->

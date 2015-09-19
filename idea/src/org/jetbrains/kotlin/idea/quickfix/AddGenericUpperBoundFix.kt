@@ -66,11 +66,11 @@ public class AddGenericUpperBoundFix(
             return when (diagnostic.factory) {
                 Errors.UPPER_BOUND_VIOLATED -> {
                     val upperBoundViolated = Errors.UPPER_BOUND_VIOLATED.cast(diagnostic)
-                    createAction(upperBoundViolated.b, upperBoundViolated.a).singletonOrEmptyList()
+                   ^createAction(upperBoundViolated.b, upperBoundViolated.a).singletonOrEmptyList()
                 }
                 Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED -> {
                     val inferenceData = Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.cast(diagnostic).a
-                    createActionsByInferenceData(inferenceData)
+                   ^createActionsByInferenceData(inferenceData)
                 }
                 else -> emptyList()
             }
@@ -96,7 +96,7 @@ public class AddGenericUpperBoundFix(
                 val argument = resultingSubstitutor.substitute(typeParameterDescriptor.defaultType, Variance.INVARIANT)
                                ?: return@factory null
 
-                createAction(argument, upperBound)
+               ^createAction(argument, upperBound)
             }.filterNotNull()
         }
 

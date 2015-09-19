@@ -130,7 +130,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             if (!propertyType.isSubtypeOf(parameter.type)) return false
             if (descriptor.findOverridden {
                 val baseProperty = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(it, this)
-                baseProperty?.getMethod?.name == getMethod.name
+               ^baseProperty?.getMethod?.name == getMethod.name
             } == null) return false
         }
 

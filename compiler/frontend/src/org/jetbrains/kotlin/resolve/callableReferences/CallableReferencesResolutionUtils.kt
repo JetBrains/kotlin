@@ -155,7 +155,7 @@ public fun resolveCallableReferenceTarget(
     return resolutionResults?.let { results ->
         if (results.isSomething()) {
             resolvedToSomething[0] = true
-            OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency)?.let { call ->
+           ^OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency)?.let { call ->
                 call.getResultingDescriptor()
             }
         }
@@ -229,7 +229,7 @@ private fun createReflectionTypeForCallableDescriptor(
             if (reportOn != null) {
                 context.trace.report(UNSUPPORTED.on(reportOn, "References to variables aren't supported yet"))
             }
-            null
+           ^null
         }
         else ->
             throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")

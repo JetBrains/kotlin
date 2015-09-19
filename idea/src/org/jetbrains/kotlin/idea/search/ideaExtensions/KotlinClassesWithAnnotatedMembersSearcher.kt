@@ -36,9 +36,9 @@ class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, 
         val processed = hashSetOf<JetClassOrObject>()
         return KotlinAnnotatedElementsSearcher.processAnnotatedMembers(queryParameters.annotationClass, queryParameters.scope) { declaration ->
             val jetClass = declaration.getNonStrictParentOfType<JetClassOrObject>()
-            if (jetClass != null && processed.add(jetClass)) {
+           ^if (jetClass != null && processed.add(jetClass)) {
                 val lightClass = LightClassUtil.getPsiClass(jetClass)
-                if (lightClass != null) consumer.process(lightClass) else true
+               ^if (lightClass != null) consumer.process(lightClass) else true
             }
             else
                 true

@@ -187,7 +187,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 newTypes.add(EqWrapper(KotlinBuiltIns.getInstance().getAnyType()))
             }
 
-            newTypes.map { TypeCandidate(it._type, scope) }.reverse()
+           ^newTypes.map { TypeCandidate(it._type, scope) }.reverse()
         }
     }
 
@@ -298,7 +298,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .map {
                             val typeCandidates = computeTypeCandidates(it)
                             assert (typeCandidates.size() == 1) { "Ambiguous type candidates for type parameter $it: $typeCandidates" }
-                            typeCandidates.first().theType
+                           ^typeCandidates.first().theType
                         }
                         .subtract(substitutionMap.keySet())
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size())
@@ -356,7 +356,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             ) {
                 receiverClassDescriptor.getTypeConstructor().getParameters().forEach { addClassifierDescriptor(it) }
                 changeLockLevel(WritableScope.LockLevel.READING)
-                this
+               ^this
             }
 
             val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
@@ -467,7 +467,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             containingElement is JetClass && containingElement.isInterface() && !config.isExtension -> ""
                             else -> "{}"
                         }
-                        if (callableInfo.kind == CallableKind.FUNCTION) {
+                       ^if (callableInfo.kind == CallableKind.FUNCTION) {
                             psiFactory.createFunction("${modifiers}fun<> $header $body")
                         }
                         else {
@@ -481,11 +481,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 else -> "{\n\n}"
                             }
                             val safeName = name.quoteIfNeeded()
-                            when (kind) {
+                           ^when (kind) {
                                 ClassKind.ENUM_ENTRY -> {
                                     if (!(targetParent is JetClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent.getText()}")
                                     val hasParameters = targetParent.getPrimaryConstructorParameters().isNotEmpty()
-                                    psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
+                                   ^psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
                                     val openMod = if (open) "open " else ""
@@ -494,7 +494,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                         ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
                                         else -> ""
                                     }
-                                    psiFactory.createDeclaration<JetClassOrObject>(
+                                   ^psiFactory.createDeclaration<JetClassOrObject>(
                                             "$openMod$innerMod${kind.keyword} $safeName$typeParamList$paramList$returnTypeString $classBody"
                                     )
                                 }
@@ -503,7 +503,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                     CallableKind.PROPERTY -> {
                         val valVar = if ((callableInfo as PropertyInfo).writable) "var" else "val"
-                        psiFactory.createProperty("$modifiers$valVar<> $header")
+                       ^psiFactory.createProperty("$modifiers$valVar<> $header")
                     }
                 }
 
@@ -562,7 +562,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 }
                             }
                         }
-                        addNextToOriginalElementContainer(insertToBlock || declaration is JetProperty)
+                       ^addNextToOriginalElementContainer(insertToBlock || declaration is JetProperty)
                     }
 
                     containingElement is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
@@ -571,7 +571,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         if (declaration is JetSecondaryConstructor) {
                             val wrappingClass = psiFactory.createClass("class ${containingElement.getName()} {\n}")
                             addDeclarationToClassOrObject(wrappingClass, declaration)
-                            (jetFileToEdit.add(wrappingClass) as JetClass).getDeclarations().first() as JetNamedDeclaration
+                           ^(jetFileToEdit.add(wrappingClass) as JetClass).getDeclarations().first() as JetNamedDeclaration
                         }
                         else {
                             jetFileToEdit.add(declaration) as JetNamedDeclaration
@@ -604,7 +604,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         classBody.getRBrace() ?: classBody.getLastChild()!!,
                         javaClass<PsiWhiteSpace>()
                 )
-                classBody.addAfter(declaration, anchor) as JetNamedDeclaration
+               ^classBody.addAfter(declaration, anchor) as JetNamedDeclaration
             }
             else classBody.addAfter(declaration, classBody.getLBrace()!!) as JetNamedDeclaration
         }
@@ -694,7 +694,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (skipReturnType) "Unit" else func.getTypeReference()!!.getText())
             receiverClassDescriptor?.let {
                 properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
-                properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
+               ^properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
             }
             if (callableInfo.name.isNotEmpty()) {
                 properties.setProperty(ATTRIBUTE_FUNCTION_NAME, callableInfo.name)
@@ -719,7 +719,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val oldTypeArgumentList = callElement.getTypeArgumentList() ?: return
             val renderedTypeArgs = typeParameters.map { typeParameter ->
                 val type = substitutions.first { it.byType.getConstructor().getDeclarationDescriptor() == typeParameter }.forType
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+               ^IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
             }
             if (renderedTypeArgs.isEmpty()) {
                 oldTypeArgumentList.delete()
@@ -853,7 +853,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     is JetNamedFunction, is JetProperty -> {
                         val klass = psiFactory.createClass("class Foo {}")
                         klass.getBody()!!.add(declaration)
-                        (declaration.replace(klass) as JetClass).getBody()!!.getDeclarations().first()
+                       ^(declaration.replace(klass) as JetClass).getBody()!!.getDeclarations().first()
                     }
                     else -> declaration
                 }

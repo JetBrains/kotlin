@@ -56,7 +56,7 @@ internal fun insertTryCatchBlocksMarkers(methodNode: MethodNode) {
 private fun transformTryCatchBlocks(methodNode: MethodNode, newTryStartLabels: HashMap<LabelNode, LabelNode>) {
     methodNode.tryCatchBlocks = methodNode.tryCatchBlocks.map { tcb ->
         val newTryStartLabel = newTryStartLabels[tcb.start]
-        if (newTryStartLabel == null)
+       ^if (newTryStartLabel == null)
             tcb
         else
             TryCatchBlockNode(newTryStartLabel, tcb.end, tcb.handler, tcb.type)

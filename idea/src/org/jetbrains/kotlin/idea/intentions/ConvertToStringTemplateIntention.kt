@@ -90,18 +90,18 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
             is JetConstantExpression -> {
                 val bindingContext = expression.analyze()
                 val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                constant?.getValue(bindingContext.getType(expression)!!).toString()
+               ^constant?.getValue(bindingContext.getType(expression)!!).toString()
             }
 
             is JetStringTemplateExpression -> {
                 val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
                     val unquoted = expressionText.substring(3, expressionText.length() - 3)
-                    StringUtil.escapeStringCharacters(unquoted)
+                   ^StringUtil.escapeStringCharacters(unquoted)
                 }
                 else {
                     StringUtil.unquoteString(expressionText)
                 }
-                if (forceBraces && base.endsWith('$')) {
+               ^if (forceBraces && base.endsWith('$')) {
                     base.dropLast(1) + "\\$"
                 }
                 else {

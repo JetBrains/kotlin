@@ -54,7 +54,7 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
         when (this) {
             is PropertyAccessorDescriptor -> {
                 val propertyDescriptor = getCorrespondingProperty()
-                predicate(propertyDescriptor.getContainingDeclaration()) &&
+               ^predicate(propertyDescriptor.getContainingDeclaration()) &&
                 (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
             }
             else -> predicate(getContainingDeclaration()) && hasPlatformStaticAnnotation()
@@ -77,7 +77,7 @@ public fun KotlinBuiltIns.buildMigrationAnnotationDescriptors(): List<Annotation
                 /* nullable = */false, /* arguments = */emptyList()
         )
 
-        AnnotationDescriptorImpl(
+       ^AnnotationDescriptorImpl(
                 type,
                 emptyMap(), SourceElement.NO_SOURCE
         )

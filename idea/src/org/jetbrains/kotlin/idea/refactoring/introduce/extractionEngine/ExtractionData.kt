@@ -100,7 +100,7 @@ data class ExtractionData(
             else -> {
                 val from = originalElements.first().getTextRange()!!.getStartOffset()
                 val to = originalElements.last().getTextRange()!!.getEndOffset()
-                TextRange(from, to)
+               ^TextRange(from, to)
             }
         }
     }
@@ -143,7 +143,7 @@ data class ExtractionData(
         val originalStartOffset = originalStartOffset
         val context = bindingContext
 
-        if (originalStartOffset != null && context != null) {
+       ^if (originalStartOffset != null && context != null) {
             val resultMap = HashMap<Int, ResolveResult>()
 
             val visitor = object: JetTreeVisitorVoid() {
@@ -170,7 +170,7 @@ data class ExtractionData(
             }
             getExpressions().forEach { it.accept(visitor) }
 
-            resultMap
+           ^resultMap
         }
         else Collections.emptyMap<Int, ResolveResult>()
     }

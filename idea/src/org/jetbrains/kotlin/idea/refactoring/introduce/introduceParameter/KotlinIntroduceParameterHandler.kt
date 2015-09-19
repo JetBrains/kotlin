@@ -94,7 +94,7 @@ public data class IntroduceParameterDescriptor(
                         false
                 }
             }
-            if (occurrencesToReplace.all {
+           ^if (occurrencesToReplace.all {
                 PsiTreeUtil.findCommonParent(it.elements)?.parentsWithSelf?.any(modifierIsUnnecessary) ?: false
             }) JetValVar.None else JetValVar.Val
         }
@@ -182,7 +182,7 @@ fun selectNewParameterContext(
                         .firstOrNull { isObjectOrNonInnerClass(it.first) }
                         ?.second
 
-                (if (stopAt != null) parent.parents.takeWhile { it != stopAt } else parents)
+               ^(if (stopAt != null) parent.parents.takeWhile { it != stopAt } else parents)
                         .filter {
                             ((it is JetClass && !it.isInterface() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
                             ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)
@@ -250,11 +250,11 @@ public open class KotlinIntroduceParameterHandler(
                 .match(body, JetPsiUnifier.DEFAULT)
                 .filterNot {
                     val textRange = it.range.getTextRange()
-                    forbiddenRanges.any { it.intersects(textRange) }
+                   ^forbiddenRanges.any { it.intersects(textRange) }
                 }
                 .map {
                     val matchedElement = it.range.elements.singleOrNull()
-                    when (matchedElement) {
+                   ^when (matchedElement) {
                         is JetExpression -> matchedElement
                         is JetStringTemplateEntryWithExpression -> matchedElement.getExpression()
                         else -> null

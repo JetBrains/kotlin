@@ -84,7 +84,7 @@ public class KotlinMemberInfoStorage(
                 .map {
                     val type = context[BindingContext.TYPE, it.typeReference]
                     val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
-                    classDescriptor?.source?.getPsi() as? JetClass
+                   ^classDescriptor?.source?.getPsi() as? JetClass
                 }
                 .filter { it != null && it.isInterface() }
                 .mapTo(temp) { KotlinMemberInfo(it!!, true) }

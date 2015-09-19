@@ -30,7 +30,7 @@ public fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library
     forEachLibrary { library ->
         if (predicate(library!!)) {
             lib = library
-            false
+           ^false
         }
         else {
             true

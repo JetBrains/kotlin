@@ -68,7 +68,7 @@ public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
 public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
     return sequence<JetExpression>(this) {
         val parentQualified = it.getParent() as? JetQualifiedExpression
-        if (parentQualified?.getSelectorExpression() == it) parentQualified else null
+       ^if (parentQualified?.getSelectorExpression() == it) parentQualified else null
     }.last() as? JetQualifiedExpression
 }
 
@@ -81,7 +81,7 @@ public fun JetElement.getQualifiedElementSelector(): JetElement? {
         is JetCallExpression -> getCalleeExpression()
         is JetQualifiedExpression -> {
             val selector = getSelectorExpression()
-            if (selector is JetCallExpression) selector.getCalleeExpression() else selector
+           ^if (selector is JetCallExpression) selector.getCalleeExpression() else selector
         }
         is JetUserType -> getReferenceExpression()
         else -> null

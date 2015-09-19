@@ -33,7 +33,7 @@ public fun ResolutionFacade.psiClassToDescriptor(
     return if (psiClass is KotlinLightClass && psiClass !is KotlinLightClassForDecompiledDeclaration) {
         val origin = psiClass.getOrigin () ?: return null
         val declaration = declarationTranslator(origin) ?: return null
-        resolveToDescriptor(declaration)
+       ^resolveToDescriptor(declaration)
     }
     else {
         this.getFrontendService(psiClass, javaClass<JavaDescriptorResolver>()).resolveClass(JavaClassImpl(psiClass))

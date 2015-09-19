@@ -180,7 +180,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, Processor { highlightInfo ->
             if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
                 hasErrors = true
-                false
+               ^false
             }
             else {
                 true

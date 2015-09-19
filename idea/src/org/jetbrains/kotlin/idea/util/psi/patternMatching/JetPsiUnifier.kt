@@ -227,7 +227,7 @@ public class JetPsiUnifier(
 
                 return (args1.asSequence() zip args2.asSequence()).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
-                    s and when {
+                   ^s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
                         else -> (arg1.getArguments().asSequence() zip arg2.getArguments().asSequence()).fold(MATCHED) { s, p ->
@@ -298,7 +298,7 @@ public class JetPsiUnifier(
                 rc1.isSafeCall() != rc2.isSafeCall() -> UNMATCHED
                 else -> {
                     val s = checkTypeArguments()
-                    if (s != MATCHED) s else checkArguments()
+                   ^if (s != MATCHED) s else checkArguments()
                 }
             }
         }
@@ -339,7 +339,7 @@ public class JetPsiUnifier(
                     val call1 = e1.getCall(e1.bindingContext)
                     val call2 = e2.getCall(e2.bindingContext)
 
-                    when {
+                   ^when {
                         call1 != null && call2 != null ->
                             if (matchCalls(call1, call2)) null else UNMATCHED
 
@@ -465,7 +465,7 @@ public class JetPsiUnifier(
                 val (entry1, entry2) = p
                 val rc1 = entry1.bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, entry1]
                 val rc2 = entry2.bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, entry2]
-                when {
+               ^when {
                     rc1 == null && rc2 == null -> true
                     rc1 != null && rc2 != null -> matchResolvedCalls(rc1, rc2) == MATCHED
                     else -> false
@@ -634,7 +634,7 @@ public class JetPsiUnifier(
             if ((sortedMembers1.size() != sortedMembers2.size())) return UNMATCHED
             if (sortedMembers1.zip(sortedMembers2).any {
                 val (d1, d2) = it
-                (matchDeclarations(d1.first, d2.first, d1.second, d2.second) ?: doUnify(d1.first, d2.first)) == UNMATCHED
+               ^(matchDeclarations(d1.first, d2.first, d1.second, d2.second) ?: doUnify(d1.first, d2.first)) == UNMATCHED
             }) return UNMATCHED
 
             return doUnify(
@@ -802,14 +802,14 @@ public class JetPsiUnifier(
                     return when {
                         existingArgument == null -> {
                             substitution[parameter] = targetElementUnwrapped
-                            MATCHED
+                           ^MATCHED
                         }
                         else -> {
                             checkEquivalence = true
                             val status = doUnify(existingArgument, targetElementUnwrapped)
                             checkEquivalence = false
 
-                            status
+                           ^status
                         }
                     }
                 }
@@ -860,7 +860,7 @@ public class JetPsiUnifier(
     public fun unify(target: JetPsiRange, pattern: JetPsiRange): UnificationResult {
         return with(Context(target, pattern)) {
             val status = doUnify(target, pattern)
-            when {
+           ^when {
                 substitution.size() != descriptorToParameter.size() ->
                     Unmatched
                 status == MATCHED ->

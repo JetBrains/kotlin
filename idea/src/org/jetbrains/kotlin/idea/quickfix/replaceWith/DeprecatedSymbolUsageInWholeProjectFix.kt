@@ -68,7 +68,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                     override fun run(indicator: ProgressIndicator) {
                         val usages = runReadAction {
                             val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
-                            ReferencesSearch.search(psiElement, searchScope)
+                           ^ReferencesSearch.search(psiElement, searchScope)
                                     .filterIsInstance<JetSimpleNameReference>()
                                     .map { ref -> ref.expression }
                         }

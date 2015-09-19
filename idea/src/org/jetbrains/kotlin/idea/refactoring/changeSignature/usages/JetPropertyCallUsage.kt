@@ -58,7 +58,7 @@ public class JetPropertyCallUsage(element: JetSimpleNameExpression): JetUsageInf
         val replacingElement = newReceiver?.let {
             val psiFactory = JetPsiFactory(getProject())
             val receiver = it.defaultValueForCall ?: psiFactory.createExpression("_")
-            psiFactory.createExpressionByPattern("$0.$1", receiver, element)
+           ^psiFactory.createExpressionByPattern("$0.$1", receiver, element)
         } ?: element
 
         elementToReplace.replace(replacingElement)

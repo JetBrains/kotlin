@@ -109,7 +109,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
                 if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
                     substitutor = extensionReceiverType.checkIsSuperTypeOf(it.makeNotNullable())
                 }
-                substitutor
+               ^substitutor
             }
             .filterNotNull()
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
@@ -124,7 +124,7 @@ public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): D
     return when (this) {
         is ExpressionReceiver -> {
             val thisRef = (JetPsiUtil.deparenthesize(this.getExpression()) as? JetThisExpression)?.getInstanceReference() ?: return null
-            bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
+           ^bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 
         is ThisReceiver -> this.getDeclarationDescriptor()

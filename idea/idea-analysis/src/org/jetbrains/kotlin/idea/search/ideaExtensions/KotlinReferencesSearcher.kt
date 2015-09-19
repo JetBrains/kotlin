@@ -64,7 +64,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         val words = runReadAction {
             val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-            unwrappedElement.getSpecialNamesToSearch() +
+           ^unwrappedElement.getSpecialNamesToSearch() +
                 (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
 
@@ -142,7 +142,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
                 ProgressManager.checkCanceled()
 
-                when {
+               ^when {
                     !filter(ref) -> true
                     !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
                     !ref.isReferenceToTarget(unwrappedElement) -> true

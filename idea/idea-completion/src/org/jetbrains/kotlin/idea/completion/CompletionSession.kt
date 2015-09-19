@@ -125,7 +125,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val descriptorNameFilter: (Name) -> Boolean = run {
         val nameFilter = prefixMatcher.asNameFilter()
         val getOrSetPrefix = listOf("get", "set").firstOrNull { prefix.startsWith(it) }
-        if (getOrSetPrefix != null)
+       ^if (getOrSetPrefix != null)
             nameFilter or prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asNameFilter()
         else
             nameFilter
@@ -154,7 +154,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
             receiverTypes = receiversData.receivers.flatMap { receiverValue ->
                 val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
-                if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
+               ^if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
                     resolutionFacade.frontendService<SmartCastManager>()
                             .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
                 }
@@ -175,7 +175,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             } ?: emptyList()
         }
 
-        LookupElementFactory(resolutionFacade, receiverTypes, contextType, inDescriptor, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
+       ^LookupElementFactory(resolutionFacade, receiverTypes, contextType, inDescriptor, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
@@ -230,7 +230,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             collector.addLookupElementPostProcessor { lookupElement ->
                 // we should put data into the original element because of DecoratorCompletionStatistician
                 lookupElement.putUserDataDeep(STATISTICS_INFO_CONTEXT_KEY, statisticsContext)
-                lookupElement
+               ^lookupElement
             }
         }
 

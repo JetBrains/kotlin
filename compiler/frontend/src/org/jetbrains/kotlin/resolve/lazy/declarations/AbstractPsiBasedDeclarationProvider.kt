@@ -66,7 +66,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
     private val index = storageManager.createLazyValue<Index> {
         val index = Index()
         doCreateIndex(index)
-        index
+       ^index
     }
 
     protected abstract fun doCreateIndex(index: Index)

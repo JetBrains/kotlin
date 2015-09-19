@@ -62,7 +62,7 @@ public class KotlinIndicesHelper(
         if (it.isAnnotatedAsHidden()) return@filter false
         if (!visibilityFilter(it)) return@filter false
         if (applyExcludeSettings && isExcludedFromAutoImport(it)) return@filter false
-        true
+       ^true
     }
 
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {

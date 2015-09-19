@@ -129,7 +129,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
 
             is JetProperty -> {
                 if (isVar()) return null //TODO
-                getGetter()?.replacementExpressionFromBody()
+               ^getGetter()?.replacementExpressionFromBody()
             }
 
             else -> null

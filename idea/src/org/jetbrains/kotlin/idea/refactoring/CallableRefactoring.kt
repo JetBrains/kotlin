@@ -179,7 +179,7 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
     val baseCallables = descriptorsForChange.map { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }.filterNotNull()
     return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
         val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
-        overrides.map { method -> method.namedUnwrappedElement ?: method}
+       ^overrides.map { method -> method.namedUnwrappedElement ?: method}
     }
 }
 

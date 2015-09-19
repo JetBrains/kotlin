@@ -58,7 +58,7 @@ public fun JetPsiRange.preview(project: Project, editor: Editor): RangeHighlight
         }
         editor.getScrollingModel().scrollTo(editor.offsetToLogicalPosition(startOffset), ScrollType.MAKE_VISIBLE)
 
-        it
+       ^it
     }
 }
 

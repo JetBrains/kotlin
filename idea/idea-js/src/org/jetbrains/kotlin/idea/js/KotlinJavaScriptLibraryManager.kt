@@ -143,7 +143,7 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
                         srcRootUrls.addAll(library.getFiles(OrderRootType.SOURCES).map { it.url })
                     }
                 }
-                true
+               ^true
             }
 
             val filesToRefresh = update(rootFiles, addToMapIfAbsent = true)

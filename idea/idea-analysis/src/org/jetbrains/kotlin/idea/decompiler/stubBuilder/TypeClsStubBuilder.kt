@@ -49,7 +49,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
             val isTopLevelClass = !it.isNestedClass()
-            isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
+           ^isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
         }
 
         val effectiveParent =

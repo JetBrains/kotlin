@@ -66,7 +66,7 @@ fun findPackagePartInternalNameForLibraryFile(topLevelDeclaration: JetDeclaratio
         is PropertyDescriptor -> packageDescriptor.memberScope.getProperties(descriptor.name, NoLookupLocation.FROM_IDE)
         else -> {
             reportError(topLevelDeclaration, descriptor)
-            listOf()
+           ^listOf()
         }
     }
 
@@ -111,7 +111,7 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
         FilenameIndex.getVirtualFilesByName(project, it, scope).asSequence()
             }.map {
                 val packageFqName = file.getPackageFqName()
-                if (packageFqName.isRoot()) {
+               ^if (packageFqName.isRoot()) {
                     it.getNameWithoutExtension()
                 } else {
                     "${packageFqName.asString()}.${it.getNameWithoutExtension()}"

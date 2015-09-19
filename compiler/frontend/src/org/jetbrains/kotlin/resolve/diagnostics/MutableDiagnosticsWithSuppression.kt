@@ -34,7 +34,7 @@ public class MutableDiagnosticsWithSuppression(
     //NOTE: CachedValuesManager is not used because it requires Project passed to this object
     private val cache = CachedValueImpl(CachedValueProvider {
         val allDiagnostics = delegateDiagnostics.noSuppression().all() + diagnosticList
-        CachedValueProvider.Result(DiagnosticsWithSuppression(bindingContext, allDiagnostics), modificationTracker)
+       ^CachedValueProvider.Result(DiagnosticsWithSuppression(bindingContext, allDiagnostics), modificationTracker)
     })
 
     private fun readonlyView() = cache.getValue()!!

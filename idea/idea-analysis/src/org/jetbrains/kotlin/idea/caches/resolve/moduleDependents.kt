@@ -85,6 +85,6 @@ private fun getModuleIndex(project: Project): ModuleIndex {
                 }
             }
         }
-        CachedValueProvider.Result(index, ProjectRootModificationTracker.getInstance(project))
+       ^CachedValueProvider.Result(index, ProjectRootModificationTracker.getInstance(project))
     }!!
 }

@@ -53,6 +53,6 @@ private fun List<PackageParts>.addCompiledParts(state: GenerationState): List<Pa
                 val (packageFqName, packageParts) = it
                 val newPackageParts = PackageParts(packageFqName)
                 packageParts.forEach { newPackageParts.parts.addAll(it.parts) }
-                newPackageParts
+               ^newPackageParts
             }
 }

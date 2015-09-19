@@ -122,7 +122,7 @@ class FunctionDescriptorResolver(
         else if (function.hasBody()) {
             DeferredType.createRecursionIntolerant(storageManager, trace) {
                 val type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-                transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace)
+               ^transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace)
             }
         }
         else {

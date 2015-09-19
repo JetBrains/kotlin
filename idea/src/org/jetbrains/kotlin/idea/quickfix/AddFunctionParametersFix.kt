@@ -54,11 +54,11 @@ public class AddFunctionParametersFix(
 
         val callableDescription = if (isConstructor()) {
             val className = functionDescriptor.containingDeclaration.name.asString()
-            "constructor '$className'"
+           ^"constructor '$className'"
         }
         else {
             val functionName = functionDescriptor.name.asString()
-            "function '$functionName'"
+           ^"function '$functionName'"
         }
 
         return if (hasTypeMismatches)
@@ -132,7 +132,7 @@ public class AddFunctionParametersFix(
     private fun hasOtherUsages(function: PsiElement): Boolean {
         return ReferencesSearch.search(function).any {
             val call = it.element.getParentOfType<JetCallElement>(false)
-            call != null && callElement != call
+           ^call != null && callElement != call
         }
     }
 

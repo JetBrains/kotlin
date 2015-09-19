@@ -39,7 +39,7 @@ open public class AbstractAccessorForFunctionDescriptor(
             copy.addUpperBound(upperBound)
         }
         copy.setInitialized()
-        copy
+       ^copy
     }
 
     protected fun copyValueParameters(descriptor: FunctionDescriptor): List<ValueParameterDescriptor> =

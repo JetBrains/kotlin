@@ -79,7 +79,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
                         return Result.HIDE_LOOKUP
                     }
                 }
-                Result.SELECT_ITEM_AND_FINISH_LOOKUP
+               ^Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
 
             '{' -> {

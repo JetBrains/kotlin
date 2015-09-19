@@ -37,7 +37,7 @@ class ClassUsageReplacementStrategy(
             is JetUserType -> {
                 return {
                     val replaced = parent.replaced(replacement)
-                    ShortenReferences.DEFAULT.process(replaced)
+                   ^ShortenReferences.DEFAULT.process(replaced)
                 } //TODO: type arguments and type arguments of outer class are lost
             }
 

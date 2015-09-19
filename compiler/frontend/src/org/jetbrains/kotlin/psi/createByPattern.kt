@@ -96,7 +96,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
     @Suppress("NAME_SHADOWING")
     val args = args.zip(argumentTypes).map {
         val (arg, type) = it
-        if (type is PlainTextArgumentType)
+       ^if (type is PlainTextArgumentType)
             (type.toPlainText as Function1<in Any, String>).invoke(arg) // TODO: see KT-7833
         else
             arg
@@ -220,7 +220,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
                         check(endIndex > i, "empty placeholder text")
                         val text = pattern.substring(i, endIndex)
                         i = endIndex + 1
-                        text
+                       ^text
                     }
 
                     append(placeholderText)
@@ -232,7 +232,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
             else {
                 append(c)
             }
-            i++
+           ^i++
         }
     }.toString()
 

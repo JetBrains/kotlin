@@ -113,7 +113,7 @@ private abstract class TypeExpression(public val typeCandidates: List<TypeCandid
                 typeCandidates.map {
                     val descriptor = it.theType.getConstructor().getDeclarationDescriptor() as ClassDescriptor
                     val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.INTERFACE) "" else "()"
-                    LookupElementBuilder.create(it, text)
+                   ^LookupElementBuilder.create(it, text)
                 }.toTypedArray()
     }
 

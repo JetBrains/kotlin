@@ -124,7 +124,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             }
 
             val inlinedArgument = getInlineArgumentIfAny(file, offset)
-            inlinedArgument != null && inlinedArgument.textRange.contains(offset)
+           ^inlinedArgument != null && inlinedArgument.textRange.contains(offset)
         }
     }
 
@@ -228,7 +228,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             if (elementAt != null) {
                 topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, startOffset)
             }
-            startOffset++
+           ^startOffset++
         }
 
         if (topMostElement == null) return emptyList()
@@ -242,7 +242,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
                 .filterIsInstance<JetFunction>()
                 .filter {
                     val context = it.analyze(BodyResolveMode.PARTIAL)
-                    InlineUtil.isInlinedArgument(it, context, false)
+                   ^InlineUtil.isInlinedArgument(it, context, false)
                 }
     }
 }

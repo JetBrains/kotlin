@@ -63,7 +63,7 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
 
             expressionLeft is JetBinaryExpression -> {
                 val sameCommutativeOperation = expressionLeft.getOperationToken() == operationToken && isCommutative(operationToken)
-                isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft)
+               ^isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft)
             }
 
             else -> {

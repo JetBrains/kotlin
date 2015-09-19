@@ -77,7 +77,7 @@ public class CodeFragmentAnalyzer(
                            if (parent is JetWhenEntry || parent is JetIfExpression || parent is JetBlockExpression) return this
                            if (parent is JetExpression) return parent
                        }
-                       null
+                      ^null
                    }
                } ?: this
     }

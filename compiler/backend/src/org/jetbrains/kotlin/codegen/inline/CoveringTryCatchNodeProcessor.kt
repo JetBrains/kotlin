@@ -67,7 +67,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
                     result = instructionIndex(t1.endLabel) - instructionIndex(t2.endLabel)
                 }
             }
-            result
+           ^result
         }
 
         Collections.sort<TryCatchBlockNodeInfo>(intervals, comp)
@@ -197,12 +197,12 @@ public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, Splitt
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
             node.end = split.startLabel
-            Pair(split.endLabel, oldEnd)
+           ^Pair(split.endLabel, oldEnd)
         }
         else {
             val oldStart = startLabel
             node.start = split.endLabel
-            Pair(oldStart, split.startLabel)
+           ^Pair(oldStart, split.startLabel)
         }
 
         return SplitPair(this, LocalVarNodeWrapper(

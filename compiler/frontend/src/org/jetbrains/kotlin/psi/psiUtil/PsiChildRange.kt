@@ -37,7 +37,7 @@ public data class PsiChildRange(public val first: PsiElement?, public val last: 
         }
         else {
             val afterLast = last!!.getNextSibling()
-            first.siblings().takeWhile { it != afterLast }
+           ^first.siblings().takeWhile { it != afterLast }
         }
         return sequence.iterator()
     }

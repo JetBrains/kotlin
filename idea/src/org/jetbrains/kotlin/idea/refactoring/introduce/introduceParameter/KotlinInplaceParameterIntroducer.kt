@@ -71,7 +71,7 @@ public class KotlinInplaceParameterIntroducer(
             override val textAttributes: TextAttributes = with(TextAttributes()) {
                 setEffectType(EffectType.ROUNDED_BOX)
                 setEffectColor(JBColor.RED)
-                this
+               ^this
             }
         },
 
@@ -79,7 +79,7 @@ public class KotlinInplaceParameterIntroducer(
             override val textAttributes: TextAttributes = with(TextAttributes()) {
                 setEffectType(EffectType.STRIKEOUT)
                 setEffectColor(Color.BLACK)
-                this
+               ^this
             }
         };
 
@@ -138,7 +138,7 @@ public class KotlinInplaceParameterIntroducer(
                         val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
                         val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
-                        "$modifier$parameterName: $parameterType$defaultValue"
+                       ^"$modifier$parameterName: $parameterType$defaultValue"
                     }
                     else parameter.getText()
 
@@ -208,7 +208,7 @@ public class KotlinInplaceParameterIntroducer(
                 val parameterList = callable.getValueParameterList()
                                     ?: (callable as JetClass).createPrimaryConstructorParameterListIfAbsent()
                 val parameter = JetPsiFactory(myProject).createParameter("$newParameterName: $newParameterTypeText")
-                parameterList.addParameter(parameter)
+               ^parameterList.addParameter(parameter)
             }
         }
     }

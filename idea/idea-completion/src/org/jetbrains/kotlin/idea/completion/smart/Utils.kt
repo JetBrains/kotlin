@@ -239,7 +239,7 @@ fun functionType(function: FunctionDescriptor): JetType? {
     val extensionReceiverType = function.getExtensionReceiverParameter()?.getType()
     val memberReceiverType = if (function is ConstructorDescriptor) {
         val classDescriptor = function.getContainingDeclaration()
-        if (classDescriptor.isInner()) {
+       ^if (classDescriptor.isInner()) {
             (classDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
         }
         else {
@@ -277,7 +277,7 @@ fun LookupElementFactory.createLookupElementsInSmartCompletion(
             element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
         }
 
-        element
+       ^element
     }
 }
 

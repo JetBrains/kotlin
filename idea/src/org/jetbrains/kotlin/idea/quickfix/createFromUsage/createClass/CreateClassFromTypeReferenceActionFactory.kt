@@ -46,7 +46,7 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
             interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
             else -> ClassKind.values().filter {
                 val noTypeArguments = element.typeArgumentsAsTypes.isEmpty()
-                when (it) {
+               ^when (it) {
                     ClassKind.OBJECT -> noTypeArguments && isQualifier
                     ClassKind.ANNOTATION_CLASS -> noTypeArguments && !isQualifier
                     ClassKind.ENUM_ENTRY -> false

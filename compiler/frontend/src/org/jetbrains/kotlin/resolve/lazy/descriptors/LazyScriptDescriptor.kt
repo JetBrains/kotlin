@@ -85,7 +85,7 @@ public class LazyScriptDescriptor(
                     scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
                 }
         )
-        result
+       ^result
     }
 
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()

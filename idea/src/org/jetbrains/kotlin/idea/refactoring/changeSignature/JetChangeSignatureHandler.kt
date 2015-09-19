@@ -107,7 +107,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                                                                    javaClass<JetConstructorDelegationCall>())
             val calleeExpr = call?.let {
                 val callee = it.getCalleeExpression()
-                (callee as? JetConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
+               ^(callee as? JetConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
             } ?: element.getStrictParentOfType<JetSimpleNameExpression>()
 
             if (calleeExpr is JetSimpleNameExpression || calleeExpr is JetConstructorDelegationReferenceExpression) {
@@ -181,7 +181,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                         return null
                     }
 
-                    descriptor
+                   ^descriptor
                 }
 
                 is PropertyDescriptor, is ValueParameterDescriptor -> descriptor as CallableDescriptor
@@ -189,7 +189,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                 else -> {
                     val message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name"))
                     CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
-                    null
+                   ^null
                 }
             }
         }

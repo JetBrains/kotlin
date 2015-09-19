@@ -100,7 +100,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
             val debuggerSession = debuggerContext.debuggerSession
-            if (debuggerSession == null) {
+           ^if (debuggerSession == null) {
                 null
             }
             else {
@@ -121,7 +121,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     if (semaphore.waitFor(20)) break
                 }
 
-                nameRef.get()
+               ^nameRef.get()
             }
         })
 

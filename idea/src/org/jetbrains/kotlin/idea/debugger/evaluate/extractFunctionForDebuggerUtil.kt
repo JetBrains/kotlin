@@ -65,7 +65,7 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
                 ErrorMessage.MULTIPLE_OUTPUT -> throw AssertionError("Unexpected error: $errorMessage")
             }
-            errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
+           ^errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
         }.joinToString(", ")
     }
 
@@ -192,16 +192,16 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
             val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
             contextElement.add(psiFactory.createNewLine())
             val newFakeFun = contextElement.add(fakeFunction) as JetNamedFunction
-            newFakeFun.getBodyExpression()!!.getLastChild()
+           ^newFakeFun.getBodyExpression()!!.getLastChild()
         }
         contextElement is JetProperty && !contextElement.isLocal() -> {
             val delegateExpressionOrInitializer = contextElement.getDelegateExpressionOrInitializer()
-            if (delegateExpressionOrInitializer != null) {
+           ^if (delegateExpressionOrInitializer != null) {
                 wrapInRunFun(delegateExpressionOrInitializer)
             }
             else {
                 val getter = contextElement.getGetter()!!
-                if (!getter.hasBlockBody()) {
+               ^if (!getter.hasBlockBody()) {
                     wrapInRunFun(getter.getBodyExpression()!!)
                 }
                 else {
@@ -211,19 +211,19 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         }
         contextElement is JetPrimaryConstructor -> {
             val classOrObject = contextElement.getContainingClassOrObject()
-            insertNewInitializer(classOrObject.getOrCreateBody())
+           ^insertNewInitializer(classOrObject.getOrCreateBody())
         }
         contextElement is JetClassOrObject -> {
             insertNewInitializer(contextElement.getBody()!!)
         }
         contextElement is JetFunctionLiteral -> {
             val block = contextElement.getBodyExpression()!!
-            block.getStatements().firstOrNull() ?: block.getLastChild()
+           ^block.getStatements().firstOrNull() ?: block.getLastChild()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBody()-> {
             val block = psiFactory.createBlock("")
             val newBlock = contextElement.add(block) as JetBlockExpression
-            newBlock.getRBrace()
+           ^newBlock.getRBrace()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)
@@ -231,14 +231,14 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         contextElement is JetDeclarationWithBody && contextElement.hasBlockBody()-> {
             val block = contextElement.getBodyExpression() as JetBlockExpression
             val last = block.getStatements().lastOrNull()
-            if (last is JetReturnExpression)
+           ^if (last is JetReturnExpression)
                 last
             else
                 block.getRBrace()
         }
         contextElement is JetWhenEntry -> {
             val entryExpression = contextElement.getExpression()
-            if (entryExpression is JetBlockExpression) {
+           ^if (entryExpression is JetBlockExpression) {
                 entryExpression.getStatements().firstOrNull() ?: entryExpression.getLastChild()
             }
             else {

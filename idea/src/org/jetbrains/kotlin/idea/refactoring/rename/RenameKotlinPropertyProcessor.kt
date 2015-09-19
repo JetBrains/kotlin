@@ -119,7 +119,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
 
         val refKindUsages = usages.toList().groupBy { usage: UsageInfo ->
             val refElement = usage.getReference()?.resolve()
-            if (refElement is PsiMethod) {
+           ^if (refElement is PsiMethod) {
                 when (refElement.getName()) {
                     oldGetterName -> UsageKind.GETTER_USAGE
                     oldSetterName -> UsageKind.SETTER_USAGE

@@ -78,7 +78,7 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
                 .map {
                     val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                    if ((declaration is JetClass || declaration is PsiClass)
+                   ^if ((declaration is JetClass || declaration is PsiClass)
                         && declaration.canRefactor()) declaration as PsiNamedElement else null
                 }
                 .filterNotNull()

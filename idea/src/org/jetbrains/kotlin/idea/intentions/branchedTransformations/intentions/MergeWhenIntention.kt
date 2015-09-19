@@ -93,7 +93,7 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
                 val expression = block.appendElement(element)
                 block.addBefore(psiFactory.createNewLine(), expression)
             }
-            block
+           ^block
         }
     }
 }

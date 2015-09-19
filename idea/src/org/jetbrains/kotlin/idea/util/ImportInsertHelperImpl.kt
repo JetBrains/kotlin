@@ -194,7 +194,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val importsFromPackage = imports.count {
                 val path = it.getImportPath()
-                path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == packageFqName
+               ^path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == packageFqName
             }
             return importsFromPackage + 1 >= codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
         }
@@ -210,9 +210,9 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     .filter { it.isAllUnder () }
                     .map {
                         val importPath = it.getImportPath()
-                        if (importPath != null) {
+                       ^if (importPath != null) {
                             val fqName = importPath.fqnPart()
-                            getMemberScope(fqName, moduleDescriptor)
+                           ^getMemberScope(fqName, moduleDescriptor)
                         }
                         else {
                             null
@@ -390,7 +390,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                             .reverse()
                             .firstOrNull {
                                 val directivePath = it.getImportPath()
-                                directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                               ^directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
                             }
                     return importList.addAfter(newDirective, insertAfter) as JetImportDirective
                 }

@@ -134,7 +134,7 @@ fun applyMarking(
                     expression.newFqName?.let {
                         expression.newFqName = null
 
-                        expression.mainReference.bindToFqName(it)
+                       ^expression.mainReference.bindToFqName(it)
                     }
                 }
 

@@ -133,7 +133,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
                     doTraversal(it.body.getEnterInstruction())
             }
 
-            true
+           ^true
         }
     }
 
@@ -350,7 +350,7 @@ private fun ExtractionData.analyzeControlFlow(
 
     outDeclarations.mapTo(outputValues) {
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
-        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE)
+       ^Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE)
     }
     outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors[it.originalDescriptor]!!) }
 
@@ -365,7 +365,7 @@ private fun ExtractionData.analyzeControlFlow(
                              + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
                     return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
                 }
-                OutputValueBoxer::AsList
+               ^OutputValueBoxer::AsList
             }
 
             else -> controlFlow.boxerFactory
@@ -455,7 +455,7 @@ private fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
             DescriptorToSourceUtils.descriptorToDeclaration(it)
         } as? JetTypeParameter
 
-        extractable && (typeParameter != null || typeToCheck.isResolvableInScope(targetScope, false))
+       ^extractable && (typeParameter != null || typeToCheck.isResolvableInScope(targetScope, false))
     }
 }
 
@@ -472,13 +472,13 @@ private fun JetType.processTypeIfExtractable(
             DescriptorToSourceUtils.descriptorToDeclaration(it)
         } as? JetTypeParameter
 
-        when {
+       ^when {
             typeToCheck.isResolvableInScope(targetScope, true) ->
                 extractable
 
             typeParameter != null -> {
                 typeParameters.add(TypeParameter(typeParameter, typeParameter.collectRelevantConstraints()))
-                extractable
+               ^extractable
             }
 
             options.allowSpecialClassNames && typeToCheck.isSpecial() ->
@@ -489,7 +489,7 @@ private fun JetType.processTypeIfExtractable(
 
             else -> {
                 nonDenotableTypes.add(typeToCheck)
-                false
+               ^false
             }
         }
     }
@@ -530,7 +530,7 @@ private class MutableParameter(
 
     private val defaultType: JetType by lazy {
         writable = false
-        if (defaultTypes.isNotEmpty()) {
+       ^if (defaultTypes.isNotEmpty()) {
             TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
         }
         else originalType
@@ -543,7 +543,7 @@ private class MutableParameter(
 
         val typeSet = if (defaultType.isFlexible()) {
             val bounds = defaultType.getCapability(javaClass<Flexibility>())!!
-            LinkedHashSet<JetType>().apply {
+           ^LinkedHashSet<JetType>().apply {
                 if (typePredicate(bounds.upperBound)) add(bounds.upperBound)
                 if (typePredicate(bounds.lowerBound)) add(bounds.lowerBound)
             }
@@ -560,7 +560,7 @@ private class MutableParameter(
             typeSet.add(superType)
         }
 
-        typeSet.toList()
+       ^typeSet.toList()
     }
 
     override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType> {
@@ -618,7 +618,7 @@ private fun ExtractionData.inferParametersInfo(
         return when {
                    extractFunctionRef -> {
                        originalDescriptor as FunctionDescriptor
-                       KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
+                      ^KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
                                                                     originalDescriptor.getExtensionReceiverParameter()?.getType(),
                                                                     originalDescriptor.getValueParameters().map { it.getType() },
                                                                     originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
@@ -635,10 +635,10 @@ private fun ExtractionData.inferParametersInfo(
                        val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                            bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
                                val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
-                               if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
+                              ^if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                            }
                        } else null
-                       typeByDataFlowInfo ?: receiverToExtract.getType()
+                      ^typeByDataFlowInfo ?: receiverToExtract.getType()
                    }
                    receiverToExtract.exists() -> receiverToExtract.getType()
                    else -> null
@@ -715,7 +715,7 @@ private fun ExtractionData.inferParametersInfo(
                     receiverToExtract is ExpressionReceiver -> {
                         val receiverExpression = receiverToExtract.getExpression()
                         // If p.q has a smart-cast, then extract entire qualified expression
-                        if (refInfo.smartCast != null) receiverExpression.getParent() as JetExpression else receiverExpression
+                       ^if (refInfo.smartCast != null) receiverExpression.getParent() as JetExpression else receiverExpression
                     }
                     receiverToExtract.exists() && refInfo.smartCast == null -> null
                     else -> (originalRef.getParent() as? JetThisExpression) ?: originalRef
@@ -727,14 +727,14 @@ private fun ExtractionData.inferParametersInfo(
                     var argumentText =
                             if (hasThisReceiver && extractThis) {
                                 val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.getName().asString()}" else ""
-                                "this$label"
+                               ^"this$label"
                             }
                             else {
                                 val argumentExpr = (thisExpr ?: ref).getQualifiedExpressionForSelectorOrThis()
-                                if (argumentExpr is JetOperationReferenceExpression) {
+                               ^if (argumentExpr is JetOperationReferenceExpression) {
                                     val nameElement = argumentExpr.getReferencedNameElement()
                                     val nameElementType = nameElement.node.elementType
-                                    (nameElementType as? JetToken)?.let {
+                                   ^(nameElementType as? JetToken)?.let {
                                         OperatorConventions.getNameForOperationSymbol(it)?.asString()
                                     } ?: nameElement.getText()
                                 }
@@ -748,7 +748,7 @@ private fun ExtractionData.inferParametersInfo(
 
                     val originalType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, false)
 
-                    MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope, originalType, refInfo.possibleTypes)
+                   ^MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope, originalType, refInfo.possibleTypes)
                 }
 
                 if (!extractThis) {
@@ -799,7 +799,7 @@ private fun ExtractionData.inferParametersInfo(
                 currentName = KotlinNameSuggester.suggestNamesByType(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
             }
             mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) KotlinNameSuggester.suggestNameByName(name, varNameValidator) else null
-            info.parameters.add(this)
+           ^info.parameters.add(this)
         }
     }
 
@@ -977,9 +977,9 @@ private fun JetNamedDeclaration.getGeneratedBody() =
                 property.getGetter()?.getBodyExpression()?.let { return it }
                 property.getInitializer()?.let { return it }
                 // We assume lazy property here with delegate expression 'by Delegates.lazy { body }'
-                property.getDelegateExpression()?.let {
+               ^property.getDelegateExpression()?.let {
                     val call = it.getCalleeExpressionIfAny()?.getParent() as? JetCallExpression
-                    call?.getFunctionLiteralArguments()?.singleOrNull()?.getFunctionLiteral()?.getBodyExpression()
+                   ^call?.getFunctionLiteralArguments()?.singleOrNull()?.getFunctionLiteral()?.getBodyExpression()
                 }
             }
         } ?: throw AssertionError("Couldn't get block body for this declaration: ${getElementTextWithContext()}")

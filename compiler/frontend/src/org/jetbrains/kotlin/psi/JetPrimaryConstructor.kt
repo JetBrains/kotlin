@@ -66,7 +66,7 @@ public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
         else {
             val parameterList = getValueParameterList()!!
             val newModifierList = JetPsiFactory(getProject()).createModifierList(annotationEntry.text)
-            (addBefore(newModifierList, parameterList) as JetModifierList).annotationEntries.first()
+           ^(addBefore(newModifierList, parameterList) as JetModifierList).annotationEntries.first()
         }
     }
 }

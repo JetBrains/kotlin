@@ -766,7 +766,7 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
             JetTokens.EXCLEQ -> !result
             JetTokens.IDENTIFIER -> {
                 assert (operationReference.getReferencedNameAsName() == OperatorConventions.EQUALS, "This method should be called only for equals operations")
-                result
+               ^result
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.getText()}")
         }

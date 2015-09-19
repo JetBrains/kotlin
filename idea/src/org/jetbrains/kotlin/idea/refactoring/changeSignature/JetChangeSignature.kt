@@ -99,7 +99,7 @@ public class JetChangeSignature(project: Project,
                     return
                 }
 
-                ChangeSignatureProcessor(project, getPreviewInfoForJavaMethod(descriptor).second)
+               ^ChangeSignatureProcessor(project, getPreviewInfoForJavaMethod(descriptor).second)
             }
             else -> throw AssertionError("Unexpected declaration: ${baseDeclaration.getElementTextWithContext()}")
         }
@@ -124,7 +124,7 @@ public class JetChangeSignature(project: Project,
                 }
 
                 val (preview, javaChangeInfo) = getPreviewInfoForJavaMethod(descriptor)
-                object: JavaChangeSignatureDialog(project, JavaMethodDescriptor(preview), false, null) {
+               ^object: JavaChangeSignatureDialog(project, JavaMethodDescriptor(preview), false, null) {
                     override fun createRefactoringProcessor(): BaseRefactoringProcessor? {
                         val processor = super.createRefactoringProcessor()
                         (processor as? ChangeSignatureProcessor)?.getChangeInfo()?.updateMethod(javaChangeInfo.getMethod())
@@ -148,7 +148,7 @@ public class JetChangeSignature(project: Project,
         val dummyFileText = with(StringBuilder()) {
             contextFile.getPackageDirective()?.let { append(it.getText()).append("\n") }
             append("class Dummy {\n").append(ktSignature).append("{}\n}")
-            toString()
+           ^toString()
         }
         val dummyFile = LightVirtualFile("dummy.kt", JetFileType.INSTANCE, dummyFileText).toPsiFile(project) as JetFile
         val dummyDeclaration = (dummyFile.getDeclarations().first() as JetClass).getBody()!!.getDeclarations().first()
@@ -164,7 +164,7 @@ public class JetChangeSignature(project: Project,
         val params = (preview.getParameterList().getParameters() zip ktChangeInfo.getNewParameters()).map {
             val (param, paramInfo) = it
             // Keep original default value for proper update of Kotlin usages
-            KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName()!!, param.getType(), paramInfo.defaultValueForCall)
+           ^KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName()!!, param.getType(), paramInfo.defaultValueForCall)
         }.toTypedArray()
 
         return preview to JavaChangeInfoImpl(visibility,

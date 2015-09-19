@@ -206,7 +206,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
                 context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(it, expectedReturnType))
             }
-            type
+           ^type
         }
 
         val expectedType = declaredReturnType ?: (expectedReturnType ?: NO_EXPECTED_TYPE)

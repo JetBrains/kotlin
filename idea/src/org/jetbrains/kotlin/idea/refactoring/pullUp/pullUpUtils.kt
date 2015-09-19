@@ -43,7 +43,7 @@ fun JetNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean
             if (targetClass.isInterface) return false
             if (hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)) return false
             if (accessors.isNotEmpty() || delegateExpression != null) return false
-            true
+           ^true
         }
         is JetNamedFunction -> true
         else -> false
@@ -96,7 +96,7 @@ fun JetClassOrObject.getDelegatorToSuperClassByDescriptor(
             .filterIsInstance<JetDelegatorToSuperClass>()
             .firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
-                referencedType?.constructor?.declarationDescriptor == descriptor
+               ^referencedType?.constructor?.declarationDescriptor == descriptor
             }
 }
 

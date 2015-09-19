@@ -88,11 +88,11 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
                 }
 
                 // Cancel rename
-                null
+               ^null
             }
             else {
                 assert(false) { "Should not be suggested to rename element of type " + element.javaClass + " " + element }
-                null
+               ^null
             }
 
         is JetConstructor<*> ->

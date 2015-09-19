@@ -50,7 +50,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry) : JetInt
             if (!(diagnostic.getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
                 ?: false)) return@factory null
 
-            JetWholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<JetAnnotatedExpression, JetAnnotationEntry>(
+           ^JetWholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<JetAnnotatedExpression, JetAnnotationEntry>(
                     tasksFactory = { collectTasks(it) },
                     tasksProcessor ={ it.forEach { ann -> replaceWithLabel(ann) } },
                     name = "Update obsolete label syntax in whole project"

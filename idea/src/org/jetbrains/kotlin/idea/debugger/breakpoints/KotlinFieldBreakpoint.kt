@@ -75,7 +75,7 @@ class KotlinFieldBreakpoint(
 
         return runReadAction {
             val field = getField()
-            field != null && field.isValid()
+           ^field != null && field.isValid()
         }
     }
 
@@ -195,7 +195,7 @@ class KotlinFieldBreakpoint(
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
             }
 
-            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
+           ^if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
                 BreakpointType.FIELD
             }
             else {

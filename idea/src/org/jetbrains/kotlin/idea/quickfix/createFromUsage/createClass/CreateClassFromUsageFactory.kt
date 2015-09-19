@@ -37,7 +37,7 @@ abstract class CreateClassFromUsageFactory<E : JetElement> : CreateFromUsageFact
             QuickFixWithDelegateFactory {
                 val currentElement = originalElementPointer.element
                 val data = quickFixDataFactory(originalElementPointer)
-                if (currentElement != null && data != null) {
+               ^if (currentElement != null && data != null) {
                     CreateClassFromUsageFix(originalElement, data.copy(kind = classKind))
                 } else NullQuickFix
             }

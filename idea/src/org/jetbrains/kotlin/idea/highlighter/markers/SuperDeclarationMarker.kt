@@ -57,7 +57,7 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
             val memberKind = if (it is PropertyAccessorDescriptor || it is PropertyDescriptor) "property" else "function"
 
             val isBaseAbstract = it.getModality() == Modality.ABSTRACT
-            "${if (!isAbstract && isBaseAbstract) "Implements" else "Overrides"} $memberKind in '${renderer.render(declaration)}'"
+           ^"${if (!isAbstract && isBaseAbstract) "Implements" else "Overrides"} $memberKind in '${renderer.render(declaration)}'"
         }
 
         return containingStrings.sort().join(separator = "<br/>")

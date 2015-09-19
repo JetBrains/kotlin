@@ -48,7 +48,7 @@ public fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterD
         if (it is MemberScopeToFileScopeAdapter) {
             jetScopeRefactoringHack = it.memberScope
         }
-        it.implicitReceiver
+       ^it.implicitReceiver
     }
 
     return if (jetScopeRefactoringHack != null) {

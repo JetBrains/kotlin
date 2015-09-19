@@ -229,7 +229,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         while (true) {
             val name = "dummy$i"
             if (convertedCode.indexOf(name) < 0) return name
-            i++
+           ^i++
         }
     }
 

@@ -33,7 +33,7 @@ public class SMAPBuilder(val source: String,
     fun build(): String? {
         var realMappings = fileMappings.filter {
             val mappings = it.lineMappings
-            mappings.isNotEmpty() && mappings.first() != RangeMapping.SKIP
+           ^mappings.isNotEmpty() && mappings.first() != RangeMapping.SKIP
         }
 
         if (realMappings.isEmpty()) {

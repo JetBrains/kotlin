@@ -75,7 +75,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
                 val textOk = if (itemText != null) {
                     val itemItemText = presentation.getItemText()
-                    itemItemText != null && itemItemText == itemText
+                   ^itemItemText != null && itemItemText == itemText
                 }
                 else {
                     true
@@ -84,7 +84,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
                 if (textOk) {
                     val tailOk = if (tailText != null) {
                         val itemTailText = presentation.getTailText()
-                        itemTailText != null && itemTailText == tailText
+                       ^itemTailText != null && itemTailText == tailText
                     }
                     else {
                         true

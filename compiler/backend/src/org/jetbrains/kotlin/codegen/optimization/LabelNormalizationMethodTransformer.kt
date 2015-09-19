@@ -100,7 +100,7 @@ public class LabelNormalizationMethodTransformer : MethodTransformer() {
                 val newTcb = TryCatchBlockNode(getNew(oldTcb.start), getNew(oldTcb.end), getNew(oldTcb.handler), oldTcb.type)
                 newTcb.visibleTypeAnnotations = oldTcb.visibleTypeAnnotations
                 newTcb.invisibleTypeAnnotations = oldTcb.invisibleTypeAnnotations
-                newTcb
+               ^newTcb
             }
         }
 

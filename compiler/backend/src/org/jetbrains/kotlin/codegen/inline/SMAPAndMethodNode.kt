@@ -36,7 +36,7 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
             }
             if (index < 0)
                 throw IllegalStateException("Unmapped label in inlined function $it ${it.line}")
-            LabelAndMapping(it, classSMAP.intervals[index])
+           ^LabelAndMapping(it, classSMAP.intervals[index])
         }.toList()
 
     val ranges = lineNumbers.asSequence().map { it.mapper }.distinct().toList();

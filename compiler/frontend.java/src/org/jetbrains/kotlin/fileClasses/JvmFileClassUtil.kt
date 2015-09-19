@@ -124,6 +124,6 @@ public val JetFile.javaFileFacadeFqName: FqName
             val facadeFqName =
                     if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
                     else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
-            CachedValueProvider.Result(facadeFqName, this)
+           ^CachedValueProvider.Result(facadeFqName, this)
         }
     }

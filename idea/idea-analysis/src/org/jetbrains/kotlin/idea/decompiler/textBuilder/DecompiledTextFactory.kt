@@ -75,7 +75,7 @@ public fun buildDecompiledText(
         classHeader.isCompatibleMultifileClassKind() -> {
             val partClasses = findMultifileClassParts(classFile, kotlinClass)
             val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
-            buildDecompiledText(packageFqName, partMembers)
+           ^buildDecompiledText(packageFqName, partMembers)
         }
         else ->
             throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")

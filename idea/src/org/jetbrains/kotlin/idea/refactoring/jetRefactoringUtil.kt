@@ -183,7 +183,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
                 is JetClassInitializer -> enclosingDeclaration.getBody()
                 else -> null
             }
-            if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
+           ^if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
         }
     }
 }
@@ -251,7 +251,7 @@ public fun <T, E: PsiElement> getPsiElementPopup(
             }
         })
 
-        createPopup()
+       ^createPopup()
     }
 }
 
@@ -328,7 +328,7 @@ public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? 
         is JetClassInitializer -> enclosingDeclaration.getBody()
         is JetClass -> {
             val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
-            if (delegationSpecifierList.isAncestor(this)) this else null
+           ^if (delegationSpecifierList.isAncestor(this)) this else null
         }
         else -> null
     }
@@ -401,7 +401,7 @@ public fun chooseContainerElement<T>(
             toPsi,
             {
                 onSelect(it)
-                true
+               ^true
             }
     ).showInBestPositionFor(editor)
 }
@@ -504,7 +504,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
     val newParams = template.getParameterList().getParameters().map {
         val param = factory.createParameter(it.getName()!!, it.getType())
         copyModifierListItems(it.getModifierList()!!, param.getModifierList()!!)
-        param
+       ^param
     }
     ChangeSignatureUtil.synchronizeList(
             targetParamList,

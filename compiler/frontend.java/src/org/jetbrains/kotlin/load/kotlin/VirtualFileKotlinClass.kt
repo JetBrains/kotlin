@@ -73,7 +73,7 @@ public class VirtualFileKotlinClass private constructor(
                 catch (e: Throwable) {
                     LOG.warn(renderFileReadingErrorMessage(file))
                 }
-                null
+               ^null
             }
         }
 

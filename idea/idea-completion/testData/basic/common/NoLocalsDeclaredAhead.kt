@@ -2,7 +2,7 @@ fun foo() {
     val v = {
         <caret>
         val hello = 1
-        hello
+       ^hello
     }
 }
 // ABSENT: hello

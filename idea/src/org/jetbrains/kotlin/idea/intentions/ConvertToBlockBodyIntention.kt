@@ -71,7 +71,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
                     if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
                         declaration.setType(returnType)
                     }
-                    generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
+                   ^generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
                 }
 
                 is JetPropertyAccessor -> generateBody(declaration.isGetter())

@@ -68,7 +68,7 @@ fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?):
                     val anchor = getNameIdentifier()
                     val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
                     addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
-                    newTypeRef
+                   ^newTypeRef
                 }
         if (needParentheses) {
             val argList = JetPsiFactory(getProject()).createCallArguments("()")

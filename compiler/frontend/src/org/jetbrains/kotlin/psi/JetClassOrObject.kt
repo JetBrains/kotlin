@@ -118,7 +118,7 @@ abstract public class JetClassOrObject :
             val typeReference = entry.getTypeReference()
             val userType = typeReference?.getStubOrPsiChild(JetStubElementTypes.USER_TYPE)
 
-            name == userType?.getReferencedName()
+           ^name == userType?.getReferencedName()
         }
     }
 

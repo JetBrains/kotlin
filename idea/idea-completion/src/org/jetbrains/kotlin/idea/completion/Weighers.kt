@@ -112,7 +112,7 @@ object KindWeigher : LookupElementWeigher("kotlin.kind") {
 
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor
-                when (descriptor) {
+               ^when (descriptor) {
                     is VariableDescriptor, is FunctionDescriptor -> Weight.callable
                     is ClassDescriptor -> if (descriptor.kind == ClassKind.ENUM_ENTRY) Weight.enumMember else Weight.default
                     else -> Weight.default
@@ -235,7 +235,7 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
-                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
+               ^descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
             }
 
             is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) } to null
@@ -250,7 +250,7 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
 
         val nameSimilarity = if (name != null) {
             val matchingInfos = classified.filter { it.second != ExpectedInfoClassification.noMatch }.map { it.first }
-            calcNameSimilarity(name.asString(), matchingInfos)
+           ^calcNameSimilarity(name.asString(), matchingInfos)
         }
         else {
             0

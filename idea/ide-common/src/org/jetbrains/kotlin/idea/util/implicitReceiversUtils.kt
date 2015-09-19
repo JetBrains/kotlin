@@ -61,7 +61,7 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
         val owner = receiver.getContainingDeclaration()
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
             val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.render()}" }
-            if (index == 0)
+           ^if (index == 0)
                 (thisWithLabel ?: "this") to true
             else
                 thisWithLabel to false

@@ -256,7 +256,7 @@ class SmartCompletion(
                 else
                     infos
             }
-            count++
+           ^count++
         }
         //TODO: we could always give higher priority to results with outer call expected type used
     }

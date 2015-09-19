@@ -210,7 +210,7 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
         val type = resolvedCall.typeArguments[typeParameter]!!
         val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
             val _typeElement = explicitTypeArgs[index].typeReference?.typeElement ?: continue
-            _typeElement.marked(USER_CODE_KEY)
+           ^_typeElement.marked(USER_CODE_KEY)
         }
         else {
             factory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).typeElement!!
@@ -386,7 +386,7 @@ private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
         }
         else {
             val thisReceiver = (element as? JetQualifiedExpression)?.receiverExpression as? JetThisExpression
-            if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
+           ^if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
                 ShortenReferences.FilterResult.GO_INSIDE
             else
                 ShortenReferences.FilterResult.PROCESS
@@ -671,12 +671,12 @@ private class ConstructedExpressionWrapper(
 
         expression = if (!isNameUsed("it")) {
             replaceUsages(Name.identifier("it"))
-            psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
+           ^psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
         }
         else {
             val name = suggestName { !isNameUsed(it) }
             replaceUsages(name)
-            psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
+           ^psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
         }
     }
 

@@ -146,7 +146,7 @@ class KotlinPullUpHelper(
         val elementsToRemove = LinkedHashSet<JetElement>()
         val commonInitializer = sourceConstructors.fold(null as JetExpression?) { commonInitializer, constructor ->
             val body = (constructor as? JetSecondaryConstructor)?.bodyExpression
-            getCommonInitializer(commonInitializer, body, propertyDescriptor, elementsToRemove)
+           ^getCommonInitializer(commonInitializer, body, propertyDescriptor, elementsToRemove)
         }
         if (commonInitializer == null) {
             elementsToRemove.clear()
@@ -180,7 +180,7 @@ class KotlinPullUpHelper(
                 .filterIsInstance<JetProperty>()
                 .filter {
                     val descriptor = memberDescriptors[it] as? PropertyDescriptor
-                    descriptor != null && data.sourceClassContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
+                   ^descriptor != null && data.sourceClassContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
                 }
     }
 
@@ -212,7 +212,7 @@ class KotlinPullUpHelper(
                     }
             )
         }
-        result
+       ^result
     }
 
     private val targetConstructorToPropertyInitializerInfoMap = LinkedHashMap<JetElement, Map<JetProperty, InitializerInfo>>().let { result ->
@@ -234,7 +234,7 @@ class KotlinPullUpHelper(
             propertyToInitializerInfo.keySet().removeAll(unmovableProperties)
             result[targetConstructor] = propertyToInitializerInfo
         }
-        result
+       ^result
     }
 
     private var dummyField: PsiField? = null
@@ -383,7 +383,7 @@ class KotlinPullUpHelper(
                 val newField = createJavaField(member, data.targetClass)
                 newField.typeElement?.replace(elementFactory.createTypeElement(newType))
                 member.delete()
-                newField
+               ^newField
             }
             is JetNamedFunction -> {
                 val newReturnType = substitutor.substitute(lightMethod.returnType)
@@ -407,7 +407,7 @@ class KotlinPullUpHelper(
                 if (!data.isInterfaceTarget && !data.targetClass.hasModifierProperty(PsiModifier.ABSTRACT)) {
                     data.targetClass.modifierList?.setModifierProperty(PsiModifier.ABSTRACT, true)
                 }
-                newMethod
+               ^newMethod
             }
             else -> return
         }
@@ -586,7 +586,7 @@ class KotlinPullUpHelper(
 
                 info.initializer?.let {
                     val body = constructorElement.getConstructorBodyBlock()
-                    body?.addAfter(it, body.statements.lastOrNull() ?: body.lBrace!!)
+                   ^body?.addAfter(it, body.statements.lastOrNull() ?: body.lBrace!!)
                 }
                 info.elementsToRemove.forEach { it.delete() }
             }

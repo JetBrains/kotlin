@@ -168,7 +168,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                 object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), property.containingFile), LowPriorityAction {}
             else
                 null
-            listOf(fix1, fix2).filterNotNull().toTypedArray()
+           ^listOf(fix1, fix2).filterNotNull().toTypedArray()
         }
         else {
             emptyArray()
@@ -193,7 +193,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                             override fun run(indicator: ProgressIndicator) {
                                 val importsToDelete = runReadAction {
                                     val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
-                                    ReferencesSearch.search(declaration, searchScope)
+                                   ^ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<JetSimpleNameReference>()
                                             .map { ref -> ref.expression.getStrictParentOfType<JetImportDirective>() }
                                             .filterNotNull()

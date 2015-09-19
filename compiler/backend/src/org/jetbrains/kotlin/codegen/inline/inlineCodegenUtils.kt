@@ -40,12 +40,12 @@ public fun FunctionDescriptor.getClassFilePath(cache: IncrementalCache): String 
         is KotlinJvmBinarySourceElement -> {
             assert(this is DeserializedSimpleFunctionDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
             val kotlinClass = source.binaryClass as VirtualFileKotlinClass
-            kotlinClass.file.canonicalPath!!
+           ^kotlinClass.file.canonicalPath!!
         }
         else -> {
             val classId = InlineCodegenUtil.getContainerClassId(this)!!
             val className = JvmClassName.byClassId(classId).internalName
-            cache.getClassFilePath(className)
+           ^cache.getClassFilePath(className)
         }
     }
 }

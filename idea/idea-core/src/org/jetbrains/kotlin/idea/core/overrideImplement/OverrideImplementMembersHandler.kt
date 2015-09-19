@@ -80,7 +80,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
         }
         else {
             val chooser = showOverrideImplementChooser(project, members.toTypedArray()) ?: return
-            chooser.selectedElements ?: return
+           ^chooser.selectedElements ?: return
         }
         if (selectedElements.isEmpty()) return
 
@@ -244,7 +244,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
                     if (descriptor is FunctionDescriptor) {
                         val paramTexts = descriptor.valueParameters.map {
                             val renderedName = it.escapedName()
-                            if (it.varargElementType != null) "*$renderedName" else renderedName
+                           ^if (it.varargElementType != null) "*$renderedName" else renderedName
                         }
                         paramTexts.joinTo(this, prefix="(", postfix=")")
                     }

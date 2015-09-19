@@ -103,7 +103,7 @@ class UnreachableCodeImpl(
             currentTextRange, element ->
 
             val elementRange = element.getTextRange()!!
-            if (currentTextRange == null) {
+           ^if (currentTextRange == null) {
                 elementRange
             }
             else if (currentTextRange.getEndOffset() == elementRange.getStartOffset()) {
@@ -111,7 +111,7 @@ class UnreachableCodeImpl(
             }
             else {
                 result.add(currentTextRange)
-                elementRange
+               ^elementRange
             }
         }
         if (lastRange != null) {

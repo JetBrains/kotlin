@@ -112,7 +112,7 @@ public class KotlinFindClassUsagesHandler(
         if (kotlinOptions.searchConstructorUsages) {
             val result = runReadAction {
                 val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
-                constructors.filterIsInstance<KotlinLightMethod>().all { constructor ->
+               ^constructors.filterIsInstance<KotlinLightMethod>().all { constructor ->
                     constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
                         it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) } ?: false
                     }

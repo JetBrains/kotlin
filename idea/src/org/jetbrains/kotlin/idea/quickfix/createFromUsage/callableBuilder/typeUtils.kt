@@ -67,7 +67,7 @@ private fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor
 private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
         val classifier = scope.getClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
-        classifier == null || classifier != typeParameter
+       ^classifier == null || classifier != typeParameter
     }
 }
 
@@ -124,17 +124,17 @@ fun JetExpression.guessTypes(
         this is JetTypeConstraint -> {
             // expression itself is a type assertion
             val constraint = this
-            arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
+           ^arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
         parent is JetTypeConstraint -> {
             // expression is on the left side of a type assertion
             val constraint = parent
-            arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
+           ^arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
         this is JetMultiDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
             val typeRef = getTypeReference()
-            if (typeRef != null) {
+           ^if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
@@ -146,7 +146,7 @@ fun JetExpression.guessTypes(
         this is JetParameter -> {
             // expression is a parameter (e.g. declared in a for-loop)
             val typeRef = getTypeReference()
-            if (typeRef != null) {
+           ^if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
@@ -159,7 +159,7 @@ fun JetExpression.guessTypes(
             // the expression is the RHS of a variable assignment with a specified type
             val variable = parent
             val typeRef = variable.getTypeReference()
-            if (typeRef != null) {
+           ^if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
@@ -176,7 +176,7 @@ fun JetExpression.guessTypes(
             val receiverType = (variableDescriptor.getExtensionReceiverParameter() ?: variableDescriptor.getDispatchReceiverParameter())?.getType()
                                ?: module.builtIns.getNullableNothingType()
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.getType()))
-            arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
+           ^arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
         parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
             arrayOf(module.builtIns.getStringType())
@@ -231,7 +231,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
     else {
         val newArguments = getArguments().zip(getConstructor().getParameters()).map { pair ->
             val (projection, typeParameter) = pair
-            TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
+           ^TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
         return JetTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }

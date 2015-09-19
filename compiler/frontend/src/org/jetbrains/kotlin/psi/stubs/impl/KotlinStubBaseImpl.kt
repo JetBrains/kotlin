@@ -58,11 +58,11 @@ public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElem
         return try {
             val value = property.invoke(this)
             val name = getPropertyName(property)
-            "$name=$value"
+           ^"$name=$value"
         }
         catch (e: Exception) {
             LOGGER.error(e)
-            null
+           ^null
         }
     }
 

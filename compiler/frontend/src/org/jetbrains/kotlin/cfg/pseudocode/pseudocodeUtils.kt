@@ -192,7 +192,7 @@ public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingC
                                 else ->
                                     parameter.getType()
                             }
-                            addSubtypesOf(expectedType)
+                           ^addSubtypesOf(expectedType)
                         }
                     }
                 }

@@ -76,7 +76,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
         "code", "literal" -> {
             val text = tag.getDataElements().map { it.getText() }.join("")
             val escaped = StringUtil.escapeXml(text.trimStart())
-            if (tag.getName() == "code") "<code>$escaped</code>" else escaped
+           ^if (tag.getName() == "code") "<code>$escaped</code>" else escaped
         }
 
         "link", "linkplain" -> {
@@ -84,7 +84,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
             val labelText = tag.getDataElements().firstOrNull { it is PsiDocToken }?.getText() ?: ""
             val kdocLink = convertJavadocLink(valueElement?.getText())
             val linkText = if (labelText.isEmpty()) kdocLink else StringUtil.escapeXml(labelText)
-            "<a docref=\"$kdocLink\">$linkText</a>"
+           ^"<a docref=\"$kdocLink\">$linkText</a>"
         }
 
         else -> tag.getText()
@@ -185,16 +185,16 @@ object IdeaDocCommentConverter : DocCommentConverter {
                 if (tag.getAttributeValue("docref") != null) {
                     val docRef = tag.getAttributeValue("docref")
                     val innerText = tag.getValue().getText()
-                    if (docRef == innerText) MarkdownSpan("[", "]") else MarkdownSpan("[", "][$docRef]")
+                   ^if (docRef == innerText) MarkdownSpan("[", "]") else MarkdownSpan("[", "][$docRef]")
                 }
                 else {
                     MarkdownSpan("[", "](${tag.getAttributeValue("href")})")
                 }
             }
 
-            "ul" -> { currentListType = ListType.Unordered; MarkdownSpan.Empty }
+            "ul" -> { currentListType = ListType.Unordered;^MarkdownSpan.Empty }
 
-            "ol" -> { currentListType = ListType.Ordered; MarkdownSpan.Empty }
+            "ol" -> { currentListType = ListType.Ordered;^MarkdownSpan.Empty }
 
             "li" -> if (currentListType == ListType.Unordered) MarkdownSpan.prefix(" * ") else MarkdownSpan.prefix(" 1. ")
 

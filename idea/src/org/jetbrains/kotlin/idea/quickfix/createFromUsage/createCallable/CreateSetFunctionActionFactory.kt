@@ -59,7 +59,7 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<Jet
 
                 val context = assignmentExpr.analyze()
                 val rhsType = assignmentExpr.getResolvedCall(context)?.resultingDescriptor?.returnType
-                TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType, Variance.IN_VARIANCE)
+               ^TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType, Variance.IN_VARIANCE)
             }
             else -> return null
         }

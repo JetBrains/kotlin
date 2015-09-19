@@ -62,7 +62,7 @@ public class LazyAnnotations(
 
         val descriptor = LazyAnnotationDescriptor(c, entry)
         val target = entry.getUseSiteTarget()?.getAnnotationUseSiteTarget()
-        AnnotationWithTarget(descriptor, target)
+       ^AnnotationWithTarget(descriptor, target)
     }
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
@@ -89,7 +89,7 @@ public class LazyAnnotations(
                 .asSequence()
                 .map {
                     val (descriptor, target) = annotation(it)
-                    if (target == null) null else AnnotationWithTarget(descriptor, target)
+                   ^if (target == null) null else AnnotationWithTarget(descriptor, target)
                 }.filterNotNull().toList()
     }
 
@@ -100,7 +100,7 @@ public class LazyAnnotations(
                 .asSequence()
                 .map {
                     val (descriptor, target) = annotation(it)
-                    if (target == null) descriptor else null // Filter out annotations with target
+                   ^if (target == null) descriptor else null // Filter out annotations with target
                 }.filterNotNull().iterator()
     }
 
@@ -145,7 +145,7 @@ public class LazyAnnotationDescriptor(
         @Suppress("UNCHECKED_CAST")
         return resolutionResults.getResultingCall().getValueArguments()
                 .mapValues { val (valueParameter, resolvedArgument) = it;
-                    if (resolvedArgument == null) null
+                   ^if (resolvedArgument == null) null
                     else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
                 }
                 .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>

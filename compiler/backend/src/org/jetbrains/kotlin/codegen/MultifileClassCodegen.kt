@@ -79,7 +79,7 @@ public class MultifileClassCodegen(
         if (singleSourceFile != null) {
             classBuilder.visitSource(singleSourceFile.name, null)
         }
-        classBuilder
+       ^classBuilder
     }
 
     public fun generate(errorHandler: CompilationErrorHandler) {

@@ -39,7 +39,7 @@ abstract class KotlinClassFileViewProvider(
 
         (psiFile as? PsiFileImpl)?.markInvalidated()
 
-        text
+       ^text
     }
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {

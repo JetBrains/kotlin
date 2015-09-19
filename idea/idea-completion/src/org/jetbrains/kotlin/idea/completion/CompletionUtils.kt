@@ -134,7 +134,7 @@ fun PrefixMatcher.asNameFilter() = { name: Name ->
     }
     else {
         val identifier = name.getIdentifier()
-        if (getPrefix().startsWith("$")) { // we need properties from scope for backing field completion
+       ^if (getPrefix().startsWith("$")) { // we need properties from scope for backing field completion
             prefixMatches("$" + identifier)
         }
         else {

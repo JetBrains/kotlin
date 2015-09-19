@@ -76,7 +76,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
                 CallableKind.SECONDARY_CONSTRUCTOR -> "secondary constructor"
                 else -> throw AssertionError("Unexpected callable info: $it")
             }
-            if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
+           ^if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
 
         return StringBuilder {
@@ -111,7 +111,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
         return receiverTypeCandidates.any {
             val declaration = getDeclarationIfApplicable(project, it)
             val insertToJavaInterface = declaration is PsiClass && declaration.isInterface
-            when {
+           ^when {
                 !isExtension && propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo.writable) ->
                     false
                 isFunction && insertToJavaInterface && receiverInfo.staticContextRequired ->

@@ -211,7 +211,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val fileResolutionScope = file.getResolutionFacade().getFileTopLevelScope(file)
         return referenceData.map {
             val reference = findReference(it, file, blockStart)
-            if (reference != null)
+           ^if (reference != null)
                 createReferenceToRestoreData(reference, it, file, fileResolutionScope)
             else
                 null

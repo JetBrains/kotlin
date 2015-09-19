@@ -109,7 +109,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             runReadAction {
                 val outputRoot = findOutputRoot(srcFile)
                 val existingClassFiles = getClassesGeneratedFromFile(outputRoot, srcFile)
-                existingClassFiles.mapTo(classFiles) { File(it.getPath()) }
+               ^existingClassFiles.mapTo(classFiles) { File(it.getPath()) }
             }
             return true
         }
@@ -127,7 +127,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             LOG.debug("Classfiles: [${existingClassFiles.map { it.getName() }.join()}]")
             return existingClassFiles.map {
                 val relativePath = VfsUtilCore.getRelativePath(it, outputRoot!!)!!
-                StringUtil.trimEnd(relativePath, ".class").replace("/", ".")
+               ^StringUtil.trimEnd(relativePath, ".class").replace("/", ".")
             }
         }
 

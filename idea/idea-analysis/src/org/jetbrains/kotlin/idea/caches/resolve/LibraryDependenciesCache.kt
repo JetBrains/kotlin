@@ -44,7 +44,7 @@ public class LibraryDependenciesCache(private val project: Project) {
         val condition = Condition<OrderEntry>() { orderEntry ->
             if (orderEntry is ModuleOrderEntry) {
                 val module = orderEntry.getModule()
-                module != null && module !in processedModules
+               ^module != null && module !in processedModules
             }
             else {
                 true

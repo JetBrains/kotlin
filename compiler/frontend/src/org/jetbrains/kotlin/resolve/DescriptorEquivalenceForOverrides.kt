@@ -80,7 +80,7 @@ object DescriptorEquivalenceForOverrides {
 
             if (d1 !is TypeParameterDescriptor || d2 !is TypeParameterDescriptor) return@eq false
 
-            areTypeParametersEquivalent(d1, d2, {x, y -> x == a && y == b})
+           ^areTypeParametersEquivalent(d1, d2, {x, y -> x == a && y == b})
         }
 
         return overridingUtil.isOverridableByIncludingReturnType(a, b).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE

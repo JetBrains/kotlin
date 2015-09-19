@@ -173,14 +173,14 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             is JetClassOrObject -> {
                 element.toLightClass()?.let { klass ->
                     findDelegationCallUsages(klass)
-                    findUsagesByJavaProcessor(klass, false)
+                   ^findUsagesByJavaProcessor(klass, false)
                 }
             }
 
             is JetSecondaryConstructor -> {
                 element.getRepresentativeLightMethod()?.let { method ->
                     findDelegationCallUsages(method)
-                    findUsagesByJavaProcessor(method, false)
+                   ^findUsagesByJavaProcessor(method, false)
                 }
             }
 
@@ -207,7 +207,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             is JetTypeParameter -> {
                 findTypeParameterUsages(element)
-                findUsagesByJavaProcessor(element)
+               ^findUsagesByJavaProcessor(element)
             }
 
             is JetParameter ->

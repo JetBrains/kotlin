@@ -44,7 +44,7 @@ public class AnnotationSerializer() {
                 addArgument(argument)
             }
 
-            build()
+           ^build()
         }
     }
 
@@ -128,6 +128,6 @@ public class AnnotationSerializer() {
             }
         }, Unit)
 
-        this
+       ^this
     }
 }

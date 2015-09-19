@@ -311,7 +311,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             val c = chars.charAt(i)
             if (c == '\n') return true
             if (!Character.isWhitespace(c)) return false
-            i++
+           ^i++
         }
         return true
     }

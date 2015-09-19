@@ -239,7 +239,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 val file = element.getContainingFile() as JetFile
                 val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
-                getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
+               ^getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
             }
         }
     }
@@ -252,7 +252,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
                     {
                         val typeMapper = createTypeMapper(file)
-                        CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
+                       ^CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
                     }, false)
 
             myTypeMappers.put(key, value)
@@ -475,7 +475,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                     }
                 }
             }
-            result
+           ^result
         }
     }
 }

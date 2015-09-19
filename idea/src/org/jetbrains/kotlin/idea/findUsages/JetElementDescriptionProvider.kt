@@ -73,12 +73,12 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
                             descriptor.getName().asString()
                         }
 
-                "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
+               ^"$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
             }
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null
-                "$kind ${descriptor.getName().asString()}"
+               ^"$kind ${descriptor.getName().asString()}"
             }
             else -> null
         }

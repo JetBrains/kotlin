@@ -34,7 +34,7 @@ public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
                 doc.setText(text.toString())
             }
 
-            offset
+           ^offset
         }
 
         PsiDocumentManager.getInstance(myProject).commitAllDocuments()

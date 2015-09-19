@@ -73,7 +73,7 @@ public class KotlinVariableInplaceIntroducer(
 
                         val psiFactory = JetPsiFactory(myProject)
                         val keyword = if (varCheckBox.isSelected()) psiFactory.createVarKeyword() else psiFactory.createValKeyword()
-                        addedVariable.getValOrVarKeyword().replace(keyword)
+                       ^addedVariable.getValOrVarKeyword().replace(keyword)
                     }
                 }
                 addComponent(varCheckBox)

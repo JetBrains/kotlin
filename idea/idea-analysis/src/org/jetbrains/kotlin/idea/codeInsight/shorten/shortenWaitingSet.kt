@@ -76,7 +76,7 @@ public fun performDelayedShortening(project: Project) {
         val options = requests.map { it.options }
         val elementToOptions = (elements zip options).toMap()
         //TODO: this is not correct because it should not shorten deep into the elements!
-        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
+       ^ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
     }
 }
 

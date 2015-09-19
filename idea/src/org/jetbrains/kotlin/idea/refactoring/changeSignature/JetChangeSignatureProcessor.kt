@@ -50,7 +50,7 @@ public class JetChangeSignatureProcessor(project: Project,
         val allUsages = ArrayList<UsageInfo>()
         getChangeInfo().getOrCreateJavaChangeInfos(true)?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
-            javaChangeInfos.mapTo(allUsages) {
+           ^javaChangeInfos.mapTo(allUsages) {
                 KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), getChangeInfo().getMethod())
             }
         }
@@ -95,7 +95,7 @@ public class JetChangeSignatureProcessor(project: Project,
             val element2 = u2.getElement()
             val rank1 = if (element1 != null) element1.getTextOffset() else -1
             val rank2 = if (element2 != null) element2.getTextOffset() else -1
-            rank2 - rank1 // Reverse order
+           ^rank2 - rank1 // Reverse order
         }
         refUsages.set(usageArray)
 

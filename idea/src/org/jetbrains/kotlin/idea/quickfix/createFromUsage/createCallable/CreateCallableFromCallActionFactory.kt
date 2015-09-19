@@ -66,7 +66,7 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         return when (diagnostic.factory) {
             in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
                 val parent = diagElement.parent
-                if (parent is JetCallExpression && parent.calleeExpression == diagElement) parent else diagElement
+               ^if (parent is JetCallExpression && parent.calleeExpression == diagElement) parent else diagElement
             }
 
             Errors.NO_VALUE_FOR_PARAMETER,
@@ -96,7 +96,7 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
                     val containers = with(element.getQualifiedExpressionForSelectorOrThis().getExtractionContainers()) {
                         if (element is JetCallExpression) this else filter { it is JetClassBody || it is JetFile }
                     }
-                    if (containers.isNotEmpty()) containers else return null
+                   ^if (containers.isNotEmpty()) containers else return null
                 }
                 else Collections.emptyList()
 
@@ -113,7 +113,7 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
                 val classifier = receiver.classifier as? JavaClassDescriptor ?: return null
                 val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classifier) as? PsiClass
                 if (javaClass == null || !javaClass.canRefactor()) return null
-                TypeInfo.StaticContextRequired(TypeInfo(classifier.defaultType, Variance.IN_VARIANCE))
+               ^TypeInfo.StaticContextRequired(TypeInfo(classifier.defaultType, Variance.IN_VARIANCE))
             }
             else -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
         }

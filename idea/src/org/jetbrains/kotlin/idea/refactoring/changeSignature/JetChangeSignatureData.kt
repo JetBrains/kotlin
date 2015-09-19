@@ -62,7 +62,7 @@ public class JetChangeSignatureData(
         parameters = baseDescriptor.getValueParameters()
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
                     val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
-                    JetParameterInfo(
+                   ^JetParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.getIndex(),
                             name = parameterDescriptor.getName().asString(),
@@ -81,7 +81,7 @@ public class JetChangeSignatureData(
         val validator = bodyScope?.let { bodyScope ->
             CollectingNameValidator(paramNames) {
                 val name = Name.identifier(it)
-                bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name, NoLookupLocation.FROM_IDE).isEmpty()
+               ^bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name, NoLookupLocation.FROM_IDE).isEmpty()
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
@@ -96,7 +96,7 @@ public class JetChangeSignatureData(
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
-            JetCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
+           ^JetCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
         }
     }
 
@@ -108,14 +108,14 @@ public class JetChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.getDeclaration() as? JetCallableDeclaration
             val lightMethods = primaryDeclaration?.toLightMethods() ?: Collections.emptyList()
-            lightMethods.flatMap { baseMethod ->
+           ^lightMethods.flatMap { baseMethod ->
                 OverridingMethodsSearch
                         .search(baseMethod)
                         .map { overridingMethod ->
                             if (overridingMethod is KotlinLightMethod) {
                                 val overridingDeclaration = overridingMethod.namedUnwrappedElement as JetNamedDeclaration
                                 val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
-                                JetCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
+                               ^JetCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                             }
                             else OverriderUsageInfo(overridingMethod, baseMethod, true, true, true)
                         }.filterNotNullTo(HashSet<UsageInfo>())

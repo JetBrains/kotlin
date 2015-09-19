@@ -46,11 +46,11 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             when (declaration) {
                 is JetClass -> {
                     val lightClass = LightClassUtil.getPsiClass(declaration)
-                    consumer.process(lightClass)
+                   ^consumer.process(lightClass)
                 }
                 is JetNamedFunction, is JetSecondaryConstructor -> {
                     val wrappedMethod = LightClassUtil.getLightClassMethod(declaration as JetFunction)
-                    consumer.process(wrappedMethod)
+                   ^consumer.process(wrappedMethod)
                 }
                 else -> true
             }

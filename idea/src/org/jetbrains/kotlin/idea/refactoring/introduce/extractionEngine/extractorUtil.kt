@@ -74,7 +74,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
                 descriptor.typeParameters.map {
                     val typeParameter = it.originalDeclaration
                     val bound = typeParameter.extendsBound
-                    typeParameter.name + (bound?.let { " : " + it.text } ?: "")
+                   ^typeParameter.name + (bound?.let { " : " + it.text } ?: "")
                 }
         )
 
@@ -86,7 +86,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
             val receiverType = it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames)
             val receiverTypeAsString = receiverType.typeAsString()
             val isFunctionType = KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(receiverType)
-            builder.receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
+           ^builder.receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
 
         builder.name(if (descriptor.name == "" && generatorOptions.allowDummyName) "myFun" else descriptor.name)
@@ -117,7 +117,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
             }
         }
 
-        builder.asString()
+       ^builder.asString()
     }
 }
 
@@ -211,7 +211,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             .filter { !(it.range.getTextRange() intersects originalTextRange) }
             .map { match ->
                 val controlFlow = getControlFlowIfMatched(match)
-                controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.result.substitution[it]!!.getText()!! }) }
+               ^controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.result.substitution[it]!!.getText()!! }) }
             }
             .filterNotNull()
             .toList()
@@ -300,7 +300,7 @@ private fun makeCall(
                 val resultVal = KotlinNameSuggester.suggestNamesByType(extractableDescriptor.returnType, varNameValidator, null).first()
                 block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
                 block.addBefore(newLine, anchorInBlock)
-                controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
+               ^controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
             }
 
     val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
@@ -321,12 +321,12 @@ private fun makeCall(
                 val exprText = if (outputValue.callSiteReturn) {
                     val firstReturn = outputValue.originalExpressions.filterIsInstance<JetReturnExpression>().firstOrNull()
                     val label = firstReturn?.getTargetLabel()?.getText() ?: ""
-                    "return$label $callText"
+                   ^"return$label $callText"
                 }
                 else {
                     callText
                 }
-                Collections.singletonList(psiFactory.createExpression(exprText))
+               ^Collections.singletonList(psiFactory.createExpression(exprText))
             }
 
             is ParameterUpdate ->
@@ -355,7 +355,7 @@ private fun makeCall(
             is Initializer -> {
                 val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as JetProperty
                 newProperty.setInitializer(psiFactory.createExpression(callText))
-                Collections.emptyList()
+               ^Collections.emptyList()
             }
 
             else -> throw IllegalArgumentException("Unknown output value: $outputValue")
@@ -431,7 +431,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         val newResultExpression = descriptor.controlFlow.defaultOutputValue?.let {
             val boxedExpression = originalExpression.replaced(replacingExpression).getReturnedExpression()!!
-            descriptor.controlFlow.outputValueBoxer.extractExpressionByValue(boxedExpression, it)
+           ^descriptor.controlFlow.outputValueBoxer.extractExpressionByValue(boxedExpression, it)
         }
         if (newResultExpression == null) {
             throw AssertionError("Can' replace '${originalExpression.getText()}' with '${replacingExpression.getText()}'")
@@ -447,7 +447,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                                            file: PsiFile): List<T> {
         return originalExpressions.map { originalExpression ->
             val offsetInBody = originalExpression.getTextRange()!!.getStartOffset() - descriptor.extractionData.originalStartOffset!!
-            file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(originalExpression.javaClass)
+           ^file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(originalExpression.javaClass)
             ?: throw AssertionError("Couldn't find expression at $offsetInBody in '${body.getText()}'")
         }
     }
@@ -516,7 +516,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             for (param in descriptor.parameters) {
                 param.mirrorVarName?.let { varName ->
                     body.addBefore(psiFactory.createProperty(varName, null, true, param.name), firstExpression)
-                    body.addBefore(psiFactory.createNewLine(), firstExpression)
+                   ^body.addBefore(psiFactory.createNewLine(), firstExpression)
                 }
             }
         }
@@ -532,7 +532,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                     val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
                     val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
-                    psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!
+                   ^psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!
                 }
                 else {
                     lastExpression to null
@@ -575,17 +575,17 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         return with(descriptor.extractionData) {
             val targetContainer = anchor.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
-            if (insertBefore) {
+           ^if (insertBefore) {
                 val declarationInFile = targetContainer.addBefore(declaration, anchor) as JetNamedDeclaration
                 targetContainer.addBefore(emptyLines, anchor)
 
-                declarationInFile
+               ^declarationInFile
             }
             else {
                 val declarationInFile = targetContainer.addAfter(declaration, anchor) as JetNamedDeclaration
                 targetContainer.addAfter(emptyLines, anchor)
 
-                declarationInFile
+               ^declarationInFile
             }
         }
     }
@@ -605,7 +605,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         // Ascend to the level of targetSibling
         val targetParent = targetSibling.getParent()
-        marginalCandidate.parentsWithSelf.first { it.getParent() == targetParent }
+       ^marginalCandidate.parentsWithSelf.first { it.getParent() == targetParent }
     }
 
     val shouldInsert = !(generatorOptions.inTempFile || generatorOptions.target == ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION)

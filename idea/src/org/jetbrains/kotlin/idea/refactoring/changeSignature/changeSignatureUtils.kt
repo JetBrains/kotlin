@@ -48,7 +48,7 @@ public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
             .asSequence()
             .filter {
                 val usage = (it as? JavaMethodKotlinUsageWithDelegate<*>)?.delegateUsage ?: it
-                usage is KotlinCallerUsage
+               ^usage is KotlinCallerUsage
                 || usage is DeferredJavaMethodKotlinCallerUsage
                 || usage is CallerUsageInfo
                 || (usage is OverriderUsageInfo && !usage.isOriginalOverrider())

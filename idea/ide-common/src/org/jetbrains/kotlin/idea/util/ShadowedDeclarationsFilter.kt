@@ -49,7 +49,7 @@ public class ShadowedDeclarationsFilter(
 
     private val explicitReceiverValue = explicitReceiverData?.let {
         val type = bindingContext.getType(it.expression) ?: return@let null
-        ExpressionReceiver(it.expression, type)
+       ^ExpressionReceiver(it.expression, type)
     } ?: ReceiverValue.NO_RECEIVER
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {

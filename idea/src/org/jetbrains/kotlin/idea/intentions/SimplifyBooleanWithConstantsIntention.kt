@@ -103,7 +103,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
 
                         else -> {
                             val opText = expression.getOperationReference().getText()
-                            psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
+                           ^psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
                         }
                     }
                 }

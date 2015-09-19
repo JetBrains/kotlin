@@ -53,7 +53,7 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
         else {
             val superClassDescriptor =
                     DescriptorUtils.getSuperclassDescriptors(classDescriptor).singleOrNull { it.kind == ClassKind.CLASS } ?: return null
-            DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
+           ^DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
         }
         if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
 

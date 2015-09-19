@@ -55,7 +55,7 @@ public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler 
         else {
             innerCall.getFunctionLiteralArguments().firstOrNull()?.let { lambdaArg ->
                 val anchor = PsiTreeUtil.skipSiblingsBackward(lambdaArg, javaClass<PsiWhiteSpace>())
-                innerCall.addAfter(psiFactory.createCallArguments("(${outerCall.getText()})"), anchor)
+               ^innerCall.addAfter(psiFactory.createCallArguments("(${outerCall.getText()})"), anchor)
             }
         }
     }

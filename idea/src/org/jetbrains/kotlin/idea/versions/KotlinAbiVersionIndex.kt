@@ -83,6 +83,6 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
             version = AbiVersionUtil.INVALID_VERSION
         }
 
-        if (version != null) mapOf(version!! to null) else mapOf()
+       ^if (version != null) mapOf(version!! to null) else mapOf()
     }
 }

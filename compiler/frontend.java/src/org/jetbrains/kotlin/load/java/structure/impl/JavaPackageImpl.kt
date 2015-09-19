@@ -30,7 +30,7 @@ public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSe
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = getPsi().getClasses(scope).filter {
             val name = it.getName()
-            name != null && nameFilter(Name.identifier(name))
+           ^name != null && nameFilter(Name.identifier(name))
         }
         return classes(psiClasses)
     }

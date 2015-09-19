@@ -42,7 +42,7 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
 
     private val kPropertyClasses by storageManager.createLazyValue {
         val reflectionTypes = ReflectionTypes(module)
-        setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
+       ^setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
 
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {

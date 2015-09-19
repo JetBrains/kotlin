@@ -56,6 +56,6 @@ public object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<Kotlin
             }
         }
 
-        result
+       ^result
     }
 }

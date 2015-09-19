@@ -215,7 +215,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
                 return TypeUtils.substituteParameters(boxingClass, outputValueTypes)
             }
 
-            getType()
+           ^getType()
         }
 
         override val boxingRequired: Boolean = outputValues.size() > 1
@@ -242,7 +242,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
                 1 -> Collections.singletonMap(outputValues.first(), boxedText)
                 else -> {
                     var i = 0
-                    ContainerUtil.newMapFromKeys(outputValues.iterator()) { "$boxedText.${selectors[i++]}" }
+                   ^ContainerUtil.newMapFromKeys(outputValues.iterator()) { "$boxedText.${selectors[i++]}" }
                 }
             }
         }
@@ -288,7 +288,7 @@ data class ControlFlow(
 
     val jumpOutputValue: Jump? = with(outputValues.filterIsInstance<Jump>()) {
         val jumpCount = size()
-        when {
+       ^when {
             isEmpty() ->
                 null
             outputValues.size() > jumpCount || jumpCount > 1 ->

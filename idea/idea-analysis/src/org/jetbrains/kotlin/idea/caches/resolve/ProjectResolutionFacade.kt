@@ -61,7 +61,7 @@ private class ProjectResolutionFacade(
                         return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
                     }
                 }
-                CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
+               ^CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
             }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
@@ -73,7 +73,7 @@ private class ProjectResolutionFacade(
             val perFileCache = synchronized(slruCache) {
                 slruCache[it.getContainingJetFile()]
             }
-            perFileCache.getAnalysisResults(it)
+           ^perFileCache.getAnalysisResults(it)
         }
         val withError = results.firstOrNull { it.isError() }
         val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })

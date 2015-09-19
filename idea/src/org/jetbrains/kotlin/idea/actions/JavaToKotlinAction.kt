@@ -151,7 +151,7 @@ public class JavaToKotlinAction : AnAction() {
         while (true) {
             val fileName = javaFile.getNameWithoutExtension() + (if (i > 0) i else "") + ".kt"
             if (!ioFile.resolveSibling(fileName).exists()) return fileName
-            i++
+           ^i++
         }
     }
 }

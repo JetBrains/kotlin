@@ -144,7 +144,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
                 MoveClassHandler.EP_NAME.getExtensions().forEach { handler -> handler.preprocessUsages(results) }
 
-                results
+               ^results
             }
         }
 

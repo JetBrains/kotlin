@@ -94,7 +94,7 @@ class PartialBodyResolveFilter(
             else if (statement is JetMultiDeclaration) {
                 if (statement.getEntries().any {
                     val name = it.getName()
-                    name != null && nameFilter(name)
+                   ^name != null && nameFilter(name)
                 }) {
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
@@ -372,7 +372,7 @@ class PartialBodyResolveFilter(
                 if (condition.isTrueConstant()) {
                     insideLoopLevel++
                     loop.getBody()?.accept(this)
-                    insideLoopLevel--
+                   ^insideLoopLevel--
                 }
                 else {
                     // do not make sense to search exits inside while-loop as not necessary enter it at all
@@ -542,7 +542,7 @@ class PartialBodyResolveFilter(
 
                 is JetContainerNode -> { //TODO - not quite correct
                     val pparent = parent.getParent() as? JetExpression
-                    pparent != null && isValueNeeded(pparent)
+                   ^pparent != null && isValueNeeded(pparent)
                 }
 
                 is JetDeclarationWithBody -> {

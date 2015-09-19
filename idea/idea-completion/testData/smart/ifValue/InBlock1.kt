@@ -4,7 +4,7 @@ fun foo(c: Char){}
 fun bar(b: Boolean, s: String, c: Char){
     foo(if (b) {
         println()
-        <caret>
+        <^caret>
     })
 }
 

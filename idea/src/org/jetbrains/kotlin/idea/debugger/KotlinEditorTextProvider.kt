@@ -76,7 +76,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 is JetSuperExpression,
                 is JetReferenceExpression -> {
                     val pparent = parent.getParent()
-                    when (pparent) {
+                   ^when (pparent) {
                         is JetQualifiedExpression -> pparent
                         else -> parent
                     }

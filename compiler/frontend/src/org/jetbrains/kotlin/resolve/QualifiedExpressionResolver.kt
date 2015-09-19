@@ -57,7 +57,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             return userType.referenceExpression?.let {
                 val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor, inImport = false, isQualifier = false)
-                classifier
+               ^classifier
             }
         }
 
@@ -259,7 +259,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
         val firstDescriptor = scopeForFirstPart?.let {
                 val firstPart = path.first()
-                it.getClassifier(firstPart.name, firstPart.location)?.apply {
+               ^it.getClassifier(firstPart.name, firstPart.location)?.apply {
                     storageResult(trace, firstPart.expression, listOf(this), shouldBeVisibleFrom, inImport)
                 }
             }
@@ -282,7 +282,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                     } else null
 
 
-                    if (packageView != null && !packageView.isEmpty()) {
+                   ^if (packageView != null && !packageView.isEmpty()) {
                         packageView
                     } else {
                         descriptor.memberScope.getClassifier(qualifierPart.name, qualifierPart.location)
@@ -291,7 +291,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 else -> null
             }
             storageResult(trace, qualifierPart.expression, listOfNotNull(nextDescriptor), shouldBeVisibleFrom, inImport)
-            nextDescriptor
+           ^nextDescriptor
         }
     }
 
@@ -312,7 +312,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 return Pair(packageDescriptor, prefixSize)
             }
             fqName = fqName.parent()
-            prefixSize--
+           ^prefixSize--
         }
         return Pair(getPackage(FqName.ROOT), 0)
     }
@@ -330,7 +330,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
                 "path: ${path.joinToString()}, packageView fqName: ${packageView.fqName}"
             }
-            parentView!!
+           ^parentView!!
         }
     }
 

@@ -42,7 +42,7 @@ class ModuleTypeCacheManager private constructor(project: Project) {
             {
                 module: Module? ->
                 val moduleType = if (module != null) computeType(module) else null
-                CachedValueProvider.Result.create<ModuleType>(moduleType, vfsModificationTracker)
+               ^CachedValueProvider.Result.create<ModuleType>(moduleType, vfsModificationTracker)
             }, false)
 
     fun isGradleModule(module: Module) = getModuleType(module) == ModuleType.GRADLE

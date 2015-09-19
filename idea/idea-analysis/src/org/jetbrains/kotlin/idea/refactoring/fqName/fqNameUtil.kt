@@ -37,7 +37,7 @@ public fun PsiElement.getKotlinFqName(): FqName? {
         is PsiClass -> element.getQualifiedName()?.let { FqName(it) }
         is PsiMember -> (element : PsiMember).getName()?.let { name ->
             val prefix = element.getContainingClass()?.getQualifiedName()
-            FqName(if (prefix != null) "$prefix.$name" else name)
+           ^FqName(if (prefix != null) "$prefix.$name" else name)
         }
         is JetNamedDeclaration -> element.getFqName()
         else -> null
@@ -56,7 +56,7 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
     val psiFactory = JetPsiFactory(this)
     val fqNameBase = (getParent() as? JetCallExpression)?.let { parent ->
         val callCopy = parent.copy() as JetCallExpression
-        callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
+       ^callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
     } ?: shortName
 
     val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
@@ -65,7 +65,7 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
     return when (elementToReplace) {
         is JetUserType -> {
             val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
-            elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
+           ^elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
         }
         else -> elementToReplace.replace(psiFactory.createExpression(text))
     } as JetElement

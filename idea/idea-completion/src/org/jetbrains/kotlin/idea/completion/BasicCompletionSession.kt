@@ -184,7 +184,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         if (parameters.isAutoPopup) {
             collector.addLookupElementPostProcessor { lookupElement ->
                 lookupElement.putUserData(LookupCancelWatcher.AUTO_POPUP_AT, position.startOffset)
-                lookupElement
+               ^lookupElement
             }
         }
 
@@ -203,7 +203,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             collector.addLookupElementPostProcessor { lookupElement ->
                 lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
                 lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
+               ^lookupElement
             }
 
             parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)

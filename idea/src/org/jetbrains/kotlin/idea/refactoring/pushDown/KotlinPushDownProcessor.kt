@@ -138,7 +138,7 @@ public class KotlinPushDownProcessor(
                         targetClassDescriptor.findCallableMemberBySignature(it as CallableMemberDescriptor)
                     }
                     val targetMember = targetMemberDescriptor?.source?.getPsi() as? JetCallableDeclaration
-                    targetMember?.apply {
+                   ^targetMember?.apply {
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
                             addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
                         }

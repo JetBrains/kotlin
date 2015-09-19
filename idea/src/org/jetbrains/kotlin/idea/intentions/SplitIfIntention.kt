@@ -64,7 +64,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
             JetTokens.OROR -> {
                 val container = ifExpression.getParent()
 
-                if (container is JetBlockExpression && elseBranch == null && thenBranch.lastBlockStatementOrThis().isExitStatement()) { // special case
+               ^if (container is JetBlockExpression && elseBranch == null && thenBranch.lastBlockStatementOrThis().isExitStatement()) { // special case
                     val secondIf = container.addAfter(innerIf, ifExpression)
                     container.addAfter(psiFactory.createNewLine(), ifExpression)
                     val firstIf = ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))

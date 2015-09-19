@@ -136,7 +136,7 @@ object KotlinOutputParserHelper {
     init {
         isNewAndroidPlugin = try {
             Class.forName("com.android.ide.common.blame.Message")
-            true
+           ^true
         }
         catch (e: ClassNotFoundException) {
             false
@@ -151,12 +151,12 @@ object KotlinOutputParserHelper {
         if (!isNewAndroidPlugin) {
             val messageClass = Class.forName("$packagePrefix.GradleMessage")
             val messageKindClass = Class.forName("$packagePrefix.GradleMessage\$Kind")
-            messageClass.getConstructor(messageKindClass, String::class.java)
+           ^messageClass.getConstructor(messageKindClass, String::class.java)
         }
         else {
             val messageClass = Class.forName("$packagePrefix.Message")
             val messageKindClass = Class.forName("$packagePrefix.Message\$Kind")
-            messageClass.getConstructor(
+           ^messageClass.getConstructor(
                     messageKindClass,
                     String::class.java,
                     String::class.java,
@@ -168,7 +168,7 @@ object KotlinOutputParserHelper {
         if (!isNewAndroidPlugin) {
             val messageClass = Class.forName("$packagePrefix.GradleMessage")
             val messageKindClass = Class.forName("$packagePrefix.GradleMessage\$Kind")
-            messageClass.getConstructor(
+           ^messageClass.getConstructor(
                     messageKindClass,
                     String::class.java, String::class.java,
                     Int::class.java, Int::class.java)
@@ -178,7 +178,7 @@ object KotlinOutputParserHelper {
             val messageKindClass = Class.forName("$packagePrefix.Message\$Kind")
             val sourceFilePositionClass = Class.forName("$packagePrefix.SourceFilePosition")
             val sourceFilePositionArrayClass = Class.forName("[L$packagePrefix.SourceFilePosition;")
-            messageClass.getConstructor(
+           ^messageClass.getConstructor(
                     messageKindClass,
                     String::class.java,
                     sourceFilePositionClass,
@@ -190,19 +190,19 @@ object KotlinOutputParserHelper {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourcePositionClass = Class.forName("$packagePrefix.SourcePosition")
         val sourceFilePositionClass = Class.forName("$packagePrefix.SourceFilePosition")
-        sourceFilePositionClass.getConstructor(File::class.java, sourcePositionClass)
+       ^sourceFilePositionClass.getConstructor(File::class.java, sourcePositionClass)
     }
 
     private val sourcePositionConstructor: Constructor<*> by lazy {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourcePositionClass = Class.forName("$packagePrefix.SourcePosition")
-        sourcePositionClass.getConstructor(Int::class.java, Int::class.java, Int::class.java)
+       ^sourcePositionClass.getConstructor(Int::class.java, Int::class.java, Int::class.java)
     }
 
     private val sourcePositionVarargArg: Any by lazy {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourceFilePositionClass = Class.forName("$packagePrefix.SourceFilePosition")
-        RArray.newInstance(sourceFilePositionClass, 0)
+       ^RArray.newInstance(sourceFilePositionClass, 0)
     }
 
     private fun loadSeverityEnums() {

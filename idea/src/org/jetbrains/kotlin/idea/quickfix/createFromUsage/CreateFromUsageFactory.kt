@@ -73,7 +73,7 @@ public abstract class CreateFromUsageFactory<E : JetElement, D : Any> : JetInten
                 if (cachedData == null) {
                     cachedData = Ref(createQuickFixData(element, currentDiagnostic))
                 }
-                cachedData!!.get()
+               ^cachedData!!.get()
             }.filter { it.isAvailable(project, null, file) }
         }
         finally {

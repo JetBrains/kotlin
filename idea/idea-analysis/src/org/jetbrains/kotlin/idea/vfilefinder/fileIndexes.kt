@@ -54,7 +54,7 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
             DataIndexer<FqName, Void, FileContent> {
                 try {
                     val fqName = f(it.getFile())
-                    if (fqName != null) {
+                   ^if (fqName != null) {
                         Collections.singletonMap<FqName, Void>(fqName, null)
                     }
                     else {
@@ -63,7 +63,7 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
                 }
                 catch (e: Throwable) {
                     LOG.warn("Error while indexing file " + it.getFileName(), e)
-                    emptyMap()
+                   ^emptyMap()
                 }
             }
 }
@@ -80,7 +80,7 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(j
 
     private val INDEXER = indexer() { file ->
         val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
-        if (kotlinClass != null && kotlinClass.getClassHeader().isCompatibleAbiVersion) kotlinClass.getClassId().asSingleFqName() else null
+       ^if (kotlinClass != null && kotlinClass.getClassHeader().isCompatibleAbiVersion) kotlinClass.getClassId().asSingleFqName() else null
     }
 }
 

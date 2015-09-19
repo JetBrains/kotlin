@@ -101,7 +101,7 @@ public class KotlinReferenceData(
         public val dataFlavor: DataFlavor? by lazy {
             try {
                 val dataClass = javaClass<KotlinReferenceData>()
-                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),
+               ^DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),
                            "KotlinReferenceData",
                            dataClass.getClassLoader())
             }

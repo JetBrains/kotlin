@@ -45,7 +45,7 @@ public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.
 
         if (psiElement.getText()?.last() == ';') {
             doc.deleteString(endOffset - 1, endOffset)
-            endOffset--
+           ^endOffset--
         }
 
         doc.insertString(endOffset, "{}")

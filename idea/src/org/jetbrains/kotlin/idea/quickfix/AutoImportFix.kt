@@ -57,7 +57,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             {
                 val descriptors = computeSuggestions(element)
                 anySuggestionFound = !descriptors.isEmpty()
-                descriptors
+               ^descriptors
             },
             { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
 

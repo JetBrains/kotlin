@@ -96,7 +96,7 @@ public class KotlinCacheService(val project: Project) {
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
                 val dependentModules = syntheticFileModule.getDependentModules()
-                ProjectResolutionFacade(project) {
+               ^ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
                             project,
                             targetPlatform,
@@ -126,7 +126,7 @@ public class KotlinCacheService(val project: Project) {
                 // currently the only known scenario is when we cannot determine that file is a library source
                 // (file under both classes and sources root)
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
-                ProjectResolutionFacade(project) {
+               ^ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
                             project,
                             targetPlatform,

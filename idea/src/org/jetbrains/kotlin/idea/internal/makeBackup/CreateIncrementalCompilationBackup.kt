@@ -139,11 +139,11 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
                             files.add(Pair(it, FileUtil.getRelativePath(dir, it)!!))
                             totalBytes += it.length()
                         }
-                        true
+                       ^true
                     },
                     /*directoryFilter*/ {
                         val name = it!!.getName()
-                        name != ".git" && name != "out"
+                       ^name != ".git" && name != "out"
                     }
             )
         }

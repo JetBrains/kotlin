@@ -31,7 +31,7 @@ public abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTes
         AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
             testCompletion(getFile().getText(), JvmPlatform, { invocationCount ->
                 complete(invocationCount)
-                myItems
+               ^myItems
             }, 1)
         })
     }
