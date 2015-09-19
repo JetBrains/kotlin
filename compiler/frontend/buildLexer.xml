@@ -1,4 +1,4 @@
-<project name="JetLexer" default="lexer">
+<project name="KotlinLexer" default="lexer">
     <property name="home" value="${basedir}"/>
     <property name="flex.base" value="${home}/../../dependencies/jflex"/>
     <property name="out.dir" value="${basedir}/tmpout"/>
