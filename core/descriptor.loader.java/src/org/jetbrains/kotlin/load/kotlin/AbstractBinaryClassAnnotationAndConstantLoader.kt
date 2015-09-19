@@ -243,11 +243,11 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-                return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString() + desc))
+                return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
             }
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
-                val signature = MemberSignature.fromFieldNameAndDesc(name, desc)
+                val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
 
                 if (initializer != null) {
                     val constant = loadConstant(desc, initializer)
@@ -299,17 +299,16 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     ): MemberSignature? {
         if (!proto.hasExtension(propertySignature)) return null
 
-        val propertySignature = proto.getExtension(propertySignature)
-        val deserializer = SignatureDeserializer(nameResolver)
+        val signature = proto.getExtension(propertySignature)
 
-        if (field && propertySignature.hasField()) {
-            val field = propertySignature.field
-            val type = deserializer.typeDescriptor(field.type)
-            val name = nameResolver.getName(field.name)
-            return MemberSignature.fromFieldNameAndDesc(name, type)
+        if (field && signature.hasField()) {
+            return MemberSignature.fromFieldNameAndDesc(
+                    nameResolver.getString(signature.field.name),
+                    nameResolver.getString(signature.field.desc)
+            )
         }
-        else if (synthetic && propertySignature.hasSyntheticMethod()) {
-            return deserializer.methodSignature(propertySignature.syntheticMethod)
+        else if (synthetic && signature.hasSyntheticMethod()) {
+            return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
         }
 
         return null
@@ -320,17 +319,15 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
     ): MemberSignature? {
-        val deserializer = SignatureDeserializer(nameResolver)
-
         when (kind) {
             AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension(methodSignature)) {
-                return deserializer.methodSignature(proto.getExtension(methodSignature))
+                return MemberSignature.fromMethod(nameResolver, proto.getExtension(methodSignature))
             }
             AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension(propertySignature)) {
-                return deserializer.methodSignature(proto.getExtension(propertySignature).getGetter())
+                return MemberSignature.fromMethod(nameResolver, proto.getExtension(propertySignature).getter)
             }
             AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension(propertySignature)) {
-                return deserializer.methodSignature(proto.getExtension(propertySignature).getSetter())
+                return MemberSignature.fromMethod(nameResolver, proto.getExtension(propertySignature).setter)
             }
             AnnotatedCallableKind.PROPERTY -> return getPropertySignature(proto, nameResolver, true, true)
         }

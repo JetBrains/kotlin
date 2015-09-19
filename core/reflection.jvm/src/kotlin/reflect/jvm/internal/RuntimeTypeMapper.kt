@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.reflect.*
-import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -52,7 +51,7 @@ internal sealed class JvmFunctionSignature {
             val nameResolver: NameResolver
     ) : JvmFunctionSignature() {
         override fun asString(): String =
-                SignatureDeserializer(nameResolver).methodSignatureString(signature)
+                nameResolver.getString(signature.name) + nameResolver.getString(signature.desc)
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
@@ -96,12 +95,12 @@ internal sealed class JvmPropertySignature {
 
         init {
             if (signature.hasGetter()) {
-                string = SignatureDeserializer(nameResolver).methodSignatureString(signature.getter)
+                string = nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
             }
             else {
                 string = JvmAbi.getterName(nameResolver.getString(signature.field.name)) +
                          "()" +
-                         SignatureDeserializer(nameResolver).typeDescriptor(signature.field.type)
+                         nameResolver.getString(signature.field.desc)
             }
         }
 
@@ -174,15 +173,15 @@ internal object RuntimeTypeMapper {
         when (function.name.asString()) {
             "equals" -> if (parameters.size() == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
                 return JvmFunctionSignature.BuiltInFunction.Predefined("equals(Ljava/lang/Object;)Z",
-                                                                       javaClass<Any>().getDeclaredMethod("equals", javaClass<Any>()))
+                                                                       Any::class.java.getDeclaredMethod("equals", Any::class.java))
             }
             "hashCode" -> if (parameters.isEmpty()) {
                 return JvmFunctionSignature.BuiltInFunction.Predefined("hashCode()I",
-                                                                       javaClass<Any>().getDeclaredMethod("hashCode"))
+                                                                       Any::class.java.getDeclaredMethod("hashCode"))
             }
             "toString" -> if (parameters.isEmpty()) {
                 return JvmFunctionSignature.BuiltInFunction.Predefined("toString()Ljava/lang/String;",
-                                                                       javaClass<Any>().getDeclaredMethod("toString"))
+                                                                       Any::class.java.getDeclaredMethod("toString"))
             }
             // TODO: generalize and support other functions from built-ins
         }

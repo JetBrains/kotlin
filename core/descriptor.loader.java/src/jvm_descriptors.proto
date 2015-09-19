@@ -22,39 +22,18 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JvmProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
-message JvmType {
-  // Either a primitive type, or a class FQ name should be present
-
-  enum PrimitiveType {
-    // These values correspond to ASM Type sorts
-    VOID = 0;
-    BOOLEAN = 1;
-    CHAR = 2;
-    BYTE = 3;
-    SHORT = 4;
-    INT = 5;
-    FLOAT = 6;
-    LONG = 7;
-    DOUBLE = 8;
-  }
-
-  optional PrimitiveType primitive_type = 1;
-
-  // id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-  optional int32 class_fq_name = 2 [(fq_name_id_in_table) = true];
-
-  optional int32 array_dimension = 3 [default = 0];
-}
-
 message JvmMethodSignature {
   required int32 name = 1 [(string_id_in_table) = true];
-  required JvmType return_type = 2;
-  repeated JvmType parameter_type = 3;
+
+  // JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
+  required int32 desc = 2 [(string_id_in_table) = true];
 }
 
 message JvmFieldSignature {
   required int32 name = 1 [(string_id_in_table) = true];
-  required JvmType type = 2;
+
+  // JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
+  required int32 desc = 2 [(string_id_in_table) = true];
 
   // True iff this field is a backing field for a companion object and is really present as a static
   // field in the outer class, not as an instance field here
@@ -62,11 +41,9 @@ message JvmFieldSignature {
 }
 
 message JvmPropertySignature {
-  // A property itself is identified either by the field, or by the synthetic method.
-  // If the property is annotated, then either field or synthetic_method should be present
   optional JvmFieldSignature field = 1;
 
-  // Annotations on properties without backing fields are written on a synthetic method with this signature
+  // Annotations on properties are written on a synthetic method with this signature
   optional JvmMethodSignature synthetic_method = 2;
 
   optional JvmMethodSignature getter = 3;

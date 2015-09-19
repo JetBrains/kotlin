@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -229,9 +228,44 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): List<Class<*>> {
         val classLoader = jClass.safeClassLoader
-        return signature.parameterTypeList.map { jvmType ->
-            loadJvmType(jvmType, nameResolver, classLoader)
+        val result = arrayListOf<Class<*>>()
+        val desc = nameResolver.getString(signature.desc)
+
+        var i = 1
+        while (desc[i] != ')') {
+            var arrayDimension = 0
+            while (desc[i] == '[') {
+                arrayDimension++
+                i++
+            }
+
+            var type = when (desc[i++]) {
+                'L' -> {
+                    val semicolon = desc.indexOf(';', i)
+                    val internalName = desc.substring(i, semicolon)
+                    i = semicolon + 1
+                    classLoader.loadClass(internalName.replace('/', '.'))
+                }
+                'V' -> Void.TYPE
+                'Z' -> java.lang.Boolean.TYPE
+                'C' -> java.lang.Character.TYPE
+                'B' -> java.lang.Byte.TYPE
+                'S' -> java.lang.Short.TYPE
+                'I' -> java.lang.Integer.TYPE
+                'F' -> java.lang.Float.TYPE
+                'J' -> java.lang.Long.TYPE
+                'D' -> java.lang.Double.TYPE
+                else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+            }
+
+            repeat(arrayDimension) {
+                type = type.createArrayType()
+            }
+
+            result.add(type)
         }
+
+        return result
     }
 
     // TODO: check resulting field's type
@@ -268,42 +302,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return jClass.safeClassLoader.loadClass(classId.asSingleFqName().asString())
     }
 
-    private fun loadJvmType(
-            type: JvmProtoBuf.JvmType,
-            nameResolver: NameResolver,
-            classLoader: ClassLoader,
-            arrayDimension: Int = type.getArrayDimension()
-    ): Class<*> {
-        if (arrayDimension > 0) {
-            return loadJvmType(type, nameResolver, classLoader, arrayDimension - 1).createArrayType()
-        }
-
-        if (type.hasPrimitiveType()) {
-            return PRIMITIVE_TYPES[type.getPrimitiveType()]
-                   ?: throw KotlinReflectionInternalError("Unknown primitive type: ${type.getPrimitiveType()}")
-        }
-
-        if (type.hasClassFqName()) {
-            val fqName = nameResolver.getFqName(type.getClassFqName())
-            return classLoader.loadClass(fqName.asString())
-        }
-
-        throw KotlinReflectionInternalError("Inconsistent metadata for JVM type")
-    }
-
     companion object {
-        private val PRIMITIVE_TYPES = mapOf(
-                VOID to Void.TYPE,
-                BOOLEAN to java.lang.Boolean.TYPE,
-                CHAR to java.lang.Character.TYPE,
-                BYTE to java.lang.Byte.TYPE,
-                SHORT to java.lang.Short.TYPE,
-                INT to java.lang.Integer.TYPE,
-                FLOAT to java.lang.Float.TYPE,
-                LONG to java.lang.Long.TYPE,
-                DOUBLE to java.lang.Double.TYPE
-        )
-
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
     }
 }

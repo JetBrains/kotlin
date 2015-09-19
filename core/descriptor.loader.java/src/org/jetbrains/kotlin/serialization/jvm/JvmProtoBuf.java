@@ -15,675 +15,6 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
   }
-  public interface JvmTypeOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
-
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     */
-    boolean hasPrimitiveType();
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     */
-    org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType getPrimitiveType();
-
-    // optional int32 class_fq_name = 2;
-    /**
-     * <code>optional int32 class_fq_name = 2;</code>
-     *
-     * <pre>
-     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-     * </pre>
-     */
-    boolean hasClassFqName();
-    /**
-     * <code>optional int32 class_fq_name = 2;</code>
-     *
-     * <pre>
-     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-     * </pre>
-     */
-    int getClassFqName();
-
-    // optional int32 array_dimension = 3 [default = 0];
-    /**
-     * <code>optional int32 array_dimension = 3 [default = 0];</code>
-     */
-    boolean hasArrayDimension();
-    /**
-     * <code>optional int32 array_dimension = 3 [default = 0];</code>
-     */
-    int getArrayDimension();
-  }
-  /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmType}
-   *
-   * <pre>
-   * Either a primitive type, or a class FQ name should be present
-   * </pre>
-   */
-  public static final class JvmType extends
-      com.google.protobuf.GeneratedMessageLite
-      implements JvmTypeOrBuilder {
-    // Use JvmType.newBuilder() to construct.
-    private JvmType(com.google.protobuf.GeneratedMessageLite.Builder builder) {
-      super(builder);
-
-    }
-    private JvmType(boolean noInit) {}
-
-    private static final JvmType defaultInstance;
-    public static JvmType getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public JvmType getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private JvmType(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 8: {
-              int rawValue = input.readEnum();
-              org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType value = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.valueOf(rawValue);
-              if (value != null) {
-                bitField0_ |= 0x00000001;
-                primitiveType_ = value;
-              }
-              break;
-            }
-            case 16: {
-              bitField0_ |= 0x00000002;
-              classFqName_ = input.readInt32();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
-              arrayDimension_ = input.readInt32();
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        makeExtensionsImmutable();
-      }
-    }
-    public static com.google.protobuf.Parser<JvmType> PARSER =
-        new com.google.protobuf.AbstractParser<JvmType>() {
-      public JvmType parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new JvmType(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<JvmType> getParserForType() {
-      return PARSER;
-    }
-
-    /**
-     * Protobuf enum {@code org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType}
-     */
-    public enum PrimitiveType
-        implements com.google.protobuf.Internal.EnumLite {
-      /**
-       * <code>VOID = 0;</code>
-       *
-       * <pre>
-       * These values correspond to ASM Type sorts
-       * </pre>
-       */
-      VOID(0, 0),
-      /**
-       * <code>BOOLEAN = 1;</code>
-       */
-      BOOLEAN(1, 1),
-      /**
-       * <code>CHAR = 2;</code>
-       */
-      CHAR(2, 2),
-      /**
-       * <code>BYTE = 3;</code>
-       */
-      BYTE(3, 3),
-      /**
-       * <code>SHORT = 4;</code>
-       */
-      SHORT(4, 4),
-      /**
-       * <code>INT = 5;</code>
-       */
-      INT(5, 5),
-      /**
-       * <code>FLOAT = 6;</code>
-       */
-      FLOAT(6, 6),
-      /**
-       * <code>LONG = 7;</code>
-       */
-      LONG(7, 7),
-      /**
-       * <code>DOUBLE = 8;</code>
-       */
-      DOUBLE(8, 8),
-      ;
-
-      /**
-       * <code>VOID = 0;</code>
-       *
-       * <pre>
-       * These values correspond to ASM Type sorts
-       * </pre>
-       */
-      public static final int VOID_VALUE = 0;
-      /**
-       * <code>BOOLEAN = 1;</code>
-       */
-      public static final int BOOLEAN_VALUE = 1;
-      /**
-       * <code>CHAR = 2;</code>
-       */
-      public static final int CHAR_VALUE = 2;
-      /**
-       * <code>BYTE = 3;</code>
-       */
-      public static final int BYTE_VALUE = 3;
-      /**
-       * <code>SHORT = 4;</code>
-       */
-      public static final int SHORT_VALUE = 4;
-      /**
-       * <code>INT = 5;</code>
-       */
-      public static final int INT_VALUE = 5;
-      /**
-       * <code>FLOAT = 6;</code>
-       */
-      public static final int FLOAT_VALUE = 6;
-      /**
-       * <code>LONG = 7;</code>
-       */
-      public static final int LONG_VALUE = 7;
-      /**
-       * <code>DOUBLE = 8;</code>
-       */
-      public static final int DOUBLE_VALUE = 8;
-
-
-      public final int getNumber() { return value; }
-
-      public static PrimitiveType valueOf(int value) {
-        switch (value) {
-          case 0: return VOID;
-          case 1: return BOOLEAN;
-          case 2: return CHAR;
-          case 3: return BYTE;
-          case 4: return SHORT;
-          case 5: return INT;
-          case 6: return FLOAT;
-          case 7: return LONG;
-          case 8: return DOUBLE;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>() {
-              public PrimitiveType findValueByNumber(int number) {
-                return PrimitiveType.valueOf(number);
-              }
-            };
-
-      private final int value;
-
-      private PrimitiveType(int index, int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType)
-    }
-
-    private int bitField0_;
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;
-    public static final int PRIMITIVE_TYPE_FIELD_NUMBER = 1;
-    private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType primitiveType_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     */
-    public boolean hasPrimitiveType() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     */
-    public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType getPrimitiveType() {
-      return primitiveType_;
-    }
-
-    // optional int32 class_fq_name = 2;
-    public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
-    private int classFqName_;
-    /**
-     * <code>optional int32 class_fq_name = 2;</code>
-     *
-     * <pre>
-     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-     * </pre>
-     */
-    public boolean hasClassFqName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional int32 class_fq_name = 2;</code>
-     *
-     * <pre>
-     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-     * </pre>
-     */
-    public int getClassFqName() {
-      return classFqName_;
-    }
-
-    // optional int32 array_dimension = 3 [default = 0];
-    public static final int ARRAY_DIMENSION_FIELD_NUMBER = 3;
-    private int arrayDimension_;
-    /**
-     * <code>optional int32 array_dimension = 3 [default = 0];</code>
-     */
-    public boolean hasArrayDimension() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional int32 array_dimension = 3 [default = 0];</code>
-     */
-    public int getArrayDimension() {
-      return arrayDimension_;
-    }
-
-    private void initFields() {
-      primitiveType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.VOID;
-      classFqName_ = 0;
-      arrayDimension_ = 0;
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, primitiveType_.getNumber());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, classFqName_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(3, arrayDimension_);
-      }
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, primitiveType_.getNumber());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, classFqName_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, arrayDimension_);
-      }
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmType}
-     *
-     * <pre>
-     * Either a primitive type, or a class FQ name should be present
-     * </pre>
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType, Builder>
-        implements org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmTypeOrBuilder {
-      // Construct using org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private void maybeForceBuilderInitialization() {
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        primitiveType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.VOID;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        classFqName_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        arrayDimension_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
-      }
-
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType build() {
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType buildPartial() {
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType result = new org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.primitiveType_ = primitiveType_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.classFqName_ = classFqName_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.arrayDimension_ = arrayDimension_;
-        result.bitField0_ = to_bitField0_;
-        return result;
-      }
-
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType other) {
-        if (other == org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance()) return this;
-        if (other.hasPrimitiveType()) {
-          setPrimitiveType(other.getPrimitiveType());
-        }
-        if (other.hasClassFqName()) {
-          setClassFqName(other.getClassFqName());
-        }
-        if (other.hasArrayDimension()) {
-          setArrayDimension(other.getArrayDimension());
-        }
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      // optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;
-      private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType primitiveType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.VOID;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       */
-      public boolean hasPrimitiveType() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType getPrimitiveType() {
-        return primitiveType_;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       */
-      public Builder setPrimitiveType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        bitField0_ |= 0x00000001;
-        primitiveType_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       */
-      public Builder clearPrimitiveType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        primitiveType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.VOID;
-        
-        return this;
-      }
-
-      // optional int32 class_fq_name = 2;
-      private int classFqName_ ;
-      /**
-       * <code>optional int32 class_fq_name = 2;</code>
-       *
-       * <pre>
-       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-       * </pre>
-       */
-      public boolean hasClassFqName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional int32 class_fq_name = 2;</code>
-       *
-       * <pre>
-       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-       * </pre>
-       */
-      public int getClassFqName() {
-        return classFqName_;
-      }
-      /**
-       * <code>optional int32 class_fq_name = 2;</code>
-       *
-       * <pre>
-       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-       * </pre>
-       */
-      public Builder setClassFqName(int value) {
-        bitField0_ |= 0x00000002;
-        classFqName_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>optional int32 class_fq_name = 2;</code>
-       *
-       * <pre>
-       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-       * </pre>
-       */
-      public Builder clearClassFqName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        classFqName_ = 0;
-        
-        return this;
-      }
-
-      // optional int32 array_dimension = 3 [default = 0];
-      private int arrayDimension_ ;
-      /**
-       * <code>optional int32 array_dimension = 3 [default = 0];</code>
-       */
-      public boolean hasArrayDimension() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 array_dimension = 3 [default = 0];</code>
-       */
-      public int getArrayDimension() {
-        return arrayDimension_;
-      }
-      /**
-       * <code>optional int32 array_dimension = 3 [default = 0];</code>
-       */
-      public Builder setArrayDimension(int value) {
-        bitField0_ |= 0x00000004;
-        arrayDimension_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>optional int32 array_dimension = 3 [default = 0];</code>
-       */
-      public Builder clearArrayDimension() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        arrayDimension_ = 0;
-        
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.jvm.JvmType)
-    }
-
-    static {
-      defaultInstance = new JvmType(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.JvmType)
-  }
-
   public interface JvmMethodSignatureOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
 
@@ -697,30 +28,15 @@ public final class JvmProtoBuf {
      */
     int getName();
 
-    // required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;
+    // required int32 desc = 2;
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    boolean hasReturnType();
+    boolean hasDesc();
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getReturnType();
-
-    // repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> 
-        getParameterTypeList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getParameterType(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    int getParameterTypeCount();
+    int getDesc();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature}
@@ -770,25 +86,9 @@ public final class JvmProtoBuf {
               name_ = input.readInt32();
               break;
             }
-            case 18: {
-              org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000002) == 0x00000002)) {
-                subBuilder = returnType_.toBuilder();
-              }
-              returnType_ = input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(returnType_);
-                returnType_ = subBuilder.buildPartial();
-              }
+            case 16: {
               bitField0_ |= 0x00000002;
-              break;
-            }
-            case 26: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                parameterType_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType>();
-                mutable_bitField0_ |= 0x00000004;
-              }
-              parameterType_.add(input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PARSER, extensionRegistry));
+              desc_ = input.readInt32();
               break;
             }
           }
@@ -799,9 +99,6 @@ public final class JvmProtoBuf {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-          parameterType_ = java.util.Collections.unmodifiableList(parameterType_);
-        }
         makeExtensionsImmutable();
       }
     }
@@ -837,62 +134,25 @@ public final class JvmProtoBuf {
       return name_;
     }
 
-    // required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;
-    public static final int RETURN_TYPE_FIELD_NUMBER = 2;
-    private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType returnType_;
+    // required int32 desc = 2;
+    public static final int DESC_FIELD_NUMBER = 2;
+    private int desc_;
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    public boolean hasReturnType() {
+    public boolean hasDesc() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getReturnType() {
-      return returnType_;
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;
-    public static final int PARAMETER_TYPE_FIELD_NUMBER = 3;
-    private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> parameterType_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> getParameterTypeList() {
-      return parameterType_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmTypeOrBuilder> 
-        getParameterTypeOrBuilderList() {
-      return parameterType_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    public int getParameterTypeCount() {
-      return parameterType_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getParameterType(int index) {
-      return parameterType_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-     */
-    public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmTypeOrBuilder getParameterTypeOrBuilder(
-        int index) {
-      return parameterType_.get(index);
+    public int getDesc() {
+      return desc_;
     }
 
     private void initFields() {
       name_ = 0;
-      returnType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
-      parameterType_ = java.util.Collections.emptyList();
+      desc_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -903,7 +163,7 @@ public final class JvmProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasReturnType()) {
+      if (!hasDesc()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -918,10 +178,7 @@ public final class JvmProtoBuf {
         output.writeInt32(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(2, returnType_);
-      }
-      for (int i = 0; i < parameterType_.size(); i++) {
-        output.writeMessage(3, parameterType_.get(i));
+        output.writeInt32(2, desc_);
       }
     }
 
@@ -937,11 +194,7 @@ public final class JvmProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, returnType_);
-      }
-      for (int i = 0; i < parameterType_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, parameterType_.get(i));
+          .computeInt32Size(2, desc_);
       }
       memoizedSerializedSize = size;
       return size;
@@ -1036,10 +289,8 @@ public final class JvmProtoBuf {
         super.clear();
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        returnType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
+        desc_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        parameterType_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -1070,12 +321,7 @@ public final class JvmProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.returnType_ = returnType_;
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          parameterType_ = java.util.Collections.unmodifiableList(parameterType_);
-          bitField0_ = (bitField0_ & ~0x00000004);
-        }
-        result.parameterType_ = parameterType_;
+        result.desc_ = desc_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -1085,18 +331,8 @@ public final class JvmProtoBuf {
         if (other.hasName()) {
           setName(other.getName());
         }
-        if (other.hasReturnType()) {
-          mergeReturnType(other.getReturnType());
-        }
-        if (!other.parameterType_.isEmpty()) {
-          if (parameterType_.isEmpty()) {
-            parameterType_ = other.parameterType_;
-            bitField0_ = (bitField0_ & ~0x00000004);
-          } else {
-            ensureParameterTypeIsMutable();
-            parameterType_.addAll(other.parameterType_);
-          }
-          
+        if (other.hasDesc()) {
+          setDesc(other.getDesc());
         }
         return this;
       }
@@ -1106,7 +342,7 @@ public final class JvmProtoBuf {
           
           return false;
         }
-        if (!hasReturnType()) {
+        if (!hasDesc()) {
           
           return false;
         }
@@ -1165,189 +401,36 @@ public final class JvmProtoBuf {
         return this;
       }
 
-      // required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;
-      private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType returnType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
+      // required int32 desc = 2;
+      private int desc_ ;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public boolean hasReturnType() {
+      public boolean hasDesc() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getReturnType() {
-        return returnType_;
+      public int getDesc() {
+        return desc_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public Builder setReturnType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        returnType_ = value;
-
+      public Builder setDesc(int value) {
         bitField0_ |= 0x00000002;
+        desc_ = value;
+        
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public Builder setReturnType(
-          org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder builderForValue) {
-        returnType_ = builderForValue.build();
-
-        bitField0_ |= 0x00000002;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
-       */
-      public Builder mergeReturnType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (((bitField0_ & 0x00000002) == 0x00000002) &&
-            returnType_ != org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance()) {
-          returnType_ =
-            org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.newBuilder(returnType_).mergeFrom(value).buildPartial();
-        } else {
-          returnType_ = value;
-        }
-
-        bitField0_ |= 0x00000002;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType return_type = 2;</code>
-       */
-      public Builder clearReturnType() {
-        returnType_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
-
+      public Builder clearDesc() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        return this;
-      }
-
-      // repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;
-      private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> parameterType_ =
-        java.util.Collections.emptyList();
-      private void ensureParameterTypeIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          parameterType_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType>(parameterType_);
-          bitField0_ |= 0x00000004;
-         }
-      }
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> getParameterTypeList() {
-        return java.util.Collections.unmodifiableList(parameterType_);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public int getParameterTypeCount() {
-        return parameterType_.size();
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getParameterType(int index) {
-        return parameterType_.get(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder setParameterType(
-          int index, org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParameterTypeIsMutable();
-        parameterType_.set(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder setParameterType(
-          int index, org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder builderForValue) {
-        ensureParameterTypeIsMutable();
-        parameterType_.set(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder addParameterType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParameterTypeIsMutable();
-        parameterType_.add(value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder addParameterType(
-          int index, org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParameterTypeIsMutable();
-        parameterType_.add(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder addParameterType(
-          org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder builderForValue) {
-        ensureParameterTypeIsMutable();
-        parameterType_.add(builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder addParameterType(
-          int index, org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder builderForValue) {
-        ensureParameterTypeIsMutable();
-        parameterType_.add(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder addAllParameterType(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType> values) {
-        ensureParameterTypeIsMutable();
-        super.addAll(values, parameterType_);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder clearParameterType() {
-        parameterType_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.JvmType parameter_type = 3;</code>
-       */
-      public Builder removeParameterType(int index) {
-        ensureParameterTypeIsMutable();
-        parameterType_.remove(index);
-
+        desc_ = 0;
+        
         return this;
       }
 
@@ -1375,15 +458,15 @@ public final class JvmProtoBuf {
      */
     int getName();
 
-    // required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;
+    // required int32 desc = 2;
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    boolean hasType();
+    boolean hasDesc();
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getType();
+    int getDesc();
 
     // optional bool is_static_in_outer = 3 [default = false];
     /**
@@ -1453,17 +536,9 @@ public final class JvmProtoBuf {
               name_ = input.readInt32();
               break;
             }
-            case 18: {
-              org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000002) == 0x00000002)) {
-                subBuilder = type_.toBuilder();
-              }
-              type_ = input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(type_);
-                type_ = subBuilder.buildPartial();
-              }
+            case 16: {
               bitField0_ |= 0x00000002;
+              desc_ = input.readInt32();
               break;
             }
             case 24: {
@@ -1514,20 +589,20 @@ public final class JvmProtoBuf {
       return name_;
     }
 
-    // required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;
-    public static final int TYPE_FIELD_NUMBER = 2;
-    private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType type_;
+    // required int32 desc = 2;
+    public static final int DESC_FIELD_NUMBER = 2;
+    private int desc_;
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    public boolean hasType() {
+    public boolean hasDesc() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+     * <code>required int32 desc = 2;</code>
      */
-    public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getType() {
-      return type_;
+    public int getDesc() {
+      return desc_;
     }
 
     // optional bool is_static_in_outer = 3 [default = false];
@@ -1558,7 +633,7 @@ public final class JvmProtoBuf {
 
     private void initFields() {
       name_ = 0;
-      type_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
+      desc_ = 0;
       isStaticInOuter_ = false;
     }
     private byte memoizedIsInitialized = -1;
@@ -1570,7 +645,7 @@ public final class JvmProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasType()) {
+      if (!hasDesc()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -1585,7 +660,7 @@ public final class JvmProtoBuf {
         output.writeInt32(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(2, type_);
+        output.writeInt32(2, desc_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBool(3, isStaticInOuter_);
@@ -1604,7 +679,7 @@ public final class JvmProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, type_);
+          .computeInt32Size(2, desc_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -1703,7 +778,7 @@ public final class JvmProtoBuf {
         super.clear();
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
+        desc_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
         isStaticInOuter_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1737,7 +812,7 @@ public final class JvmProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.type_ = type_;
+        result.desc_ = desc_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -1751,8 +826,8 @@ public final class JvmProtoBuf {
         if (other.hasName()) {
           setName(other.getName());
         }
-        if (other.hasType()) {
-          mergeType(other.getType());
+        if (other.hasDesc()) {
+          setDesc(other.getDesc());
         }
         if (other.hasIsStaticInOuter()) {
           setIsStaticInOuter(other.getIsStaticInOuter());
@@ -1765,7 +840,7 @@ public final class JvmProtoBuf {
           
           return false;
         }
-        if (!hasType()) {
+        if (!hasDesc()) {
           
           return false;
         }
@@ -1824,64 +899,36 @@ public final class JvmProtoBuf {
         return this;
       }
 
-      // required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;
-      private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType type_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
+      // required int32 desc = 2;
+      private int desc_ ;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public boolean hasType() {
+      public boolean hasDesc() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType getType() {
-        return type_;
+      public int getDesc() {
+        return desc_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public Builder setType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        type_ = value;
-
+      public Builder setDesc(int value) {
         bitField0_ |= 0x00000002;
+        desc_ = value;
+        
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
+       * <code>required int32 desc = 2;</code>
        */
-      public Builder setType(
-          org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.Builder builderForValue) {
-        type_ = builderForValue.build();
-
-        bitField0_ |= 0x00000002;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
-       */
-      public Builder mergeType(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType value) {
-        if (((bitField0_ & 0x00000002) == 0x00000002) &&
-            type_ != org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance()) {
-          type_ =
-            org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.newBuilder(type_).mergeFrom(value).buildPartial();
-        } else {
-          type_ = value;
-        }
-
-        bitField0_ |= 0x00000002;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.jvm.JvmType type = 2;</code>
-       */
-      public Builder clearType() {
-        type_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.getDefaultInstance();
-
+      public Builder clearDesc() {
         bitField0_ = (bitField0_ & ~0x00000002);
+        desc_ = 0;
+        
         return this;
       }
 
@@ -1955,20 +1002,10 @@ public final class JvmProtoBuf {
     // optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-     *
-     * <pre>
-     * A property itself is identified either by the field, or by the synthetic method.
-     * If the property is annotated, then either field or synthetic_method should be present
-     * </pre>
      */
     boolean hasField();
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-     *
-     * <pre>
-     * A property itself is identified either by the field, or by the synthetic method.
-     * If the property is annotated, then either field or synthetic_method should be present
-     * </pre>
      */
     org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature getField();
 
@@ -1977,7 +1014,7 @@ public final class JvmProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Annotations on properties without backing fields are written on a synthetic method with this signature
+     * Annotations on properties are written on a synthetic method with this signature
      * </pre>
      */
     boolean hasSyntheticMethod();
@@ -1985,7 +1022,7 @@ public final class JvmProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Annotations on properties without backing fields are written on a synthetic method with this signature
+     * Annotations on properties are written on a synthetic method with this signature
      * </pre>
      */
     org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature getSyntheticMethod();
@@ -2137,22 +1174,12 @@ public final class JvmProtoBuf {
     private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature field_;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-     *
-     * <pre>
-     * A property itself is identified either by the field, or by the synthetic method.
-     * If the property is annotated, then either field or synthetic_method should be present
-     * </pre>
      */
     public boolean hasField() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-     *
-     * <pre>
-     * A property itself is identified either by the field, or by the synthetic method.
-     * If the property is annotated, then either field or synthetic_method should be present
-     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature getField() {
       return field_;
@@ -2165,7 +1192,7 @@ public final class JvmProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Annotations on properties without backing fields are written on a synthetic method with this signature
+     * Annotations on properties are written on a synthetic method with this signature
      * </pre>
      */
     public boolean hasSyntheticMethod() {
@@ -2175,7 +1202,7 @@ public final class JvmProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Annotations on properties without backing fields are written on a synthetic method with this signature
+     * Annotations on properties are written on a synthetic method with this signature
      * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature getSyntheticMethod() {
@@ -2502,33 +1529,18 @@ public final class JvmProtoBuf {
       private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature field_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public boolean hasField() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature getField() {
         return field_;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public Builder setField(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature value) {
         if (value == null) {
@@ -2541,11 +1553,6 @@ public final class JvmProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public Builder setField(
           org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature.Builder builderForValue) {
@@ -2556,11 +1563,6 @@ public final class JvmProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public Builder mergeField(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature value) {
         if (((bitField0_ & 0x00000001) == 0x00000001) &&
@@ -2576,11 +1578,6 @@ public final class JvmProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
-       *
-       * <pre>
-       * A property itself is identified either by the field, or by the synthetic method.
-       * If the property is annotated, then either field or synthetic_method should be present
-       * </pre>
        */
       public Builder clearField() {
         field_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmFieldSignature.getDefaultInstance();
@@ -2595,7 +1592,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public boolean hasSyntheticMethod() {
@@ -2605,7 +1602,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature getSyntheticMethod() {
@@ -2615,7 +1612,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public Builder setSyntheticMethod(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature value) {
@@ -2631,7 +1628,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public Builder setSyntheticMethod(
@@ -2645,7 +1642,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public Builder mergeSyntheticMethod(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature value) {
@@ -2664,7 +1661,7 @@ public final class JvmProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * Annotations on properties are written on a synthetic method with this signature
        * </pre>
        */
       public Builder clearSyntheticMethod() {

@@ -91,7 +91,7 @@ public class StringTableImpl implements StringTable {
             shortName = descriptor.getName().asString();
             FqName packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
             if (!packageFqName.isRoot()) {
-                builder.setParentQualifiedName(getFqNameIndex(packageFqName));
+                builder.setParentQualifiedName(getPackageFqNameIndex(packageFqName));
             }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
@@ -109,8 +109,7 @@ public class StringTableImpl implements StringTable {
         return qualifiedNames.intern(new FqNameProto(builder));
     }
 
-    @Override
-    public int getFqNameIndex(@NotNull FqName fqName) {
+    private int getPackageFqNameIndex(@NotNull FqName fqName) {
         int result = -1;
         for (Name segment : fqName.pathSegments()) {
             QualifiedName.Builder builder = QualifiedName.newBuilder();

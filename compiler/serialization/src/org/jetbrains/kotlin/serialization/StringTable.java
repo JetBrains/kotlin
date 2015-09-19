@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.name.FqName;
 
 import java.io.OutputStream;
 
@@ -26,8 +25,6 @@ public interface StringTable {
     int getStringIndex(@NotNull String string);
 
     int getFqNameIndex(@NotNull ClassDescriptor descriptor);
-
-    int getFqNameIndex(@NotNull FqName fqName);
 
     void serializeTo(@NotNull OutputStream output);
 }

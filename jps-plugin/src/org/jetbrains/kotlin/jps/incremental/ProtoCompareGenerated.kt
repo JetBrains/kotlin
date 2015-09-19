@@ -299,9 +299,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     open fun checkEquals(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
         if (!checkStringEquals(old.name, new.name)) return false
 
-        if (!checkEquals(old.returnType, new.returnType)) return false
-
-        if (!checkEqualsJvmMethodSignatureParameterType(old, new)) return false
+        if (!checkStringEquals(old.desc, new.desc)) return false
 
         return true
     }
@@ -352,29 +350,10 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEquals(old: JvmProtoBuf.JvmType, new: JvmProtoBuf.JvmType): Boolean {
-        if (old.hasPrimitiveType() != new.hasPrimitiveType()) return false
-        if (old.hasPrimitiveType()) {
-            if (old.primitiveType != new.primitiveType) return false
-        }
-
-        if (old.hasClassFqName() != new.hasClassFqName()) return false
-        if (old.hasClassFqName()) {
-            if (!checkClassIdEquals(old.classFqName, new.classFqName)) return false
-        }
-
-        if (old.hasArrayDimension() != new.hasArrayDimension()) return false
-        if (old.hasArrayDimension()) {
-            if (old.arrayDimension != new.arrayDimension) return false
-        }
-
-        return true
-    }
-
     open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
         if (!checkStringEquals(old.name, new.name)) return false
 
-        if (!checkEquals(old.type, new.type)) return false
+        if (!checkStringEquals(old.desc, new.desc)) return false
 
         if (old.hasIsStaticInOuter() != new.hasIsStaticInOuter()) return false
         if (old.hasIsStaticInOuter()) {
@@ -545,16 +524,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         for(i in 0..old.argumentCount - 1) {
             if (!checkEquals(old.getArgument(i), new.getArgument(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsJvmMethodSignatureParameterType(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
-        if (old.parameterTypeCount != new.parameterTypeCount) return false
-
-        for(i in 0..old.parameterTypeCount - 1) {
-            if (!checkEquals(old.getParameterType(i), new.getParameterType(i))) return false
         }
 
         return true
@@ -814,11 +783,7 @@ public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: (Int) -> Int, 
 
     hashCode = 31 * hashCode + stringIndexes(name)
 
-    hashCode = 31 * hashCode + returnType.hashCode(stringIndexes, fqNameIndexes)
-
-    for(i in 0..parameterTypeCount - 1) {
-        hashCode = 31 * hashCode + getParameterType(i).hashCode(stringIndexes, fqNameIndexes)
-    }
+    hashCode = 31 * hashCode + stringIndexes(desc)
 
     return hashCode
 }
@@ -869,30 +834,12 @@ public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fq
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasPrimitiveType()) {
-        hashCode = 31 * hashCode + primitiveType.hashCode()
-    }
-
-    if (hasClassFqName()) {
-        hashCode = 31 * hashCode + fqNameIndexes(classFqName)
-    }
-
-    if (hasArrayDimension()) {
-        hashCode = 31 * hashCode + arrayDimension
-    }
-
-    return hashCode
-}
-
 public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     hashCode = 31 * hashCode + stringIndexes(name)
 
-    hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
+    hashCode = 31 * hashCode + stringIndexes(desc)
 
     if (hasIsStaticInOuter()) {
         hashCode = 31 * hashCode + isStaticInOuter.hashCode()
