@@ -73,7 +73,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 
 DIGIT=[0-9]
 HEX_DIGIT=[0-9A-Fa-f]
-WHITE_SPACE_CHAR=[\ \n\t\f]
+WHITE_SPACE_CHAR=[\ \n\t\f\^]
 
 // TODO: prohibit '$' in identifiers?
 LETTER = [:letter:]|_
