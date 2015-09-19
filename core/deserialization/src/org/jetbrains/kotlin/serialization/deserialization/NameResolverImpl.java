@@ -45,7 +45,7 @@ public class NameResolverImpl implements NameResolver {
     private final ProtoBuf.StringTable strings;
     private final ProtoBuf.QualifiedNameTable qualifiedNames;
 
-    public NameResolverImpl(
+    private NameResolverImpl(
             @NotNull ProtoBuf.StringTable strings,
             @NotNull ProtoBuf.QualifiedNameTable qualifiedNames
     ) {
@@ -92,16 +92,5 @@ public class NameResolverImpl implements NameResolver {
         }
 
         return new ClassId(FqName.fromSegments(packageFqName), FqName.fromSegments(relativeClassName), local);
-    }
-
-    @Override
-    @NotNull
-    public FqName getFqName(int index) {
-        QualifiedName qualifiedName = qualifiedNames.getQualifiedName(index);
-        Name shortName = getName(qualifiedName.getShortName());
-        if (!qualifiedName.hasParentQualifiedName()) {
-            return FqName.topLevel(shortName);
-        }
-        return getFqName(qualifiedName.getParentQualifiedName()).child(shortName);
     }
 }

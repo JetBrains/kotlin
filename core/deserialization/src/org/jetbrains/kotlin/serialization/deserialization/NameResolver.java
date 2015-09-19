@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 public interface NameResolver {
@@ -30,7 +29,4 @@ public interface NameResolver {
 
     @NotNull
     ClassId getClassId(int index);
-
-    @NotNull
-    FqName getFqName(int index);
 }

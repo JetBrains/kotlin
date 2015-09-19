@@ -157,7 +157,7 @@ class LazyOperationsLog(
                 val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
                 val text = when {
-                    typeProto.hasClassName() -> context.nameResolver.getFqName(typeProto.className).asString()
+                    typeProto.hasClassName() -> context.nameResolver.getClassId(typeProto.className).asSingleFqName().asString()
                     typeProto.hasTypeParameter() -> {
                         val classifier = (o as JetType).constructor.declarationDescriptor!!
                         "" + classifier.name + " in " + DescriptorUtils.getFqName(classifier.containingDeclaration)
