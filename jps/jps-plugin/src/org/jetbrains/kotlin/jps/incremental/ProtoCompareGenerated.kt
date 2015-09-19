@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
@@ -33,9 +32,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     public val oldClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
     public val newClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
 
-    private val fqNames = Interner<FqName>()
     private val classIds = Interner<ClassId>()
-
 
     open fun checkEquals(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
         if (!checkEqualsPackageMember(old, new)) return false
@@ -556,7 +553,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     public fun getIndexOfClassId(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {
         map[index]?.let { return it }
 
-        val result = fqNames.intern(nameResolver.getFqName(index))
+        val result = classIds.intern(nameResolver.getClassId(index))
         map[index] = result
         return result
     }
