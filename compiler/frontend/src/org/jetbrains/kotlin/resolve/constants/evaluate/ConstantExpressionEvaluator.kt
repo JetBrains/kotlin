@@ -86,7 +86,7 @@ public class ConstantExpressionEvaluator(
         val varargElementType = parameterDescriptor.getVarargElementType()
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
         val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.getType()
-        val compileTimeConstants = resolveValueArguments(resolvedArgument, constantType!!, trace)
+        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, trace)
         val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
 
         if (argumentsAsVararg) {
@@ -168,7 +168,7 @@ public class ConstantExpressionEvaluator(
         return arguments.size() == 1 && arguments.get(0).getSpreadElement() != null
     }
 
-    private fun resolveValueArguments(
+    private fun resolveAnnotationValueArguments(
             resolvedValueArgument: ResolvedValueArgument,
             expectedType: JetType,
             trace: BindingTrace): List<CompileTimeConstant<*>> {
