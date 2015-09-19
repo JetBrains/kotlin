@@ -131,17 +131,17 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerContext = createDebuggerContext(suspendContext)
     }
 
-    protected fun SuspendContextImpl.stepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
+    protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
         dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
-    protected fun SuspendContextImpl.stepOut() {
+    protected fun SuspendContextImpl.doStepOut() {
         val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, StepRequest.STEP_LINE) }
                               ?: dp.createStepOutCommand(this)
         dp.getManagerThread()!!.schedule(stepOutCommand)
     }
 
-    protected fun SuspendContextImpl.stepOver() {
+    protected fun SuspendContextImpl.doStepOver() {
         val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, StepRequest.STEP_LINE) }
                               ?: dp.createStepOverCommand(this, false)
         dp.getManagerThread()!!.schedule(stepOverCommand)
@@ -164,19 +164,19 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         when {
             line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
-            line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
-            line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { stepOver() }
-            line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { smartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
-            line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
+            line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
+            line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { doStepOver() }
+            line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
+            line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { doSmartStepInto() }
             line.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
         }
     }
 
-    protected fun SuspendContextImpl.smartStepInto(chooseFromList: Int = 0) {
-        this.smartStepInto(chooseFromList, false)
+    protected fun SuspendContextImpl.doSmartStepInto(chooseFromList: Int = 0) {
+        this.doSmartStepInto(chooseFromList, false)
     }
 
-    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
+    private fun SuspendContextImpl.doSmartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
         val filters = createSmartStepIntoFilters()
         if (chooseFromList == 0) {
             filters.forEach {
