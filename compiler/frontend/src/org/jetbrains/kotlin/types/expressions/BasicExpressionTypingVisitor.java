@@ -120,9 +120,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
-            CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
+            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context.trace, components.builtIns, false);
             ConstantValue constantValue = compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
-            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
+            boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
                 return TypeInfoFactoryPackage.createTypeInfo(getDefaultType(elementType), context);
