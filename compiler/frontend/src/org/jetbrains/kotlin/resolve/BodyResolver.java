@@ -779,6 +779,11 @@ public class BodyResolver {
             SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             WritableScopeStorage innerScopeStorage = (WritableScopeStorage) innerScope;
             innerScopeStorage.addVariableOrClassDescriptor(fieldDescriptor);
+            for (JetParameter parameter : function.getValueParameters()) {
+                if (SyntheticFieldDescriptor.NAME.equals(parameter.getNameAsName())) {
+                    trace.report(Errors.ACCESSOR_PARAMETER_NAME_SHADOWING.on(parameter));
+                }
+            }
         }
 
         DataFlowInfo dataFlowInfo = null;

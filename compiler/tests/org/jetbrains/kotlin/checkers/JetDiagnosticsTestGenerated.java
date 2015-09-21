@@ -1326,6 +1326,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FieldAsParam.kt")
+            public void testFieldAsParam() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldAsParam.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FieldAsProperty.kt")
             public void testFieldAsProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldAsProperty.kt");
