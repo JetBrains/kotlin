@@ -40,4 +40,7 @@ public abstract class PackageFragmentDescriptorImpl(
     }
 
     override fun toString(): String = "package $fqName"
+
+    @Deprecated("This is a hack in order to preliminary support internal visibility in multi-module projects")
+    open fun isIncremental(): Boolean = false
 }
