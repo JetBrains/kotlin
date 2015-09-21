@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -167,7 +168,7 @@ public class IncrementalCacheImpl(
 
     public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): ChangesInfo {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
-        protoMap.process(jvmClassName, file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
+        protoMap.process(jvmClassName, file.readBytes(), emptyArray<String>(), isPackage = false, checkChangesIsOpenPart = false)
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
         sourceFiles.forEach { sourceToClassesMap.add(it, jvmClassName) }
         return ChangesInfo.NO_CHANGES
@@ -249,8 +250,10 @@ public class IncrementalCacheImpl(
         return obsoletePackageParts
     }
 
-    override fun getPackagePartData(fqName: String): ByteArray? {
-        return protoMap[JvmClassName.byInternalName(fqName)]?.bytes
+    override fun getPackagePartData(fqName: String): JvmPackagePartProto? {
+        return protoMap[JvmClassName.byInternalName(fqName)]?.let { value ->
+            JvmPackagePartProto(value.bytes, value.strings)
+        }
     }
 
     override fun getModuleMappingData(): ByteArray? {
@@ -275,19 +278,24 @@ public class IncrementalCacheImpl(
         public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
             val header = kotlinClass.classHeader
             val bytes = BitEncoding.decodeBytes(header.annotationData!!)
-            return put(kotlinClass.className, bytes, isPackage, checkChangesIsOpenPart)
+            return put(kotlinClass.className, bytes, header.strings!!, isPackage, checkChangesIsOpenPart)
         }
 
-        public fun process(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
-            return put(className, data, isPackage, checkChangesIsOpenPart)
+        public fun process(className: JvmClassName, data: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
+            return put(className, data, strings, isPackage, checkChangesIsOpenPart)
         }
 
-        private fun put(className: JvmClassName, bytes: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
+        private fun put(
+                className: JvmClassName, bytes: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean
+        ): ChangesInfo {
             val key = className.internalName
             val oldData = storage[key]
-            val data = ProtoMapValue(isPackage, bytes)
+            val data = ProtoMapValue(isPackage, bytes, strings)
 
-            if (oldData == null || !Arrays.equals(bytes, oldData.bytes) || isPackage != oldData.isPackageFacade) {
+            if (oldData == null ||
+                !Arrays.equals(bytes, oldData.bytes) ||
+                !Arrays.equals(strings, oldData.strings) ||
+                isPackage != oldData.isPackageFacade) {
                 storage[key] = data
             }
 
@@ -757,14 +765,19 @@ private object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
         out.writeBoolean(value.isPackageFacade)
         out.writeInt(value.bytes.size())
         out.write(value.bytes)
+        out.writeInt(value.strings.size())
+        for (string in value.strings) {
+            out.writeUTF(string)
+        }
     }
 
     override fun read(`in`: DataInput): ProtoMapValue {
         val isPackageFacade = `in`.readBoolean()
-        val length = `in`.readInt()
-        val buf = ByteArray(length)
-        `in`.readFully(buf)
-        return ProtoMapValue(isPackageFacade, buf)
+        val bytesLength = `in`.readInt()
+        val bytes = ByteArray(bytesLength)
+        `in`.readFully(bytes, 0, bytesLength)
+        val stringsLength = `in`.readInt()
+        val strings = Array<String>(stringsLength) { `in`.readUTF() }
+        return ProtoMapValue(isPackageFacade, bytes, strings)
     }
 }
-
