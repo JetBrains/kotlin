@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -472,6 +473,25 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
     }
 
+    public fun testInternalFromAnotherModule() {
+        initProject()
+        val result = makeAll()
+        result.assertFailed()
+
+        val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
+                .map { it.messageText }.sorted().joinToString("\n")
+        val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+        val expectedFile = File(projectRoot, "errors.txt")
+        JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
+    }
+
+    // TODO See KT-9299 In a project with circular dependencies between modules, IDE reports error on use of internal class from another module, but the corresponding code still compiles and runs.
+    public fun testCircularDependenciesInternalFromAnotherModule() {
+        initProject()
+        val result = makeAll()
+        result.assertSuccessful()
+    }
+
     public fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject()
 
@@ -491,6 +511,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
         addKotlinRuntimeDependency()
+
+        val result = makeAll()
+        result.assertSuccessful()
+    }
+
+    public fun testAccessToInternalInProductionFromTests() {
+        initProject()
 
         val result = makeAll()
         result.assertSuccessful()

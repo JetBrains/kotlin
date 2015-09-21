@@ -1,0 +1,4 @@
+fun test() {
+  foo()
+  internalBar()
+}
