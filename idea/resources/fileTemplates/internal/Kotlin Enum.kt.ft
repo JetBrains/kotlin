@@ -2,5 +2,5 @@
 
 #end
 #parse("File Header.java")
-public enum class ${NAME} {
+enum class ${NAME} {
 }
