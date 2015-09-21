@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -39,3 +40,6 @@ class SyntheticFieldDescriptor private constructor(
         val NAME = Name.identifier("field")
     }
 }
+
+public val DeclarationDescriptor.referencedProperty: PropertyDescriptor?
+    get() = if (this is SyntheticFieldDescriptor) this.propertyDescriptor else if (this is PropertyDescriptor) this else null

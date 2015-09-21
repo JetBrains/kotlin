@@ -104,8 +104,7 @@ public final class ReferenceTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context) {
-        if (getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression) instanceof SyntheticFieldDescriptor
-            || isBackingFieldReference(referenceExpression)) {
+        if (isBackingFieldReference(referenceExpression, getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression))) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (canBePropertyAccess(referenceExpression, context)) {
