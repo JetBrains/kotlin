@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -470,6 +471,23 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+    }
+
+    public fun testInternalFromAnotherModule() {
+        initProject()
+        val result = makeAll()
+        result.assertFailed()
+
+        val module2File = File(workDir, "module2/src/module2.kt")
+        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(FileUtilRt.loadFile(module2File), "// ERROR:")
+                .sorted()
+                .joinToString("\n")
+        val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
+                .map { it.messageText }
+                .map { it.replace("^.+:\\d+:\\s+".toRegex(), "").trim() }
+                .sorted()
+                .joinToString("\n")
+        assertEquals(expectedErrors, actualErrors, "Error messages were different")
     }
 
     public fun testCircularDependencyWithReferenceToOldVersionLib() {
