@@ -773,12 +773,19 @@ public class BodyResolver {
 
         // Synthetic "field" creation
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-            assert innerScope instanceof WritableScopeStorage : "Expected innerScope as WritableScopeStorage but got " + innerScope;
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             JetProperty property = (JetProperty) function.getParent();
-            SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
-            WritableScopeStorage innerScopeStorage = (WritableScopeStorage) innerScope;
-            innerScopeStorage.addVariableOrClassDescriptor(fieldDescriptor);
+            final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
+            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, functionDescriptor.getExtensionReceiverParameter(),
+                                              "Accessor inner scope with synthetic field",
+                                              RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                @Override
+                public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                    handler.addVariableOrClassDescriptor(fieldDescriptor);
+                    return Unit.INSTANCE$;
+                }
+            });
+            // Check parameter name shadowing
             for (JetParameter parameter : function.getValueParameters()) {
                 if (SyntheticFieldDescriptor.NAME.equals(parameter.getNameAsName())) {
                     trace.report(Errors.ACCESSOR_PARAMETER_NAME_SHADOWING.on(parameter));
