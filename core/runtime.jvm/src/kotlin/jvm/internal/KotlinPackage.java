@@ -30,4 +30,6 @@ public @interface KotlinPackage {
     int[] version() default {};
 
     String[] data();
+
+    String[] strings();
 }

@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.org.objectweb.asm.*;
@@ -254,7 +253,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        JvmCodegenUtil.writeAbiVersion(av);
+        writeAnnotationData(av, serializer.serialize(classProto));
         if (kind != null) {
             av.visitEnum(
                     JvmAnnotationNames.KIND_FIELD_NAME,
@@ -262,11 +261,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     kind.toString()
             );
         }
-        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(serializer.serialize(classProto))) {
-            array.visit(null, string);
-        }
-        array.visitEnd();
         av.visitEnd();
     }
 

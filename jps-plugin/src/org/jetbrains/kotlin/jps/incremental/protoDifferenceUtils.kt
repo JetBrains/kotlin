@@ -31,7 +31,7 @@ public sealed class DifferenceKind() {
     public class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray)
+data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray, val strings: Array<String>)
 
 public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE
@@ -127,8 +127,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         )
     }
 
-    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes)
-    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes)
+    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes, oldData.strings)
+    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes, newData.strings)
 
     val oldProto = oldClassData.classProto
     val newProto = newClassData.classProto
@@ -217,8 +217,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
 }
 
 private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
-    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData.bytes)
-    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData.bytes)
+    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData.bytes, oldData.strings)
+    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData.bytes, newData.strings)
 
     val oldProto = oldPackageData.packageProto
     val newProto = newPackageData.packageProto

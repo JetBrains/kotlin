@@ -60,7 +60,9 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
 
         String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "data");
         assertNotNull(data);
-        PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
+        String[] strings = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "strings");
+        assertNotNull(strings);
+        PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
 
         Set<String> callableNames = collectCallableNames(packageData.getPackageProto().getMemberList(), packageData.getNameResolver());
         assertEmpty(callableNames);
@@ -84,7 +86,9 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
 
         String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "data");
         assertNotNull(data);
-        PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
+        String[] strings = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "strings");
+        assertNotNull(strings);
+        PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
 
         Set<String> callableNames = collectCallableNames(packageData.getPackageProto().getMemberList(), packageData.getNameResolver());
         assertSameElements(callableNames, Arrays.asList("foo", "bar"));

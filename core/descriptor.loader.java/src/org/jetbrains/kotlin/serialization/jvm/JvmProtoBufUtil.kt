@@ -31,11 +31,11 @@ public object JvmProtoBufUtil {
     }
 
     @JvmStatic
-    public fun readClassDataFrom(data: Array<String>): ClassData =
-            readClassDataFrom(BitEncoding.decodeBytes(data))
+    public fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
+            readClassDataFrom(BitEncoding.decodeBytes(data), strings)
 
     @JvmStatic
-    public fun readClassDataFrom(bytes: ByteArray): ClassData {
+    public fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
         val input = ByteArrayInputStream(bytes)
         val nameResolver = NameResolverImpl.read(input)
         val classProto = ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
@@ -43,11 +43,11 @@ public object JvmProtoBufUtil {
     }
 
     @JvmStatic
-    public fun readPackageDataFrom(data: Array<String>): PackageData =
-            readPackageDataFrom(BitEncoding.decodeBytes(data))
+    public fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
+            readPackageDataFrom(BitEncoding.decodeBytes(data), strings)
 
     @JvmStatic
-    public fun readPackageDataFrom(bytes: ByteArray): PackageData {
+    public fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
         val input = ByteArrayInputStream(bytes)
         val nameResolver = NameResolverImpl.read(input)
         val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)

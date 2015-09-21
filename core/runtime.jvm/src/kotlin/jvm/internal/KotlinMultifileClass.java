@@ -30,4 +30,6 @@ public @interface KotlinMultifileClass {
     int[] version() default {};
 
     String[] filePartClassNames();
+
+    String[] strings();
 }

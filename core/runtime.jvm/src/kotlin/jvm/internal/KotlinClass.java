@@ -33,6 +33,8 @@ public @interface KotlinClass {
 
     String[] data();
 
+    String[] strings();
+
     enum Kind {
         CLASS,
 

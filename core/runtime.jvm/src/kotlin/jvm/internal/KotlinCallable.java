@@ -30,4 +30,6 @@ public @interface KotlinCallable {
     int[] version() default {};
 
     String[] data();
+
+    String[] strings();
 }

@@ -117,17 +117,20 @@ public class IncrementalPackageFragmentProvider(
                             allParts.filterNot { it in obsoletePackageParts }
                         } ?: emptyList<String>()
 
-                val dataOfPackageParts = actualPackagePartFiles.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
+                val scopes = actualPackagePartFiles
+                        .map {
+                            incrementalCache.getPackagePartData(it)
+                        }
+                        .filterNotNull()
+                        .map {
+                            IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings))
+                        }
 
-                if (dataOfPackageParts.isEmpty()) {
+                if (scopes.isEmpty()) {
                     JetScope.Empty
                 }
                 else {
-                    val scopes = dataOfPackageParts.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it)) }
-                    ChainedScope(this,
-                                 "Member scope for incremental compilation: union of package parts data",
-                                 *scopes.toTypedArray<JetScope>()
-                    )
+                    ChainedScope(this, "Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
                 }
             }
         }

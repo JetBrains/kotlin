@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypesPackage;
@@ -839,6 +840,18 @@ public class AsmUtil {
                 kind.toString()
         );
         av.visitEnd();
+    }
+
+    public static void writeAnnotationData(@NotNull AnnotationVisitor av, @NotNull byte[] bytes) {
+        JvmCodegenUtil.writeAbiVersion(av);
+        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
+        for (String string : BitEncoding.encodeBytes(bytes)) {
+            data.visit(null, string);
+        }
+        data.visitEnd();
+        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.STRINGS_FIELD_NAME);
+        // TODO: write the actual string table
+        strings.visitEnd();
     }
 
     @NotNull

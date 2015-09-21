@@ -62,12 +62,14 @@ public class DeserializerForDecompiler(
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
         val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
-        val annotationData = binaryClassForPackageClass?.classHeader?.annotationData
-        if (annotationData == null) {
-            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.classId}")
+        val header = binaryClassForPackageClass?.classHeader
+        val annotationData = header?.annotationData
+        val strings = header?.strings
+        if (annotationData == null || strings == null) {
+            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.getClassId()}")
             return emptyList()
         }
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }

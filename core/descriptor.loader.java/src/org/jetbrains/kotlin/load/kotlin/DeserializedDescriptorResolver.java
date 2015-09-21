@@ -61,7 +61,9 @@ public final class DeserializedDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, KOTLIN_CLASS);
         if (data != null) {
-            ClassData classData = JvmProtoBufUtil.readClassDataFrom(data);
+            String[] strings = kotlinClass.getClassHeader().getStrings();
+            assert strings != null : "String table not found in " + kotlinClass;
+            ClassData classData = JvmProtoBufUtil.readClassDataFrom(data, strings);
             KotlinJvmBinarySourceElement sourceElement = new KotlinJvmBinarySourceElement(kotlinClass);
             return components.getClassDeserializer().deserializeClass(
                     kotlinClass.getClassId(),
@@ -75,13 +77,15 @@ public final class DeserializedDescriptorResolver {
     public JetScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART);
         if (data != null) {
-            //all classes are included in java scope
-            PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
+            String[] strings = kotlinClass.getClassHeader().getStrings();
+            assert strings != null : "String table not found in " + kotlinClass;
+            PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
             return new DeserializedPackageMemberScope(
                     descriptor, packageData.getPackageProto(), packageData.getNameResolver(), components,
                     new Function0<Collection<Name>>() {
                         @Override
                         public Collection<Name> invoke() {
+                            // All classes are included into Java scope
                             return Collections.emptyList();
                         }
                     }

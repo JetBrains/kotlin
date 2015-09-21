@@ -32,4 +32,6 @@ public @interface KotlinMultifileClassPart {
     String multifileClassName();
 
     String[] data();
+
+    String[] strings();
 }

@@ -30,4 +30,6 @@ public @interface KotlinFileFacade {
     int[] version() default {};
 
     String[] data();
+
+    String[] strings();
 }

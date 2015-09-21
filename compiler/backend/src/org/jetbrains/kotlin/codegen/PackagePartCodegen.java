@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -41,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<JetFile> {
@@ -128,12 +128,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         if (packageProto.getMemberCount() == 0) return;
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
-        JvmCodegenUtil.writeAbiVersion(av);
-        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(serializer.serialize(packageProto))) {
-            array.visit(null, string);
-        }
-        array.visitEnd();
+        writeAnnotationData(av, serializer.serialize(packageProto));
         av.visitEnd();
     }
 }
