@@ -6651,6 +6651,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportOverloadFunctions.kt")
+            public void testImportOverloadFunctions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportOverloadFunctions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportProtectedClass.kt")
             public void testImportProtectedClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportProtectedClass.kt");

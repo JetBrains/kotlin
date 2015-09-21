@@ -43,7 +43,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     ) {
         val packageNames = packageDirective.packageNames
         for ((index, nameExpression) in packageNames.withIndex()) {
-            storageResult(trace, nameExpression, listOf(module.getPackage(packageDirective.getFqName(nameExpression))),
+            storageResult(trace, nameExpression, module.getPackage(packageDirective.getFqName(nameExpression)),
                           shouldBeVisibleFrom = null, inImport = false, isQualifier = index != packageNames.lastIndex)
         }
     }
@@ -56,7 +56,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
             return userType.referenceExpression?.let {
                 val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
-                storageResult(trace, it, listOfNotNull(classifier), scope.ownerDescriptor, inImport = false, isQualifier = false)
+                storageResult(trace, it, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
                 classifier
             }
         }
@@ -82,7 +82,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getClassifier(lastPart.name, lastPart.location)
             else -> null
         }
-        storageResult(trace, lastPart.expression, listOfNotNull(classifier), scope.ownerDescriptor, inImport = false, isQualifier = false)
+        storageResult(trace, lastPart.expression, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
         return classifier
     }
 
@@ -173,7 +173,10 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
             }
 
-            return SingleImportScope(aliasName, descriptors)
+            val importedDescriptors = descriptors.filter { isVisible(it, packageFragmentForVisibilityCheck, inImport = true) }.
+                    check { it.isNotEmpty() } ?: descriptors
+
+            return SingleImportScope(aliasName, importedDescriptors)
         }
     }
 
@@ -260,7 +263,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val firstDescriptor = scopeForFirstPart?.let {
                 val firstPart = path.first()
                 it.getClassifier(firstPart.name, firstPart.location)?.apply {
-                    storageResult(trace, firstPart.expression, listOf(this), shouldBeVisibleFrom, inImport)
+                    storageResult(trace, firstPart.expression, this, shouldBeVisibleFrom, inImport)
                 }
             }
 
@@ -290,7 +293,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 }
                 else -> null
             }
-            storageResult(trace, qualifierPart.expression, listOfNotNull(nextDescriptor), shouldBeVisibleFrom, inImport)
+            storageResult(trace, qualifierPart.expression, nextDescriptor, shouldBeVisibleFrom, inImport)
             nextDescriptor
         }
     }
@@ -324,7 +327,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             inImport: Boolean
     ) {
         path.foldRight(packageView) { qualifierPart, currentView ->
-            storageResult(trace, qualifierPart.expression, listOfNotNull(currentView), shouldBeVisibleFrom = null, inImport = inImport)
+            storageResult(trace, qualifierPart.expression, currentView, shouldBeVisibleFrom = null, inImport = inImport)
             val parentView = currentView.containingDeclaration
             assert(parentView != null) {
                 "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
@@ -342,25 +345,49 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             inImport: Boolean,
             isQualifier: Boolean = true
     ) {
-        if (descriptors.isEmpty()) {
-            trace.report(Errors.UNRESOLVED_REFERENCE.on(referenceExpression, referenceExpression))
-        }
-        else if(descriptors.size() > 1) {
-            // todo all descriptors invisible - report specific error
-            trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors)
+        if (descriptors.size() > 1) {
+            val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, inImport) }
+            if (visibleDescriptors.isEmpty()) {
+                val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
+                trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor.containingDeclaration!!))
+            }
+            else if (visibleDescriptors.size() > 1) {
+                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, visibleDescriptors)
+            }
+            else {
+                storageResult(trace, referenceExpression, visibleDescriptors.single(), null, inImport, isQualifier)
+            }
         }
         else {
-            val descriptor = descriptors.single()
-            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
-            if (descriptor is ClassifierDescriptor) {
-                symbolUsageValidator.validateTypeUsage(descriptor, trace, referenceExpression)
-            }
-            if (descriptor is DeclarationDescriptorWithVisibility && shouldBeVisibleFrom != null) {
-                checkVisibility(descriptor, trace, referenceExpression, shouldBeVisibleFrom, inImport)
-            }
-            if (isQualifier) {
-                storageQualifier(trace, referenceExpression, descriptor)
-            }
+            storageResult(trace, referenceExpression, descriptors.singleOrNull(), shouldBeVisibleFrom, inImport, isQualifier)
+        }
+    }
+
+    private fun storageResult(
+            trace: BindingTrace,
+            referenceExpression: JetSimpleNameExpression,
+            descriptor: DeclarationDescriptor?,
+            shouldBeVisibleFrom: DeclarationDescriptor?,
+            inImport: Boolean,
+            isQualifier: Boolean = true
+    ) {
+        if (descriptor == null) {
+            trace.report(Errors.UNRESOLVED_REFERENCE.on(referenceExpression, referenceExpression))
+            return
+        }
+
+        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
+
+        if (descriptor is ClassifierDescriptor) {
+            symbolUsageValidator.validateTypeUsage(descriptor, trace, referenceExpression)
+        }
+
+        if (descriptor is DeclarationDescriptorWithVisibility && !isVisible(descriptor, shouldBeVisibleFrom, inImport)) {
+            trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor.containingDeclaration!!))
+        }
+
+        if (isQualifier) {
+            storageQualifier(trace, referenceExpression, descriptor)
         }
     }
 
@@ -371,19 +398,18 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
     }
 
-    private fun checkVisibility(
-            descriptor: DeclarationDescriptorWithVisibility,
-            trace: BindingTrace,
-            referenceExpression: JetSimpleNameExpression,
-            shouldBeVisibleFrom: DeclarationDescriptor,
+    private fun isVisible(
+            descriptor: DeclarationDescriptor,
+            shouldBeVisibleFrom: DeclarationDescriptor?,
             inImport: Boolean
-    ) {
+    ): Boolean {
+        if (descriptor !is DeclarationDescriptorWithVisibility || shouldBeVisibleFrom == null) return true
+
         val visibility = descriptor.visibility
-        if (inImport && !visibility.mustCheckInImports()) {
-            return
+        if (inImport) {
+            if (Visibilities.isPrivate(visibility)) return false
+            if (!visibility.mustCheckInImports()) return true
         }
-        if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)) {
-            trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, visibility, descriptor.containingDeclaration!!))
-        }
+        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)
     }
 }
