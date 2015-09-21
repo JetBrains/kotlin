@@ -529,8 +529,7 @@ private class ConstantExpressionEvaluatorVisitor(
         }
         if (DescriptorUtils.isObject(descriptor.getContainingDeclaration()) ||
             DescriptorUtils.isStaticDeclaration(descriptor)) {
-            val returnType = descriptor.getType()
-            return KotlinBuiltIns.isPrimitiveType(returnType) || KotlinBuiltIns.isString(returnType)
+            return descriptor.type.canBeUsedForConstVal()
         }
         return false
     }

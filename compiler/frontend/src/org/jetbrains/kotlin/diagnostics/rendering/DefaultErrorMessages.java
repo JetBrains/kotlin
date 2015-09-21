@@ -596,6 +596,13 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL, "An annotation parameter must be a class literal (T::class)");
         MAP.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant");
 
+        MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
+        MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
+        MAP.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter");
+        MAP.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const 'val' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE);
+        MAP.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer");
+        MAP.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value");
+
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
 
 

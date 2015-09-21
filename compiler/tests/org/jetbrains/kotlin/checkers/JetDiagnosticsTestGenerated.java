@@ -9107,6 +9107,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/repeatedModifiers.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/modifiers/const")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Const extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInConst() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/const"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("applicability.kt")
+                public void testApplicability() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/applicability.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constInteraction.kt")
+                public void testConstInteraction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/constInteraction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("types.kt")
+                public void testTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/multimodule")

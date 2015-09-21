@@ -64,7 +64,8 @@ public object ModifierCheckerCore {
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
             EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
             ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
-            CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER)
+            CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
+            CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY)
     )
 
     // NOTE: redundant targets must be possible!
@@ -87,16 +88,21 @@ public object ModifierCheckerCore {
     private fun buildCompatibilityMap(): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
         val result = hashMapOf<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility>()
         // Variance: in + out are incompatible
-        result += incompatibilityRegister(listOf(IN_KEYWORD, OUT_KEYWORD))
+        result += incompatibilityRegister(IN_KEYWORD, OUT_KEYWORD)
         // Visibilities: incompatible
-        result += incompatibilityRegister(listOf(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD))
+        result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
         // Abstract + open + final + sealed: incompatible
-        result += incompatibilityRegister(listOf(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD))
+        result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)
         // abstract is redundant to sealed
         result += redundantRegister(SEALED_KEYWORD, ABSTRACT_KEYWORD)
+
+        // const is incompatible with abstract, open, override
+        result += incompatibilityRegister(CONST_KEYWORD, ABSTRACT_KEYWORD)
+        result += incompatibilityRegister(CONST_KEYWORD, OPEN_KEYWORD)
+        result += incompatibilityRegister(CONST_KEYWORD, OVERRIDE_KEYWORD)
         return result
     }
 
@@ -109,7 +115,7 @@ public object ModifierCheckerCore {
     }
 
     private fun incompatibilityRegister(
-            list: List<JetModifierKeywordToken>
+            vararg list: JetModifierKeywordToken
     ): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
         val result = hashMapOf<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility>()
         for (first in list) {

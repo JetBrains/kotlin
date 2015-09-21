@@ -36,6 +36,7 @@ class IllegalModifiers1(
         <!WRONG_MODIFIER_TARGET!>reified<!>
         <!WRONG_MODIFIER_TARGET!>enum<!>
         <!WRONG_MODIFIER_TARGET!>private<!>
+        <!WRONG_MODIFIER_TARGET!>const<!>
         <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
@@ -110,6 +111,7 @@ class IllegalModifiers7() {
     <!INCOMPATIBLE_MODIFIERS!>in<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
     <!WRONG_MODIFIER_TARGET!>reified<!>
+    <!WRONG_MODIFIER_TARGET!>const<!>
     fun foo() {}
 }
 
@@ -126,6 +128,7 @@ class IllegalModifiers8 {
     <!INCOMPATIBLE_MODIFIERS!>final<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
     <!WRONG_MODIFIER_TARGET!>reified<!>
+    <!INCOMPATIBLE_MODIFIERS!>const<!>
     constructor() {}
 
     constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
@@ -149,6 +152,7 @@ class IllegalModifiers10
 <!INCOMPATIBLE_MODIFIERS!>in<!>
 <!INCOMPATIBLE_MODIFIERS!>final<!>
 <!WRONG_MODIFIER_TARGET!>vararg<!>
-<!WRONG_MODIFIER_TARGET!>reified<!> constructor()
+<!WRONG_MODIFIER_TARGET!>reified<!>
+<!INCOMPATIBLE_MODIFIERS!>const<!> constructor()
 
 class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor()
