@@ -1483,6 +1483,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("constFlags.kt")
+        public void testConstFlags() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/constFlags.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("genericBackingFieldSignature.kt")
         public void testGenericBackingFieldSignature() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/genericBackingFieldSignature.kt");

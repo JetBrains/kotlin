@@ -365,6 +365,8 @@ public class AsmUtil {
             }
         }
 
+        if (memberDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) memberDescriptor).isConst()) return null;
+
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;
         }

@@ -466,6 +466,12 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ConstVal.kt")
+        public void testConstVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/ConstVal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Extensions.kt")
         public void testExtensions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/Extensions.kt");

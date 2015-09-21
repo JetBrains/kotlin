@@ -300,10 +300,11 @@ public class PropertyCodegen {
         boolean hasPublicFieldAnnotation = AnnotationsPackage.findPublicFieldAnnotation(propertyDescriptor) != null;
 
         FieldOwnerContext backingFieldContext = context;
+        boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
-            if (propertyDescriptor.isLateInit()) {
+            if (takeVisibilityFromDescriptor) {
                 modifiers |= getVisibilityAccessFlag(propertyDescriptor);
             }
             else if (hasPublicFieldAnnotation && !isDelegate) {
@@ -320,7 +321,7 @@ public class PropertyCodegen {
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
         }
-        else if (propertyDescriptor.isLateInit()) {
+        else if (takeVisibilityFromDescriptor) {
             modifiers |= getVisibilityAccessFlag(propertyDescriptor);
         }
         else if (!isDelegate && hasPublicFieldAnnotation) {
