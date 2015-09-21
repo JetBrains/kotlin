@@ -524,7 +524,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        JetType result = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, typesToIntersect);
+        JetType result = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, typesToIntersect);
 //        assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }

@@ -1278,7 +1278,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType rightType = facade.getTypeInfo(right, context).getType();
 
             if (rightType != null) {
-                if (components.typeIntersector.isIntersectionEmpty(leftType, rightType)) {
+                if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(

@@ -135,9 +135,9 @@ public class TypeBoundsImpl(
         }
 
         val upperBounds = filterBounds(bounds, TypeBounds.BoundKind.UPPER_BOUND, values)
-        val intersectionOfUpperBounds = TypeIntersector(typeVariable.builtIns).intersect(JetTypeChecker.DEFAULT, upperBounds)
-        if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
-            if (tryPossibleAnswer(bounds, intersectionOfUpperBounds)) {
+        if (upperBounds.isNotEmpty()) {
+            val intersectionOfUpperBounds = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, upperBounds)
+            if (intersectionOfUpperBounds != null && tryPossibleAnswer(bounds, intersectionOfUpperBounds)) {
                 return setOf(intersectionOfUpperBounds)
             }
         }

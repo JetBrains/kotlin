@@ -347,7 +347,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (type == null) {
             return;
         }
-        if (components.typeIntersector.isIntersectionEmpty(type, subjectType)) {
+        if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
             return;
         }

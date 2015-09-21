@@ -531,7 +531,7 @@ private class MutableParameter(
     private val defaultType: JetType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, defaultTypes)!!
         }
         else originalType
     }

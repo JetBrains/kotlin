@@ -176,7 +176,10 @@ class LazyJavaTypeResolver(
             for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
                 supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
             }
-            return TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, supertypesJet)
+            if (supertypesJet.isEmpty()) {
+                return c.module.builtIns.nullableAnyType
+            }
+            return TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, supertypesJet)
                         ?: ErrorUtils.createErrorType("Can't intersect upper bounds of " + javaType.getPresentableText())
         }
 
