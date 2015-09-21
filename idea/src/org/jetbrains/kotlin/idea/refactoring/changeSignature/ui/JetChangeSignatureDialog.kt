@@ -51,13 +51,13 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.psi.JetExpressionCodeFragment
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetTypeCodeFragment
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.awt.BorderLayout
 import java.awt.Font
 import java.awt.Toolkit
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
-import java.util.ArrayList
+import java.util.*
 import javax.swing.*
 
 public class JetChangeSignatureDialog(
@@ -78,8 +78,6 @@ public class JetChangeSignatureDialog(
 
     override fun createReturnTypeCodeFragment() = createReturnTypeCodeFragment(myProject, myMethod)
 
-    public fun getReturnType(): JetType? = getType(myReturnTypeCodeFragment as JetTypeCodeFragment?)
-    
     private val parametersTableModel: JetCallableParameterTableModel get() = super.myParametersTableModel
     
     override fun getRowPresentation(item: ParameterTableModelItemBase<JetParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
@@ -337,7 +335,7 @@ public class JetChangeSignatureDialog(
             throw ConfigurationException(JetRefactoringBundle.message("function.name.is.invalid"))
         }
 
-        if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite && getReturnType() == null) {
+        if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite && !hasTypeReference(myReturnTypeCodeFragment)) {
             throw ConfigurationException(JetRefactoringBundle.message("return.type.is.invalid"))
         }
 
@@ -351,7 +349,7 @@ public class JetChangeSignatureDialog(
                 throw ConfigurationException(JetRefactoringBundle.message("parameter.name.is.invalid", parameterName))
             }
 
-            if (getType(item.typeCodeFragment as JetTypeCodeFragment) == null) {
+            if (!hasTypeReference(item.typeCodeFragment)) {
                 throw ConfigurationException(JetRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()))
             }
         }
@@ -386,8 +384,6 @@ public class JetChangeSignatureDialog(
 
         private fun createReturnTypeCodeFragment(project: Project, method: JetMethodDescriptor) =
                 JetPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
-
-        private fun getType(typeCodeFragment: JetTypeCodeFragment?) = typeCodeFragment?.getType()
 
         public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
@@ -424,7 +420,8 @@ public class JetChangeSignatureDialog(
             }
 
             val returnTypeText = if (returnTypeCodeFragment != null) returnTypeCodeFragment.getText().trim() else ""
-            val returnType = getType(returnTypeCodeFragment as JetTypeCodeFragment?)
+            //TODO return the actual type
+            val returnType = if (hasTypeReference(returnTypeCodeFragment)) methodDescriptor.baseDescriptor.builtIns.anyType else null
             return JetChangeInfo(methodDescriptor.original,
                                  methodName,
                                  returnType,
@@ -434,5 +431,8 @@ public class JetChangeSignatureDialog(
                                  parametersModel.getReceiver(),
                                  defaultValueContext)
         }
+
+        private fun hasTypeReference(codeFragment: PsiCodeFragment?): Boolean
+                = (codeFragment as? JetTypeCodeFragment)?.hasTypeReference() ?: false
     }
 }
