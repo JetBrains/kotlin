@@ -25,9 +25,11 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 public class AddHatsAction : AnAction() {
@@ -72,6 +74,21 @@ public class AddHatsAction : AnAction() {
                                         println("Not used as expression: $lastExpression")
                                         return
                                     }
+
+                                    val type = bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, lastExpression)?.type
+                                    if (type == null) {
+                                        println("Type is null: $lastExpression")
+                                    }
+                                    if (type != null && (KotlinBuiltIns.isUnit(type) || KotlinBuiltIns.isNothing(type))) {
+                                        println("Type is Unit/Nothing: $lastExpression")
+                                        return
+                                    }
+                                    val expectedType = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, lastExpression)
+                                    if (expectedType != null && (KotlinBuiltIns.isUnit(expectedType) || KotlinBuiltIns.isNothing(expectedType))) {
+                                        println("Expected Type is Unit/Nothing: $lastExpression")
+                                        return
+                                    }
+
                                     val node = lastExpression.node
 
                                     val space = node.treePrev
