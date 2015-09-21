@@ -58,8 +58,8 @@ private abstract class DifferenceCalculator() {
     ): Collection<String> {
         val result = hashSetOf<String>()
 
-        val oldMap = oldList.groupBy { it.hashCode(compareObject.oldStringIndexes, compareObject.oldFqNameIndexes) }
-        val newMap = newList.groupBy { it.hashCode(compareObject.newStringIndexes, compareObject.newFqNameIndexes) }
+        val oldMap = oldList.groupBy { it.hashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) } )}
+        val newMap = newList.groupBy { it.hashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) } )}
 
         fun List<ProtoBuf.Callable>.names(nameResolver: NameResolver): List<String> =
                 map { nameResolver.getString(it.name) }
