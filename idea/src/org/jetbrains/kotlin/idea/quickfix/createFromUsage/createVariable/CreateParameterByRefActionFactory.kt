@@ -58,12 +58,13 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
     ): CreateParameterData<JetSimpleNameExpression>? {
         val result = (diagnostic.psiFile as? JetFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
+        val moduleDescriptor = result.moduleDescriptor
 
         val varExpected = element.getAssignmentByLHS() != null
 
-        val paramType = element.getExpressionForTypeGuess().guessTypes(context, result.moduleDescriptor).let {
+        val paramType = element.getExpressionForTypeGuess().guessTypes(context, moduleDescriptor).let {
             when (it.size()) {
-                0 -> KotlinBuiltIns.getInstance().anyType
+                0 -> moduleDescriptor.builtIns.anyType
                 1 -> it.first()
                 else -> return null
             }

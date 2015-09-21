@@ -934,7 +934,12 @@ public class KotlinBuiltIns {
         return isAny(getFqName(descriptor));
     }
 
+    public static boolean isAny(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.any);
+    }
+
     public static boolean isBoolean(@NotNull JetType type) {
+
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
     }
 

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.ArrayList
 import java.util.Collections
 import java.util.HashMap
@@ -636,7 +637,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         if (declaration.getTypeReference() != null) {
-            declaration.getTypeReference()?.debugTypeInfo = KotlinBuiltIns.getInstance().getAnyType()
+            declaration.getTypeReference()?.debugTypeInfo = descriptor.returnType.builtIns.anyType
         }
     }
 

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
@@ -369,8 +368,8 @@ class KotlinPullUpHelper(
 
         // TODO: Drop after PsiTypes in light elements are properly generated
         if (member is JetCallableDeclaration && member.typeReference == null) {
-            val returnType = (data.memberDescriptors[member] as CallableDescriptor).returnType ?: KotlinBuiltIns.getInstance().anyType
-            returnType.anonymousObjectSuperTypeOrNull()?.let { member.setType(it, false) }
+            val returnType = (data.memberDescriptors[member] as CallableDescriptor).returnType
+            returnType?.anonymousObjectSuperTypeOrNull()?.let { member.setType(it, false) }
         }
 
         val project = member.project

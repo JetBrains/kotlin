@@ -34,7 +34,6 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -185,7 +184,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (newTypes.isEmpty()) {
-                newTypes.add(EqWrapper(KotlinBuiltIns.getInstance().getAnyType()))
+                newTypes.add(EqWrapper(currentFileModule.builtIns.anyType))
             }
 
             newTypes.map { TypeCandidate(it._type, scope) }.reverse()
@@ -959,8 +958,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 is JetProperty -> {
                     if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
                         val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
-                                               ?: KotlinBuiltIns.getInstance().getAnyType()
-                        val defaultValue = CodeInsightUtils.defaultInitializer(defaultValueType) ?: "null"
+                        val defaultValue = defaultValueType?.let {CodeInsightUtils.defaultInitializer(it) } ?: "null"
                         val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
                         val range = initializer.getTextRange()
                         selectionModel.setSelection(range.getStartOffset(), range.getEndOffset())

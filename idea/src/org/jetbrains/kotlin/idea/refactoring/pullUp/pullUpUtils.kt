@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -108,14 +109,15 @@ fun makeAbstract(member: JetCallableDeclaration,
         member.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
     }
 
+    val builtIns = originalMemberDescriptor.builtIns
     if (member.typeReference == null) {
         var type = originalMemberDescriptor.returnType
         if (type == null || type.isError) {
-            type = KotlinBuiltIns.getInstance().nullableAnyType
+            type = builtIns.nullableAnyType
         }
         else {
             type = substitutor.substitute(type.anonymousObjectSuperTypeOrNull() ?: type, Variance.INVARIANT)
-                   ?: KotlinBuiltIns.getInstance().nullableAnyType
+                   ?: builtIns.nullableAnyType
         }
 
         if (member is JetProperty || !type.isUnit()) {

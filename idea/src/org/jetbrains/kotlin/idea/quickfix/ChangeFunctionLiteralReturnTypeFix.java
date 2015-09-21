@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -57,11 +58,13 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         this.type = type;
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
-        BindingContext context = ResolutionUtils.analyzeFully(functionLiteralExpression.getContainingJetFile());
+        AnalysisResult analysisResult = ResolutionUtils.analyzeFullyAndGetResult(functionLiteralExpression.getContainingJetFile());
+        BindingContext context = analysisResult.getBindingContext();
         JetType functionLiteralType = context.getType(functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 
-        ClassDescriptor functionClass = KotlinBuiltIns.getInstance().getFunction(functionLiteralType.getArguments().size() - 1);
+        KotlinBuiltIns builtIns = analysisResult.getModuleDescriptor().getBuiltIns();
+        ClassDescriptor functionClass = builtIns.getFunction(functionLiteralType.getArguments().size() - 1);
         List<JetType> functionClassTypeParameters = new LinkedList<JetType>();
         for (TypeProjection typeProjection: functionLiteralType.getArguments()) {
             functionClassTypeParameters.add(typeProjection.getType());

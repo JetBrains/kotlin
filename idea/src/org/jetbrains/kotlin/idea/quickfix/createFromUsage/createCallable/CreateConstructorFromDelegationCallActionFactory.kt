@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
 object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFromUsageFactory<JetConstructorDelegationCall>() {
@@ -57,7 +58,7 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
         }
         if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
 
-        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val anyType = classDescriptor.builtIns.nullableAnyType
         val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

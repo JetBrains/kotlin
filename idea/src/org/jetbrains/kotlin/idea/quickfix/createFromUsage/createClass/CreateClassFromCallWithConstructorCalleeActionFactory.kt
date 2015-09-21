@@ -20,6 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.*
@@ -58,14 +59,14 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClas
         val typeRef = callee.typeReference ?: return null
         val userType = typeRef.typeElement as? JetUserType ?: return null
 
-        val context = userType.analyze()
+        val (context, module) = userType.analyzeAndGetResult()
 
         val qualifier = userType.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
         val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
 
-        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val anyType = module.builtIns.nullableAnyType
         val valueArguments = element.valueArguments
         val defaultParamName = if (valueArguments.size() == 1) "value" else null
         val parameterInfos = valueArguments.map {

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
@@ -112,12 +113,13 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
                 if (callable is JetNamedFunction) {
                     if (callable.getTypeReference() == null) {
-                        val type = (callable.resolveToDescriptor() as FunctionDescriptor).getReturnType()
+                        val functionDescriptor = callable.resolveToDescriptor() as FunctionDescriptor
+                        val type = functionDescriptor.getReturnType()
                         val typeToInsert = when {
                                                type == null || type.isError() -> null
                                                type.getConstructor().isDenotable() -> type
                                                else -> type.supertypes().firstOrNull { it.getConstructor().isDenotable() }
-                                           } ?: KotlinBuiltIns.getInstance().getNullableAnyType()
+                                           } ?: functionDescriptor.builtIns.nullableAnyType
                         callable.typeFqNameToAdd = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToInsert)
                     }
 
