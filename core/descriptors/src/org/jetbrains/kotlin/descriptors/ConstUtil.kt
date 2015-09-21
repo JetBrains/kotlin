@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-@file:JvmName("ConstUtil")
+//@file:JvmName("ConstUtil")
 
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.JetType
 
-public fun JetType.canBeUsedForConstVal() = KotlinBuiltIns.isPrimitiveType(this) || KotlinBuiltIns.isString(this)
+object ConstUtil {
+    @JvmStatic
+    public fun canBeUsedForConstVal(type: JetType) = type.canBeUsedForConstVal()
+}
 
+public fun JetType.canBeUsedForConstVal() = KotlinBuiltIns.isPrimitiveType(this) || KotlinBuiltIns.isString(this)
