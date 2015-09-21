@@ -5,4 +5,4 @@ fun test() {
   attributes["href"] = "1" // inference fails, but it shouldn't
 }
 
-fun <K, V> Map<K, V>.set(key : K, value : V) {}//= this.put(key, value)
+operator fun <K, V> Map<K, V>.set(key : K, value : V) {}//= this.put(key, value)

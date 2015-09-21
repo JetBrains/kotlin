@@ -1,5 +1,5 @@
 fun testFor() {
-    fun Nothing.iterator() = (0..1).iterator()
+    operator fun Nothing.iterator() = (0..1).iterator()
 
     <!UNREACHABLE_CODE!>for (i in<!> todo()<!UNREACHABLE_CODE!>) {}<!>
 }

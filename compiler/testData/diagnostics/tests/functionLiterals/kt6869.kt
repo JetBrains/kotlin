@@ -7,5 +7,5 @@ fun main(args : Array<String>) {
 }
 
 fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
-fun <T> Iterable<T>.plus(<!UNUSED_PARAMETER!>element<!>: T): List<T> = null!!
+operator fun <T> Iterable<T>.plus(<!UNUSED_PARAMETER!>element<!>: T): List<T> = null!!
 fun listOf<T>(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!

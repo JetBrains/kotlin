@@ -46,7 +46,7 @@ PsiJetFileStubImpl[package=a.b.c]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=String]
       FUN:[fqName=a.b.c.DataClass.component1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=component1]
-        MODIFIER_LIST:[public final]
+        MODIFIER_LIST:[public final operator]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -54,7 +54,7 @@ PsiJetFileStubImpl[package=a.b.c]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=a.b.c.DataClass.component2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=component2]
-        MODIFIER_LIST:[public final]
+        MODIFIER_LIST:[public final operator]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]

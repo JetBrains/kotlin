@@ -1,12 +1,12 @@
 // KT-282 Nullability in extension functions and in binary calls
 
 class Set {
-    fun contains(<!UNUSED_PARAMETER!>x<!> : Int) : Boolean = true
+    operator fun contains(<!UNUSED_PARAMETER!>x<!> : Int) : Boolean = true
 }
 
-fun Set?.plus(<!UNUSED_PARAMETER!>x<!> : Int) : Int = 1
+operator fun Set?.plus(<!UNUSED_PARAMETER!>x<!> : Int) : Int = 1
 
-fun Int?.contains(<!UNUSED_PARAMETER!>x<!> : Int) : Boolean = false
+operator fun Int?.contains(<!UNUSED_PARAMETER!>x<!> : Int) : Boolean = false
 
 fun f(): Unit {
     var set : Set? = null

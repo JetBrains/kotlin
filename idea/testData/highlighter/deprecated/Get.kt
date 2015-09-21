@@ -1,6 +1,6 @@
 class MyClass {}
 
-@Deprecated("Use A instead") fun MyClass.get(i: MyClass): MyClass { return i }
+@Deprecated("Use A instead") operator fun MyClass.get(i: MyClass): MyClass { return i }
 
 fun test() {
   val x1 = MyClass()

@@ -2,8 +2,8 @@
 
 class Data {
     @Deprecated("text")
-    fun component1(): String = throw Exception()
-    fun component2(): String = throw Exception()
+    operator fun component1(): String = throw Exception()
+    operator fun component2(): String = throw Exception()
 }
 
 fun use() {

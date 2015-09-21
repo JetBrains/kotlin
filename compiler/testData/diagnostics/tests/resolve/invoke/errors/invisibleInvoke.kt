@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class My {
-    private fun Int.invoke(s: String) {}
+    private operator fun Int.invoke(s: String) {}
 }
 
 fun My.foo(i: Int) {

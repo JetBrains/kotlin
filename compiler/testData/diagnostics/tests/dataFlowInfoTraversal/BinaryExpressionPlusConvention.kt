@@ -3,7 +3,7 @@
 interface A
 
 interface B : A
-fun B.plus(b: B) = if (this == b) b else this
+operator fun B.plus(b: B) = if (this == b) b else this
 
 fun foo(a: A): B {
     val result = (a as B) + <!DEBUG_INFO_SMARTCAST!>a<!>

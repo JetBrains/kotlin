@@ -1,4 +1,4 @@
 package util
 
-fun h.H.div(i: Int) = 3
-fun h.H.timesAssign(i: Int) {}
+operator fun h.H.div(i: Int) = 3
+operator fun h.H.timesAssign(i: Int) {}

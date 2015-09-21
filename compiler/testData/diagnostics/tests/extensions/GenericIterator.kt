@@ -8,12 +8,12 @@ fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
 
 interface MyIterator<T> {
 
-  fun hasNext() : Boolean
+  operator fun hasNext() : Boolean
 
-  fun next() : T
+  operator fun next() : T
 }
 
-fun <T : Any> T?.iterator() = object : MyIterator<T> {
+operator fun <T : Any> T?.iterator() = object : MyIterator<T> {
     var hasNext = this@iterator != null
       private set
     override fun hasNext() = hasNext

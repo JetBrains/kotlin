@@ -2,8 +2,8 @@
 
 class C
 
-fun C.plus(a: Any): C = this
-fun C.plusAssign(a: Any) {}
+operator fun C.plus(a: Any): C = this
+operator fun C.plusAssign(a: Any) {}
 
 fun test() {
     val c = C()

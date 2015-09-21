@@ -8,6 +8,6 @@ package test
         public final fun <get-foo>(): kotlin.String
     public final val other: kotlin.Long
         public final fun <get-other>(): kotlin.Long
-    public final /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int = ..., /*2*/ other: kotlin.Long): test.A
 }

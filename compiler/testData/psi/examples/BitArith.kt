@@ -23,7 +23,11 @@ fun Int.matchMask(mask : Int) = this and mask == mask
 
 open class INumber : IComparable<This> {
   val bits : Int
-  @operator fun plus(other : This) : This
-  @operator fun shl(bits : Int) : This
+
+  @Operator
+  fun plus(other : This) : This
+
+  @Operator
+  fun shl(bits : Int) : This
   // ...
 }

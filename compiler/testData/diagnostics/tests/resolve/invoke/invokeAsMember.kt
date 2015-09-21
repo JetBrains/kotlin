@@ -1,5 +1,5 @@
 class Foo {
-    fun invoke() {}
+    operator fun invoke() {}
 }
 
 //no variable

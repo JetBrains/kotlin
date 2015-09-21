@@ -1,5 +1,5 @@
 interface <info textAttributesKey="KOTLIN_TRAIT">FunctionLike</info> {
-    fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">invoke</info>() {
+    <info descr="null" textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">operator</info> fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">invoke</info>() {
     }
 }
 

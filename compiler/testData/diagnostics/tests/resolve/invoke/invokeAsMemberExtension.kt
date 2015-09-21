@@ -2,7 +2,7 @@ class Foo
 
 //no variable
 interface A {
-    fun Foo.invoke() {}
+    operator fun Foo.invoke() {}
 
     fun test(foo: Foo) {
         foo()
@@ -15,7 +15,7 @@ interface B {
 }
 
 class C {
-    fun Foo.invoke() {}
+    operator fun Foo.invoke() {}
 
     fun test(b: B) {
         b.foo()
@@ -44,7 +44,7 @@ val D.foo: Foo
     get() = Foo()
 
 class E {
-    fun Foo.invoke() {}
+    operator fun Foo.invoke() {}
 
     fun test(d: D) {
         d.foo()
@@ -70,7 +70,7 @@ interface F
 
 interface G {
     val F.foo: Foo
-    fun Foo.invoke()
+    operator fun Foo.invoke()
 
     fun test(f: F) {
         f.foo()
@@ -99,7 +99,7 @@ interface U {
 }
 
 interface V {
-    fun Foo.invoke() {}
+    operator fun Foo.invoke() {}
 
     fun U.test(x: X) {
         x.foo()

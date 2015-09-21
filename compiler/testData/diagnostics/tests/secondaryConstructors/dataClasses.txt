@@ -4,7 +4,7 @@ package
     public constructor A1()
     public constructor A1(/*0*/ x: kotlin.String)
     public final val x: kotlin.String
-    public final /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): A1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -16,8 +16,8 @@ package
     public constructor A2(/*0*/ y: kotlin.String, /*1*/ z: kotlin.Int)
     public final val y: kotlin.String
     public final val z: kotlin.Int
-    public final /*synthesized*/ fun component1(): kotlin.String
-    public final /*synthesized*/ fun component2(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ y: kotlin.String = ..., /*1*/ z: kotlin.Int = ...): A2
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

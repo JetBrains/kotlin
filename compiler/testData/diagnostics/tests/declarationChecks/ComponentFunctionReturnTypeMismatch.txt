@@ -4,8 +4,8 @@ public fun a(/*0*/ aa: A): kotlin.Unit
 
 public final class A {
     public constructor A()
-    public final fun component1(): kotlin.Int
-    public final fun component2(): kotlin.Int
+    public final operator fun component1(): kotlin.Int
+    public final operator fun component2(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

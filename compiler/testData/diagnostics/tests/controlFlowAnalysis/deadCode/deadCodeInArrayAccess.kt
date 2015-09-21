@@ -5,12 +5,12 @@ fun testArrayAccess1(array: Array<Any>) {
 }
 
 fun testArrayAccess2() {
-    fun Nothing.get(i: Int, s: String) {}
+    operator fun Nothing.get(i: Int, s: String) {}
     todo()<!UNREACHABLE_CODE!>[1, ""]<!>
 }
 
 fun testAraryAccess3() {
-    fun Nothing.get(n: Nothing) {}
+    operator fun Nothing.get(n: Nothing) {}
     todo()<!UNREACHABLE_CODE!>[todo()]<!>
 }
 
@@ -23,17 +23,17 @@ fun testArrayAssignment2(array: Array<Any>) {
 }
 
 fun testArrayAssignment3(n: Nothing) {
-    fun Nothing.set(i: Int, j: Int) {}
+    operator fun Nothing.set(i: Int, j: Int) {}
     n<!UNREACHABLE_CODE!>[1] = 2<!>
 }
 
 fun testArrayAssignment4(n: Nothing) {
-    fun Nothing.set(i: Int, a: Any) {}
+    operator fun Nothing.set(i: Int, a: Any) {}
     n<!UNREACHABLE_CODE!>[1] = todo()<!>
 }
 
 fun testArrayPlusAssign(array: Array<Any>) {
-    fun Any.plusAssign(a: Any) {}
+    operator fun Any.plusAssign(a: Any) {}
     array[1] <!UNREACHABLE_CODE!>+=<!> todo()
 }
 

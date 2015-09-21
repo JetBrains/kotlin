@@ -2,7 +2,7 @@ package
 
 public fun foo(/*0*/ i: kotlin.Int): kotlin.Int
 public fun test(/*0*/ a: A?): kotlin.Unit
-public fun B.invoke(/*0*/ i: kotlin.Int): kotlin.Int
+public operator fun B.invoke(/*0*/ i: kotlin.Int): kotlin.Int
 
 public final class A {
     public constructor A()

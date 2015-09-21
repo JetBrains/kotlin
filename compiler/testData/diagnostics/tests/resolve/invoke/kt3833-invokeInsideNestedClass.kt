@@ -17,7 +17,7 @@ class Either1 {
 
 
 class X {
-    fun invoke() {
+    operator fun invoke() {
     }
 }
 

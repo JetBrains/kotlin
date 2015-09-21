@@ -1,7 +1,7 @@
 package
 
 public fun foo(/*0*/ s: kotlin.String, /*1*/ ai: A<kotlin.Int>): kotlin.Unit
-public fun </*0*/ T> T.invoke(/*0*/ a: A<T>): kotlin.Unit
+public operator fun </*0*/ T> T.invoke(/*0*/ a: A<T>): kotlin.Unit
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()

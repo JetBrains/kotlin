@@ -6,8 +6,8 @@ public val kotlin.Any.extVal: () -> kotlin.Unit
 public val kotlin.Any.extValFun: () -> kotlin.Unit
 public fun bar(): kotlin.Unit
 public fun kotlin.Any.ext(): kotlin.Unit
-public fun kotlin.Any.invoke(): kotlin.Unit
-public fun kotlin.Any.plus(/*0*/ a: kotlin.Any): kotlin.Unit
+public operator fun kotlin.Any.invoke(): kotlin.Unit
+public operator fun kotlin.Any.plus(/*0*/ a: kotlin.Any): kotlin.Unit
 public fun dynamic.test(): kotlin.Unit
 
 public final class C {
@@ -18,7 +18,7 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun kotlin.String.invoke(): kotlin.Unit
+    public final operator fun kotlin.String.invoke(): kotlin.Unit
     public final fun dynamic.test(): kotlin.Unit
 }
 
@@ -26,6 +26,6 @@ public final class WithInvoke {
     public constructor WithInvoke()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun invoke(): kotlin.Unit
+    public final operator fun invoke(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

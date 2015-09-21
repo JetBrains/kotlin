@@ -32,11 +32,11 @@ fun shortBinEq() {
 }
 
 class A {
-    fun plus(x : A) : A { return x }
+    operator fun plus(x : A) : A { return x }
 }
 
 class B {
-    fun plus(x : A) : A { return x }
+    operator fun plus(x : A) : A { return x }
 }
 
 fun overloading() {

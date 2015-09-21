@@ -1,6 +1,6 @@
 interface B
 
-fun B.invoke(i: Int) = i
+operator fun B.invoke(i: Int) = i
 
 class A {
     companion object: B {

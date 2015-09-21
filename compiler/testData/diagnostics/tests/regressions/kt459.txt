@@ -1,4 +1,4 @@
 package
 
 public fun test(): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> kotlin.Map<K, V>.set(/*0*/ key: K, /*1*/ value: V): kotlin.Unit
+public operator fun </*0*/ K, /*1*/ V> kotlin.Map<K, V>.set(/*0*/ key: K, /*1*/ value: V): kotlin.Unit

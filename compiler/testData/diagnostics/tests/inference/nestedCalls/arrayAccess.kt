@@ -1,7 +1,7 @@
 package b
 
 class A {
-    fun <T> get(i: Int): List<T> = throw Exception("$i")
+    operator fun <T> get(i: Int): List<T> = throw Exception("$i")
 }
 
 fun bar(l: List<Int>) = l

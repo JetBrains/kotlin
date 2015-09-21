@@ -2,7 +2,7 @@
 // Advancement of KT-9126
 
 class My(val x: Int?) {
-    fun plus(y: My) = if (this.x != null) this else y
+    operator fun plus(y: My) = if (this.x != null) this else y
 }
 
 fun foo() {

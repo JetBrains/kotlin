@@ -1,20 +1,20 @@
 class Iter {
     @Deprecated("text")
-    fun iterator() : IterIterator = throw Exception()
+    operator fun iterator() : IterIterator = throw Exception()
 
     class IterIterator {
-        fun hasNext(): Boolean = throw UnsupportedOperationException()
-        fun next(): String = throw UnsupportedOperationException()
+        operator fun hasNext(): Boolean = throw UnsupportedOperationException()
+        operator fun next(): String = throw UnsupportedOperationException()
     }
 }
 
 class Iter2 {
-    fun iterator() : Iter2Iterator = throw Exception()
+    operator fun iterator() : Iter2Iterator = throw Exception()
     class Iter2Iterator {
         @Deprecated("text")
-        fun hasNext(): Boolean = throw UnsupportedOperationException()
+        operator fun hasNext(): Boolean = throw UnsupportedOperationException()
         @Deprecated("text")
-        fun next(): String = throw UnsupportedOperationException()
+        operator fun next(): String = throw UnsupportedOperationException()
     }
 }
 

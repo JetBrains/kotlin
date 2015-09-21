@@ -11,6 +11,6 @@ public interface Map</*0*/ K, /*1*/ out V> {
 public interface MutableMap</*0*/ K, /*1*/ V> : Map<K, V> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun set(/*0*/ k: K, /*1*/ v: V): kotlin.Unit
+    public abstract operator fun set(/*0*/ k: K, /*1*/ v: V): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

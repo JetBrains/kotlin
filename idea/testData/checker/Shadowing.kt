@@ -1,6 +1,6 @@
 class A {
-    fun component1() = 42
-    fun component2() = 42
+    operator fun component1() = 42
+    operator fun component2() = 42
 }
 
 fun arrayA(): Array<A> = null!!

@@ -2,7 +2,7 @@ class MyClass {
   val i = 0
 }
 
-@Deprecated("Use A instead") fun MyClass.inc(): MyClass { return MyClass() }
+@Deprecated("Use A instead") operator fun MyClass.inc(): MyClass { return MyClass() }
 
 fun test() {
     var x3 = MyClass()

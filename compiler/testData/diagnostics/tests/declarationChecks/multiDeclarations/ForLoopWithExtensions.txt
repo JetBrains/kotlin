@@ -1,8 +1,8 @@
 package
 
 public fun test(): kotlin.Unit
-public fun A.component1(): kotlin.Int
-public fun A.component2(): kotlin.Int
+public operator fun A.component1(): kotlin.Int
+public operator fun A.component2(): kotlin.Int
 
 public final class A {
     public constructor A()
@@ -15,6 +15,6 @@ public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun iterator(): kotlin.Iterator<A>
+    public final operator fun iterator(): kotlin.Iterator<A>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -1,10 +1,10 @@
 fun create(): Map<String, String> = null!!
 
-fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = null!!
+operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = null!!
 
-fun <K, V> Map.Entry<K, V>.component1() = getKey()
+operator fun <K, V> Map.Entry<K, V>.component1() = getKey()
 
-fun <K, V> Map.Entry<K, V>.component2() = getValue()
+operator fun <K, V> Map.Entry<K, V>.component2() = getValue()
 
 class MyClass {
     private var m: Map<String, String>? = null

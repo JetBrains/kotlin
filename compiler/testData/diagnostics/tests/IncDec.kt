@@ -1,6 +1,6 @@
 class IncDec() {
-  fun inc() : IncDec = this
-  fun dec() : IncDec = this
+  operator fun inc() : IncDec = this
+  operator fun dec() : IncDec = this
 }
 
 fun testIncDec() {
@@ -16,8 +16,8 @@ fun testIncDec() {
 }
 
 class WrongIncDec() {
-  fun inc() : Int = 1
-  fun dec() : Int = 1
+  operator fun inc() : Int = 1
+  operator fun dec() : Int = 1
 }
 
 fun testWrongIncDec() {
@@ -29,8 +29,8 @@ fun testWrongIncDec() {
 }
 
 class UnitIncDec() {
-  fun inc() : Unit {}
-  fun dec() : Unit {}
+  operator fun inc() : Unit {}
+  operator fun dec() : Unit {}
 }
 
 fun testUnitIncDec() {

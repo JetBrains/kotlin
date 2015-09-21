@@ -6,7 +6,7 @@ fun test() {
 class A() {
     companion object {
         object f {
-            fun invoke(i: Int) = i
+            operator fun invoke(i: Int) = i
         }
     }
 }

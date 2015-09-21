@@ -3,7 +3,7 @@ package
 package a {
     public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
     public fun foo(/*0*/ map: kotlin.MutableMap<kotlin.Int, kotlin.String>, /*1*/ value: kotlin.String?): kotlin.Unit
-    public fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
+    public operator fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
 
     @kotlin.data() public final class Tag {
         public constructor Tag(/*0*/ tagName: kotlin.String)
@@ -11,7 +11,7 @@ package a {
         public final val contents: kotlin.MutableList<a.Tag>
         public final var id: kotlin.String?
         public final var tagName: kotlin.String
-        public final /*synthesized*/ fun component1(): kotlin.String
+        public final operator /*synthesized*/ fun component1(): kotlin.String
         public final /*synthesized*/ fun copy(/*0*/ tagName: kotlin.String = ...): a.Tag
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

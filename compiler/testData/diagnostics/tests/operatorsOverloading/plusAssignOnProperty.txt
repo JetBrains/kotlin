@@ -1,8 +1,8 @@
 package
 
 public fun test(): kotlin.Unit
-public fun C.plus(/*0*/ a: kotlin.Any): C
-public fun C.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
+public operator fun C.plus(/*0*/ a: kotlin.Any): C
+public operator fun C.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
 
 public final class C {
     public constructor C()

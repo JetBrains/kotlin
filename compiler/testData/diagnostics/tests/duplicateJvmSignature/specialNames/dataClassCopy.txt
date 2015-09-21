@@ -3,7 +3,7 @@ package
 @kotlin.data() public final class C {
     public constructor C(/*0*/ c: kotlin.Int)
     public final val c: kotlin.Int
-    public final /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ c: kotlin.Int = ...): C
     public final fun `copy$default`(/*0*/ c: C, /*1*/ x: kotlin.Int, /*2*/ m: kotlin.Int): C
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

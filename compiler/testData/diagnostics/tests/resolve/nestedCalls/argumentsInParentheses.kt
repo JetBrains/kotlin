@@ -1,7 +1,7 @@
 interface Foo<T>
 
 class Bar {
-    fun <T> invoke(): Foo<T> = throw Exception()
+    operator fun <T> invoke(): Foo<T> = throw Exception()
 }
 
 class A {

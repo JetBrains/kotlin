@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ V, /*1*/ T> kotlin.Any.get(/*0*/ s: kotlin.String, /*1*/ w: java.util.ArrayList<V>): java.util.ArrayList<T>
+public operator fun </*0*/ V, /*1*/ T> kotlin.Any.get(/*0*/ s: kotlin.String, /*1*/ w: java.util.ArrayList<V>): java.util.ArrayList<T>
 
 public final class F</*0*/ T> {
     public constructor F</*0*/ T>()

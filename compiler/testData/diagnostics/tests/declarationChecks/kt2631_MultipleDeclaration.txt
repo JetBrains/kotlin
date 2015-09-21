@@ -2,12 +2,12 @@ package
 
 package a {
     public fun test(/*0*/ mc1: a.MyClass, /*1*/ mc2: a.MyClass2): kotlin.Unit
-    public fun a.MyClass2.component1(): kotlin.Double
+    public operator fun a.MyClass2.component1(): kotlin.Double
 
     public final class MyClass {
         public constructor MyClass()
-        public final fun component1(): kotlin.Int
-        public final fun component2(): kotlin.String
+        public final operator fun component1(): kotlin.Int
+        public final operator fun component2(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

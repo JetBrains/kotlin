@@ -26,8 +26,7 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    val (a1, b1) = platformNN
+    val (<!OPERATOR_MODIFIER_REQUIRED!>a1<!>, <!OPERATOR_MODIFIER_REQUIRED!>b1<!>) = platformNN
     val (a2, b2) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>platformN<!>
-    val (a3, b3) = platformJ
+    val (<!OPERATOR_MODIFIER_REQUIRED!>a3<!>, <!OPERATOR_MODIFIER_REQUIRED!>b3<!>) = platformJ
 }
-

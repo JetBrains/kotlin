@@ -12,7 +12,7 @@ public interface A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open fun test(/*0*/ foo: Foo): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public open fun Foo.invoke(): kotlin.Unit
+    public open operator fun Foo.invoke(): kotlin.Unit
 }
 
 public interface B {
@@ -28,7 +28,7 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun test(/*0*/ b: B): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun Foo.invoke(): kotlin.Unit
+    public final operator fun Foo.invoke(): kotlin.Unit
 }
 
 public interface D {
@@ -43,7 +43,7 @@ public final class E {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun test(/*0*/ d: D): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun Foo.invoke(): kotlin.Unit
+    public final operator fun Foo.invoke(): kotlin.Unit
 }
 
 public interface F {
@@ -65,7 +65,7 @@ public interface G {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open fun test(/*0*/ f: F): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public abstract fun Foo.invoke(): kotlin.Unit
+    public abstract operator fun Foo.invoke(): kotlin.Unit
 }
 
 public interface U {
@@ -79,7 +79,7 @@ public interface V {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public open fun Foo.invoke(): kotlin.Unit
+    public open operator fun Foo.invoke(): kotlin.Unit
     public open fun U.test(/*0*/ x: X): kotlin.Unit
 }
 

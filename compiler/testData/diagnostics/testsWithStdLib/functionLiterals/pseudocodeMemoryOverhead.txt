@@ -38,9 +38,9 @@ public final class BigInteger {
     public final val f: CompileTimeType<out A>
     public final val functionName: kotlin.String
     public final val g: CompileTimeType<out B>
-    public final /*synthesized*/ fun component1(): CompileTimeType<out A>
-    public final /*synthesized*/ fun component2(): CompileTimeType<out B>
-    public final /*synthesized*/ fun component3(): kotlin.String
+    public final operator /*synthesized*/ fun component1(): CompileTimeType<out A>
+    public final operator /*synthesized*/ fun component2(): CompileTimeType<out B>
+    public final operator /*synthesized*/ fun component3(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ f: CompileTimeType<out A> = ..., /*1*/ g: CompileTimeType<out B> = ..., /*2*/ functionName: kotlin.String = ...): BinaryOperationKey<A, B>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -58,8 +58,8 @@ private final class CompileTimeType</*0*/ T> {
     public constructor UnaryOperationKey</*0*/ A>(/*0*/ f: CompileTimeType<out A>, /*1*/ functionName: kotlin.String)
     public final val f: CompileTimeType<out A>
     public final val functionName: kotlin.String
-    public final /*synthesized*/ fun component1(): CompileTimeType<out A>
-    public final /*synthesized*/ fun component2(): kotlin.String
+    public final operator /*synthesized*/ fun component1(): CompileTimeType<out A>
+    public final operator /*synthesized*/ fun component2(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ f: CompileTimeType<out A> = ..., /*1*/ functionName: kotlin.String = ...): UnaryOperationKey<A>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

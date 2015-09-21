@@ -6,7 +6,7 @@ fun <T> Array<T>?.get(i: Int) : T {
     else throw NullPointerException()
 }
 
-fun Int?.inc() : Int {
+operator fun Int?.inc() : Int {
     if (this != null)
         return <!DEBUG_INFO_SMARTCAST!>this<!>.inc()
     else

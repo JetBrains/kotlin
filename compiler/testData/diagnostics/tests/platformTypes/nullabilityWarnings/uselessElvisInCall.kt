@@ -24,5 +24,5 @@ fun test() {
 fun foo(a: Any) {}
 
 class Bar {
-    fun invoke(a: Any) {}
+    operator fun invoke(a: Any) {}
 }

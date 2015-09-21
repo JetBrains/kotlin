@@ -4,7 +4,7 @@ package kt629
 
 class A() {
     var p = "yeah"
-    fun mod(<!UNUSED_PARAMETER!>other<!> : A) : A {
+    operator fun mod(<!UNUSED_PARAMETER!>other<!> : A) : A {
         return A();
     }
 }

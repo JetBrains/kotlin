@@ -16,7 +16,7 @@ package j {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun </*0*/ T> invoke(/*0*/ f: (T) -> T): j.MyFunc<T>
+        public final operator fun </*0*/ T> invoke(/*0*/ f: (T) -> T): j.MyFunc<T>
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 

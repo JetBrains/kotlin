@@ -1,6 +1,6 @@
 class Foo {}
 
-fun Foo.invoke() {}
+operator fun Foo.invoke() {}
 
 //no variable
 fun test(foo: Foo) {

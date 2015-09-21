@@ -3,7 +3,7 @@
 interface A
 
 interface B : A
-fun B.compareTo(b: B) = if (this == b) 0 else 1
+operator fun B.compareTo(b: B) = if (this == b) 0 else 1
 
 fun foo(a: A): Boolean {
     val result = (a as B) < <!DEBUG_INFO_SMARTCAST!>a<!>

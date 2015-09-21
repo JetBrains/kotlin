@@ -35,15 +35,15 @@ fun main(args: Array<String>) {
 }
 
 class MyArray() {
-    fun get(i: Int): Int = 1
-    fun set(i: Int, value: Int): Int = 1
+    operator fun get(i: Int): Int = 1
+    operator fun set(i: Int, value: Int): Int = 1
 }
 
 class MyArray1() {
-    fun get(i: Int): Int = 1
-    fun set(i: Int, value: Int) {}
+    operator fun get(i: Int): Int = 1
+    operator fun set(i: Int, value: Int) {}
 }
 
 class MyNumber() {
-    fun inc(): MyNumber = MyNumber()
+    operator fun inc(): MyNumber = MyNumber()
 }

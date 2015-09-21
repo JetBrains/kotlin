@@ -6,7 +6,7 @@ public fun test(/*0*/ b: B): kotlin.Unit
 public fun test(/*0*/ d: D, /*1*/ c: C): kotlin.Unit
 public fun test(/*0*/ foo: Foo): kotlin.Unit
 public fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
-public fun Foo.invoke(): kotlin.Unit
+public operator fun Foo.invoke(): kotlin.Unit
 
 public interface A {
     public abstract val foo: Foo

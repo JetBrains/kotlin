@@ -2,14 +2,14 @@ package
 
 package kt1820 {
     public fun test(/*0*/ m: kt1820.MyInt): kotlin.Unit
-    public fun kotlin.Any.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
+    public operator fun kotlin.Any.plusAssign(/*0*/ a: kotlin.Any): kotlin.Unit
 
     public final class MyInt {
         public constructor MyInt(/*0*/ i: kotlin.Int)
         public final val i: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun plus(/*0*/ m: kt1820.MyInt): kt1820.MyInt
+        public final operator fun plus(/*0*/ m: kt1820.MyInt): kt1820.MyInt
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

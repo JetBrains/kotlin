@@ -6,27 +6,27 @@ public fun testWrongIncDec(): kotlin.Unit
 
 public final class IncDec {
     public constructor IncDec()
-    public final fun dec(): IncDec
+    public final operator fun dec(): IncDec
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun inc(): IncDec
+    public final operator fun inc(): IncDec
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class UnitIncDec {
     public constructor UnitIncDec()
-    public final fun dec(): kotlin.Unit
+    public final operator fun dec(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun inc(): kotlin.Unit
+    public final operator fun inc(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class WrongIncDec {
     public constructor WrongIncDec()
-    public final fun dec(): kotlin.Int
+    public final operator fun dec(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun inc(): kotlin.Int
+    public final operator fun inc(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

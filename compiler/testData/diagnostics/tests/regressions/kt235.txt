@@ -6,18 +6,18 @@ package kt235 {
     public final class MyArray {
         public constructor MyArray()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun get(/*0*/ i: kotlin.Int): kotlin.Int
+        public final operator fun get(/*0*/ i: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Int
+        public final operator fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     public final class MyArray1 {
         public constructor MyArray1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun get(/*0*/ i: kotlin.Int): kotlin.Int
+        public final operator fun get(/*0*/ i: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
+        public final operator fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
@@ -25,7 +25,7 @@ package kt235 {
         public constructor MyNumber()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun inc(): kt235.MyNumber
+        public final operator fun inc(): kt235.MyNumber
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

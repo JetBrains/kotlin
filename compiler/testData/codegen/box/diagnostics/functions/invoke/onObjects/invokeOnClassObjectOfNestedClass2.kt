@@ -3,7 +3,7 @@ import A.Nested
 class A {
     class Nested {
         companion object {
-            fun invoke(i: Int) = i
+            operator fun invoke(i: Int) = i
         }
     }
 }

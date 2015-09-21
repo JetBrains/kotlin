@@ -7,7 +7,7 @@ package b {
     public final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun </*0*/ T> get(/*0*/ i: kotlin.Int): kotlin.List<T>
+        public final operator fun </*0*/ T> get(/*0*/ i: kotlin.Int): kotlin.List<T>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

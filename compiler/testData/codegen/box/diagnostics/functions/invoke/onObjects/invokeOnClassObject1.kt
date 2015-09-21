@@ -1,6 +1,6 @@
 class A {
     companion object {
-        fun invoke(i: Int) = i
+        operator fun invoke(i: Int) = i
     }
 }
 

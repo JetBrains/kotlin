@@ -1,10 +1,10 @@
 class Coll {
-  fun iterator(): It = It()
+  operator fun iterator(): It = It()
 }
 
 class It {
-  fun next() = 1
-  fun hasNext() = false
+  operator fun next() = 1
+  operator fun hasNext() = false
 }
 
 fun test(c: Coll?) {

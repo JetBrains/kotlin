@@ -8,8 +8,8 @@ public fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
     public constructor StringPair(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)
     public final val first: kotlin.String
     public final val second: kotlin.String
-    public final /*synthesized*/ fun component1(): kotlin.String
-    public final /*synthesized*/ fun component2(): kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ first: kotlin.String = ..., /*1*/ second: kotlin.String = ...): StringPair
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
 interface G {
-    fun get(x: Int, y: Int): Int = x + y
-    fun set(x: Int, y: Int, value: Int) {}
+    operator fun get(x: Int, y: Int): Int = x + y
+    operator fun set(x: Int, y: Int, value: Int) {}
 }
 
 fun foo1(a: Int?, b: G) {

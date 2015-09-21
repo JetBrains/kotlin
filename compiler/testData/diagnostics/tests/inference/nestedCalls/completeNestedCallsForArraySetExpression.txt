@@ -2,4 +2,4 @@ package
 
 public fun </*0*/ T> foo(/*0*/ t: T): T
 public fun test(/*0*/ map: kotlin.MutableMap<kotlin.Int, kotlin.Int>, /*1*/ t: kotlin.Int): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
+public operator fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?

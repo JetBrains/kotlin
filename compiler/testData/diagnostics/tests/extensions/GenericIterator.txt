@@ -1,13 +1,13 @@
 package
 
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> T?.iterator(): MyIterator<T>
+public operator fun </*0*/ T : kotlin.Any> T?.iterator(): MyIterator<T>
 public fun </*0*/ T> java.util.Enumeration<T>.iterator(): kotlin.Iterator<T>
 
 public interface MyIterator</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun hasNext(): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): T
+    public abstract operator fun next(): T
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

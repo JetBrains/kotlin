@@ -2,18 +2,18 @@ class MyClass {
     val i = 0
 }
 
-@Deprecated("Use A instead") fun MyClass.minus(i: MyClass) { i.i }
-@Deprecated("Use A instead") fun MyClass.div(i: MyClass) { i.i }
-@Deprecated("Use A instead") fun MyClass.times(i: MyClass) { i.i }
+@Deprecated("Use A instead") operator fun MyClass.minus(i: MyClass) { i.i }
+@Deprecated("Use A instead") operator fun MyClass.div(i: MyClass) { i.i }
+@Deprecated("Use A instead") operator fun MyClass.times(i: MyClass) { i.i }
 
-@Deprecated("Use A instead") fun MyClass.not() { }
-@Deprecated("Use A instead") fun MyClass.plus() { }
+@Deprecated("Use A instead") operator fun MyClass.not() { }
+@Deprecated("Use A instead") operator fun MyClass.plus() { }
 
-@Deprecated("Use A instead") fun MyClass.contains(i: MyClass): Boolean { i.i; return false }
+@Deprecated("Use A instead") operator fun MyClass.contains(i: MyClass): Boolean { i.i; return false }
 
-@Deprecated("Use A instead") fun MyClass.plusAssign(i: MyClass) { i.i }
+@Deprecated("Use A instead") operator fun MyClass.plusAssign(i: MyClass) { i.i }
 
-@Deprecated("Use A instead") fun MyClass.rangeTo(i: MyClass): IntRange { return IntRange(i.i, i.i) }
+@Deprecated("Use A instead") operator fun MyClass.rangeTo(i: MyClass): IntRange { return IntRange(i.i, i.i) }
 
 fun test() {
     val x1 = MyClass()
