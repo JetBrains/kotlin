@@ -52,10 +52,13 @@ class GenerateProtoBufCompare {
 
     private val RESULT_NAME = "result"
     private val STRING_INDEXES_NANE = "StringIndexes"
+    private val CLASS_ID_INDEXES_NANE = "ClassIdIndexes"
     private val FQ_NAME_INDEXES_NANE = "FqNameIndexes"
     private val OLD_PREFIX = "old"
     private val NEW_PREFIX = "new"
     private val CHECK_EQAULS_NAME = "checkEquals"
+    private val CHECK_STRING_EQAULS_NAME = "checkStringEquals"
+    private val CHECK_CLASS_ID_EQAULS_NAME = "checkClassIdEquals"
     private val HASH_CODE_NAME = "hashCode"
 
     val extentionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
@@ -71,6 +74,7 @@ class GenerateProtoBufCompare {
         p.println("package org.jetbrains.kotlin.jps.incremental")
         p.println()
 
+        p.println("import org.jetbrains.kotlin.name.ClassId")
         p.println("import org.jetbrains.kotlin.name.FqName")
         p.println("import org.jetbrains.kotlin.serialization.Interner")
         p.println("import org.jetbrains.kotlin.serialization.ProtoBuf")
@@ -85,13 +89,14 @@ class GenerateProtoBufCompare {
         p.pushIndent()
 
         p.println("private val strings = Interner<String>()")
-        p.println("public val $OLD_PREFIX$STRING_INDEXES_NANE: IntArray = oldNameResolver.stringTable.stringList.map { strings.intern(it) }.toIntArray()")
-        p.println("public val $NEW_PREFIX$STRING_INDEXES_NANE: IntArray = newNameResolver.stringTable.stringList.map { strings.intern(it) }.toIntArray()")
+        p.println("public val $OLD_PREFIX${STRING_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("public val $NEW_PREFIX${STRING_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("public val $OLD_PREFIX${CLASS_ID_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("public val $NEW_PREFIX${CLASS_ID_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
 
         p.println()
         p.println("private val fqNames = Interner<FqName>()")
-        p.println("public val $OLD_PREFIX$FQ_NAME_INDEXES_NANE: IntArray = oldNameResolver.qualifiedNameTable.qualifiedNameList.indices.map { fqNames.intern(oldNameResolver.getFqName(it)) }.toIntArray()")
-        p.println("public val $NEW_PREFIX$FQ_NAME_INDEXES_NANE: IntArray = newNameResolver.qualifiedNameTable.qualifiedNameList.indices.map { fqNames.intern(newNameResolver.getFqName(it)) }.toIntArray()")
+        p.println("private val classIds = Interner<ClassId>()")
         p.println()
 
         val fileDescriptor = DebugProtoBuf.getDescriptor()
@@ -113,12 +118,55 @@ class GenerateProtoBufCompare {
 
         repeatedFields.forEach { generateHelperMethodForRepeatedField(it, p) }
 
+        p.println()
+        generateAuxiliaryMethods(p)
+
         p.popIndent()
         p.println("}")
 
         allMessages.forEach { generateHashCodeFun(it, p) }
 
         return sb.toString()
+    }
+
+    fun generateAuxiliaryMethods(p: Printer) {
+        p.println("public fun oldGetIndexOfString(index: Int): Int = getIndexOfString(index, oldStringIndexesMap, oldNameResolver)")
+        p.println("public fun newGetIndexOfString(index: Int): Int = getIndexOfString(index, newStringIndexesMap, newNameResolver)")
+        p.println()
+
+        p.println("public fun getIndexOfString(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {")
+        p.println("    map[index]?.let { return it }")
+        p.println()
+        p.println("    val result = strings.intern(nameResolver.getString(index))")
+        p.println("    map[index] = result")
+        p.println("    return result")
+        p.println("}")
+        p.println()
+
+        p.println("public fun oldGetIndexOfClassId(index: Int): Int = getIndexOfClassId(index, oldClassIdIndexesMap, oldNameResolver)")
+        p.println("public fun newGetIndexOfClassId(index: Int): Int = getIndexOfClassId(index, newClassIdIndexesMap, newNameResolver)")
+        p.println()
+
+        p.println("public fun getIndexOfClassId(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {")
+        p.println("    map[index]?.let { return it }")
+        p.println()
+        // TODO fqNames -> classIds
+        p.println("    val result = fqNames.intern(nameResolver.getFqName(index))")
+        //p.println("    val result = classIds.intern(nameResolver.getClassId(index))")
+        p.println("    map[index] = result")
+        p.println("    return result")
+        p.println("}")
+        p.println()
+
+        p.println("private fun $CHECK_STRING_EQAULS_NAME(old: Int, new: Int): Boolean {")
+        p.println("   return oldGetIndexOfString(old) == newGetIndexOfString(new)")
+        p.println("}")
+        p.println()
+
+        p.println("private fun $CHECK_CLASS_ID_EQAULS_NAME(old: Int, new: Int): Boolean {")
+        p.println("   return oldGetIndexOfClassId(old) == newGetIndexOfClassId(new)")
+        p.println("}")
+
     }
 
     fun generateHashCodeFun(descriptor: Descriptors.Descriptor, p: Printer) {
@@ -128,7 +176,7 @@ class GenerateProtoBufCompare {
         val extFields = extentionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
 
         p.println()
-        p.println("public fun $typeName.$HASH_CODE_NAME(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {")
+        p.println("public fun $typeName.$HASH_CODE_NAME(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {")
         p.pushIndent()
 
         p.println("var $HASH_CODE_NAME = 1")
@@ -203,7 +251,7 @@ class GenerateProtoBufCompare {
         p.println("public fun difference(old: $typeName, new: $typeName): EnumSet<${className}Kind> {")
         p.pushIndent()
 
-        p.println("val $RESULT_NAME = EnumSet.noneOf(javaClass<${className}Kind>())")
+        p.println("val $RESULT_NAME = EnumSet.noneOf(${className}Kind::class.java)")
         p.println()
 
         fields.forEach { field -> FieldGeneratorForDiff(field, p).generate() }
@@ -347,9 +395,9 @@ class GenerateProtoBufCompare {
         val line = when {
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable),
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
-                "if ($OLD_PREFIX$STRING_INDEXES_NANE[old.$expr] != $NEW_PREFIX$STRING_INDEXES_NANE[new.$expr]) $statement"
+                "if (!$CHECK_STRING_EQAULS_NAME(old.$expr, new.$expr)) $statement"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
-                "if ($OLD_PREFIX$FQ_NAME_INDEXES_NANE[old.$expr] != $NEW_PREFIX$FQ_NAME_INDEXES_NANE[new.$expr]) $statement"
+                "if (!$CHECK_CLASS_ID_EQAULS_NAME(old.$expr, new.$expr)) $statement"
             field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
                 "if (old.$expr != new.$expr) $statement"
             else ->
@@ -368,9 +416,9 @@ class GenerateProtoBufCompare {
         when {
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable),
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
-                "stringIndexes[$expr]"
+                "stringIndexes($expr)"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
-                "fqNameIndexes[$expr]"
+                "fqNameIndexes($expr)"
             field.javaType == Descriptors.FieldDescriptor.JavaType.INT ->
                 "$expr"
             field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->

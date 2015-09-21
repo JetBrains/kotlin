@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.Interner
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -27,12 +28,13 @@ import java.util.EnumSet
 
 open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, public val newNameResolver: NameResolver) {
     private val strings = Interner<String>()
-    public val oldStringIndexes: IntArray = oldNameResolver.stringTable.stringList.map { strings.intern(it) }.toIntArray()
-    public val newStringIndexes: IntArray = newNameResolver.stringTable.stringList.map { strings.intern(it) }.toIntArray()
+    public val oldStringIndexesMap: MutableMap<Int, Int> = hashMapOf()
+    public val newStringIndexesMap: MutableMap<Int, Int> = hashMapOf()
+    public val oldClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
+    public val newClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
 
     private val fqNames = Interner<FqName>()
-    public val oldFqNameIndexes: IntArray = oldNameResolver.qualifiedNameTable.qualifiedNameList.indices.map { fqNames.intern(oldNameResolver.getFqName(it)) }.toIntArray()
-    public val newFqNameIndexes: IntArray = newNameResolver.qualifiedNameTable.qualifiedNameList.indices.map { fqNames.intern(newNameResolver.getFqName(it)) }.toIntArray()
+    private val classIds = Interner<ClassId>()
 
 
     open fun checkEquals(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
@@ -45,7 +47,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     public fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
-        val result = EnumSet.noneOf(javaClass<ProtoBufPackageKind>())
+        val result = EnumSet.noneOf(ProtoBufPackageKind::class.java)
 
         if (!checkEqualsPackageMember(old, new)) result.add(ProtoBufPackageKind.MEMBER_LIST)
 
@@ -58,11 +60,11 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (old.flags != new.flags) return false
         }
 
-        if (oldFqNameIndexes[old.fqName] != newFqNameIndexes[new.fqName]) return false
+        if (!checkClassIdEquals(old.fqName, new.fqName)) return false
 
         if (old.hasCompanionObjectName() != new.hasCompanionObjectName()) return false
         if (old.hasCompanionObjectName()) {
-            if (oldStringIndexes[old.companionObjectName] != newStringIndexes[new.companionObjectName]) return false
+            if (!checkStringEquals(old.companionObjectName, new.companionObjectName)) return false
         }
 
         if (!checkEqualsClassTypeParameter(old, new)) return false
@@ -105,18 +107,18 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     public fun difference(old: ProtoBuf.Class, new: ProtoBuf.Class): EnumSet<ProtoBufClassKind> {
-        val result = EnumSet.noneOf(javaClass<ProtoBufClassKind>())
+        val result = EnumSet.noneOf(ProtoBufClassKind::class.java)
 
         if (old.hasFlags() != new.hasFlags()) result.add(ProtoBufClassKind.FLAGS)
         if (old.hasFlags()) {
             if (old.flags != new.flags) result.add(ProtoBufClassKind.FLAGS)
         }
 
-        if (oldFqNameIndexes[old.fqName] != newFqNameIndexes[new.fqName]) result.add(ProtoBufClassKind.FQ_NAME)
+        if (!checkClassIdEquals(old.fqName, new.fqName)) result.add(ProtoBufClassKind.FQ_NAME)
 
         if (old.hasCompanionObjectName() != new.hasCompanionObjectName()) result.add(ProtoBufClassKind.COMPANION_OBJECT_NAME)
         if (old.hasCompanionObjectName()) {
-            if (oldStringIndexes[old.companionObjectName] != newStringIndexes[new.companionObjectName]) result.add(ProtoBufClassKind.COMPANION_OBJECT_NAME)
+            if (!checkStringEquals(old.companionObjectName, new.companionObjectName)) result.add(ProtoBufClassKind.COMPANION_OBJECT_NAME)
         }
 
         if (!checkEqualsClassTypeParameter(old, new)) result.add(ProtoBufClassKind.TYPE_PARAMETER_LIST)
@@ -168,7 +170,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (!checkEquals(old.receiverType, new.receiverType)) return false
         }
 
-        if (oldStringIndexes[old.name] != newStringIndexes[new.name]) return false
+        if (!checkStringEquals(old.name, new.name)) return false
 
         if (!checkEqualsCallableValueParameter(old, new)) return false
 
@@ -186,7 +188,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (old.hasExtension(JvmProtoBuf.implClassName) != new.hasExtension(JvmProtoBuf.implClassName)) return false
         if (old.hasExtension(JvmProtoBuf.implClassName)) {
-            if (oldStringIndexes[old.getExtension(JvmProtoBuf.implClassName)] != newStringIndexes[new.getExtension(JvmProtoBuf.implClassName)]) return false
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.implClassName), new.getExtension(JvmProtoBuf.implClassName))) return false
         }
 
         return true
@@ -195,7 +197,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     open fun checkEquals(old: ProtoBuf.TypeParameter, new: ProtoBuf.TypeParameter): Boolean {
         if (old.id != new.id) return false
 
-        if (oldStringIndexes[old.name] != newStringIndexes[new.name]) return false
+        if (!checkStringEquals(old.name, new.name)) return false
 
         if (old.hasReified() != new.hasReified()) return false
         if (old.hasReified()) {
@@ -222,7 +224,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (old.hasFlexibleTypeCapabilitiesId() != new.hasFlexibleTypeCapabilitiesId()) return false
         if (old.hasFlexibleTypeCapabilitiesId()) {
-            if (oldStringIndexes[old.flexibleTypeCapabilitiesId] != newStringIndexes[new.flexibleTypeCapabilitiesId]) return false
+            if (!checkStringEquals(old.flexibleTypeCapabilitiesId, new.flexibleTypeCapabilitiesId)) return false
         }
 
         if (old.hasFlexibleUpperBound() != new.hasFlexibleUpperBound()) return false
@@ -232,7 +234,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (old.hasConstructorClassName() != new.hasConstructorClassName()) return false
         if (old.hasConstructorClassName()) {
-            if (oldFqNameIndexes[old.constructorClassName] != newFqNameIndexes[new.constructorClassName]) return false
+            if (!checkClassIdEquals(old.constructorClassName, new.constructorClassName)) return false
         }
 
         if (old.hasConstructorTypeParameter() != new.hasConstructorTypeParameter()) return false
@@ -264,7 +266,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: ProtoBuf.Annotation, new: ProtoBuf.Annotation): Boolean {
-        if (oldFqNameIndexes[old.id] != newFqNameIndexes[new.id]) return false
+        if (!checkClassIdEquals(old.id, new.id)) return false
 
         if (!checkEqualsAnnotationArgument(old, new)) return false
 
@@ -277,7 +279,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (old.flags != new.flags) return false
         }
 
-        if (oldStringIndexes[old.name] != newStringIndexes[new.name]) return false
+        if (!checkStringEquals(old.name, new.name)) return false
 
         if (!checkEquals(old.type, new.type)) return false
 
@@ -295,7 +297,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
-        if (oldStringIndexes[old.name] != newStringIndexes[new.name]) return false
+        if (!checkStringEquals(old.name, new.name)) return false
 
         if (!checkEquals(old.returnType, new.returnType)) return false
 
@@ -343,7 +345,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: ProtoBuf.Annotation.Argument, new: ProtoBuf.Annotation.Argument): Boolean {
-        if (oldStringIndexes[old.nameId] != newStringIndexes[new.nameId]) return false
+        if (!checkStringEquals(old.nameId, new.nameId)) return false
 
         if (!checkEquals(old.value, new.value)) return false
 
@@ -358,7 +360,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (old.hasClassFqName() != new.hasClassFqName()) return false
         if (old.hasClassFqName()) {
-            if (oldFqNameIndexes[old.classFqName] != newFqNameIndexes[new.classFqName]) return false
+            if (!checkClassIdEquals(old.classFqName, new.classFqName)) return false
         }
 
         if (old.hasArrayDimension() != new.hasArrayDimension()) return false
@@ -370,7 +372,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
-        if (oldStringIndexes[old.name] != newStringIndexes[new.name]) return false
+        if (!checkStringEquals(old.name, new.name)) return false
 
         if (!checkEquals(old.type, new.type)) return false
 
@@ -405,17 +407,17 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (old.hasStringValue() != new.hasStringValue()) return false
         if (old.hasStringValue()) {
-            if (oldStringIndexes[old.stringValue] != newStringIndexes[new.stringValue]) return false
+            if (!checkStringEquals(old.stringValue, new.stringValue)) return false
         }
 
         if (old.hasClassId() != new.hasClassId()) return false
         if (old.hasClassId()) {
-            if (oldFqNameIndexes[old.classId] != newFqNameIndexes[new.classId]) return false
+            if (!checkClassIdEquals(old.classId, new.classId)) return false
         }
 
         if (old.hasEnumValueId() != new.hasEnumValueId()) return false
         if (old.hasEnumValueId()) {
-            if (oldStringIndexes[old.enumValueId] != newStringIndexes[new.enumValueId]) return false
+            if (!checkStringEquals(old.enumValueId, new.enumValueId)) return false
         }
 
         if (old.hasAnnotation() != new.hasAnnotation()) return false
@@ -462,7 +464,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.nestedClassNameCount != new.nestedClassNameCount) return false
 
         for(i in 0..old.nestedClassNameCount - 1) {
-            if (oldStringIndexes[old.getNestedClassName(i)] != newStringIndexes[new.getNestedClassName(i)]) return false
+            if (!checkStringEquals(old.getNestedClassName(i), new.getNestedClassName(i))) return false
         }
 
         return true
@@ -482,7 +484,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.enumEntryCount != new.enumEntryCount) return false
 
         for(i in 0..old.enumEntryCount - 1) {
-            if (oldStringIndexes[old.getEnumEntry(i)] != newStringIndexes[new.getEnumEntry(i)]) return false
+            if (!checkStringEquals(old.getEnumEntry(i), new.getEnumEntry(i))) return false
         }
 
         return true
@@ -567,9 +569,39 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         return true
     }
+
+    public fun oldGetIndexOfString(index: Int): Int = getIndexOfString(index, oldStringIndexesMap, oldNameResolver)
+    public fun newGetIndexOfString(index: Int): Int = getIndexOfString(index, newStringIndexesMap, newNameResolver)
+
+    public fun getIndexOfString(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {
+        map[index]?.let { return it }
+
+        val result = strings.intern(nameResolver.getString(index))
+        map[index] = result
+        return result
+    }
+
+    public fun oldGetIndexOfClassId(index: Int): Int = getIndexOfClassId(index, oldClassIdIndexesMap, oldNameResolver)
+    public fun newGetIndexOfClassId(index: Int): Int = getIndexOfClassId(index, newClassIdIndexesMap, newNameResolver)
+
+    public fun getIndexOfClassId(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {
+        map[index]?.let { return it }
+
+        val result = fqNames.intern(nameResolver.getFqName(index))
+        map[index] = result
+        return result
+    }
+
+    private fun checkStringEquals(old: Int, new: Int): Boolean {
+       return oldGetIndexOfString(old) == newGetIndexOfString(new)
+    }
+
+    private fun checkClassIdEquals(old: Int, new: Int): Boolean {
+       return oldGetIndexOfClassId(old) == newGetIndexOfClassId(new)
+    }
 }
 
-public fun ProtoBuf.Package.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     for(i in 0..memberCount - 1) {
@@ -579,17 +611,17 @@ public fun ProtoBuf.Package.hashCode(stringIndexes: IntArray, fqNameIndexes: Int
     return hashCode
 }
 
-public fun ProtoBuf.Class.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasFlags()) {
         hashCode = 31 * hashCode + flags
     }
 
-    hashCode = 31 * hashCode + fqNameIndexes[fqName]
+    hashCode = 31 * hashCode + fqNameIndexes(fqName)
 
     if (hasCompanionObjectName()) {
-        hashCode = 31 * hashCode + stringIndexes[companionObjectName]
+        hashCode = 31 * hashCode + stringIndexes(companionObjectName)
     }
 
     for(i in 0..typeParameterCount - 1) {
@@ -601,7 +633,7 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: IntArray, fqNameIndexes: IntAr
     }
 
     for(i in 0..nestedClassNameCount - 1) {
-        hashCode = 31 * hashCode + stringIndexes[getNestedClassName(i)]
+        hashCode = 31 * hashCode + stringIndexes(getNestedClassName(i))
     }
 
     for(i in 0..memberCount - 1) {
@@ -609,7 +641,7 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: IntArray, fqNameIndexes: IntAr
     }
 
     for(i in 0..enumEntryCount - 1) {
-        hashCode = 31 * hashCode + stringIndexes[getEnumEntry(i)]
+        hashCode = 31 * hashCode + stringIndexes(getEnumEntry(i))
     }
 
     if (hasPrimaryConstructor()) {
@@ -627,7 +659,7 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: IntArray, fqNameIndexes: IntAr
     return hashCode
 }
 
-public fun ProtoBuf.Callable.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Callable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasFlags()) {
@@ -650,7 +682,7 @@ public fun ProtoBuf.Callable.hashCode(stringIndexes: IntArray, fqNameIndexes: In
         hashCode = 31 * hashCode + receiverType.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    hashCode = 31 * hashCode + stringIndexes[name]
+    hashCode = 31 * hashCode + stringIndexes(name)
 
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
@@ -667,18 +699,18 @@ public fun ProtoBuf.Callable.hashCode(stringIndexes: IntArray, fqNameIndexes: In
     }
 
     if (hasExtension(JvmProtoBuf.implClassName)) {
-        hashCode = 31 * hashCode + stringIndexes[getExtension(JvmProtoBuf.implClassName)]
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.implClassName))
     }
 
     return hashCode
 }
 
-public fun ProtoBuf.TypeParameter.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     hashCode = 31 * hashCode + id
 
-    hashCode = 31 * hashCode + stringIndexes[name]
+    hashCode = 31 * hashCode + stringIndexes(name)
 
     if (hasReified()) {
         hashCode = 31 * hashCode + reified.hashCode()
@@ -695,7 +727,7 @@ public fun ProtoBuf.TypeParameter.hashCode(stringIndexes: IntArray, fqNameIndexe
     return hashCode
 }
 
-public fun ProtoBuf.Type.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     for(i in 0..argumentCount - 1) {
@@ -707,7 +739,7 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArr
     }
 
     if (hasFlexibleTypeCapabilitiesId()) {
-        hashCode = 31 * hashCode + stringIndexes[flexibleTypeCapabilitiesId]
+        hashCode = 31 * hashCode + stringIndexes(flexibleTypeCapabilitiesId)
     }
 
     if (hasFlexibleUpperBound()) {
@@ -715,7 +747,7 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArr
     }
 
     if (hasConstructorClassName()) {
-        hashCode = 31 * hashCode + fqNameIndexes[constructorClassName]
+        hashCode = 31 * hashCode + fqNameIndexes(constructorClassName)
     }
 
     if (hasConstructorTypeParameter()) {
@@ -733,7 +765,7 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArr
     return hashCode
 }
 
-public fun ProtoBuf.Class.PrimaryConstructor.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Class.PrimaryConstructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasData()) {
@@ -743,10 +775,10 @@ public fun ProtoBuf.Class.PrimaryConstructor.hashCode(stringIndexes: IntArray, f
     return hashCode
 }
 
-public fun ProtoBuf.Annotation.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + fqNameIndexes[id]
+    hashCode = 31 * hashCode + fqNameIndexes(id)
 
     for(i in 0..argumentCount - 1) {
         hashCode = 31 * hashCode + getArgument(i).hashCode(stringIndexes, fqNameIndexes)
@@ -755,14 +787,14 @@ public fun ProtoBuf.Annotation.hashCode(stringIndexes: IntArray, fqNameIndexes: 
     return hashCode
 }
 
-public fun ProtoBuf.Callable.ValueParameter.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Callable.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasFlags()) {
         hashCode = 31 * hashCode + flags
     }
 
-    hashCode = 31 * hashCode + stringIndexes[name]
+    hashCode = 31 * hashCode + stringIndexes(name)
 
     hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
 
@@ -777,10 +809,10 @@ public fun ProtoBuf.Callable.ValueParameter.hashCode(stringIndexes: IntArray, fq
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes[name]
+    hashCode = 31 * hashCode + stringIndexes(name)
 
     hashCode = 31 * hashCode + returnType.hashCode(stringIndexes, fqNameIndexes)
 
@@ -791,7 +823,7 @@ public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: IntArray, fqNa
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasField()) {
@@ -813,7 +845,7 @@ public fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: IntArray, fq
     return hashCode
 }
 
-public fun ProtoBuf.Type.Argument.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Type.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasProjection()) {
@@ -827,17 +859,17 @@ public fun ProtoBuf.Type.Argument.hashCode(stringIndexes: IntArray, fqNameIndexe
     return hashCode
 }
 
-public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes[nameId]
+    hashCode = 31 * hashCode + stringIndexes(nameId)
 
     hashCode = 31 * hashCode + value.hashCode(stringIndexes, fqNameIndexes)
 
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasPrimitiveType()) {
@@ -845,7 +877,7 @@ public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: IntArray, fqNameIndexes: 
     }
 
     if (hasClassFqName()) {
-        hashCode = 31 * hashCode + fqNameIndexes[classFqName]
+        hashCode = 31 * hashCode + fqNameIndexes(classFqName)
     }
 
     if (hasArrayDimension()) {
@@ -855,10 +887,10 @@ public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: IntArray, fqNameIndexes: 
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes[name]
+    hashCode = 31 * hashCode + stringIndexes(name)
 
     hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
 
@@ -869,7 +901,7 @@ public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: IntArray, fqNam
     return hashCode
 }
 
-public fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: IntArray, fqNameIndexes: IntArray): Int {
+public fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasType()) {
@@ -889,15 +921,15 @@ public fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: IntArray, 
     }
 
     if (hasStringValue()) {
-        hashCode = 31 * hashCode + stringIndexes[stringValue]
+        hashCode = 31 * hashCode + stringIndexes(stringValue)
     }
 
     if (hasClassId()) {
-        hashCode = 31 * hashCode + fqNameIndexes[classId]
+        hashCode = 31 * hashCode + fqNameIndexes(classId)
     }
 
     if (hasEnumValueId()) {
-        hashCode = 31 * hashCode + stringIndexes[enumValueId]
+        hashCode = 31 * hashCode + stringIndexes(enumValueId)
     }
 
     if (hasAnnotation()) {
