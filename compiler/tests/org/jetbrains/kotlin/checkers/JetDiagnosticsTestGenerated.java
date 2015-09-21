@@ -9128,6 +9128,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("fromJava.kt")
+                public void testFromJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/fromJava.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("types.kt")
                 public void testTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/types.kt");

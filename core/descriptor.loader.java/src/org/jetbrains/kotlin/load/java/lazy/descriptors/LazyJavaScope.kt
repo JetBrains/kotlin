@@ -269,13 +269,15 @@ public abstract class LazyJavaScope(
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
-                                      c.components.sourceElementFactory.source(field), /* original = */ null)
+                                      c.components.sourceElementFactory.source(field), /* original = */ null, /*isConst= */ field.isFinalStatic)
     }
+
+    private val JavaField.isFinalStatic: Boolean
+        get() = isFinal && isStatic
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): JetType {
         // Fields do not have their own generic parameters
-        val finalStatic = field.isFinal() && field.isStatic()
-
+        val finalStatic = field.isFinalStatic
         // simple static constants should not have flexible types:
         val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
         val propertyType = c.typeResolver.transformJavaType(

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.List;
 
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
+    private final boolean isStaticFinal;
     public JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -34,10 +35,13 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             boolean isVar,
             @NotNull Name name,
             @NotNull SourceElement source,
-            @Nullable PropertyDescriptor original
+            @Nullable PropertyDescriptor original,
+            boolean isStaticFinal
     ) {
         super(containingDeclaration, original, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source,
               /* lateInit = */ false, /* isConst = */ false);
+
+        this.isStaticFinal = isStaticFinal;
     }
 
     @Override
@@ -59,7 +63,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 isVar(),
                 getName(),
                 getSource(),
-                getOriginal()
+                getOriginal(),
+                isStaticFinal
         );
         assert getGetter() == null : "Field must not have a getter: " + this;
         assert getSetter() == null : "Field must not have a setter: " + this;
@@ -75,5 +80,10 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 enhancedReceiverType
         );
         return enhanced;
+    }
+
+    @Override
+    public boolean isConst() {
+        return isStaticFinal && ConstUtil.canBeUsedForConstVal(getType());
     }
 }

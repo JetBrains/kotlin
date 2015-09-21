@@ -24,9 +24,9 @@ public open class Test {
 
     // Static members
     public final var i1: kotlin.Int
-    public final val i2: kotlin.Int = 1
-    public final val i3: kotlin.Int
-    public final val i4: kotlin.Int = 1
+    public const final val i2: kotlin.Int = 1
+    public const final val i3: kotlin.Int
+    public const final val i4: kotlin.Int = 1
     public final var i5: kotlin.Int
     public final var i6: kotlin.Int
 }

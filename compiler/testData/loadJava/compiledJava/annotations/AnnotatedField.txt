@@ -11,5 +11,5 @@ public open class AnnotatedField {
     }
 
     // Static members
-    @test.AnnotatedField.Anno(value = "static") public final val x: kotlin.Int = 0
+    @test.AnnotatedField.Anno(value = "static") public const final val x: kotlin.Int = 0
 }

@@ -13,5 +13,5 @@ public interface StringConstantInParam {
     }
 
     // Static members
-    public final val HEL: kotlin.String = "hel"
+    public const final val HEL: kotlin.String = "hel"
 }
