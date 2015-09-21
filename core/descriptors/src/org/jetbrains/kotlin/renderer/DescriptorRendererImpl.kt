@@ -707,6 +707,11 @@ internal class DescriptorRendererImpl(
         if (!startFromName) {
             renderAnnotations(property, builder)
             renderVisibility(property.getVisibility(), builder)
+
+            if (property.isConst) {
+                builder.append("const ")
+            }
+
             renderModalityForCallable(property, builder)
             renderOverride(property, builder)
             renderLateInit(property, builder)

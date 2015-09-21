@@ -36,7 +36,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull SourceElement source,
             @Nullable PropertyDescriptor original
     ) {
-        super(containingDeclaration, original, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source, false);
+        super(containingDeclaration, original, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source,
+              /* lateInit = */ false, /* isConst = */ false);
     }
 
     @Override

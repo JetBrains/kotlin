@@ -645,7 +645,8 @@ public class DescriptorResolver {
                     JetPsiUtil.safeName(variable.getName()),
                     CallableMemberDescriptor.Kind.DECLARATION,
                     toSourceElement(variable),
-                    false
+                    /* lateInit = */ false,
+                    /* isConst = */ false
             );
             // For a local variable the type must not be deferred
             type = getVariableType(propertyDescriptor, scope, variable, dataFlowInfo, false, trace);
@@ -743,7 +744,8 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(property),
-                modifierList != null && modifierList.hasModifier(JetTokens.LATE_INIT_KEYWORD)
+                modifierList != null && modifierList.hasModifier(JetTokens.LATE_INIT_KEYWORD),
+                modifierList != null && modifierList.hasModifier(JetTokens.CONST_KEYWORD)
         );
         wrapper.setProperty(propertyDescriptor);
 
@@ -1114,7 +1116,8 @@ public class DescriptorResolver {
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(parameter),
-                false
+                /* lateInit = */ false,
+                /* isConst = */ false
         );
         propertyWrapper.setProperty(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),

@@ -95,7 +95,8 @@ object DynamicCallableDescriptors {
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 SourceElement.NO_SOURCE,
-                false
+                /* lateInit = */ false,
+                /* isConst = */ false
         )
         propertyDescriptor.setType(
                 DynamicType,

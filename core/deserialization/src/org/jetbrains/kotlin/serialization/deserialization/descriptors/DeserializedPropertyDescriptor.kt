@@ -42,7 +42,7 @@ public class DeserializedPropertyDescriptor(
         lateInit: Boolean
 ) : DeserializedCallableMemberDescriptor,
     PropertyDescriptorImpl(containingDeclaration, original, annotations,
-                           modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, lateInit) {
+                           modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, lateInit, false) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -52,6 +52,6 @@ public class DeserializedPropertyDescriptor(
             kind: Kind
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
-                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, proto, nameResolver, isLateInit)
+                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, proto, nameResolver, isLateInit, false)
     }
 }
