@@ -325,7 +325,7 @@ public class ArgumentTypeResolver {
             // otherwise not-null will propagate to successive statements
             // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
             if (CallUtilPackage.isSafeCall(call)) {
-                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.NULL);
+                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns));
             }
         }
         infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);

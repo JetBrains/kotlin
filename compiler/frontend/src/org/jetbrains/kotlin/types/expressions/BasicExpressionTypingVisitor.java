@@ -843,7 +843,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             DataFlowValue value = createDataFlowValue(baseExpression, baseType, context);
-            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.NULL));
+            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns)));
         }
         JetType resultingType = TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
@@ -1186,7 +1186,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
                 || !rightDataFlowInfo.getNullability(leftValue).canBeNull()) {
-                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.NULL);
+                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.nullValue(components.builtIns));
             }
         }
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();

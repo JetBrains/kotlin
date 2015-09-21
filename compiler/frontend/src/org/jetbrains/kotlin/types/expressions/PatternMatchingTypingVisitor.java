@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -100,7 +99,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         DataFlowValue subjectDataFlowValue = subjectExpression != null
                 ? DataFlowValueFactory.createDataFlowValue(subjectExpression, subjectType, context)
-                : DataFlowValue.NULL;
+                : DataFlowValue.nullValue(components.builtIns);
 
         // TODO : exhaustive patterns
 
