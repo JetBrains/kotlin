@@ -16,8 +16,18 @@
 
 package org.jetbrains.kotlin.descriptors;
 
+import kotlin.Deprecated;
+
 public interface SourceElement {
+    @Deprecated("This is a hack in order to preliminary support internal visibility in multi-module projects")
+    boolean isKotlinSourceElement();
+
     SourceElement NO_SOURCE = new SourceElement() {
+        @Override
+        public boolean isKotlinSourceElement() {
+            return false;
+        }
+
         @Override
         public String toString() {
             return "NO_SOURCE";
