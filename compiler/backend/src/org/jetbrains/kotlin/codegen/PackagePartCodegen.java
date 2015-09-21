@@ -128,7 +128,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         if (packageProto.getMemberCount() == 0) return;
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
-        writeAnnotationData(av, serializer.serialize(packageProto));
+        writeAnnotationData(av, serializer, serializer.serialize(packageProto));
         av.visitEnd();
     }
 }

@@ -13042,7 +13042,9 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *hasConstant
+     *isConst
      *lateinit
+     *isOperator
      * </pre>
      */
     boolean hasFlags();
@@ -13059,7 +13061,9 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *hasConstant
+     *isConst
      *lateinit
+     *isOperator
      * </pre>
      */
     int getFlags();
@@ -14599,7 +14603,9 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *hasConstant
+     *isConst
      *lateinit
+     *isOperator
      * </pre>
      */
     public boolean hasFlags() {
@@ -14618,7 +14624,9 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *hasConstant
+     *isConst
      *lateinit
+     *isOperator
      * </pre>
      */
     public int getFlags() {
@@ -15352,7 +15360,9 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *hasConstant
+       *isConst
        *lateinit
+       *isOperator
        * </pre>
        */
       public boolean hasFlags() {
@@ -15371,7 +15381,9 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *hasConstant
+       *isConst
        *lateinit
+       *isOperator
        * </pre>
        */
       public int getFlags() {
@@ -15390,7 +15402,9 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *hasConstant
+       *isConst
        *lateinit
+       *isOperator
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -15412,7 +15426,9 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *hasConstant
+       *isConst
        *lateinit
+       *isOperator
        * </pre>
        */
       public Builder clearFlags() {

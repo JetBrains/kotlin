@@ -95,7 +95,7 @@ public class MultifileClassPartCodegen(
         if (packageProto.memberCount == 0) return
 
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
-        AsmUtil.writeAnnotationData(av, serializer.serialize(packageProto))
+        AsmUtil.writeAnnotationData(av, serializer, serializer.serialize(packageProto))
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassFqName.shortName().asString())
         av.visitEnd()
     }

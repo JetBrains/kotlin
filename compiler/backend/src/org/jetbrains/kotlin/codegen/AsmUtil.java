@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
@@ -842,7 +844,7 @@ public class AsmUtil {
         av.visitEnd();
     }
 
-    public static void writeAnnotationData(@NotNull AnnotationVisitor av, @NotNull byte[] bytes) {
+    public static void writeAnnotationData(@NotNull AnnotationVisitor av, @NotNull DescriptorSerializer serializer, @NotNull byte[] bytes) {
         JvmCodegenUtil.writeAbiVersion(av);
         AnnotationVisitor data = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(bytes)) {
@@ -850,7 +852,9 @@ public class AsmUtil {
         }
         data.visitEnd();
         AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.STRINGS_FIELD_NAME);
-        // TODO: write the actual string table
+        for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
+            strings.visit(null, string);
+        }
         strings.visitEnd();
     }
 

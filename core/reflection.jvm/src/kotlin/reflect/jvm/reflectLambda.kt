@@ -17,11 +17,12 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.jvm.internal.KotlinCallable
 import kotlin.reflect.KFunction
@@ -37,7 +38,10 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
 public fun <R> Function<R>.reflect(): KFunction<R>? {
     val callable = javaClass.getAnnotation(KotlinCallable::class.java) ?: return null
     val input = BitEncoding.decodeBytes(callable.data).inputStream()
-    val nameResolver = NameResolverImpl.read(input)
+    val nameResolver = JvmNameResolver(
+            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY),
+            callable.strings
+    )
     val proto = ProtoBuf.Callable.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(moduleData.deserialization, nameResolver, moduleData.module,

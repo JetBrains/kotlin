@@ -16,28 +16,28 @@
 
 package org.jetbrains.kotlin.jps.build.classFilesComparison
 
-import java.io.File
-import org.junit.Assert.*
-import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
-import java.io.PrintWriter
-import org.jetbrains.org.objectweb.asm.ClassReader
-import java.io.StringWriter
-import org.jetbrains.kotlin.utils.Printer
-import com.google.common.io.Files
-import com.google.common.hash.Hashing
-import com.intellij.openapi.util.io.FileUtil
 import com.google.common.collect.Sets
-import java.util.HashSet
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
+import com.google.common.hash.Hashing
+import com.google.common.io.Files
 import com.google.protobuf.ExtensionRegistry
-import java.io.ByteArrayInputStream
-import org.jetbrains.kotlin.serialization.DebugProtoBuf
-import java.util.Arrays
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.serialization.DebugProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding
+import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.util.*
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -139,8 +139,7 @@ fun classFileToString(classFile: File): String {
         ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
             input ->
 
-            out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.StringTable.parseDelimitedFrom(input)}")
-            out.write("\n------ qualifiedNames proto -----\n${DebugProtoBuf.QualifiedNameTable.parseDelimitedFrom(input)}")
+            out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
 
             when {
                 classHeader!!.isCompatiblePackageFacadeKind() ->

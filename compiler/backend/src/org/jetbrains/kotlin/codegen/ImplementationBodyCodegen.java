@@ -253,7 +253,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        writeAnnotationData(av, serializer.serialize(classProto));
+        writeAnnotationData(av, serializer, serializer.serialize(classProto));
         if (kind != null) {
             av.visitEnum(
                     JvmAnnotationNames.KIND_FIELD_NAME,

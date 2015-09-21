@@ -230,7 +230,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
-        writeAnnotationData(av, serializer.serialize(callableProto));
+        writeAnnotationData(av, serializer, serializer.serialize(callableProto));
         av.visitEnd();
     }
 

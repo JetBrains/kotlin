@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.serialization.jvm
 
 import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
 
 public object JvmProtoBufUtil {
@@ -37,7 +37,7 @@ public object JvmProtoBufUtil {
     @JvmStatic
     public fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
         val input = ByteArrayInputStream(bytes)
-        val nameResolver = NameResolverImpl.read(input)
+        val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
         val classProto = ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
         return ClassData(nameResolver, classProto)
     }
@@ -49,7 +49,7 @@ public object JvmProtoBufUtil {
     @JvmStatic
     public fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
         val input = ByteArrayInputStream(bytes)
-        val nameResolver = NameResolverImpl.read(input)
+        val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
         val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)
         return PackageData(nameResolver, packageProto)
     }

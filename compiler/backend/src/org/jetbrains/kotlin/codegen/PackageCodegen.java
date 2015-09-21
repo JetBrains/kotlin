@@ -290,7 +290,7 @@ public class PackageCodegen {
         ProtoBuf.Package packageProto = serializer.packageProtoWithoutDescriptors().build();
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
-        AsmUtil.writeAnnotationData(av, serializer.serialize(packageProto));
+        AsmUtil.writeAnnotationData(av, serializer, serializer.serialize(packageProto));
         av.visitEnd();
     }
 

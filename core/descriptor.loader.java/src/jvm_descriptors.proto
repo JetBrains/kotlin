@@ -22,6 +22,45 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JvmProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
+message StringTableTypes {
+  message Record {
+    // The number of times this record should be repeated; this is used to collapse identical subsequent records in the list
+    optional int32 range = 1 [default = 1];
+
+    // Index of the predefined constant. If this field is present, the associated string is ignored
+    optional int32 predefined_index = 2;
+
+    enum Operation {
+      NONE = 0;
+
+      // replaceAll('$', '.')
+      // java/util/Map$Entry -> java/util/Map.Entry;
+      INTERNAL_TO_CLASS_ID = 1;
+
+      // substring(1, length - 1) and then replaceAll('$', '.')
+      // Ljava/util/Map$Entry; -> java/util/Map.Entry
+      DESC_TO_CLASS_ID = 2;
+    }
+
+    // Perform a described operation on the string
+    optional Operation operation = 3 [default = NONE];
+
+    // If this field is present, the "substring" operation must be performed with the first element of this list as the start index,
+    // and the second element as the end index.
+    // If an operation is not NONE, it's applied _after_ this substring operation
+    repeated int32 substring_index = 4 [packed = true];
+
+    // If this field is present, the "replaceAll" operation must be performed with the first element of this list as the code point
+    // of the character to replace, and the second element as the code point of the replacement character
+    repeated int32 replace_char = 5 [packed = true];
+  }
+
+  repeated Record record = 1;
+
+  // Indices of strings which are names of local classes or anonymous objects
+  repeated int32 local_name = 5 [packed = true];
+}
+
 message JvmMethodSignature {
   required int32 name = 1 [(string_id_in_table) = true];
 
