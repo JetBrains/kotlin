@@ -1,5 +1,4 @@
 import kotlin.Any
-import kotlin.Any
 
 fun foo(p: Int??) {
 

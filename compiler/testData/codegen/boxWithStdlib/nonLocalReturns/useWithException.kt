@@ -1,8 +1,4 @@
 import java.io.Closeable
-
-import java.io.Closeable
-
-import java.io.Closeable
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.test.assertEquals

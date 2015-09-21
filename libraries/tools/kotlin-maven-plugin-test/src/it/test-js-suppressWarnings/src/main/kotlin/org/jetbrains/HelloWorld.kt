@@ -1,7 +1,6 @@
 package org.jetbrains
 
 import kotlin.Any
-import kotlin.Any
 
 fun foo(p: Int??) {
 
