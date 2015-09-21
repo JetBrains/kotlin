@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -58,8 +59,10 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
         val file = sourcePosition.file as? JetFile ?: return null
 
-        val inlinedArguments = getInlinedArgumentsIfAny(sourcePosition)
-        if (inlinedArguments.isEmpty()) return null
+        val inlineFunctionCalls = getInlineFunctionCallsIfAny(sourcePosition)
+        if (inlineFunctionCalls.isEmpty()) return null
+
+        val inlinedArguments = getInlinedArgumentsIfAny(inlineFunctionCalls)
 
         if (inlinedArguments.any { it.shouldNotUseStepOver(sourcePosition.elementAt) }) {
             return null
@@ -305,7 +308,16 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return result
     }
 
-    private fun getInlinedArgumentsIfAny(sourcePosition: SourcePosition): List<JetFunction> {
+    private fun getInlinedArgumentsIfAny(inlineFunctionCalls: List<JetCallExpression>): List<JetFunction> {
+        return inlineFunctionCalls.flatMap {
+            it.valueArguments
+                    .map { it.getArgumentExpression()  }
+                    .filterIsInstance<JetFunctionLiteralExpression>()
+                    .map { it.functionLiteral }
+        }
+    }
+
+    private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<JetCallExpression> {
         val file = sourcePosition.file as? JetFile ?: return emptyList()
         val lineNumber = sourcePosition.line
         var elementAt = sourcePosition.elementAt
@@ -327,20 +339,23 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val start = topMostElement.startOffset
         val end = topMostElement.endOffset
 
-        val allInlinedArguments = CodeInsightUtils.
-                findElementsOfClassInRange(file, start, end, JetFunctionLiteral::class.java, JetNamedFunction::class.java)
-                .filter { JetPsiUtil.getParentCallIfPresent(it as JetExpression) != null }
-                .filterIsInstance<JetFunction>()
-                .filter {
-                    val context = it.analyze(BodyResolveMode.PARTIAL)
-                    InlineUtil.isInlinedArgument(it, context, false)
-                }
+        fun isInlineCall(expr: JetExpression): Boolean {
+            val context = expr.analyze(BodyResolveMode.PARTIAL)
+            val resolvedCall = expr.getResolvedCall(context) ?: return false
+            return InlineUtil.isInline(resolvedCall.resultingDescriptor)
+        }
+
+        val allInlineFunctionCalls = CodeInsightUtils.
+                findElementsOfClassInRange(file, start, end, JetExpression::class.java)
+                .map { JetPsiUtil.getParentCallIfPresent(it as JetExpression) }
+                .filterIsInstance<JetCallExpression>()
+                .filter { isInlineCall(it) }
+                .toSet()
 
         // It is necessary to check range because of multiline assign
         var linesRange = lineNumber..lineNumber
-        return allInlinedArguments.filter {
-            val parentCall = JetPsiUtil.getParentCallIfPresent(it)!!
-            val shouldInclude = parentCall.getLineNumber() in linesRange
+        return allInlineFunctionCalls.filter {
+            val shouldInclude = it.getLineNumber() in linesRange
             if (shouldInclude) {
                 linesRange = Math.min(linesRange.start, it.getLineNumber())..Math.max(linesRange.end, it.getLineNumber(false))
             }
