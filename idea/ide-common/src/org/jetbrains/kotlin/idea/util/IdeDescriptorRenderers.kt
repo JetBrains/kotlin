@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 public object IdeDescriptorRenderers {
     public val APPROXIMATE_FLEXIBLE_TYPES: (JetType) -> JetType = { approximateFlexibleTypes(it, true) }
@@ -37,7 +37,7 @@ public object IdeDescriptorRenderers {
 
         type.constructor.supertypes.singleOrNull()?.let { return it }
 
-        val builtIns = KotlinBuiltIns.getInstance()
+        val builtIns = type.builtIns
         return if (type.isMarkedNullable)
             builtIns.nullableAnyType
         else
