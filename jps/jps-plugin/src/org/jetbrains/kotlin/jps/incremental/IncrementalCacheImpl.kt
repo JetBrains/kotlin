@@ -112,7 +112,6 @@ public class IncrementalCacheImpl(
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
         val SOURCE_TO_CLASSES = "source-to-classes.tab"
-        val CLASS_TO_SOURCES = "class-to-sources.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
         val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
         val INLINED_TO = "inlined-to.tab"
@@ -130,7 +129,6 @@ public class IncrementalCacheImpl(
     private val inlineFunctionsMap = InlineFunctionsMap(INLINE_FUNCTIONS.storageFile)
     private val packagePartMap = PackagePartMap(PACKAGE_PARTS.storageFile)
     private val sourceToClassesMap = SourceToClassesMap(SOURCE_TO_CLASSES.storageFile)
-    private val classToSourcesMap = ClassToSourcesMap(CLASS_TO_SOURCES.storageFile)
     private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
     private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
     private val inlinedTo = InlineFunctionsFilesMap(INLINED_TO.storageFile)
@@ -165,7 +163,6 @@ public class IncrementalCacheImpl(
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {
                 dirtyOutputClassesMap.markDirty(it.internalName)
-                classToSourcesMap.remove(it)
             }
 
             sourceToClassesMap.clearOutputsForSource(sourceFile)
@@ -225,7 +222,6 @@ public class IncrementalCacheImpl(
         dirtyOutputClassesMap.notDirty(className.internalName)
         sourceFiles.forEach {
             sourceToClassesMap.add(it, className)
-            classToSourcesMap.add(className, it)
         }
 
         val header = kotlinClass.classHeader
@@ -566,24 +562,6 @@ public class IncrementalCacheImpl(
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
         override fun dumpValue(value: List<String>) = value.toString()
-    }
-
-    private inner class ClassToSourcesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathCollectionExternalizer) {
-        public fun get(className: JvmClassName): Collection<String> =
-                getFromStorage(className.internalName) ?: emptySet()
-
-        public fun add(className: JvmClassName, sourceFile: File) {
-            appendDataToStorage(className.internalName) { out ->
-                IOUtil.writeUTF(out, sourceFile.normalizedPath)
-            }
-        }
-
-        public fun remove(className: JvmClassName) {
-            removeFromStorage(className.internalName)
-        }
-
-        override fun dumpValue(value: Collection<String>): String =
-                value.dumpCollection()
     }
 
     private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
