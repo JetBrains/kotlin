@@ -602,6 +602,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const 'val' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE);
         MAP.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer");
         MAP.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value");
+        MAP.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions");
 
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
 

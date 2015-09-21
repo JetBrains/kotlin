@@ -2,7 +2,7 @@ package
 
 public val extensionWithoutName: A.() -> kotlin.Unit
 public val funfun: () -> () -> kotlin.Int
-public val ok: kotlin.String = "OK"
+public const val ok: kotlin.String = "OK"
 public val parentesized: () -> kotlin.Unit
 public val parentesizedWithType: () -> kotlin.Unit
 public val withExpression: () -> kotlin.Int

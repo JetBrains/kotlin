@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
@@ -880,7 +881,7 @@ public class DescriptorResolver {
     }
 
     private void setConstantForVariableIfNeeded(
-            @NotNull VariableDescriptorWithInitializerImpl variableDescriptor,
+            @NotNull final VariableDescriptorWithInitializerImpl variableDescriptor,
             @NotNull final LexicalScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
@@ -898,7 +899,15 @@ public class DescriptorResolver {
                 public ConstantValue<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    return constantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
+                    CompileTimeConstant<?> constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType);
+
+                    if (constant == null) return null;
+
+                    if (constant.getUsesNonConstValAsConstant() && variableDescriptor.isConst()) {
+                        trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer));
+                    }
+
+                    return constant.toConstantValue(initializerType);
                 }
             }, null)
         );

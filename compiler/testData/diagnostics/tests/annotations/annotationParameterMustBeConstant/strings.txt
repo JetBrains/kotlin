@@ -1,6 +1,6 @@
 package
 
-public val topLevel: kotlin.String = "topLevel"
+public const val topLevel: kotlin.String = "topLevel"
 public fun foo(): kotlin.Unit
 
 @kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {

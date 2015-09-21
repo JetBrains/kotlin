@@ -1,6 +1,6 @@
 package
 
-@ann(x = 1) public val x: kotlin.Int = 1
+@ann(x = 1) public const val x: kotlin.Int = 1
 
 @kotlin.annotation.annotation() public final class ann : kotlin.Annotation {
     public constructor ann(/*0*/ x: kotlin.Int)
