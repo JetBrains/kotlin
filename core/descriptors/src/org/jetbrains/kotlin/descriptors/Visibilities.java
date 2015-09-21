@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -121,9 +122,25 @@ public class Visibilities {
         @Override
         public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            return isInFriendModule(what, fromOrModule);
+            if (!isInFriendModule(what, fromOrModule)) return false;
+
+            return isWithSourcesOrFromIncrementalPackageFragment(what) || !isWithSourcesOrFromIncrementalPackageFragment(from);
         }
     };
+
+    @SuppressWarnings("deprecation")
+    private static boolean isWithSourcesOrFromIncrementalPackageFragment(@NotNull DeclarationDescriptor descriptor) {
+        SourceElement sourceElement = DescriptorUtils.getSourceElement(descriptor);
+        if (sourceElement.isKotlinSourceElement()) return true;
+
+        PackageFragmentDescriptor containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class, false);
+
+        if (containingPackage instanceof PackageFragmentDescriptorImpl) {
+            return ((PackageFragmentDescriptorImpl)containingPackage).isIncremental();
+        }
+
+        return false;
+    }
 
     public static final Visibility PUBLIC = new Visibility("public", true) {
         @Override
