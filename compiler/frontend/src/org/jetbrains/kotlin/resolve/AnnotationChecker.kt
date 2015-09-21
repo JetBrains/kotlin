@@ -54,7 +54,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), TargetLists.T_EXPRESSION, trace)
+        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null), trace)
         if (expression is JetFunctionLiteralExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
@@ -172,6 +172,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                     if (annotated.projectionKind == JetProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
                 is JetClassInitializer -> TargetLists.T_INITIALIZER
                 is JetMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
+                is JetFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
+                is JetExpression -> TargetLists.T_EXPRESSION
                 else -> TargetLists.EMPTY
             }
         }
@@ -224,6 +226,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }
 
             val T_EXPRESSION = targetList(EXPRESSION)
+
+            val T_FUNCTION_LITERAL = targetList(FUNCTION_LITERAL, FUNCTION, EXPRESSION)
 
             val T_TYPE_REFERENCE = targetList(TYPE) {
                 onlyWithUseSiteTarget(VALUE_PARAMETER)

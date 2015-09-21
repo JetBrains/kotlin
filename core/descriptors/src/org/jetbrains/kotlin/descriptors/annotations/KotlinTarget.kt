@@ -32,11 +32,11 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     LOCAL_VARIABLE("local variable"),
     VALUE_PARAMETER("value parameter"),
     CONSTRUCTOR("constructor"),
-    FUNCTION("function"),                      // includes *_FUNCTION
+    FUNCTION("function"),                      // includes *_FUNCTION and FUNCTION_LITERAL
     PROPERTY_GETTER("getter"),
     PROPERTY_SETTER("setter"),
     TYPE("type usage", false),
-    EXPRESSION("expression", false),
+    EXPRESSION("expression", false),           // includes FUNCTION_LITERAL
     FILE("file", false),
 
     TYPE_PROJECTION("type projection", false),
@@ -60,7 +60,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     TOP_LEVEL_PROPERTY("top level property", false),
 
     INITIALIZER("initializer", false),
-    MULTI_DECLARATION("multi declaration", false)
+    MULTI_DECLARATION("multi declaration", false),
+    FUNCTION_LITERAL("function literal", false)
     ;
 
     companion object {
