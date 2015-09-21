@@ -16,28 +16,10 @@
 
 package org.jetbrains.kotlin.serialization;
 
-import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
-import org.jetbrains.kotlin.utils.UtilsPackage;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 public final class PackageData {
-    @NotNull
-    public static PackageData read(@NotNull byte[] bytes, @NotNull ExtensionRegistryLite registry) {
-        try {
-            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-            NameResolver nameResolver = NameResolver.read(in);
-            ProtoBuf.Package packageProto = ProtoBuf.Package.parseFrom(in, registry);
-            return new PackageData(nameResolver, packageProto);
-        }
-        catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
-        }
-    }
-
     private final NameResolver nameResolver;
     private final ProtoBuf.Package packageProto;
 

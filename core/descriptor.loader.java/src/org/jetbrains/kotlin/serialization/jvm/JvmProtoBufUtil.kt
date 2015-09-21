@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.serialization.jvm
 import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import java.io.ByteArrayInputStream
 
 public object JvmProtoBufUtil {
     public val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
@@ -28,14 +31,26 @@ public object JvmProtoBufUtil {
     }
 
     @JvmStatic
-    public fun readClassDataFrom(encodedData: Array<String>): ClassData = readClassDataFrom(BitEncoding.decodeBytes(encodedData))
+    public fun readClassDataFrom(data: Array<String>): ClassData =
+            readClassDataFrom(BitEncoding.decodeBytes(data))
 
     @JvmStatic
-    public fun readClassDataFrom(data: ByteArray): ClassData = ClassData.read(data, EXTENSION_REGISTRY)
+    public fun readClassDataFrom(bytes: ByteArray): ClassData {
+        val input = ByteArrayInputStream(bytes)
+        val nameResolver = NameResolver.read(input)
+        val classProto = ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
+        return ClassData(nameResolver, classProto)
+    }
 
     @JvmStatic
-    public fun readPackageDataFrom(encodedData: Array<String>): PackageData = readPackageDataFrom(BitEncoding.decodeBytes(encodedData))
+    public fun readPackageDataFrom(data: Array<String>): PackageData =
+            readPackageDataFrom(BitEncoding.decodeBytes(data))
 
     @JvmStatic
-    public fun readPackageDataFrom(data: ByteArray): PackageData = PackageData.read(data, EXTENSION_REGISTRY)
+    public fun readPackageDataFrom(bytes: ByteArray): PackageData {
+        val input = ByteArrayInputStream(bytes)
+        val nameResolver = NameResolver.read(input)
+        val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)
+        return PackageData(nameResolver, packageProto)
+    }
 }
