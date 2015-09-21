@@ -46,5 +46,6 @@ var a : Int
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 /*TODO*/
 // NOTHING_ELSE

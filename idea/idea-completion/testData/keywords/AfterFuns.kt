@@ -46,4 +46,5 @@ class A {
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 // NOTHING_ELSE

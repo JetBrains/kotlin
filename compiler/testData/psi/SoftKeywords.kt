@@ -60,6 +60,7 @@ ref
     val param
     val sparam
     val lateinit
+    val const
       get() = a
       set(S : s) {}
 
@@ -94,6 +95,7 @@ ref
     fun param  () : param
     fun sparam  () : sparam
     fun lateinit  () : lateinit
+    fun const  () : const
 
     fun test(
         abstract  : t,
@@ -125,6 +127,7 @@ ref
         param     : t,
         sparam    : t,
         lateinit  : t,
+        const     : t,
     public protected private internal abstract
     open
     enum
@@ -173,6 +176,7 @@ class F(val foo : bar,
         param     : t,
         sparam    : t,
         lateinit  : t,
+        const     : t,
     public protected private internal abstract
     open
     enum

@@ -37,5 +37,6 @@ package Test
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 /*TODO*/
 // NOTHING_ELSE

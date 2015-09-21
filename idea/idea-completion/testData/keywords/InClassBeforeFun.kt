@@ -44,4 +44,5 @@ public class Test {
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 // NOTHING_ELSE
