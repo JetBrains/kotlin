@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAME
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -37,7 +36,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import java.util.ArrayList
+import java.util.*
 
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
@@ -502,14 +501,14 @@ internal class DescriptorRendererImpl(
         val upperBoundsCount = typeParameter.getUpperBounds().size()
         if ((upperBoundsCount > 1 && !topLevel) || upperBoundsCount == 1) {
             val upperBound = typeParameter.getUpperBounds().iterator().next()
-            if (KotlinBuiltIns.getInstance().getDefaultBound() != upperBound) {
+            if (!KotlinBuiltIns.isDefaultBound(upperBound)) {
                 builder.append(" : ").append(renderType(upperBound))
             }
         }
         else if (topLevel) {
             var first = true
             for (upperBound in typeParameter.getUpperBounds()) {
-                if (upperBound == KotlinBuiltIns.getInstance().getDefaultBound()) {
+                if (KotlinBuiltIns.isDefaultBound(upperBound)) {
                     continue
                 }
                 if (first) {
@@ -797,7 +796,7 @@ internal class DescriptorRendererImpl(
     private fun renderSuperTypes(klass: ClassDescriptor, builder: StringBuilder) {
         if (withoutSuperTypes) return
 
-        if (klass == KotlinBuiltIns.getInstance().getNothing()) return
+        if (KotlinBuiltIns.isNothing(klass.defaultType)) return
 
         val supertypes = klass.getTypeConstructor().getSupertypes()
         if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.isAnyOrNullableAny(supertypes.iterator().next())) return
