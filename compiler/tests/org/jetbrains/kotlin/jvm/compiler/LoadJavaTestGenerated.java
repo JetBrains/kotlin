@@ -4471,6 +4471,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("Const.kt")
+            public void testConst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("Constants.kt")
             public void testConstants() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");

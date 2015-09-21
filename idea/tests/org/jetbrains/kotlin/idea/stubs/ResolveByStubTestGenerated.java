@@ -2578,6 +2578,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Const.kt")
+        public void testConst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");

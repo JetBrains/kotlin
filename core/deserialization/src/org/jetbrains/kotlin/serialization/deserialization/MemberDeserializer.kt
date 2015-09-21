@@ -45,8 +45,6 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     private fun loadProperty(proto: Callable): PropertyDescriptor {
         val flags = proto.getFlags()
 
-        val lateInit = Flags.LATE_INIT.get(flags)
-
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
@@ -57,7 +55,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
                 c.nameResolver,
-                Flags.LATE_INIT.get(flags)
+                Flags.LATE_INIT.get(flags),
+                Flags.IS_CONST.get(flags)
         )
 
         val local = c.childContext(property, proto.getTypeParameterList())

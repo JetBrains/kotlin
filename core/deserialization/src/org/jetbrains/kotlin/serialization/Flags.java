@@ -48,7 +48,9 @@ public class Flags {
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
 
-    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(HAS_CONSTANT);
+    public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_CONSTANT);
+
+    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
 
     // Parameters
 
@@ -115,7 +117,8 @@ public class Flags {
             boolean hasGetter,
             boolean hasSetter,
             boolean hasConstant,
-            boolean lateInit
+            boolean lateInit,
+            boolean isConst
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -126,6 +129,7 @@ public class Flags {
                | HAS_SETTER.toFlags(hasSetter)
                | HAS_CONSTANT.toFlags(hasConstant)
                | LATE_INIT.toFlags(lateInit)
+               | IS_CONST.toFlags(isConst)
                ;
     }
 
