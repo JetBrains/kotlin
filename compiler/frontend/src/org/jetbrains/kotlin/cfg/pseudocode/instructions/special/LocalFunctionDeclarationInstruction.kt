@@ -33,7 +33,7 @@ public class LocalFunctionDeclarationInstruction(
 ) : InstructionWithNext(element, lexicalScope) {
     public var sink: SubroutineSinkInstruction? = null
         set(value: SubroutineSinkInstruction?) {
-            $sink = outgoingEdgeTo(value) as SubroutineSinkInstruction?
+            field = outgoingEdgeTo(value) as SubroutineSinkInstruction?
         }
 
     override val nextInstructions: Collection<Instruction>

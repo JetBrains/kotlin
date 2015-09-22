@@ -25,7 +25,7 @@ public abstract class InstructionWithNext(
 ) : JetElementInstructionImpl(element, lexicalScope) {
     public var next: Instruction? = null
         set(value: Instruction?) {
-            $next = outgoingEdgeTo(value)
+            field = outgoingEdgeTo(value)
         }
 
     override val nextInstructions: Collection<Instruction>
