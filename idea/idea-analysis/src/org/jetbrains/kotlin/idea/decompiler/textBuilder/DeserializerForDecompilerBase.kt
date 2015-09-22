@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
@@ -36,11 +36,12 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
 public abstract class DeserializerForDecompilerBase(
-        val packageDirectory: VirtualFile ,
+        val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : ResolverForDecompiler {
-
     protected abstract val deserializationComponents: DeserializationComponents
+
+    protected abstract val targetPlatform: TargetPlatform
 
     protected abstract val classDataFinder: ClassDataFinder
 
@@ -75,7 +76,7 @@ public abstract class DeserializerForDecompilerBase(
                 PackageFragmentProviderForMissingDependencies(moduleContainingMissingDependencies)
         )
         moduleDescriptor.setDependencies(
-                moduleDescriptor, KotlinBuiltIns.getInstance().getBuiltInsModule(), moduleContainingMissingDependencies
+                moduleDescriptor, targetPlatform.builtIns.builtInsModule, moduleContainingMissingDependencies
         )
     }
 }

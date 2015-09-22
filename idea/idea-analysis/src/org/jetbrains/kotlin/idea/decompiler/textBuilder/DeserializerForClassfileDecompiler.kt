@@ -24,22 +24,25 @@ import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
+public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
     val packageFqName = kotlinClass!!.classId.packageFqName
-    return DeserializerForDecompiler(classFile.parent!!, packageFqName)
+    return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
 }
 
-public class DeserializerForDecompiler(
+public class DeserializerForClassfileDecompiler(
         packageDirectory: VirtualFile,
         directoryPackageFqName: FqName
 ) : DeserializerForDecompilerBase(packageDirectory, directoryPackageFqName) {
+    override val targetPlatform: TargetPlatform get() = JvmPlatform
 
     private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)
 
@@ -52,8 +55,8 @@ public class DeserializerForDecompiler(
 
     override val deserializationComponents: DeserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver, errorReporter, JavaFlexibleTypeCapabilitiesDeserializer,
-            ClassDescriptorFactory.EMPTY
+            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), errorReporter,
+            JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
@@ -77,6 +80,6 @@ public class DeserializerForDecompiler(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(DeserializerForDecompiler::class.java)
+        private val LOG = Logger.getInstance(DeserializerForClassfileDecompiler::class.java)
     }
 }
