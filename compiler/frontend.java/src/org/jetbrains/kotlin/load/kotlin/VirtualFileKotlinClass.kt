@@ -59,7 +59,7 @@ public class VirtualFileKotlinClass private constructor(
                 assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
-                    val byteContent = file.contentsToByteArray()
+                    val byteContent = file.contentsToByteArray(false)
                     if (!byteContent.isEmpty()) {
                         return@time FileBasedKotlinClass.create(byteContent) {
                             name, header, innerClasses ->
