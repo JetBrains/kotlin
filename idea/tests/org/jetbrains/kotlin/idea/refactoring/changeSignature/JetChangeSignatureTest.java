@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -57,6 +58,9 @@ import java.io.File;
 import java.util.*;
 
 public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
+
+    private static final KotlinBuiltIns BUILT_INS = JvmPlatform.INSTANCE$.getBuiltIns();
+
     public void testBadSelection() throws Exception {
         configureByFile(getTestName(false) + "Before.kt");
         Editor editor = getEditor();
@@ -90,6 +94,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
 
     public void testChangeConstructorVisibility() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
+
         changeInfo.setNewVisibility(Visibilities.PROTECTED);
         doTest(changeInfo);
     }
@@ -115,7 +120,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.setNewVisibility(Visibilities.PROTECTED);
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "x", KotlinBuiltIns.getInstance().getAnyType(),
+                                                             -1, "x", BUILT_INS.getAnyType(),
                                                              null, psiFactory.createExpression("12"), JetValVar.Val, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
@@ -181,7 +186,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.getNewParameters()[0].setName("x1");
         changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "y1", KotlinBuiltIns.getInstance().getIntType(), null, null, JetValVar.None, null));
+                                                     -1, "y1", BUILT_INS.getIntType(), null, null, JetValVar.None, null));
         doTest(changeInfo);
     }
 
@@ -193,7 +198,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo newParameter =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "x0", KotlinBuiltIns.getInstance().getNullableAnyType(), null, psiFactory.createExpression("null"), JetValVar.None, null);
+                                     -1, "x0", BUILT_INS.getNullableAnyType(), null, psiFactory.createExpression("null"), JetValVar.None, null);
         changeInfo.setNewParameter(0, newParameter);
         doTest(changeInfo);
     }
@@ -201,7 +206,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testFakeOverride() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "i", KotlinBuiltIns.getInstance().getIntType(), null, null, JetValVar.None, null);
+                                                             -1, "i", BUILT_INS.getIntType(), null, null, JetValVar.None, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
     }
@@ -210,7 +215,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.getNewParameters()[1].setName("y1");
         changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "x", KotlinBuiltIns.getInstance().getAnyType(), null, null, JetValVar.None, null));
+                                                     -1, "x", BUILT_INS.getAnyType(), null, null, JetValVar.None, null));
         changeInfo.setNewReturnTypeText("Int");
         doTest(changeInfo);
     }
@@ -308,7 +313,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testOverridesInEnumEntries() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, null, JetValVar.None, null);
+                                                             -1, "s", BUILT_INS.getStringType(), null, null, JetValVar.None, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
     }
@@ -318,7 +323,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo newParameter =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "n", KotlinBuiltIns.getInstance().getIntType(), null, psiFactory.createExpression("1"), JetValVar.None, null);
+                                     -1, "n", BUILT_INS.getIntType(), null, psiFactory.createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
     }
@@ -336,7 +341,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo newParameter =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"abc\""), JetValVar.None, null);
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"abc\""), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
     }
@@ -346,12 +351,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"abc\""),
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"abc\""),
                                      JetValVar.None, null)
         );
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null,
+                                     -1, "o", BUILT_INS.getNullableAnyType(), null,
                                      psiFactory.createExpression("\"def\""), JetValVar.None, null)
         );
         doTest(changeInfo);
@@ -590,14 +595,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testParameterModifiers() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "n", KotlinBuiltIns.getInstance().getIntType(), null, null, JetValVar.None, null));
+                                                     -1, "n", BUILT_INS.getIntType(), null, null, JetValVar.None, null));
         doTest(changeInfo);
     }
 
     public void testFqNameShortening() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo parameterInfo = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                              -1, "s", KotlinBuiltIns.getInstance().getAnyType(), null, null, JetValVar.None, null);
+                                                              -1, "s", BUILT_INS.getAnyType(), null, null, JetValVar.None, null);
         parameterInfo.setCurrentTypeText("kotlin.String");
         changeInfo.addParameter(parameterInfo);
         doTest(changeInfo);
@@ -612,7 +617,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testParameterListAddParam() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "l", KotlinBuiltIns.getInstance().getLongType(), null, null, JetValVar.None, null));
+                                                     -1, "l", BUILT_INS.getLongType(), null, null, JetValVar.None, null));
         doTest(changeInfo);
     }
 
@@ -635,7 +640,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo parameterInfo =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
+                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
         parameterInfo.setCurrentTypeText("X");
         changeInfo.setReceiverParameterInfo(parameterInfo);
         doTest(changeInfo);
@@ -646,7 +651,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo parameterInfo =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
+                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
         parameterInfo.setCurrentTypeText("X");
         changeInfo.setReceiverParameterInfo(parameterInfo);
         doTest(changeInfo);
@@ -657,7 +662,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo parameterInfo =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
+                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
         parameterInfo.setCurrentTypeText("X");
         changeInfo.setReceiverParameterInfo(parameterInfo);
         doTestConflict(changeInfo);
@@ -668,7 +673,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo parameterInfo =
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
+                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
         parameterInfo.setCurrentTypeText("X");
         changeInfo.setReceiverParameterInfo(parameterInfo);
         doTestConflict(changeInfo);
@@ -782,7 +787,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""),
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""),
                                      JetValVar.None, null));
         doTest(changeInfo);
     }
@@ -810,7 +815,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -820,7 +825,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -830,7 +835,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -840,7 +845,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
+                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -868,7 +873,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "i", KotlinBuiltIns.getInstance().getIntType(), null, psiFactory.createExpression("0"), JetValVar.None, null)
+                                     -1, "i", BUILT_INS.getIntType(), null, psiFactory.createExpression("0"), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -950,7 +955,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              psiFactory.createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
@@ -1031,7 +1036,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testAddPropertyReceiverConflict() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             -1, "receiver", BUILT_INS.getStringType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
         changeInfo.setReceiverParameterInfo(newParameter);
         doTestConflict(changeInfo);
@@ -1040,7 +1045,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testAddPropertyReceiver() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             -1, "receiver", BUILT_INS.getStringType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
         changeInfo.setReceiverParameterInfo(newParameter);
         doTest(changeInfo);
@@ -1176,7 +1181,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
@@ -1193,7 +1198,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
@@ -1210,7 +1215,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
@@ -1235,7 +1240,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
@@ -1270,7 +1275,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
@@ -1285,7 +1290,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
 
         JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             -1, "n", BUILT_INS.getIntType(), null,
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
