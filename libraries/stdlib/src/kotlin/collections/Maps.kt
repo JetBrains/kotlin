@@ -37,6 +37,13 @@ public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size()
 public fun mapOf<K, V>(): Map<K, V> = emptyMap()
 
 /**
+ * Returns an immutable map, mapping only the specified key to the
+ * specified value.  The returned map is serializable.
+ */
+@JvmVersion
+public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = Collections.singletonMap(keyValuePair.first, keyValuePair.second)
+
+/**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *

@@ -41,25 +41,10 @@ private object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
-private object EmptySet : Set<Nothing>, Serializable {
-    override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
-    override fun hashCode(): Int = 0
-    override fun toString(): String = "[]"
 
-    override fun size(): Int = 0
-    override fun isEmpty(): Boolean = true
-    override fun contains(o: Any?): Boolean = false
-    override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
-
-    override fun iterator(): Iterator<Nothing> = EmptyIterator
-
-    private fun readResolve(): Any = EmptySet
-}
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun emptyList<T>(): List<T> = EmptyList
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun emptySet<T>(): Set<T> = EmptySet
 
 /** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
 public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayListOf(*values) else emptyList()
@@ -67,23 +52,18 @@ public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayLi
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun listOf<T>(): List<T> = emptyList()
 
-/** Returns a new read-only ordered set with the given elements.  The returned set is serializable (JVM). */
-public fun setOf<T>(vararg values: T): Set<T> = if (values.size() > 0) values.toSet() else emptySet()
-
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun setOf<T>(): Set<T> = emptySet()
+/**
+ * Returns an immutable list containing only the specified object [value].
+ * The returned list is serializable.
+ */
+@JvmVersion
+public fun listOf<T>(value: T): List<T> = Collections.singletonList(value)
 
 /** Returns a new [LinkedList] with the given elements. */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
 
 /** Returns a new [ArrayList] with the given elements. */
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
-
-/** Returns a new [HashSet] with the given elements. */
-public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(mapCapacity(values.size())))
-
-/** Returns a new [LinkedHashSet] with the given elements. */
-public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
 public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
@@ -121,8 +101,12 @@ public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 /** Returns this List if it's not `null` and the empty list otherwise. */
 public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
-/** Returns this Set if it's not `null` and the empty set otherwise. */
-public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
+/**
+ * Returns a list containing the elements returned by this enumeration
+ * in the order they are returned by the enumeration.
+ */
+@JvmVersion
+public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
