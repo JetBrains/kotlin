@@ -179,6 +179,8 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe _set = fqNameUnsafe("Set");
         public final FqNameUnsafe _iterable = fqNameUnsafe("Iterable");
 
+        public final FqName throwable = fqName("Throwable");
+
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("Deprecated");
         public final FqName tailRecursive = fqName("tailrec");
