@@ -55,6 +55,7 @@ import java.io.File;
 
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class JvmCodegenUtil {
 

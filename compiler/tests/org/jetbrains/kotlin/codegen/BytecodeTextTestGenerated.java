@@ -544,6 +544,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noPrivateMemberInJavaInterface.kt")
+        public void testNoPrivateMemberInJavaInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaces/noPrivateMemberInJavaInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("traitImplGeneratedOnce.kt")
         public void testTraitImplGeneratedOnce() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaces/traitImplGeneratedOnce.kt");

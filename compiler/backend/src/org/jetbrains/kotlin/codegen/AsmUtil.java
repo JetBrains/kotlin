@@ -310,11 +310,11 @@ public class AsmUtil {
     @Nullable
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
+        Visibility memberVisibility = memberDescriptor.getVisibility();
         if (isInterface(containingDeclaration)) {
-            return ACC_PUBLIC;
+            return memberVisibility == Visibilities.PRIVATE ? NO_FLAG_PACKAGE_PRIVATE : ACC_PUBLIC;
         }
 
-        Visibility memberVisibility = memberDescriptor.getVisibility();
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
         }
