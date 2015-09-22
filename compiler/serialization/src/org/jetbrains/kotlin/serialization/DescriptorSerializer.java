@@ -438,6 +438,15 @@ public class DescriptorSerializer {
     }
 
     @NotNull
+    public ProtoBuf.Package.Builder packageProtoWithoutDescriptors() {
+        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
+
+        extension.serializePackage(Collections.<PackageFragmentDescriptor>emptyList(), builder, stringTable);
+
+        return builder;
+    }
+
+    @NotNull
     public ProtoBuf.Package.Builder packageProto(@NotNull Collection<PackageFragmentDescriptor> fragments, @Nullable Function1<DeclarationDescriptor, Boolean> skip) {
         ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
 

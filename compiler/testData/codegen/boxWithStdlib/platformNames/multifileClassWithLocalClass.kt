@@ -1,4 +1,4 @@
-@file:JvmName("TestPackage")
+@file:JvmName("Test")
 @file:JvmMultifileClass
 package test
 

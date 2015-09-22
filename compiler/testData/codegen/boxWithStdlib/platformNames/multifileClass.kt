@@ -1,5 +1,4 @@
-// NB this multifile class should be called "TestPackage" due to the way codegen box tests work.
-@file:JvmName("TestPackage")
+@file:JvmName("Test")
 @file:JvmMultifileClass
 package test
 
