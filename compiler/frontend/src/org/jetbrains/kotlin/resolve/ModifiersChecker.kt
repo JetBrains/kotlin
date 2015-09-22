@@ -100,9 +100,11 @@ public object ModifierCheckerCore {
         result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
         // Abstract + open + final + sealed: incompatible
         result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
-        // data + open, data + inner
+        // data + open, data + inner, data + abstract, data + sealed
         result += deprecationRegister(DATA_KEYWORD, OPEN_KEYWORD)
         result += deprecationRegister(DATA_KEYWORD, INNER_KEYWORD)
+        result += deprecationRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
+        result += deprecationRegister(DATA_KEYWORD, SEALED_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)

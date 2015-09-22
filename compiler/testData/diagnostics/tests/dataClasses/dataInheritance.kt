@@ -2,7 +2,7 @@ interface Allowed
 
 open class NotAllowed
 
-abstract data class Base(val x: Int)
+<!DEPRECATED_MODIFIER_PAIR!>abstract<!> <!DEPRECATED_MODIFIER_PAIR!>data<!> class Base(val x: Int)
 
 class Derived: Base(42)
 
