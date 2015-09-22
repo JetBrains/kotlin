@@ -33,7 +33,7 @@ public class ReplSystemInWrapper(
     private val isAtBufferEnd: Boolean
         get() = curBytePos == inputByteArray.size()
 
-    var isReplScriptExecuting = false
+    @Volatile var isReplScriptExecuting = false
 
     override fun read(): Int {
         if (isLastByteProcessed) {
@@ -47,7 +47,7 @@ public class ReplSystemInWrapper(
         }
 
         while (isXmlIncomplete) {
-            if (isReplScriptExecuting && !isReadLineStartSent) {
+            if (!isReadLineStartSent && isReplScriptExecuting) {
                 replWriter.printlnReadLineStart()
                 isReadLineStartSent = true
             }
@@ -69,7 +69,14 @@ public class ReplSystemInWrapper(
 
     private fun parseInput(): String {
         val xmlInput = byteBuilder.toString()
-        return "${parseXml(xmlInput)}$END_LINE"
+        val unescapedXml = parseXml(xmlInput)
+
+        val resultLine = if (isReplScriptExecuting)
+            unescapeLineBreaks(unescapedXml)
+        else
+            unescapedXml
+
+        return "$resultLine$END_LINE"
     }
 
     private fun resetBufferIfNeeded() {

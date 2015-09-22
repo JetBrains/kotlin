@@ -34,5 +34,7 @@ fun parseXml(inputMessage: String): String {
     val input = docBuilder.parse(strToSource(inputMessage))
 
     val root = input.firstChild as Element
-    return StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
+    return root.textContent
 }
+
+fun unescapeLineBreaks(s: String) = StringUtil.replace(s, XML_REPLACEMENTS, SOURCE_CHARS)

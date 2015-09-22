@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.UnescapeUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
@@ -158,6 +159,8 @@ public class ReplFromTerminal {
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
             }
+
+            line = UnescapeUtilsKt.unescapeLineBreaks(line);
 
             if (line.startsWith(":") && (line.length() == 1 || line.charAt(1) != ':')) {
                 boolean notQuit = oneCommand(line.substring(1));
