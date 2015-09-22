@@ -2,7 +2,8 @@
 internal class A {
     private val s: String? = null
 
-    fun getValue(): Any {
-        return s
-    }
+    val value: Any
+        get() {
+            return s
+        }
 }

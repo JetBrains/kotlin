@@ -24,8 +24,9 @@ import java.util.*
 class ConstructorConverter(
         private val psiClass: PsiClass,
         private val converter: Converter,
-        private val fieldCorrections: Map<PsiField, FieldCorrectionInfo>,
-        private val overloadReducer: OverloadReducer
+        private val fieldToPropertyInfo: (PsiField) -> PropertyInfo?,
+        private val overloadReducer: OverloadReducer,
+        private val classKind: ClassKind
 ) {
     private val constructors = psiClass.getConstructors().asList()
 
@@ -75,10 +76,10 @@ class ConstructorConverter(
     public fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
                                   modifiers: Modifiers,
-                                  membersToRemove: MutableSet<PsiMember>,
+                                  fieldsToDrop: MutableSet<PsiField>,
                                   postProcessBody: (Block) -> Block): Constructor? {
         val result = if (constructor == primaryConstructor) {
-            convertPrimaryConstructor(annotations, modifiers, membersToRemove, postProcessBody)
+            convertPrimaryConstructor(annotations, modifiers, fieldsToDrop, postProcessBody)
         }
         else {
             if (overloadReducer.shouldDropMethod(constructor)) return null
@@ -116,7 +117,7 @@ class ConstructorConverter(
 
     private fun convertPrimaryConstructor(annotations: Annotations,
                                           modifiers: Modifiers,
-                                          membersToRemove: MutableSet<PsiMember>,
+                                          fieldsToDrop: MutableSet<PsiField>,
                                           postProcessBody: (Block) -> Block): PrimaryConstructor {
         val params = primaryConstructor!!.getParameterList().getParameters()
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
@@ -143,15 +144,14 @@ class ConstructorConverter(
                     continue
                 }
 
-                val fieldCorrection = fieldCorrections[field]
-                // we cannot specify different setter access for constructor parameter
-                if (fieldCorrection != null && !field.isVal(converter.referenceSearcher) && fieldCorrection.access != fieldCorrection.setterAccess) continue
+                val propertyInfo = fieldToPropertyInfo(field)
+                if (propertyInfo != null && (propertyInfo.needExplicitGetter || propertyInfo.needExplicitSetter)) continue
 
                 parameterToField.put(parameter, field to type)
                 statementsToRemove.add(initializationStatement)
-                membersToRemove.add(field)
+                fieldsToDrop.add(field)
 
-                val fieldName = fieldCorrection?.name ?: field.getName()!!
+                val fieldName = propertyInfo?.name ?: field.getName()!!
                 if (fieldName != parameter.getName()) {
                     parameterUsageReplacementMap.put(parameter.getName()!!, fieldName)
                 }
@@ -200,17 +200,13 @@ class ConstructorConverter(
                     }
                     else {
                         val (field, type) = parameterToField[parameter]!!
-                        val fieldCorrection = fieldCorrections[field]
-                        val name = fieldCorrection?.identifier ?: field.declarationIdentifier()
-                        val accessModifiers = if (fieldCorrection != null)
-                            Modifiers(listOf()).with(fieldCorrection.access).assignNoPrototype()
-                        else
-                            converter.convertModifiers(field, false).filter { it in ACCESS_MODIFIERS }
-                        FunctionParameter(name,
+                        val propertyInfo = fieldToPropertyInfo(field)!!
+                        val parameterModifiers = converter.convertModifiers(propertyInfo, classKind)
+                        FunctionParameter(propertyInfo.identifier,
                                           type,
-                                          if (field.isVal(converter.referenceSearcher)) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,
-                                  converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
-                                          accessModifiers,
+                                          if (propertyInfo.isVal) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,
+                                          converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
+                                          parameterModifiers,
                                           default)
                                 .assignPrototypes(
                                         PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),

@@ -91,3 +91,16 @@ public class MethodReferenceHelperClass {
     public <T> void memberFun1(JFunction1<T> f) {}
     public <T, K> void memberFun2(JFunction2<T, K> f) {}
 }
+
+public class JavaClassWithProperties {
+    public int getValue1() { return 1; }
+
+    public int getValue2() { return 1; }
+    public void setValue2(int value) { }
+
+    public int getValue3() { return 1; }
+    public void setValue3(int value) { }
+
+    public int getValue4() { return 1; }
+    public void setValue4(int value) { }
+}

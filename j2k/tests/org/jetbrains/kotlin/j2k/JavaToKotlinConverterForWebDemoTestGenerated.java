@@ -1597,6 +1597,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("InInterface.java")
+        public void testInInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InInterface.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("InObject.java")
         public void testInObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InObject.java");
@@ -1612,6 +1618,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("KeywordPropertyName.java")
         public void testKeywordPropertyName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/KeywordPropertyName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Overrides.java")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/Overrides.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OverridesOfExternalCode.java")
+        public void testOverridesOfExternalCode() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/OverridesOfExternalCode.java");
             doTest(fileName);
         }
 

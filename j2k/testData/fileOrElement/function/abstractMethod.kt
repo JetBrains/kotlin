@@ -1,1 +1,1 @@
-internal abstract fun getNoofGears(): Int
+internal abstract val noofGears: Int

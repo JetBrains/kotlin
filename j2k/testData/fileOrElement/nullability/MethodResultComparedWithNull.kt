@@ -1,10 +1,10 @@
 internal interface I {
-    fun getString(): String?
+    val string: String?
 }
 
 internal class C {
     fun foo(i: I) {
-        if (i.getString() == null) {
+        if (i.string == null) {
             println("null")
         }
     }

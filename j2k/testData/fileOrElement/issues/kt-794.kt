@@ -1,6 +1,7 @@
 internal class Test {
-    fun getInt(): Int {
-        val b = 10
-        return b.toInt()
-    }
+    val int: Int
+        get() {
+            val b = 10
+            return b.toInt()
+        }
 }

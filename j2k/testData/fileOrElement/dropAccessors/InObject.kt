@@ -1,11 +1,10 @@
 object AAA {
     var x = 42
     var y = 0
-    val z = 0
-
-    fun setZ(z: Int) {
-        Other.z = z
-    }
+    var z = 0
+        set(z: Int) {
+            Other.z = z
+        }
 }
 
 internal object Other {

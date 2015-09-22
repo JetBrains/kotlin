@@ -47,3 +47,24 @@ public object KotlinObject {
         get() = 1
         set(value) {}
 }
+
+public open class KotlinClassWithProperties {
+    public open var someVar1: String = ""
+    public open var someVar2: String = ""
+    public open var someVar3: String = ""
+    public open var someVar4: String
+        get() = ""
+        set(value) {}
+    public open val someVal: String = ""
+
+    public open fun getSomething1() { return 1; }
+
+    public open fun getSomething2() { return 1; }
+    public open fun setSomething2(value: Int) { }
+
+    public open fun getSomething3() { return 1; }
+    public open fun setSomething3(value: Int) { }
+
+    public open fun getSomething4() { return 1; }
+    public open fun setSomething4(value: Int) { }
+}
