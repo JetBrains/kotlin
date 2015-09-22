@@ -185,6 +185,12 @@ enum class FlagsToModifiers {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
             return if (Flags.INNER.get(flags)) JetTokens.INNER_KEYWORD else null
         }
+    },
+
+    CONST {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_CONST.get(flags)) JetTokens.CONST_KEYWORD else null
+        }
     };
 
     abstract fun getModifiers(flags: Int): JetModifierKeywordToken?

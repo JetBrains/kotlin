@@ -89,6 +89,12 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Const.kt")
+    public void testConst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/Const.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DanglingAnnotations.kt")
     public void testDanglingAnnotations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/DanglingAnnotations.kt");
