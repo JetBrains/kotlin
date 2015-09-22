@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.rmi.service
 
+import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.rmi.CompilerCallbackServicesFacade
@@ -24,13 +25,12 @@ import org.jetbrains.kotlin.rmi.Profiler
 
 
 class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, val profiler: Profiler = DummyProfiler()) : LookupTracker {
-
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
-    override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+    override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         if (!isDoNothing) {
             profiler.withMeasure(this) {
-                facade.lookupTracker_record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name)
+                facade.lookupTracker_record(locationInfo, scopeFqName, scopeKind, name)
             }
         }
     }

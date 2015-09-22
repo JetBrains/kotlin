@@ -18,27 +18,18 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 public fun LookupTracker.record(from: LookupLocation, inScope: KtScope, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
-    if (from !is KotlinLookupLocation) throw AssertionError("Unexpected location type: ${from.javaClass}")
-
-    val containingJetFile = from.element.getContainingJetFile()
-
-    if (containingJetFile.doNotAnalyze != null) return
-
-    val containingFilePath = containingJetFile.virtualFile.path
-    val lineAndColumn = if (requiresLookupLineAndColumn) getLineAndColumnInPsiFile(containingJetFile, from.element.textRange) else null
+    val location = from.location ?: return
 
     val scopeContainingDeclaration = inScope.getContainingDeclaration()
 
@@ -49,5 +40,5 @@ public fun LookupTracker.record(from: LookupLocation, inScope: KtScope, name: Na
                 else -> throw AssertionError("Unexpected containing declaration type: ${scopeContainingDeclaration.javaClass}")
             }
 
-    record(containingFilePath, lineAndColumn?.line, lineAndColumn?.column, scopeContainingDeclaration.fqNameUnsafe.asString(), scopeKind, name.asString())
+    record(location, scopeContainingDeclaration.fqNameUnsafe.asString(), scopeKind, name.asString())
 }
