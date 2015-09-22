@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetTypeProjection;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
@@ -63,7 +64,7 @@ public class TypeUnifierTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
 
-        builtIns = KotlinBuiltIns.getInstance();
+        builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
 
         typeResolver = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule()).getTypeResolver();
         x = createTypeVariable("X");
@@ -71,9 +72,9 @@ public class TypeUnifierTest extends JetLiteFixture {
         variables = Sets.newHashSet(x.getTypeConstructor(), y.getTypeConstructor());
     }
 
-    private static TypeParameterDescriptor createTypeVariable(String name) {
+    private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
+                builtIns.getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifier(name), 0);
     }
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -64,7 +65,7 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, KotlinBuiltIns.getInstance().builtInsModule)
+        module.setDependencies(module, JsPlatform.builtIns.builtInsModule)
 
         return module
     }

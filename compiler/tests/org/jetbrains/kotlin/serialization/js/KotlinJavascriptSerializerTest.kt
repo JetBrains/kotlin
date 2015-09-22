@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -86,7 +87,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
+        module.setDependencies(module, JsPlatform.builtIns.builtInsModule)
 
         return module
     }

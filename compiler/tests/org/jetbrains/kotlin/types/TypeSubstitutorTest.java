@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
@@ -100,7 +101,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),
-                                KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+                                JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {

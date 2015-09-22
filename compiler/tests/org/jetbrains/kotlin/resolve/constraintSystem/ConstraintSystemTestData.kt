@@ -29,6 +29,7 @@ import java.util.regex.Pattern
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
 public class ConstraintSystemTestData(
@@ -62,7 +63,7 @@ public class ConstraintSystemTestData(
         if (matcher.find()) {
             val number = matcher.group(1)!!
             return JetTypeImpl.create(
-                    Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), KotlinBuiltIns.getInstance()), false, listOf(),
+                    Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), JvmPlatform.builtIns), false, listOf(),
                     JetScope.Empty
             )
         }

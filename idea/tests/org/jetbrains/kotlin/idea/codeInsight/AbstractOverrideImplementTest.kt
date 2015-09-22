@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
@@ -127,7 +128,11 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         val chooserObjects = handler.collectMembersToGenerate(classOrObject)
 
         val singleToOverride = if (memberToOverride == null) {
-            val filtered = chooserObjects.filter { it.descriptor.containingDeclaration != KotlinBuiltIns.getInstance().any }
+            val filtered = chooserObjects.filter {
+                (it.descriptor.containingDeclaration as? ClassDescriptor)?.let {
+                    !KotlinBuiltIns.isAny(it)
+                } ?: true
+            }
             assertEquals(1, filtered.size(), "Invalid number of available chooserObjects for override")
             filtered.single()
         }

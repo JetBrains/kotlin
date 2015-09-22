@@ -81,7 +81,7 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
                 module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
                     it is CallableMemberDescriptor &&
-                    it.module != KotlinBuiltIns.getInstance().builtInsModule &&
+                    it.module != module.builtIns.builtInsModule &&
                     isFromFacade(it, facadeFqName)
                 }.sortedWith(MemberComparator.INSTANCE)
     }

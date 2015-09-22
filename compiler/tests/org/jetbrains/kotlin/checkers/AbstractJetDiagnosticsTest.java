@@ -26,8 +26,8 @@ import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
@@ -44,11 +44,12 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -345,11 +346,16 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 dependencies.add(modules.get(dependency));
             }
 
-            dependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+            dependencies.add(getPlatform().getBuiltIns().getBuiltInsModule());
             module.setDependencies(dependencies);
         }
 
         return modules;
+    }
+
+    @NotNull
+    protected TargetPlatform getPlatform() {
+        return JvmPlatform.INSTANCE$;
     }
 
     @NotNull
@@ -362,7 +368,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
     @NotNull
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
         ModuleDescriptorImpl moduleDescriptor = createModule("<test-module>", storageManager);
-        moduleDescriptor.setDependencies(moduleDescriptor, KotlinBuiltIns.getInstance().getBuiltInsModule());
+        moduleDescriptor.setDependencies(moduleDescriptor, getPlatform().getBuiltIns().getBuiltInsModule());
         return moduleDescriptor;
     }
 

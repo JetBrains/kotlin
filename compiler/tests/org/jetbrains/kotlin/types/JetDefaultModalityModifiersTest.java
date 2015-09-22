@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -77,7 +78,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             ContainerForTests containerForTests = DiPackage.createContainerForTests(getProject(), root);
             descriptorResolver = containerForTests.getDescriptorResolver();
             functionDescriptorResolver = containerForTests.getFunctionDescriptorResolver();
-            scope = createScope(KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+            scope = createScope(JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
         }
 
         public void tearDown() throws Exception {
