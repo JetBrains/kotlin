@@ -94,12 +94,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
         assert(vf != null) { "Virtual file not found by URL: $url" }
 
-        // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
-        vf!!.getChildren()
-        vf.refresh(false, true)
-        PathUtil.getLocalFile(vf).refresh(false, true)
-
-        val psiDirectory = PsiManager.getInstance(project).findDirectory(vf)
+        val psiDirectory = PsiManager.getInstance(project).findDirectory(vf!!)
         assert(psiDirectory != null) { "No PsiDirectory for $vf" }
         return psiDirectory!!.getFiles().filterIsInstance<JetFile>().toHashSet()
     }
@@ -187,6 +182,19 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
                 return setOf(defaultBuiltIns, BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
             }
             return setOf(defaultBuiltIns)
+        }
+
+        public fun refreshBuiltIns() {
+            getBuiltInsDirUrls().forEach { url ->
+                val fromUrl = VfsUtilCore.convertFromUrl(url)
+                val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
+                assert(vf != null) { "Virtual file not found by URL: $url" }
+
+                // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
+                vf!!.getChildren()
+                vf.refresh(true, true)
+                PathUtil.getLocalFile(vf).refresh(true, true)
+            }
         }
     }
 }
