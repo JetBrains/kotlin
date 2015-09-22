@@ -65,7 +65,7 @@ public class OperatorValidator : SymbolUsageValidator {
             return
         }
 
-        if (isVariableAsFunctionCall() || isMultiDeclaration() || isConventionOperator() || isArrayAccessExpression()) {
+        if (isVariableAsFunctionCall() || isConventionOperator() || isArrayAccessExpression()) {
             if (!functionDescriptor.isOperator) {
                 report(jetElement, functionDescriptor, trace)
             }

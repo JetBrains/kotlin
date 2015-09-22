@@ -18,24 +18,19 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
-import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
-import java.util.*
 
 public enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -114,6 +109,15 @@ public fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boole
         }
     }
     return false
+}
+
+
+fun isConventionCall(call: Call): Boolean {
+    if (call is CallTransformer.CallForImplicitInvoke) return true
+    val callElement = call.callElement
+    if (callElement is JetArrayAccessExpression || callElement is JetMultiDeclarationEntry) return true
+    val calleeExpression = call.calleeExpression as? JetOperationReferenceExpression ?: return false
+    return calleeExpression.getNameForConventionalOperation() != null
 }
 
 public fun isInvokeCallOnVariable(call: Call): Boolean {

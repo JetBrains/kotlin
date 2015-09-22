@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.doNotAnalyze
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -135,9 +135,20 @@ public class TaskPrioritizer(
             c: TaskPrioritizerContext<D, F>,
             isExplicit: Boolean
     ) {
+        val explicitReceiverTypeIsDynamic = explicitReceiver.value.type.isDynamic()
+
+        // Members and extensions with 'operator' modifier have higher priority
+        if (isConventionCall(c.context.call)) {
+            val filter = { d: CallableDescriptor -> (d is FunctionDescriptor && d.isOperator) || ErrorUtils.isError(d) }
+            addMembers(explicitReceiver, c, staticMembers = false, isExplicit = isExplicit, filter = filter)
+            if (!explicitReceiverTypeIsDynamic) {
+                addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit, filter)
+            }
+        }
+
         addMembers(explicitReceiver, c, staticMembers = false, isExplicit = isExplicit)
 
-        if (explicitReceiver.value.type.isDynamic()) {
+        if (explicitReceiverTypeIsDynamic) {
             addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit)
         }
         else {
@@ -149,7 +160,8 @@ public class TaskPrioritizer(
             explicitReceiver: ReceiverWithTypes,
             implicitReceivers: Collection<ReceiverValue>,
             c: TaskPrioritizerContext<D, F>,
-            isExplicit: Boolean
+            isExplicit: Boolean,
+            filter: ((CallableDescriptor) -> Boolean)? = null
     ) {
         for (callableDescriptorCollector in c.callableDescriptorCollectors) {
             //member extensions
@@ -164,10 +176,14 @@ public class TaskPrioritizer(
             }
             //extensions
             c.result.addCandidates {
+                val extensions = callableDescriptorCollector.getExtensionsByName(
+                        c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c))
+                val filteredExtensions = if (filter == null) extensions else extensions.filter(filter)
+
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver.value,
-                        callableDescriptorCollector.getExtensionsByName(c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c)),
+                        filteredExtensions,
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -179,7 +195,8 @@ public class TaskPrioritizer(
             explicitReceiver: ReceiverWithTypes,
             c: TaskPrioritizerContext<D, F>,
             staticMembers: Boolean,
-            isExplicit: Boolean
+            isExplicit: Boolean,
+            filter: ((CallableDescriptor) -> Boolean)? = null
     ) {
         for (callableDescriptorCollector in c.callableDescriptorCollectors) {
             c.result.addCandidates {
@@ -191,8 +208,10 @@ public class TaskPrioritizer(
                     else {
                         callableDescriptorCollector.getMembersByName(type, c.name, createLookupLocation(c))
                     }
+                    val filteredMembers = if (filter == null) membersForThisVariant else membersForThisVariant.filter(filter)
+
                     convertWithReceivers(
-                            membersForThisVariant,
+                            filteredMembers,
                             explicitReceiver.value,
                             NO_RECEIVER,
                             members,
