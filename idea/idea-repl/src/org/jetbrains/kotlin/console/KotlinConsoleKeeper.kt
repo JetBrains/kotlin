@@ -77,7 +77,7 @@ public class KotlinConsoleKeeper(val project: Project) {
         paramList.add("-cp")
         paramList.add(replClassPath)
 
-        paramList.add("-Drepl.ideMode=true")
+        paramList.add("-Dkotlin.repl.ideMode=true")
 
         paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 

@@ -52,7 +52,7 @@ public class ReplFromTerminal {
             @NotNull final Disposable disposable,
             @NotNull final CompilerConfiguration compilerConfiguration
     ) {
-        String replIdeMode = System.getProperty("repl.ideMode");
+        String replIdeMode = System.getProperty("kotlin.repl.ideMode");
         ideMode = replIdeMode != null && replIdeMode.equals("true");
 
         // wrapper for `out` is required to escape every input in [ideMode];
