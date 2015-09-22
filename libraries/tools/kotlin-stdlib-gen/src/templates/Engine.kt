@@ -105,6 +105,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val doc = FamilyProperty<String>()
     val platformName = PrimitiveProperty<String>()
     val inline = FamilyProperty<Boolean>()
+    val jvmOnly = FamilyProperty<Boolean>()
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
     val operator = FamilyProperty<Boolean>()
@@ -362,6 +363,10 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             platformName[primitive]
                     ?.replace("<T>", primitive.name)
                     ?.let { platformName -> builder.append("@kotlin.jvm.JvmName(\"${platformName}\")\n")}
+        }
+
+        if (jvmOnly[f] ?: false) {
+            builder.append("@kotlin.jvm.JvmVersion\n")
         }
 
         annotations[f]?.let { builder.append(it).append('\n') }
