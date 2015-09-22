@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
@@ -31,32 +30,30 @@ class CacheFormatVersion(targetDataRoot: File) {
                 JvmAbi.VERSION.major * 1000 +
                 JvmAbi.VERSION.minor
 
-        private val NON_INCREMENTAL_MODE_PSEUDO_VERSION = Int.MAX_VALUE
-
         val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
 
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
-    private fun actualCacheFormatVersion() = if (IncrementalCompilation.ENABLED) CACHE_FORMAT_VERSION else NON_INCREMENTAL_MODE_PSEUDO_VERSION
-
-    public fun isIncompatible(): Boolean {
+    fun isIncompatible(): Boolean {
         if (!file.exists()) return false
 
         val versionNumber = file.readText().toInt()
-        val expectedVersionNumber = actualCacheFormatVersion()
 
-        if (versionNumber != expectedVersionNumber) {
-            KotlinBuilder.LOG.info("Incompatible incremental cache version, expected $expectedVersionNumber, actual $versionNumber")
+        if (versionNumber != CACHE_FORMAT_VERSION) {
+            KotlinBuilder.LOG.info("Incompatible incremental cache version, expected $CACHE_FORMAT_VERSION, actual $versionNumber")
             return true
         }
+
         return false
     }
 
     fun saveIfNeeded() {
-        if (file.parentFile.exists() && !file.exists()) {
-            file.writeText(actualCacheFormatVersion().toString())
+        if (!file.parentFile.exists()) {
+            file.parentFile.mkdirs()
         }
+
+        file.writeText("$CACHE_FORMAT_VERSION")
     }
 
     fun clean() {
