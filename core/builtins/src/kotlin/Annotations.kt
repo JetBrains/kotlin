@@ -82,10 +82,6 @@ public annotation class Suppress(vararg val names: String)
  */
 @Target(FUNCTION)
 @Retention(SOURCE)
-public annotation class tailRecursive
-
-@Target(FUNCTION)
-@Retention(SOURCE)
 public annotation class tailrec
 
 /**

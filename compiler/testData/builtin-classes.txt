@@ -1256,10 +1256,6 @@ public object Unit {
     /*primary*/ public constructor noinline()
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() public final class tailRecursive : kotlin.Annotation {
-    /*primary*/ public constructor tailRecursive()
-}
-
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() public final class tailrec : kotlin.Annotation {
     /*primary*/ public constructor tailrec()
 }
