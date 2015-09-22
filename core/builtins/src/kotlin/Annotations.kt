@@ -28,7 +28,7 @@ import kotlin.annotation.AnnotationTarget.*
  */
 @Target(CLASS)
 @MustBeDocumented
-public annotation class data
+private annotation class data
 
 /**
  * Marks the annotated class, function, property, variable or parameter as deprecated.
@@ -82,7 +82,7 @@ public annotation class Suppress(vararg val names: String)
  */
 @Target(FUNCTION)
 @Retention(SOURCE)
-public annotation class tailrec
+private annotation class tailrec
 
 /**
  * Hides the annotated function, property or constructor from the overload resolution,
@@ -101,4 +101,4 @@ public annotation class HiddenDeclaration
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(SOURCE)
 @MustBeDocumented
-public annotation class external
+private annotation class external

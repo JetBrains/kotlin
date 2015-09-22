@@ -83,7 +83,7 @@ public annotation class Target(vararg val allowedTargets: AnnotationTarget)
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class annotation
+private annotation class annotation
 
 /**
  * This meta-annotation determines whether an annotation is stored in binary output and visible for reflection. By default, both are true.

@@ -23,7 +23,7 @@ package kotlin
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class noinline
+private annotation class noinline
 
 /**
  * Enables inlining of the annotated function and the function literals that it takes as parameters into the
@@ -37,7 +37,7 @@ public annotation class noinline
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class inline
+private annotation class inline
 
 /**
  * Forbids use of non-local control flow statements within lambdas passed as arguments for this parameter.
@@ -45,4 +45,4 @@ public annotation class inline
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class crossinline
+private annotation class crossinline
