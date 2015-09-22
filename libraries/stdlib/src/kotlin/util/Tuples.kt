@@ -29,6 +29,14 @@ public data class Pair<out A, out B>(
 }
 
 /**
+ * Creates a tuple of type [Pair] from this and [that].
+ *
+ * This can be useful for creating [Map] literals with less noise, for example:
+ * @sample test.collections.MapTest.createUsingTo
+ */
+public fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
+
+/**
  * Converts this pair into a list.
  */
 public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
