@@ -34,6 +34,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
@@ -237,5 +238,13 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                     new File(getTestAppPath() + File.separator + "outs" + File.separator + getTestName(true) + ".out"),
                     e.getActual());
         }
+    }
+
+    @Override
+    public Object getData(String dataId) {
+        if (XDebugSession.DATA_KEY.is(dataId)) {
+            return myDebuggerSession == null ? null : myDebuggerSession.getXDebugSession();
+        }
+        return super.getData(dataId);
     }
 }
