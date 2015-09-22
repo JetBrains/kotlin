@@ -16,12 +16,18 @@
 
 package kotlin.jvm
 
-// is used in common generated code in stdlib
+// these are used in common generated code in stdlib
+
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class JvmOverloads
+internal annotation class JvmOverloads
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class JvmName(public val name: String)
+internal annotation class JvmName(public val name: String)
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+internal annotation class JvmMultifileClass
