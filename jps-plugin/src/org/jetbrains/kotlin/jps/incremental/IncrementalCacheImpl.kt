@@ -107,39 +107,40 @@ public class IncrementalCacheImpl(
         private val target: ModuleBuildTarget
 ) : StorageOwner, IncrementalCache {
     companion object {
-        val PROTO_MAP = "proto.tab"
-        val CONSTANTS_MAP = "constants.tab"
-        val INLINE_FUNCTIONS = "inline-functions.tab"
-        val PACKAGE_PARTS = "package-parts.tab"
-        val SOURCE_TO_CLASSES = "source-to-classes.tab"
-        val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
-        val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
-        val INLINED_TO = "inlined-to.tab"
+        val CACHE_EXTENSION = "tab"
+
+        private val PROTO_MAP = "proto"
+        private val CONSTANTS_MAP = "constants"
+        private val INLINE_FUNCTIONS = "inline-functions"
+        private val PACKAGE_PARTS = "package-parts"
+        private val SOURCE_TO_CLASSES = "source-to-classes"
+        private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        private val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions"
+        private val INLINED_TO = "inlined-to"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
+    private val maps = arrayListOf<BasicMap<*, *>>()
 
     private val String.storageFile: File
-        get() = File(baseDir, this)
+        get() = File(baseDir, this + "." + CACHE_EXTENSION)
 
-    private val protoMap = ProtoMap(PROTO_MAP.storageFile)
-    private val constantsMap = ConstantsMap(CONSTANTS_MAP.storageFile)
-    private val inlineFunctionsMap = InlineFunctionsMap(INLINE_FUNCTIONS.storageFile)
-    private val packagePartMap = PackagePartMap(PACKAGE_PARTS.storageFile)
-    private val sourceToClassesMap = SourceToClassesMap(SOURCE_TO_CLASSES.storageFile)
-    private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
-    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
-    private val inlinedTo = InlineFunctionsFilesMap(INLINED_TO.storageFile)
+    private fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
+        maps.add(map)
+        return map
+    }
 
-    private val maps = listOf(protoMap,
-                              constantsMap,
-                              inlineFunctionsMap,
-                              packagePartMap,
-                              sourceToClassesMap,
-                              dirtyOutputClassesMap,
-                              inlinedTo)
+    private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
+    private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
+    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
+    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
+    private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
+    private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
+    // TODO: can be removed?
+    private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
+    private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
