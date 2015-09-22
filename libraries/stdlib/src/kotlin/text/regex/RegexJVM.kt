@@ -211,6 +211,8 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
  *
  * Provides the way to use Regex API on the instances of [Pattern].
  */
+@Deprecated("Use extension toRegex instead in kotlin package.")
+@HiddenDeclaration
 public fun Pattern.toRegex(): Regex = Regex(this)
 
 
