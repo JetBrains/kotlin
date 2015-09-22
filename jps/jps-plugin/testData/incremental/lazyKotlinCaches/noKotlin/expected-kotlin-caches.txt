@@ -1,0 +1,2 @@
+Module 'module' production
+Module 'module' tests

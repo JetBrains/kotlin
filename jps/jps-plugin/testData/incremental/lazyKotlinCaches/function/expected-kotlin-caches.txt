@@ -1,0 +1,5 @@
+Module 'module' production
+    package-parts.tab
+    proto.tab
+    source-to-classes.tab
+Module 'module' tests
