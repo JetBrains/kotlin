@@ -3330,6 +3330,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dataInheritance.kt")
+            public void testDataInheritance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataInheritance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyConstructor.kt")
             public void testEmptyConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/emptyConstructor.kt");

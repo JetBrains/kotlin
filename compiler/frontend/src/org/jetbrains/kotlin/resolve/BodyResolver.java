@@ -440,6 +440,10 @@ public class BodyResolver {
                         trace.report(TRAIT_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
+                    else if (jetClass.hasModifier(JetTokens.DATA_KEYWORD)) {
+                        trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
+                        addSupertype = false;
+                    }
 
                     if (classAppeared) {
                         trace.report(MANY_CLASSES_IN_SUPERTYPE_LIST.on(typeReference));
