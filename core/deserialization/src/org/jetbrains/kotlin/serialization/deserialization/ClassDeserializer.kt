@@ -18,50 +18,52 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 public class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
-    // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
-    public fun deserializeClass(classId: ClassId, classDataProvider: ClassDataProvider? = null): ClassDescriptor? =
-            classes(ClassKey(classId, classDataProvider))
+    // Additional ClassDataWithSource parameter is needed to avoid calling ClassDataFinder#findClassData()
+    // if it is already computed at the call site
+    public fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
+            classes(ClassKey(classId, classDataWithSource))
 
     private fun createClass(key: ClassKey): ClassDescriptor? {
         val classId = key.classId
         components.fictitiousClassDescriptorFactory.createClass(classId)?.let { return it }
-        val classDataProvider = key.classDataProvider
-                                ?: components.classDataFinder.findClassData(classId)
-                                ?: return null
-        val (nameResolver, classProto) = classDataProvider.classData
+        val (classData, sourceElement) = key.classDataWithSource
+                                         ?: components.classDataFinder.findClassData(classId)
+                                         ?: return null
+        val (nameResolver, classProto) = classData
 
-        val outerContext = if (classId.isNestedClass()) {
-            val outerClass = deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor ?: return null
+        val outerContext = if (classId.isNestedClass) {
+            val outerClass = deserializeClass(classId.outerClassId) as? DeserializedClassDescriptor ?: return null
 
             // Find the outer class first and check if he knows anything about the nested class we're looking for
-            if (!outerClass.hasNestedClass(classId.getShortClassName())) return null
+            if (!outerClass.hasNestedClass(classId.shortClassName)) return null
 
             outerClass.c
         }
         else {
-            val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
+            val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
             assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
 
             val fragment = fragments.single()
             if (fragment is DeserializedPackageFragment) {
                 // Similarly, verify that the containing package has information about this class
-                if (!fragment.hasTopLevelClass(classId.getShortClassName())) return null
+                if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
             }
 
             components.createContext(fragment, nameResolver)
         }
 
-        return DeserializedClassDescriptor(outerContext, classProto, nameResolver, classDataProvider.sourceElement)
+        return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)
     }
 
-    private data class ClassKey(val classId: ClassId, classDataProvider: ClassDataProvider?) {
+    private data class ClassKey(val classId: ClassId, classDataWithSource: ClassDataWithSource?) {
         // This property is not declared in the constructor because it shouldn't participate in equals/hashCode
-        val classDataProvider: ClassDataProvider? = classDataProvider
+        val classDataWithSource: ClassDataWithSource? = classDataWithSource
     }
 }

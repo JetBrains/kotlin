@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.ClassData;
+import org.jetbrains.kotlin.serialization.ClassDataWithSource;
 import org.jetbrains.kotlin.serialization.PackageData;
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
@@ -63,8 +63,10 @@ public final class DeserializedDescriptorResolver {
         if (data != null) {
             ClassData classData = JvmProtoBufUtil.readClassDataFrom(data);
             KotlinJvmBinarySourceElement sourceElement = new KotlinJvmBinarySourceElement(kotlinClass);
-            ClassDataProvider classDataProvider = new ClassDataProvider(classData, sourceElement);
-            return components.getClassDeserializer().deserializeClass(kotlinClass.getClassId(), classDataProvider);
+            return components.getClassDeserializer().deserializeClass(
+                    kotlinClass.getClassId(),
+                    new ClassDataWithSource(classData, sourceElement)
+            );
         }
         return null;
     }

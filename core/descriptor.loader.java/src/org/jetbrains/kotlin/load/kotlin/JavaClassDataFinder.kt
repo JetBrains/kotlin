@@ -16,23 +16,22 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 public class JavaClassDataFinder(
         private val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassDataProvider? {
+    override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
         assert(kotlinJvmBinaryClass.getClassId() == classId) {
             "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.getClassId()}"
         }
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, DeserializedDescriptorResolver.KOTLIN_CLASS) ?: return null
         val classData = JvmProtoBufUtil.readClassDataFrom(data)
-        return ClassDataProvider(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
+        return ClassDataWithSource(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import java.io.InputStream
@@ -28,7 +29,7 @@ public open class ResourceLoadingClassDataFinder(
         private val serializedResourcePaths: SerializedResourcePaths,
         private val loadResource: (path: String) -> InputStream?
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassDataProvider? {
+    override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull()
                                       as? DeserializedPackageFragment ?: return null
 
@@ -38,6 +39,6 @@ public open class ResourceLoadingClassDataFinder(
                 packageFragment.nameResolver,
                 ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.extensionRegistry)
         )
-        return ClassDataProvider(classData)
+        return ClassDataWithSource(classData)
     }
 }

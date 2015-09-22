@@ -16,11 +16,17 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
 data class ClassData(
         val nameResolver: NameResolver,
         val classProto: ProtoBuf.Class
+)
+
+data class ClassDataWithSource(
+        val classData: ClassData,
+        val sourceElement: SourceElement = SourceElement.NO_SOURCE
 )
 
 data class PackageData(
