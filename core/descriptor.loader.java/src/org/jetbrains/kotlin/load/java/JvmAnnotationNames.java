@@ -35,6 +35,11 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
 
+    public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
+
+    public static final FqName KOTLIN_DELEGATED_METHOD = new FqName("kotlin.jvm.internal.KotlinDelegatedMethod");
+    public static final String IMPLEMENTATION_CLASS_NAME_FIELD_NAME = "implementationClassName";
+
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
 

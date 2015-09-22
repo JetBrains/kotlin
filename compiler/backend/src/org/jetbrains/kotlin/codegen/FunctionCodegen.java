@@ -27,10 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
-import org.jetbrains.kotlin.codegen.context.DelegatingFacadeContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -227,6 +225,22 @@ public class FunctionCodegen {
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        }
+
+        writePackageFacadeMethodAnnotationsIfNeeded(mv);
+    }
+
+    private void writePackageFacadeMethodAnnotationsIfNeeded(MethodVisitor mv) {
+        if (owner instanceof PackageFacadeContext) {
+            PackageFacadeContext packageFacadeContext = (PackageFacadeContext) owner;
+            Type delegateToClassType = packageFacadeContext.getDelegateToClassType();
+            if (delegateToClassType != null) {
+                String className = delegateToClassType.getClassName();
+                AnnotationVisitor
+                        av = mv.visitAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_DELEGATED_METHOD), true);
+                av.visit(JvmAnnotationNames.IMPLEMENTATION_CLASS_NAME_FIELD_NAME, className);
+                av.visitEnd();
+            }
         }
     }
 

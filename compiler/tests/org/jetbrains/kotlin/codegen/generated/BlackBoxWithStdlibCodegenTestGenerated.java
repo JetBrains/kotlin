@@ -106,6 +106,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("packageFacadeIsDeprecated.kt")
+        public void testPackageFacadeIsDeprecated() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/packageFacadeIsDeprecated.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("packageFacadeMethodsAnnotation.kt")
+        public void testPackageFacadeMethodsAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/packageFacadeMethodsAnnotation.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("parameterWithPrimitiveType.kt")
         public void testParameterWithPrimitiveType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/parameterWithPrimitiveType.kt");

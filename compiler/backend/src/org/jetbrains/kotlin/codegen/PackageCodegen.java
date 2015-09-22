@@ -219,7 +219,7 @@ public class PackageCodegen {
         for (JetFile file : files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             try {
-                ClassBuilder builder = generate(file, generateCallableMemberTasks);
+                ClassBuilder builder = generatePart(file, generateCallableMemberTasks);
                 if (builder != null) {
                     bindings.add(builder.getSerializationBindings());
                 }
@@ -257,7 +257,8 @@ public class PackageCodegen {
         }
 
         bindings.add(v.getSerializationBindings());
-        writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings), tasks.keySet());
+        writeDeprecatedAnnotation();
+        writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
     }
 
     private void generateKotlinPackageReflectionField() {
@@ -269,15 +270,12 @@ public class PackageCodegen {
         FunctionCodegen.endVisit(mv, "package facade static initializer", null);
     }
 
-    private void writeKotlinPackageAnnotationIfNeeded(
-            @NotNull JvmSerializationBindings bindings,
-            @NotNull final Collection<CallableMemberDescriptor> relevantCallables
-    ) {
+    private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
             return;
         }
 
-        // SCRIPT: Do not write annotations for scripts (if any is??)
+        // SCRIPT: Do not write KotlinPackage annotation for scripts (if any is??)
         for (JetFile file : files) {
             if (file.isScript()) return;
         }
@@ -289,7 +287,6 @@ public class PackageCodegen {
         ProtoBuf.Package packageProto = serializer.packageProto(packageFragments, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
-//                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
                 return true;
             }
         }).build();
@@ -306,8 +303,13 @@ public class PackageCodegen {
         av.visitEnd();
     }
 
+    private void writeDeprecatedAnnotation() {
+        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.JAVA_LANG_DEPRECATED), true);
+        av.visitEnd();
+    }
+
     @Nullable
-    private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
+    private ClassBuilder generatePart(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
         Type packagePartType = FileClassesPackage.getFileClassType(state.getFileClassesProvider(), file);
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
