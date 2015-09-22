@@ -10107,12 +10107,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("AllProtectedFromSupertypes.kt")
-            public void testAllProtectedFromSupertypes() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/AllProtectedFromSupertypes.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("CannotInferVisibilityForProperty.kt")
             public void testCannotInferVisibilityForProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForProperty.kt");
@@ -10254,18 +10248,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt4785.kt")
             public void testKt4785() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/kt4785.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt4785classObject.kt")
-            public void testKt4785classObject() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/kt4785classObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt4785delegation.kt")
-            public void testKt4785delegation() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/kt4785delegation.kt");
                 doTest(fileName);
             }
 
@@ -15538,6 +15520,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class PrivateToThis extends AbstractJetDiagnosticsTest {
+                @TestMetadata("Abstract.kt")
+                public void testAbstract() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/Abstract.kt");
+                    doTest(fileName);
+                }
+
                 public void testAllFilesPresentInPrivateToThis() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/variance/privateToThis"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -15557,12 +15545,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("SetVar.kt")
                 public void testSetVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/SetVar.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("Trait.kt")
-                public void testTrait() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/Trait.kt");
                     doTest(fileName);
                 }
 

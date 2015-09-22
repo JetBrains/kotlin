@@ -1,11 +1,11 @@
 package test
 
 interface A {
-    protected val a: String
+    val a: String
 }
 
 interface B {
-    protected val a: String
+    val a: String
 }
 
 open class C {

@@ -20,7 +20,7 @@ open class C {
 }
 
 interface T {
-    protected fun foo() {}
+    fun foo() {}
 }
 
 class D : C(), T {
@@ -28,7 +28,7 @@ class D : C(), T {
 }
 
 class E : C(), T {
-    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 
 class F : C(), T {

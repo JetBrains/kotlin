@@ -1,9 +1,9 @@
 interface T {
-    internal var foo: Long
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>internal<!> var foo: Long
 }
 
 interface U {
-    protected var foo: Long
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>protected<!> var foo: Long
 }
 
 interface V : T, U {

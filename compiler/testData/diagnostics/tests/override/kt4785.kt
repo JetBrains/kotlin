@@ -1,5 +1,5 @@
 interface T {
-    internal fun foo()
+    fun foo()
 }
 
 open class C {

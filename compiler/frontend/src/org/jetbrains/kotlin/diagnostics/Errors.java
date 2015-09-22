@@ -115,6 +115,7 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> REDUNDANT_MODIFIER_FOR_TARGET = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_CONTAINING_DECLARATION = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> DEPRECATED_MODIFIER_CONTAINING_DECLARATION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<JetAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetAnnotationEntry, String, String> WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<JetAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);

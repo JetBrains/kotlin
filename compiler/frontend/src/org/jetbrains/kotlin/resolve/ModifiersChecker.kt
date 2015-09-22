@@ -82,6 +82,12 @@ public object ModifierCheckerCore {
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
+    private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+            PRIVATE_KEYWORD   to EnumSet.of(INTERFACE),
+            INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
+            PROTECTED_KEYWORD to EnumSet.of(INTERFACE)
+    )
+
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()
 
@@ -183,6 +189,11 @@ public object ModifierCheckerCore {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
             is FunctionDescriptor -> listOf(FUNCTION)
             else -> listOf(FILE)
+        }
+        val deprecatedParents = deprecatedParentTargetMap[modifier]
+        if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
+            trace.report(Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
+            return false
         }
         val possibleParents = possibleParentTargetMap[modifier] ?: return true
         if (possibleParents == KotlinTarget.ALL_TARGET_SET) return true
