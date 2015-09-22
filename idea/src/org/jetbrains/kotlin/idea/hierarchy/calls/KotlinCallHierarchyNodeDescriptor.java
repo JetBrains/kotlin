@@ -74,12 +74,13 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
     }
 
     public final PsiElement getTargetElement(){
-        return myElement;
+        return getPsiElement();
     }
 
     @Override
     public final boolean isValid(){
         //noinspection ConstantConditions
+        PsiElement myElement = getPsiElement();
         return myElement != null && myElement.isValid();
     }
 
