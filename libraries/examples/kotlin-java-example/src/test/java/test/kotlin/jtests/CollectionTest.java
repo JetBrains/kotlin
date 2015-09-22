@@ -6,7 +6,7 @@ import kotlin.jvm.functions.Function1;
 import java.util.Collection;
 import java.util.List;
 
-import static kotlin.KotlinPackage.*;
+import static kotlin.CollectionsKt.*;
 
 /**
  * Lets try using the Kotlin standard library from Java code
