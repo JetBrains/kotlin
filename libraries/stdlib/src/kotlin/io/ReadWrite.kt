@@ -31,6 +31,9 @@ public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.for
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
         buffered().use { block(it.lineSequence()) }
 
+/** Creates a new reader for the string. */
+public fun String.reader(): StringReader = StringReader(this)
+
 /**
  * Returns a sequence of corresponding file lines.
  *
@@ -139,6 +142,7 @@ public fun URL.readText(charset: Charset = Charsets.UTF_8): String = readBytes()
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
 
+// TODO: Move to kotlin package, rename to using
 /**
  * Executes the given [block] function on this resource and then closes it down correctly whether an exception
  * is thrown or not.

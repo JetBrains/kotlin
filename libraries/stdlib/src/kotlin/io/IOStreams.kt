@@ -41,6 +41,10 @@ public fun InputStream.iterator(): ByteIterator =
             }
         }
 
+
+/** Creates a new byte input stream for the string. */
+public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
+
 /**
  * Creates a buffered input stream wrapping this stream.
  * @param bufferSize the buffer size to use.
