@@ -3306,18 +3306,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("componentFunctionVisibility.kt")
-            public void testComponentFunctionVisibility() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentFunctionVisibility.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("componentFunctionsAreFinal.kt")
-            public void testComponentFunctionsAreFinal() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentFunctionsAreFinal.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("componentNamedComponent1.kt")
             public void testComponentNamedComponent1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");
@@ -3339,12 +3327,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("copyOfPrivateClass.kt")
             public void testCopyOfPrivateClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/copyOfPrivateClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("dataClassOverrideConflict.kt")
-            public void testDataClassOverrideConflict() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassOverrideConflict.kt");
                 doTest(fileName);
             }
 
@@ -3378,6 +3360,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerDataClass.kt")
+            public void testInnerDataClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/innerDataClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multiDeclaration.kt")
             public void testMultiDeclaration() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/multiDeclaration.kt");
@@ -3405,12 +3393,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("oneValParam.kt")
             public void testOneValParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/oneValParam.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("overrideInvisibleMember.kt")
-            public void testOverrideInvisibleMember() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/overrideInvisibleMember.kt");
                 doTest(fileName);
             }
 

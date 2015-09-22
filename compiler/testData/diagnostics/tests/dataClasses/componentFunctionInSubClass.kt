@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-open data class A(private val x: Int)
+<!DEPRECATED_MODIFIER_PAIR!>open<!> <!DEPRECATED_MODIFIER_PAIR!>data<!> class A(private val x: Int)
 
 class B : A(1) {
     fun component1(): String = ""

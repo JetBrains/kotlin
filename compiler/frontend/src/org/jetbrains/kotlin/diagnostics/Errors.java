@@ -110,6 +110,7 @@ public interface Errors {
     // Modifiers
 
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> INCOMPATIBLE_MODIFIERS = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> DEPRECATED_MODIFIER_PAIR = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> REPEATED_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_TARGET = DiagnosticFactory2.create(ERROR);

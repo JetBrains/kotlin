@@ -34,6 +34,7 @@ public object ModifierCheckerCore {
         REDUNDANT,
         REVERSE_REDUNDANT,
         REPEATED,
+        DEPRECATED,
         INCOMPATIBLE
     }
 
@@ -99,6 +100,9 @@ public object ModifierCheckerCore {
         result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
         // Abstract + open + final + sealed: incompatible
         result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
+        // data + open, data + inner
+        result += deprecationRegister(DATA_KEYWORD, OPEN_KEYWORD)
+        result += deprecationRegister(DATA_KEYWORD, INNER_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)
@@ -120,19 +124,23 @@ public object ModifierCheckerCore {
                      Pair(redundant, sufficient) to Compatibility.REVERSE_REDUNDANT)
     }
 
-    private fun incompatibilityRegister(
-            vararg list: JetModifierKeywordToken
+    private fun compatibilityRegister(
+            compatibility: Compatibility, vararg list: JetModifierKeywordToken
     ): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
         val result = hashMapOf<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility>()
         for (first in list) {
             for (second in list) {
                 if (first != second) {
-                    result[Pair(first, second)] = Compatibility.INCOMPATIBLE
+                    result[Pair(first, second)] = compatibility
                 }
             }
         }
         return result
     }
+
+    private fun incompatibilityRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
+
+    private fun deprecationRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
 
     private fun compatibility(first: JetModifierKeywordToken, second: JetModifierKeywordToken): Compatibility {
         if (first == second) {
@@ -157,6 +165,14 @@ public object ModifierCheckerCore {
             }
             Compatibility.REVERSE_REDUNDANT -> if (incorrectNodes.add(firstNode)) {
                 trace.report(Errors.REDUNDANT_MODIFIER.on(firstNode.psi,  second, first))
+            }
+            Compatibility.DEPRECATED -> {
+                if (incorrectNodes.add(firstNode)) {
+                    trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
+                }
+                if (incorrectNodes.add(secondNode)) {
+                    trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))
+                }
             }
             Compatibility.INCOMPATIBLE -> {
                 if (incorrectNodes.add(firstNode)) {

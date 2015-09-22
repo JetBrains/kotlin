@@ -118,6 +118,7 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presense of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
