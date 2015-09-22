@@ -6,6 +6,6 @@ open class NotAllowed
 
 class Derived: Base(42)
 
-<!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class Nasty(x: Int, val y: Int): <!DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES!>Base<!>(x)
+<!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class Nasty(val z: Int, val y: Int): <!DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES!>Base<!>(z)
 
 data class Complex(val y: Int): Allowed, <!DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES!>NotAllowed<!>()

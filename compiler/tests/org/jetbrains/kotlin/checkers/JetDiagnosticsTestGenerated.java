@@ -3294,12 +3294,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClasses"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
-            @TestMetadata("bothParamsAreNotProperties.kt")
-            public void testBothParamsAreNotProperties() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/bothParamsAreNotProperties.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("componentFunctionInSubClass.kt")
             public void testComponentFunctionInSubClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentFunctionInSubClass.kt");
@@ -3330,6 +3324,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dataClassVarargParam.kt")
+            public void testDataClassVarargParam() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassVarargParam.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dataInheritance.kt")
             public void testDataInheritance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataInheritance.kt");
@@ -3339,18 +3339,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("emptyConstructor.kt")
             public void testEmptyConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/emptyConstructor.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("firstParamIsVal.kt")
-            public void testFirstParamIsVal() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/firstParamIsVal.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("firstParamIsVar.kt")
-            public void testFirstParamIsVar() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/firstParamIsVar.kt");
                 doTest(fileName);
             }
 
@@ -3402,12 +3390,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("paramNameSameToField.kt")
-            public void testParamNameSameToField() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/paramNameSameToField.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("repeatedProperties.kt")
             public void testRepeatedProperties() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/repeatedProperties.kt");
@@ -3417,18 +3399,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("sealedDataClass.kt")
             public void testSealedDataClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/sealedDataClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("secondParamIsVal.kt")
-            public void testSecondParamIsVal() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/secondParamIsVal.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("secondParamIsVar.kt")
-            public void testSecondParamIsVar() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/secondParamIsVar.kt");
                 doTest(fileName);
             }
 

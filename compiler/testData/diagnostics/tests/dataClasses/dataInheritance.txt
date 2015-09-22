@@ -37,12 +37,14 @@ public final class Derived : Base {
 }
 
 @kotlin.data() public final class Nasty : Base {
-    public constructor Nasty(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    public constructor Nasty(/*0*/ z: kotlin.Int, /*1*/ y: kotlin.Int)
     public final override /*1*/ /*fake_override*/ val x: kotlin.Int
     public final val y: kotlin.Int
+    public final val z: kotlin.Int
     public final override /*1*/ /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun component2(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun copy(/*0*/ x: kotlin.Int = ...): Base
-    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int = ...): Nasty
+    public final /*synthesized*/ fun copy(/*0*/ z: kotlin.Int = ..., /*1*/ y: kotlin.Int = ...): Nasty
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -36,6 +36,19 @@ public class DataClassAnnotationChecker : DeclarationChecker {
             if (descriptor.getUnsubstitutedPrimaryConstructor() == null && descriptor.getConstructors().isNotEmpty()) {
                 diagnosticHolder.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(declaration.getNameIdentifier()));
             }
+            val primaryConstructor = declaration.getPrimaryConstructor()
+            val parameters = primaryConstructor?.valueParameters ?: emptyList()
+            if (parameters.isEmpty()) {
+                diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(declaration.nameIdentifier!!))
+            }
+            for (parameter in parameters) {
+                if (parameter.isVarArg) {
+                    diagnosticHolder.report(Errors.DATA_CLASS_VARARG_PARAMETER.on(parameter))
+                }
+                if (!parameter.hasValOrVar()) {
+                    diagnosticHolder.report(Errors.DATA_CLASS_NOT_PROPERTY_PARAMETER.on(parameter))
+                }
+            }
         }
     }
 }
