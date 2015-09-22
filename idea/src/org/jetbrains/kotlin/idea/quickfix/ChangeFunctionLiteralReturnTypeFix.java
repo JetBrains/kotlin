@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFunctionLiteralExpression> {
@@ -151,7 +152,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetFunctionLiteralExpression functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
                 if (functionLiteralExpression == null) return null;
-                return new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, KotlinBuiltIns.getInstance().getUnitType());
+                return new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, getPlatform(functionLiteralExpression).getBuiltIns().getUnitType());
             }
         };
     }

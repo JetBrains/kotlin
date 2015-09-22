@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -52,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
+import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -244,7 +244,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
-                return function == null ? null : new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
+                return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getUnitType());
             }
         };
     }

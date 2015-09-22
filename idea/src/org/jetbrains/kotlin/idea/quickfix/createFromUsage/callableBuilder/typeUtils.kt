@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.refactoring.psi.SearchUtils
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -259,7 +259,7 @@ fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
 }
 
 fun JetCallExpression.getParameterInfos(): List<ParameterInfo> {
-    val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+    val anyType = this.platform.builtIns.nullableAnyType
     return valueArguments.map {
         ParameterInfo(
                 it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
