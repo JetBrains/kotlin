@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
+
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {
     // Checks for case when method returning Super[] is overridden with method returning Sub[]
@@ -47,10 +49,10 @@ class PropagationHeuristics {
                 .filter(typesFromSuper, new Condition<SignaturesPropagationData.TypeAndVariance>() {
                     @Override
                     public boolean value(SignaturesPropagationData.TypeAndVariance typeAndVariance) {
-                        return typeAndVariance.type.getConstructor().getDeclarationDescriptor() == KotlinBuiltIns.getInstance().getArray();
+                        return isArray(typeAndVariance.type);
                     }
                 });
-        if (KotlinBuiltIns.getInstance().getArray() == type.getConstructor().getDeclarationDescriptor() && !arrayTypesFromSuper.isEmpty()) {
+        if (isArray(type) && !arrayTypesFromSuper.isEmpty()) {
             assert type.getArguments().size() == 1;
             if (type.getArguments().get(0).getProjectionKind() == Variance.INVARIANT) {
                 for (SignaturesPropagationData.TypeAndVariance typeAndVariance : arrayTypesFromSuper) {

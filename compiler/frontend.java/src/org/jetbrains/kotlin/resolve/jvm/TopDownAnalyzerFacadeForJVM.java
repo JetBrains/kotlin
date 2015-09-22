@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -71,8 +72,8 @@ public enum TopDownAnalyzerFacadeForJVM {
         list.add(new ImportPath("kotlin.jvm.*"));
         list.add(new ImportPath("kotlin.io.*"));
 
-        addAllClassifiersToImportPathList(list, KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
-        addAllClassifiersToImportPathList(list, KotlinBuiltIns.getInstance().getAnnotationPackageScope());
+        addAllClassifiersToImportPathList(list, JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
+        addAllClassifiersToImportPathList(list, JvmPlatform.INSTANCE$.getBuiltIns().getAnnotationPackageScope());
 
         return list;
     }
@@ -193,7 +194,7 @@ public enum TopDownAnalyzerFacadeForJVM {
         MutableModuleContext context = ContextForNewModule(
                 project, Name.special("<" + moduleName + ">"), JVM_MODULE_PARAMETERS
         );
-        context.setDependencies(context.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
+        context.setDependencies(context.getModule(), JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());
         return context;
     }
 }
