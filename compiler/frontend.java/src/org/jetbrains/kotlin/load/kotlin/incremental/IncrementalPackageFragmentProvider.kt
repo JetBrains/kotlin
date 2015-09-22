@@ -135,12 +135,12 @@ public class IncrementalPackageFragmentProvider(
         override fun getMemberScope(): JetScope = memberScope()
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
-                this@IncrementalPackageFragment, packageData.getPackageProto(), packageData.getNameResolver(), deserializationComponents,
+                this@IncrementalPackageFragment, packageData.packageProto, packageData.nameResolver, deserializationComponents,
                 { listOf() }
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 fun getPackagePart(callable: ProtoBuf.Callable) =
-                        callable.getExtension(JvmProtoBuf.implClassName)?.let { packageData.getNameResolver().getName(it) }
+                        callable.getExtension(JvmProtoBuf.implClassName)?.let { packageData.nameResolver.getName(it) }
 
                 fun shouldSkipPackagePart(name: Name) =
                         JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).getInternalName() in obsoletePackageParts

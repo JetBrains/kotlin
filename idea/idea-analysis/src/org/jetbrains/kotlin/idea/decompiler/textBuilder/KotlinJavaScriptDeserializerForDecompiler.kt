@@ -31,7 +31,7 @@ import java.io.ByteArrayInputStream
 
 public class KotlinJavaScriptDeserializerForDecompiler(
         classFile: VirtualFile
-) : DeserializerForDecompilerBase(classFile.getParent()!!, JsMetaFileUtils.getPackageFqName(classFile)) {
+) : DeserializerForDecompilerBase(classFile.parent!!, JsMetaFileUtils.getPackageFqName(classFile)) {
 
     private val nameResolver = run {
         val moduleDirectory = JsMetaFileUtils.getModuleDirectory(packageDirectory)
@@ -65,13 +65,10 @@ public class KotlinJavaScriptDeserializerForDecompiler(
         }
 
         val content = file.contentsToByteArray(false)
-        val packageData = content.toPackageData(nameResolver)
+        val (nameResolver, packageProto) = content.toPackageData(nameResolver)
 
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName),
-                packageData.getPackageProto(),
-                packageData.getNameResolver(),
-                deserializationComponents
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }
         return membersScope.getDescriptors()
     }

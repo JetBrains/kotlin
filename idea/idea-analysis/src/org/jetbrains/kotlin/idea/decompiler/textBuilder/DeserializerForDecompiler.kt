@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val packageFqName = kotlinClass!!.getClassId().getPackageFqName()
-    return DeserializerForDecompiler(classFile.getParent()!!, packageFqName)
+    val packageFqName = kotlinClass!!.classId.packageFqName
+    return DeserializerForDecompiler(classFile.parent!!, packageFqName)
 }
 
 public class DeserializerForDecompiler(
@@ -62,22 +62,19 @@ public class DeserializerForDecompiler(
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
         val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
-        val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
+        val annotationData = binaryClassForPackageClass?.classHeader?.annotationData
         if (annotationData == null) {
-            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.getClassId()}")
+            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.classId}")
             return emptyList()
         }
-        val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName),
-                packageData.getPackageProto(),
-                packageData.getNameResolver(),
-                deserializationComponents
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }
         return membersScope.getDescriptors()
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
+        private val LOG = Logger.getInstance(DeserializerForDecompiler::class.java)
     }
 }

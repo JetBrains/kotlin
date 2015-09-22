@@ -39,7 +39,7 @@ public open class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-        val file = content.getFile()
+        val file = content.file
 
         if (isKotlinJavaScriptInternalCompiledFile(file)) return null
 
@@ -55,33 +55,32 @@ public open class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         val moduleDirectory = JsMetaFileUtils.getModuleDirectory(file)
         val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(packageFqName)
         val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
-        assert(stringsFile != null, "strings file not found: $stringsFileName")
+        assert(stringsFile != null) { "strings file not found: $stringsFileName" }
 
         val nameResolver = NameResolver.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
         val components = createStubBuilderComponents(file, packageFqName, nameResolver)
 
         if (isPackageHeader) {
             val packageData = content.toPackageData(nameResolver)
-            val context = components.createContext(packageData.getNameResolver(), packageFqName)
-            return createPackageFacadeStub(packageData.getPackageProto(), packageFqName, context)
+            val context = components.createContext(packageData.nameResolver, packageFqName)
+            return createPackageFacadeStub(packageData.packageProto, packageFqName, context)
         }
         else {
-            val classData =  content.toClassData(nameResolver)
-            val context = components.createContext(classData.getNameResolver(), packageFqName)
+            val classData = content.toClassData(nameResolver)
+            val context = components.createContext(classData.nameResolver, packageFqName)
             val classId = JsMetaFileUtils.getClassId(file)
-            return createTopLevelClassStub(classId, classData.getClassProto(), context)
+            return createTopLevelClassStub(classId, classData.classProto, context)
         }
     }
 
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, nameResolver: NameResolver): ClsStubBuilderComponents {
-        val metaFileFinder = DirectoryBasedKotlinJavaScriptMetaFileFinder(file.getParent()!!, packageFqName, nameResolver)
+        val metaFileFinder = DirectoryBasedKotlinJavaScriptMetaFileFinder(file.parent!!, packageFqName, nameResolver)
         val classDataFinder = DirectoryBasedKotlinJavaScriptDataFinder(metaFileFinder, LOG)
         val annotationLoader = AnnotationLoaderForKotlinJavaScriptStubBuilder()
         return ClsStubBuilderComponents(classDataFinder, annotationLoader)
     }
 
     companion object {
-        val LOG = Logger.getInstance(javaClass<KotlinJavaScriptStubBuilder>())
+        val LOG = Logger.getInstance(KotlinJavaScriptStubBuilder::class.java)
     }
 }
-

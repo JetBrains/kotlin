@@ -34,7 +34,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
         val classDataProvider = key.classDataProvider
                                 ?: components.classDataFinder.findClassData(classId)
                                 ?: return null
-        val classData = classDataProvider.classData
+        val (nameResolver, classProto) = classDataProvider.classData
 
         val outerContext = if (classId.isNestedClass()) {
             val outerClass = deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor ?: return null
@@ -54,11 +54,10 @@ public class ClassDeserializer(private val components: DeserializationComponents
                 if (!fragment.hasTopLevelClass(classId.getShortClassName())) return null
             }
 
-            components.createContext(fragment, classData.getNameResolver())
+            components.createContext(fragment, nameResolver)
         }
 
-        return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver(),
-                                           classDataProvider.sourceElement)
+        return DeserializedClassDescriptor(outerContext, classProto, nameResolver, classDataProvider.sourceElement)
     }
 
     private data class ClassKey(val classId: ClassId, classDataProvider: ClassDataProvider?) {

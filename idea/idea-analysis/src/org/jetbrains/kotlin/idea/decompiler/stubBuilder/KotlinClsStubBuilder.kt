@@ -24,7 +24,6 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
-import org.jetbrains.kotlin.idea.decompiler.readMultifileClassPartHeaders
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
@@ -73,20 +72,20 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         }
         return when {
             header.isCompatiblePackageFacadeKind() -> {
-                val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
-                val context = components.createContext(packageData.getNameResolver(), packageFqName)
-                createPackageFacadeStub(packageData.getPackageProto(), packageFqName, context)
+                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+                val context = components.createContext(nameResolver, packageFqName)
+                createPackageFacadeStub(packageProto, packageFqName, context)
             }
             header.isCompatibleClassKind() -> {
                 if (header.classKind != JvmAnnotationNames.KotlinClass.Kind.CLASS) return null
-                val classData = JvmProtoBufUtil.readClassDataFrom(annotationData)
-                val context = components.createContext(classData.getNameResolver(), packageFqName)
-                createTopLevelClassStub(classId, classData.getClassProto(), context)
+                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData)
+                val context = components.createContext(nameResolver, packageFqName)
+                createTopLevelClassStub(classId, classProto, context)
             }
             header.isCompatibleFileFacadeKind() -> {
-                val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
-                val context = components.createContext(packageData.getNameResolver(), packageFqName)
-                createFileFacadeStub(packageData.getPackageProto(), classId.asSingleFqName(), context)
+                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+                val context = components.createContext(nameResolver, packageFqName)
+                createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }
