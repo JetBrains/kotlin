@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.utils.Interner;
 
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 

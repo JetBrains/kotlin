@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.utils;
 
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
@@ -61,7 +61,7 @@ public final class Interner<T> {
 
     @NotNull
     public List<T> getAllInternedObjects() {
-        return KotlinPackage.toSortedListBy(interned.keySet(), new Function1<T, Integer>() {
+        return KotlinPackage.sortedBy(interned.keySet(), new Function1<T, Integer>() {
             @Override
             public Integer invoke(T key) {
                 return interned.get(key);

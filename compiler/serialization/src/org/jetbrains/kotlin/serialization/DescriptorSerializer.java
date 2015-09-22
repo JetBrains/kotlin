@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.utils.Interner;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.ByteArrayOutputStream;
