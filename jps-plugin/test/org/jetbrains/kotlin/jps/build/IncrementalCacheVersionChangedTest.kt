@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
-import java.io.File
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
 import kotlin.test.assertTrue
-import org.jetbrains.kotlin.jps.incremental.CacheFormatVersion
 
 public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     fun testCacheVersionChanged() {
@@ -36,16 +33,13 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(all
     }
 
     override fun performAdditionalModifications() {
-        val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)
+        val targets = projectDescriptor.allModuleTargets
+        val paths = projectDescriptor.dataManager.dataPaths
 
-
-        val moduleNames = if (getTestName(false) == "CacheVersionChangedMultiModule") listOf("module1", "module2") else listOf("module")
-
-        for (moduleName in moduleNames) {
-            val relativePath = "$moduleName/${CacheFormatVersion.FORMAT_VERSION_FILE_PATH}"
-            val cacheVersionFile = File(storageForTargetType, relativePath)
-
-            assertTrue(cacheVersionFile.exists())
+        for (target in targets) {
+            val cacheVersion = paths.getKotlinCacheVersion(target)
+            val cacheVersionFile = cacheVersion.formatVersionFile
+            assertTrue(cacheVersionFile.exists(), "Cache version file does not exists: $cacheVersionFile")
             cacheVersionFile.writeText("777")
         }
     }

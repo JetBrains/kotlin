@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
@@ -30,7 +31,7 @@ class CacheFormatVersion(targetDataRoot: File) {
                 JvmAbi.VERSION.major * 1000 +
                 JvmAbi.VERSION.minor
 
-        val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
+        private val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
 
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
@@ -59,4 +60,8 @@ class CacheFormatVersion(targetDataRoot: File) {
     fun clean() {
         file.delete()
     }
+
+    @TestOnly
+    val formatVersionFile: File
+        get() = file
 }
