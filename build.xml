@@ -766,10 +766,9 @@
     </target>
 
     <target name="stdlib">
-        <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/jvm6" profile="JVM6" />
         <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-package-facades">
             <src>
-                <include name="${intermediate-sources}/stdlib/jvm6"/>
+                <include name="libraries/stdlib/src"/>
             </src>
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
