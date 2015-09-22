@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.calls.checkers.*
@@ -32,6 +33,7 @@ public abstract class TargetPlatform(
     }
 
     public abstract val platformConfigurator: PlatformConfigurator
+    public val builtIns: KotlinBuiltIns = KotlinBuiltIns.getInstance()
 
     public object Default : TargetPlatform("Default") {
         override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf())
