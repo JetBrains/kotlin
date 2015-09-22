@@ -21,6 +21,7 @@
       <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
       <element id="module-output" name="kotlinr" />
       <element id="module-output" name="rmi-interface" />
+      <element id="module-output" name="deserialization" />
     </root>
   </artifact>
 </component>
