@@ -40,6 +40,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
@@ -51,6 +52,8 @@ import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.completion.doNotComplete
+import org.jetbrains.kotlin.psi.JetFile
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
@@ -81,6 +84,8 @@ public class KotlinConsoleRunner(
                 .build(project, JetLanguage.INSTANCE)
 
         consoleView.prompt = null
+
+        disableCompletion(consoleView)
 
         val consoleEditor = consoleView.consoleEditor
 
@@ -146,6 +151,12 @@ public class KotlinConsoleRunner(
         placeholderAttrs.foregroundColor = ReplColors.PLACEHOLDER_COLOR
         placeholderAttrs.fontType = Font.ITALIC
         editor.setPlaceholderAttributes(placeholderAttrs)
+    }
+
+    private fun disableCompletion(consoleView: LanguageConsoleView) {
+        val consoleFile = consoleView.virtualFile
+        val jetFile = PsiManager.getInstance(project).findFile(consoleFile) as? JetFile ?: return
+        jetFile.doNotComplete = true
     }
 
     fun setupGutters() {
