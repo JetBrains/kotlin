@@ -41,18 +41,6 @@ public val <T: Any> T.javaClass : Class<T>
 @Deprecated("Use the class reference and .java extension property instead: MyClass::class.java", ReplaceWith("T::class.java"))
 public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
-/**
- * Executes the given function [block] while holding the monitor of the given object [lock].
- */
-public inline fun <R> synchronized(lock: Any, block: () -> R): R {
-    monitorEnter(lock)
-    try {
-        return block()
-    }
-    finally {
-        monitorExit(lock)
-    }
-}
 
 /**
  * Returns the annotation type of this annotation.
