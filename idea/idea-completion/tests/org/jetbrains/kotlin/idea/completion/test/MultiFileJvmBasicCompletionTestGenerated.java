@@ -293,6 +293,24 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("PropertyKeysEmptyString")
+    public void testPropertyKeysEmptyString() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysEmptyString/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropertyKeysNoPrefix")
+    public void testPropertyKeysNoPrefix() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysNoPrefix/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropertyKeysWithPrefix")
+    public void testPropertyKeysWithPrefix() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysWithPrefix/");
+        doTest(fileName);
+    }
+
     @TestMetadata("SyntheticExtensionForGenericClass")
     public void testSyntheticExtensionForGenericClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/SyntheticExtensionForGenericClass/");

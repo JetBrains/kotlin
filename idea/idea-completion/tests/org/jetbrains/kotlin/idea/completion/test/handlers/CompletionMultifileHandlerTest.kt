@@ -77,9 +77,18 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest('!')
     }
 
-    fun doTest(completionChar: Char = '\n') {
+    fun testPropertyKeysWithPrefixEnter() {
+        doTest('\n', "TestBundle.properties")
+    }
+
+    fun testPropertyKeysWithPrefixTab() {
+        doTest('\t', "TestBundle.properties")
+    }
+
+    fun doTest(completionChar: Char = '\n', vararg extraFileNames: String) {
         val fileName = getTestName(false)
 
+        configureByFiles(null, *extraFileNames)
         configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt")
         complete(2)
         if (myItems != null) {

@@ -79,6 +79,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             isInUnclosedSuperQualifier(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">"
 
+            isInSimpleStringTemplate(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+
             else -> specialLambdaSignatureDummyIdentifier(tokenBefore)
                     ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
@@ -241,6 +243,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
             result.stopHere()
             return
         }
+
+        if (PropertyKeyCompletion.perform(parameters, result)) return
 
         try {
             result.restartCompletionWhenNothingMatches()
@@ -431,5 +435,9 @@ public class KotlinCompletionContributor : CompletionContributor() {
         if (ltToken.node.elementType != JetTokens.LT) return false
         val superToken = ltToken.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
         return superToken?.node?.elementType == JetTokens.SUPER_KEYWORD
+    }
+
+    private fun isInSimpleStringTemplate(tokenBefore: PsiElement?): Boolean {
+        return tokenBefore?.parents?.firstIsInstanceOrNull<JetStringTemplateExpression>()?.isPlain() ?: false
     }
 }
