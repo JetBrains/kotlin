@@ -190,15 +190,15 @@ internal object RuntimeTypeMapper {
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
-        if (klass.isArray()) {
-            klass.getComponentType().primitiveType?.let {
-                return KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(it).classId
+        if (klass.isArray) {
+            klass.componentType.primitiveType?.let {
+                return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.arrayTypeName)
             }
             return ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.array.toSafe())
         }
 
         klass.primitiveType?.let {
-            return KotlinBuiltIns.getInstance().getPrimitiveClassDescriptor(it).classId
+            return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)
         }
 
         val classId = klass.classId
