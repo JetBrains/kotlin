@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.analyze;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.frontend.js.di.DiPackage;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -83,7 +83,7 @@ public final class TopDownAnalyzerFacadeForJS {
         List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
         allDependencies.add(module);
         allDependencies.addAll(config.getModuleDescriptors());
-        allDependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        allDependencies.add(JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());
         return allDependencies;
     }
 
