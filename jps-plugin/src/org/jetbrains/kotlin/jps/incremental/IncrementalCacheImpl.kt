@@ -56,6 +56,9 @@ val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
 internal val CACHE_DIRECTORY_NAME = "kotlin"
 
+@TestOnly
+public fun getCacheDirectoryName(): String =
+        CACHE_DIRECTORY_NAME
 
 public class IncrementalCacheImpl(
         targetDataRoot: File,

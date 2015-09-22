@@ -98,6 +98,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
+import org.jetbrains.kotlin.jps.build.AbstractIncrementalLazyCachesTest
 import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
@@ -834,6 +835,10 @@ fun main(args: Array<String>) {
         }
         testClass(javaClass<AbstractLookupTrackerTest>()) {
             model("incremental/lookupTracker", extension = null, excludeParentDirs = true)
+        }
+
+        testClass(AbstractIncrementalLazyCachesTest::class.java) {
+            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
         }
     }
 
