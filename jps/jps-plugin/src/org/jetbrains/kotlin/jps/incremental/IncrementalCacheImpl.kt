@@ -731,9 +731,6 @@ private object PathCollectionExternalizer : DataExternalizer<Collection<String>>
     }
 }
 
-private val File.normalizedPath: String
-    get() = FileUtil.toSystemIndependentName(canonicalPath)
-
 @TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
         StringBuilder {
