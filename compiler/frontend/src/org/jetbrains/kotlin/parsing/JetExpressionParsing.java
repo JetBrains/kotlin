@@ -1044,7 +1044,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * functionLiteral  // one can use "it" as a parameter name
      *   : "{" expressions "}"
      *   : "{" (modifiers SimpleName){","} "->" statements "}"
-     *   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "->" expressions "}"
      *   ;
      */
     private void parseFunctionLiteral() {
@@ -1069,25 +1068,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ARROW
             paramsFound = true;
         }
-        else if (at(LPAR)) {
-            // Look for ARROW after matching RPAR
-            //   {(a, b) -> ...}
-
-            {
-                PsiBuilder.Marker rollbackMarker = mark();
-                boolean preferParamsToExpressions = parseFunctionLiteralParametersAndType();
-
-                paramsFound = preferParamsToExpressions ?
-                              rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
-                              rollbackOrDropAt(rollbackMarker, ARROW);
-            }
-
-            if (!paramsFound) {
-                // If not found, try a typeRef DOT and then LPAR .. RPAR ARROW
-                //   {((A) -> B).(x) -> ... }
-                paramsFound = parseFunctionTypeDotParametersAndType();
-            }
-        }
         else {
             if (at(IDENTIFIER) || at(COLON)) {
                 // Try to parse a simple name list followed by an ARROW
@@ -1100,11 +1080,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 paramsFound = preferParamsToExpressions ?
                               rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
                               rollbackOrDropAt(rollbackMarker, ARROW);
-            }
-            if (!paramsFound && atSet(JetParsing.TYPE_REF_FIRST)) {
-                // Try to parse a type DOT valueParameterList ARROW
-                //   {A.(b) -> ...}
-                paramsFound = parseFunctionTypeDotParametersAndType();
             }
         }
 
@@ -1198,110 +1173,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         parameterList.done(VALUE_PARAMETER_LIST);
-    }
-
-    private boolean parseFunctionTypeDotParametersAndType() {
-        PsiBuilder.Marker rollbackMarker = mark();
-
-        // True when it's confirmed that body of literal can't be simple expressions and we prefer to parse
-        // it to function params if possible.
-        boolean preferParamsToExpressions = false;
-
-        // Last dot before ARROW and RPAR, but also stop at top-level keywords and '{', '}'
-        int lastDot = matchTokenStreamPredicate(new LastBefore(
-                new At(DOT),
-                new AtSet(TokenSet.orSet(
-                        TokenSet.create(ARROW, RPAR),
-                        TokenSet.orSet(
-                                TokenSet.create(LBRACE, RBRACE),
-                                TokenSet.andNot(
-                                        KEYWORDS,
-                                        TokenSet.create(CAPITALIZED_THIS_KEYWORD)
-                                )
-                        )
-                ))
-        ));
-
-        if (lastDot >= 0) {
-            createTruncatedBuilder(lastDot).parseTypeRef();
-            if (at(DOT)) {
-                advance(); // DOT
-                preferParamsToExpressions = parseFunctionLiteralParametersAndType();
-            }
-        }
-
-        return preferParamsToExpressions ?
-               rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
-               rollbackOrDropAt(rollbackMarker, ARROW);
-    }
-
-    private boolean parseFunctionLiteralParametersAndType() {
-        boolean hasCommaInParametersList = parseFunctionLiteralParameterList();
-        parseOptionalFunctionLiteralType();
-        return hasCommaInParametersList;
-    }
-
-    /*
-     * (":" type)?
-     */
-    private void parseOptionalFunctionLiteralType() {
-        if (at(COLON)) {
-            advance(); // COLON
-            if (at(ARROW)) {
-                error("Expecting a type");
-            }
-            else {
-                myJetParsing.parseTypeRef();
-            }
-        }
-    }
-
-    /**
-     * "(" (modifiers SimpleName (":" type)?){","} ")"
-     *
-     * @return true if at least one comma was found
-     */
-    private boolean parseFunctionLiteralParameterList() {
-        PsiBuilder.Marker list = mark();
-        expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(ARROW, COLON));
-
-        boolean hasComma = false;
-
-        myBuilder.disableNewlines();
-
-        if (!at(RPAR)) {
-            while (true) {
-                if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
-
-                PsiBuilder.Marker parameter = mark();
-                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, ARROW, RBRACE, LBRACE)));
-                createTruncatedBuilder(parameterNamePos).parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
-
-                expect(IDENTIFIER, "Expecting parameter declaration");
-
-                if (at(COLON)) {
-                    advance(); // COLON
-                    myJetParsing.parseTypeRef();
-                }
-                parameter.done(VALUE_PARAMETER);
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-
-                hasComma = true;
-
-                if (at(RPAR)) {
-                    error("Expecting a parameter declaration");
-                    break;
-                }
-            }
-        }
-
-        myBuilder.restoreNewlinesState();
-
-        expect(RPAR, "Expecting ')'", TokenSet.create(ARROW, COLON));
-        list.done(VALUE_PARAMETER_LIST);
-
-        return hasComma;
     }
 
     /*

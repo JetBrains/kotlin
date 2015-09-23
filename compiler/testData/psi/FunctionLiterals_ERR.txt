@@ -30,187 +30,193 @@ JetFile: FunctionLiterals_ERR.kt
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiErrorElement:Expecting ')'
-              <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
           BLOCK
-            REFERENCE_EXPRESSION
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                PsiErrorElement:Type expected
-                  <empty list>
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
           BLOCK
-            REFERENCE_EXPRESSION
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              BINARY_WITH_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    <empty list>
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
+          BLOCK
+            BINARY_EXPRESSION
+              BINARY_WITH_TYPE
+                PARENTHESIZED
+                  PsiElement(LPAR)('(')
+                  BINARY_WITH_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(COLON)(':')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('a')
+              PsiErrorElement:Expecting an element
+                <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BLOCK
+            BINARY_WITH_TYPE
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
-            PsiElement(RPAR)(')')
+                    PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiErrorElement:Expecting a type
-            <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          BLOCK
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          BLOCK
-            <empty list>
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiErrorElement:Expecting a parameter declaration
-              <empty list>
-            PsiWhiteSpace(' ')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
           BLOCK
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting a parameter declaration
-              PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('B')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          BLOCK
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting a parameter declaration
-              PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiErrorElement:Expecting parameter declaration
-                <empty list>
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('a')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
           BLOCK
-            REFERENCE_EXPRESSION
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              BINARY_WITH_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('A')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('B')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BLOCK
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              BINARY_WITH_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('A')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('T')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
@@ -401,99 +407,91 @@ JetFile: FunctionLiterals_ERR.kt
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiErrorElement:Expecting a parameter list in parentheses (...)
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiErrorElement:Expecting parameter declaration
-                <empty list>
-              PsiElement(COLON)(':')
+          BLOCK
+            BINARY_WITH_TYPE
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('b')
-            PsiErrorElement:Expecting ')'
-              <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          BLOCK
-            REFERENCE_EXPRESSION
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-          PsiErrorElement:An -> is expected
-            <empty list>
-          PsiWhiteSpace(' ')
           BLOCK
-            <empty list>
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            USER_TYPE
+          BLOCK
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
+              PsiElement(DOT)('.')
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiErrorElement:Expecting ')'
+                  <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-          PsiErrorElement:An -> is expected
-            <empty list>
+              PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          BLOCK
-            <empty list>
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Int')
-            PsiElement(COMMA)(',')
-            PsiErrorElement:Expecting a parameter declaration
-              <empty list>
-            PsiWhiteSpace(' ')
-            PsiElement(RPAR)(')')
-          PsiErrorElement:An -> is expected
-            <empty list>
           BLOCK
-            <empty list>
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              BINARY_WITH_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(RPAR)(')')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FUNCTION_LITERAL_EXPRESSION
