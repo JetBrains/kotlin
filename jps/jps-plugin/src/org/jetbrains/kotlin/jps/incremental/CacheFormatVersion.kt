@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
@@ -37,6 +38,7 @@ class CacheFormatVersion(targetDataRoot: File) {
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
     fun isIncompatible(): Boolean {
+        assert(IncrementalCompilation.ENABLED) { "Incremental compilation is not enabled" }
         if (!file.exists()) return false
 
         val versionNumber = file.readText().toInt()

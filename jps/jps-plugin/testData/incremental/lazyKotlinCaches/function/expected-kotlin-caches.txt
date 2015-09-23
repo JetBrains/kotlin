@@ -1,5 +1,7 @@
 Module 'module' production
+    format-version.txt
     package-parts.tab
     proto.tab
     source-to-classes.tab
 Module 'module' tests
+    format-version.txt
