@@ -52,6 +52,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
+        _processings.add(AccessorBodyToExpression())
 
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
@@ -190,6 +191,16 @@ object J2KPostProcessingRegistrar {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
                         .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
+        }
+    }
+
+    private class AccessorBodyToExpression : J2kPostProcessing {
+        private val intention = ConvertToExpressionBodyIntention()
+
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetPropertyAccessor) return null
+            if (!intention.isApplicableTo(element)) return null
+            return { intention.applyTo(element, true) }
         }
     }
 }

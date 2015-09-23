@@ -5,9 +5,7 @@ internal class Library {
     }
 
     val string: String?
-        get() {
-            return ""
-        }
+        get() = ""
 }
 
 internal class User {

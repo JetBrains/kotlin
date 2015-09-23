@@ -22,28 +22,20 @@ internal interface I1 : I {
 
 internal open class B {
     open val fromB1: String
-        get() {
-            return ""
-        }
+        get() = ""
 
     open var fromB2: String
-        get() {
-            return ""
-        }
+        get() = ""
         set(value: String) {
         }
 
     open var fromB3: String
-        get() {
-            return ""
-        }
+        get() = ""
         set(value: String) {
         }
 
     open var fromB4: String
-        get() {
-            return ""
-        }
+        get() = ""
         set(value: String) {
         }
 
@@ -55,29 +47,21 @@ internal abstract class C(override val something1: Int) : B(), I {
     private var mySomething6: Int = 0
 
     override val something2: Int
-        get() {
-            return 0
-        }
+        get() = 0
 
     override var something3: Int
-        get() {
-            return 0
-        }
+        get() = 0
         set(value: Int) {
         }
 
     override var something4: Int
-        get() {
-            return 0
-        }
+        get() = 0
         set(value: Int) {
             super.something4 = value
         }
 
     override var something5: Int
-        get() {
-            return super.something5
-        }
+        get() = super.something5
         set(value: Int) {
 
         }
@@ -91,38 +75,28 @@ internal abstract class C(override val something1: Int) : B(), I {
     }
 
     override val fromB1: String
-        get() {
-            return super.fromB1
-        }
+        get() = super.fromB1
 
     override var fromB2: String
-        get() {
-            return super.fromB2
-        }
+        get() = super.fromB2
         set(value: String) {
             super.fromB2 = value
         }
 
     override var fromB3: String
-        get() {
-            return super.fromB3
-        }
+        get() = super.fromB3
         set(value: String) {
             super.fromB3 = value
         }
 
     override var fromB4: String
-        get() {
-            return super.fromB4
-        }
+        get() = super.fromB4
         set(value: String) {
             super.fromB4 = value
         }
 
     val fromB5: String
-        get() {
-            return ""
-        }
+        get() = ""
 
     override fun setFromB5(value: String) {
         super.setFromB5(value)

@@ -1,4 +1,2 @@
 val isTrue: Boolean
-    get() {
-        return true
-    }
+    get() = true

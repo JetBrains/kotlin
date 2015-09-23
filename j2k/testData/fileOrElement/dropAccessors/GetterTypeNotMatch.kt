@@ -3,7 +3,5 @@ internal class A {
     private val s: String? = null
 
     val value: Any
-        get() {
-            return s
-        }
+        get() = s
 }

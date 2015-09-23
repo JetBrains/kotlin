@@ -347,7 +347,7 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
                     getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.isOverride) { //TODO: expression body!
+                else if (propertyInfo.isOverride) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
@@ -372,7 +372,7 @@ class Converter private constructor(
                             method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.isOverride) { //TODO: expression body!
+                else if (propertyInfo.isOverride) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val valueIdentifier = Identifier("value", false).assignNoPrototype()

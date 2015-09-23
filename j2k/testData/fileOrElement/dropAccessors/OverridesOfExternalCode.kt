@@ -4,41 +4,31 @@ import javaApi.JavaClassDerivedFromKotlinClassWithProperties
 
 internal open class A : KotlinClassWithProperties() {
     override var someVar1: String
-        get() {
-            return super.someVar1
-        }
+        get() = super.someVar1
         set(s: String) {
             super.someVar1 = s
         }
 
     override var someVar2: String
-        get() {
-            return super.someVar2
-        }
+        get() = super.someVar2
         set(value: String) {
             super.someVar2 = value
         }
 
     override var someVar3: String
-        get() {
-            return super.someVar3
-        }
+        get() = super.someVar3
         set(s: String) {
             super.someVar3 = s
         }
 
     override var someVar4: String
-        get() {
-            return super.someVar4
-        }
+        get() = super.someVar4
         set(value: String) {
             super.someVar4 = value
         }
 
     override val someVal: String
-        get() {
-            return super.someVal
-        }
+        get() = super.someVal
 
     override fun getSomething1() {
         super.getSomething1()
@@ -85,9 +75,7 @@ internal class B : JavaClassWithProperties() {
 
 internal class C : A() {
     override var someVar1: String
-        get() {
-            return super.someVar1
-        }
+        get() = super.someVar1
         set(value: String) {
             super.someVar1 = value
         }
@@ -95,17 +83,13 @@ internal class C : A() {
 
 internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
     override var someVar1: String
-        get() {
-            return "a"
-        }
+        get() = "a"
         set(value: String) {
             super.someVar1 = value
         }
 
     override var someVar2: String
-        get() {
-            return super.someVar2
-        }
+        get() = super.someVar2
         set(value: String) {
         }
 

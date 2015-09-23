@@ -1,4 +1,2 @@
 val string: String
-    get() {
-        return ""
-    }
+    get() = ""

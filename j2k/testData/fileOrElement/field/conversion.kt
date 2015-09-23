@@ -8,8 +8,6 @@ internal class A {
     companion object {
 
         val byte: Byte
-            get() {
-                return 0
-            }
+            get() = 0
     }
 }

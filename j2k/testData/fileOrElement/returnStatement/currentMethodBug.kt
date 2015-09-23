@@ -7,9 +7,7 @@ internal class C {
         get() {
             foo(object : I {
                 override val int: Int
-                    get() {
-                        return 0
-                    }
+                    get() = 0
             })
             return string
         }
