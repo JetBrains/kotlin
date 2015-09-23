@@ -16,10 +16,26 @@
 
 package org.jetbrains.kotlin.js.resolve
 
+import com.google.common.collect.ImmutableList
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 public object JsPlatform : TargetPlatform("JS") {
+    override val defaultModuleParameters = object : ModuleParameters {
+        override val defaultImports: List<ImportPath> = ImmutableList.of(
+                ImportPath("java.lang.*"),
+                ImportPath("kotlin.*"),
+                ImportPath("kotlin.annotation.*"),
+                ImportPath("kotlin.js.*")
+        )
+
+        override val platformToKotlinClassMap: PlatformToKotlinClassMap
+            get() = PlatformToKotlinClassMap.EMPTY
+    }
+
+
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 }

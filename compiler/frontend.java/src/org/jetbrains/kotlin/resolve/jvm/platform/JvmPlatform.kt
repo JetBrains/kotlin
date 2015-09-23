@@ -16,10 +16,42 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.types.DynamicTypesSettings
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import java.util.*
 
 public object JvmPlatform : TargetPlatform("JVM") {
+    override val defaultModuleParameters = object : ModuleParameters {
+        override val platformToKotlinClassMap: PlatformToKotlinClassMap
+            get() = JavaToKotlinClassMap.INSTANCE
+        override val defaultImports: List<ImportPath>
+            get() = DEFAULT_IMPORTS_FOR_JVM
+    }
+
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
+}
+
+private val DEFAULT_IMPORTS_FOR_JVM = ArrayList<ImportPath>().apply {
+    add(ImportPath("java.lang.*"))
+    add(ImportPath("kotlin.*"))
+    add(ImportPath("kotlin.annotation.*"))
+    add(ImportPath("kotlin.jvm.*"))
+    add(ImportPath("kotlin.io.*"))
+
+    fun addAllClassifiersFromScope(scope: JetScope) {
+        for (descriptor in scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
+            add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+        }
+    }
+
+    val builtIns = JvmPlatform.builtIns
+    addAllClassifiersFromScope(builtIns.builtInsPackageScope)
+    addAllClassifiersFromScope(builtIns.annotationPackageScope)
 }

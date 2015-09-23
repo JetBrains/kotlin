@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -102,7 +103,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     private static PackageFragmentDescriptor createBuiltInsPackageFragment() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, KotlinBuiltIns.getInstance()
         );
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(

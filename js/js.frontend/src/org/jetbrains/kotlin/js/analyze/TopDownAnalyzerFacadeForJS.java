@@ -40,27 +40,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class TopDownAnalyzerFacadeForJS {
-    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
-            new ImportPath("java.lang.*"),
-            new ImportPath("kotlin.*"),
-            new ImportPath("kotlin.annotation.*"),
-            new ImportPath("kotlin.js.*")
-    );
-
-    public static ModuleParameters JS_MODULE_PARAMETERS = new ModuleParameters() {
-        @NotNull
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return DEFAULT_IMPORTS;
-        }
-
-        @NotNull
-        @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
-        }
-    };
-
     private TopDownAnalyzerFacadeForJS() {
     }
 
@@ -72,7 +51,7 @@ public final class TopDownAnalyzerFacadeForJS {
         BindingTrace trace = new BindingTraceContext();
 
         MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
-                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JS_MODULE_PARAMETERS
+                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE$
         );
         newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
         return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config);

@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
@@ -360,9 +357,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     @NotNull
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return new ModuleDescriptorImpl(Name.special(moduleName),
-                                        storageManager,
-                                        TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS);
+        return TargetPlatformKt.createModule(JvmPlatform.INSTANCE$, Name.special(moduleName), storageManager);
     }
 
     @NotNull

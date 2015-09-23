@@ -44,9 +44,10 @@ public class RuntimeModuleData private constructor(public val deserialization: D
 
     companion object {
         public fun create(classLoader: ClassLoader): RuntimeModuleData {
+            val builtIns = KotlinBuiltIns.getInstance()
             val storageManager = LockBasedStorageManager()
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager,
-                                              ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE))
+                                              ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE), builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
@@ -71,7 +72,7 @@ public class RuntimeModuleData private constructor(public val deserialization: D
             singleModuleClassResolver.resolver = javaDescriptorResolver
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
 
-            module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
+            module.setDependencies(module, builtIns.builtInsModule)
             module.initialize(javaDescriptorResolver.packageFragmentProvider)
 
             return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackageFacadeProvider)

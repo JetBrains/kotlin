@@ -21,10 +21,11 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.frontend.java.di.DiPackage;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
@@ -36,15 +37,13 @@ import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.modules.ModulesPackage;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,42 +54,6 @@ import static org.jetbrains.kotlin.context.ContextPackage.ContextForNewModule;
 public enum TopDownAnalyzerFacadeForJVM {
 
     INSTANCE;
-
-    public static final List<ImportPath> DEFAULT_IMPORTS = buildDefaultImports();
-
-    private static void addAllClassifiersToImportPathList(List<ImportPath> list, JetScope scope) {
-        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
-            list.add(new ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false));
-        }
-    }
-
-    private static List<ImportPath> buildDefaultImports() {
-        List<ImportPath> list = new ArrayList<ImportPath>();
-        list.add(new ImportPath("java.lang.*"));
-        list.add(new ImportPath("kotlin.*"));
-        list.add(new ImportPath("kotlin.annotation.*"));
-        list.add(new ImportPath("kotlin.jvm.*"));
-        list.add(new ImportPath("kotlin.io.*"));
-
-        addAllClassifiersToImportPathList(list, JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
-        addAllClassifiersToImportPathList(list, JvmPlatform.INSTANCE$.getBuiltIns().getAnnotationPackageScope());
-
-        return list;
-    }
-
-    public static ModuleParameters JVM_MODULE_PARAMETERS = new ModuleParameters() {
-        @NotNull
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return DEFAULT_IMPORTS;
-        }
-
-        @NotNull
-        @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return JavaToKotlinClassMap.INSTANCE;
-        }
-    };
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
@@ -192,7 +155,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     public static MutableModuleContext createContextWithSealedModule(@NotNull Project project, @NotNull String moduleName) {
         MutableModuleContext context = ContextForNewModule(
-                project, Name.special("<" + moduleName + ">"), JVM_MODULE_PARAMETERS
+                project, Name.special("<" + moduleName + ">"), JvmPlatform.INSTANCE$
         );
         context.setDependencies(context.getModule(), JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());
         return context;

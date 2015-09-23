@@ -79,7 +79,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     }
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
-        val module = JetTestUtils.createEmptyModule("<$MODULE_NAME>")
+        val module = JetTestUtils.createEmptyModule("<$MODULE_NAME>", JsPlatform)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size() == 1)
 

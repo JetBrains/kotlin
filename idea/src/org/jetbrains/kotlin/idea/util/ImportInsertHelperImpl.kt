@@ -27,18 +27,16 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -79,10 +77,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     }
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean {
-        val defaultImports = if (ProjectStructureUtil.isJsKotlinModule(contextFile))
-            TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
-        else
-            TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
+        val defaultImports = contextFile.platform.defaultModuleParameters.defaultImports
         return importPath.isImported(defaultImports)
     }
 

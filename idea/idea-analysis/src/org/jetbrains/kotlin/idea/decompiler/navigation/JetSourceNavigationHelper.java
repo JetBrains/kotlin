@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -60,7 +61,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -242,9 +243,10 @@ public class JetSourceNavigationHelper {
         MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
                 project, Name.special("<library module>"),
                 ModuleParameters(
-                        TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS,
+                        JvmPlatform.defaultModuleParameters.getDefaultImports(),
                         PlatformToKotlinClassMap.EMPTY
-                )
+                ),
+                KotlinBuiltIns.getInstance()
         );
 
         newModuleContext.setDependencies(newModuleContext.getModule(), platform.getBuiltIns().getBuiltInsModule());

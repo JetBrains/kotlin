@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.createModule
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -105,12 +107,24 @@ public fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = 
 public fun ContextForNewModule(
         project: Project,
         moduleName: Name,
-        parameters: ModuleParameters
+        parameters: ModuleParameters,
+        builtIns: KotlinBuiltIns = KotlinBuiltIns.getInstance()
 ): MutableModuleContext {
     val projectContext = ProjectContext(project)
-    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters, builtIns)
     return MutableModuleContextImpl(module, projectContext)
 }
+
+public fun ContextForNewModule(
+        project: Project,
+        moduleName: Name,
+        targetPlatform: TargetPlatform
+): MutableModuleContext {
+    val projectContext = ProjectContext(project)
+    val module = targetPlatform.createModule(moduleName, projectContext.storageManager)
+    return MutableModuleContextImpl(module, projectContext)
+}
+
 
 @Deprecated("Used temporarily while we are in transition from to lazy resolve")
 public open class TypeLazinessToken {

@@ -26,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
@@ -152,9 +152,8 @@ public abstract class Config {
                 "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION +
                 ", but metadata.abiVersion = " + metadata.getAbiVersion();
 
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                Name.special("<" + metadata.getModuleName() + ">"), storageManager,
-                TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS
+        ModuleDescriptorImpl moduleDescriptor = TargetPlatformKt.createModule(
+                JsPlatform.INSTANCE$, Name.special("<" + metadata.getModuleName() + ">"), storageManager
         );
 
         PackageFragmentProvider provider =
