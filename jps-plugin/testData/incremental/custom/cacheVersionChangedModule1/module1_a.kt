@@ -1,4 +1,4 @@
-package a
+package module1
 
 class A
 
