@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -36,8 +37,10 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         javaClass(), "Convert to expression body"
 ) {
     override fun isApplicableTo(element: JetDeclarationWithBody): Boolean {
-        val value = calcValue(element)
-        return value != null && !containsReturn(value)
+        val value = calcValue(element) ?: return false
+        return !value.anyDescendantOfType<JetReturnExpression>(
+                canGoInside = { it !is JetFunctionLiteral && it !is JetNamedFunction && it !is JetPropertyAccessor }
+        )
     }
 
     override fun allowCaretInsideElement(element: PsiElement) = element !is JetDeclaration
@@ -120,19 +123,5 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
                 return statement
             }
         }
-    }
-
-    private fun containsReturn(element: PsiElement): Boolean {
-        if (element is JetReturnExpression) return true
-        //TODO: would be better to have some interface of declaration where return can be used
-        if (element is JetNamedFunction || element is JetPropertyAccessor) return false // can happen inside
-
-        var child = element.getFirstChild()
-        while (child != null) {
-            if (containsReturn(child)) return true
-            child = child.getNextSibling()
-        }
-
-        return false
     }
 }

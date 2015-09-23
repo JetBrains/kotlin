@@ -4180,6 +4180,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("returnFromLambda.kt")
+        public void testReturnFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/returnFromLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnFromLambda2.kt")
+        public void testReturnFromLambda2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/returnFromLambda2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnWithNoValue.kt")
         public void testReturnWithNoValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/returnWithNoValue.kt");
