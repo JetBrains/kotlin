@@ -61,7 +61,7 @@ public object CompileDaemon {
     init {
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
         val (logPath: String, fileIsGiven: Boolean) =
-                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
+                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
                 "handlers = java.util.logging.FileHandler\n" +
                 "java.util.logging.FileHandler.level     = ALL\n" +
