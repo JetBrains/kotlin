@@ -74,7 +74,6 @@ public class KotlinBuiltIns {
             initializing = true;
             try {
                 instance = new KotlinBuiltIns();
-                instance.doInitialize();
             }
             catch (Throwable e) {
                 initializationFailed = e;
@@ -139,9 +138,6 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
-    }
-
-    private void doInitialize() {
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
