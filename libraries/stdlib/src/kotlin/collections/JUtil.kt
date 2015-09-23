@@ -246,3 +246,31 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
         toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
     }
 }
+
+/**
+ * Returns a single list of all elements from all collections in the given collection.
+ */
+public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
+    val result = ArrayList<T>()
+    for (element in this) {
+        result.addAll(element)
+    }
+    return result
+}
+
+/**
+ * Returns a pair of lists, where
+ * *first* list is built from the first values of each pair from this collection,
+ * *second* list is built from the second values of each pair from this collection.
+ */
+public fun <T, R> Iterable<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
+    val expectedSize = collectionSizeOrDefault(10)
+    val listT = ArrayList<T>(expectedSize)
+    val listR = ArrayList<R>(expectedSize)
+    for (pair in this) {
+        listT.add(pair.first)
+        listR.add(pair.second)
+    }
+    return listT to listR
+}
+

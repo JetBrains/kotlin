@@ -66,6 +66,27 @@ private object EmptySequence : Sequence<Nothing> {
 }
 
 /**
+ * Returns a sequence of all elements from all sequences in this sequence.
+ */
+public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
+    return MultiSequence(this)
+}
+/**
+ * Returns a pair of lists, where
+ * *first* list is built from the first values of each pair from this sequence,
+ * *second* list is built from the second values of each pair from this sequence.
+ */
+public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
+    val listT = ArrayList<T>()
+    val listR = ArrayList<R>()
+    for (pair in this) {
+        listT.add(pair.first)
+        listR.add(pair.second)
+    }
+    return listT to listR
+}
+
+/**
  * A sequence that returns the values from the underlying [sequence] that either match or do not match
  * the specified [predicate].
  *
