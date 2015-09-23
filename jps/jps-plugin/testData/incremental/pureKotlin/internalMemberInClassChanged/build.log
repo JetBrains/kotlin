@@ -1,0 +1,12 @@
+Cleaning output files:
+out/production/module/test/ClassA.class
+End of files
+Compiling files:
+src/ClassA.kt
+End of files
+Cleaning output files:
+out/production/module/test/Usage.class
+End of files
+Compiling files:
+src/usage.kt
+End of files
