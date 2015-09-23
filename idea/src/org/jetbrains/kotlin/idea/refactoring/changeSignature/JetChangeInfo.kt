@@ -369,9 +369,9 @@ public open class JetChangeInfo(
                     is JetProperty, is JetParameter -> {
                         val accessorName = originalPsiMethod.getName()
                         when {
-                            accessorName.startsWith(JvmAbi.GETTER_PREFIX) ->
+                            JvmAbi.isGetterName(accessorName) ->
                                 createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, true)
-                            accessorName.startsWith(JvmAbi.SETTER_PREFIX) ->
+                            JvmAbi.isSetterName(accessorName) ->
                                 createJavaChangeInfoForSetter(originalPsiMethod, currentPsiMethod)
                             else -> null
                         }

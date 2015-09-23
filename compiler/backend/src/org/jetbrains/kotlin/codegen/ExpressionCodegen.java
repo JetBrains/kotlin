@@ -2758,7 +2758,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetType type = bindingContext.getType(expression);
         assert type != null;
 
-        assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
+        assert state.getReflectionTypes().getTEMP_kClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
         return generateClassLiteralReference(typeMapper, KotlinPackage.single(type.getArguments()).getType());
