@@ -162,19 +162,13 @@ public object ModifierCheckerCore {
             Compatibility.REPEATED -> if (incorrectNodes.add(secondNode)) {
                 trace.report(Errors.REPEATED_MODIFIER.on (secondNode.psi, first))
             }
-            Compatibility.REDUNDANT -> if (incorrectNodes.add(secondNode)) {
+            Compatibility.REDUNDANT ->
                 trace.report(Errors.REDUNDANT_MODIFIER.on(secondNode.psi, first, second))
-            }
-            Compatibility.REVERSE_REDUNDANT -> if (incorrectNodes.add(firstNode)) {
+            Compatibility.REVERSE_REDUNDANT ->
                 trace.report(Errors.REDUNDANT_MODIFIER.on(firstNode.psi,  second, first))
-            }
             Compatibility.DEPRECATED -> {
-                if (incorrectNodes.add(firstNode)) {
-                    trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
-                }
-                if (incorrectNodes.add(secondNode)) {
-                    trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))
-                }
+                trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
+                trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))
             }
             Compatibility.INCOMPATIBLE -> {
                 if (incorrectNodes.add(firstNode)) {
@@ -187,6 +181,7 @@ public object ModifierCheckerCore {
         }
     }
 
+    // Should return false if error is reported, true otherwise
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
         val modifier = node.elementType as JetModifierKeywordToken
         val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
@@ -201,6 +196,7 @@ public object ModifierCheckerCore {
         return true
     }
 
+    // Should return false if error is reported, true otherwise
     private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
         val modifier = node.elementType as JetModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
@@ -211,7 +207,7 @@ public object ModifierCheckerCore {
         val deprecatedParents = deprecatedParentTargetMap[modifier]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             trace.report(Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
-            return false
+            return true
         }
         val possibleParents = possibleParentTargetMap[modifier] ?: return true
         if (possibleParents == KotlinTarget.ALL_TARGET_SET) return true
@@ -223,6 +219,8 @@ public object ModifierCheckerCore {
     private val MODIFIER_KEYWORD_SET = TokenSet.orSet(JetTokens.SOFT_KEYWORDS, TokenSet.create(JetTokens.IN_KEYWORD))
 
     private fun checkModifierList(list: JetModifierList, trace: BindingTrace, parentDescriptor: DeclarationDescriptor?, actualTargets: List<KotlinTarget>) {
+        // It's a list of all nodes with error already reported
+        // General strategy: report no more than one error but any number of warnings
         val incorrectNodes = hashSetOf<ASTNode>()
         val children = list.node.getChildren(MODIFIER_KEYWORD_SET)
         for (second in children) {

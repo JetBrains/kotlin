@@ -3360,6 +3360,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerOuterDataClass.kt")
+            public void testInnerOuterDataClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/innerOuterDataClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multiDeclaration.kt")
             public void testMultiDeclaration() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/multiDeclaration.kt");
