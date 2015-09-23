@@ -134,13 +134,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val dataManager = projectDescriptor.dataManager
 
-        if (IncrementalCompilation.isEnabled() &&
-            chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }
-        ) {
-            LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
-            val incrementalCaches = getIncrementalCaches(chunk, context)
-            incrementalCaches.values().forEach(StorageOwner::clean)
-            return CHUNK_REBUILD_REQUIRED
+        if (!IncrementalCompilation.isEnabled()) {
+            dataManager.clean()
+            dataManager.flush(true)
+        }
+        else {
+            if (chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }) {
+                LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
+                val incrementalCaches = getIncrementalCaches(chunk, context)
+                incrementalCaches.values().forEach(StorageOwner::clean)
+                return CHUNK_REBUILD_REQUIRED
+            }
         }
 
         if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()
