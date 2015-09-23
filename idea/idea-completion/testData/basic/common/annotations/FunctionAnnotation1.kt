@@ -6,6 +6,6 @@ fun some() {}
 
 // INVOCATION_COUNT: 0
 // EXIST: Hello
-// EXIST: inlineOptions
+// EXIST: Suppress
 // ABSENT: String
 // ABSENT: v

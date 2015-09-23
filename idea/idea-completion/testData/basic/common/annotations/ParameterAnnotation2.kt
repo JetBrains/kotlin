@@ -1,7 +1,7 @@
-annotation class iHello
+annotation class SHello
 
-fun foo(i<caret>) { }
+fun foo(S<caret>) { }
 
 // INVOCATION_COUNT: 1
-// EXIST: iHello
-// EXIST: inlineOptions
+// EXIST: SHello
+// EXIST: Suppress

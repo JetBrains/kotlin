@@ -1,5 +1,5 @@
 fun foo(kotlin.<caret>) { }
 
 // INVOCATION_COUNT: 1
-// EXIST: inlineOptions
+// EXIST: Suppress
 // ABSENT: String

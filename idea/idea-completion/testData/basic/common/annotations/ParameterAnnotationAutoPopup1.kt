@@ -1,8 +1,8 @@
 val v = 1
 
-fun foo(@[i<caret>) { }
+fun foo(@[S<caret>) { }
 
 // INVOCATION_COUNT: 0
-// EXIST: inlineOptions
+// EXIST: Suppress
 // ABSENT: String
 // ABSENT: v
