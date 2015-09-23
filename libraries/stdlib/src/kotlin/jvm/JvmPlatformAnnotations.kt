@@ -67,6 +67,7 @@ public annotation class JvmMultifileClass
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
+@Deprecated("Use lateinit instead")
 public annotation class publicField
 
 /**
