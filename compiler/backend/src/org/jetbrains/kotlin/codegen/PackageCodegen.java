@@ -112,7 +112,7 @@ public class PackageCodegen {
                         packageClassType, PackagePartClassUtils.getFilesWithCallables(files)
                 );
                 v.defineClass(sourceFile, V1_6,
-                              ACC_PUBLIC | ACC_FINAL,
+                              ACC_PUBLIC | ACC_FINAL | ACC_DEPRECATED,
                               packageClassType.getInternalName(),
                               null,
                               "java/lang/Object",

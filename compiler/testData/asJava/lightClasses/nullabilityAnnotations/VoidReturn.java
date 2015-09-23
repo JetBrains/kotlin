@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 @java.lang.Deprecated
 public final class _DefaultPackage {
     @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "VoidReturnKt")
