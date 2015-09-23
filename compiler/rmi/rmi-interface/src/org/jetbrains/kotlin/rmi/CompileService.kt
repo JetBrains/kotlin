@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.rmi
 
+import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.modules.TargetId
+import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -47,6 +49,38 @@ public interface CompileService : Remote {
         public fun close()
     }
 
+    public interface RemoteLookupTracker : Remote {
+        @Throws(RemoteException::class)
+        fun record(
+                lookupContainingFile: String,
+                lookupLine: Int?,
+                lookupColumn: Int?,
+                scopeFqName: String,
+                scopeKind: ScopeKind,
+                name: String
+        )
+        @Throws(RemoteException::class)
+        fun isDoNothing(): Boolean
+    }
+
+    public interface RemoteIncrementalCompilationComponents : Remote {
+        @Throws(RemoteException::class)
+        public fun getIncrementalCache(target: TargetId): RemoteIncrementalCache
+
+        @Throws(RemoteException::class)
+        public fun getLookupTracker(): RemoteLookupTracker
+    }
+
+    public interface RemoteCompilationCanceledStatus : Remote {
+        @Throws(RemoteException::class)
+        fun checkCanceled(): Unit
+    }
+
+    public data class RemoteCompilationServices(
+            public val incrementalCompilationComponents: RemoteIncrementalCompilationComponents? = null,
+            public val compilationCanceledStatus: RemoteCompilationCanceledStatus? = null
+    ) : Serializable
+
     @Throws(RemoteException::class)
     public fun getCompilerId(): CompilerId
 
@@ -59,6 +93,7 @@ public interface CompileService : Remote {
     @Throws(RemoteException::class)
     public fun remoteCompile(
             args: Array<out String>,
+            services: RemoteCompilationServices,
             compilerOutputStream: RemoteOutputStream,
             outputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream
@@ -67,7 +102,7 @@ public interface CompileService : Remote {
     @Throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
-            caches: Map<TargetId, RemoteIncrementalCache>,
+            services: RemoteCompilationServices,
             compilerOutputStream: RemoteOutputStream,
             compilerOutputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream
