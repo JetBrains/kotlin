@@ -4,14 +4,10 @@ package foo
 
 enum class Foo {
     BAR;
-
     val t: Int = 0
 
     fun test() {
-        testRenamed("let", {
-            let@ while (false) {
-            }
-        })
+        testRenamed("let", { let@ while (false) {} })
     }
 }
 

@@ -4,9 +4,9 @@ package foo
 
 object TestObject {
     fun foo(public: String) {
-        assertEquals("123", public)
-        testRenamed("public", { public })
-    }
+    assertEquals("123", public)
+    testRenamed("public", { public })
+}
 
     fun test() {
         foo("123")

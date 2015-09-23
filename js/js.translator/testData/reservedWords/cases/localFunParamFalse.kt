@@ -4,9 +4,9 @@ package foo
 
 fun box(): String {
     fun foo(`false`: String) {
-        assertEquals("123", `false`)
-        testRenamed("false", { `false` })
-    }
+    assertEquals("123", `false`)
+    testRenamed("false", { `false` })
+}
 
     foo("123")
 

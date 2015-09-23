@@ -4,9 +4,9 @@ package foo
 
 class TestClass {
     fun foo(await: String) {
-        assertEquals("123", await)
-        testRenamed("await", { await })
-    }
+    assertEquals("123", await)
+    testRenamed("await", { await })
+}
 
     fun test() {
         foo("123")

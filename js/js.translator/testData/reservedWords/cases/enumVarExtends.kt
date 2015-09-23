@@ -4,7 +4,6 @@ package foo
 
 enum class Foo {
     BAR;
-
     var extends: Int = 0
 
     fun test() {

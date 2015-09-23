@@ -12,10 +12,7 @@ class TraitImpl : Trait {
 
 class TestDelegate : Trait by TraitImpl() {
     fun test() {
-        testRenamed("this", {
-            `this`@ while (false) {
-            }
-        })
+        testRenamed("this", { `this`@ while (false) {} })
     }
 }
 

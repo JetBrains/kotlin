@@ -7,10 +7,7 @@ class TestClass {
         val t: Int = 0
 
         fun test() {
-            testRenamed("implements", {
-                implements@ while (false) {
-                }
-            })
+            testRenamed("implements", { implements@ while (false) {} })
         }
     }
 }

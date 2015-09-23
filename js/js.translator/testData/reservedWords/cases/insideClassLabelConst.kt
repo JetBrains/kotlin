@@ -6,10 +6,7 @@ class TestClass {
     val t: Int = 0
 
     fun test() {
-        testRenamed("const", {
-            const@ while (false) {
-            }
-        })
+        testRenamed("const", { const@ while (false) {} })
     }
 }
 

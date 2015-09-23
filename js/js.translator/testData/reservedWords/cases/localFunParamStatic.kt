@@ -4,9 +4,9 @@ package foo
 
 fun box(): String {
     fun foo(static: String) {
-        assertEquals("123", static)
-        testRenamed("static", { static })
-    }
+    assertEquals("123", static)
+    testRenamed("static", { static })
+}
 
     foo("123")
 

@@ -7,9 +7,7 @@ interface Trait {
 }
 
 class TraitImpl : Trait {
-    override fun `package`() {
-        `package`()
-    }
+    override fun `package`() { `package`() }
 }
 
 class TestDelegate : Trait by TraitImpl() {

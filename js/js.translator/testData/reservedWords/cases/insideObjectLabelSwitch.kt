@@ -6,10 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("switch", {
-            switch@ while (false) {
-            }
-        })
+        testRenamed("switch", { switch@ while (false) {} })
     }
 }
 

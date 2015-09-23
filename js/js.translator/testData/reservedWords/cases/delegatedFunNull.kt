@@ -7,9 +7,7 @@ interface Trait {
 }
 
 class TraitImpl : Trait {
-    override fun `null`() {
-        `null`()
-    }
+    override fun `null`() { `null`() }
 }
 
 class TestDelegate : Trait by TraitImpl() {

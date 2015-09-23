@@ -5,9 +5,9 @@ package foo
 class TestClass {
     companion object {
         fun foo(finally: String) {
-            assertEquals("123", finally)
-            testRenamed("finally", { finally })
-        }
+    assertEquals("123", finally)
+    testRenamed("finally", { finally })
+}
 
         fun test() {
             foo("123")

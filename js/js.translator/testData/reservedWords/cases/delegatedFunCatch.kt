@@ -7,9 +7,7 @@ interface Trait {
 }
 
 class TraitImpl : Trait {
-    override fun catch() {
-        catch()
-    }
+    override fun catch() { catch() }
 }
 
 class TestDelegate : Trait by TraitImpl() {

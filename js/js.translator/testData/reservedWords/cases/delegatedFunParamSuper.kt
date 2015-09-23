@@ -8,9 +8,9 @@ interface Trait {
 
 class TraitImpl : Trait {
     override fun foo(`super`: String) {
-        assertEquals("123", `super`)
-        testRenamed("super", { `super` })
-    }
+    assertEquals("123", `super`)
+    testRenamed("super", { `super` })
+}
 }
 
 class TestDelegate : Trait by TraitImpl() {

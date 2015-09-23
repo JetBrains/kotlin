@@ -6,10 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("typeof", {
-            typeof@ while (false) {
-            }
-        })
+        testRenamed("typeof", { typeof@ while (false) {} })
     }
 }
 

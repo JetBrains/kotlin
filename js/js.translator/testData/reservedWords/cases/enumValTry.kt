@@ -4,7 +4,6 @@ package foo
 
 enum class Foo {
     BAR;
-
     val `try`: Int = 0
 
     fun test() {

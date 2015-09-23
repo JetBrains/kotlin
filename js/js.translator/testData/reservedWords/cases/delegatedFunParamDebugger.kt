@@ -8,9 +8,9 @@ interface Trait {
 
 class TraitImpl : Trait {
     override fun foo(debugger: String) {
-        assertEquals("123", debugger)
-        testRenamed("debugger", { debugger })
-    }
+    assertEquals("123", debugger)
+    testRenamed("debugger", { debugger })
+}
 }
 
 class TestDelegate : Trait by TraitImpl() {

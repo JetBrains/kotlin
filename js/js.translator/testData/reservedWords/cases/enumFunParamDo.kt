@@ -4,11 +4,10 @@ package foo
 
 enum class Foo {
     BAR;
-
     fun foo(`do`: String) {
-        assertEquals("123", `do`)
-        testRenamed("do", { `do` })
-    }
+    assertEquals("123", `do`)
+    testRenamed("do", { `do` })
+}
 
     fun test() {
         foo("123")

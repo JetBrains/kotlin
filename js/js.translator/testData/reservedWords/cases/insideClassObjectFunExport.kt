@@ -4,9 +4,7 @@ package foo
 
 class TestClass {
     companion object {
-        fun export() {
-            export()
-        }
+        fun export() { export() }
 
         fun test() {
             testNotRenamed("export", { ::export })

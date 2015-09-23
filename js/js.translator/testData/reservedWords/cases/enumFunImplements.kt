@@ -4,10 +4,7 @@ package foo
 
 enum class Foo {
     BAR;
-
-    fun implements() {
-        implements()
-    }
+    fun implements() { implements() }
 
     fun test() {
         testNotRenamed("implements", { ::implements })

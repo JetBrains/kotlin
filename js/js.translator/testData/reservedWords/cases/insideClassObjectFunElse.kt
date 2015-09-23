@@ -4,9 +4,7 @@ package foo
 
 class TestClass {
     companion object {
-        fun `else`() {
-            `else`()
-        }
+        fun `else`() { `else`() }
 
         fun test() {
             testNotRenamed("else", { ::`else` })

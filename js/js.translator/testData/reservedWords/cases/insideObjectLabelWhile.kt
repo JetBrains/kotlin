@@ -6,10 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("while", {
-            `while`@ while (false) {
-            }
-        })
+        testRenamed("while", { `while`@ while (false) {} })
     }
 }
 

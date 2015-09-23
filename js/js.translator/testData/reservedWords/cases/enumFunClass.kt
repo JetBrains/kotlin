@@ -4,10 +4,7 @@ package foo
 
 enum class Foo {
     BAR;
-
-    fun `class`() {
-        `class`()
-    }
+    fun `class`() { `class`() }
 
     fun test() {
         testNotRenamed("class", { ::`class` })

@@ -7,9 +7,7 @@ interface Trait {
 }
 
 class TraitImpl : Trait {
-    override fun const() {
-        const()
-    }
+    override fun const() { const() }
 }
 
 class TestDelegate : Trait by TraitImpl() {

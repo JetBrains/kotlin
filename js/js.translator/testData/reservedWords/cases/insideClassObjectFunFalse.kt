@@ -4,9 +4,7 @@ package foo
 
 class TestClass {
     companion object {
-        fun `false`() {
-            `false`()
-        }
+        fun `false`() { `false`() }
 
         fun test() {
             testNotRenamed("false", { ::`false` })

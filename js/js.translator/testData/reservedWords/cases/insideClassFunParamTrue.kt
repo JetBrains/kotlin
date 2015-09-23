@@ -4,9 +4,9 @@ package foo
 
 class TestClass {
     fun foo(`true`: String) {
-        assertEquals("123", `true`)
-        testRenamed("true", { `true` })
-    }
+    assertEquals("123", `true`)
+    testRenamed("true", { `true` })
+}
 
     fun test() {
         foo("123")

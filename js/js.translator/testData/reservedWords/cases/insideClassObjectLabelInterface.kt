@@ -7,10 +7,7 @@ class TestClass {
         val t: Int = 0
 
         fun test() {
-            testRenamed("interface", {
-                `interface`@ while (false) {
-                }
-            })
+            testRenamed("interface", { `interface`@ while (false) {} })
         }
     }
 }

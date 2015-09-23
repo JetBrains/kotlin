@@ -5,10 +5,7 @@ package foo
 fun box(): String {
     val t: Int = 0
 
-    testRenamed("typeof", {
-        typeof@ while (false) {
-        }
-    })
+    testRenamed("typeof", { typeof@ while (false) {} })
 
     return "OK"
 }

@@ -4,9 +4,7 @@ package foo
 
 class TestClass {
     companion object {
-        fun eval() {
-            eval()
-        }
+        fun eval() { eval() }
 
         fun test() {
             testNotRenamed("eval", { ::eval })

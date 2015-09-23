@@ -4,9 +4,9 @@ package foo
 
 class TestClass {
     fun foo(case: String) {
-        assertEquals("123", case)
-        testRenamed("case", { case })
-    }
+    assertEquals("123", case)
+    testRenamed("case", { case })
+}
 
     fun test() {
         foo("123")

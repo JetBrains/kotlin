@@ -4,10 +4,7 @@ package foo
 
 enum class Foo {
     BAR;
-
-    fun `break`() {
-        `break`()
-    }
+    fun `break`() { `break`() }
 
     fun test() {
         testNotRenamed("break", { ::`break` })

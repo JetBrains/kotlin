@@ -4,7 +4,6 @@ package foo
 
 enum class Foo {
     BAR;
-
     val export: Int = 0
 
     fun test() {
