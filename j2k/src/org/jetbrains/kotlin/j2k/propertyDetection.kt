@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.j2k.ast.Identifier
 import org.jetbrains.kotlin.j2k.ast.Modifier
 import org.jetbrains.kotlin.j2k.ast.assignNoPrototype
+import org.jetbrains.kotlin.j2k.ast.declarationIdentifier
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetProperty
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import java.util.*
 
 class PropertyInfo(
-        val name: String,
+        val identifier: Identifier,
         val isVar: Boolean,
         val psiType: PsiType,
         val field: PsiField?,
@@ -50,15 +51,15 @@ class PropertyInfo(
         }
     }
 
-    //TODO: take from field
-    val identifier = Identifier(name).assignNoPrototype()
+    val name: String
+        get() = identifier.name
 
     val needExplicitGetter: Boolean get() = needGetterBody
     val needExplicitSetter: Boolean get() = needSetterBody || specialSetterAccess != null
 
     companion object {
         fun fromFieldWithNoAccessors(field: PsiField, isVar: Boolean)
-                = PropertyInfo(field.name ?: "", isVar, field.type, field, null, null, false, false, null, false)
+                = PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, null, false)
     }
 }
 
@@ -147,7 +148,7 @@ private class PropertyDetector(
 
             val type = field?.type ?: getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
-            val propertyInfo = PropertyInfo(propertyName,
+            val propertyInfo = PropertyInfo(Identifier(propertyName).assignNoPrototype(),
                                             isVar,
                                             type,
                                             field,
