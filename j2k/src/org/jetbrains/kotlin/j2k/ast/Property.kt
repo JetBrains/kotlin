@@ -24,7 +24,7 @@ class Property(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        val isVal: Boolean,
+        val isVar: Boolean,
         val type: Type,
         val explicitType: Boolean,
         private val initializer: DeferredElement<Expression>,
@@ -50,7 +50,7 @@ class Property(
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
                 .appendWithSpaceAfter(presentationModifiers())
-                .append(if (isVal) "val " else "var ")
+                .append(if (isVar) "var " else "val ")
                 .append(identifier)
 
         if (explicitType) {

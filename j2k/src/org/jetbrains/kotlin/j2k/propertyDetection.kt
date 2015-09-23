@@ -30,7 +30,7 @@ import java.util.*
 
 class PropertyInfo(
         val name: String,
-        val isVal: Boolean,
+        val isVar: Boolean,
         val psiType: PsiType,
         val field: PsiField?,
         val getMethod: PsiMethod?,
@@ -57,8 +57,8 @@ class PropertyInfo(
     val needExplicitSetter: Boolean get() = needSetterBody || specialSetterAccess != null
 
     companion object {
-        fun fromFieldWithNoAccessors(field: PsiField, isVal: Boolean)
-                = PropertyInfo(field.name ?: "", isVal, field.type, field, null, null, false, false, null, false)
+        fun fromFieldWithNoAccessors(field: PsiField, isVar: Boolean)
+                = PropertyInfo(field.name ?: "", isVar, field.type, field, null, null, false, false, null, false)
     }
 }
 
@@ -128,7 +128,7 @@ private class PropertyDetector(
             val getterAccess = if (getterInfo != null) converter.convertModifiers(getterInfo.method, false).accessModifier() else Modifier.PUBLIC //TODO
             val setterAccess = if (setterInfo != null)
                 converter.convertModifiers(setterInfo.method, false).accessModifier()
-            else if (field != null && !field.isVal(converter.referenceSearcher))
+            else if (field != null && field.isVar(converter.referenceSearcher))
                 converter.convertModifiers(field, false).accessModifier()
             else
                 getterAccess
@@ -138,17 +138,17 @@ private class PropertyDetector(
 
             //TODO: no body for getter OR setter
 
-            val isVal = if (setterInfo != null)
-                false
-            else if (getterInfo!!.superProperty != null && !getterInfo.superProperty!!.isVal)
-                false
+            val isVar = if (setterInfo != null)
+                true
+            else if (getterInfo!!.superProperty != null && getterInfo.superProperty!!.isVar)
+                true
             else
-                field == null || field.isVal(converter.referenceSearcher)
+                field != null && field.isVar(converter.referenceSearcher)
 
             val type = field?.type ?: getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
             val propertyInfo = PropertyInfo(propertyName,
-                                            isVal,
+                                            isVar,
                                             type,
                                             field,
                                             getterInfo?.method,
@@ -179,7 +179,7 @@ private class PropertyDetector(
         // map all other fields
         for (field in psiClass.fields) {
             if (field !in mappedFields) {
-                val propertyInfo = PropertyInfo.fromFieldWithNoAccessors(field, field.isVal(converter.referenceSearcher))
+                val propertyInfo = PropertyInfo.fromFieldWithNoAccessors(field, field.isVar(converter.referenceSearcher))
                 memberToPropertyInfo[field] = propertyInfo
             }
         }
@@ -215,7 +215,7 @@ private class PropertyDetector(
                 continue
             }
 
-            if (!propertyInfo.isVal) {
+            if (propertyInfo.isVar) {
                 val setterName = JvmAbi.setterName(propertyInfo.name)
                 val setterSignature = MethodSignatureUtil.createMethodSignature(setterName, arrayOf(propertyInfo.psiType), emptyArray(), PsiSubstitutor.EMPTY)
                 if (setterSignature in prohibitedSignatures) {
@@ -235,7 +235,7 @@ private class PropertyDetector(
     )
 
     private class SuperPropertyInfo(
-            val isVal: Boolean
+            val isVar: Boolean
             //TODO: add visibility
     )
 
@@ -261,11 +261,11 @@ private class PropertyDetector(
             val containingClass = method.containingClass!!
             val superPropertyInfo: SuperPropertyInfo? = if (converter.inConversionScope(containingClass)) {
                 val propertyInfo = converter.propertyDetectionCache[containingClass][method]
-                if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVal) else null
+                if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVar) else null
             }
             else if (method is KotlinLightMethod) {
                 val origin = method.getOrigin()
-                if (origin is JetProperty) SuperPropertyInfo(!origin.isVar) else null
+                if (origin is JetProperty) SuperPropertyInfo(origin.isVar) else null
             }
             else {
                 null

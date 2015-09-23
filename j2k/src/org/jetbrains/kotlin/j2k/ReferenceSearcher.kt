@@ -42,25 +42,26 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
     }.filterNotNull()
 }
 
-public fun PsiField.isVal(searcher: ReferenceSearcher): Boolean {
-    if (hasModifierProperty(PsiModifier.FINAL)) return true
-    if (!hasModifierProperty(PsiModifier.PRIVATE)) return false
-    val containingClass = getContainingClass() ?: return false
+public fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {
+    if (hasModifierProperty(PsiModifier.FINAL)) return false
+    if (!hasModifierProperty(PsiModifier.PRIVATE)) return true
+    val containingClass = getContainingClass() ?: return true
     val writes = searcher.findVariableUsages(this, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
-    if (writes.size() == 0) return true
-    if (writes.size() > 1) return false
+    if (writes.size() == 0) return false
+    if (writes.size() > 1) return true
     val write = writes.single()
     val parent = write.getParent()
-    if (parent is PsiAssignmentExpression &&
-        parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
-        write.isQualifierEmptyOrThis()) {
+    if (parent is PsiAssignmentExpression
+        && parent.getOperationSign().getTokenType() == JavaTokenType.EQ
+        && write.isQualifierEmptyOrThis()
+    ) {
         val constructor = write.getContainingConstructor()
-        return constructor != null &&
-               constructor.getContainingClass() == containingClass &&
-               parent.getParent() is PsiExpressionStatement &&
-               parent.getParent()?.getParent() == constructor.getBody()
+        return constructor == null
+               || constructor.containingClass != containingClass
+               || !(parent.parent is PsiExpressionStatement)
+               || parent.parent?.parent != constructor.body
     }
-    return false
+    return true
 }
 
 public fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean

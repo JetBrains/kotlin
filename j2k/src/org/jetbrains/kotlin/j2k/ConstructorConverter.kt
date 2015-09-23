@@ -204,7 +204,7 @@ class ConstructorConverter(
                         val parameterModifiers = converter.convertModifiers(propertyInfo, classKind)
                         FunctionParameter(propertyInfo.identifier,
                                           type,
-                                          if (propertyInfo.isVal) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,
+                                          if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
                                           converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
                                           parameterModifiers,
                                           default)

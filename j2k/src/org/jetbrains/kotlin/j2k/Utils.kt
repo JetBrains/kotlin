@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import com.intellij.psi.*
-import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.j2k.ast.*
 import com.intellij.psi.util.PsiMethodUtil
+import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
 
@@ -45,7 +44,7 @@ fun getDefaultInitializer(property: Property): Expression? {
 }
 
 fun shouldGenerateDefaultInitializer(searcher: ReferenceSearcher, field: PsiField)
-        = field.getInitializer() == null && !(field.isVal(searcher) && field.hasWriteAccesses(searcher, field.getContainingClass()))
+        = field.initializer == null && (field.isVar(searcher) || !field.hasWriteAccesses(searcher, field.containingClass))
 
 fun PsiReferenceExpression.isQualifierEmptyOrThis(): Boolean {
     val qualifier = getQualifierExpression()

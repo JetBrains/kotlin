@@ -109,7 +109,7 @@ class Converter private constructor(
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element, null, null, null, ClassKind.FINAL_CLASS)
-        is PsiField -> convertProperty(PropertyInfo.fromFieldWithNoAccessors(element, element.isVal(referenceSearcher)), ClassKind.FINAL_CLASS)
+        is PsiField -> convertProperty(PropertyInfo.fromFieldWithNoAccessors(element, element.isVar(referenceSearcher)), ClassKind.FINAL_CLASS)
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
@@ -331,7 +331,7 @@ class Converter private constructor(
 
             val shouldDeclareType = settings.specifyFieldTypeByDefault
                                     || field == null
-                                    || shouldDeclareVariableType(field, propertyType, propertyInfo.isVal && modifiers.isPrivate)
+                                    || shouldDeclareVariableType(field, propertyType, !propertyInfo.isVar && modifiers.isPrivate)
 
             //TODO: usage processings for converting method's to property
             if (field != null) {
@@ -364,7 +364,7 @@ class Converter private constructor(
             val property = Property(name,
                                     annotations,
                                     modifiers,
-                                    propertyInfo.isVal,
+                                    propertyInfo.isVar,
                                     propertyType,
                                     shouldDeclareType,
                                     deferredElement { codeConverter -> field?.let { codeConverter.convertExpression(it.initializer, it.type) } ?: Expression.Empty },
