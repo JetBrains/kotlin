@@ -113,6 +113,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameBundle/renameBundle.test")
+    public void testRenameBundle_RenameBundle() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameBundle/renameBundle.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameBundleProperty/renameBundleProperty.test")
+    public void testRenameBundleProperty_RenameBundleProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameBundleProperty/renameBundleProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameCompareTo/compareTo.test")
     public void testRenameCompareTo_CompareTo() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameCompareTo/compareTo.test");
