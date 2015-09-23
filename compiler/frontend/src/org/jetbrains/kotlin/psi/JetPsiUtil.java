@@ -874,7 +874,7 @@ public class JetPsiUtil {
             else if (parent instanceof JetValueArgument || parent instanceof JetValueArgumentList) {
                 parent = parent.getParent();
             }
-            else if (parent instanceof JetFunctionLiteralExpression) {
+            else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetAnnotatedExpression) {
                 parent = parent.getParent();
             }
             else {

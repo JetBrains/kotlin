@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
@@ -92,11 +95,28 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             it in applicableTargets && (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it)
         }
 
-        if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted)) return
+        fun checkUselessFunctionLiteralAnnotation() {
+            // TODO: tests on different JetAnnotatedExpression (?!)
+            if (KotlinTarget.FUNCTION !in applicableTargets) return
+            val annotatedExpression = entry.parent as? JetAnnotatedExpression ?: return
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return
+            val retention = descriptor.type.constructor.declarationDescriptor?.getAnnotationRetention()
+            if (retention == KotlinRetention.SOURCE) return
 
-        if (useSiteTarget != null && actualTargets.onlyWithUseSiteTarget.any {
+            val functionLiteralExpression = annotatedExpression.baseExpression as? JetFunctionLiteralExpression ?: return
+            if (InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, trace.bindingContext, false)) {
+                trace.report(Errors.NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL.on(entry))
+            }
+        }
+
+        fun applicableWithUseSiteTarget() = useSiteTarget != null && actualTargets.onlyWithUseSiteTarget.any {
             it in applicableTargets && KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it
-        }) return
+        }
+
+        if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || applicableWithUseSiteTarget()) {
+            checkUselessFunctionLiteralAnnotation()
+            return
+        }
 
         if (useSiteTarget != null) {
             trace.report(Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(

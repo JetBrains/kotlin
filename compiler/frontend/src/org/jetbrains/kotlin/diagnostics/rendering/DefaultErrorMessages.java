@@ -127,6 +127,7 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
+        MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL, "Function literal here is an inlined argument so this annotation cannot be stored anywhere");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}'' annotations could be applied only to property declarations", TO_STRING);
         MAP.put(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD, "Property has neither a backing field nor a delegate");
