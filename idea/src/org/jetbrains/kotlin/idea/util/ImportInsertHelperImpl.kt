@@ -108,37 +108,34 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     ) {
         private val resolutionFacade = file.getResolutionFacade()
 
+        private fun isAlreadyImported(target: DeclarationDescriptor, topLevelScope: JetScope, targetFqName: FqName): Boolean {
+            val name = target.name
+            when (target) {
+                is ClassDescriptor -> {
+                    val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
+                    if (classifier?.importableFqName == targetFqName) return true
+                }
+                is FunctionDescriptor -> {
+                    val functions = topLevelScope.getFunctions(name, NoLookupLocation.FROM_IDE)
+                    if (functions.map { it.importableFqName }.contains(targetFqName)) return true
+                }
+                is PropertyDescriptor -> {
+                    val properties = topLevelScope.getProperties(name, NoLookupLocation.FROM_IDE)
+                    if (properties.map { it.importableFqName }.contains(targetFqName)) return true
+                }
+            }
+            return false
+        }
+
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
             val target = descriptor.getImportableDescriptor()
-            val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
 
             val name = target.name
             val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
 
             // check if import is not needed
-            when (target) {
-                is ClassDescriptor -> {
-                    val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
-                    if (classifier?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
-                }
-                is FunctionDescriptor -> {
-                    val functions = topLevelScope.getFunctions(name, NoLookupLocation.FROM_IDE)
-                    if (functions.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
-                }
-                is PropertyDescriptor -> {
-                    val properties = topLevelScope.getProperties(name, NoLookupLocation.FROM_IDE)
-                    if (properties.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
-                }
-                // todo change this after adding special syntax for package import
-                // now impossible import package
-                //
-                // is PackageViewDescriptor -> {
-                //     if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
-                // }
-                else -> {
-                    return ImportDescriptorResult.FAIL
-                }
-            }
+            val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
+            if (isAlreadyImported(target, topLevelScope, targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
 
             if (!mayImportByCodeStyle(descriptor)) {
                 return ImportDescriptorResult.FAIL
@@ -148,6 +145,10 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 file.importsAsImportList()?.getImports() ?: listOf()
             else
                 file.getImportDirectives()
+
+            if (imports.any { !it.isAllUnder && it.importPath?.fqnPart() == targetFqName }) {
+                return ImportDescriptorResult.FAIL
+            }
 
             // check there is an explicit import of a class/package with the same name already
             val conflict = when (target) {
@@ -249,13 +250,10 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val addedImport = addImport(parentFqName, true)
 
-            if (target is ClassDescriptor) {
-                val newTopLevelScope = resolutionFacade.getFileTopLevelScope(file)
-                val resolvedTo = newTopLevelScope.getClassifier(target.name, NoLookupLocation.FROM_IDE)
-                if (resolvedTo?.importableFqName != targetFqName) {
-                    addedImport.delete()
-                    return ImportDescriptorResult.FAIL
-                }
+            val newTopLevelScope = resolutionFacade.getFileTopLevelScope(file)
+            if (!isAlreadyImported(target, newTopLevelScope, targetFqName)) {
+                addedImport.delete()
+                return ImportDescriptorResult.FAIL
             }
 
             for (conflict in conflicts) {
