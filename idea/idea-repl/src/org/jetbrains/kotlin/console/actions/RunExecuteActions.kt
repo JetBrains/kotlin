@@ -47,8 +47,7 @@ public class RunKotlinConsoleAction : AnAction() {
 public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return errorNotification(null, "Cannot find project")
-        val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile)
-                        ?: return errorNotification(project, "Action performed in an invalid console")
+        val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile) ?: return
 
         ktConsole.executor.executeCommand()
     }
