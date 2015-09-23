@@ -49,6 +49,9 @@ public class KotlinReplOutputHandler(
     override fun isSilentlyDestroyOnClose() = true
 
     override fun notifyTextAvailable(text: String, key: Key<*>?) {
+        // hide warning about adding test folder to classpath
+        if (text.startsWith("warning: classpath entry points to a non-existent location")) return
+
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
         if (!text.startsWith(XML_PREFIX)) return super.notifyTextAvailable(text, key)
 
