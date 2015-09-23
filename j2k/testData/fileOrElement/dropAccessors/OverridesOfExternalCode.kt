@@ -2,8 +2,11 @@
 // ERROR: Property must be initialized
 // ERROR: Property must be initialized
 // ERROR: Property must be initialized
+// ERROR: Property must be initialized
+// ERROR: Property must be initialized
 import kotlinApi.KotlinClassWithProperties
 import javaApi.JavaClassWithProperties
+import javaApi.JavaClassDerivedFromKotlinClassWithProperties
 
 internal open class A : KotlinClassWithProperties() {
     override var someVar1: String
@@ -82,4 +85,16 @@ internal class C : A() {
         get() {
             return super.someVar1
         }
+}
+
+internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
+    override var someVar1: String
+        get() {
+            return "a"
+        }
+
+    override var someVar2: String
+        set(value: String) {
+        }
+
 }

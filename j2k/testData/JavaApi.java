@@ -1,7 +1,10 @@
 package javaApi;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.String;
 import java.util.Set;
+import kotlinApi.KotlinClassWithProperties;
 
 public @interface Anon1 {
     String[] value();
@@ -103,4 +106,12 @@ public class JavaClassWithProperties {
 
     public int getValue4() { return 1; }
     public void setValue4(int value) { }
+}
+
+public class JavaClassDerivedFromKotlinClassWithProperties extends KotlinClassWithProperties {
+    @Override
+    public String getSomeVar1() { return ""; }
+
+    @Override
+    public void setSomeVar2(String value) { }
 }

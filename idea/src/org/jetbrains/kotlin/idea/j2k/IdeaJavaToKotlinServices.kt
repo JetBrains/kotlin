@@ -16,13 +16,23 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.*
 
-object IdeaJavaToKotlinServices: JavaToKotlinConverterServices {
+object IdeaJavaToKotlinServices : JavaToKotlinConverterServices {
     override val referenceSearcher: ReferenceSearcher
         get() = IdeaReferenceSearcher
+
+    override val superMethodsSearcher: SuperMethodsSearcher
+        get() = IdeaSuperMethodSearcher
+
     override val resolverForConverter: ResolverForConverter
         get() = IdeaResolverForConverter
+
     override val docCommentConverter: DocCommentConverter
         get() = IdeaDocCommentConverter
+}
+
+object IdeaSuperMethodSearcher : SuperMethodsSearcher {
+    override fun findDeepestSuperMethods(method: PsiMethod) = method.findDeepestSuperMethods().asList()
 }

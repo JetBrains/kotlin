@@ -255,17 +255,15 @@ private class PropertyDetector(
     }
 
     private fun createAccessorInfo(getOrSetMethod: PsiMethod, field: PsiField?, kind: AccessorKind, propertyName: String): AccessorInfo? {
-        //TODO: deepest method
         //TODO: multiple
-        for (superSignature in getOrSetMethod.hierarchicalMethodSignature.superSignatures) {
-            val method = superSignature.method
-            val containingClass = method.containingClass!!
+        for (superMethod in converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod)) {
+            val containingClass = superMethod.containingClass!!
             val superPropertyInfo: SuperPropertyInfo? = if (converter.inConversionScope(containingClass)) {
-                val propertyInfo = converter.propertyDetectionCache[containingClass][method]
+                val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
                 if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVar) else null
             }
-            else if (method is KotlinLightMethod) {
-                val origin = method.getOrigin()
+            else if (superMethod is KotlinLightMethod) {
+                val origin = superMethod.getOrigin()
                 if (origin is JetProperty) SuperPropertyInfo(origin.isVar) else null
             }
             else {

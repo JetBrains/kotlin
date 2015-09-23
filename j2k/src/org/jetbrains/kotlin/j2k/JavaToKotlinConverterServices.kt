@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.psi.PsiMethod
+
 interface JavaToKotlinConverterServices {
     val referenceSearcher: ReferenceSearcher
+    val superMethodsSearcher: SuperMethodsSearcher
     val resolverForConverter: ResolverForConverter
     val docCommentConverter: DocCommentConverter
 }
@@ -25,8 +28,22 @@ interface JavaToKotlinConverterServices {
 object EmptyJavaToKotlinServices: JavaToKotlinConverterServices {
     override val referenceSearcher: ReferenceSearcher
         get() = EmptyReferenceSearcher
+
+    override val superMethodsSearcher: SuperMethodsSearcher
+        get() = SuperMethodsSearcher.Default
+
     override val resolverForConverter: ResolverForConverter
         get() = EmptyResolverForConverter
+
     override val docCommentConverter: DocCommentConverter
         get() = EmptyDocCommentConverter
+}
+
+interface SuperMethodsSearcher {
+    fun findDeepestSuperMethods(method: PsiMethod): Collection<PsiMethod>
+
+    object Default : SuperMethodsSearcher {
+        // use simple findSuperMethods by default because findDeepestSuperMethods requires some service from IDEA
+        override fun findDeepestSuperMethods(method: PsiMethod) = method.findSuperMethods().asList()
+    }
 }

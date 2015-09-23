@@ -1,5 +1,6 @@
 import kotlinApi.KotlinClassWithProperties;
 import javaApi.JavaClassWithProperties;
+import javaApi.JavaClassDerivedFromKotlinClassWithProperties;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -100,4 +101,13 @@ class C extends A {
     public String getSomeVar1() {
         return super.getSomeVar1();
     }
+}
+
+class D extends JavaClassDerivedFromKotlinClassWithProperties {
+    @Override
+    public String getSomeVar1() { return "a"; }
+
+    @Override
+    public void setSomeVar2(String value) { }
+
 }
