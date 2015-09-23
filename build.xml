@@ -766,7 +766,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-package-facades">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>

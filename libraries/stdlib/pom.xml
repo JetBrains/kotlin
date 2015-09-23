@@ -31,12 +31,6 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
 
-                 <configuration>
-                     <args>
-                         <arg>-Xmultifile-package-facades</arg>
-                     </args>
-                 </configuration>
-
                 <executions>
                     <execution>
                         <id>compile</id>
