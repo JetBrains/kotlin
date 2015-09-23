@@ -222,7 +222,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactory())
         UNUSED_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactoryForUnusedParameter())
         EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch())
-        DEPRECATED_LAMBDA_SYNTAX.registerFactory(DeprecatedLambdaSyntaxFix, DeprecatedLambdaSyntaxFix.createWholeProjectFixFactory())
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
         EXPECTED_RETURN_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch())

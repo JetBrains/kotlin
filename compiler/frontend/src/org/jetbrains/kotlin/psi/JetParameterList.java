@@ -63,14 +63,4 @@ public class JetParameterList extends JetElementImplStub<KotlinPlaceHolderStub<J
     public void removeParameter(@NotNull JetParameter parameter) {
         EditCommaSeparatedListHelper.INSTANCE$.removeItem(parameter);
     }
-
-    // this method needed only for migrate lambda syntax
-    @Deprecated
-    public boolean isParenthesized() {
-        PsiElement firstChild = getFirstChild();
-        if (firstChild != null && firstChild.getNode() != null) {
-            return firstChild.getNode().getElementType() == JetTokens.LPAR;
-        }
-        return false;
-    }
 }
