@@ -59,7 +59,7 @@ public object ModifierCheckerCore {
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
             COMPANION_KEYWORD to EnumSet.of(OBJECT),
             LATE_INIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY),
-            DATA_KEYWORD      to EnumSet.of(CLASS),
+            DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS),
             INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, PROPERTY),
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),

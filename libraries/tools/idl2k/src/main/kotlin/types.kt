@@ -9,13 +9,13 @@ interface Type {
     protected fun String.withSuffix(): String = if (nullable) "$this?" else this
 }
 
-data object UnitType : Type {
+object UnitType : Type {
     override val nullable: Boolean
         get() = false
 
     override fun render() = "Unit"
 }
-data object DynamicType : Type {
+object DynamicType : Type {
     override val nullable: Boolean
         get() = false
 
