@@ -6,7 +6,6 @@
 package foo
 
 import test.*
-import kotlin.InlineOption.*
 
 fun testSameCaptured() : String {
     var result = 0;

@@ -1,6 +1,5 @@
 //NO_CHECK_LAMBDA_INLINING
 import test.*
-import kotlin.InlineOption.*
 
 fun testSameCaptured() : String {
     var result = 0;

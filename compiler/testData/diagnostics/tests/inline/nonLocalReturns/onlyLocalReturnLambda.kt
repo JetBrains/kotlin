@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-import kotlin.InlineOption.*
 
 fun <R> fun1(p: () -> R) {
     inlineFun {

@@ -1,6 +1,5 @@
 //NO_CHECK_LAMBDA_INLINING
 import builders.*
-import kotlin.InlineOption.*
 
 inline fun testAllInline(f: () -> String) : String {
     val args = arrayOf("1", "2", "3")

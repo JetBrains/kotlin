@@ -1,4 +1,3 @@
-import kotlin.InlineOption.*
 
 class A {
     fun foo() {

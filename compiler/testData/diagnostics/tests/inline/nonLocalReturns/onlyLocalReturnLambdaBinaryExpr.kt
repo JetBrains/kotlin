@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-import kotlin.InlineOption.*
 
 class Z {
     inline fun <R> inlineFun(crossinline p: () -> R) {

@@ -6,7 +6,6 @@
 package foo
 
 import test.*
-import kotlin.InlineOption.*
 
 fun test1(param: String): String {
     var result = "fail1"

@@ -1,4 +1,3 @@
-import kotlin.InlineOption.*
 
 inline fun<reified T> createArray(n: Int, crossinline block: () -> T): Array<T> {
     return Array<T>(n) { block() }

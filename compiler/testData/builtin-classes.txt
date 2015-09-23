@@ -591,22 +591,6 @@ public interface Function</*0*/ out R> {
     /*primary*/ public constructor HiddenDeclaration()
 }
 
-public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
-    enum entry LOCAL_CONTINUE_AND_BREAK
-
-    enum entry ONLY_LOCAL_RETURN
-
-    /*primary*/ private constructor InlineOption()
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
-    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
-}
-
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
@@ -1266,12 +1250,6 @@ public object Unit {
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class inline : kotlin.Annotation {
     /*primary*/ public constructor inline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
-    /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
-    public final val value: kotlin.Array<out kotlin.InlineOption>
-        public final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class noinline : kotlin.Annotation {

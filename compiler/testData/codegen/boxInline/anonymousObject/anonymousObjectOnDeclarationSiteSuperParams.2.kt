@@ -1,6 +1,5 @@
 package test
 
-import kotlin.InlineOption.*
 
 abstract class A<R>(val param : R) {
     abstract fun getO() : R

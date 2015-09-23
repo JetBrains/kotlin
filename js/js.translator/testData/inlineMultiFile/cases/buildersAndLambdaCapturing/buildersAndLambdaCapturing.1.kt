@@ -5,7 +5,6 @@
 
 package foo
 
-import kotlin.InlineOption.*
 
 inline fun testAllInline(f: () -> String) : String {
     val args = arrayOf("1", "2", "3")

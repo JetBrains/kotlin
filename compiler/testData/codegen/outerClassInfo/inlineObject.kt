@@ -1,6 +1,5 @@
 package foo
 
-import kotlin.InlineOption.*
 
 class Foo {
 

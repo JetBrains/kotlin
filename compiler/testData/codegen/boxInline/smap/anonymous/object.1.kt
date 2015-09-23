@@ -1,5 +1,5 @@
 import builders.*
-import kotlin.InlineOption.*
+
 
 fun test(): String {
     var res = "Fail"

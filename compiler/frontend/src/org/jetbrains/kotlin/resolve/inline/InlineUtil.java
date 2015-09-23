@@ -61,29 +61,8 @@ public class InlineUtil {
         return InlineStrategy.valueOf(((EnumValue) argument).getValue().getName().asString());
     }
 
-    public static boolean hasOnlyLocalContinueAndBreak(@NotNull ValueParameterDescriptor descriptor) {
-        return hasInlineOption(descriptor, InlineOption.LOCAL_CONTINUE_AND_BREAK);
-    }
-
     public static boolean hasOnlyLocalReturn(@NotNull ValueParameterDescriptor descriptor) {
-        return hasInlineOption(descriptor, InlineOption.ONLY_LOCAL_RETURN)
-               || descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.crossinline) != null;
-    }
-
-    private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {
-        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.inlineOptions);
-        if (annotation != null) {
-            ConstantValue<?> argument = firstOrNull(annotation.getAllValueArguments().values());
-            if (argument instanceof ArrayValue) {
-                for (ConstantValue<?> value : ((ArrayValue) argument).getValue()) {
-                    if (value instanceof EnumValue && ((EnumValue) value).getValue().getName().asString().equals(option.name())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        return descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.crossinline) != null;
     }
 
     public static boolean checkNonLocalReturnUsage(

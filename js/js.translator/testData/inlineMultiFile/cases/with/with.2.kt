@@ -5,7 +5,6 @@
 
 package test
 
-import kotlin.InlineOption.*
 
 public class Data()
 

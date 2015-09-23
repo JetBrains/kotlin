@@ -1,6 +1,5 @@
 package zzz
 
-import kotlin.InlineOption.*
 
 inline fun calc(crossinline lambda: () -> Int): Int {
     return doCalc { lambda() }

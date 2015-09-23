@@ -1,6 +1,5 @@
 package test
 
-import kotlin.InlineOption.*
 
 inline fun <R> doWork(crossinline job: ()-> R) : R {
     val k = 10;

@@ -1,6 +1,5 @@
 //NO_CHECK_LAMBDA_INLINING
 import test.*
-import kotlin.InlineOption.*
 
 inline fun test1(crossinline param: () -> String): String {
     var result = "fail"

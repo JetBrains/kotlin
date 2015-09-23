@@ -16,7 +16,6 @@
 
 package kotlin
 
-import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 // Note:
 // Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime,
