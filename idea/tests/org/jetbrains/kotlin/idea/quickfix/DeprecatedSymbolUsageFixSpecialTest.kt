@@ -55,7 +55,7 @@ public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTes
         val element = getFile().findElementAt(offset)
         val nameExpression = element!!.parents.firstIsInstance<JetSimpleNameExpression>()
         getProject().executeWriteCommand("") {
-            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern)).invoke(getProject(), getEditor(), getFile())
+            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(getProject(), getEditor(), getFile())
         }
 
         myFixture.checkResultByFile("$testPath.after")

@@ -1,6 +1,8 @@
 data class A(val v: IntArray)
 
 fun box() : String {
-  if(A(intArrayOf(0,1,2)) != A(intArrayOf(0,1,2))) return "fail"
+  val myArray = intArrayOf(0, 1, 2)
+  if(A(myArray) == A(intArrayOf(0, 1, 2))) return "fail"
+  if(A(myArray) != A(myArray)) return "fail 2"
   return "OK"
 }

@@ -73,7 +73,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             if (descriptor is CallableDescriptor &&
                 descriptor.valueParameters.any { it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null }) return null
 
-            return ReplaceWith(pattern, *imports.toTypedArray())
+            return ReplaceWith(pattern, imports)
         }
 
         data class Data(

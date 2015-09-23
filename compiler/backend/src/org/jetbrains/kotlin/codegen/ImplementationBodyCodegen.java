@@ -503,18 +503,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 2);
                 StackValue.coerce(otherPropertyType, asmType, iv);
 
-                if (asmType.getSort() == Type.ARRAY) {
-                    Type elementType = correctElementType(asmType);
-                    if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z", false);
-                    }
-                    else {
-                        iv.invokestatic("java/util/Arrays", "equals",
-                                        "(" + asmType.getDescriptor() + asmType.getDescriptor() + ")Z", false);
-                    }
-                    iv.ifeq(ne);
-                }
-                else if (asmType.getSort() == Type.FLOAT) {
+                if (asmType.getSort() == Type.FLOAT) {
                     iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
                     iv.ifne(ne);
                 }

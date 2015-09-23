@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-data class ReplaceWith(val pattern: String, vararg val imports: String)
+data class ReplaceWith(val pattern: String, val imports: List<String>)
 
 object ReplaceWithAnnotationAnalyzer {
     public val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
