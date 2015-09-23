@@ -2,7 +2,7 @@ fun test(some: (Int) -> Int) {
 }
 
 fun foo() = test() { it }
-val function = test { (a: Int) -> a }
+val function = test { a: Int -> a }
 val function1 = test {a : Int -> a}
 val function2 = test {    }
 val function3 = test {}

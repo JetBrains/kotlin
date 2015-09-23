@@ -2,38 +2,38 @@
 fun foo() {
     "before"
     val b = 1
-    val f = { (x: Int) ->
+    val f = { x: Int ->
         val a = x + b
     }
     "after"
 }
 ---------------------
 L0:
-  1 <START>                                                                       INIT: in: {} out: {}                        USE: in: {} out: {}
-  2 mark({ "before" val b = 1 val f = { (x: Int) -> val a = x + b } "after" })
+  1 <START>                                                                     INIT: in: {} out: {}                        USE: in: {} out: {}
+  2 mark({ "before" val b = 1 val f = { x: Int -> val a = x + b } "after" })
     mark("before")
     r("before") -> <v0>
-    v(val b = 1)                                                                  INIT: in: {} out: {b=D}
-    r(1) -> <v1>                                                                  INIT: in: {b=D} out: {b=D}
-    w(b|<v1>)                                                                     INIT: in: {b=D} out: {b=ID}
-    v(val f = { (x: Int) -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
-    mark({ (x: Int) -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
+    v(val b = 1)                                                                INIT: in: {} out: {b=D}
+    r(1) -> <v1>                                                                INIT: in: {b=D} out: {b=D}
+    w(b|<v1>)                                                                   INIT: in: {b=D} out: {b=ID}
+    v(val f = { x: Int -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
+    mark({ x: Int -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
-    d({ (x: Int) -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
+    d({ x: Int -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
 L2 [after local declaration]:
-    r({ (x: Int) -> val a = x + b }) -> <v2>
-    w(f|<v2>)                                                                     INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
-    mark("after")                                                                 INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
+    r({ x: Int -> val a = x + b }) -> <v2>
+    w(f|<v2>)                                                                   INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
+    mark("after")                                                               INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
     r("after") -> <v3>
 L1:
-  1 <END>                                                                         INIT: in: {} out: {}
+  1 <END>                                                                       INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                    USE: in: {} out: {}
+    <SINK>                                                                                                                  USE: in: {} out: {}
 =====================
 == anonymous_0 ==
-{ (x: Int) ->
+{ x: Int ->
         val a = x + b
     }
 ---------------------

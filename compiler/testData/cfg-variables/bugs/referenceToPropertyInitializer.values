@@ -1,27 +1,27 @@
 == TestFunctionLiteral ==
 class TestFunctionLiteral {
-    val sum: (Int)->Int = { (x: Int) ->
+    val sum: (Int)->Int = { x: Int ->
         sum(x - 1) + x
     }
 }
 ---------------------
-{ (x: Int) -> sum(x - 1) + x }   <v0>: {<: (Int) -> Int}   NEW: r({ (x: Int) -> sum(x - 1) + x }) -> <v0>
+{ x: Int -> sum(x - 1) + x }   <v0>: {<: (Int) -> Int}   NEW: r({ x: Int -> sum(x - 1) + x }) -> <v0>
 =====================
 == anonymous_0 ==
-{ (x: Int) ->
+{ x: Int ->
         sum(x - 1) + x
     }
 ---------------------
-                 <v0>: Int                   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>      
-                 <v1>: TestFunctionLiteral   NEW: magic[IMPLICIT_RECEIVER](sum) -> <v1>        
-sum              <v2>: {<: (Int) -> Int}     NEW: r(sum|<v1>) -> <v2>                          
-x                <v3>: Int                   NEW: r(x) -> <v3>                                 
-1                <v4>: Int                   NEW: r(1) -> <v4>                                 
-x - 1            <v5>: Int                   NEW: call(x - 1, minus|<v3>, <v4>) -> <v5>        
-sum(x - 1)       <v6>: Int                   NEW: call(sum(x - 1), invoke|<v2>, <v5>) -> <v6>  
-x                <v7>: Int                   NEW: r(x) -> <v7>                                 
+                 <v0>: Int                   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+                 <v1>: TestFunctionLiteral   NEW: magic[IMPLICIT_RECEIVER](sum) -> <v1>
+sum              <v2>: {<: (Int) -> Int}     NEW: r(sum|<v1>) -> <v2>
+x                <v3>: Int                   NEW: r(x) -> <v3>
+1                <v4>: Int                   NEW: r(1) -> <v4>
+x - 1            <v5>: Int                   NEW: call(x - 1, minus|<v3>, <v4>) -> <v5>
+sum(x - 1)       <v6>: Int                   NEW: call(sum(x - 1), invoke|<v2>, <v5>) -> <v6>
+x                <v7>: Int                   NEW: r(x) -> <v7>
 sum(x - 1) + x   <v8>: Int                   NEW: call(sum(x - 1) + x, plus|<v6>, <v7>) -> <v8>
-sum(x - 1) + x   <v8>: Int                   COPY                                              
+sum(x - 1) + x   <v8>: Int                   COPY
 =====================
 == A ==
 open class A(val a: A)

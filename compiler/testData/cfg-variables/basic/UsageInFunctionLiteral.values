@@ -1,17 +1,17 @@
 == foo ==
 fun foo() {
     val a = 1
-    val f = { (x: Int) ->
+    val f = { x: Int ->
         val y = x + a
         use(a)
     }
 }
 ---------------------
-1                                      <v0>: Int                             NEW: r(1) -> <v0>
-{ (x: Int) -> val y = x + a use(a) }   <v1>: {<: (Int) -> Array<out Any?>}   NEW: r({ (x: Int) -> val y = x + a use(a) }) -> <v1>
+1                                    <v0>: Int                             NEW: r(1) -> <v0>
+{ x: Int -> val y = x + a use(a) }   <v1>: {<: (Int) -> Array<out Any?>}   NEW: r({ x: Int -> val y = x + a use(a) }) -> <v1>
 =====================
 == anonymous_0 ==
-{ (x: Int) ->
+{ x: Int ->
         val y = x + a
         use(a)
     }

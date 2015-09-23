@@ -34,7 +34,7 @@ fun test4() {
 // should be an error on receiver, shouldn't be thrown away
 
 fun test5() {
-    <!TYPE_MISMATCH!>1<!>.{ <!DEPRECATED_LAMBDA_SYNTAX!>String.(): String<!> -> this}()
+    <!TYPE_MISMATCH!>1<!>.(fun String.()=1)()
 }
 
 fun <R: Any> R?.sure() : R = this!!

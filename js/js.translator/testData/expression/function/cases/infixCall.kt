@@ -3,12 +3,12 @@ package foo
 
 fun Int.foo(a: Int) = this + a
 
-val bar = { Int.(a: Int) -> this * a }
+val bar = fun Int.(a: Int): Int = this * a
 
 fun test(op: Int.(Int) -> Int) = 3 op 20
 
 fun box(): String {
-    val op = { Int.(a: Int) -> this / a }
+    val op = fun Int.(a: Int): Int = this / a
 
     assertEquals(41, 34 foo 7)
     assertEquals(28, 4 bar 7)

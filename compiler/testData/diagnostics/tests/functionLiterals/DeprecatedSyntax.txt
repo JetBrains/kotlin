@@ -7,12 +7,12 @@ public val newSyntax3: (???, kotlin.Int) -> kotlin.Unit
 public val newSyntax4: (kotlin.Int, ???) -> kotlin.Unit
 public val none: () -> kotlin.Unit
 public val parameterWithFunctionType: () -> ((kotlin.Int) -> kotlin.Int) -> [ERROR : No type element]
-public val parenthesizedParameters: (kotlin.Int) -> kotlin.Unit
-public val parenthesizedParameters2: (???) -> kotlin.Unit
-public val receiver: kotlin.Int.() -> kotlin.Unit
-public val receiverAndReturnType: kotlin.Int.() -> kotlin.Int
-public val receiverAndReturnTypeWithParameter: kotlin.Int.(kotlin.Int) -> kotlin.Int
-public val receiverWithFunctionType: ((kotlin.Int) -> kotlin.Int).() -> kotlin.Unit
-public val receiverWithParameter: kotlin.Int.(???) -> kotlin.Unit
+public val parenthesizedParameters: () -> kotlin.Int
+public val parenthesizedParameters2: () -> ???
+public val receiver: () -> ???
+public val receiverAndReturnType: () -> kotlin.Int
+public val receiverAndReturnTypeWithParameter: () -> kotlin.Int
+public val receiverWithFunctionType: () -> kotlin.Int.Companion
+public val receiverWithParameter: () -> ???
 public val returnType: () -> kotlin.Int
-public val returnTypeWithParameter: (kotlin.Int) -> kotlin.Int
+public val returnTypeWithParameter: () -> kotlin.Int

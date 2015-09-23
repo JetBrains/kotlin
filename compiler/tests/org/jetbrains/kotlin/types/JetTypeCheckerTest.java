@@ -366,30 +366,30 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testFunctionLiterals() throws Exception {
-        assertType("{() -> }", "() -> Unit");
-        assertType("{() : Int -> }", "() -> Int");
-        assertType("{() -> 1}", "() -> Int");
+        assertType("{ -> }", "() -> Unit");
+        assertType("fun(): Int = 1", "() -> Int");
+        assertType("{ 1}", "() -> Int");
 
-        assertType("{(a : Int) -> 1}", "(a : Int) -> Int");
-        assertType("{(a : Int, b : String) -> 1}", "(a : Int, b : String) -> Int");
+        assertType("{ a : Int -> 1}", "(a : Int) -> Int");
+        assertType("{ a : Int, b : String -> 1}", "(a : Int, b : String) -> Int");
 
-        assertType("{(a : Int) -> 1}", "(Int) -> Int");
-        assertType("{(a : Int, b : String) -> 1}", "(Int, String) -> Int");
+        assertType("{ a : Int -> 1}", "(Int) -> Int");
+        assertType("{ a : Int, b : String -> 1}", "(Int, String) -> Int");
 
-        assertType("{Any.() -> 1}", "Any.() -> Int");
+        assertType("fun Any.(): Int = 1", "Any.() -> Int");
 
-        assertType("{Any.(a : Int) -> 1}", "Any.(a : Int) -> Int");
-        assertType("{Any.(a : Int, b : String) -> 1}", "Any.(a : Int, b : String) -> Int");
+        assertType("fun Any.(a : Int) = 1", "Any.(a : Int) -> Int");
+        assertType("fun Any.(a : Int, b : String) = 1", "Any.(a : Int, b : String) -> Int");
 
-        assertType("{Any.(a : Int) -> 1}", "Any.(Int) -> Int");
-        assertType("{Any.(a : Int, b : String) -> 1}", "Any.(Int, String) -> Int");
+        assertType("fun Any.(a : Int) = 1", "Any.(Int) -> Int");
+        assertType("fun Any.(a : Int, b : String) = 1", "Any.(Int, String) -> Int");
 
-        assertType("{Any.(a : Int, b : String) -> b}", "Any.(Int, String) -> String");
+        assertType("fun Any.(a : Int, b : String) = b", "Any.(Int, String) -> String");
     }
 
     public void testBlocks() throws Exception {
         assertType("if (1) {val a = 1; a} else {null}", "Int?");
-        assertType("if (1) {() -> val a = 1; a} else {() -> null}", "Function0<Int?>");
+        assertType("if (1) { -> val a = 1; a} else { -> null}", "Function0<Int?>");
         assertType("if (1) (fun (): Boolean { val a = 1; a; var b : Boolean; return b }) else null", "Function0<Boolean>?");
         assertType("if (1) (fun (): Int { val a = 1; a; var b = a; return b }) else null", "Function0<Int>?");
     }

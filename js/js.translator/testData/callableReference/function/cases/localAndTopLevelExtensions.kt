@@ -5,7 +5,7 @@ fun Int.sum0(other: Int): Int = this + other
 fun box(): String {
     fun Int.sum1(other: Int): Int = this + other
 
-    val sum2 = {Int.(other : Int) : Int -> this + other}
+    val sum2 = fun Int.(other: Int): Int = this + other
 
     var x = 10
     x = x.sum0(5)

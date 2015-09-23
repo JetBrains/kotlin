@@ -1,16 +1,10 @@
-{ Int.(n: Int, s: String) ->
+{ n: Int, s: String ->
         val a = n + this
         println(s)
         f(a)
     }
 
-{ Int.(m: Int, r: String) ->
-        val b = m + this
-        println(r)
-        f(b)
-    }
-
-{ (a, b) ->
+{ a, b ->
         val m = a + this
         println(b)
         f(m)
