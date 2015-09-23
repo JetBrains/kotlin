@@ -27,6 +27,7 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -37,6 +38,7 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -57,6 +59,8 @@ import org.jetbrains.kotlin.psi.JetFile
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
+
+private val KOTLIN_SHELL_EXECUTE_ACTION_ID = "KotlinShellExecute"
 
 public class KotlinConsoleRunner(
         val module: Module,
@@ -139,12 +143,15 @@ public class KotlinConsoleRunner(
     }
 
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler)
-            = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, "KotlinShellExecute", consoleExecuteActionHandler)
+            = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, KOTLIN_SHELL_EXECUTE_ACTION_ID, consoleExecuteActionHandler)
 
     override fun constructConsoleTitle(title: String) = "$title (in module ${module.name})"
 
     private fun setupPlaceholder(editor: EditorEx) {
-        editor.setPlaceholder("<Ctrl+Enter> to execute")
+        val executeCommandAction = ActionManager.getInstance().getAction(KOTLIN_SHELL_EXECUTE_ACTION_ID)
+        val executeCommandActionShortcutText = KeymapUtil.getFirstKeyboardShortcutText(executeCommandAction)
+
+        editor.setPlaceholder("<$executeCommandActionShortcutText> to execute")
         editor.setShowPlaceholderWhenFocused(true)
 
         val placeholderAttrs = TextAttributes()
