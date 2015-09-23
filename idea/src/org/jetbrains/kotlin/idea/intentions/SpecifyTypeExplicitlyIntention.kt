@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.ArrayList
+import java.util.*
 
 public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
@@ -85,7 +84,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
             }
             else {
-                declaration.setType(KotlinBuiltIns.getInstance().getAnyType())
+                declaration.setType(exprType)
             }
         }
 

@@ -123,6 +123,10 @@ public class JetParserDefinition implements ParserDefinition {
 
     @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
+        IElementType rightTokenType = astNode1.getElementType();
+        if (rightTokenType == JetTokens.GET_KEYWORD || rightTokenType == JetTokens.SET_KEYWORD) {
+            return SpaceRequirements.MUST_LINE_BREAK;
+        }
         return SpaceRequirements.MAY;
     }
 }

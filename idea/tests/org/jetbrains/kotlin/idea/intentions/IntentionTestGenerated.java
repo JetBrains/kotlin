@@ -5173,6 +5173,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/introduceBackingProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceBackingProperty extends AbstractIntentionTest {
+        public void testAllFilesPresentInIntroduceBackingProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/introduceBackingProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("backingFieldRef.kt")
+        public void testBackingFieldRef() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/backingFieldRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleVal.kt")
+        public void testSimpleVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleVar.kt")
+        public void testSimpleVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valWithAccessor.kt")
+        public void testValWithAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/valWithAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varWithAccessor.kt")
+        public void testVarWithAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/varWithAccessor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/invertIfCondition")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

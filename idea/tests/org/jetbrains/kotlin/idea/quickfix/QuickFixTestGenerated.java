@@ -4045,6 +4045,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/backingFieldSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("introduceBackingField.kt")
+            public void testIntroduceBackingField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/introduceBackingField.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("usage.kt")
             public void testUsage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/usage.kt");
