@@ -108,7 +108,7 @@ public fun ContextForNewModule(
         project: Project,
         moduleName: Name,
         parameters: ModuleParameters,
-        builtIns: KotlinBuiltIns = KotlinBuiltIns.getInstance()
+        builtIns: KotlinBuiltIns
 ): MutableModuleContext {
     val projectContext = ProjectContext(project)
     val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters, builtIns)

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -34,6 +36,9 @@ public object JvmPlatform : TargetPlatform("JVM") {
         override val defaultImports: List<ImportPath>
             get() = DEFAULT_IMPORTS_FOR_JVM
     }
+
+    override val builtIns: KotlinBuiltIns
+        get() = JvmBuiltIns.Instance
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 }

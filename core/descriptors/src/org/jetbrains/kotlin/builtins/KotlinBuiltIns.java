@@ -43,7 +43,7 @@ import static kotlin.KotlinPackage.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
-public class KotlinBuiltIns {
+public abstract class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
@@ -53,54 +53,6 @@ public class KotlinBuiltIns {
             ANNOTATION_PACKAGE_FQ_NAME,
             BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
     );
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static volatile KotlinBuiltIns instance = null;
-
-    private static volatile boolean initializing;
-    private static Throwable initializationFailed;
-
-    private static synchronized void initialize() {
-        if (instance == null) {
-            if (initializationFailed != null) {
-                throw new IllegalStateException(
-                        "Built-in library initialization failed previously: " + initializationFailed, initializationFailed
-                );
-            }
-            if (initializing) {
-                throw new IllegalStateException("Built-in library initialization loop");
-            }
-            initializing = true;
-            try {
-                instance = new KotlinBuiltIns();
-            }
-            catch (Throwable e) {
-                initializationFailed = e;
-                throw new IllegalStateException("Built-in library initialization failed. " +
-                                                "Please ensure you have kotlin-runtime.jar in the classpath: " + e, e);
-            }
-            finally {
-                initializing = false;
-            }
-        }
-    }
-
-    @NotNull
-    public static KotlinBuiltIns getInstance() {
-        if (initializing) {
-            synchronized (KotlinBuiltIns.class) {
-                assert instance != null : "Built-ins are not initialized (note: We are under the same lock as initializing and instance)";
-                return instance;
-            }
-        }
-        if (instance == null) {
-            initialize();
-        }
-        return instance;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
@@ -112,7 +64,7 @@ public class KotlinBuiltIns {
 
     public static final FqNames FQ_NAMES = new FqNames();
 
-    private KotlinBuiltIns() {
+    protected KotlinBuiltIns() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this

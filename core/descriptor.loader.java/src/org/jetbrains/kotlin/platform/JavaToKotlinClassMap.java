@@ -44,7 +44,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     private final Map<ClassDescriptor, ClassDescriptor> readOnlyToMutable = new HashMap<ClassDescriptor, ClassDescriptor>();
 
     private JavaToKotlinClassMap() {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        KotlinBuiltIns builtIns = JvmBuiltIns.getInstance();
 
         add(Object.class, builtIns.getAny());
         add(String.class, builtIns.getString());

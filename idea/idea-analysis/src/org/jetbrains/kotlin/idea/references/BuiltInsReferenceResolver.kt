@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -65,7 +64,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         val jetBuiltInsFiles = getJetBuiltInsFiles()
 
         runReadAction {
-            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), ModuleParameters.Empty)
+            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), TargetPlatform.Default)
             newModuleContext.setDependencies(newModuleContext.module)
 
             val declarationFactory = FileBasedDeclarationProviderFactory(newModuleContext.storageManager, jetBuiltInsFiles)

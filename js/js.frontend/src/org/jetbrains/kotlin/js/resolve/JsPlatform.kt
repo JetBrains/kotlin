@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.resolve
 
 import com.google.common.collect.ImmutableList
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -36,6 +38,8 @@ public object JsPlatform : TargetPlatform("JS") {
             get() = PlatformToKotlinClassMap.EMPTY
     }
 
-
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
+
+    override val builtIns: KotlinBuiltIns
+        get() = DefaultBuiltIns.Instance
 }
