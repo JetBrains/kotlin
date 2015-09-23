@@ -134,8 +134,6 @@ public class IncrementalPackageFragmentProvider(
 
         override fun getMemberScope(): JetScope = memberScope()
 
-        override fun isIncremental(): Boolean = true
-
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
                 this@IncrementalPackageFragment, packageData.packageProto, packageData.nameResolver, deserializationComponents,
                 { listOf() }
