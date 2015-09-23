@@ -5,4 +5,3 @@ Module 'module' production
     proto.tab
     source-to-classes.tab
 Module 'module' tests
-    format-version.txt

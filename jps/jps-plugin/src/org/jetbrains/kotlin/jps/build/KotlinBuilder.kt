@@ -30,7 +30,10 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ABORT
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ADDITIONAL_PASS_REQUIRED
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.NOTHING_DONE
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.OK
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
@@ -143,7 +146,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
                 val incrementalCaches = getIncrementalCaches(chunk, context)
                 incrementalCaches.values().forEach(StorageOwner::clean)
-                return CHUNK_REBUILD_REQUIRED
+                FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
+                return ADDITIONAL_PASS_REQUIRED
             }
         }
 
@@ -205,7 +209,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             isJsModule -> ChangesInfo.NO_CHANGES
             else -> {
                 val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
-                val info = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
+                val info = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles, chunk)
                 updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
                 info
             }
@@ -264,7 +268,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         private fun recompileEverything() {
             allCompiledFiles.clear()
-            FSOperations.markDirtyRecursively(context, chunk)
+            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
         }
 
         private fun recompileOtherAndDependents() {
@@ -449,13 +453,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
-            generatedFiles: List<GeneratedFile>
+            generatedFiles: List<GeneratedFile>,
+            chunk: ModuleChunk
     ): ChangesInfo {
         if (!IncrementalCompilation.isEnabled()) {
             return ChangesInfo.NO_CHANGES
         }
 
-        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
+        chunk.targets.forEach { incrementalCaches[it]!!.saveCacheFormatVersion() }
 
         var changesInfo = ChangesInfo.NO_CHANGES
         for (generatedFile in generatedFiles) {

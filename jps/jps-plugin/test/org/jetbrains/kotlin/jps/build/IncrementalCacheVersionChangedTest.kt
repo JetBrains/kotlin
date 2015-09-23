@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
-import kotlin.test.assertTrue
 
 public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     fun testCacheVersionChanged() {
@@ -28,8 +27,12 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(all
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedAndFileModified/")
     }
 
-    fun testCacheVersionChangedMultiModule() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedMultiModule/")
+    fun testCacheVersionChangedMultiModule1() {
+        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule1/")
+    }
+
+    fun testCacheVersionChangedMultiModule2() {
+        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule2/")
     }
 
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
@@ -39,8 +42,10 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(all
         for (target in targets) {
             val cacheVersion = paths.getKotlinCacheVersion(target)
             val cacheVersionFile = cacheVersion.formatVersionFile
-            assertTrue(cacheVersionFile.exists(), "Cache version file does not exists: $cacheVersionFile")
-            cacheVersionFile.writeText("777")
+
+            if (cacheVersionFile.exists()) {
+                cacheVersionFile.writeText("777")
+            }
         }
     }
 }
