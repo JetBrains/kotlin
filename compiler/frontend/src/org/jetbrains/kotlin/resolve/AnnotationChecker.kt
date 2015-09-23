@@ -171,6 +171,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is JetTypeProjection ->
                     if (annotated.projectionKind == JetProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
                 is JetClassInitializer -> TargetLists.T_INITIALIZER
+                is JetMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
                 else -> TargetLists.EMPTY
             }
         }
@@ -181,6 +182,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
                 onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
             }
+
+            val T_MULTI_DECLARATION = targetList(MULTI_DECLARATION)
 
             val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
                 extraTargets(FIELD)

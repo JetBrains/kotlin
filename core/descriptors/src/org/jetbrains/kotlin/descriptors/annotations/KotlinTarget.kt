@@ -59,7 +59,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER
     TOP_LEVEL_PROPERTY("top level property", false),
 
-    INITIALIZER("initializer", false)
+    INITIALIZER("initializer", false),
+    MULTI_DECLARATION("multi declaration", false)
     ;
 
     companion object {
