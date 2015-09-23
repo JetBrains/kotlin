@@ -109,41 +109,14 @@ private class PropertyDetector(
             methodsToCheck.add(method to (superInfo as SuperInfo.Property?))
         }
 
-
         val propertyNamesWithConflict = HashSet<String>()
         val prohibitedPropertyNames = psiClass.fields.map { it.name }.toMutableSet() //TODO: fields from base
 
-        val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
-        for ((method, superInfo) in methodsToCheck) {
-            val info = getGetterInfo(method, superInfo) ?: continue
+        val propertyNameToGetterInfo = detectGetters(methodsToCheck, prohibitedPropertyNames, propertyNamesWithConflict)
 
-            val prevInfo = propertyNameToGetterInfo[info.propertyName]
-            if (prevInfo != null) {
-                propertyNamesWithConflict.add(info.propertyName)
-                continue
-            }
+        val propertyNameToSetterInfo = detectSetters(methodsToCheck, prohibitedPropertyNames, propertyNameToGetterInfo.keySet(), propertyNamesWithConflict)
 
-            propertyNameToGetterInfo[info.propertyName] = info
-            info.field?.let { prohibitedPropertyNames.remove(it.name) }
-        }
-
-        var propertyNames: Set<String> = propertyNameToGetterInfo.keySet()
-
-        val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
-        for ((method, superInfo) in methodsToCheck) {
-            val info = getSetterInfo(method, superInfo, propertyNames) ?: continue
-
-            val prevInfo = propertyNameToSetterInfo[info.propertyName]
-            if (prevInfo != null) {
-                propertyNamesWithConflict.add(info.propertyName)
-                continue
-            }
-
-            propertyNameToSetterInfo[info.propertyName] = info
-            info.field?.let { prohibitedPropertyNames.remove(it.name) }
-        }
-
-        propertyNames = propertyNames + propertyNameToSetterInfo.keySet()
+        val propertyNames = propertyNameToGetterInfo.keySet() + propertyNameToSetterInfo.keySet()
 
         val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
         for (propertyName in propertyNames) {
@@ -228,6 +201,49 @@ private class PropertyDetector(
         }
 
         return memberToPropertyInfo
+    }
+
+    private fun detectGetters(
+            methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
+            prohibitedPropertyNames: MutableSet<String?>,
+            propertyNamesWithConflict: HashSet<String>
+    ): Map<String, AccessorInfo> {
+        val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
+        for ((method, superInfo) in methodsToCheck) {
+            val info = getGetterInfo(method, superInfo) ?: continue
+
+            val prevInfo = propertyNameToGetterInfo[info.propertyName]
+            if (prevInfo != null) {
+                propertyNamesWithConflict.add(info.propertyName)
+                continue
+            }
+
+            propertyNameToGetterInfo[info.propertyName] = info
+            info.field?.let { prohibitedPropertyNames.remove(it.name) }
+        }
+        return propertyNameToGetterInfo
+    }
+
+    private fun detectSetters(
+            methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
+            prohibitedPropertyNames: MutableSet<String?>,
+            propertyNamesFromGetters: Set<String>,
+            propertyNamesWithConflict: HashSet<String>
+    ): Map<String, AccessorInfo> {
+        val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
+        for ((method, superInfo) in methodsToCheck) {
+            val info = getSetterInfo(method, superInfo, propertyNamesFromGetters) ?: continue
+
+            val prevInfo = propertyNameToSetterInfo[info.propertyName]
+            if (prevInfo != null) {
+                propertyNamesWithConflict.add(info.propertyName)
+                continue
+            }
+
+            propertyNameToSetterInfo[info.propertyName] = info
+            info.field?.let { prohibitedPropertyNames.remove(it.name) }
+        }
+        return propertyNameToSetterInfo
     }
 
     private fun dropPropertiesWithConflictingAccessors(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
