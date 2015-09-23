@@ -27,25 +27,23 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.rmi.*
-import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportCategory
-import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportMessage
-import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets
-import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
-import org.jetbrains.kotlin.utils.*
-
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.rmi.CompilerId
+import org.jetbrains.kotlin.rmi.configureDaemonJVMOptions
+import org.jetbrains.kotlin.rmi.configureDaemonOptions
+import org.jetbrains.kotlin.rmi.isDaemonEnabled
+import org.jetbrains.kotlin.rmi.kotlinr.*
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.util.ArrayList
-
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import java.util.*
 
 public object KotlinCompilerRunner {
     private val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -58,14 +56,12 @@ public object KotlinCompilerRunner {
             compilerSettings: CompilerSettings,
             messageCollector: MessageCollector,
             environment: CompilerEnvironment,
-            incrementalCaches: Map<TargetId, IncrementalCache>?,
             moduleFile: File,
             collector: OutputItemsCollector) {
         val arguments = mergeBeans(commonArguments, k2jvmArguments)
         setupK2JvmArguments(moduleFile, arguments)
 
-        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment,
-                    incrementalCaches)
+        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment)
     }
 
     public fun runK2JsCompiler(
@@ -74,7 +70,6 @@ public object KotlinCompilerRunner {
             compilerSettings: CompilerSettings,
             messageCollector: MessageCollector,
             environment: CompilerEnvironment,
-            incrementalCaches: Map<TargetId, IncrementalCache>?,
             collector: OutputItemsCollector,
             sourceFiles: Collection<File>,
             libraryFiles: List<String>,
@@ -82,8 +77,7 @@ public object KotlinCompilerRunner {
         val arguments = mergeBeans(commonArguments, k2jsArguments)
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments)
 
-        runCompiler(K2JS_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment,
-                    incrementalCaches)
+        runCompiler(K2JS_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment)
     }
 
     private fun processCompilerOutput(
@@ -109,8 +103,7 @@ public object KotlinCompilerRunner {
             additionalArguments: String,
             messageCollector: MessageCollector,
             collector: OutputItemsCollector,
-            environment: CompilerEnvironment,
-            incrementalCaches: Map<TargetId, IncrementalCache>?) {
+            environment: CompilerEnvironment) {
         try {
             messageCollector.report(INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
 
@@ -119,7 +112,7 @@ public object KotlinCompilerRunner {
 
             val argsArray = argumentsList.toTypedArray()
 
-            if (!tryCompileWithDaemon(messageCollector, collector, environment, incrementalCaches, argsArray)) {
+            if (!tryCompileWithDaemon(messageCollector, collector, environment, argsArray)) {
                 // otherwise fallback to in-process
 
                 val stream = ByteArrayOutputStream()
@@ -139,14 +132,12 @@ public object KotlinCompilerRunner {
 
     }
 
-    private fun tryCompileWithDaemon(
-            messageCollector: MessageCollector,
-            collector: OutputItemsCollector,
-            environment: CompilerEnvironment,
-            incrementalCaches: Map<TargetId, IncrementalCache>?,
-            argsArray: Array<String>): Boolean {
+    private fun tryCompileWithDaemon(messageCollector: MessageCollector,
+                                     collector: OutputItemsCollector,
+                                     environment: CompilerEnvironment,
+                                     argsArray: Array<String>): Boolean {
 
-        if (incrementalCaches != null && isDaemonEnabled()) {
+        if (isDaemonEnabled()) {
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
             // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
             //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
@@ -173,7 +164,11 @@ public object KotlinCompilerRunner {
                 val compilerOut = ByteArrayOutputStream()
                 val daemonOut = ByteArrayOutputStream()
 
-                val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, incrementalCaches, compilerOut, daemonOut)
+                val services = CompilationServices(
+                        incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
+                        compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
+
+                val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
