@@ -1,10 +1,10 @@
 package test
 
-interface A<T> {
+internal interface A<T> {
     fun run(): T;
 }
 
-inline fun bar(crossinline y: () -> String) = object : A<String> {
+internal inline fun bar(crossinline y: () -> String) = object : A<String> {
     override fun run() : String {
         return call(y)
     }
