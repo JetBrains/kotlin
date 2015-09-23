@@ -239,7 +239,7 @@ public class FunctionCodegen {
     private void writePackageFacadeMethodAnnotationsIfNeeded(MethodVisitor mv) {
         if (owner instanceof PackageFacadeContext) {
             PackageFacadeContext packageFacadeContext = (PackageFacadeContext) owner;
-            Type delegateToClassType = packageFacadeContext.getDelegateToClassType();
+            Type delegateToClassType = packageFacadeContext.getPublicFacadeType();
             if (delegateToClassType != null) {
                 String className = delegateToClassType.getClassName();
                 AnnotationVisitor

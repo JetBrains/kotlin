@@ -97,7 +97,7 @@ public class PropertyCodegen {
     }
 
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
-        assert context instanceof PackageFacadeContext : "should be called only for generating package facade: " + context;
+        assert context instanceof DelegatingFacadeContext : "should be called only for generating facade: " + context;
         gen(null, deserializedProperty, null, null);
     }
 

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -136,13 +137,23 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
+        return mapOwner(descriptor, false);
+    }
+
+    @NotNull
+    public Type mapImplementationOwner(@NotNull DeclarationDescriptor descriptor) {
+        return mapOwner(descriptor, true);
+    }
+
+    @NotNull
+    private Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean isImplementation) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
-            return Type.getObjectType(internalNameForPackage((CallableMemberDescriptor) descriptor));
+            return Type.getObjectType(internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor, isImplementation));
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
@@ -156,11 +167,11 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private String internalNameForPackage(@NotNull CallableMemberDescriptor descriptor) {
+    private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean isImplementation) {
         JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
-            if (descriptor instanceof PropertyDescriptor || Visibilities.isPrivate(visibility)) {
+            if (isImplementation || descriptor instanceof PropertyDescriptor || Visibilities.isPrivate(visibility)) {
                 return FileClassesPackage.getFileClassInternalName(fileClassesProvider, file);
             }
             else {
@@ -171,7 +182,7 @@ public class JetTypeMapper {
         CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember);
+            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, isImplementation);
             if (facadeFqName != null) return facadeFqName;
         }
 
@@ -180,7 +191,7 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
+    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
         // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack
         // introduced to make stdlib work with package facades built as multifile facades for M13.
         // We need some safe, concise way to identify multifile facade and multifile part
@@ -193,7 +204,7 @@ public class JetTypeMapper {
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
         PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
 
-        String facadeShortName = getPackageMemberOwnerShortName(descriptor);
+        String facadeShortName = getPackageMemberOwnerShortName(descriptor, isImplementation);
         if (facadeShortName == null) {
             return null;
         }
@@ -203,27 +214,40 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    private static String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
+    private static String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
         // XXX Dirty hack; see getPackageMemberOwnerInternalName above for more details.
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
+            if (isImplementation) {
+                return implClassName.asString();
+            }
+
             PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
             JetScope scope = packageFragmentDescriptor.getMemberScope();
             if (scope instanceof AbstractScopeAdapter) {
                 scope = ((AbstractScopeAdapter) scope).getActualScope();
             }
             if (scope instanceof LazyJavaPackageScope) {
-                Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
                 return ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
             }
             else if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
                 return PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()).shortName().asString();
             }
+            else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+                IncrementalPackageFragmentProvider.IncrementalPackageFragment incrementalPackageFragment =
+                        (IncrementalPackageFragmentProvider.IncrementalPackageFragment) packageFragmentDescriptor;
+                String implClassInternalName = internalNameByFqNameWithoutInnerClasses(
+                        packageFragmentDescriptor.getFqName().child(implClassName));
+                String facadeClassInternalName = incrementalPackageFragment.getMultifileFacade(implClassInternalName);
+                if (facadeClassInternalName == null) {
+                    return implClassName.asString();
+                }
+                else {
+                    return getSimpleInternalName(facadeClassInternalName);
+                }
+            }
             else {
-                // Incremental compilation ends up here. We do not have multifile classes support in incremental so far,
-                // so "use implementation class name" looks like a safe assumption for this case.
-                // However, this should be fixed; see getPackageMemberOwnerInternalName above for more details.
-                Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
                 return implClassName.asString();
             }
         }

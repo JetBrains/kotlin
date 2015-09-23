@@ -54,6 +54,7 @@ public class GenerationState @JvmOverloads constructor(
         public val packageFacadesAsMultifileClasses: Boolean = false,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
+        public val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
         public val targetId: TargetId? = null,
         moduleName: String? = null,

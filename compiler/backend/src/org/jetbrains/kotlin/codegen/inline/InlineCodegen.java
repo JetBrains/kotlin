@@ -231,10 +231,10 @@ public class InlineCodegen extends CallGenerator {
 
             SMAP smap;
             if (callDefault) {
-                Type ownerType = typeMapper.mapOwner(functionDescriptor);
+                Type implementationOwner = typeMapper.mapImplementationOwner(functionDescriptor);
                 FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
                                                                         (FieldOwnerContext) methodContext.getParentContext(),
-                                                                        ownerType.getInternalName());
+                                                                        implementationOwner.getInternalName());
                 FunctionCodegen.generateDefaultImplBody(
                         methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
                         inliningFunction, parentCodegen
@@ -343,7 +343,7 @@ public class InlineCodegen extends CallGenerator {
                 new FakeMemberCodegen(codegen.getParentCodegen(), expression,
                                       (FieldOwnerContext) context.getParentContext(),
                                       isLambda ? codegen.getParentCodegen().getClassName()
-                                               : typeMapper.mapOwner(descriptor).getInternalName());
+                                               : typeMapper.mapImplementationOwner(descriptor).getInternalName());
 
         FunctionGenerationStrategy strategy =
                 expression instanceof JetCallableReferenceExpression ?

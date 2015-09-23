@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Sets;
+import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -29,9 +30,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 
@@ -85,15 +84,16 @@ public class KotlinCodegenFacade {
             }
         }
 
+        Set<FqName> obsoleteMultifileClasses = new HashSet<FqName>(state.getObsoleteMultifileClasses());
+        for (FqName multifileClassFqName : Sets.union(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
+        }
+
         Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
         for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackageClasses.keySet())) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             generatePackage(state, packageFqName, filesInPackageClasses.get(packageFqName), errorHandler);
-        }
-
-        for (FqName multifileClassFqName : filesInMultifileClasses.keySet()) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

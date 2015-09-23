@@ -21,11 +21,14 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.ArrayUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.getFileClassType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -37,9 +40,18 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -55,13 +67,18 @@ public class MultifileClassCodegen(
 
     private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.bindingContext)
 
-    private val compiledPackageFragment = getCompiledPackageFragment(facadeFqName.parent(), state)
+    private val compiledPackageFragment = getCompiledPackageFragment(facadeFqName, state)
+
+    private val previouslyCompiledCallables =
+            if (compiledPackageFragment == null)
+                emptyList<DeserializedCallableMemberDescriptor>()
+            else
+                getDeserializedCallables(compiledPackageFragment)
+
+    private fun getDeserializedCallables(compiledPackageFragment: PackageFragmentDescriptor) =
+            compiledPackageFragment.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
 
     public val packageParts = PackageParts(facadeFqName.parent().asString())
-
-    // TODO incremental compilation support
-    // TODO previouslyCompiledCallables
-    // We can do this (probably without 'compiledPackageFragment') after modifications to part codegen.
 
     private val classBuilder = ClassBuilderOnDemand {
         val originFile = files.firstOrNull()
@@ -72,7 +89,9 @@ public class MultifileClassCodegen(
         val classBuilder = state.factory.newVisitor(declarationOrigin, facadeClassType, files)
 
         val filesWithCallables = files.filter { it.declarations.any { it is JetNamedFunction || it is JetProperty } }
-        val singleSourceFile = filesWithCallables.singleOrNull()
+
+        val singleSourceFile = if (previouslyCompiledCallables.isNotEmpty()) null else filesWithCallables.singleOrNull()
+
         classBuilder.defineClass(singleSourceFile, Opcodes.V1_6, FACADE_CLASS_ATTRIBUTES,
                                  facadeClassType.internalName,
                                  null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY)
@@ -86,6 +105,20 @@ public class MultifileClassCodegen(
         val generateCallableMemberTasks = HashMap<CallableMemberDescriptor, () -> Unit>()
         val partFqNames = arrayListOf<FqName>()
 
+        generateCodeForSourceFiles(errorHandler, generateCallableMemberTasks, partFqNames)
+
+        generateDelegatesToPreviouslyCompiledParts(generateCallableMemberTasks, partFqNames)
+
+        if (!generateCallableMemberTasks.isEmpty()) {
+            generateMultifileFacadeClass(generateCallableMemberTasks, partFqNames)
+        }
+    }
+
+    private fun generateCodeForSourceFiles(
+            errorHandler: CompilationErrorHandler,
+            generateCallableMemberTasks: MutableMap<CallableMemberDescriptor, () -> Unit>,
+            partFqNames: MutableList<FqName>
+    ) {
         for (file in files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             try {
@@ -103,12 +136,6 @@ public class MultifileClassCodegen(
                     e.printStackTrace()
                 }
             }
-        }
-
-//        generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks)
-
-        if (!generateCallableMemberTasks.isEmpty()) {
-            generateMultifileFacadeClass(generateCallableMemberTasks, partFqNames)
         }
     }
 
@@ -187,6 +214,55 @@ public class MultifileClassCodegen(
         }
     }
 
+    private fun generateDelegatesToPreviouslyCompiledParts(
+            generateCallableMemberTasks: MutableMap<CallableMemberDescriptor, () -> Unit>,
+            partFqNames: MutableList<FqName>
+    ) {
+        if (compiledPackageFragment == null) return
+
+        partFqNames.addAll(compiledPackageFragment.partsNames.map { JvmClassName.byInternalName(it).fqNameForClassNameWithoutDollars })
+
+        for (callable in previouslyCompiledCallables) {
+            val partFqName = JvmFileClassUtil.getPartFqNameForDeserializedCallable(callable)
+            val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partFqName)
+
+            generateCallableMemberTasks[callable] = { generateDelegateToCompiledMember(callable, compiledPackageFragment, partType) }
+        }
+    }
+
+    private fun generateDelegateToCompiledMember(
+            member: CallableMemberDescriptor,
+            compiledPackageFragment: PackageFragmentDescriptor,
+            partType: Type
+    ) {
+        val context = state.rootContext.intoMultifileClass(compiledPackageFragment, facadeClassType, partType)
+
+        val memberCodegen = createCodegenForPartOfMultifileFacade(context)
+
+        when (member) {
+            is DeserializedSimpleFunctionDescriptor -> {
+                memberCodegen.functionCodegen.generateMethod(OtherOrigin(member), member, DelegateToCompiledMemberGenerationStrategy)
+
+                memberCodegen.functionCodegen.generateDefaultIfNeeded(
+                        context.intoFunction(member), member, OwnerKind.PACKAGE, DefaultParameterValueLoader.DEFAULT, null)
+
+                memberCodegen.functionCodegen.generateOverloadsWithDefaultValues(null, member, member)
+            }
+            is DeserializedPropertyDescriptor -> {
+                memberCodegen.propertyCodegen.generateInPackageFacade(member)
+            }
+            else -> {
+                throw IllegalStateException("Unexpected member: " + member)
+            }
+        }
+    }
+
+    object DelegateToCompiledMemberGenerationStrategy : FunctionGenerationStrategy() {
+        override fun generateBody(mv: MethodVisitor, frameMap: FrameMap, signature: JvmMethodSignature, context: MethodContext, parentCodegen: MemberCodegen<*>) {
+            throw IllegalStateException("shouldn't be called")
+        }
+    }
+
     private fun generateKotlinPackageReflectionField() {
         val mv = classBuilder.newMethod(JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
         val method = AsmUtil.method("createKotlinPackage",
@@ -246,12 +322,19 @@ public class MultifileClassCodegen(
             return fragments.firstOrNull()
         }
 
-        private fun getCompiledPackageFragment(packageFqName: FqName, state: GenerationState): PackageFragmentDescriptor? =
-                if (!IncrementalCompilation.isEnabled()) null
-                else state.module.getPackage(packageFqName).fragments.firstOrNull { fragment ->
+        private fun getCompiledPackageFragment(facadeFqName: FqName, state: GenerationState):
+                IncrementalPackageFragmentProvider.IncrementalPackageFragment.IncrementalMultifileClassPackageFragment? {
+            if (!IncrementalCompilation.isEnabled()) return null
+
+            val packageFqName = facadeFqName.parent()
+
+            val incrementalPackageFragment = state.module.getPackage(packageFqName).fragments.firstOrNull { fragment ->
                     fragment is IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
                     fragment.target == state.targetId
-                }
+                } as IncrementalPackageFragmentProvider.IncrementalPackageFragment?
+
+            return incrementalPackageFragment?.getPackageFragmentForMultifileClass(facadeFqName)
+        }
     }
 
 }

@@ -21,7 +21,13 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartPro
 import org.jetbrains.kotlin.rmi.CompileService
 
 public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache): IncrementalCache {
+    override fun getObsoleteMultifileClasses(): Collection<String> = cache.getObsoleteMultifileClassFacades()
+
+    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = cache.getMultifileFacadeParts(facadeInternalName)
+
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
+
+    override fun getMultifileFacade(partInternalName: String): String? = cache.getMultifileFacade(partInternalName)
 
     override fun getPackagePartData(fqName: String): JvmPackagePartProto? = cache.getPackagePartData(fqName)
 

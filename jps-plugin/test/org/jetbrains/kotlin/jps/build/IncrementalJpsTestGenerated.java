@@ -347,6 +347,54 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multifileClassFileAdded")
+        public void testMultifileClassFileAdded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassFileChanged")
+        public void testMultifileClassFileChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassFileMovedToAnotherMultifileClass")
+        public void testMultifileClassFileMovedToAnotherMultifileClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileMovedToAnotherMultifileClass/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassInlineFunction")
+        public void testMultifileClassInlineFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunction/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassInlineFunctionAccessingField")
+        public void testMultifileClassInlineFunctionAccessingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunctionAccessingField/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassRecreated")
+        public void testMultifileClassRecreated() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRecreated/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassRecreatedAfterRenaming")
+        public void testMultifileClassRecreatedAfterRenaming() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRecreatedAfterRenaming/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifileClassRemoved")
+        public void testMultifileClassRemoved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("multiplePackagesModified")
         public void testMultiplePackagesModified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multiplePackagesModified/");
