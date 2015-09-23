@@ -22,11 +22,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
@@ -121,7 +120,9 @@ public class Visibilities {
         @Override
         public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            return isInFriendModule(what, fromOrModule);
+            if (!DescriptorUtils.getContainingModule(what).isFriend(DescriptorUtils.getContainingModule(fromOrModule))) return false;
+
+            return MODULE_VISIBILITY_HELPER.isInFriendModule(what, from);
         }
     };
 
@@ -200,11 +201,6 @@ public class Visibilities {
         return findInvisibleMember(receiver, what, from) == null;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    private static boolean isInFriendModule(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
-        return DescriptorUtils.getContainingModule(what).isFriend(DescriptorUtils.getContainingModule(from));
-    }
-
     @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
             @NotNull ReceiverValue receiver,
@@ -262,5 +258,13 @@ public class Visibilities {
 
     public static boolean isPrivate(@NotNull Visibility visibility) {
         return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
+    }
+
+    @NotNull
+    private static final ModuleVisibilityHelper MODULE_VISIBILITY_HELPER;
+
+    static {
+        Iterator<ModuleVisibilityHelper> iterator = ServiceLoader.load(ModuleVisibilityHelper.class, ModuleVisibilityHelper.class.getClassLoader()).iterator();
+        MODULE_VISIBILITY_HELPER = iterator.hasNext() ? iterator.next() : ModuleVisibilityHelper.EMPTY.INSTANCE$;
     }
 }

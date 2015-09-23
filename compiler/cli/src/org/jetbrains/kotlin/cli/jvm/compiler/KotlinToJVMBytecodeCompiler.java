@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
@@ -119,6 +120,10 @@ public class KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
+        for (Module module: chunk) {
+            ModuleVisibilityManager.SERVICE.getInstance(environment.getProject()).addModule(module);
+        }
+
         String targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
             @Override
             public String apply(@Nullable Module input) {
@@ -144,8 +149,9 @@ public class KotlinToJVMBytecodeCompiler {
                         }
                     }
             );
+            File moduleOutputDirectory = new File(module.getOutputDirectory());
             GenerationState generationState =
-                    generate(environment, result, jetFiles, module, new File(module.getOutputDirectory()),
+                    generate(environment, result, jetFiles, module, moduleOutputDirectory,
                              module.getModuleName());
             outputFiles.put(module, generationState.getFactory());
         }
