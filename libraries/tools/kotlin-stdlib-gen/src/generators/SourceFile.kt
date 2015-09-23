@@ -14,7 +14,7 @@ enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = tru
 
     val name = this.name()
 
-    val jvmClassName = jvmClassName ?: this.name().capitalize()
+    val jvmClassName = jvmClassName ?: (name.capitalize() + "Kt")
 
     val fileName: String get() = "_${name.capitalize()}.kt"
 }
