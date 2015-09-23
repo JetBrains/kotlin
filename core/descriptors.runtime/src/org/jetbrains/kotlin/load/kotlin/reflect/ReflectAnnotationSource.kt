@@ -18,6 +18,4 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 
-public class ReflectAnnotationSource(public val annotation: Annotation) : SourceElement {
-    override fun isKotlinSourceElement(): Boolean = false
-}
+public class ReflectAnnotationSource(public val annotation: Annotation) : SourceElement

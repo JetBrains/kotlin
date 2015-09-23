@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 
 private class JavaSourceElementImpl(override val javaElement: JavaElement) : PsiSourceElement, JavaSourceElement {
-    override fun isKotlinSourceElement(): Boolean = false
-
     override val psi: PsiElement?
         get() = (javaElement as JavaElementImpl<*>).getPsi()
 }
