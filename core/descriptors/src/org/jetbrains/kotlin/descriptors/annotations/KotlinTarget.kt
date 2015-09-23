@@ -24,7 +24,7 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
+    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
     PROPERTY("property"),                      // includes *_PROPERTY, PROPERTY_PARAMETER, ENUM_ENTRY
@@ -36,7 +36,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     PROPERTY_GETTER("getter"),
     PROPERTY_SETTER("setter"),
     TYPE("type usage", false),
-    EXPRESSION("expression", false),           // includes FUNCTION_LITERAL
+    EXPRESSION("expression", false),           // includes FUNCTION_LITERAL, OBJECT_LITERAL
     FILE("file", false),
 
     TYPE_PROJECTION("type projection", false),
@@ -44,7 +44,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     PROPERTY_PARAMETER("property constructor parameter", false),
 
     CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
-    OBJECT("object", false),
+    OBJECT("object", false),     // does not include OBJECT_LITERAL
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
     ENUM_ENTRY("enum entry", false),
@@ -61,7 +61,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
 
     INITIALIZER("initializer", false),
     MULTI_DECLARATION("multi declaration", false),
-    FUNCTION_LITERAL("function literal", false)
+    FUNCTION_LITERAL("function literal", false),
+    OBJECT_LITERAL("object literal", false)
     ;
 
     companion object {

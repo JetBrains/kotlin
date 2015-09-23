@@ -173,6 +173,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is JetClassInitializer -> TargetLists.T_INITIALIZER
                 is JetMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
                 is JetFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
+                is JetObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
                 is JetExpression -> TargetLists.T_EXPRESSION
                 else -> TargetLists.EMPTY
             }
@@ -228,6 +229,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val T_EXPRESSION = targetList(EXPRESSION)
 
             val T_FUNCTION_LITERAL = targetList(FUNCTION_LITERAL, FUNCTION, EXPRESSION)
+
+            val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 
             val T_TYPE_REFERENCE = targetList(TYPE) {
                 onlyWithUseSiteTarget(VALUE_PARAMETER)
