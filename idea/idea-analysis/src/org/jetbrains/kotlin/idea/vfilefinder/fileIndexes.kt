@@ -80,7 +80,7 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(K
 
     private val INDEXER = indexer() { file ->
         val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
-        if (kotlinClass != null && kotlinClass.classHeader.isCompatibleAbiVersion) kotlinClass.classId.asSingleFqName() else null
+        if (kotlinClass != null && kotlinClass.classHeader.TEMP_isCompatibleAbiVersion) kotlinClass.classId.asSingleFqName() else null
     }
 }
 

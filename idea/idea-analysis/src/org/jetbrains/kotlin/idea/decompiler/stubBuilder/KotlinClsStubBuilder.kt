@@ -55,7 +55,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         val header = kotlinBinaryClass.getClassHeader()
         val classId = kotlinBinaryClass.getClassId()
         val packageFqName = classId.getPackageFqName()
-        if (!header.isCompatibleAbiVersion) {
+        if (!header.TEMP_isCompatibleAbiVersion) {
             return createIncompatibleAbiVersionFileStub()
         }
 

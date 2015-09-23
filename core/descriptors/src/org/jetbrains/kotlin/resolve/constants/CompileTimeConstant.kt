@@ -36,7 +36,7 @@ public interface CompileTimeConstant<out T> {
 
     public val usesNonConstValAsConstant: Boolean get() = parameters.usesNonConstValAsConstant
 
-    public val isPure: Boolean get() = parameters.isPure
+    public val TEMP_isPure: Boolean get() = parameters.isPure
 
     public class Parameters(
             public val canBeUsedInAnnotation: Boolean,

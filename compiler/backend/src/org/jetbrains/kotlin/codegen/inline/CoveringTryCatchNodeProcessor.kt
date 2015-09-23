@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import com.google.common.collect.LinkedListMultimap
 import java.util.ArrayList
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.TEMP_isMeaningful
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
@@ -157,7 +157,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
 private fun Interval.isMeaningless(): Boolean {
     val start = this.startLabel
     var end: AbstractInsnNode = this.endLabel
-    while (end != start && !end.isMeaningful) {
+    while (end != start && !end.TEMP_isMeaningful) {
         end = end.getPrevious()
     }
     return start == end

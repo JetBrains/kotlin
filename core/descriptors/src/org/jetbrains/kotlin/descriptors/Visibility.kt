@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public abstract class Visibility protected constructor(
         public val name: String,
-        public val isPublicAPI: Boolean
+        public val TEMP_isPublicAPI: Boolean
 ) {
     public abstract fun isVisible(receiver: ReceiverValue, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
 

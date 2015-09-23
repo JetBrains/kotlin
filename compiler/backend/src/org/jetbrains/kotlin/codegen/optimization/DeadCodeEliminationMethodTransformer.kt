@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.TEMP_isMeaningful
 
 public class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -31,7 +31,7 @@ public class DeadCodeEliminationMethodTransformer : MethodTransformer() {
         // by try/catch blocks or local variables table
         // We remove unneeded ones further after all optimizations by calling CommonPackage.prepareForEmitting(methodNode)
         insnsArray.zip(frames).filter {
-            it.second == null && it.first.isMeaningful
+            it.second == null && it.first.TEMP_isMeaningful
         }.forEach { insnList.remove(it.first) }
     }
 }

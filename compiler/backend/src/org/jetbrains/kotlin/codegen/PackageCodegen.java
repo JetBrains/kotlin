@@ -305,7 +305,7 @@ public class PackageCodegen {
     private ClassBuilder generateFile(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
-        if (fileClassInfo.getIsMultifileClass()) {
+        if (fileClassInfo.getTEMP_isMultifileClass()) {
             Type fileFacadeType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFacadeClassFqName());
             addDelegateToFileClassMemberTasks(file, generateCallableMemberTasks, fileFacadeType);
             return null;

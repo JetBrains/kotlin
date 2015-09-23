@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
@@ -377,7 +376,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
         }
 
-        if (parameterInfo.getIsTypeChanged() && parameter.getTypeReference() != null) {
+        if (parameterInfo.getTEMP_isTypeChanged() && parameter.getTypeReference() != null) {
             String renderedType = parameterInfo.renderType(parameterIndex, this);
             parameter.setTypeReference(psiFactory.createType(renderedType));
         }

@@ -52,7 +52,7 @@ public class JetPrimaryConstructorParameterTableModel extends JetCallableParamet
 
         @Override
         public boolean isCellEditable(ParameterTableModelItemBase<JetParameterInfo> item) {
-            return !item.isEllipsisType() && item.parameter.getIsNewParameter();
+            return !item.isEllipsisType() && item.parameter.getTEMP_isNewParameter();
         }
 
         @Override

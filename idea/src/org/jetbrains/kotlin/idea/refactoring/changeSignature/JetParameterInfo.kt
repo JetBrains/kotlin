@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.JetType
-import java.util.LinkedHashMap
+import java.util.*
 
 public class JetParameterInfo(
         val callableDescriptor: CallableDescriptor,
@@ -130,7 +130,7 @@ public class JetParameterInfo(
 
     override fun getOldIndex(): Int = originalIndex
 
-    public val isNewParameter: Boolean
+    public val TEMP_isNewParameter: Boolean
         get() = originalIndex == -1
 
     override fun getDefaultValue(): String? = null
@@ -143,7 +143,7 @@ public class JetParameterInfo(
 
     override fun getTypeText(): String = currentTypeText
 
-    public val isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
+    public val TEMP_isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
 
     override fun isUseAnySingleVariable(): Boolean = false
 

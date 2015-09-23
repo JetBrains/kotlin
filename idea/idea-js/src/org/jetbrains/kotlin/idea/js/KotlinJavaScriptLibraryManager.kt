@@ -130,7 +130,7 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
                         assert(path != null) { "expected not-null path for ${clsRootFile.name}" }
 
                         val metadataList = KotlinJavascriptMetadataUtils.loadMetadata(path!!)
-                        if (metadataList.filter { !it.isAbiVersionCompatible }.isNotEmpty()) continue
+                        if (metadataList.filter { !it.TEMP_isAbiVersionCompatible }.isNotEmpty()) continue
 
                         VfsUtil.findFileByIoFile(File(path), true)?.let { rootFiles.add(it) }
                         val classRoot = KotlinJavaScriptMetaFileSystem.getInstance().refreshAndFindFileByPath("$path!/")

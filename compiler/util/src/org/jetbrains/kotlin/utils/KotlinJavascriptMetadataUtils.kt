@@ -21,7 +21,7 @@ import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
 public class KotlinJavascriptMetadata(public val abiVersion: Int, public val moduleName: String, public val body: ByteArray) {
-    public val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
+    public val TEMP_isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
 }
 
 public object KotlinJavascriptMetadataUtils {

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-public enum class TopDownAnalysisMode(public val isLocalDeclarations: Boolean) {
+public enum class TopDownAnalysisMode(public val TEMP_isLocalDeclarations: Boolean) {
     LocalDeclarations(true),
     TopLevelDeclarations(false)
 }

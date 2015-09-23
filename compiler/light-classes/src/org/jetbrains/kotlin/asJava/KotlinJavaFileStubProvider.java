@@ -220,7 +220,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         if (!files.isEmpty()) {
                             JetFile representativeFile = files.iterator().next();
                             JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE$.getFileClassInfo(representativeFile);
-                            if (!fileClassInfo.getIsMultifileClass()) {
+                            if (!fileClassInfo.getTEMP_isMultifileClass()) {
                                 PackageCodegen codegen = state.getFactory().forPackage(representativeFile.getPackageFqName(), files);
                                 codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                                 state.getFactory().asList();

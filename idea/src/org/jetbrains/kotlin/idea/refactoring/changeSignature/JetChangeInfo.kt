@@ -189,7 +189,7 @@ public open class JetChangeInfo(
     public fun getNewSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
-        val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
+        val defaultVisibility = if (kind.TEMP_isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
 
         if (kind == Kind.PRIMARY_CONSTRUCTOR) {
             buffer.append(name)

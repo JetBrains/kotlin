@@ -34,7 +34,7 @@ fun syntheticExtensionVisibility(originalDescriptor: DeclarationDescriptorWithVi
     return when (originalVisibility) {
         Visibilities.PUBLIC -> Visibilities.PUBLIC
 
-        else -> object : Visibility(originalVisibility.name, originalVisibility.isPublicAPI) {
+        else -> object : Visibility(originalVisibility.name, originalVisibility.TEMP_isPublicAPI) {
             override fun isVisible(receiver: ReceiverValue, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor)
                     = originalVisibility.isVisible(receiver, originalDescriptor, from)
 

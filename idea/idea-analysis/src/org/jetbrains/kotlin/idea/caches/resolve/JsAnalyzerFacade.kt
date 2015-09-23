@@ -61,7 +61,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {
             val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
                     .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
-                    .filter { it.isAbiVersionCompatible }
+                    .filter { it.TEMP_isAbiVersionCompatible }
                     .map { KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, it.body, moduleContext.storageManager) }
                     .filterNotNull()
 

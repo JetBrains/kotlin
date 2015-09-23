@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableD
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public interface JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
-    enum class Kind(val isConstructor: Boolean) {
+    enum class Kind(val TEMP_isConstructor: Boolean) {
         FUNCTION(false),
         PRIMARY_CONSTRUCTOR(true),
         SECONDARY_CONSTRUCTOR(true)
