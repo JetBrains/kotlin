@@ -201,12 +201,11 @@ class ConstructorConverter(
                     else {
                         val (field, type) = parameterToField[parameter]!!
                         val propertyInfo = fieldToPropertyInfo(field)!!
-                        val parameterModifiers = converter.convertModifiers(propertyInfo, classKind)
                         FunctionParameter(propertyInfo.identifier,
                                           type,
                                           if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
                                           converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
-                                          parameterModifiers,
+                                          propertyInfo.modifiers,
                                           default)
                                 .assignPrototypes(
                                         PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),

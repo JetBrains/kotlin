@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignatureUtil
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.j2k.ast.Identifier
-import org.jetbrains.kotlin.j2k.ast.Modifier
-import org.jetbrains.kotlin.j2k.ast.assignNoPrototype
-import org.jetbrains.kotlin.j2k.ast.declarationIdentifier
+import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 class PropertyInfo(
@@ -38,9 +37,8 @@ class PropertyInfo(
         val setMethod: PsiMethod?,
         val isGetMethodBodyFieldAccess: Boolean,
         val isSetMethodBodyFieldAccess: Boolean,
-        val specialSetterAccess: Modifier?,
-        val isOverride: Boolean,
-        val isAbstract: Boolean //TODO: modifiers here
+        val modifiers: Modifiers,
+        val specialSetterAccess: Modifier?
 ) {
     init {
         assert(field != null || getMethod != null || setMethod != null)
@@ -59,7 +57,7 @@ class PropertyInfo(
     val needExplicitGetter: Boolean
         get() {
             if (getMethod != null && getMethod.body != null && !isGetMethodBodyFieldAccess) return true
-            return isOverride && this.field == null && !isAbstract
+            return modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
         }
 
     //TODO: what if annotations are not empty?
@@ -68,12 +66,15 @@ class PropertyInfo(
             if (!isVar) return false
             if (specialSetterAccess != null) return true
             if (setMethod != null && setMethod.body != null && !isSetMethodBodyFieldAccess) return true
-            return isOverride && this.field == null && !isAbstract
+            return modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
         }
 
     companion object {
-        fun fromFieldWithNoAccessors(field: PsiField, isVar: Boolean)
-                = PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, null, false, false)
+        fun fromFieldWithNoAccessors(field: PsiField, converter: Converter): PropertyInfo {
+            val isVar = field.isVar(converter.referenceSearcher)
+            val modifiers = converter.convertModifiers(field, false)
+            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null)
+        }
     }
 }
 
@@ -95,6 +96,8 @@ private class PropertyDetector(
         private val psiClass: PsiClass,
         private val converter: Converter
 ) {
+    private val isOpenClass = converter.needOpenModifier(psiClass)
+
     public fun detectProperties(): Map<PsiMember, PropertyInfo> {
         val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
         val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
@@ -139,18 +142,6 @@ private class PropertyDetector(
                 field = null
             }
 
-            var specialSetterAccess: Modifier? = null
-            val getterAccess = if (getterInfo != null) converter.convertModifiers(getterInfo.method, false).accessModifier() else Modifier.PUBLIC //TODO
-            val setterAccess = if (setterInfo != null)
-                converter.convertModifiers(setterInfo.method, false).accessModifier()
-            else if (field != null && field.isVar(converter.referenceSearcher))
-                converter.convertModifiers(field, false).accessModifier()
-            else
-                getterAccess
-            if (setterAccess != getterAccess) {
-                specialSetterAccess = setterAccess
-            }
-
             //TODO: no body for getter OR setter
 
             val isVar = if (setterInfo != null)
@@ -164,10 +155,16 @@ private class PropertyDetector(
 
             val isOverride = getterInfo?.superProperty != null || setterInfo?.superProperty != null
 
-            //TODO: what if one is abstract and another is not?
-            val isGetterAbstract = getterInfo?.method?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
-            val isSetterAbstract = setterInfo?.method?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
-            val isAbstract = field == null && isGetterAbstract && isSetterAbstract
+            val modifiers = convertModifiers(field, getterInfo?.method, setterInfo?.method, isOverride)
+
+            val propertyAccess = modifiers.accessModifier()
+            val setterAccess = if (setterInfo != null)
+                converter.convertModifiers(setterInfo.method, false).accessModifier()
+            else if (field != null && field.isVar(converter.referenceSearcher))
+                converter.convertModifiers(field, false).accessModifier()
+            else
+                propertyAccess
+            val specialSetterAccess = setterAccess?.check { it != propertyAccess }
 
             val propertyInfo = PropertyInfo(Identifier(propertyName).assignNoPrototype(),
                                             isVar,
@@ -177,9 +174,8 @@ private class PropertyDetector(
                                             setterInfo?.method,
                                             field != null && getterInfo?.field == field,
                                             field != null && setterInfo?.field == field,
-                                            specialSetterAccess,
-                                            isOverride,
-                                            isAbstract)
+                                            modifiers,
+                                            specialSetterAccess)
 
             if (field != null) {
                 memberToPropertyInfo[field] = propertyInfo
@@ -202,8 +198,7 @@ private class PropertyDetector(
         // map all other fields
         for (field in psiClass.fields) {
             if (field !in mappedFields) {
-                val propertyInfo = PropertyInfo.fromFieldWithNoAccessors(field, field.isVar(converter.referenceSearcher))
-                memberToPropertyInfo[field] = propertyInfo
+                memberToPropertyInfo[field] = PropertyInfo.fromFieldWithNoAccessors(field, converter)
             }
         }
 
@@ -228,7 +223,7 @@ private class PropertyDetector(
         }
 
         for (propertyInfo in propertyInfos) {
-            if (propertyInfo.isOverride) continue // cannot drop override
+            if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) continue // cannot drop override
 
             //TODO: test this case
             val getterName = JvmAbi.getterName(propertyInfo.name)
@@ -247,6 +242,44 @@ private class PropertyDetector(
                 }
             }
         }
+    }
+
+    private fun convertModifiers(field: PsiField?, getMethod: PsiMethod?, setMethod: PsiMethod?, isOverride: Boolean): Modifiers {
+        val fieldModifiers = field?.let { converter.convertModifiers(it, false) } ?: Modifiers.Empty
+        val getterModifiers = getMethod?.let { converter.convertModifiers(it, isOpenClass) } ?: Modifiers.Empty
+        val setterModifiers = setMethod?.let { converter.convertModifiers(it, isOpenClass) } ?: Modifiers.Empty
+
+        val modifiers = ArrayList<Modifier>()
+
+        //TODO: what if one is abstract and another is not?
+        val isGetterAbstract = getMethod?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
+        val isSetterAbstract = setMethod?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
+        if (field == null && isGetterAbstract && isSetterAbstract) {
+            modifiers.add(Modifier.ABSTRACT)
+        }
+
+        if (getterModifiers.contains(Modifier.OPEN) || setterModifiers.contains(Modifier.OPEN)) {
+            modifiers.add(Modifier.OPEN)
+        }
+
+        if (isOverride) {
+            modifiers.add(Modifier.OVERRIDE)
+        }
+
+        if (getMethod != null) {
+            modifiers.addIfNotNull(getterModifiers.accessModifier())
+        }
+        else if (setMethod != null) {
+            modifiers.addIfNotNull(getterModifiers.accessModifier())
+        }
+        else {
+            modifiers.addIfNotNull(fieldModifiers.accessModifier())
+        }
+
+        val prototypes = listOf<PsiElement?>(field, getMethod, setMethod)
+                .filterNotNull()
+                .map { PrototypeInfo(it, CommentsAndSpacesInheritance.NO_SPACES) }
+        return Modifiers(modifiers).assignPrototypes(*prototypes.toTypedArray())
     }
 
     private class AccessorInfo(
@@ -278,23 +311,22 @@ private class PropertyDetector(
 
     private fun createAccessorInfo(getOrSetMethod: PsiMethod, field: PsiField?, kind: AccessorKind, propertyName: String): AccessorInfo? {
         //TODO: multiple
-        for (superMethod in converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod)) {
-            val containingClass = superMethod.containingClass!!
-            val superPropertyInfo: SuperPropertyInfo? = if (converter.inConversionScope(containingClass)) {
-                val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-                if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVar) else null
-            }
-            else if (superMethod is KotlinLightMethod) {
-                val origin = superMethod.getOrigin()
-                if (origin is JetProperty) SuperPropertyInfo(origin.isVar) else null
-            }
-            else {
-                null
-            }
-            return superPropertyInfo?.let { AccessorInfo(getOrSetMethod, field, kind, propertyName, it) }
-        }
+        val superMethod = converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod).firstOrNull()
+                          ?: return AccessorInfo(getOrSetMethod, field, kind, propertyName, null)
 
-        return AccessorInfo(getOrSetMethod, field, kind, propertyName, null)
+        val containingClass = superMethod.containingClass!!
+        val superPropertyInfo: SuperPropertyInfo? = if (converter.inConversionScope(containingClass)) {
+            val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
+            if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVar) else null
+        }
+        else if (superMethod is KotlinLightMethod) {
+            val origin = superMethod.getOrigin()
+            if (origin is JetProperty) SuperPropertyInfo(origin.isVar) else null
+        }
+        else {
+            null
+        }
+        return superPropertyInfo?.let { AccessorInfo(getOrSetMethod, field, kind, propertyName, it) }
     }
 
     private fun propertyNameByGetMethod(method: PsiMethod): String? {

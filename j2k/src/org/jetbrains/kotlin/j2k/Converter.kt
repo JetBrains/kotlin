@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -109,7 +108,7 @@ class Converter private constructor(
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element, null, null, null, ClassKind.FINAL_CLASS)
-        is PsiField -> convertProperty(PropertyInfo.fromFieldWithNoAccessors(element, element.isVar(referenceSearcher)), ClassKind.FINAL_CLASS)
+        is PsiField -> convertProperty(PropertyInfo.fromFieldWithNoAccessors(element, this), ClassKind.FINAL_CLASS)
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
@@ -208,7 +207,7 @@ class Converter private constructor(
         }.assignPrototype(psiClass)
     }
 
-    private fun needOpenModifier(psiClass: PsiClass): Boolean {
+    public fun needOpenModifier(psiClass: PsiClass): Boolean {
         return if (psiClass.hasModifierProperty(PsiModifier.FINAL) || psiClass.hasModifierProperty(PsiModifier.ABSTRACT))
             false
         else
@@ -309,7 +308,7 @@ class Converter private constructor(
         //TODO: annotations from getter/setter?
         val annotations = field?.let { convertAnnotations(it) } ?: Annotations.Empty
 
-        val modifiers = convertModifiers(propertyInfo, classKind)
+        val modifiers = propertyInfo.modifiers
 
         val name = propertyInfo.identifier
         if (field is PsiEnumConstant) {
@@ -347,7 +346,7 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
                     getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.isOverride) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
@@ -372,7 +371,7 @@ class Converter private constructor(
                             method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.isOverride) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val valueIdentifier = Identifier("value", false).assignNoPrototype()
@@ -667,41 +666,6 @@ class Converter private constructor(
         if (containingClass == null || !containingClass.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)) return this
         if (!contains(Modifier.INTERNAL) || contains(Modifier.OVERRIDE) || contains(Modifier.OPEN) || contains(Modifier.ABSTRACT)) return this
         return without(Modifier.INTERNAL).with(Modifier.PUBLIC)
-    }
-
-    public fun convertModifiers(propertyInfo: PropertyInfo, classKind: ClassKind): Modifiers {
-        val fieldModifiers = propertyInfo.field?.let { convertModifiers(it, false) } ?: Modifiers.Empty
-        val getterModifiers = propertyInfo.getMethod?.let { convertModifiers(it, classKind.isOpen()) } ?: Modifiers.Empty
-        val setterModifiers = propertyInfo.setMethod?.let { convertModifiers(it, classKind.isOpen()) } ?: Modifiers.Empty
-
-        val modifiers = ArrayList<Modifier>()
-
-        if (propertyInfo.isAbstract) {
-            modifiers.add(Modifier.ABSTRACT)
-        }
-
-        if (getterModifiers.contains(Modifier.OPEN) || setterModifiers.contains(Modifier.OPEN)) {
-            modifiers.add(Modifier.OPEN)
-        }
-
-        if (propertyInfo.isOverride) {
-            modifiers.add(Modifier.OVERRIDE)
-        }
-
-        if (propertyInfo.getMethod != null) {
-            modifiers.addIfNotNull(getterModifiers.accessModifier())
-        }
-        else if (propertyInfo.setMethod != null) {
-            modifiers.addIfNotNull(getterModifiers.accessModifier())
-        }
-        else {
-            modifiers.addIfNotNull(fieldModifiers.accessModifier())
-        }
-
-        val prototypes = listOf<PsiElement?>(propertyInfo.field, propertyInfo.getMethod, propertyInfo.setMethod)
-                .filterNotNull()
-                .map { PrototypeInfo(it, CommentsAndSpacesInheritance.NO_SPACES) }
-        return Modifiers(modifiers).assignPrototypes(*prototypes.toTypedArray())
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
