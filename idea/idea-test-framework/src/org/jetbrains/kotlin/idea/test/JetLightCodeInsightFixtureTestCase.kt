@@ -71,7 +71,7 @@ public abstract class JetLightCodeInsightFixtureTestCase : LightCodeInsightFixtu
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
 
-        unInvalidateBuiltins(getProject()) {
+        unInvalidateBuiltinsAndStdLib(getProject()) {
             super.tearDown()
         }
 

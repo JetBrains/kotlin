@@ -35,7 +35,7 @@ abstract public class KotlinLightQuickFixTestCase extends LightQuickFixTestCase 
     protected void tearDown() throws Exception {
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
-        TestPackage.unInvalidateBuiltins(getProject(), new RunnableWithException() {
+        TestPackage.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
             @Override
             public void run() throws Exception {
                 KotlinLightQuickFixTestCase.super.tearDown();

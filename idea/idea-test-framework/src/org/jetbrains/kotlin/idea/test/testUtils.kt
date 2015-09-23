@@ -21,17 +21,23 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiManagerEx
+import com.intellij.psi.impl.file.impl.FileManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.decompiler.JetClassFileViewProvider
+import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.psi.JetFile
+import java.util.*
 
 public enum class ModuleKind {
     KOTLIN_JVM_WITH_STDLIB_SOURCES,
@@ -80,21 +86,37 @@ public fun JetFile.dumpTextWithErrors(): String {
 public fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
-public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithException) {
+public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
     val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
+
+    val stdLibViewProviders = HashSet<JetClassFileViewProvider>()
+    val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
+    for ((file, viewProvider) in vFileToViewProviderMap) {
+        if (file.isStdLibFile && viewProvider is JetClassFileViewProvider) {
+            stdLibViewProviders.add(viewProvider)
+        }
+    }
 
     runnable.run()
 
-    // Base tearDown() invalidates builtins. Restore them with brute force.
-    for (source in builtInsSources) {
+    // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
+    fun unInvalidateFile(file: PsiFileImpl) {
         val field = javaClass<PsiFileImpl>().getDeclaredField("myInvalidated")!!
         field.setAccessible(true)
-        field.set(source, false)
+        field.set(file, false)
+    }
+
+    builtInsSources.forEach { unInvalidateFile(it) }
+    stdLibViewProviders.forEach {
+        it.allFiles.forEach { unInvalidateFile(it as JetClsFile) }
+        vFileToViewProviderMap.set(it.virtualFile, it)
     }
 }
 
-public fun unInvalidateBuiltins(project: Project, runnable: () -> Unit) {
-    unInvalidateBuiltins(project, RunnableWithException { runnable() })
+private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
+
+public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
+    unInvalidateBuiltinsAndStdLib(project, RunnableWithException { runnable() })
 }
 
 public fun invalidateLibraryCache(project: Project) {
