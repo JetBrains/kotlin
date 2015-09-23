@@ -1,7 +1,5 @@
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
+// ERROR: Abstract member cannot be accessed directly
+// ERROR: Abstract member cannot be accessed directly
 internal interface I {
     val something1: Int
 
@@ -14,6 +12,12 @@ internal interface I {
     var something5: Int
 
     fun setSomething6(value: Int)
+}
+
+internal interface I1 : I {
+    fun setSomething1(value: Int)
+
+    val something6: Int
 }
 
 internal open class B {
@@ -66,8 +70,14 @@ internal abstract class C(override val something1: Int) : B(), I {
         get() {
             return 0
         }
+        set(value: Int) {
+            super.something4 = value
+        }
 
     override var something5: Int
+        get() {
+            return super.something5
+        }
         set(value: Int) {
 
         }
@@ -97,8 +107,14 @@ internal abstract class C(override val something1: Int) : B(), I {
         get() {
             return super.fromB3
         }
+        set(value: String) {
+            super.fromB3 = value
+        }
 
     override var fromB4: String
+        get() {
+            return super.fromB4
+        }
         set(value: String) {
             super.fromB4 = value
         }

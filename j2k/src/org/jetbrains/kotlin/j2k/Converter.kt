@@ -340,24 +340,52 @@ class Converter private constructor(
 
             //TODO: doc-comments
 
-            val getter = getMethod
-                    ?.check { propertyInfo.needExplicitGetter } //TODO: what if annotations are not empty?
-                    ?.let {
-                        val method = convertMethod(it, null, null, null, classKind)!!
-                        PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
-                                .assignPrototype(it, CommentsAndSpacesInheritance.NO_SPACES)
-                    }
+            var getter: PropertyAccessor? = null
+            if (propertyInfo.needExplicitGetter) {
+                if (getMethod != null) {
+                    val method = convertMethod(getMethod, null, null, null, classKind)!!
+                    getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
+                    getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
+                }
+                else if (propertyInfo.isOverride) { //TODO: expression body!
+                    val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
+                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
+                    val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
+                    val body = Block(listOf(returnStatement), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+                    val parameterList = ParameterList(emptyList()).assignNoPrototype()
+                    getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, parameterList, deferredElement { body })
+                    getter.assignNoPrototype()
+                }
+                //TODO: what else?
+            }
 
             var setter: PropertyAccessor? = null
             if (propertyInfo.needExplicitSetter) {
-                val method = setMethod?.let { convertMethod(it, null, null, null, classKind)!! }
                 val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
-                setter = PropertyAccessor(
-                        AccessorKind.SETTER,
-                        method?.annotations ?: Annotations.Empty,
-                        accessorModifiers,
-                        method?.parameterList?.check { propertyInfo.needSetterBody },
-                        method?.body?.check { propertyInfo.needSetterBody }).assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
+                if (setMethod != null) {
+                    val method = setMethod.let { convertMethod(it, null, null, null, classKind)!! }
+                    setter = PropertyAccessor(
+                            AccessorKind.SETTER,
+                            method.annotations,
+                            accessorModifiers,
+                            method.parameterList?.check { method.body != null },
+                            method.body)
+                    setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
+                }
+                else if (propertyInfo.isOverride) { //TODO: expression body!
+                    val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
+                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
+                    val valueIdentifier = Identifier("value", false).assignNoPrototype()
+                    val assignment = AssignmentExpression(superAccess, valueIdentifier, "=").assignNoPrototype()
+                    val body = Block(listOf(assignment), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+                    val parameter = FunctionParameter(valueIdentifier, propertyType, FunctionParameter.VarValModifier.None, Annotations.Empty, Modifiers.Empty).assignNoPrototype()
+                    val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
+                    setter = PropertyAccessor(AccessorKind.SETTER, Annotations.Empty, accessorModifiers, parameterList, deferredElement { body })
+                    setter.assignNoPrototype()
+                }
+                else {
+                    setter = PropertyAccessor(AccessorKind.SETTER, Annotations.Empty, accessorModifiers, null, null).assignNoPrototype()
+                }
             }
 
             val needInitializer = field != null && shouldGenerateDefaultInitializer(referenceSearcher, field)
@@ -648,8 +676,7 @@ class Converter private constructor(
 
         val modifiers = ArrayList<Modifier>()
 
-        //TODO: what if one is abstract and another is not?
-        if (getterModifiers.contains(Modifier.ABSTRACT) || setterModifiers.contains(Modifier.ABSTRACT)) {
+        if (propertyInfo.isAbstract) {
             modifiers.add(Modifier.ABSTRACT)
         }
 

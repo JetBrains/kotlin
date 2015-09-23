@@ -15,6 +15,12 @@ interface I {
     void setSomething6(int value);
 }
 
+interface I1 extends I {
+    void setSomething1(int value);
+
+    int getSomething6();
+}
+
 class B {
     public String getFromB1() {
         return "";

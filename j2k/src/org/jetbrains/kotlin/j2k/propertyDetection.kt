@@ -36,30 +36,44 @@ class PropertyInfo(
         val field: PsiField?,
         val getMethod: PsiMethod?,
         val setMethod: PsiMethod?,
-        val needGetterBody: Boolean,
-        val needSetterBody: Boolean,
+        val isGetMethodBodyFieldAccess: Boolean,
+        val isSetMethodBodyFieldAccess: Boolean,
         val specialSetterAccess: Modifier?,
-        val isOverride: Boolean
+        val isOverride: Boolean,
+        val isAbstract: Boolean //TODO: modifiers here
 ) {
     init {
         assert(field != null || getMethod != null || setMethod != null)
-        if (needGetterBody) {
-            assert(getMethod != null && getMethod.body != null)
+        if (isGetMethodBodyFieldAccess) {
+            assert(field != null && getMethod != null)
         }
-        if (needSetterBody) {
-            assert(setMethod != null && setMethod.body != null)
+        if (isSetMethodBodyFieldAccess) {
+            assert(field != null && setMethod != null)
         }
     }
 
     val name: String
         get() = identifier.name
 
-    val needExplicitGetter: Boolean get() = needGetterBody
-    val needExplicitSetter: Boolean get() = needSetterBody || specialSetterAccess != null
+    //TODO: what if annotations are not empty?
+    val needExplicitGetter: Boolean
+        get() {
+            if (getMethod != null && getMethod.body != null && !isGetMethodBodyFieldAccess) return true
+            return isOverride && this.field == null && !isAbstract
+        }
+
+    //TODO: what if annotations are not empty?
+    val needExplicitSetter: Boolean
+        get() {
+            if (!isVar) return false
+            if (specialSetterAccess != null) return true
+            if (setMethod != null && setMethod.body != null && !isSetMethodBodyFieldAccess) return true
+            return isOverride && this.field == null && !isAbstract
+        }
 
     companion object {
         fun fromFieldWithNoAccessors(field: PsiField, isVar: Boolean)
-                = PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, null, false)
+                = PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, null, false, false)
     }
 }
 
@@ -148,16 +162,24 @@ private class PropertyDetector(
 
             val type = field?.type ?: getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
+            val isOverride = getterInfo?.superProperty != null || setterInfo?.superProperty != null
+
+            //TODO: what if one is abstract and another is not?
+            val isGetterAbstract = getterInfo?.method?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
+            val isSetterAbstract = setterInfo?.method?.hasModifierProperty(PsiModifier.ABSTRACT) ?: true
+            val isAbstract = field == null && isGetterAbstract && isSetterAbstract
+
             val propertyInfo = PropertyInfo(Identifier(propertyName).assignNoPrototype(),
                                             isVar,
                                             type,
                                             field,
                                             getterInfo?.method,
                                             setterInfo?.method,
-                                            getterInfo != null && getterInfo.method.body != null && (field == null || getterInfo.field != field),
-                                            setterInfo != null && setterInfo.method.body != null && (field == null || setterInfo.field != field),
+                                            field != null && getterInfo?.field == field,
+                                            field != null && setterInfo?.field == field,
                                             specialSetterAccess,
-                                            getterInfo?.superProperty != null || setterInfo?.superProperty != null)
+                                            isOverride,
+                                            isAbstract)
 
             if (field != null) {
                 memberToPropertyInfo[field] = propertyInfo
