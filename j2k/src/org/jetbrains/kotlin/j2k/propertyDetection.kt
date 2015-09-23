@@ -99,28 +99,53 @@ private class PropertyDetector(
     private val isOpenClass = converter.needOpenModifier(psiClass)
 
     public fun detectProperties(): Map<PsiMember, PropertyInfo> {
-        val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
-        val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
+        val methodsToCheck = ArrayList<Pair<PsiMethod, SuperInfo.Property?>>()
+        for (method in psiClass.methods) {
+            val name = method.name
+            if (!name.startsWith("get") && !name.startsWith("set") && !name.startsWith("is")) continue
+
+            val superInfo = superInfo(method)
+            if (superInfo is SuperInfo.Function) continue
+            methodsToCheck.add(method to (superInfo as SuperInfo.Property?))
+        }
+
+
         val propertyNamesWithConflict = HashSet<String>()
         val prohibitedPropertyNames = psiClass.fields.map { it.name }.toMutableSet() //TODO: fields from base
-        for (method in psiClass.getMethods()) {
-            val info = getAccessorInfo(method) ?: continue
 
-            val map = if (info.kind == AccessorKind.GETTER) propertyNameToGetterInfo else propertyNameToSetterInfo
+        val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
+        for ((method, superInfo) in methodsToCheck) {
+            val info = getGetterInfo(method, superInfo) ?: continue
 
-            val prevInfo = map[info.propertyName]
+            val prevInfo = propertyNameToGetterInfo[info.propertyName]
             if (prevInfo != null) {
                 propertyNamesWithConflict.add(info.propertyName)
                 continue
             }
 
-            map[info.propertyName] = info
+            propertyNameToGetterInfo[info.propertyName] = info
             info.field?.let { prohibitedPropertyNames.remove(it.name) }
         }
 
-        val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
+        var propertyNames: Set<String> = propertyNameToGetterInfo.keySet()
 
-        val propertyNames = propertyNameToGetterInfo.keySet() + propertyNameToSetterInfo.keySet()
+        val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
+        for ((method, superInfo) in methodsToCheck) {
+            val info = getSetterInfo(method, superInfo, propertyNames) ?: continue
+
+            val prevInfo = propertyNameToSetterInfo[info.propertyName]
+            if (prevInfo != null) {
+                propertyNamesWithConflict.add(info.propertyName)
+                continue
+            }
+
+            propertyNameToSetterInfo[info.propertyName] = info
+            info.field?.let { prohibitedPropertyNames.remove(it.name) }
+        }
+
+        propertyNames = propertyNames + propertyNameToSetterInfo.keySet()
+
+        val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
         for (propertyName in propertyNames) {
             // TODO: use "field" expression if the conflicting field is used only inside get/set-methods
             if (propertyName in prohibitedPropertyNames) continue // cannot create such property - will conflict with existing field
@@ -287,46 +312,53 @@ private class PropertyDetector(
             val field: PsiField?,
             val kind: AccessorKind,
             val propertyName: String,
-            val superProperty: SuperPropertyInfo?
+            val superProperty: SuperInfo.Property?
     )
 
-    private class SuperPropertyInfo(
-            val isVar: Boolean
-            //TODO: add visibility
-    )
+    private sealed class SuperInfo {
+        class Property(
+                val isVar: Boolean,
+                val name: String
+                //TODO: add visibility
+        ) : SuperInfo()
 
-    private fun getAccessorInfo(method: PsiMethod): AccessorInfo? {
-        propertyNameByGetMethod(method)?.let { propertyName ->
-            val field = fieldFromGetterBody(method)
-            return createAccessorInfo(method, field, AccessorKind.GETTER, propertyName)
-        }
+        object Function : SuperInfo()
 
-        propertyNameBySetMethod(method)?.let { propertyName ->
-            val field = fieldFromSetterBody(method)
-            return createAccessorInfo(method, field, AccessorKind.SETTER, propertyName)
-        }
-
-        return null
     }
 
-    private fun createAccessorInfo(getOrSetMethod: PsiMethod, field: PsiField?, kind: AccessorKind, propertyName: String): AccessorInfo? {
+    private fun getGetterInfo(method: PsiMethod, superProperty: SuperInfo.Property?): AccessorInfo? {
+        val propertyName = propertyNameByGetMethod(method) ?: return null
+        val field = fieldFromGetterBody(method)
+        return AccessorInfo(method, field, AccessorKind.GETTER, propertyName, superProperty)
+    }
+
+    private fun getSetterInfo(method: PsiMethod, superProperty: SuperInfo.Property?, propertyNamesFromGetters: Set<String>): AccessorInfo? {
+        val allowedPropertyNames = if (superProperty != null)
+            setOf(superProperty.name)
+        else
+            propertyNamesFromGetters
+
+        val propertyName = propertyNameBySetMethod(method, allowedPropertyNames) ?: return null
+        val field = fieldFromSetterBody(method)
+        return AccessorInfo(method, field, AccessorKind.SETTER, propertyName, superProperty)
+    }
+
+    private fun superInfo(getOrSetMethod: PsiMethod): SuperInfo? {
         //TODO: multiple
-        val superMethod = converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod).firstOrNull()
-                          ?: return AccessorInfo(getOrSetMethod, field, kind, propertyName, null)
+        val superMethod = converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod).firstOrNull() ?: return null
 
         val containingClass = superMethod.containingClass!!
-        val superPropertyInfo: SuperPropertyInfo? = if (converter.inConversionScope(containingClass)) {
+        if (converter.inConversionScope(containingClass)) {
             val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-            if (propertyInfo != null) SuperPropertyInfo(propertyInfo.isVar) else null
+            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name) else SuperInfo.Function
         }
         else if (superMethod is KotlinLightMethod) {
             val origin = superMethod.getOrigin()
-            if (origin is JetProperty) SuperPropertyInfo(origin.isVar) else null
+            return if (origin is JetProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
         }
         else {
-            null
+            return SuperInfo.Function
         }
-        return superPropertyInfo?.let { AccessorInfo(getOrSetMethod, field, kind, propertyName, it) }
     }
 
     private fun propertyNameByGetMethod(method: PsiMethod): String? {
@@ -337,6 +369,11 @@ private class PropertyDetector(
         if (!Name.isValidIdentifier(name)) return null
         val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(Name.identifier(name))?.identifier ?: return null
 
+        if (name.startsWith("is")) {
+            val typeText = method.returnType?.canonicalText
+            if (typeText != "boolean" && typeText != "java.lang.Boolean") return null
+        }
+
         val returnType = method.returnType ?: return null
         if (returnType.canonicalText == "void") return null
         if (method.typeParameters.isNotEmpty()) return null
@@ -344,13 +381,21 @@ private class PropertyDetector(
         return propertyName
     }
 
-    private fun propertyNameBySetMethod(method: PsiMethod): String? {
+    private fun propertyNameBySetMethod(method: PsiMethod, allowedNames: Set<String>): String? {
         if (method.isConstructor) return null
         if (method.parameterList.parametersCount != 1) return null
 
         val name = method.name
         if (!Name.isValidIdentifier(name)) return null
-        val propertyName = SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(Name.identifier(name), false/*TODO!!*/)?.identifier ?: return null
+
+        val propertyName1 = SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(Name.identifier(name), false)?.identifier
+        val propertyName2 = SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(Name.identifier(name), true)?.identifier
+        val propertyName = if (propertyName1 != null && propertyName1 in allowedNames)
+            propertyName1
+        else if (propertyName2 != null && propertyName2 in allowedNames)
+            propertyName2
+        else
+            return null
 
         if (method.returnType?.canonicalText != "void") return null
         if (method.typeParameters.isNotEmpty()) return null

@@ -1519,6 +1519,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("IsPrefix.java")
+        public void testIsPrefix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/IsPrefix.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaKeywordPropertyName.java")
         public void testJavaKeywordPropertyName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/JavaKeywordPropertyName.java");
