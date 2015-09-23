@@ -78,16 +78,4 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
             }
         };
     }
-
-    @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForExpectedReturnTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters1<JetTypeReference, JetType> diagnosticWithParameters = Errors.EXPECTED_RETURN_TYPE_MISMATCH.cast(diagnostic);
-                return new ChangeTypeFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
-            }
-        };
-    }
 }

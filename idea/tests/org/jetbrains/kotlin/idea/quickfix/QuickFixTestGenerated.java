@@ -5973,12 +5973,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("expectedReturnTypeMismatch.kt")
-        public void testExpectedReturnTypeMismatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/expectedReturnTypeMismatch.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("hasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/hasNextFunctionReturnTypeMismatch.kt");
@@ -6251,18 +6245,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("changeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt")
-            public void testChangeFunctionLiteralTypeWithoutChangingFunctionParameterType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("changeFunctionLiteralTypeWithoutChangingPropertyType.kt")
-            public void testChangeFunctionLiteralTypeWithoutChangingPropertyType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionLiteralTypeWithoutChangingPropertyType.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("changeFunctionReturnTypeToFunctionType.kt")
             public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionReturnTypeToFunctionType.kt");
@@ -6278,12 +6260,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("dontChangeFunctionReturnTypeToErrorType.kt")
             public void testDontChangeFunctionReturnTypeToErrorType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/dontChangeFunctionReturnTypeToErrorType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("expectedTypeMismatch.kt")
-            public void testExpectedTypeMismatch() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/expectedTypeMismatch.kt");
                 doTest(fileName);
             }
 

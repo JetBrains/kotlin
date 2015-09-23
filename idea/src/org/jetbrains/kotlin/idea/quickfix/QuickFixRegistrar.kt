@@ -224,7 +224,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch())
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
-        EXPECTED_RETURN_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch())
 
         val changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch()
         EXPECTED_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
