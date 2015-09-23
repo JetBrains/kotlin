@@ -93,14 +93,14 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun shutdownCompileService(daemonOptions: DaemonOptions): Unit {
-        KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
+    public fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
+        KotlinCompilerClient.connectToCompileService(compilerId, DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
                 ?.shutdown()
     }
 
 
-    public fun shutdownCompileService(): Unit {
-        shutdownCompileService(DaemonOptions())
+    public fun shutdownCompileService(compilerId: CompilerId): Unit {
+        shutdownCompileService(compilerId, DaemonOptions())
     }
 
 

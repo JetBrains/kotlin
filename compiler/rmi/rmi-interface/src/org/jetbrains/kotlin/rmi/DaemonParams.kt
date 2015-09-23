@@ -36,6 +36,7 @@ public val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
 public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
 public val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
 public val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.client.alive.path"
+public val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
 public val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
 public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
@@ -299,6 +300,7 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_REPORT_PERF_PROPERTY) }
     System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) }
+    System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=$it" ) }
     return opts
 }
 

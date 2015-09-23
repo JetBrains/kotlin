@@ -31,7 +31,6 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     data class CompilerResults(val resultCode: Int, val out: String)
 
     val daemonOptions by lazy(LazyThreadSafetyMode.NONE) { DaemonOptions(runFilesPath = tmpdir.absolutePath) }
-    val daemonJVMOptions by lazy(LazyThreadSafetyMode.NONE) { DaemonJVMOptions() }
     val compilerId by lazy(LazyThreadSafetyMode.NONE) {
         CompilerId.makeCompilerId(
                 File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
@@ -39,33 +38,52 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar"))
     }
 
-    private fun compileOnDaemon(args: Array<out String>): CompilerResults {
-        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
-        try {
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
-            TestCase.assertNotNull("failed to connect daemon", daemon)
-            val strm = ByteArrayOutputStream()
-            val code = KotlinCompilerClient.compile(daemon!!, args, strm)
-            return CompilerResults(code, strm.toString())
-        }
-        finally {
-            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
-        }
+    private fun compileOnDaemon(daemonJVMOptions: DaemonJVMOptions, args: Array<out String>): CompilerResults {
+        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
+        TestCase.assertNotNull("failed to connect daemon", daemon)
+        val strm = ByteArrayOutputStream()
+        val code = KotlinCompilerClient.compile(daemon!!, args, strm)
+        return CompilerResults(code, strm.toString())
     }
 
     private fun runDaemonCompilerTwice(logName: String, vararg arguments: String): Unit {
-        KotlinCompilerClient.shutdownCompileService(daemonOptions)
+        KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
+        val logFile = File.createTempFile("kotlin-daemon-test.", ".log")
+        System.setProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY, logFile.absolutePath)
+
+        val daemonJVMOptions = configureDaemonJVMOptions(false)
+        var daemonShotDown = false
+//        daemonJVMOptions.jvmParams.add("agentlib:jdwp=transport=dt_socket\\,server=y\\,suspend=y\\,address=5005")
 
         try {
-            val res1 = compileOnDaemon(arguments)
+            val res1 = compileOnDaemon(daemonJVMOptions, arguments)
             TestCase.assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
-            val res2 = compileOnDaemon(arguments)
+            val res2 = compileOnDaemon(daemonJVMOptions, arguments)
             TestCase.assertEquals("second compilation failed:\n${res2.out}", 0, res2.resultCode)
             TestCase.assertEquals("build results differ", CliBaseTest.removePerfOutput(res1.out), CliBaseTest.removePerfOutput(res2.out))
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+            daemonShotDown = true
+            logFile.reader().useLines {
+                it.ifNotContainsSequence( LinePattern("Kotlin compiler daemon version"),
+                                          LinePattern("Starting compilation with args: "),
+                                          LinePattern("Starting compilation with args: "),
+                                          LinePattern("Shutdown complete"))
+                { (unmatchedPattern, lineNo) ->
+                    TestCase.fail("pattern not found in the input: " + unmatchedPattern.regex +
+                                  "\nunmatched part of the log file (" + logFile.absolutePath +
+                                  ") from line " + lineNo + ":\n\n" + logFile.reader().useLines { it.drop(lineNo).joinToString("\n") })
+                }
+            }
+            logFile.delete()
             // TODO: add performance comparison assert
         }
         finally {
-            KotlinCompilerClient.shutdownCompileService(daemonOptions)
+            if (!daemonShotDown)
+                KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+            System.clearProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)
+            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
         }
     }
 
@@ -91,12 +109,12 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             TestCase.assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
         }
         finally {
-            backupJvmOptions?.let { System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, it) }
+            restoreSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backupJvmOptions)
         }
     }
 
     public fun testDaemonOptionsParsing() {
-        val backupJvmOptions = System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)
+        val backupOptions = System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, "runFilesPath=abcd,clientAliveFlagPath=efgh,autoshutdownIdleSeconds=1111")
             val opts = configureDaemonOptions()
@@ -105,7 +123,16 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             TestCase.assertEquals(1111, opts.autoshutdownIdleSeconds)
         }
         finally {
-            backupJvmOptions?.let { System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, it) }
+            restoreSystemProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, backupOptions)
         }
+    }
+}
+
+fun restoreSystemProperty(propertyName: String, backupValue: String?) {
+    if (backupValue == null) {
+        System.clearProperty(propertyName)
+    }
+    else {
+        System.setProperty(propertyName, backupValue)
     }
 }
