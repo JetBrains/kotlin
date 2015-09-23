@@ -7,6 +7,7 @@
     <properties>
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.4</maven.version>
+        <surefire-version>2.16</surefire-version>
         <kotlin.relocated.package>org.jetbrains.kotlin.relocated</kotlin.relocated.package>
     </properties>
 
@@ -46,6 +47,7 @@
     </dependencies>
 
     <build>
+        <testSourceDirectory>test/kotlin</testSourceDirectory>
         <plugins>
 
             <plugin>
@@ -139,6 +141,9 @@
                                 <relocation>
                                     <pattern>org.fusesource</pattern>
                                     <shadedPattern>${kotlin.relocated.package}.org.fusesource</shadedPattern>
+                                    <excludes>
+                                        <exclude>org.fusesource.jansi.internal.CLibrary</exclude>
+                                    </excludes>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.picocontainer</pattern>
@@ -161,6 +166,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${project.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
