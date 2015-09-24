@@ -55,41 +55,32 @@ public abstract class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     public boolean hasDeclaredReturnType() {
-        return getTypeReference() != null;
+        return false;
     }
 
     @Override
     @Nullable
     public JetTypeReference getReceiverTypeReference() {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            IElementType tt = child.getNode().getElementType();
-            if (tt == JetTokens.LPAR || tt == JetTokens.COLON) break;
-            if (child instanceof JetTypeReference) {
-                return (JetTypeReference) child;
-            }
-            child = child.getNextSibling();
-        }
-
         return null;
     }
 
     @Override
     @Nullable
     public JetTypeReference getTypeReference() {
-        return TypeRefHelpersPackage.getTypeReference(this);
+        return null;
     }
 
     @Nullable
     @Override
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeReference(this, getValueParameterList(), typeRef);
+        if (typeRef == null) return null;
+        throw new IllegalStateException("Function literals can't have type reference");
     }
 
     @Nullable
     @Override
     public PsiElement getColon() {
-        return findChildByType(JetTokens.COLON);
+        return null;
     }
 
     @Override

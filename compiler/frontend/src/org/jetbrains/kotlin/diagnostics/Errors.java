@@ -649,7 +649,6 @@ public interface Errors {
     DiagnosticFactory0<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetFunction, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
             DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 

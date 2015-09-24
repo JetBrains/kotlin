@@ -360,7 +360,6 @@ public class DefaultErrorMessages {
                 "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value", RENDER_TYPE);
 
         MAP.put(EXPECTED_PARAMETER_TYPE_MISMATCH, "Expected parameter of type {0}", RENDER_TYPE);
-        MAP.put(EXPECTED_RETURN_TYPE_MISMATCH, "Expected return type {0}", RENDER_TYPE);
         MAP.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, "Expected {0,choice,0#no parameters|1#one parameter of type|1<{0,number,integer} parameters of types} {1}", null, RENDER_COLLECTION_OF_TYPES);
 
         MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type is cast to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
