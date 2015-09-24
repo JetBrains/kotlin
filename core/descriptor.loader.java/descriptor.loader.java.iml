@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javax.inject" level="project" />
-    <orderEntry type="module" module-name="deserialization" />
     <orderEntry type="module" module-name="util.runtime" />
+    <orderEntry type="module" module-name="descriptors" exported="" />
   </component>
 </module>
