@@ -787,10 +787,13 @@
     <target name="override-version">
         <condition property="need.version.override">
             <and>
-                <equals arg1="${kotlin.bootstrap.branch}" arg2="${teamcity.build.branch}"/>
                 <isset property="override.version.url"/>
+                <equals arg1="${kotlin.bootstrap.branch}" arg2="${teamcity.build.branch}"/>
                 <not>
                     <isset property="override.version.disabled"/>
+                </not>
+                <not>
+                    <istrue value="${bootstrap.build.no.tests}"/>
                 </not>
             </and>
         </condition>
