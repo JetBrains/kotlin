@@ -61,7 +61,10 @@ import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.*
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextFromJsMetadataTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -407,7 +410,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
-            model("quickfix", pattern = """^(\w+)\.before\.Main\.kt$""", testMethod = "doTestWithExtraFile")
+            model("quickfix", pattern = """^(\w+)\.before\.Main\.\w+$""", testMethod = "doTestWithExtraFile")
         }
 
         testClass(javaClass<AbstractHighlightingTest>()) {
