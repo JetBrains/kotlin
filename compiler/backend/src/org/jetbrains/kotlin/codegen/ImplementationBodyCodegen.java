@@ -1439,7 +1439,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
 
                         if (KotlinBuiltIns.isCloneable(containingTrait) && traitMethod.getName().equals("clone")) {
-                            // A special hack for Cloneable: there's no kotlin/Cloneable$$TImpl class at runtime,
+                            // A special hack for Cloneable: there's no kotlin/Cloneable$DefaultImpls class at runtime,
                             // and its 'clone' method is actually located in java/lang/Object
                             iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
                         }

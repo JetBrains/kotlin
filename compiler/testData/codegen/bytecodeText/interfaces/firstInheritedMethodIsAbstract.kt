@@ -8,6 +8,6 @@ interface B {
 
 interface C : A, B
 
-// There's no 'foo' in A$$TImpl, proguard and other tools may fail if we generate calls to it
-// 0 INVOKESTATIC A\$\$TImpl.foo
-// 1 INVOKESTATIC B\$\$TImpl.foo
+// There's no 'foo' in A$DefaultImpls, proguard and other tools may fail if we generate calls to it
+// 0 INVOKESTATIC A\$DefaultImpls.foo
+// 1 INVOKESTATIC B\$DefaultImpls.foo
