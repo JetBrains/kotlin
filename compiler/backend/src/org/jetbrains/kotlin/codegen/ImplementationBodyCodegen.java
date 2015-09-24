@@ -296,7 +296,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            if (isInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
                 sw.writeInterface();
                 Type jvmName = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();
@@ -318,7 +318,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
-            if (superClass != null && !isInterface(superClass)) {
+            if (superClass != null && !isJvmInterface(superClass)) {
                 superClassAsmType = typeMapper.mapClass(superClass);
                 superClassType = supertype;
                 return;

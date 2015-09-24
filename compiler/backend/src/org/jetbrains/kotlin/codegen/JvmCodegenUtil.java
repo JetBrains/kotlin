@@ -55,7 +55,7 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isInterface(DeclarationDescriptor descriptor) {
+    public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
             return kind == ClassKind.INTERFACE || kind == ClassKind.ANNOTATION_CLASS;
@@ -63,8 +63,8 @@ public class JvmCodegenUtil {
         return false;
     }
 
-    public static boolean isInterface(JetType type) {
-        return isInterface(type.getConstructor().getDeclarationDescriptor());
+    public static boolean isJvmInterface(JetType type) {
+        return isJvmInterface(type.getConstructor().getDeclarationDescriptor());
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {

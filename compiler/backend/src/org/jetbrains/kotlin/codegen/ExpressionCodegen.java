@@ -251,7 +251,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull ClassDescriptor provided,
             @NotNull ClassDescriptor required
     ) {
-        if (!isInterface(provided) && isInterface(required)) {
+        if (!isJvmInterface(provided) && isJvmInterface(required)) {
             return StackValue.coercion(inner, asmType(required.getDefaultType()));
         }
 
@@ -2200,7 +2200,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (!skipPropertyAccessors) {
             if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
-                if (isSuper && !isInterface(containingDeclaration)) {
+                if (isSuper && !isJvmInterface(containingDeclaration)) {
                     ClassDescriptor owner = getSuperCallLabelTarget(context, superExpression);
                     CodegenContext c = context.findParentContextWithDescriptor(owner);
                     assert c != null : "Couldn't find a context for a super-call: " + propertyDescriptor;
@@ -2371,7 +2371,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetSuperExpression superCallExpression = CallResolverUtilPackage.getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
-        if (superCall && !isInterface(fd.getContainingDeclaration())) {
+        if (superCall && !isJvmInterface(fd.getContainingDeclaration())) {
             ClassDescriptor owner = getSuperCallLabelTarget(context, superCallExpression);
             CodegenContext c = context.findParentContextWithDescriptor(owner);
             assert c != null : "Couldn't find a context for a super-call: " + fd;
