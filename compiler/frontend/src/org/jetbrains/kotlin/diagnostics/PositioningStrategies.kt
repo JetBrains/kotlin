@@ -452,4 +452,18 @@ public object PositioningStrategies {
             return listOf(TextRange(element.getOperationReference().startOffset, element.endOffset))
         }
     }
+
+    public val IMPORT_ALIAS: PositioningStrategy<JetImportDirective> = object: PositioningStrategy<JetImportDirective>() {
+        override fun mark(element: JetImportDirective): List<TextRange> {
+            element.aliasNameNode?.let { return markNode(it) }
+            element.importedReference?.let {
+                if (it is JetQualifiedExpression) {
+                    it.selectorExpression?.let { return markElement(it) }
+                }
+                return markElement(it)
+            }
+            return markElement(element)
+        }
+    }
+
 }

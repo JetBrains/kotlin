@@ -723,6 +723,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/conflictingImports/removeConflictingImport.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("removeDuplicateImport.kt")
+        public void testRemoveDuplicateImport() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/conflictingImports/removeDuplicateImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeDuplicateImportWithAlias.kt")
+        public void testRemoveDuplicateImportWithAlias() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/conflictingImports/removeDuplicateImportWithAlias.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/createFromUsage")

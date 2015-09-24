@@ -300,6 +300,9 @@ public class JetPsiUtil {
 
     @Nullable
     public static Name getAliasName(@NotNull JetImportDirective importDirective) {
+        if (importDirective.isAllUnder()) {
+            return null;
+        }
         String aliasName = importDirective.getAliasName();
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {

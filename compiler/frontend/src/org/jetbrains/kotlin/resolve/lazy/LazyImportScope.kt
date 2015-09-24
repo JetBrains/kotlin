@@ -16,25 +16,27 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import com.google.common.collect.HashMultimap
 import com.google.common.collect.ImmutableListMultimap
 import com.google.common.collect.ListMultimap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
-import java.util.LinkedHashSet
+import java.util.*
 
 interface IndexedImports {
     val imports: List<JetImportDirective>
@@ -67,100 +69,50 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
 class LazyImportResolver(
         val storageManager: StorageManager,
         val qualifiedExpressionResolver: QualifiedExpressionResolver,
-        val fileScopeProvider: FileScopeProvider,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace,
         private val packageFragment: PackageFragmentDescriptor
 ) {
-    private val importedScopesProvider = storageManager.createMemoizedFunction {
-        directive: JetImportDirective -> ImportDirectiveResolveCache(directive)
-    }
+    private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
+        directive: JetImportDirective ->
+            val directiveImportScope = qualifiedExpressionResolver.processImportReference(
+                    directive, moduleDescriptor, traceForImportResolve, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
 
-    private var directiveUnderResolve: JetImportDirective? = null
-
-    private class ImportResolveStatus(val scope: JetScope, val descriptors: Collection<DeclarationDescriptor>)
-
-    private inner class ImportDirectiveResolveCache(private val directive: JetImportDirective) {
-
-        @Volatile var importResolveStatus: ImportResolveStatus? = null
-
-        fun scopeForMode(): JetScope {
-            val status = importResolveStatus
-            if (status != null) {
-                return status.scope
+            if (!directive.isAllUnder) {
+                PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(
+                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getAllDescriptors())
             }
 
-            return storageManager.compute {
-                val cachedStatus = importResolveStatus
-                if (cachedStatus != null) {
-                    cachedStatus.scope
-                }
-                else {
-                    directiveUnderResolve = directive
-
-                    try {
-                        val directiveImportScope = qualifiedExpressionResolver.processImportReference(
-                                directive, moduleDescriptor, traceForImportResolve, packageFragment)
-                        val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
-
-                        PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(moduleDescriptor, traceForImportResolve, directive, descriptors)
-
-                        importResolveStatus = ImportResolveStatus(directiveImportScope, descriptors)
-                        directiveImportScope
-                    }
-                    finally {
-                        directiveUnderResolve = null
-                    }
-                }
-            }
-        }
+            directiveImportScope
     }
 
     public fun forceResolveAllContents() {
+        val explicitClassImports = HashMultimap.create<String, JetImportDirective>()
         for (importDirective in indexedImports.imports) {
             forceResolveImportDirective(importDirective)
+            val scope = importedScopesProvider(importDirective)
+
+            val alias = JetPsiUtil.getAliasName(importDirective)?.identifier
+            if (scope != null && alias != null) {
+                if (scope.getClassifier(Name.identifier(alias), KotlinLookupLocation(importDirective)) != null) {
+                    explicitClassImports.put(alias, importDirective)
+                }
+            }
+        }
+        for (alias in explicitClassImports.keySet()) {
+            val imports = explicitClassImports.get(alias)
+            if (imports.size() > 1) {
+                imports.forEach {
+                    traceForImportResolve.report(Errors.CONFLICTING_IMPORT.on(it, alias))
+                }
+            }
         }
     }
 
     public fun forceResolveImportDirective(importDirective: JetImportDirective) {
         getImportScope(importDirective)
-
-        val status = importedScopesProvider(importDirective).importResolveStatus
-        if (status != null && !status.descriptors.isEmpty()) {
-            val fileScope = fileScopeProvider.getFileScope(importDirective.getContainingJetFile())
-            reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
-        }
     }
-
-    private fun reportConflictingImport(
-            importDirective: JetImportDirective,
-            fileScope: JetScope,
-            resolvedTo: Collection<DeclarationDescriptor>?,
-            trace: BindingTrace
-    ) {
-
-        val importedReference = importDirective.getImportedReference()
-        if (importedReference == null || resolvedTo == null) return
-
-        val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return
-
-        if (resolvedTo.size() != 1) return
-
-        when (resolvedTo.single()) {
-            is ClassDescriptor -> {
-                if (fileScope.getClassifier(aliasName) == null) {
-                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
-                }
-            }
-            is PackageViewDescriptor -> {
-                if (fileScope.getPackage(aliasName) == null) {
-                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
-                }
-            }
-        }
-    }
-
 
     public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
@@ -168,10 +120,6 @@ class LazyImportResolver(
     ): D? {
         fun compute(): D? {
             val imports = indexedImports.importsForName(name)
-            if (imports.contains(directiveUnderResolve)) {
-                // This is the recursion in imports analysis
-                return null
-            }
 
             var target: D? = null
             for (directive in imports) {
@@ -191,11 +139,6 @@ class LazyImportResolver(
         return storageManager.compute {
             var descriptors: Collection<D>? = null
             for (directive in indexedImports.importsForName(name)) {
-                if (directive == directiveUnderResolve) {
-                    // This is the recursion in imports analysis
-                    throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
-                }
-
                 val descriptorsForImport = descriptorsSelector(getImportScope(directive), name)
                 descriptors = descriptors.concat(descriptorsForImport)
             }
@@ -205,7 +148,7 @@ class LazyImportResolver(
     }
 
     public fun getImportScope(directive: JetImportDirective): JetScope {
-        return importedScopesProvider(directive).scopeForMode()
+        return importedScopesProvider(directive) ?: JetScope.Empty
     }
 }
 

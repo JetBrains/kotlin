@@ -11,7 +11,7 @@ class X
 // FILE: c.kt
 package c
 
-import <!CONFLICTING_IMPORT!>a.X<!>
-import <!CONFLICTING_IMPORT!>b.X<!>
+import a.<!CONFLICTING_IMPORT!>X<!>
+import b.<!CONFLICTING_IMPORT!>X<!>
 
 class Y : <!UNRESOLVED_REFERENCE!>X<!>

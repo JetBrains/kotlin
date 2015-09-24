@@ -105,7 +105,7 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, Name> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSimpleNameExpression> PACKAGE_CANNOT_BE_IMPORTED = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory1<JetExpression, String> CONFLICTING_IMPORT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetImportDirective, String> CONFLICTING_IMPORT = DiagnosticFactory1.create(ERROR, PositioningStrategies.IMPORT_ALIAS);
 
     // Modifiers
 

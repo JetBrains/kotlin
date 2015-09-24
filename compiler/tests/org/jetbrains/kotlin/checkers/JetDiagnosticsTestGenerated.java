@@ -6603,6 +6603,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportClassClash.kt")
+            public void testImportClassClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportClassClash.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentName.kt");
