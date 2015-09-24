@@ -228,6 +228,12 @@ public open class JetChangeInfo(
     }
 
     public fun getNewParametersSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
+        return "(" + getNewParametersSignatureWithoutParentheses(inheritedCallable) + ")"
+    }
+
+    public fun getNewParametersSignatureWithoutParentheses(
+            inheritedCallable: JetCallableDefinitionUsage<PsiElement>
+    ): String {
         val signatureParameters = getNonReceiverParameters()
 
         val isLambda = inheritedCallable.getDeclaration() is JetFunctionLiteral
@@ -237,7 +243,7 @@ public open class JetChangeInfo(
 
         return signatureParameters.indices
                 .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable) }
-                .joinToString(prefix = "(", separator = ", ", postfix = ")")
+                .joinToString(separator = ", ")
     }
 
     public fun renderReceiverType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String? {

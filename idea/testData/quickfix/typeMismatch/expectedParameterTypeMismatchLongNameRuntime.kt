@@ -2,6 +2,6 @@
 
 fun foo(f: (java.util.HashSet<Int>) -> String) {
     foo {
-        (x: String<caret>) -> ""
+        x: String<caret> -> ""
     }
 }

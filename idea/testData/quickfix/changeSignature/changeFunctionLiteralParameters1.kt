@@ -2,5 +2,5 @@
 // DISABLE-ERRORS
 
 fun f(x: Int, y: Int, z : () -> Int) {
-    f(1, 2, {(x: Int, y: Int<caret>) -> x});
+    f(1, 2, {x: Int, y: Int<caret> -> x});
 }
