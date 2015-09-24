@@ -49,6 +49,6 @@ object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFacto
         val entry = entries[componentNumber]
         val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return FunctionInfo(name.identifier, ownerType, returnType)
+        return FunctionInfo(name.identifier, ownerType, returnType, isOperator = true)
     }
 }

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import java.util.Collections
+import java.util.*
 
 public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<JetBinaryExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetBinaryExpression? {
@@ -54,6 +54,7 @@ public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageF
             else -> TypeInfo(element, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
-        return FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters)
+        return FunctionInfo(operationName, receiverType, returnType, parameterInfos = parameters,
+                            isOperator = token != JetTokens.IDENTIFIER)
     }
 }

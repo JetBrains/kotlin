@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class OperatorModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -41,25 +42,27 @@ public class OperatorModifierInspection : AbstractKotlinInspection(), CleanupLoc
     }
 
     private fun JetNamedFunction.isOperator(): Boolean {
+        val name = nameAsName ?: return false
         val arity = valueParameters.size()
         if (arity == 0 &&
-            (nameAsName in OperatorConventions.UNARY_OPERATION_NAMES.values() ||
-             nameAsName == OperatorConventions.ITERATOR)) {
+            (name in OperatorConventions.UNARY_OPERATION_NAMES.values() ||
+             name == OperatorConventions.ITERATOR ||
+             isComponentLike(name))) {
             return true
         }
-        if (arity == 1 && (nameAsName in OperatorConventions.BINARY_OPERATION_NAMES.values() ||
-             nameAsName in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
-             nameAsName == OperatorConventions.CONTAINS ||
-             nameAsName == OperatorConventions.COMPARE_TO)) {
+        if (arity == 1 && (name in OperatorConventions.BINARY_OPERATION_NAMES.values() ||
+             name in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
+             name == OperatorConventions.CONTAINS ||
+             name == OperatorConventions.COMPARE_TO)) {
             return true
         }
-        if (nameAsName == OperatorConventions.INVOKE) {
+        if (name == OperatorConventions.INVOKE) {
             return true
         }
-        if (arity >= 1 && nameAsName == OperatorConventions.GET) {
+        if (arity >= 1 && name == OperatorConventions.GET) {
             return true
         }
-        if (arity >= 2 && nameAsName == OperatorConventions.SET) {
+        if (arity >= 2 && name == OperatorConventions.SET) {
             return true
         }
         return false

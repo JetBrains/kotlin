@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import java.util.Collections
+import java.util.*
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -143,7 +143,8 @@ class FunctionInfo(name: String,
                    returnTypeInfo: TypeInfo,
                    possibleContainers: List<JetElement> = Collections.emptyList(),
                    override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
-                   typeParameterInfos: List<TypeInfo> = Collections.emptyList()
+                   typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
+                   val isOperator: Boolean = false
 ) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
 }

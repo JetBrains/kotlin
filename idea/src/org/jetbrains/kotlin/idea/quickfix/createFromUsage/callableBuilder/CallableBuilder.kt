@@ -467,8 +467,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             containingElement is JetClass && containingElement.isInterface() && !config.isExtension -> ""
                             else -> "{}"
                         }
-                        if (callableInfo.kind == CallableKind.FUNCTION) {
-                            psiFactory.createFunction("${modifiers}fun<> $header $body")
+                        if (callableInfo is FunctionInfo) {
+                            val operatorModifier = if (callableInfo.isOperator) "operator " else ""
+                            psiFactory.createFunction("${modifiers}${operatorModifier}fun<> $header $body")
                         }
                         else {
                             psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body")

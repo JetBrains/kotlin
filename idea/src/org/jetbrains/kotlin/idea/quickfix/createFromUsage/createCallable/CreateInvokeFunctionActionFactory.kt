@@ -47,6 +47,6 @@ object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<
         }
 
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, emptyList(), parameters)
+        return FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, parameterInfos = parameters, isOperator = true)
     }
 }
