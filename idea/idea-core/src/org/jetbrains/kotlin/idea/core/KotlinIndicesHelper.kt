@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.resolve.bindingContextUtil.get
 import java.util.*
 
 public class KotlinIndicesHelper(
