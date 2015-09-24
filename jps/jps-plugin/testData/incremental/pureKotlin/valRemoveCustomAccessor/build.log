@@ -1,0 +1,19 @@
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/test/TestPackage.class
+out/production/module/test/UsageKt.class
+End of files
+Compiling files:
+src/usage.kt
+End of files
+COMPILATION FAILED
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Int?
+
+
+Cleaning output files:
+out/production/module/test/A.class
+End of files
+Compiling files:
+src/A.kt
+src/usage.kt
+End of files
