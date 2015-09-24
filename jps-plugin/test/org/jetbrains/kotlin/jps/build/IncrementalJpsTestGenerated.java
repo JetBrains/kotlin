@@ -551,6 +551,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("valAddCustomAccessor")
+        public void testValAddCustomAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valRemoveCustomAccessor")
+        public void testValRemoveCustomAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/valRemoveCustomAccessor/");
+            doTest(fileName);
+        }
+
     }
 
     @TestMetadata("jps-plugin/testData/incremental/withJava")
