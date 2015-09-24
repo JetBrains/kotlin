@@ -59,13 +59,15 @@ import kotlin.jvm.internal.Intrinsic
 /**
  * Creates an input stream for reading data from this byte array.
  */
-@Deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
+@Deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()", "kotlin.io.inputStream"))
 public val ByteArray.inputStream : ByteArrayInputStream
     get() = inputStream()
 
 /**
  * Creates an input stream for reading data from this byte array.
  */
+@Deprecated("Use inputStream() method from kotlin.io package instead.", ReplaceWith("this.inputStream()", "kotlin.io.inputStream"))
+@HiddenDeclaration
 public fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(this)
 
 /**
@@ -73,6 +75,8 @@ public fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(
  * @param offset the start offset of the portion of the array to read.
  * @param length the length of the portion of the array to read.
  */
+@Deprecated("Use inputStream() method from kotlin.io package instead.", ReplaceWith("this.inputStream(offset, length)", "kotlin.io.inputStream"))
+@HiddenDeclaration
 public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 /**

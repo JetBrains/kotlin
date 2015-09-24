@@ -9,7 +9,7 @@ import org.junit.Test as test
 
 class OldStdlibTest() {
     @test fun testCollectionEmpty() {
-        assertNot {
+        assertFalse {
             listOf(0, 1, 2).isEmpty()
         }
     }
@@ -27,8 +27,10 @@ class OldStdlibTest() {
             x [index] = index.toByte()
         }
 
-        for(b in x.inputStream()) {
-            println(b)
+        x.inputStream().use { stream ->
+            for(b in stream) {
+                println(b)
+            }
         }
     }
 }
