@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
 import java.io.*
 import java.rmi.ConnectException
@@ -25,6 +26,12 @@ import java.rmi.registry.LocateRegistry
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
+
+
+public class CompilationServices(
+        val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        val compilationCanceledStatus: CompilationCanceledStatus? = null
+)
 
 
 public object KotlinCompilerClient {
@@ -93,14 +100,14 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun shutdownCompileService(daemonOptions: DaemonOptions): Unit {
-        KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
+    public fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
+        KotlinCompilerClient.connectToCompileService(compilerId, DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
                 ?.shutdown()
     }
 
 
-    public fun shutdownCompileService(): Unit {
-        shutdownCompileService(DaemonOptions())
+    public fun shutdownCompileService(compilerId: CompilerId): Unit {
+        shutdownCompileService(compilerId, DaemonOptions())
     }
 
 
@@ -108,7 +115,7 @@ public object KotlinCompilerClient {
 
         val outStrm = RemoteOutputStreamServer(out)
         try {
-            return compiler.remoteCompile(args, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+            return compiler.remoteCompile(args, makeRemoteServices(CompilationServices()), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
         }
         finally {
             outStrm.disconnect()
@@ -118,14 +125,13 @@ public object KotlinCompilerClient {
 
     // TODO: remove jvmStatic after all use sites will switch to kotlin
     @JvmStatic
-    public fun incrementalCompile(compiler: CompileService, args: Array<out String>, caches: Map<TargetId, IncrementalCache>, compilerOut: OutputStream, daemonOut: OutputStream): Int {
+    public fun incrementalCompile(compiler: CompileService, args: Array<out String>, services: CompilationServices, compilerOut: OutputStream, daemonOut: OutputStream): Int {
 
         val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
         val daemonOutStreamServer = RemoteOutputStreamServer(daemonOut)
         val cacheServers = hashMapOf<TargetId, RemoteIncrementalCacheServer>()
         try {
-            caches.mapValuesTo(cacheServers, { RemoteIncrementalCacheServer(it.getValue()) })
-            return compiler.remoteIncrementalCompile(args, cacheServers, compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer)
+            return compiler.remoteIncrementalCompile(args, makeRemoteServices(services), compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer)
         }
         finally {
             cacheServers.forEach { it.getValue().disconnect() }
@@ -134,6 +140,12 @@ public object KotlinCompilerClient {
         }
     }
 
+
+    fun makeRemoteServices(services: CompilationServices): CompileService.RemoteCompilationServices =
+        CompileService.RemoteCompilationServices(
+                incrementalCompilationComponents = if (services.incrementalCompilationComponents == null) null else RemoteIncrementalCompilationComponentsServer(services.incrementalCompilationComponents),
+                compilationCanceledStatus = if (services.compilationCanceledStatus == null) null else RemoteCompilationCanceledStatusServer(services.compilationCanceledStatus)
+        )
 
     data class ClientOptions(
             public var stop: Boolean = false
@@ -196,7 +208,7 @@ public object KotlinCompilerClient {
                     val memBefore = daemon.getUsedMemory() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+                    val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), makeRemoteServices(CompilationServices()), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")

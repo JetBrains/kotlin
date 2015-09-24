@@ -19,22 +19,17 @@ package org.jetbrains.kotlin.rmi.service
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
-import java.io.IOException
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
-import java.net.URLClassLoader
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.jar.Manifest
 import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -65,6 +60,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
     }
 
     override fun remoteCompile(args: Array<out String>,
+                               services: CompileService.RemoteCompilationServices,
                                compilerOutputStream: RemoteOutputStream,
                                outputFormat: CompileService.OutputFormat,
                                serviceOutputStream: RemoteOutputStream
@@ -77,7 +73,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             }
 
     override fun remoteIncrementalCompile(args: Array<out String>,
-                                          caches: Map<TargetId, CompileService.RemoteIncrementalCache>,
+                                          services: CompileService.RemoteCompilationServices,
                                           compilerOutputStream: RemoteOutputStream,
                                           compilerOutputFormat: CompileService.OutputFormat,
                                           serviceOutputStream: RemoteOutputStream
@@ -85,7 +81,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             doCompile(args, compilerOutputStream, serviceOutputStream) { printStream ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(caches), *args)
+                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services), *args)
                 }
             }
 
@@ -127,13 +123,6 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         alive = true
     }
 
-    private class IncrementalCompilationComponentsImpl(val targetToCache: Map<TargetId, CompileService.RemoteIncrementalCache>): IncrementalCompilationComponents {
-        // perf: cheap object, but still the pattern may be costly if there are too many calls to cache with the same id (which seems not to be the case now)
-        override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(targetToCache[target]!!)
-        // TODO: add appropriate proxy into interaction when lookup tracker is needed
-        override fun getLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
-    }
-
     private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream) -> ExitCode): Int =
             ifAlive {
                 val compilerMessagesStream = PrintStream(RemoteOutputStreamClient(compilerMessagesStreamProxy))
@@ -145,14 +134,12 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
                 }
             }
 
-    private fun createCompileServices(incrementalCaches: Map<TargetId, CompileService.RemoteIncrementalCache>): Services =
-        Services.Builder()
-                .register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches))
-                // TODO: add remote proxy for cancellation status tracking
-//                .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
-//                    override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
-//                })
-                .build()
+    private fun createCompileServices(services: CompileService.RemoteCompilationServices): Services {
+        val builder = Services.Builder()
+        services.incrementalCompilationComponents?.let { builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(it)) }
+        services.compilationCanceledStatus?.let { builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(it)) }
+        return builder.build()
+    }
 
 
     fun usedMemory(): Long {

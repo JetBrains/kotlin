@@ -47,8 +47,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
@@ -319,10 +318,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             )
         }
 
-        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment,
-                            incrementalCaches.mapKeysTo(HashMap<TargetId, IncrementalCache>(incrementalCaches.size()),
-                                                        { TargetId(it.getKey()) }),
-                            filesToCompile, messageCollector)
+        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
     }
 
     private fun createCompileEnvironment(
@@ -520,7 +516,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
 
-        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, incrementalCaches, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
         return outputItemCollector
     }
 
@@ -543,7 +539,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                              context: CompileContext,
                              dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
                              environment: CompilerEnvironment,
-                             incrementalCaches: MutableMap<TargetId, IncrementalCache>?,
                              filesToCompile: MultiMap<ModuleBuildTarget, File>, messageCollector: MessageCollectorAdapter
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -587,7 +582,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                 + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
 
-        runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, incrementalCaches, moduleFile, outputItemCollector)
+        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
         moduleFile.delete()
 
         return outputItemCollector

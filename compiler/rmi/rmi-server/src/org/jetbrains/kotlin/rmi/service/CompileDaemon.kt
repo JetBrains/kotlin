@@ -59,18 +59,19 @@ class LogStream(name: String) : OutputStream() {
 public object CompileDaemon {
 
     init {
-        val logPath: String = System.getProperty("kotlin.daemon.log.path")?.trimEnd('/','\\') ?: "%t"
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
+        val (logPath: String, fileIsGiven: Boolean) =
+                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
-            "handlers = java.util.logging.FileHandler\n" +
-            "java.util.logging.FileHandler.level     = ALL\n" +
-            "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-            "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-            "java.util.logging.FileHandler.limit     = 1073741824\n" + // 1Mb
-            "java.util.logging.FileHandler.count     = 3\n" +
-            "java.util.logging.FileHandler.append    = false\n" +
-            "java.util.logging.FileHandler.pattern   = $logPath/$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log\n" +
-            "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
+                "handlers = java.util.logging.FileHandler\n" +
+                "java.util.logging.FileHandler.level     = ALL\n" +
+                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
+                "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
+                "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
+                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
