@@ -21,15 +21,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
+import org.jetbrains.kotlin.types.DynamicTypesKt;
+import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -70,6 +77,8 @@ public class ForLoopConventionsChecker {
             context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
 
+            checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
+
             symbolUsageValidator.validateCall(iteratorFunction, context.trace, loopRangeExpression);
 
             JetType iteratorType = iteratorFunction.getReturnType();
@@ -92,6 +101,16 @@ public class ForLoopConventionsChecker {
             }
         }
         return null;
+    }
+
+    private static void checkIfOperatorModifierPresent(JetExpression expression, FunctionDescriptor descriptor, DiagnosticSink sink) {
+        if (ErrorUtils.isError(descriptor)) return;
+        ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
+        if ((extensionReceiverParameter != null) && (DynamicTypesKt.isDynamic(extensionReceiverParameter.getType()))) return;
+
+        if (!descriptor.isOperator()) {
+            OperatorValidator.Companion.report(expression, descriptor, sink);
+        }
     }
 
     @Nullable
@@ -122,6 +141,9 @@ public class ForLoopConventionsChecker {
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
             symbolUsageValidator.validateCall(functionDescriptor, context.trace, loopRangeExpression);
+
+            checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
+
             return functionDescriptor.getReturnType();
         }
         return null;

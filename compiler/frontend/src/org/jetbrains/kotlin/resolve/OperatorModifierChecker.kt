@@ -68,6 +68,8 @@ public class OperatorModifierChecker : DeclarationChecker {
             INVOKE == name -> {}
             CONTAINS == name -> {}
             ITERATOR == name -> {}
+            NEXT == name -> {}
+            HAS_NEXT == name -> {}
             EQUALS == name -> {}
             COMPARE_TO == name -> {}
             UNARY_OPERATION_NAMES.any { it.value == name } && functionDescriptor.valueParameters.isEmpty() -> {}
