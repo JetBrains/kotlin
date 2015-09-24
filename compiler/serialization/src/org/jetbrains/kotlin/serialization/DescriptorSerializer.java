@@ -284,7 +284,10 @@ public class DescriptorSerializer {
     private ProtoBuf.Callable.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
         ProtoBuf.Callable.ValueParameter.Builder builder = ProtoBuf.Callable.ValueParameter.newBuilder();
 
-        builder.setFlags(Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue()));
+        int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue());
+        if (flags != 0) {
+            builder.setFlags(flags);
+        }
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 

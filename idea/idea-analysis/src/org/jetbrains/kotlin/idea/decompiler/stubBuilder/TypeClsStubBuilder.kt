@@ -139,13 +139,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     fun createValueParameterListStub(parent: StubElement<out PsiElement>, callableProto: ProtoBuf.Callable, container: ProtoContainer) {
-        val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
+        val callableKind = Flags.CALLABLE_KIND[callableProto.flags]
         if (callableKind == CallableKind.VAL || callableKind == CallableKind.VAR) {
             return
         }
         val parameterListStub = KotlinPlaceHolderStubImpl<JetParameterList>(parent, JetStubElementTypes.VALUE_PARAMETER_LIST)
-        for (valueParameterProto in callableProto.getValueParameterList()) {
-            val name = c.nameResolver.getName(valueParameterProto.getName())
+        for ((index, valueParameterProto) in callableProto.valueParameterList.withIndex()) {
+            val name = c.nameResolver.getName(valueParameterProto.name)
             val parameterStub = KotlinParameterStubImpl(
                     parameterListStub,
                     name = name.ref(),
@@ -157,13 +157,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val isVararg = valueParameterProto.hasVarargElementType()
             val modifierList = if (isVararg) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                    container, callableProto, c.nameResolver, callableProto.annotatedCallableKind, valueParameterProto
+                    container, callableProto, c.nameResolver, callableProto.annotatedCallableKind, index, valueParameterProto
             )
             if (parameterAnnotations.isNotEmpty()) {
                 createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierList(parameterStub))
             }
 
-            val typeProto = if (isVararg) valueParameterProto.getVarargElementType() else valueParameterProto.getType()
+            val typeProto = if (isVararg) valueParameterProto.varargElementType else valueParameterProto.type
             createTypeReferenceStub(parameterStub, typeProto)
         }
     }

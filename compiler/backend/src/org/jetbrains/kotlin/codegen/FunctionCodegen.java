@@ -268,7 +268,9 @@ public class FunctionCodegen {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
+                if (parameter.getIndex() != i) {
+                    v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
+                }
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
 
                 if (functionDescriptor instanceof PropertySetterDescriptor) {

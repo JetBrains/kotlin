@@ -208,16 +208,17 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
         val callableDescriptor = c.containingDeclaration as CallableDescriptor
-        val containerOfCallable = callableDescriptor.getContainingDeclaration().asProtoContainer()
+        val containerOfCallable = callableDescriptor.containingDeclaration.asProtoContainer()
 
-        return callable.getValueParameterList().mapIndexed { i, proto ->
+        return callable.valueParameterList.mapIndexed { i, proto ->
+            val flags = if (proto.hasFlags()) proto.flags else 0
             ValueParameterDescriptorImpl(
                     callableDescriptor, null, i,
-                    containerOfCallable?.let { getParameterAnnotations(it, callable, kind, proto) } ?: Annotations.EMPTY,
-                    c.nameResolver.getName(proto.getName()),
-                    c.typeDeserializer.type(proto.getType()),
-                    Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    if (proto.hasVarargElementType()) c.typeDeserializer.type(proto.getVarargElementType()) else null,
+                    containerOfCallable?.let { getParameterAnnotations(it, callable, kind, i, proto) } ?: Annotations.EMPTY,
+                    c.nameResolver.getName(proto.name),
+                    c.typeDeserializer.type(proto.type),
+                    Flags.DECLARES_DEFAULT_VALUE.get(flags),
+                    if (proto.hasVarargElementType()) c.typeDeserializer.type(proto.varargElementType) else null,
                     SourceElement.NO_SOURCE
             )
         }.toReadOnlyList()
@@ -227,10 +228,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             container: ProtoContainer,
             callable: Callable,
             kind: AnnotatedCallableKind,
+            index: Int,
             valueParameter: Callable.ValueParameter
     ): Annotations {
         return DeserializedAnnotations(c.storageManager) {
-            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, c.nameResolver, kind, valueParameter)
+            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(
+                    container, callable, c.nameResolver, kind, index, valueParameter
+            )
         }
     }
 

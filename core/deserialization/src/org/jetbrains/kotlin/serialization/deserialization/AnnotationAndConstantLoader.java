@@ -44,6 +44,7 @@ public interface AnnotationAndConstantLoader<A, C, T> {
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
+            int parameterIndex,
             @NotNull ProtoBuf.Callable.ValueParameter proto
     );
 

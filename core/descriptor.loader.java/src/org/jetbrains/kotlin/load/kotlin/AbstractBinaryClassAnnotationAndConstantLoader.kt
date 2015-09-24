@@ -137,14 +137,14 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             callable: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
+            parameterIndex: Int,
             proto: ProtoBuf.Callable.ValueParameter
     ): List<A> {
         val methodSignature = getCallableSignature(callable, nameResolver, kind)
         if (methodSignature != null) {
-            if (proto.hasExtension(index)) {
-                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(index))
-                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
-            }
+            val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
+            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
+            return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
         }
 
         return listOf()
