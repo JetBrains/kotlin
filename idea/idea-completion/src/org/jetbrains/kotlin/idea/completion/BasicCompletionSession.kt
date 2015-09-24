@@ -257,6 +257,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                         }
                     }
 
+                    "override" -> {
+                        collector.addElement(lookupElement)
+
+                        OverridesCompletion(collector, lookupElementFactory).complete(position)
+                    }
+
                     else -> collector.addElement(lookupElement)
                 }
             }

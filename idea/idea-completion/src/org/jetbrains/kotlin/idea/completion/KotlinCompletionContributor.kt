@@ -395,7 +395,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (parent is JetParameterList) {
                 val balance = countParenthesisBalance(tokenBefore, parent)
                 val count = if (balance > 1) balance - 1 else 0
-                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B$"
+                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B"
             }
             if (parent is JetTypeElement) return null
             if (parent is JetAnnotationEntry) return null

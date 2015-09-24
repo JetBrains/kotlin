@@ -21,10 +21,13 @@ import com.intellij.codeInsight.generation.MemberChooserObject
 import com.intellij.codeInsight.generation.MemberChooserObjectBase
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.*
 
 interface OverrideMemberChooserObject : ClassMember {
     enum class BodyType {
@@ -56,7 +59,7 @@ interface OverrideMemberChooserObject : ClassMember {
         ) : DescriptorMemberChooserObject(declaration, descriptor), OverrideMemberChooserObject {
 
             override val descriptor: CallableMemberDescriptor
-                get() = super<DescriptorMemberChooserObject>.descriptor as CallableMemberDescriptor
+                get() = super.descriptor as CallableMemberDescriptor
         }
 
         private class WithoutDeclaration(
@@ -72,3 +75,91 @@ interface OverrideMemberChooserObject : ClassMember {
         }
     }
 }
+
+fun OverrideMemberChooserObject.generateMember(project: Project, asConstructorParameter: Boolean = false): JetCallableDeclaration {
+    val descriptor = immediateSuper
+    if (asConstructorParameter) {
+        assert(descriptor is PropertyDescriptor) { "asConstructorParameter is valid only for PropertyDescriptor" }
+        return generateConstructorParameter(project, descriptor as PropertyDescriptor)
+    }
+
+    return when (descriptor) {
+        is SimpleFunctionDescriptor -> generateFunction(project, descriptor, bodyType)
+        is PropertyDescriptor -> generateProperty(project, descriptor, bodyType)
+        else -> error("Unknown member to override: $descriptor")
+    }
+}
+
+private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
+    renderDefaultValues = false
+    modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
+    withDefinedIn = false
+    nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
+    overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
+    unitReturnType = false
+    typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
+}
+
+private fun generateProperty(project: Project, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetProperty {
+    val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
+                                        descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
+    newDescriptor.addOverriddenDescriptor(descriptor)
+
+    val body = StringBuilder {
+        append("\nget()")
+        append(" = ")
+        append(generateUnsupportedOrSuperCall(descriptor, bodyType))
+        if (descriptor.isVar) {
+            append("\nset(value) {}")
+        }
+    }
+    return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
+}
+
+private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor): JetParameter {
+    val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
+                                        descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
+    newDescriptor.addOverriddenDescriptor(descriptor)
+    return JetPsiFactory(project).createParameter(OVERRIDE_RENDERER.render(newDescriptor))
+}
+
+private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetNamedFunction {
+    val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
+                                        descriptor.kind, /* copyOverrides = */ true)
+    newDescriptor.addOverriddenDescriptor(descriptor)
+
+    val returnType = descriptor.returnType
+    val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
+
+    val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
+
+    val body = "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
+
+    return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
+}
+
+private fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
+    if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
+        return "throw UnsupportedOperationException()"
+    }
+    else {
+        return StringBuilder {
+            append("super")
+            if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
+                val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
+                append("<").append(superClassFqName).append(">")
+            }
+            append(".").append(descriptor.name.render())
+
+            if (descriptor is FunctionDescriptor) {
+                val paramTexts = descriptor.valueParameters.map {
+                    val renderedName = it.name.render()
+                    if (it.varargElementType != null) "*$renderedName" else renderedName
+                }
+                paramTexts.joinTo(this, prefix="(", postfix=")")
+            }
+        }.toString()
+    }
+}
+
+

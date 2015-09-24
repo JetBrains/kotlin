@@ -1,0 +1,11 @@
+interface I {
+    fun foo(p: Int)
+}
+
+class A : I {
+    override fun foo(p: Int) {
+        <caret><selection>throw UnsupportedOperationException()</selection>
+    }
+}
+
+// ELEMENT_TEXT: "override fun foo(p: Int) {...}"
