@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.impl.XSourcePositionImpl
@@ -51,7 +52,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         if (suspendContext == null || suspendContext.isResumed) return null
 
         val location = computeInManagerThread(suspendContext) {
-            it.frameProxy?.location()
+            it.safeFrameProxy?.location()
         } ?: return null
 
         val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
@@ -184,7 +185,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         if (suspendContext == null || suspendContext.isResumed) return null
 
         val location = computeInManagerThread(suspendContext) {
-            it.frameProxy?.location()
+            it.safeFrameProxy?.location()
         } ?: return null
 
         val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
@@ -280,8 +281,11 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return functionLiteralExpression.functionLiteral
     }
 
+    private val SuspendContextImpl.safeFrameProxy: StackFrameProxyImpl?
+            get() = if (isResumed) null else frameProxy
+
     private fun isKotlinStrataAvailable(suspendContext: SuspendContextImpl): Boolean {
-        val availableStrata = suspendContext.frameProxy?.location()?.declaringType()?.availableStrata() ?: return false
+        val availableStrata = suspendContext.safeFrameProxy?.location()?.declaringType()?.availableStrata() ?: return false
         return availableStrata.contains("Kotlin")
     }
 
