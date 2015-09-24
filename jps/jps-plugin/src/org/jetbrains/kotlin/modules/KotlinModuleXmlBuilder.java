@@ -83,7 +83,7 @@ public class KotlinModuleXmlBuilder {
     ) {
         p.println("<!-- Classpath -->");
         for (File file : files) {
-            boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
+            boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabled();
             if (isOutput) {
                 // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                 // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
