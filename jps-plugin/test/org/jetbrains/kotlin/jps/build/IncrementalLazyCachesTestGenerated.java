@@ -53,6 +53,18 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
         doTest(fileName);
     }
 
+    @TestMetadata("incrementalCompilationOff")
+    public void testIncrementalCompilationOff() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/incrementalCompilationOff/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("incrementalCompilationOffOn")
+    public void testIncrementalCompilationOffOn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/incrementalCompilationOffOn/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionDeclared")
     public void testInlineFunctionDeclared() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionDeclared/");

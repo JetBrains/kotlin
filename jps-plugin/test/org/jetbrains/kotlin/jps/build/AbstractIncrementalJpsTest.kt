@@ -345,13 +345,13 @@ public abstract class AbstractIncrementalJpsTest(
         val modifications = getModificationsToPerform(moduleNames)
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
-            performAdditionalModifications()
+            performAdditionalModifications(step)
             results.add(make())
         }
         return results
     }
 
-    protected open fun performAdditionalModifications() {
+    protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
 
     // null means one module
@@ -415,13 +415,13 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private abstract class Modification(val path: String) {
+    protected abstract class Modification(val path: String) {
         abstract fun perform(workDir: File)
 
         override fun toString(): String = "${javaClass.simpleName} $path"
     }
 
-    private class ModifyContent(path: String, val dataFile: File) : Modification(path) {
+    protected class ModifyContent(path: String, val dataFile: File) : Modification(path) {
         override fun perform(workDir: File) {
             val file = File(workDir, path)
 
@@ -437,7 +437,7 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private class DeleteFile(path: String) : Modification(path) {
+    protected class DeleteFile(path: String) : Modification(path) {
         override fun perform(workDir: File) {
             val fileToDelete = File(workDir, path)
             if (!fileToDelete.delete()) {

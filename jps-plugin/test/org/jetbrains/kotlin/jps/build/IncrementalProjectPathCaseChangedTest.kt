@@ -36,7 +36,7 @@ public class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(
         super.doTest(testDataPath)
     }
 
-    override fun performAdditionalModifications() {
+    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
         val module = myProject.getModules()[0]
         val sourceRoot = module.getSourceRoots()[0].getUrl()
         assert(sourceRoot.endsWith("/src"))
