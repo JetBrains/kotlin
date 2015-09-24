@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -125,7 +126,7 @@ public class ErrorUtils {
             @NotNull
             @Override
             public KotlinBuiltIns getBuiltIns() {
-                throw new IllegalStateException("Should not be called!");
+                return DefaultBuiltIns.getInstance();
             }
         };
     }
@@ -566,7 +567,7 @@ public class ErrorUtils {
             @NotNull
             @Override
             public KotlinBuiltIns getBuiltIns() {
-                throw new IllegalStateException("Should not be called");
+                return DefaultBuiltIns.getInstance();
             }
 
             @NotNull
