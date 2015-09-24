@@ -32,7 +32,7 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(all
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedMultiModule/")
     }
 
-    override fun performAdditionalModifications() {
+    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
         val targets = projectDescriptor.allModuleTargets
         val paths = projectDescriptor.dataManager.dataPaths
 

@@ -447,11 +447,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             generatedFiles: List<GeneratedFile>
     ): ChangesInfo {
-        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
-
         if (!IncrementalCompilation.isEnabled()) {
             return ChangesInfo.NO_CHANGES
         }
+
+        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
 
         var changesInfo = ChangesInfo.NO_CHANGES
         for (generatedFile in generatedFiles) {
