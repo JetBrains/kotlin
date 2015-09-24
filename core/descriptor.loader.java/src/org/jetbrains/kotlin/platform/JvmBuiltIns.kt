@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.builtins.BuiltInsInitializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes
 
 class JvmBuiltIns private constructor() : KotlinBuiltIns() {
     companion object {
@@ -28,5 +30,9 @@ class JvmBuiltIns private constructor() : KotlinBuiltIns() {
         @JvmStatic
         val Instance: KotlinBuiltIns
             get() = initializer.get()
+    }
+
+    override fun getAdditionalSupertypesProvider(): AdditionalSupertypes {
+        return BuiltInClassesAreSerializableOnJvm(builtInsModule)
     }
 }

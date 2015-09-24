@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -54,7 +55,7 @@ public abstract class KotlinBuiltIns {
             BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
     );
 
-    private final ModuleDescriptorImpl builtInsModule;
+    protected final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
@@ -73,6 +74,7 @@ public abstract class KotlinBuiltIns {
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                getAdditionalSupertypesProvider(),
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
@@ -93,6 +95,11 @@ public abstract class KotlinBuiltIns {
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
+    }
+
+    @NotNull
+    protected AdditionalSupertypes getAdditionalSupertypesProvider() {
+        return AdditionalSupertypes.None.INSTANCE$;
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
@@ -644,6 +651,10 @@ public abstract class KotlinBuiltIns {
     @Nullable
     public JetType getPrimitiveArrayJetTypeByPrimitiveJetType(@NotNull JetType jetType) {
         return primitiveJetTypeToJetArrayType.get(jetType);
+    }
+
+    public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
+        return getPrimitiveTypeByArrayClassFqName(arrayFqName) != null;
     }
 
     @Nullable
