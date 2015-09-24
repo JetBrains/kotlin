@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetModifierListOwner
@@ -51,9 +53,9 @@ public class OperatorModifierInspection : AbstractKotlinInspection(), CleanupLoc
             return true
         }
         if (arity == 1 && (name in OperatorConventions.BINARY_OPERATION_NAMES.values() ||
-             name in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
-             name == OperatorConventions.CONTAINS ||
-             name == OperatorConventions.COMPARE_TO)) {
+                           name in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
+                           (name == OperatorConventions.CONTAINS && isBooleanReturnType()) ||
+                           (name == OperatorConventions.COMPARE_TO && isIntReturnType()))) {
             return true
         }
         if (name == OperatorConventions.INVOKE) {
@@ -66,6 +68,14 @@ public class OperatorModifierInspection : AbstractKotlinInspection(), CleanupLoc
             return true
         }
         return false
+    }
+
+    private fun JetNamedFunction.isIntReturnType(): Boolean {
+        return KotlinBuiltIns.isInt(analyze().getType(this) ?: return false)
+    }
+
+    private fun JetNamedFunction.isBooleanReturnType(): Boolean {
+        return KotlinBuiltIns.isBoolean(analyze().getType(this) ?: return false)
     }
 }
 
