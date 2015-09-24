@@ -221,7 +221,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", NAME);
         MAP.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name");
-        MAP.put(FUNCTION_EXPRESSION_WITH_NAME, "Function expressions with names are deprecated");
+        MAP.put(FUNCTION_EXPRESSION_WITH_NAME, "Function expressions with names are prohibited");
         MAP.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "\"open\" has no effect in a final class");
 
         MAP.put(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE, "A function expression is not allowed to specify default values for its parameters");

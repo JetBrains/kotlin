@@ -9,15 +9,10 @@ fun test2(): String = (l@ fun (): String {
     return "fail"
 }) ()
 
-fun test3(): String = (l@ fun bar(): String {
-    foo { return@bar "OK" }
-    return "fail"
-}) ()
-
 fun box(): String {
     if (test() != "OK") return "fail 1: ${test()}"
 
     if (test2() != "OK") return "fail 2: ${test2()}"
 
-    return test3()
+    return "OK"
 }

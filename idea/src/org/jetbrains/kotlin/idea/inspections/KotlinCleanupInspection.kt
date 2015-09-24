@@ -83,7 +83,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
     private val cleanupDiagnosticsFactories = setOf(
             Errors.MISSING_CONSTRUCTOR_KEYWORD,
-            Errors.FUNCTION_EXPRESSION_WITH_NAME,
             Errors.UNNECESSARY_NOT_NULL_ASSERTION,
             Errors.UNNECESSARY_SAFE_CALL,
             Errors.USELESS_CAST,

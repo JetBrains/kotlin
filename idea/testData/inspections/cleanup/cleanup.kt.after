@@ -3,8 +3,6 @@ import pack.oldFun2 // should not be removed for non-deprecated overload used
 
 class A private constructor()
 
-val x = fun(x: String) { }
-
 fun foo() {
     loop@
     for (i in 1..100) {

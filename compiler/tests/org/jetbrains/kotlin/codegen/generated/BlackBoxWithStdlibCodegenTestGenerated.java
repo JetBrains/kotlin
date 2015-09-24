@@ -3384,12 +3384,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("namedFunctionExpressionInProperty.kt")
-            public void testNamedFunctionExpressionInProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/namedFunctionExpressionInProperty.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("objectInLambda.kt")
             public void testObjectInLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/objectInLambda.kt");

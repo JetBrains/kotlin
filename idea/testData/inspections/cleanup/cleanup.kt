@@ -4,8 +4,6 @@ import pack.oldFun3
 
 class A private()
 
-val x = fun foo(x: String) { }
-
 fun foo() {
     @loop
     for (i in 1..100) {

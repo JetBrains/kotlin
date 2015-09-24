@@ -21,7 +21,7 @@ fun test1(local: Int, nonLocal: String, doNonLocal: Boolean): String {
 fun test2(local: Int, nonLocal: String, doNonLocal: Boolean): String {
 
     val localResult = doCall(
-            fun xxx(): Int {
+            xxx@ fun(): Int {
                 if (doNonLocal) {
                     return@test2 nonLocal
                 }
@@ -39,7 +39,7 @@ fun test2(local: Int, nonLocal: String, doNonLocal: Boolean): String {
 fun test3(local: Int, nonLocal: String, doNonLocal: Boolean): String {
 
     val localResult = doCall(
-            yy@ fun xxx(): Int {
+            yy@ fun(): Int {
                 if (doNonLocal) {
                     return@test3 nonLocal
                 }
