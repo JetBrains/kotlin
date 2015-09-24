@@ -38,7 +38,7 @@ class CacheFormatVersion(targetDataRoot: File) {
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
     fun isIncompatible(): Boolean {
-        assert(IncrementalCompilation.ENABLED) { "Incremental compilation is not enabled" }
+        assert(IncrementalCompilation.isEnabled()) { "Incremental compilation is not enabled" }
         if (!file.exists()) return false
 
         val versionNumber = file.readText().toInt()

@@ -247,7 +247,7 @@ public class MultifileClassCodegen(
         }
 
         private fun getCompiledPackageFragment(packageFqName: FqName, state: GenerationState): PackageFragmentDescriptor? =
-                if (!IncrementalCompilation.ENABLED) null
+                if (!IncrementalCompilation.isEnabled()) null
                 else state.module.getPackage(packageFqName).fragments.firstOrNull { fragment ->
                     fragment is IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
                     fragment.target == state.targetId
