@@ -1199,6 +1199,14 @@
                      level="WARNING"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OperatorModifierInspection"
+                     displayName="Missing 'operator' modifier"
+                     groupName="Kotlin"
+                     language="jet"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     cleanupTool="true"/>
+
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
                        displayName="Extension property conflicts with synthetic one"
                        groupName="Kotlin"

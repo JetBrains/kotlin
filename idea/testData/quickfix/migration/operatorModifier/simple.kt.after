@@ -1,0 +1,4 @@
+// "Add 'operator' modifier" "true"
+class A {
+    operator fun plus(other: A): A = A()
+}

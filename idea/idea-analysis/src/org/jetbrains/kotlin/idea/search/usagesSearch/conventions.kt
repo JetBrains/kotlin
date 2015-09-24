@@ -41,10 +41,7 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
 public val ALL_SEARCHABLE_OPERATION_PATTERNS: Set<String> =
         ALL_SEARCHABLE_OPERATIONS.map { (it as JetSingleValueToken).getValue() }.toSet()
 
-public val INDEXING_OPERATION_NAMES: ImmutableSet<Name> =
-        ImmutableSet.of(Name.identifier("get"), Name.identifier("set"))
-
-public val ITERATOR_OPERATION_NAME: Name = Name.identifier("iterator")
+public val INDEXING_OPERATION_NAMES: ImmutableSet<Name> = ImmutableSet.of(GET, SET)
 
 public val IN_OPERATIONS_TO_SEARCH: ImmutableSet<JetToken> = ImmutableSet.of(JetTokens.IN_KEYWORD)
 
@@ -56,7 +53,7 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         EQUALS -> return EQUALS_OPERATIONS
         IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         CONTAINS -> return IN_OPERATIONS_TO_SEARCH
-        ITERATOR_OPERATION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.IN_KEYWORD)
+        ITERATOR -> return ImmutableSet.of<JetToken>(JetTokens.IN_KEYWORD)
         in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.BY_KEYWORD)
     }
