@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.isFlexible
@@ -122,7 +124,8 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
 }
 
 fun JetType.isSpecial(): Boolean {
-    return this.getConstructor().getDeclarationDescriptor()?.getName()?.isSpecial() ?: false
+    val classDescriptor = this.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    return classDescriptor.name.isSpecial || DescriptorUtils.isLocal(classDescriptor)
 }
 
 fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNameExpression, JetSimpleNameExpression> {
