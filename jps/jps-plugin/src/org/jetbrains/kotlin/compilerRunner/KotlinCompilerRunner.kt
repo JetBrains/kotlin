@@ -86,7 +86,7 @@ public object KotlinCompilerRunner {
                     incrementalCaches)
     }
 
-    private fun ProcessCompilerOutput(
+    private fun processCompilerOutput(
             messageCollector: MessageCollector,
             collector: OutputItemsCollector,
             stream: ByteArrayOutputStream,
@@ -115,9 +115,9 @@ public object KotlinCompilerRunner {
             messageCollector.report(INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
 
             val argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments)
-            argumentsList.addAll(StringUtil.split(additionalArguments, " "))
+            argumentsList.addAll(additionalArguments.split(" "))
 
-            val argsArray = ArrayUtil.toStringArray(argumentsList)
+            val argsArray = argumentsList.toTypedArray()
 
             if (!tryCompileWithDaemon(messageCollector, collector, environment, incrementalCaches, argsArray)) {
                 // otherwise fallback to in-process
@@ -129,7 +129,7 @@ public object KotlinCompilerRunner {
 
                 // exec() returns an ExitCode object, class of which is loaded with a different class loader,
                 // so we take it's contents through reflection
-                ProcessCompilerOutput(messageCollector, collector, stream, getReturnCodeFromObject(rc))
+                processCompilerOutput(messageCollector, collector, stream, getReturnCodeFromObject(rc))
             }
         }
         catch (e: Throwable) {
@@ -145,6 +145,7 @@ public object KotlinCompilerRunner {
             environment: CompilerEnvironment,
             incrementalCaches: Map<TargetId, IncrementalCache>?,
             argsArray: Array<String>): Boolean {
+
         if (incrementalCaches != null && isDaemonEnabled()) {
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
             // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
@@ -174,7 +175,7 @@ public object KotlinCompilerRunner {
 
                 val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, incrementalCaches, compilerOut, daemonOut)
 
-                ProcessCompilerOutput(messageCollector, collector, compilerOut, res.toString())
+                processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
                     messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
                 }
@@ -185,37 +186,24 @@ public object KotlinCompilerRunner {
     }
 
     private fun getReturnCodeFromObject(rc: Any?): String {
-        if (rc == null) {
-            return INTERNAL_ERROR
-        }
-        else if (ExitCode::class.java.name == rc.javaClass.name) {
-            return rc.toString()
-        }
-        else {
-            throw IllegalStateException("Unexpected return: " + rc)
+        when {
+            rc == null -> return INTERNAL_ERROR
+            ExitCode::class.java.name == rc.javaClass.name -> return rc.toString()
+            else -> throw IllegalStateException("Unexpected return: " + rc)
         }
     }
 
     private fun <T : CommonCompilerArguments> mergeBeans(from: CommonCompilerArguments, to: T): T {
         // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
-        try {
-            val copy = XmlSerializerUtil.createCopy(to)
+        val copy = XmlSerializerUtil.createCopy(to)
 
-            val fromFields = collectFieldsToCopy(from.javaClass)
-            for (fromField in fromFields) {
-                val toField = copy.javaClass.getField(fromField.name)
-                toField.set(copy, fromField.get(from))
-            }
-
-            return copy
-        }
-        catch (e: NoSuchFieldException) {
-            throw rethrow(e)
-        }
-        catch (e: IllegalAccessException) {
-            throw rethrow(e)
+        val fromFields = collectFieldsToCopy(from.javaClass)
+        for (fromField in fromFields) {
+            val toField = copy.javaClass.getField(fromField.name)
+            toField.set(copy, fromField.get(from))
         }
 
+        return copy
     }
 
     private fun collectFieldsToCopy(clazz: Class<*>): List<Field> {
@@ -236,25 +224,21 @@ public object KotlinCompilerRunner {
     }
 
     private fun setupK2JvmArguments(moduleFile: File, settings: K2JVMCompilerArguments) {
-        settings.module = moduleFile.absolutePath
-        settings.noStdlib = true
-        settings.noJdkAnnotations = true
-        settings.noJdk = true
+        with(settings) {
+            module = moduleFile.absolutePath
+            noStdlib = true
+            noJdkAnnotations = true
+            noJdk = true
+        }
     }
 
-    private fun setupK2JsArguments(
-            outputFile: File,
-            sourceFiles: Collection<File>,
-            libraryFiles: List<String>,
-            settings: K2JSCompilerArguments) {
-        settings.noStdlib = true
-        settings.freeArgs = ContainerUtil.map(sourceFiles, object : Function<File, String> {
-            override fun `fun`(file: File): String {
-                return file.path
-            }
-        })
-        settings.outputFile = outputFile.path
-        settings.metaInfo = true
-        settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles)
+    private fun setupK2JsArguments( _outputFile: File, sourceFiles: Collection<File>, _libraryFiles: List<String>, settings: K2JSCompilerArguments) {
+        with(settings) {
+            noStdlib = true
+            freeArgs = sourceFiles.map { it.path }
+            outputFile = _outputFile.path
+            metaInfo = true
+            libraryFiles = _libraryFiles.toTypedArray()
+        }
     }
 }
