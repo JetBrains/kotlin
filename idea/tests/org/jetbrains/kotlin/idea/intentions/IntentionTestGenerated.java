@@ -3217,6 +3217,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("javaUsagesGet.kt")
+        public void testJavaUsagesGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/javaUsagesGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUsagesIs.kt")
+        public void testJavaUsagesIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/javaUsagesIs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/localFun.kt");
@@ -3232,6 +3244,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("otherRefs.kt")
         public void testOtherRefs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefsGet.kt")
+        public void testOtherRefsGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefsGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefsIs.kt")
+        public void testOtherRefsIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefsIs.kt");
             doTest(fileName);
         }
 

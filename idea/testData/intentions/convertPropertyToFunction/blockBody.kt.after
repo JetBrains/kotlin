@@ -1,9 +1,9 @@
 class A(val n: Int) {
-    fun foo(): Boolean {
+    fun getFoo(): Boolean {
         return n > 1
     }
 }
 
 fun test() {
-    val t = A(1).foo()
+    val t = A(1).getFoo()
 }
