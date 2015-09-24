@@ -454,6 +454,7 @@ public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
 /**
  * Creates a new [StringReader] for reading the contents of this string.
  */
+@Deprecated("Use reader() method instead in kotlin.io package", ReplaceWith("this.reader()", "kotlin.io.reader"))
 public val String.reader: StringReader
     get() = StringReader(this)
 
