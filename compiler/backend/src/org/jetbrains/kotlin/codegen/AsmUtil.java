@@ -778,7 +778,7 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return !propertyDescriptor.isVar()
                && !isExtensionProperty
-               && isCompanionObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
+               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }

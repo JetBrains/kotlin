@@ -66,7 +66,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             }
         }
 
-        if (!DescriptorUtils.isTrait(descriptor)) {
+        if (!DescriptorUtils.isInterface(descriptor)) {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (memberDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor member = (FunctionDescriptor) memberDescriptor;

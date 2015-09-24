@@ -595,7 +595,7 @@ public class InlineCodegen extends CallGenerator {
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);
 
         if (descriptor instanceof ClassDescriptor) {
-            OwnerKind kind = DescriptorUtils.isTrait(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;
+            OwnerKind kind = DescriptorUtils.isInterface(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;
             return parent.intoClass((ClassDescriptor) descriptor, kind, state);
         }
         else if (descriptor instanceof ScriptDescriptor) {

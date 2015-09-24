@@ -61,7 +61,7 @@ import java.util.ListIterator;
 
 import static kotlin.KotlinPackage.substringAfterLast;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
@@ -193,7 +193,7 @@ public class InlineCodegenUtil {
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
-            if (isTrait(containerDescriptor)) {
+            if (isInterface(containerDescriptor)) {
                 FqName relativeClassName = classId.getRelativeClassName();
                 //TODO test nested trait fun inlining
                 classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));

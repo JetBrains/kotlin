@@ -57,7 +57,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -250,7 +250,7 @@ public class PropertyCodegen {
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
         String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
 
-        if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
+        if (!isInterface(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
             AnnotationCodegen.forMethod(mv, typeMapper)
