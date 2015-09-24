@@ -107,7 +107,7 @@ public class PropertyCodegen {
             @Nullable JetPropertyAccessor getter,
             @Nullable JetPropertyAccessor setter
     ) {
-        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
         String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
@@ -154,7 +154,7 @@ public class PropertyCodegen {
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 
         // Don't generate accessors for trait properties with default accessors in TRAIT_IMPL
-        if (kind == OwnerKind.TRAIT_IMPL && isDefaultAccessor) return false;
+        if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
 
         if (declaration == null) return true;
 
@@ -216,7 +216,7 @@ public class PropertyCodegen {
 
     private boolean hasBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
         return !isInterface(descriptor.getContainingDeclaration()) &&
-               kind != OwnerKind.TRAIT_IMPL &&
+               kind != OwnerKind.DEFAULT_IMPLS &&
                !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
     }
 
@@ -225,7 +225,7 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor descriptor,
             @NotNull Annotations annotations
     ) {
-        if (isInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.TRAIT_IMPL) {
+        if (isInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) {
             return false;
         }
 
@@ -250,7 +250,7 @@ public class PropertyCodegen {
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
         String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
 
-        if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
+        if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
             AnnotationCodegen.forMethod(mv, typeMapper)
@@ -264,7 +264,7 @@ public class PropertyCodegen {
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
         }
 
-        if (kind != OwnerKind.TRAIT_IMPL) {
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
             v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, new Method(name, desc));
         }
     }

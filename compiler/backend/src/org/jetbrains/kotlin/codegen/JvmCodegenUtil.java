@@ -49,7 +49,6 @@ import java.io.File;
 
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class JvmCodegenUtil {
 
@@ -82,7 +81,7 @@ public class JvmCodegenUtil {
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
                  (context.getParentContext() instanceof PackageContext
                   && isSamePackageInSameModule(context.getParentContext().getContextDescriptor(), containingDeclaration)))
-                && context.getContextKind() != OwnerKind.TRAIT_IMPL);
+                && context.getContextKind() != OwnerKind.DEFAULT_IMPLS);
     }
 
     private static boolean isSamePackageInSameModule(

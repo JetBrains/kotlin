@@ -106,7 +106,7 @@ public class FunctionCodegen {
         assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
                                             "in " + function.getContainingFile().getVirtualFile();
 
-        if (owner.getContextKind() != OwnerKind.TRAIT_IMPL || function.hasBody()) {
+        if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             generateMethod(OtherOrigin(function, functionDescriptor), functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
@@ -144,7 +144,7 @@ public class FunctionCodegen {
         OwnerKind contextKind = methodContext.getContextKind();
         if (isTrait(functionDescriptor.getContainingDeclaration()) &&
             functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
-            contextKind != OwnerKind.TRAIT_IMPL) {
+            contextKind != OwnerKind.DEFAULT_IMPLS) {
             return;
         }
 
@@ -504,7 +504,7 @@ public class FunctionCodegen {
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
-        if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
+        if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
         if (isTrait(descriptor.getContainingDeclaration())) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
@@ -585,7 +585,7 @@ public class FunctionCodegen {
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
-        if (kind != OwnerKind.TRAIT_IMPL && isTrait(contextClass)) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && isTrait(contextClass)) {
             return;
         }
 

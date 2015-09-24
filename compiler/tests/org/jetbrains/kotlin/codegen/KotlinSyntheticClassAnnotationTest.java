@@ -51,7 +51,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public void testTraitImpl() {
         doTestKotlinSyntheticClass(
                 "interface A { fun foo() = 42 }",
-                JvmAbi.TRAIT_IMPL_SUFFIX,
+                JvmAbi.DEFAULT_IMPLS_SUFFIX,
                 TRAIT_IMPL
         );
     }

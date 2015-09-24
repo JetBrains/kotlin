@@ -474,7 +474,7 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapTraitImpl(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
+        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.DEFAULT_IMPLS_SUFFIX);
     }
 
     @NotNull
@@ -632,7 +632,7 @@ public class JetTypeMapper {
                 }
                 else {
                     invokeOpcode = INVOKESTATIC;
-                    signature = mapSignature(descriptor.getOriginal(), OwnerKind.TRAIT_IMPL);
+                    signature = mapSignature(descriptor.getOriginal(), OwnerKind.DEFAULT_IMPLS);
                     owner = mapTraitImpl(currentOwner);
                 }
             }
@@ -900,7 +900,7 @@ public class JetTypeMapper {
             @NotNull BothSignatureWriter sw
     ) {
         ClassDescriptor thisType;
-        if (kind == OwnerKind.TRAIT_IMPL) {
+        if (kind == OwnerKind.DEFAULT_IMPLS) {
             thisType = getTraitImplThisParameterClass((ClassDescriptor) descriptor.getContainingDeclaration());
         }
         else if (isAccessor(descriptor) && descriptor.getDispatchReceiverParameter() != null) {

@@ -51,7 +51,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
 
     @Override
     protected void generateBody() {
-        if (kind != OwnerKind.TRAIT_IMPL) {
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {

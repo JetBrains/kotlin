@@ -335,7 +335,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (declaration instanceof JetClass && ((JetClass) declaration).isInterface()) {
             Type traitImplType = state.getTypeMapper().mapTraitImpl(descriptor);
             ClassBuilder traitImplBuilder = state.getFactory().newVisitor(TraitImpl(declaration, descriptor), traitImplType, declaration.getContainingFile());
-            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.TRAIT_IMPL);
+            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
             new TraitImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
         }
 
@@ -2012,7 +2012,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             boolean directToField =
                     (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER || isSyntheticField)
-                    && contextKind() != OwnerKind.TRAIT_IMPL;
+                    && contextKind() != OwnerKind.DEFAULT_IMPLS;
             JetSuperExpression superExpression =
                     resolvedCall == null ? null : CallResolverUtilPackage.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);

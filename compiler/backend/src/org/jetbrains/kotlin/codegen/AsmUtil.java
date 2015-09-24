@@ -179,7 +179,7 @@ public class AsmUtil {
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
-        return kind == OwnerKind.PACKAGE || kind == OwnerKind.TRAIT_IMPL;
+        return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
@@ -908,6 +908,6 @@ public class AsmUtil {
     public static int getReceiverIndex(@NotNull CodegenContext context, @NotNull CallableMemberDescriptor descriptor) {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor
-        return kind != OwnerKind.TRAIT_IMPL && isStaticMethod(kind, descriptor) ? 0 : 1;
+        return kind != OwnerKind.DEFAULT_IMPLS && isStaticMethod(kind, descriptor) ? 0 : 1;
     }
 }

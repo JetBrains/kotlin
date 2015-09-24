@@ -196,7 +196,7 @@ public class InlineCodegenUtil {
             if (isTrait(containerDescriptor)) {
                 FqName relativeClassName = classId.getRelativeClassName();
                 //TODO test nested trait fun inlining
-                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.TRAIT_IMPL_SUFFIX));
+                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
             }
             return classId;
         }

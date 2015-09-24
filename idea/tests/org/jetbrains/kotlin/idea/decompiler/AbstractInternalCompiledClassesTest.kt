@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Ki
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.junit.Assert
-import kotlin.test.assertFalse
 
 public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
     private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
@@ -58,7 +57,7 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
                               decompiledPsiFile is PsiJavaFile)
             val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
             Assert.assertTrue("Should have some decompiled text",
-                              classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
+                              classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
         }
     }
 

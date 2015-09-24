@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
-        JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL,
+        JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
         JvmDeclarationOriginKind.DELEGATION,
         JvmDeclarationOriginKind.BRIDGE)
 
