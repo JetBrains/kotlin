@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_FINAL
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Opcodes.V1_6
 
-public class TraitImplBodyCodegen(
+public class InterfaceImplBodyCodegen(
         aClass: JetClassOrObject,
         context: ClassContext,
         v: ClassBuilder,
