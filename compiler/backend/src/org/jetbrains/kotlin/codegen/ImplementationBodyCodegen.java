@@ -1421,7 +1421,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
 
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
-                        Type traitImplType = typeMapper.mapTraitImpl(containingTrait);
+                        Type traitImplType = typeMapper.mapDefaultImpls(containingTrait);
 
                         Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.DEFAULT_IMPLS).getAsmMethod();
 

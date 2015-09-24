@@ -333,7 +333,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
 
         if (declaration instanceof JetClass && ((JetClass) declaration).isInterface()) {
-            Type traitImplType = state.getTypeMapper().mapTraitImpl(descriptor);
+            Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder traitImplBuilder = state.getFactory().newVisitor(TraitImpl(declaration, descriptor), traitImplType, declaration.getContainingFile());
             ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
             new InterfaceImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();

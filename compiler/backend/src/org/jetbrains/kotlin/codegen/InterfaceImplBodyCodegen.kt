@@ -46,7 +46,7 @@ public class InterfaceImplBodyCodegen(
     override fun generateDeclaration() {
         v.defineClass(
                 myClass, V1_6, ACC_PUBLIC or ACC_FINAL,
-                typeMapper.mapTraitImpl(descriptor).getInternalName(),
+                typeMapper.mapDefaultImpls(descriptor).getInternalName(),
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.getContainingFile().getName(), null)

@@ -260,7 +260,7 @@ public class PropertyCodegen {
             mv.visitEnd();
         }
         else {
-            Type tImplType = typeMapper.mapTraitImpl((ClassDescriptor) context.getContextDescriptor());
+            Type tImplType = typeMapper.mapDefaultImpls((ClassDescriptor) context.getContextDescriptor());
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
         }
 
