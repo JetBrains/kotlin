@@ -1,0 +1,7 @@
+class A {
+    var a: Int = 1
+
+    init {
+        // Initialize a
+    }
+}

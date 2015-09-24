@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty>(javaClass(), "Introduce backing property") {
@@ -82,7 +81,7 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
                 }
             }
 
-            element.removeInitializer()
+            element.setInitializer(null)
 
             replaceBackingFieldReferences(element)
         }
@@ -97,16 +96,6 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
             val body = "set(value) { _${element.name} = value }"
             val newSetter = JetPsiFactory(element).createProperty("val x $body").setter!!
             element.add(newSetter)
-        }
-
-        private fun JetProperty.removeInitializer() {
-            val initializer = initializer
-            if (initializer != null) {
-                val eq = initializer.prevLeaf { it.node.elementType == JetTokens.EQ }
-                if (eq != null) {
-                    initializer.parent.deleteChildRange(eq, initializer)
-                }
-            }
         }
 
         private fun createBackingProperty(element: JetProperty) {

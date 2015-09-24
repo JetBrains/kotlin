@@ -1,0 +1,4 @@
+class A {
+    var a: Int = 1
+
+}

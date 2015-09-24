@@ -185,12 +185,11 @@ public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinl
 
 public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
     var result: T? = null
-    this.accept(object : PsiRecursiveElementVisitor() {
+    this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
-            if (result != null) return
-
             if (element is T && predicate(element)) {
                 result = element
+                stopWalking()
                 return
             }
 
@@ -311,3 +310,10 @@ public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUt
 
 public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
+
+fun PsiElement.resolveAllReferences(): Sequence<PsiElement?> {
+    return PsiReferenceService.getService().getReferences(this, PsiReferenceService.Hints.NO_HINTS)
+            .asSequence()
+            .map { it.resolve() }
+}
+
