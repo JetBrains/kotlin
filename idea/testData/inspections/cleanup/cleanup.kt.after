@@ -35,6 +35,12 @@ fun unnecessaryElvis(x: String) = x
 
 @JavaAnn(1, arg1 = "abc") class MyClass
 
+const val i = 1
+
+annotation class Fancy(val param: Int)
+
+@Fancy(<caret>i) class D
+
 class Foo {
     var x: Int = 0
         get = field

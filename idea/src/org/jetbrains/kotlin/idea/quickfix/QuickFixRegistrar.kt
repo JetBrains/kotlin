@@ -321,6 +321,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
 
+        NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
+
         BACKING_FIELD_SYNTAX_DEPRECATED.registerFactory(MigrateBackingFieldSyntaxFix)
         BACKING_FIELD_USAGE_DEPRECATED.registerFactory(MigrateBackingFieldUsageFix)
         BACKING_FIELD_USAGE_DEPRECATED.registerFactory(IntroduceBackingPropertyFix)
