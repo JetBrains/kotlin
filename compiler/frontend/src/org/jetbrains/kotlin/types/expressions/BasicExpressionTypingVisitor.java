@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
@@ -428,9 +429,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.recordType(expression.getInstanceReference(), result);
             context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
         }
-        if (superTypeQualifier != null) {
-            context.trace.record(BindingContext.LEXICAL_SCOPE, superTypeQualifier, context.scope);
-        }
+
+        BindingContextUtilPackage.recordScope(context.trace, context.scope, superTypeQualifier);
         return result;
     }
 

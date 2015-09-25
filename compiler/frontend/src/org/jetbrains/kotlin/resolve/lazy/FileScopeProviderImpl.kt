@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportsFactory
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.get
@@ -85,6 +86,8 @@ public class FileScopeProviderImpl(
         scopeChain.add(LazyImportScope(packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "All under imports in $debugName (invisible classes only)"))
         scopeChain.add(LazyImportScope(packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "Default all under imports in $debugName (invisible classes only)"))
 
-        return LazyFileScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
+        val lazyFileScope = LazyFileScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
+        bindingTrace.recordScope(lazyFileScope, file)
+        return lazyFileScope
     }
 }

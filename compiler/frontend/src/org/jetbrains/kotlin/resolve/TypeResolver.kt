@@ -28,19 +28,18 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
+import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -109,7 +108,7 @@ public class TypeResolver(
         val typeElement = typeReference.getTypeElement()
 
         val type = resolveTypeElement(c, annotations, typeElement)
-        c.trace.record(BindingContext.LEXICAL_SCOPE, typeReference, c.scope)
+        c.trace.recordScope(c.scope, typeReference)
 
         if (!type.isBare) {
             for (argument in type.actualType.arguments) {
