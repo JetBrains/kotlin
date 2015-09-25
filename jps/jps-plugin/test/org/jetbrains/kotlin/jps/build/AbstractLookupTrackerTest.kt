@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -44,7 +45,8 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
         for (file in workSrcDir.walkTopDown()) {
             if (!file.isFile) continue
 
-            val lookupsFromFile = fileToLookups[file.path] ?: continue
+            val independentFilePath = FileUtil.toSystemIndependentName(file.path)
+            val lookupsFromFile = fileToLookups[independentFilePath] ?: continue
 
             val text = file.readText()
 
@@ -92,7 +94,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
             val actual = lines.joinToString("\n")
 
-            JetTestUtils.assertEqualsToFile(File(testDataDir, file.path.replace(".*/src/".toRegex(), "")), actual)
+            JetTestUtils.assertEqualsToFile(File(testDataDir, independentFilePath.replace(".*/src/".toRegex(), "")), actual)
         }
     }
 
