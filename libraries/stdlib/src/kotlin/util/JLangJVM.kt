@@ -1,5 +1,6 @@
 package kotlin
 
+import java.lang.reflect.Method
 import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.KClass
@@ -58,3 +59,11 @@ public inline fun <R> synchronized(lock: Any, block: () -> R): R {
  */
 public fun <T : Annotation> T.annotationType() : Class<out T> =
     (this as java.lang.annotation.Annotation).annotationType() as Class<out T>
+
+/**
+ * Invokes the underlying method represented by this [Method] object, on the specified [instance] with the specified parameters.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Method.invoke(instance: Any, vararg args: Any?): Any? {
+    return invoke(instance, *args)
+}
