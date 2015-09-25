@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.ErrorUtils.FunctionPlaceholderTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
@@ -269,7 +268,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             return true
         }
 
-        if (type == null || (type.isError() && !ErrorUtils.isFunctionPlaceholder(type))) {
+        if (type == null || (type.isError() && !type.isFunctionPlaceholder)) {
             errors.add(ErrorInConstrainingType(constraintPosition))
             return true
         }
@@ -287,13 +286,13 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
-        assert(!ErrorUtils.isFunctionPlaceholder(superType)) {
+        assert(!superType.isFunctionPlaceholder) {
             "The type for " + constraintPosition + " shouldn't be a placeholder for function type"
         }
 
         // function literal { x -> ... } goes without declaring receiver type
         // and can be considered as extension function if one is expected
-        val newSubType = if (constraintKind == SUB_TYPE && ErrorUtils.isFunctionPlaceholder(subType)) {
+        val newSubType = if (constraintKind == SUB_TYPE && subType.isFunctionPlaceholder) {
             if (isMyTypeVariable(superType)) {
                 // the constraint binds type parameter and a function type,
                 // we don't add it without knowing whether it's a function type or an extension function type
@@ -503,12 +502,12 @@ fun createTypeForFunctionPlaceholder(
         functionPlaceholder: JetType,
         expectedType: JetType
 ): JetType {
-    if (!ErrorUtils.isFunctionPlaceholder(functionPlaceholder)) return functionPlaceholder
+    if (!functionPlaceholder.isFunctionPlaceholder) return functionPlaceholder
 
     val functionPlaceholderTypeConstructor = functionPlaceholder.getConstructor() as FunctionPlaceholderTypeConstructor
 
     val isExtension = KotlinBuiltIns.isExtensionFunctionType(expectedType)
-    val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments()) {
+    val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments) {
         val typeParamSize = expectedType.getConstructor().getParameters().size()
         // the first parameter is receiver (if present), the last one is return type,
         // the remaining are function arguments
@@ -518,7 +517,7 @@ fun createTypeForFunctionPlaceholder(
         result
     }
     else {
-        functionPlaceholderTypeConstructor.getArgumentTypes()
+        functionPlaceholderTypeConstructor.argumentTypes
     }
     val receiverType = if (isExtension) DONT_CARE else null
     return functionPlaceholder.builtIns.getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)

@@ -44,7 +44,8 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.FunctionPlaceholders;
+import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -72,6 +73,7 @@ public class ArgumentTypeResolver {
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final ReflectionTypes reflectionTypes;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    @NotNull private final FunctionPlaceholders functionPlaceholders;
 
     public ArgumentTypeResolver(
             @NotNull TypeResolver typeResolver,
@@ -79,7 +81,8 @@ public class ArgumentTypeResolver {
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ReflectionTypes reflectionTypes,
-            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull FunctionPlaceholders functionPlaceholders
     ) {
         this.typeResolver = typeResolver;
         this.callResolver = callResolver;
@@ -87,13 +90,14 @@ public class ArgumentTypeResolver {
         this.builtIns = builtIns;
         this.reflectionTypes = reflectionTypes;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.functionPlaceholders = functionPlaceholders;
     }
 
     public static boolean isSubtypeOfForArgumentType(
             @NotNull JetType actualType,
             @NotNull JetType expectedType
     ) {
-        if (ErrorUtils.isFunctionPlaceholder(actualType)) {
+        if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
             JetType functionType = createTypeForFunctionPlaceholder(actualType, expectedType);
             return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
@@ -247,7 +251,7 @@ public class ArgumentTypeResolver {
                         callResolver);
         return CallableReferencesPackage.getResolvedCallableReferenceShapeType(
                 callableReferenceExpression, overloadResolutionResults, context, expectedTypeIsUnknown,
-                reflectionTypes, builtIns);
+                reflectionTypes, builtIns, functionPlaceholders);
     }
 
     @NotNull
@@ -274,7 +278,8 @@ public class ArgumentTypeResolver {
         boolean isFunctionLiteral = function instanceof JetFunctionLiteral;
         if (function.getValueParameterList() == null && isFunctionLiteral) {
             return expectedTypeIsUnknown
-                   ? ErrorUtils.createFunctionPlaceholderType(Collections.<JetType>emptyList(), /* hasDeclaredArguments = */ false)
+                   ? functionPlaceholders
+                           .createFunctionPlaceholderType(Collections.<JetType>emptyList(), /* hasDeclaredArguments = */ false)
                    : builtIns.getFunctionType(Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = function.getValueParameters();
@@ -289,7 +294,7 @@ public class ArgumentTypeResolver {
         JetType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
 
         return expectedTypeIsUnknown && isFunctionLiteral
-               ? ErrorUtils.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
+               ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
                : builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, returnType);
     }
 

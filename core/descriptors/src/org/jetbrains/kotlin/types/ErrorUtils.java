@@ -513,7 +513,12 @@ public class ErrorUtils {
 
     @NotNull
     public static JetType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
-        return new ErrorTypeImpl(createErrorTypeConstructorWithCustomDebugName(debugName), createErrorScope(debugName));
+        return createErrorTypeWithCustomConstructor(debugName, createErrorTypeConstructorWithCustomDebugName(debugName));
+    }
+
+    @NotNull
+    public static JetType createErrorTypeWithCustomConstructor(@NotNull String debugName, @NotNull TypeConstructor typeConstructor) {
+        return new ErrorTypeImpl(typeConstructor, createErrorScope(debugName));
     }
 
     @NotNull
@@ -527,7 +532,7 @@ public class ErrorUtils {
     }
 
     @NotNull
-    private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
+    public static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
         return createErrorTypeConstructorWithCustomDebugName(debugName, ERROR_CLASS);
     }
 
@@ -709,9 +714,8 @@ public class ErrorUtils {
 
     @NotNull
     public static JetType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        return new ErrorTypeImpl(
-                new UninferredParameterTypeConstructor(typeParameterDescriptor),
-                createErrorScope("Scope for error type for not inferred parameter: " + typeParameterDescriptor.getName()));
+        return createErrorTypeWithCustomConstructor("Scope for error type for not inferred parameter: " + typeParameterDescriptor.getName(),
+                                                    new UninferredParameterTypeConstructor(typeParameterDescriptor));
     }
 
     public static class UninferredParameterTypeConstructor implements TypeConstructor {
@@ -766,83 +770,6 @@ public class ErrorUtils {
         @Override
         public KotlinBuiltIns getBuiltIns() {
             return DescriptorUtilsKt.getBuiltIns(typeParameterDescriptor);
-        }
-    }
-
-    public static boolean isFunctionPlaceholder(@Nullable JetType type) {
-        return type != null && type.getConstructor() instanceof FunctionPlaceholderTypeConstructor;
-    }
-
-    @NotNull
-    public static JetType createFunctionPlaceholderType(@NotNull List<JetType> argumentTypes, boolean hasDeclaredArguments) {
-        return new ErrorTypeImpl(
-                new FunctionPlaceholderTypeConstructor(argumentTypes, hasDeclaredArguments),
-                createErrorScope("Scope for function placeholder type"));
-    }
-
-    public static class FunctionPlaceholderTypeConstructor implements TypeConstructor {
-        private final TypeConstructor errorTypeConstructor;
-        private final List<JetType> argumentTypes;
-        private final boolean hasDeclaredArguments;
-
-        private FunctionPlaceholderTypeConstructor(@NotNull List<JetType> argumentTypes, boolean hasDeclaredArguments) {
-            errorTypeConstructor = createErrorTypeConstructorWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE" + argumentTypes);
-            this.argumentTypes = argumentTypes;
-            this.hasDeclaredArguments = hasDeclaredArguments;
-        }
-
-        @NotNull
-        public List<JetType> getArgumentTypes() {
-            return argumentTypes;
-        }
-
-        public boolean hasDeclaredArguments() {
-            return hasDeclaredArguments;
-        }
-
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getParameters() {
-            return errorTypeConstructor.getParameters();
-        }
-
-        @NotNull
-        @Override
-        public Collection<JetType> getSupertypes() {
-            return errorTypeConstructor.getSupertypes();
-        }
-
-        @Override
-        public boolean isFinal() {
-            return errorTypeConstructor.isFinal();
-        }
-
-        @Override
-        public boolean isDenotable() {
-            return errorTypeConstructor.isDenotable();
-        }
-
-        @Nullable
-        @Override
-        public ClassifierDescriptor getDeclarationDescriptor() {
-            return errorTypeConstructor.getDeclarationDescriptor();
-        }
-
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return errorTypeConstructor.getAnnotations();
-        }
-
-        @Override
-        public String toString() {
-            return errorTypeConstructor.toString();
-        }
-
-        @NotNull
-        @Override
-        public KotlinBuiltIns getBuiltIns() {
-            return errorTypeConstructor.getBuiltIns();
         }
     }
 
