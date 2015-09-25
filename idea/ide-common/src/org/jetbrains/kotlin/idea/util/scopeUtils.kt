@@ -22,7 +22,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.FileScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getFileScope
 
 
 public fun JetScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor>
@@ -41,4 +45,22 @@ public fun JetScope.getVariableFromImplicitReceivers(name: Name): VariableDescri
         it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
     }
     return null
+}
+
+public fun LexicalScope.addImportScope(importScope: JetScope): LexicalScope {
+    val fileScope = getFileScope()
+    val scopeWithAdditionImport =
+            LexicalChainedScope(fileScope, fileScope.ownerDescriptor, false, null, "Scope with addition import", importScope)
+    return LexicalScopeWrapper(this, scopeWithAdditionImport)
+}
+
+private class LexicalScopeWrapper(val delegate: LexicalScope, val fileScopeReplace: LexicalScope): LexicalScope by delegate {
+    override val parent: LexicalScope? by lazy(LazyThreadSafetyMode.NONE) {
+        if (delegate is FileScope) {
+            fileScopeReplace
+        }
+        else {
+            LexicalScopeWrapper(delegate.parent!!, fileScopeReplace)
+        }
+    }
 }
