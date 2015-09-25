@@ -1029,6 +1029,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.quickfix.AddConstModifierIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
