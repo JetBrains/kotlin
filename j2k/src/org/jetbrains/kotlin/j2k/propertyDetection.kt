@@ -206,7 +206,7 @@ private class PropertyDetector(
     private fun detectGetters(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
             prohibitedPropertyNames: MutableSet<String?>,
-            propertyNamesWithConflict: HashSet<String>
+            propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
         for ((method, superInfo) in methodsToCheck) {
@@ -228,7 +228,7 @@ private class PropertyDetector(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
             prohibitedPropertyNames: MutableSet<String?>,
             propertyNamesFromGetters: Set<String>,
-            propertyNamesWithConflict: HashSet<String>
+            propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
         for ((method, superInfo) in methodsToCheck) {

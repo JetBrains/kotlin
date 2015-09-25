@@ -2,7 +2,6 @@ package javaApi;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.String;
 import java.util.Set;
 import kotlinApi.KotlinClassWithProperties;
 

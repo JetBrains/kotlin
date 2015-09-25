@@ -70,7 +70,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                                               converter.referenceSearcher)
 
         val constructorConverter = if (psiClass.getName() != null && !classKind.isObject())
-            ConstructorConverter(psiClass, converter, { memberToPropertyInfo[it] }, overloadReducer, classKind)
+            ConstructorConverter(psiClass, converter, { field -> memberToPropertyInfo[field]!! }, overloadReducer)
         else
             null
 

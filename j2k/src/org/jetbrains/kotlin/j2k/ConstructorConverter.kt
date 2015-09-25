@@ -24,9 +24,8 @@ import java.util.*
 class ConstructorConverter(
         private val psiClass: PsiClass,
         private val converter: Converter,
-        private val fieldToPropertyInfo: (PsiField) -> PropertyInfo?,
-        private val overloadReducer: OverloadReducer,
-        private val classKind: ClassKind
+        private val fieldToPropertyInfo: (PsiField) -> PropertyInfo,
+        private val overloadReducer: OverloadReducer
 ) {
     private val constructors = psiClass.getConstructors().asList()
 
@@ -145,13 +144,13 @@ class ConstructorConverter(
                 }
 
                 val propertyInfo = fieldToPropertyInfo(field)
-                if (propertyInfo != null && (propertyInfo.needExplicitGetter || propertyInfo.needExplicitSetter)) continue
+                if (propertyInfo.needExplicitGetter || propertyInfo.needExplicitSetter) continue
 
                 parameterToField.put(parameter, field to type)
                 statementsToRemove.add(initializationStatement)
                 fieldsToDrop.add(field)
 
-                val fieldName = propertyInfo?.name ?: field.getName()!!
+                val fieldName = propertyInfo.name
                 if (fieldName != parameter.getName()) {
                     parameterUsageReplacementMap.put(parameter.getName()!!, fieldName)
                 }
@@ -200,7 +199,7 @@ class ConstructorConverter(
                     }
                     else {
                         val (field, type) = parameterToField[parameter]!!
-                        val propertyInfo = fieldToPropertyInfo(field)!!
+                        val propertyInfo = fieldToPropertyInfo(field)
                         FunctionParameter(propertyInfo.identifier,
                                           type,
                                           if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
