@@ -32,7 +32,7 @@ class E : C(), T {
 }
 
 class F : C(), T {
-    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>private<!> override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> fun foo() {}
 }
 
 class G : C(), T {
