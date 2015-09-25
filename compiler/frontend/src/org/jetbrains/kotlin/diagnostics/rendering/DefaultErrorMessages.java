@@ -352,6 +352,8 @@ public class DefaultErrorMessages {
 
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
 
+        MAP.put(UNDESCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
+
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
         MAP.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')");

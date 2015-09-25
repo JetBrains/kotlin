@@ -200,6 +200,7 @@ public class ModifiersChecker {
             for (JetMultiDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
                 ModifierCheckerCore.INSTANCE$.check(multiEntry, trace, null);
+                UnderscoreChecker.INSTANCE$.checkNamed(multiEntry, trace);
             }
         }
 

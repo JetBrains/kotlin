@@ -522,6 +522,8 @@ public interface Errors {
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> UNDESCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
+
     // Labels
 
     DiagnosticFactory0<JetSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);

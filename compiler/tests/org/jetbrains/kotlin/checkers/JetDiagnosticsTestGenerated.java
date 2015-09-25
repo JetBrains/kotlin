@@ -541,6 +541,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Underscore.kt")
+        public void testUnderscore() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Underscore.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnitByDefaultForFunctionTypes.kt")
         public void testUnitByDefaultForFunctionTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnitByDefaultForFunctionTypes.kt");

@@ -100,6 +100,11 @@ class LazyImportResolver(
                 }
             }
         }
+        for ((alias, import) in explicitClassImports.entries()) {
+            if (alias.all { it == '_' }) {
+                traceForImportResolve.report(Errors.UNDESCORE_IS_DEPRECATED.on(import))
+            }
+        }
         for (alias in explicitClassImports.keySet()) {
             val imports = explicitClassImports.get(alias)
             if (imports.size() > 1) {
