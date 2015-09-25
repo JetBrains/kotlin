@@ -1,3 +1,3 @@
 package util
 
-fun h.H?.minus() = ""
+operator fun h.H?.minus() = ""

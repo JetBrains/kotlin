@@ -5,13 +5,13 @@ package lol {
 
     public final class B {
         public constructor B()
-        public final fun divAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun divAssign(/*0*/ other: lol.B): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun minusAssign(/*0*/ other: lol.B): kotlin.String
-        public final fun modAssign(/*0*/ other: lol.B): kotlin.String
-        public final fun plusAssign(/*0*/ other: lol.B): kotlin.String
-        public final fun timesAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun minusAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun modAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun plusAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun timesAssign(/*0*/ other: lol.B): kotlin.String
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

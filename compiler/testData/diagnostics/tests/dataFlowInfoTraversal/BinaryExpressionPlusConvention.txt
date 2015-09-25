@@ -2,7 +2,7 @@ package
 
 public fun bar(/*0*/ a: A, /*1*/ b: B): B
 public fun foo(/*0*/ a: A): B
-public fun B.plus(/*0*/ b: B): B
+public operator fun B.plus(/*0*/ b: B): B
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

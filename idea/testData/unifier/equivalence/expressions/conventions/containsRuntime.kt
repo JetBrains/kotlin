@@ -1,6 +1,6 @@
 // DISABLE-ERRORS
 val array = Array(2) { it }
-fun <T> Array<T>.contains(t: T): Boolean = false
+operator fun <T> Array<T>.contains(t: T): Boolean = false
 
 val a = <selection>1 in array</selection>
 val b = array.contains(1)

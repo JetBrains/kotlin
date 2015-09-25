@@ -6,7 +6,7 @@ class A(val b: B) {
 }
 
 class B {
-    fun <T> invoke(<!UNUSED_PARAMETER!>f<!>: (T) -> T): MyFunc<T> = throw Exception()
+    operator fun <T> invoke(<!UNUSED_PARAMETER!>f<!>: (T) -> T): MyFunc<T> = throw Exception()
 }
 
 fun id<R>(r: R) = r

@@ -120,6 +120,7 @@ public interface Errors {
     DiagnosticFactory1<JetAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetAnnotationEntry, String, String> WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<JetAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetAnnotationEntry> NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 
@@ -520,6 +521,12 @@ public interface Errors {
     DiagnosticFactory2<JetExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_PD_METHOD_NONE_APPLICABLE = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> UNDESCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
 
     // Labels
 

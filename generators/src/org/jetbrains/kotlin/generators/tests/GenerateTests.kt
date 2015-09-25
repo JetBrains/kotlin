@@ -525,6 +525,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetFindUsagesTest>()) {
             model("findUsages/kotlin", pattern = """^(.+)\.0\.kt$""")
             model("findUsages/java", pattern = """^(.+)\.0\.java$""")
+            model("findUsages/propertyFiles", pattern = """^(.+)\.0\.properties$""")
         }
 
         testClass(javaClass<AbstractKotlinFindUsagesWithLibraryTest>()) {

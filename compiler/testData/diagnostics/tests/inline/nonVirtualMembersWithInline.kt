@@ -29,6 +29,7 @@ abstract class A {
 
 interface B {
 
+    inline private fun good1() {}
     inline public final fun good2() {}
     inline final fun good3() {}
     inline final fun good4() {}

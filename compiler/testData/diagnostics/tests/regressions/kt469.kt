@@ -11,7 +11,7 @@ fun bar(list : MutableList<Int>) {
     System.out.println(list)
 }
 
-fun <T> MutableList<T>.plusAssign(t : T) {
+operator fun <T> MutableList<T>.plusAssign(t : T) {
     add(t)
 }
 
@@ -22,7 +22,7 @@ fun foo() {
 }
 
 class MyNumber(var i: Int) {
-    fun minusAssign(m : MyNumber) {
+    operator fun minusAssign(m : MyNumber) {
         i -= m.i
     }
 }

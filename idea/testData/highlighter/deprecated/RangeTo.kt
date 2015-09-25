@@ -2,7 +2,7 @@ class MyClass {
   val i = 1
 }
 
-@Deprecated("Use A instead") fun MyClass.rangeTo(i: MyClass): Iterable<Int> {
+@Deprecated("Use A instead") operator fun MyClass.rangeTo(i: MyClass): Iterable<Int> {
     i.i
     throw Exception()
 }

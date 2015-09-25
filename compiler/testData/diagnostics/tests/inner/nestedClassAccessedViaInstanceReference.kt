@@ -6,21 +6,21 @@ class WithClassObject {
     class Nested()
     class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
-    object NestedObj : N { fun invoke() = 1 }
+    object NestedObj : N { operator fun invoke() = 1 }
 }
 
 class WithoutClassObject {
     class Nested()
     class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
-    object NestedObj : N { fun invoke() = 1 }
+    object NestedObj : N { operator fun invoke() = 1 }
 }
 
 object Obj {
     class Nested()
     class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
-    object NestedObj : N { fun invoke() = 1 }
+    object NestedObj : N { operator fun invoke() = 1 }
 }
 
 fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {

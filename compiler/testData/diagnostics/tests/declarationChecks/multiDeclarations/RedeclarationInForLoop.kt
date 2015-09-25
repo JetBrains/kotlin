@@ -1,10 +1,10 @@
 class A {
-    fun component1() = 1
-    fun component2() = 1
+    operator fun component1() = 1
+    operator fun component2() = 1
 }
 
 class C {
-    fun iterator(): Iterator<A> = null!!
+    operator fun iterator(): Iterator<A> = null!!
 }
 
 fun test() {

@@ -569,7 +569,7 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun BooleanArray.plus(array: BooleanArray): BooleanArray {
+public operator fun BooleanArray.plus(array: BooleanArray): BooleanArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -580,7 +580,7 @@ public fun BooleanArray.plus(array: BooleanArray): BooleanArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun ByteArray.plus(array: ByteArray): ByteArray {
+public operator fun ByteArray.plus(array: ByteArray): ByteArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -591,7 +591,7 @@ public fun ByteArray.plus(array: ByteArray): ByteArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun CharArray.plus(array: CharArray): CharArray {
+public operator fun CharArray.plus(array: CharArray): CharArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -602,7 +602,7 @@ public fun CharArray.plus(array: CharArray): CharArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun DoubleArray.plus(array: DoubleArray): DoubleArray {
+public operator fun DoubleArray.plus(array: DoubleArray): DoubleArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -613,7 +613,7 @@ public fun DoubleArray.plus(array: DoubleArray): DoubleArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun FloatArray.plus(array: FloatArray): FloatArray {
+public operator fun FloatArray.plus(array: FloatArray): FloatArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -624,7 +624,7 @@ public fun FloatArray.plus(array: FloatArray): FloatArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun IntArray.plus(array: IntArray): IntArray {
+public operator fun IntArray.plus(array: IntArray): IntArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -635,7 +635,7 @@ public fun IntArray.plus(array: IntArray): IntArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun LongArray.plus(array: LongArray): LongArray {
+public operator fun LongArray.plus(array: LongArray): LongArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -646,7 +646,7 @@ public fun LongArray.plus(array: LongArray): LongArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun ShortArray.plus(array: ShortArray): ShortArray {
+public operator fun ShortArray.plus(array: ShortArray): ShortArray {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -657,7 +657,7 @@ public fun ShortArray.plus(array: ShortArray): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
-public fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
+public operator fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
     val thisSize = size()
     val arraySize = array.size()
     val result = Arrays.copyOf(this, thisSize + arraySize)
@@ -668,7 +668,7 @@ public fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
+public operator fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -678,7 +678,7 @@ public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
+public operator fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -688,7 +688,7 @@ public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun CharArray.plus(collection: Collection<Char>): CharArray {
+public operator fun CharArray.plus(collection: Collection<Char>): CharArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -698,7 +698,7 @@ public fun CharArray.plus(collection: Collection<Char>): CharArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
+public operator fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -708,7 +708,7 @@ public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
+public operator fun FloatArray.plus(collection: Collection<Float>): FloatArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -718,7 +718,7 @@ public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun IntArray.plus(collection: Collection<Int>): IntArray {
+public operator fun IntArray.plus(collection: Collection<Int>): IntArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -728,7 +728,7 @@ public fun IntArray.plus(collection: Collection<Int>): IntArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun LongArray.plus(collection: Collection<Long>): LongArray {
+public operator fun LongArray.plus(collection: Collection<Long>): LongArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -738,7 +738,7 @@ public fun LongArray.plus(collection: Collection<Long>): LongArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
+public operator fun ShortArray.plus(collection: Collection<Short>): ShortArray {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -748,7 +748,7 @@ public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
+public operator fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
     var index = size()
     val result = Arrays.copyOf(this, index + collection.size())
     for (element in collection) result[index++] = element
@@ -758,7 +758,7 @@ public fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun BooleanArray.plus(element: Boolean): BooleanArray {
+public operator fun BooleanArray.plus(element: Boolean): BooleanArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -768,7 +768,7 @@ public fun BooleanArray.plus(element: Boolean): BooleanArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun ByteArray.plus(element: Byte): ByteArray {
+public operator fun ByteArray.plus(element: Byte): ByteArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -778,7 +778,7 @@ public fun ByteArray.plus(element: Byte): ByteArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun CharArray.plus(element: Char): CharArray {
+public operator fun CharArray.plus(element: Char): CharArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -788,7 +788,7 @@ public fun CharArray.plus(element: Char): CharArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun DoubleArray.plus(element: Double): DoubleArray {
+public operator fun DoubleArray.plus(element: Double): DoubleArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -798,7 +798,7 @@ public fun DoubleArray.plus(element: Double): DoubleArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun FloatArray.plus(element: Float): FloatArray {
+public operator fun FloatArray.plus(element: Float): FloatArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -808,7 +808,7 @@ public fun FloatArray.plus(element: Float): FloatArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun IntArray.plus(element: Int): IntArray {
+public operator fun IntArray.plus(element: Int): IntArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -818,7 +818,7 @@ public fun IntArray.plus(element: Int): IntArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun LongArray.plus(element: Long): LongArray {
+public operator fun LongArray.plus(element: Long): LongArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -828,7 +828,7 @@ public fun LongArray.plus(element: Long): LongArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun ShortArray.plus(element: Short): ShortArray {
+public operator fun ShortArray.plus(element: Short): ShortArray {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -838,7 +838,7 @@ public fun ShortArray.plus(element: Short): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun <T> Array<T>.plus(element: T): Array<T> {
+public operator fun <T> Array<T>.plus(element: T): Array<T> {
     val index = size()
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element

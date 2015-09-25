@@ -13,7 +13,7 @@ fun <T: Any, E> T.foo(<warning>x</warning> : E, y : A) : T   {
 
 class A
 
-fun A.plus(<warning>a</warning> : Any) {
+operator fun A.plus(<warning>a</warning> : Any) {
 
   1.foo()
   true.<error>foo</error>(<error><error>)</error></error>
@@ -21,7 +21,7 @@ fun A.plus(<warning>a</warning> : Any) {
   <warning>1</warning>
 }
 
-fun A.plus(<warning>a</warning> : Int) {
+operator fun A.plus(<warning>a</warning> : Int) {
   <warning>1</warning>
 }
 
@@ -46,7 +46,7 @@ fun Int.foo() = this
           val foo : Int = 0
         }
 
-        fun Any.equals(<warning>other</warning> : Any?) : Boolean = true
+        operator fun Any.equals(<warning>other</warning> : Any?) : Boolean = true
         fun Any?.equals1(<warning>other</warning> : Any?) : Boolean = true
         fun Any.equals2(<warning>other</warning> : Any?) : Boolean = true
 

@@ -3,56 +3,56 @@ package kotlin
 /**
  * Adds the specified [element] to this mutable collection.
  */
-public fun <T> MutableCollection<in T>.plusAssign(element: T) {
+public operator fun <T> MutableCollection<in T>.plusAssign(element: T) {
     this.add(element)
 }
 
 /**
  * Adds all elements of the given [collection] to this mutable collection.
  */
-public fun <T> MutableCollection<in T>.plusAssign(collection: Iterable<T>) {
+public operator fun <T> MutableCollection<in T>.plusAssign(collection: Iterable<T>) {
     this.addAll(collection)
 }
 
 /**
  * Adds all elements of the given [array] to this mutable collection.
  */
-public fun <T> MutableCollection<in T>.plusAssign(array: Array<T>) {
+public operator fun <T> MutableCollection<in T>.plusAssign(array: Array<T>) {
     this.addAll(array)
 }
 
 /**
  * Adds all elements of the given [sequence] to this mutable collection.
  */
-public fun <T> MutableCollection<in T>.plusAssign(sequence: Sequence<T>) {
+public operator fun <T> MutableCollection<in T>.plusAssign(sequence: Sequence<T>) {
     this.addAll(sequence)
 }
 
 /**
  * Removes a single instance of the specified [element] from this mutable collection.
  */
-public fun <T> MutableCollection<in T>.minusAssign(element: T) {
+public operator fun <T> MutableCollection<in T>.minusAssign(element: T) {
     this.remove(element)
 }
 
 /**
  * Removes all elements contained in the given [collection] from this mutable collection.
  */
-public fun <T> MutableCollection<in T>.minusAssign(collection: Iterable<T>) {
+public operator fun <T> MutableCollection<in T>.minusAssign(collection: Iterable<T>) {
     this.removeAll(collection)
 }
 
 /**
  * Removes all elements contained in the given [array] from this mutable collection.
  */
-public fun <T> MutableCollection<in T>.minusAssign(array: Array<T>) {
+public operator fun <T> MutableCollection<in T>.minusAssign(array: Array<T>) {
     this.removeAll(array)
 }
 
 /**
  * Removes all elements contained in the given [sequence] from this mutable collection.
  */
-public fun <T> MutableCollection<in T>.minusAssign(sequence: Sequence<T>) {
+public operator fun <T> MutableCollection<in T>.minusAssign(sequence: Sequence<T>) {
     this.removeAll(sequence)
 }
 

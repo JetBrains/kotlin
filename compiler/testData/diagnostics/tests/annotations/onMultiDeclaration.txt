@@ -6,8 +6,8 @@ public fun test(): kotlin.Any?
     public constructor P(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
     public final val a: kotlin.Int
     public final val b: kotlin.Int
-    public final /*synthesized*/ fun component1(): kotlin.Int
-    public final /*synthesized*/ fun component2(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.Int = ...): P
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

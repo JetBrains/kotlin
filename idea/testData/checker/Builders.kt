@@ -24,7 +24,7 @@ import java.util.*
   }
 
   abstract class TagWithText(name : String) : Tag(name) {
-    fun String.plus() {
+    operator fun String.plus() {
       children.add(TextElement(this))
     }
   }
@@ -78,7 +78,7 @@ import java.util.*
       }
   }
 
-  fun MutableMap<String, String>.set(key : String, value : String) = this.put(key, value)
+  operator fun MutableMap<String, String>.set(key : String, value : String) = this.put(key, value)
 
   fun html(init :  HTML.() -> Unit) : HTML {
     val html = HTML()

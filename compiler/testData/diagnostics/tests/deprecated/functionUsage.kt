@@ -13,7 +13,7 @@ fun Obsolete(param: Int = 1): UsefulClass = UsefulClass(param)
 
 class Invocable {
     @Deprecated("message")
-    fun invoke() {}
+    operator fun invoke() {}
 }
 
 object InvocableHolder {

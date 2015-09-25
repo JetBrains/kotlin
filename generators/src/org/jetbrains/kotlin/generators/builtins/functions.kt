@@ -77,7 +77,7 @@ class GenerateFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val suffix = if (i == 1) "" else "s"
             out.println("    /** Invokes the function with the specified argument${suffix}. */")
         }
-        out.print("    public fun invoke(")
+        out.print("    public operator fun invoke(")
         for (j in 1..i) {
             out.print("p$j: P$j")
             if (j < i) {

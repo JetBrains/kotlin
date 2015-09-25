@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 public class A {
-    public fun get(vararg attrs : Pair<String, String>) : A = this
+    public operator fun get(vararg attrs : Pair<String, String>) : A = this
 }
-fun String.plus() : A = A()
-fun A.div(s : String) : A = A()
+operator fun String.plus() : A = A()
+operator fun A.div(s : String) : A = A()
 
 fun test() {
     (+"node2" / "node3" / "zzz") ["attr" to "value", "a2" to "v2"]
@@ -12,9 +12,9 @@ fun test() {
 
 //---------
 class B {
-    public fun get(s : String, q : String) : B = this
-    public fun get(s : Pair<String, String>) : B = this
-    public fun invoke(q : B.() -> Unit) : B = this
+    public operator fun get(s : String, q : String) : B = this
+    public operator fun get(s : Pair<String, String>) : B = this
+    public operator fun invoke(q : B.() -> Unit) : B = this
 }
 val x = B()["a", "v"]["a" to "b"] {} ["q" to "p"] // does not parses around {}
 

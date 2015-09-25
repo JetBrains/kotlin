@@ -35,6 +35,12 @@ public class JetMultiFileInspectionTestGenerated extends AbstractJetMultiFileIns
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("invalidBundleOrProperty/invalidBundleOrProperty.test")
+    public void testInvalidBundleOrProperty_InvalidBundleOrProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileInspections/invalidBundleOrProperty/invalidBundleOrProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test")
     public void testMismatchedProjectAndDirectory_MismatchedProjectAndDirectory() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");

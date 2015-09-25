@@ -17,16 +17,27 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.SmartPointerManager
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement): Boolean {
+public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
+    val project = element.project
+    val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(element)
+
+    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+
+    pointer.element?.let { moveCaretIntoGeneratedElementDocumentUnblocked(editor, it) }
+}
+
+private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, element: PsiElement): Boolean {
     // Inspired by GenerateMembersUtils.positionCaret()
 
     if (element is JetDeclarationWithBody && element.hasBody()) {
@@ -72,7 +83,7 @@ public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement): B
 
     if (element is JetProperty) {
         for (accessor in element.getAccessors()) {
-            if (moveCaretIntoGeneratedElement(editor, accessor)) {
+            if (moveCaretIntoGeneratedElementDocumentUnblocked(editor, accessor)) {
                 return true
             }
         }

@@ -6,13 +6,13 @@ import DOMElementTestClasses.cls2
 enum class DOMElementTestClasses {
     cls1, cls2;
 
-    fun invoke() {}
+    operator fun invoke() {}
 }
 
 
 // use case 2
 interface EnumStyleClass {
-    fun invoke() {}
+    operator fun invoke() {}
 }
 enum class TestClasses : EnumStyleClass {
     cls

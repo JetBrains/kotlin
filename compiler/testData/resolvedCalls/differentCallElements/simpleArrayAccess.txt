@@ -5,7 +5,7 @@ fun foo(array: Array<Int>) {
 
 Resolved call:
 
-Resulting descriptor: fun get(index: Int): Int defined in kotlin.Array
+Resulting descriptor: operator fun get(index: Int): Int defined in kotlin.Array
 
 Explicit receiver kind = DISPATCH_RECEIVER
 Dispatch receiver = array {Array<Int>}

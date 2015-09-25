@@ -302,6 +302,10 @@ fun PsiFile.getLineEndOffset(line: Int): Int? {
     return PsiDocumentManager.getInstance(project).getDocument(this)?.getLineEndOffset(line)
 }
 
+fun PsiElement.getLineNumber(start: Boolean = true): Int {
+    return PsiDocumentManager.getInstance(project).getDocument(this.containingFile)?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
+}
+
 fun PsiElement.getLineCount(): Int {
     val doc = getContainingFile()?.let { file -> PsiDocumentManager.getInstance(getProject()).getDocument(file) }
     if (doc != null) {

@@ -4,8 +4,8 @@ class C {
     val c: C = C()
 }
 
-fun C.plus(a: Any): C = this
-fun C.plusAssign(a: Any) {}
+operator fun C.plus(a: Any): C = this
+operator fun C.plusAssign(a: Any) {}
 
 class C1 {
     var c: C = C()

@@ -127,6 +127,7 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
+        MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL, "Function literal here is an inlined argument so this annotation cannot be stored anywhere");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}'' annotations could be applied only to property declarations", TO_STRING);
         MAP.put(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD, "Property has neither a backing field nor a delegate");
@@ -350,6 +351,12 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATE_PD_METHOD_NONE_APPLICABLE, "''{0}'' method may be missing. None of the following functions will be called: {1}", STRING, AMBIGUOUS_CALLS);
 
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
+
+        MAP.put(UNDESCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
+
+        MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function");
+
+        MAP.put(OPERATOR_MODIFIER_REQUIRED, "'operator' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
 
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");

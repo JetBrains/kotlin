@@ -70,10 +70,10 @@ interface MyTrait {
     <warning>abstract</warning> val a2: Int
     <warning>abstract</warning> val a3: Int = <error>1</error>
 
-    var b: Int
-    var b1: Int = <error>0</error>;
-    <warning>abstract</warning> var b2: Int
-    <warning>abstract</warning> var b3: Int = <error>0</error>;
+    var b: Int                                                  private set
+    var b1: Int = <error>0</error>;                             private set
+    <warning>abstract</warning> var b2: Int                     private set
+    <warning>abstract</warning> var b3: Int = <error>0</error>; private set
 
     <error>var c: Int</error>                                   set(v: Int) { field = v }
     <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { field = v }

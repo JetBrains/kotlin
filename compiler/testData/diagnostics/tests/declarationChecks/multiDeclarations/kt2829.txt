@@ -9,8 +9,8 @@ package test {
         public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
         public final val a: A
         public final val b: B
-        public final /*synthesized*/ fun component1(): A
-        public final /*synthesized*/ fun component2(): B
+        public final operator /*synthesized*/ fun component1(): A
+        public final operator /*synthesized*/ fun component2(): B
         public final /*synthesized*/ fun copy(/*0*/ a: A = ..., /*1*/ b: B = ...): test.Pair<A, B>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

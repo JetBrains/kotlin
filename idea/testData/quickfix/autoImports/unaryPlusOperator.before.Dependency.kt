@@ -1,3 +1,3 @@
 package util
 
-fun h.H.plus() = ""
+operator fun h.H.plus() = ""

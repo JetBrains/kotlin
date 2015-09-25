@@ -5,7 +5,7 @@ package html {
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
     public fun print(/*0*/ message: kotlin.Any?): kotlin.Unit
     public fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
-    public fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
+    public operator fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
 
     public final class A : html.BodyTag {
         public constructor A()
@@ -203,7 +203,7 @@ package html {
         public open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
         invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final fun kotlin.String.plus(): kotlin.Unit
+        public final operator fun kotlin.String.plus(): kotlin.Unit
     }
 
     public final class TextElement : html.Element {

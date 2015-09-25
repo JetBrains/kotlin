@@ -2,7 +2,7 @@
 package a
 
 class MyClass1 {
-    public fun plus() {}
+    public operator fun plus() {}
 }
 
 fun main(arg: MyClass1) {

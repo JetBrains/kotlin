@@ -1,15 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
-    fun get(i: Int): C = this
+    operator fun get(i: Int): C = this
 }
 
-fun C.plus(a: Any): C = this
-fun C.plusAssign(a: Any) {}
+operator fun C.plus(a: Any): C = this
+operator fun C.plusAssign(a: Any) {}
 
 class C1 {
-    fun get(i: Int): C = C()
-    fun set(i: Int, v: C) {}
+    operator fun get(i: Int): C = C()
+    operator fun set(i: Int, v: C) {}
 }
 
 fun test() {

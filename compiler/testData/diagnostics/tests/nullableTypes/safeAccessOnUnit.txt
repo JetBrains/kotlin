@@ -5,7 +5,7 @@ public fun foo(/*0*/ my: My?): kotlin.Int?
 @kotlin.data() public final class My {
     public constructor My(/*0*/ x: kotlin.Unit)
     public final val x: kotlin.Unit
-    public final /*synthesized*/ fun component1(): kotlin.Unit
+    public final operator /*synthesized*/ fun component1(): kotlin.Unit
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Unit = ...): My
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

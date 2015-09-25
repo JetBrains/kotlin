@@ -32,7 +32,7 @@ public open class Any {
      * Note that the `==` operator in Kotlin code is translated into a call to [equals] when objects on both sides of the
      * operator are not null.
      */
-    public open fun equals(other: Any?): Boolean
+    public open operator fun equals(other: Any?): Boolean
 
     /**
      * Returns a hash code value for the object.  The general contract of hashCode is:

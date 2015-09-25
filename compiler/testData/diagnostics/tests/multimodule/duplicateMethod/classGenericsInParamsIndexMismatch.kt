@@ -4,7 +4,7 @@
 // FILE: a.kt
 package p
 
-public interface B<T, _> {
+public interface B<T, Z> {
     public fun foo(a: T?)
 }
 
@@ -12,7 +12,7 @@ public interface B<T, _> {
 // FILE: b.kt
 package p
 
-public interface C<X, _> : B<X, _> {
+public interface C<X, Z> : B<X, Z> {
     override fun foo(a: X?)
 
 }
@@ -21,7 +21,7 @@ public interface C<X, _> : B<X, _> {
 // FILE: b.kt
 package p
 
-public interface B<_, T> {
+public interface B<Z, T> {
     public fun foo(a: T?)
 }
 

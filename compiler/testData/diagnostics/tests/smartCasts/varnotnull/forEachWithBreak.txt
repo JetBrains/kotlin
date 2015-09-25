@@ -5,7 +5,7 @@ public fun list(/*0*/ start: SomeObject): SomeObject
 @kotlin.data() public final class SomeObject {
     public constructor SomeObject(/*0*/ n: SomeObject?)
     public final val n: SomeObject?
-    public final /*synthesized*/ fun component1(): SomeObject?
+    public final operator /*synthesized*/ fun component1(): SomeObject?
     public final /*synthesized*/ fun copy(/*0*/ n: SomeObject? = ...): SomeObject
     public final fun doSomething(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

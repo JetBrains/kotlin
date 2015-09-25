@@ -1,6 +1,6 @@
 interface A
 interface Foo {
-    fun A.invoke()
+    operator fun A.invoke()
 }
 
 fun test(a: A, foo: Foo) {

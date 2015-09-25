@@ -1,4 +1,4 @@
-fun Int?.inc(): Int? { return this }
+operator fun Int?.inc(): Int? { return this }
 
 public fun box(arg: Int?) : Int? {
     var i : Int? = arg

@@ -867,6 +867,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             boolean isStatement
     ) {
+        JetSimpleNameExpression labelExpression = expression.getTargetLabel();
+        if (labelExpression != null) {
+            PsiElement labelIdentifier = labelExpression.getIdentifier();
+            UnderscoreChecker.INSTANCE$.checkIdentifier(labelIdentifier, context.trace);
+        }
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return TypeInfoFactoryPackage.noTypeInfo(context);
 

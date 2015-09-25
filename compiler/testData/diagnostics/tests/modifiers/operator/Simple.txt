@@ -1,0 +1,35 @@
+package
+
+public fun a(): kotlin.Unit
+public fun consumeExample2(/*0*/ e: Example2): kotlin.Unit
+public fun consumeInt(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun consumeString(/*0*/ s: kotlin.String): kotlin.Unit
+public operator fun Example.component1(): kotlin.String
+public operator fun Example.component2(): kotlin.String
+public operator fun Example.get(/*0*/ i: kotlin.Int): kotlin.String
+public operator fun Example.inc(): Example2
+public operator fun Example.invoke(): kotlin.String
+
+public open class Example {
+    public constructor Example()
+    public final fun component1(): kotlin.Int
+    public final fun component2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ i: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun inc(): Example
+    public final fun invoke(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Example2 : Example {
+    public constructor Example2()
+    public final override /*1*/ /*fake_override*/ fun component1(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun component2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(/*0*/ i: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun inc(): Example
+    public final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

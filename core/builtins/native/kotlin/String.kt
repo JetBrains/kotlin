@@ -26,12 +26,12 @@ public class String : Comparable<String>, CharSequence {
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
-    public fun plus(other: Any?): String
+    public operator fun plus(other: Any?): String
 
     /**
      * Returns the character at the specified [index].
      */
-    public fun get(index: Int): Char
+    public operator fun get(index: Int): Char
 
     public override fun length(): Int
 

@@ -1036,6 +1036,27 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             }
         }
 
+        @TestMetadata("idea/testData/findUsages/kotlin/propertyFiles")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PropertyFiles extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInPropertyFiles() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/propertyFiles"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("propertyFileUsagesByRef.0.kt")
+            public void testPropertyFileUsagesByRef() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/propertyFiles/propertyFileUsagesByRef.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyUsagesByRef.0.kt")
+            public void testPropertyUsagesByRef() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/propertyFiles/propertyUsagesByRef.0.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/findUsages/kotlin/unresolvedAnnotation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1313,6 +1334,27 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/findUsages/propertyFiles")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PropertyFiles extends AbstractJetFindUsagesTest {
+        public void testAllFilesPresentInPropertyFiles() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/propertyFiles"), Pattern.compile("^(.+)\\.0\\.properties$"), true);
+        }
+
+        @TestMetadata("propertyFileUsages.0.properties")
+        public void testPropertyFileUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/propertyFiles/propertyFileUsages.0.properties");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyUsages.0.properties")
+        public void testPropertyUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/propertyFiles/propertyUsages.0.properties");
+            doTest(fileName);
         }
     }
 }

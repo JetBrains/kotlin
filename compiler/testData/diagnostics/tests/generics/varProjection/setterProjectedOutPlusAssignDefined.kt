@@ -4,7 +4,7 @@ interface Tr<T> {
 }
 
 class C {
-    fun plusAssign(<!UNUSED_PARAMETER!>c<!>: C) {}
+    operator fun plusAssign(<!UNUSED_PARAMETER!>c<!>: C) {}
 }
 
 fun test(t: Tr<out C>) {

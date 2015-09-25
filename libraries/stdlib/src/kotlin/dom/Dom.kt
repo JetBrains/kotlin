@@ -116,7 +116,7 @@ public fun NodeList?.toElementList(): List<Element> {
 }
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-public fun Document?.get(selector: String): List<Element> {
+public operator fun Document?.get(selector: String): List<Element> {
     val root = this?.documentElement
     return if (root != null) {
         if (selector == "*") {
@@ -140,7 +140,7 @@ public fun Document?.get(selector: String): List<Element> {
 }
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-public fun Element.get(selector: String): List<Element> {
+public operator fun Element.get(selector: String): List<Element> {
     return if (selector == "*") {
         elements
     } else if (selector.startsWith(".")) {
@@ -319,16 +319,16 @@ public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = fal
 
 // Syntax sugar
 
-public fun Node.plus(child: Node?): Node {
+public operator fun Node.plus(child: Node?): Node {
     if (child != null) {
         this.appendChild(child)
     }
     return this
 }
 
-public fun Element.plus(text: String?): Element = this.addText(text)
+public operator fun Element.plus(text: String?): Element = this.addText(text)
 
-public fun Element.plusAssign(text: String?): Element = this.addText(text)
+public operator fun Element.plusAssign(text: String?): Element = this.addText(text)
 
 
 // Builder

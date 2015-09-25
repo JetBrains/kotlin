@@ -29,7 +29,7 @@ fun bar(a: Ann = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann()<!>) {
     if (a is Ann) {}
 }
 
-fun String.invoke() {}
+operator fun String.invoke() {}
 
 // from stdlib
 fun <T> javaClass() : Class<T> = null <!CAST_NEVER_SUCCEEDS!>as<!> Class<T>

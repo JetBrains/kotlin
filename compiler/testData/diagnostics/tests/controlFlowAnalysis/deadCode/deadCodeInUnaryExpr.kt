@@ -1,10 +1,10 @@
 fun testPrefix() {
-    fun Any.not() {}
+    operator fun Any.not() {}
     <!UNREACHABLE_CODE!>!<!>todo()
 }
 
 fun testPostfixWithCall(n: Nothing) {
-    fun Nothing.inc(): Nothing = this
+    operator fun Nothing.inc(): Nothing = this
     n<!UNREACHABLE_CODE!>++<!>
 }
 

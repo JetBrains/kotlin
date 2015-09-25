@@ -33,13 +33,13 @@ public class DataClassAnnotationChecker : DeclarationChecker {
         if (declaration !is JetClassOrObject) return
 
         if (KotlinBuiltIns.isData(descriptor)) {
-            if (descriptor.getUnsubstitutedPrimaryConstructor() == null && descriptor.getConstructors().isNotEmpty()) {
-                diagnosticHolder.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(declaration.getNameIdentifier()));
+            if (descriptor.unsubstitutedPrimaryConstructor == null && descriptor.constructors.isNotEmpty()) {
+                declaration.nameIdentifier?.let { diagnosticHolder.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(it)) }
             }
             val primaryConstructor = declaration.getPrimaryConstructor()
             val parameters = primaryConstructor?.valueParameters ?: emptyList()
             if (parameters.isEmpty()) {
-                diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(declaration.nameIdentifier!!))
+                declaration.nameIdentifier?.let { diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it)) }
             }
             for (parameter in parameters) {
                 if (parameter.isVarArg) {

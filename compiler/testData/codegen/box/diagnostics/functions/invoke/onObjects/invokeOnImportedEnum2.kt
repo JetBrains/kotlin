@@ -5,6 +5,6 @@ enum class A {
     TWO
 }
 
-fun A.invoke(i: Int) = i
+operator fun A.invoke(i: Int) = i
 
 fun box() = if (ONE(42) == 42) "OK" else "fail"

@@ -4,13 +4,13 @@
 package a
 
 class MyClass {
-    fun component1() = 1
-    fun component2() = "a"
+    operator fun component1() = 1
+    operator fun component2() = "a"
 }
 
 class MyClass2 {}
 
-fun MyClass2.component1() = 1.2
+operator fun MyClass2.component1() = 1.2
 
 fun test(mc1: MyClass, mc2: MyClass2) {
     val (a, b) = mc1

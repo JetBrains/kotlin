@@ -17,8 +17,7 @@ public class J {
 // FILE: k.kt
 
 fun test() {
-    J.staticNN()
-    J.<!UNSAFE_CALL!>staticN<!>()
-    J.staticJ()
+    J.<!OPERATOR_MODIFIER_REQUIRED!>staticNN<!>()
+    J.<!UNSAFE_CALL, OPERATOR_MODIFIER_REQUIRED!>staticN<!>()
+    J.<!OPERATOR_MODIFIER_REQUIRED!>staticJ<!>()
 }
-

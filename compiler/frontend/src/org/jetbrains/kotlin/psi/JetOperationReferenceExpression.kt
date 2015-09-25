@@ -19,7 +19,17 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.parsing.JetExpressionParsing
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.TreeElement
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class JetOperationReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node) {
     override fun getReferencedNameElement() = (findChildByType(JetExpressionParsing.ALL_OPERATIONS): PsiElement?) ?: this
+
+    fun getNameForConventionalOperation(): Name? {
+        val operator = (firstChild as? TreeElement)?.elementType as? JetToken ?: return null
+        return OperatorConventions.getNameForOperationSymbol(operator)
+    }
+
 }

@@ -72,6 +72,8 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             ANNOTATION -> UsageType.ANNOTATION
             CLASS_NEW_OPERATOR -> UsageType.CLASS_NEW_OPERATOR
             NAMED_ARGUMENT -> JetUsageTypes.NAMED_ARGUMENT
+
+            USAGE_IN_STRING_LITERAL -> UsageType.LITERAL_USAGE
         }
     }
 }

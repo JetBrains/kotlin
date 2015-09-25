@@ -1,4 +1,4 @@
 package
 
 public fun box(/*0*/ arg: kotlin.Int?): kotlin.Int?
-public fun kotlin.Int?.inc(): kotlin.Int?
+public operator fun kotlin.Int?.inc(): kotlin.Int?

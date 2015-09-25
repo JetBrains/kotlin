@@ -1,5 +1,5 @@
 fun testBinary1() {
-    fun Int.times(<!UNUSED_PARAMETER!>s<!>: String) {}
+    operator fun Int.times(<!UNUSED_PARAMETER!>s<!>: String) {}
 
     todo() <!UNREACHABLE_CODE!>* ""<!>
 }

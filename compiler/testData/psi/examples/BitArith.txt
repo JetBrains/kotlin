@@ -554,7 +554,7 @@ JetFile: BitArith.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-      PsiWhiteSpace('\n  ')
+      PsiWhiteSpace('\n\n  ')
       FUN
         MODIFIER_LIST
           ANNOTATION_ENTRY
@@ -563,8 +563,8 @@ JetFile: BitArith.kt
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('operator')
-        PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('Operator')
+        PsiWhiteSpace('\n  ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('plus')
@@ -585,7 +585,7 @@ JetFile: BitArith.kt
         TYPE_REFERENCE
           SELF_TYPE
             PsiElement(This)('This')
-      PsiWhiteSpace('\n  ')
+      PsiWhiteSpace('\n\n  ')
       FUN
         MODIFIER_LIST
           ANNOTATION_ENTRY
@@ -594,8 +594,8 @@ JetFile: BitArith.kt
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('operator')
-        PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('Operator')
+        PsiWhiteSpace('\n  ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('shl')

@@ -6,8 +6,8 @@ package foo.bar
     b /*c:foo.bar.A(contains)*/in a
     "s" /*c:foo.bar.A(contains) p:foo.bar(contains)*/!in a
 
-    /*p:foo.bar c:foo.bar.A(invoke)*/a()
-    /*p:foo.bar c:foo.bar.A(invoke) p:foo.bar(invoke)*/a(1)
+    /*c:foo.bar.A(invoke)*/a()
+    /*c:foo.bar.A(invoke) p:foo.bar(invoke)*/a(1)
 
     val (/*c:foo.bar.A(component1)*/h, /*c:foo.bar.A(component2) p:foo.bar(component2)*/t) = a;
 

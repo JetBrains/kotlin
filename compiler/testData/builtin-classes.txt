@@ -2,7 +2,7 @@ package-fragment kotlin
 
 public fun </*0*/ reified T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
 public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-public fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
+public operator fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
 public fun kotlin.Any?.toString(): kotlin.String
 
 public interface Annotation {
@@ -15,9 +15,9 @@ public open class Any {
 public final class Array</*0*/ reified T> : kotlin.Cloneable {
     /*primary*/ private constructor Array</*0*/ reified T>()
     public open override /*1*/ fun clone(): kotlin.Array<T>
-    public final fun get(/*0*/ index: kotlin.Int): T
-    public final fun iterator(): kotlin.Iterator<T>
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): T
+    public final operator fun iterator(): kotlin.Iterator<T>
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -25,7 +25,7 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
     /*primary*/ private constructor Boolean()
     public final fun and(/*0*/ other: kotlin.Boolean): kotlin.Boolean
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Boolean): kotlin.Int
-    public final fun not(): kotlin.Boolean
+    public final operator fun not(): kotlin.Boolean
     public final fun or(/*0*/ other: kotlin.Boolean): kotlin.Boolean
     public final fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
@@ -33,9 +33,9 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
 public final class BooleanArray : kotlin.Cloneable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.BooleanArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
-    public final fun iterator(): kotlin.BooleanIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
+    public final operator fun iterator(): kotlin.BooleanIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -49,51 +49,51 @@ public abstract class BooleanIterator : kotlin.Iterator<kotlin.Boolean> {
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     /*primary*/ private constructor Byte()
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Byte
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun inc(): kotlin.Byte
-    public final fun minus(): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun plus(): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ByteRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Byte
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun inc(): kotlin.Byte
+    public final operator fun minus(): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun plus(): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ByteRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Int
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -114,9 +114,9 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 public final class ByteArray : kotlin.Cloneable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.ByteArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Byte
-    public final fun iterator(): kotlin.ByteIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Byte
+    public final operator fun iterator(): kotlin.ByteIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -178,12 +178,12 @@ public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kot
 public final class Char : kotlin.Comparable<kotlin.Char> {
     /*primary*/ private constructor Char()
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
-    public final fun dec(): kotlin.Char
-    public final fun inc(): kotlin.Char
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Char
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Char
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
+    public final operator fun dec(): kotlin.Char
+    public final operator fun inc(): kotlin.Char
+    public final operator fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Char
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Char
+    public final operator fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
     public open fun toByte(): kotlin.Byte
     public open fun toChar(): kotlin.Char
     public open fun toDouble(): kotlin.Double
@@ -200,9 +200,9 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 public final class CharArray : kotlin.Cloneable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.CharArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
-    public final fun iterator(): kotlin.CharIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public final operator fun iterator(): kotlin.CharIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -272,7 +272,7 @@ public interface Cloneable {
 }
 
 public interface Collection</*0*/ out E> : kotlin.Iterable<E> {
-    public abstract fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
@@ -280,7 +280,7 @@ public interface Collection</*0*/ out E> : kotlin.Iterable<E> {
 }
 
 public interface Comparable</*0*/ in T> {
-    public abstract fun compareTo(/*0*/ other: T): kotlin.Int
+    public abstract operator fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
@@ -293,52 +293,52 @@ public interface Comparable</*0*/ in T> {
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     /*primary*/ private constructor Double()
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Double
-    public final fun inc(): kotlin.Double
-    public final fun minus(): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Double
-    public final fun plus(): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Double
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.DoubleRange
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Double
+    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Double
+    public final operator fun inc(): kotlin.Double
+    public final operator fun minus(): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
+    public final operator fun plus(): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Double
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.DoubleRange
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Double
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -365,9 +365,9 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 public final class DoubleArray : kotlin.Cloneable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.DoubleArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Double
-    public final fun iterator(): kotlin.DoubleIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Double
+    public final operator fun iterator(): kotlin.DoubleIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -441,52 +441,52 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Float
-    public final fun inc(): kotlin.Float
-    public final fun minus(): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Float
-    public final fun plus(): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Float
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.FloatRange
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Float
+    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Float
+    public final operator fun inc(): kotlin.Float
+    public final operator fun minus(): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
+    public final operator fun plus(): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Float
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.FloatRange
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Float
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -513,9 +513,9 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 public final class FloatArray : kotlin.Cloneable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.FloatArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Float
-    public final fun iterator(): kotlin.FloatIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Float
+    public final operator fun iterator(): kotlin.FloatIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -594,56 +594,56 @@ public interface Function</*0*/ out R> {
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun inc(): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun inc(): kotlin.Int
     public final fun inv(): kotlin.Int
-    public final fun minus(): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun minus(): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun or(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun plus(): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
+    public final operator fun plus(): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
     public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Int
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -666,9 +666,9 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 public final class IntArray : kotlin.Cloneable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.IntArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Int
-    public final fun iterator(): kotlin.IntIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Int
+    public final operator fun iterator(): kotlin.IntIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -735,18 +735,18 @@ public interface IntegerConstants</*0*/ T> {
 }
 
 public interface Iterable</*0*/ out T> {
-    public abstract fun iterator(): kotlin.Iterator<T>
+    public abstract operator fun iterator(): kotlin.Iterator<T>
 }
 
 public interface Iterator</*0*/ out T> {
-    public abstract fun hasNext(): kotlin.Boolean
-    public abstract fun next(): T
+    public abstract operator fun hasNext(): kotlin.Boolean
+    public abstract operator fun next(): T
 }
 
 public interface List</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
-    public abstract fun get(/*0*/ index: kotlin.Int): E
+    public abstract operator fun get(/*0*/ index: kotlin.Int): E
     public abstract fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
@@ -769,56 +769,56 @@ public interface ListIterator</*0*/ out T> : kotlin.Iterator<T> {
 public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     /*primary*/ private constructor Long()
     public final fun and(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Long
-    public final fun inc(): kotlin.Long
+    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Long
+    public final operator fun inc(): kotlin.Long
     public final fun inv(): kotlin.Long
-    public final fun minus(): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Long
+    public final operator fun minus(): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
     public final fun or(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Long
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
+    public final operator fun plus(): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Long
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
     public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Long
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -841,9 +841,9 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 public final class LongArray : kotlin.Cloneable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.LongArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Long
-    public final fun iterator(): kotlin.LongIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Long
+    public final operator fun iterator(): kotlin.LongIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -906,7 +906,7 @@ public interface Map</*0*/ K, /*1*/ out V> {
     public abstract fun containsKey(/*0*/ key: kotlin.Any?): kotlin.Boolean
     public abstract fun containsValue(/*0*/ value: kotlin.Any?): kotlin.Boolean
     public abstract fun entrySet(): kotlin.Set<kotlin.Map.Entry<K, V>>
-    public abstract fun get(/*0*/ key: kotlin.Any?): V?
+    public abstract operator fun get(/*0*/ key: kotlin.Any?): V?
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract fun keySet(): kotlin.Set<K>
     public abstract fun size(): kotlin.Int
@@ -961,7 +961,7 @@ public interface MutableList</*0*/ E> : kotlin.List<E>, kotlin.MutableCollection
     public abstract fun remove(/*0*/ index: kotlin.Int): E
     public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
-    public abstract fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
+    public abstract operator fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
     public abstract override /*2*/ /*fake_override*/ fun size(): kotlin.Int
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<E>
 }
@@ -1047,7 +1047,7 @@ public interface PropertyMetadata {
     /*primary*/ public constructor PropertyMetadataImpl(/*0*/ name: kotlin.String)
     public open override /*1*/ val name: kotlin.String
         public open override /*1*/ fun <get-name>(): kotlin.String
-    public final /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ name: kotlin.String = ...): kotlin.PropertyMetadataImpl
 }
 
@@ -1056,7 +1056,7 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
         public abstract fun <get-end>(): T
     public abstract val start: T
         public abstract fun <get-start>(): T
-    public abstract fun contains(/*0*/ item: T): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ item: T): kotlin.Boolean
     public open fun isEmpty(): kotlin.Boolean
 }
 
@@ -1078,52 +1078,52 @@ public interface Set</*0*/ out E> : kotlin.Collection<E> {
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     /*primary*/ private constructor Short()
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun dec(): kotlin.Short
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun inc(): kotlin.Short
-    public final fun minus(): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun plus(): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ShortRange
-    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
-    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun dec(): kotlin.Short
+    public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun inc(): kotlin.Short
+    public final operator fun minus(): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun plus(): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ShortRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Int
     public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
@@ -1144,9 +1144,9 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 public final class ShortArray : kotlin.Cloneable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
     public open override /*1*/ fun clone(): kotlin.ShortArray
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Short
-    public final fun iterator(): kotlin.ShortIterator
-    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Short
+    public final operator fun iterator(): kotlin.ShortIterator
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
     public final fun size(): kotlin.Int
 }
 
@@ -1209,9 +1209,9 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     /*primary*/ public constructor String()
     public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-    public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun length(): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
+    public final operator fun plus(/*0*/ other: kotlin.Any?): kotlin.String
     public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
 
     public companion object Companion {

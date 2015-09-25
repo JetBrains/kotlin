@@ -7,7 +7,7 @@ public final class Bar {
     public constructor Bar()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun invoke(/*0*/ a: kotlin.Any): kotlin.Unit
+    public final operator fun invoke(/*0*/ a: kotlin.Any): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

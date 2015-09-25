@@ -2,7 +2,7 @@ class A {
     val b = B()
 }
 class B
-fun B.invoke(i: Int) = i
+operator fun B.invoke(i: Int) = i
 
 fun foo(i: Int) = i
 

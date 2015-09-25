@@ -109,7 +109,7 @@ public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
  * execute the given block on the [Executor].
  */
 @Deprecated("Use Executor.execute(Runnable) instead.")  // do not specify ReplaceWith("execute(action)") due to KT-8597
-public fun Executor.invoke(action: () -> Unit) {
+public operator fun Executor.invoke(action: () -> Unit) {
     execute(action)
 }
 
@@ -118,6 +118,6 @@ public fun Executor.invoke(action: () -> Unit) {
  * execute the given block on the [ExecutorService].
  */
 @Deprecated("Use ExecutorService.submit(Callable) instead.")  // do not specify ReplaceWith("submit(action)") due to KT-8597
-public fun <T> ExecutorService.invoke(action: () -> T): Future<T> {
+public operator fun <T> ExecutorService.invoke(action: () -> T): Future<T> {
     return submit(action)
 }

@@ -23,10 +23,10 @@ package outer {
     public fun test(): kotlin.Unit
     public fun </*0*/ T : kotlin.Any, /*1*/ E> T.foo(/*0*/ x: E, /*1*/ y: outer.A): T
     public fun kotlin.Int.foo(): kotlin.Int
-    public fun </*0*/ T> T.minus(/*0*/ t: T): kotlin.Int
+    public operator fun </*0*/ T> T.minus(/*0*/ t: T): kotlin.Int
     public fun kotlin.Int?.optint(): kotlin.Unit
-    public fun outer.A.plus(/*0*/ a: kotlin.Any): kotlin.Unit
-    public fun outer.A.plus(/*0*/ a: kotlin.Int): kotlin.Unit
+    public operator fun outer.A.plus(/*0*/ a: kotlin.Any): kotlin.Unit
+    public operator fun outer.A.plus(/*0*/ a: kotlin.Int): kotlin.Unit
 
     public final class A {
         public constructor A()

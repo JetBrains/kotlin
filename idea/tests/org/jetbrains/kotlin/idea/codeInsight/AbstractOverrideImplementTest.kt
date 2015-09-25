@@ -176,7 +176,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
             selectedElements: List<OverrideMemberChooserObject>) {
         try {
             myFixture.project.executeWriteCommand("") {
-                OverrideImplementMembersHandler.generateMethods(myFixture.editor, classOrObject, selectedElements)
+                OverrideImplementMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements)
             }
         }
         catch (throwable: Throwable) {

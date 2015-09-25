@@ -79,6 +79,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             isInUnclosedSuperQualifier(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">"
 
+            isInSimpleStringTemplate(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+
             else -> specialLambdaSignatureDummyIdentifier(tokenBefore)
                     ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
@@ -242,6 +244,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
             return
         }
 
+        if (PropertyKeyCompletion.perform(parameters, result)) return
+
         try {
             result.restartCompletionWhenNothingMatches()
 
@@ -391,7 +395,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (parent is JetParameterList) {
                 val balance = countParenthesisBalance(tokenBefore, parent)
                 val count = if (balance > 1) balance - 1 else 0
-                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B$"
+                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B"
             }
             if (parent is JetTypeElement) return null
             if (parent is JetAnnotationEntry) return null
@@ -431,5 +435,9 @@ public class KotlinCompletionContributor : CompletionContributor() {
         if (ltToken.node.elementType != JetTokens.LT) return false
         val superToken = ltToken.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
         return superToken?.node?.elementType == JetTokens.SUPER_KEYWORD
+    }
+
+    private fun isInSimpleStringTemplate(tokenBefore: PsiElement?): Boolean {
+        return tokenBefore?.parents?.firstIsInstanceOrNull<JetStringTemplateExpression>()?.isPlain() ?: false
     }
 }

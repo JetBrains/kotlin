@@ -31,8 +31,8 @@ class MyProperty<R, T> {
     }
 }
 
-fun <R, T> MyProperty<R, T>.plus() = MyProperty<R, T>()
-fun <R, T> MyProperty<R, T>.minus(<!UNUSED_PARAMETER!>i<!>: Int) = MyProperty<R, T>()
+operator fun <R, T> MyProperty<R, T>.plus() = MyProperty<R, T>()
+operator fun <R, T> MyProperty<R, T>.minus(<!UNUSED_PARAMETER!>i<!>: Int) = MyProperty<R, T>()
 
 object O {
     fun getMyProperty<A, B>() = MyProperty<A, B>()

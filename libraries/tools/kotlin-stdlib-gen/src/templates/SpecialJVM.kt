@@ -6,6 +6,8 @@ fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
+        operator(true)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
@@ -20,6 +22,8 @@ fun specialJVM(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Collection<T>)") {
+        operator(true)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
@@ -34,6 +38,8 @@ fun specialJVM(): List<GenericFunction> {
     }
 
     templates add f("plus(array: SELF)") {
+        operator(true)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         customSignature(InvariantArraysOfObjects) { "plus(array: Array<out T>)" }
         doc { "Returns an array containing all elements of the original array and then all elements of the given [array]." }

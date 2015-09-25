@@ -11,10 +11,10 @@ package h {
     public fun test5(): kotlin.Unit
     public fun </*0*/ T> toBeOrNot(): kotlin.Boolean
     public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
-    public fun </*0*/ T> h.Z.compareTo(/*0*/ a: h.A<T>): kotlin.Int
+    public operator fun </*0*/ T> h.Z.compareTo(/*0*/ a: h.A<T>): kotlin.Int
     public fun h.Z.equals(/*0*/ any: kotlin.Any): kotlin.Int
     public fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>
-    public fun </*0*/ T> h.Z.plus(/*0*/ a: h.A<T>): h.A<T>
+    public operator fun </*0*/ T> h.Z.plus(/*0*/ a: h.A<T>): h.A<T>
 
     public interface A</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

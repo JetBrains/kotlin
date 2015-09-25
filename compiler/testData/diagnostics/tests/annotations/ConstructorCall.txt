@@ -5,7 +5,7 @@ package
 public fun bar(/*0*/ a: Ann = ...): kotlin.Unit
 public fun foo(): kotlin.Unit
 public fun </*0*/ T> javaClass(): java.lang.Class<T>
-public fun kotlin.String.invoke(): kotlin.Unit
+public operator fun kotlin.String.invoke(): kotlin.Unit
 
 @kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
     public constructor Ann()

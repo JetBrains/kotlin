@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.testng.internal.PropertiesFile;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -295,11 +296,21 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         String mainFileText = FileUtil.loadFile(mainFile, true);
         final String prefix = mainFileName.substring(0, mainFileName.indexOf('.') + 1);
 
-        List<String> caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ");
-        assert caretElementClassNames.size() == 1;
-        //noinspection unchecked
+        boolean isPropertiesFile = FileUtilRt.getExtension(path).equals("properties");
 
-        Class<T> caretElementClass = (Class<T>)Class.forName(caretElementClassNames.get(0));
+        Class<T> caretElementClass;
+        if (!isPropertiesFile) {
+            List<String> caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ");
+            assert caretElementClassNames.size() == 1;
+            //noinspection unchecked
+            caretElementClass = (Class<T>)Class.forName(caretElementClassNames.get(0));
+        }
+        else {
+            //noinspection unchecked
+            caretElementClass = (Class<T>) (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")
+                                            ? PropertiesFile.class
+                                            : Property.class);
+        }
 
         OptionsParser parser = OptionsParser.getParserByPsiElementClass(caretElementClass);
 
@@ -316,6 +327,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                         return ext.equals("kt")
                                || ext.equals("java")
                                || ext.equals("xml")
+                               || ext.equals("properties")
                                || (ext.equals("txt") && !name.endsWith(".results.txt"));
                     }
                 }

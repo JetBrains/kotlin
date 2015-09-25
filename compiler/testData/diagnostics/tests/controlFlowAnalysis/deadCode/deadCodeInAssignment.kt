@@ -8,7 +8,7 @@ fun testVariableDeclaration() {
 }
 
 fun testPlusAssign() {
-    fun Int.plusAssign(<!UNUSED_PARAMETER!>i<!>: Int) {}
+    operator fun Int.plusAssign(<!UNUSED_PARAMETER!>i<!>: Int) {}
 
     var a = 1
     a <!UNREACHABLE_CODE!>+=<!> todo()

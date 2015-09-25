@@ -4,7 +4,7 @@ public fun test(/*0*/ c: C): kotlin.Unit
 
 public final class C {
     public constructor C()
-    public final fun compareTo(/*0*/ c: C): kotlin.Int?
+    public final operator fun compareTo(/*0*/ c: C): kotlin.Int?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

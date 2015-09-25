@@ -6,25 +6,25 @@ public abstract class AmbiguousHasNextIterator {
     public constructor AmbiguousHasNextIterator()
     public final val hasNext: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun hasNext(): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public abstract class GoodIterator {
     public constructor GoodIterator()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun hasNext(): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public abstract class ImproperIterator1 {
     public constructor ImproperIterator1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun hasNext(): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -33,16 +33,16 @@ public abstract class ImproperIterator2 {
     public constructor ImproperIterator2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Boolean
+    public abstract operator fun next(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public abstract class ImproperIterator3 {
     public constructor ImproperIterator3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun hasNext(): kotlin.Int
+    public abstract operator fun hasNext(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -51,7 +51,7 @@ public abstract class ImproperIterator4 {
     public final val hasNext: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -60,7 +60,7 @@ public abstract class ImproperIterator5 {
     public abstract val kotlin.String.hasNext: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun next(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -75,7 +75,7 @@ public abstract class NotRange2 {
     public constructor NotRange2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): kotlin.Unit
+    public abstract operator fun iterator(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -83,7 +83,7 @@ public abstract class NotRange3 {
     public constructor NotRange3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): ImproperIterator1
+    public abstract operator fun iterator(): ImproperIterator1
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -91,7 +91,7 @@ public abstract class NotRange4 {
     public constructor NotRange4()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): ImproperIterator2
+    public abstract operator fun iterator(): ImproperIterator2
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -99,7 +99,7 @@ public abstract class NotRange5 {
     public constructor NotRange5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): ImproperIterator3
+    public abstract operator fun iterator(): ImproperIterator3
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -107,7 +107,7 @@ public abstract class NotRange6 {
     public constructor NotRange6()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): AmbiguousHasNextIterator
+    public abstract operator fun iterator(): AmbiguousHasNextIterator
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -115,7 +115,7 @@ public abstract class NotRange7 {
     public constructor NotRange7()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): ImproperIterator3
+    public abstract operator fun iterator(): ImproperIterator3
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -123,7 +123,7 @@ public abstract class NotRange8 {
     public constructor NotRange8()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): ImproperIterator5
+    public abstract operator fun iterator(): ImproperIterator5
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -131,7 +131,7 @@ public abstract class Range0 {
     public constructor Range0()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): GoodIterator
+    public abstract operator fun iterator(): GoodIterator
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -139,6 +139,6 @@ public abstract class Range1 {
     public constructor Range1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun iterator(): kotlin.Iterator<kotlin.Int>
+    public abstract operator fun iterator(): kotlin.Iterator<kotlin.Int>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -16,7 +16,7 @@ fun <T: Any, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
 
 class A
 
-fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
+operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
 
   1.foo()
   true.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
@@ -24,11 +24,11 @@ fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
   <!UNUSED_EXPRESSION!>1<!>
 }
 
-fun A.plus(<!UNUSED_PARAMETER!>a<!> : Int) {
+operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Int) {
   <!UNUSED_EXPRESSION!>1<!>
 }
 
-fun <T> T.minus(<!UNUSED_PARAMETER!>t<!> : T) : Int = 1
+operator fun <T> T.minus(<!UNUSED_PARAMETER!>t<!> : T) : Int = 1
 
 fun test() {
   val <!UNUSED_VARIABLE!>y<!> = 1.abs

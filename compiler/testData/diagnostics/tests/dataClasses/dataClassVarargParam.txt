@@ -4,8 +4,8 @@ package
     public constructor My(/*0*/ x: kotlin.Int, /*1*/ vararg y: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val x: kotlin.Int
     public final val y: kotlin.Array<out kotlin.String>
-    public final /*synthesized*/ fun component1(): kotlin.Int
-    public final /*synthesized*/ fun component2(): kotlin.Array<out kotlin.String>
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Array<out kotlin.String>
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ vararg y: kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...): My
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -15,10 +15,10 @@ inline fun <T> Function0<T>.inlineExt() {
     {11}.<!RECURSION_IN_INLINE!>inlineExt<!>()
 }
 
-inline fun <T, V> Function1<T, V>.not() : Boolean {
+inline operator fun <T, V> Function1<T, V>.not() : Boolean {
     return <!RECURSION_IN_INLINE!>!<!>this
 }
 
-inline fun <T, V> Function1<T, V>.inc() : Function1<T, V> {
+inline operator fun <T, V> Function1<T, V>.inc() : Function1<T, V> {
     return this<!RECURSION_IN_INLINE!>++<!>
 }

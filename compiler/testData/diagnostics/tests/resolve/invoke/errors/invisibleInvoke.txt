@@ -7,5 +7,5 @@ public final class My {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    private final fun kotlin.Int.invoke(/*0*/ s: kotlin.String): kotlin.Unit
+    private final operator fun kotlin.Int.invoke(/*0*/ s: kotlin.String): kotlin.Unit
 }

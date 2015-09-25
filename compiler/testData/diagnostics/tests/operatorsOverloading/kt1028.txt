@@ -33,8 +33,8 @@ package kt1028 {
         public final fun call(/*0*/ value: T): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun minusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
-        public final fun plusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
+        public final operator fun minusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
+        public final operator fun plusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

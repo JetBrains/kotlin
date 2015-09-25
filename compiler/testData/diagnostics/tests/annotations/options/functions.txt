@@ -1,11 +1,27 @@
 package
 
 public fun bar(/*0*/ arg: () -> kotlin.Int): kotlin.Int
+@kotlin.inline() public fun fast(/*0*/ arg: () -> kotlin.Int): kotlin.Int
+@kotlin.inline() public fun fast2(/*0*/ x: kotlin.Int, /*1*/ arg: () -> kotlin.Int): kotlin.Int
 public fun foo(/*0*/ arg: kotlin.Int): kotlin.Unit
 @FunAnn() public fun gav(): kotlin.Int
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.annotation() public final class ExprAnn : kotlin.Annotation {
+    public constructor ExprAnn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.annotation() public final class FunAnn : kotlin.Annotation {
     public constructor FunAnn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() public final class SourceAnn : kotlin.Annotation {
+    public constructor SourceAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

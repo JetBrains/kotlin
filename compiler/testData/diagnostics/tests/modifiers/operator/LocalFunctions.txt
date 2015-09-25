@@ -1,0 +1,17 @@
+package
+
+public fun a(): kotlin.Unit
+public fun consumeInt(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun consumeString(/*0*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
+public fun Example.div(/*0*/ other: Example): kotlin.Int
+public operator fun Example.minus(/*0*/ other: Example): kotlin.Int
+public fun Example.plus(/*0*/ other: Example): kotlin.Int
+public operator fun Example.times(/*0*/ other: Example): kotlin.Int
+
+public final class Example {
+    public constructor Example()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

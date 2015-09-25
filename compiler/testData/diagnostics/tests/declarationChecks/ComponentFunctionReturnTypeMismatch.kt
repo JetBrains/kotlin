@@ -1,6 +1,6 @@
 class A {
-    fun component1() : Int = 1
-    fun component2() : Int = 2
+    operator fun component1() : Int = 1
+    operator fun component2() : Int = 2
 }
 
 fun a(aa : A) {

@@ -311,6 +311,69 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/override")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Override extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInOverride() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/override"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ImplementFunction.kt")
+        public void testImplementFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ImplementFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImplementVal.kt")
+        public void testImplementVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ImplementVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImplementVar.kt")
+        public void testImplementVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ImplementVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KeepAnnotationBefore.kt")
+        public void testKeepAnnotationBefore() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/KeepAnnotationBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KeepModifiersBefore.kt")
+        public void testKeepModifiersBefore() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/KeepModifiersBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OverrideFunction.kt")
+        public void testOverrideFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/OverrideFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OverrideVar.kt")
+        public void testOverrideVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/OverrideVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PublicValInConstructorParameter.kt")
+        public void testPublicValInConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/PublicValInConstructorParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInConstructorParameter.kt")
+        public void testValInConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

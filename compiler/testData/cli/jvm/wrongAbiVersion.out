@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: b
     bar()
     ^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
-public fun <K, V> kotlin.MutableMap<kotlin.Int, kotlin.Int>.set(key: kotlin.Int, value: kotlin.Int): kotlin.Int? defined in kotlin
+public operator fun <K, V> kotlin.MutableMap<kotlin.Int, kotlin.Int>.set(key: kotlin.Int, value: kotlin.Int): kotlin.Int? defined in kotlin
 (note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
     1.set(2, 3)
       ^

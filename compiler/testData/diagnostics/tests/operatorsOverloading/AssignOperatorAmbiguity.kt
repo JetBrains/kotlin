@@ -2,10 +2,10 @@
 package kt1820
 
 class MyInt(val i: Int) {
-    fun plus(m: MyInt) : MyInt = MyInt(m.i + i)
+    operator fun plus(m: MyInt) : MyInt = MyInt(m.i + i)
 }
 
-fun Any.plusAssign(<!UNUSED_PARAMETER!>a<!>: Any) {}
+operator fun Any.plusAssign(<!UNUSED_PARAMETER!>a<!>: Any) {}
 
 fun test(m: MyInt) {
     m += m

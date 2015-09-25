@@ -1,0 +1,16 @@
+package
+
+public operator fun A.component1(): kotlin.Int
+public operator fun A.componentN(): kotlin.Int
+public operator fun A.plus(/*0*/ o: A): A
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun A.add(/*0*/ o: A): A
+    public final operator fun A.get(/*0*/ o: A): A
+    public final operator fun A.invokee(): kotlin.Unit
+    public final operator fun A.minus(/*0*/ o: A): A
+}

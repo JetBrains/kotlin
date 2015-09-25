@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.lang.properties.psi.PropertiesFile
+import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -66,7 +68,8 @@ private enum class RenameType {
     KOTLIN_PROPERTY,
     KOTLIN_PACKAGE,
     MARKED_ELEMENT,
-    FILE
+    FILE,
+    BUNDLE_PROPERTY
 }
 
 public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
@@ -102,6 +105,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 RenameType.KOTLIN_PACKAGE -> renameKotlinPackageTest(renameObject, context)
                 RenameType.MARKED_ELEMENT -> renameMarkedElement(renameObject, context)
                 RenameType.FILE -> renameFile(renameObject, context)
+                RenameType.BUNDLE_PROPERTY -> renameBundleProperty(renameObject, context)
             }
 
             if (hintDirective != null) {
@@ -241,6 +245,20 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)
 
             runRenameProcessor(context, newName, psiFile, true, true)
+        }
+    }
+
+    private fun renameBundleProperty(renameParamsObject: JsonObject, context: TestContext) {
+        val file = renameParamsObject.getString("file")
+        val oldName = renameParamsObject.getString("oldName")
+        val newName = renameParamsObject.getString("newName")
+
+        doTestCommittingDocuments { rootDir, rootAfter ->
+            val mainFile = rootDir.findChild(file)!!
+            val psiFile = PsiManager.getInstance(context.project).findFile(mainFile) as PropertiesFile
+            val property = psiFile.findPropertyByKey(oldName) as Property
+
+            runRenameProcessor(context, newName, property, true, true)
         }
     }
 

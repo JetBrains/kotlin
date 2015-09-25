@@ -93,7 +93,7 @@ abstract class Tag(val name : String) : Element {
 }
 
 abstract class TagWithText(name : String) : Tag(name) {
-  fun String.plus() {
+  operator fun String.plus() {
     children.add(TextElement(this))
   }
 }
@@ -148,7 +148,7 @@ fun html(init : HTML.() -> Unit) : HTML {
 }
 
 // An excerpt from the Standard Library
-fun <K, V> MutableMap<K, V>.set(key : K, value : V) = this.put(key, value)
+operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
 fun println(message : Any?) {
   System.out.println(message)

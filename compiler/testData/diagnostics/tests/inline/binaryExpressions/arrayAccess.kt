@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
-inline fun <T, U> Function1<T, U>.get(index : Int) {
+operator inline fun <T, U> Function1<T, U>.get(index : Int) {
 
 }
 
@@ -8,11 +8,11 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
 }
 
 //noinline
-fun <T, U, V> Function2<T, U, V>.get(index : Int) {
+operator fun <T, U, V> Function2<T, U, V>.get(index : Int) {
 
 }
 
-fun <T, U, V, W> @Extension Function3<T, U, V, W>.get(index : Int) {
+operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.get(index : Int) {
 
 }
 

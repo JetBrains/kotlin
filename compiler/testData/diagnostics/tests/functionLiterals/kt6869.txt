@@ -3,4 +3,4 @@ package
 public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 public fun </*0*/ T : kotlin.Any, /*1*/ R> T.let(/*0*/ f: (T) -> R): R
-public fun </*0*/ T> kotlin.Iterable<T>.plus(/*0*/ element: T): kotlin.List<T>
+public operator fun </*0*/ T> kotlin.Iterable<T>.plus(/*0*/ element: T): kotlin.List<T>

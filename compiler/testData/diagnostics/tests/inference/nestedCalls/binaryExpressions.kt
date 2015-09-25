@@ -20,7 +20,7 @@ fun test(z: Z) {
 }
 
 //binary operation expression
-fun <T> Z.plus(a: A<T>): A<T> = a
+operator fun <T> Z.plus(a: A<T>): A<T> = a
 
 fun test1(z: Z) {
     id(z <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>+<!> <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
@@ -32,7 +32,7 @@ fun test1(z: Z) {
 }
 
 //comparison operation
-fun <T> Z.compareTo(a: A<T>): Int { use(a); return 1 }
+operator fun <T> Z.compareTo(a: A<T>): Int { use(a); return 1 }
 
 fun test2(z: Z) {
     val a: Boolean = id(z <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!><<!> <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())

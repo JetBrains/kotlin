@@ -98,7 +98,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println(" */")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
-            out.println("fun compareTo(other: ${otherKind.capitalized}): Int")
+            out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")
         }
         out.println()
     }
@@ -113,7 +113,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
             out.println("    /** $doc */")
-            out.println("    public fun $name(other: ${otherKind.capitalized}): $returnType")
+            out.println("    public operator fun $name(other: ${otherKind.capitalized}): $returnType")
         }
         out.println()
     }
@@ -122,7 +122,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
             out.println("     /** Creates a range from this value to the specified [other] value. */")
-            out.println("    public fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
+            out.println("    public operator fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
         }
         out.println()
 
@@ -133,7 +133,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) &&
                                  name in listOf("plus", "minus")) "Int" else kind.capitalized
             out.println("    /** $doc */")
-            out.println("    public fun $name(): $returnType")
+            out.println("    public operator fun $name(): $returnType")
         }
         out.println()
     }

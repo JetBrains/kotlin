@@ -5,8 +5,8 @@ package
     public final val name: kotlin.String
     public final val parent: ProductGroup?
     public final val short_name: kotlin.String
-    public final /*synthesized*/ fun component1(): kotlin.String
-    public final /*synthesized*/ fun component2(): ProductGroup?
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): ProductGroup?
     public final /*synthesized*/ fun copy(/*0*/ short_name: kotlin.String = ..., /*1*/ parent: ProductGroup? = ...): ProductGroup
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

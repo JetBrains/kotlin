@@ -31,20 +31,20 @@ public class Char private () : Comparable<Char> {
     public override fun compareTo(other: Char): Int
 
     /** Adds the other Int value to this value resulting a Char. */
-    public fun plus(other: Int): Char
+    public operator fun plus(other: Int): Char
 
     /** Subtracts the other Char value from this value resulting an Int. */
-    public fun minus(other: Char): Int
+    public operator fun minus(other: Char): Int
     /** Subtracts the other Int value from this value resulting a Char. */
-    public fun minus(other: Int): Char
+    public operator fun minus(other: Int): Char
 
     /** Increments this value. */
-    public fun inc(): Char
+    public operator fun inc(): Char
     /** Decrements this value. */
-    public fun dec(): Char
+    public operator fun dec(): Char
 
     /** Creates a range from this value to the specified [other] value. */
-    public fun rangeTo(other: Char): CharRange
+    public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
     public override fun toByte(): Byte

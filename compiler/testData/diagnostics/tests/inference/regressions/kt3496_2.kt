@@ -8,4 +8,4 @@ class F<T> {
         val z: ArrayList<T> = y["", w]
     }
 }
-fun <V, T> Any.get(s: String, w: ArrayList<V>): ArrayList<T> = throw Exception()
+operator fun <V, T> Any.get(s: String, w: ArrayList<V>): ArrayList<T> = throw Exception()

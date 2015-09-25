@@ -1,0 +1,59 @@
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass ClsAnn
+
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass ExprAnn
+
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass FunAnn
+
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$1 {
+    inner class LiteralsKt$foo$1
+    field $arg: int
+    method invoke(): java.lang.Object
+    @FunAnn method invoke(): int
+    method <init>(p0: int): void
+}
+
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$2 {
+    inner class LiteralsKt$foo$2
+    field $arg: int
+    method invoke(): java.lang.Object
+    method invoke(): int
+    method <init>(p0: int): void
+}
+
+@kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
+    inner class LiteralsKt$foo$3
+    field $kotlinClass: kotlin.reflect.KClass
+    method <clinit>(): void
+    method <init>(): void
+}
+
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$x$1 {
+    inner class LiteralsKt$foo$x$1
+    field $arg: int
+    method invoke(): java.lang.Object
+    @FunAnn method invoke(): int
+    method <init>(p0: int): void
+}
+
+@kotlin.jvm.internal.KotlinFileFacade LiteralsKt {
+    inner class LiteralsKt$foo$1
+    inner class LiteralsKt$foo$2
+    inner class LiteralsKt$foo$x$1
+    inner class LiteralsKt$foo$3
+    method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    @org.jetbrains.annotations.NotNull method foo(p0: int): My
+}
+
+@kotlin.jvm.internal.KotlinClass My {
+    field $kotlinClass: kotlin.reflect.KClass
+    method <clinit>(): void
+    method <init>(): void
+}
+
+@java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
+    field $kotlinPackage: kotlin.reflect.KPackage
+    field $moduleName: java.lang.String
+    method <clinit>(): void
+    @kotlin.jvm.internal.KotlinDelegatedMethod method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method foo(p0: int): My
+}

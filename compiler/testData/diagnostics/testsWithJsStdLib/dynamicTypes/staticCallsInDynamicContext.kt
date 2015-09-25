@@ -44,13 +44,13 @@ val Any.extVal: () -> Unit get() = null!!
 
 val Any.extExtVal: Any.() -> Unit get() = null!!
 
-fun Any.invoke() {}
+operator fun Any.invoke() {}
 
-fun Any.plus(a: Any) {}
+operator fun Any.plus(a: Any) {}
 
 class C {
 
-    fun String.invoke() {}
+    operator fun String.invoke() {}
     val foo: String.() -> Unit = null!!
 
     val s: String = ""
@@ -70,5 +70,5 @@ class C {
 }
 
 class WithInvoke {
-    fun invoke() {}
+    operator fun invoke() {}
 }

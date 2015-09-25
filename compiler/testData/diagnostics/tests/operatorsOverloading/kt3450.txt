@@ -2,14 +2,14 @@ package
 
 public val x: B
 public fun test(): kotlin.Unit
-public fun A.div(/*0*/ s: kotlin.String): A
-public fun kotlin.String.plus(): A
+public operator fun A.div(/*0*/ s: kotlin.String): A
+public operator fun kotlin.String.plus(): A
 public fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
 
 public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun get(/*0*/ vararg attrs: Pair<kotlin.String, kotlin.String> /*kotlin.Array<out Pair<kotlin.String, kotlin.String>>*/): A
+    public final operator fun get(/*0*/ vararg attrs: Pair<kotlin.String, kotlin.String> /*kotlin.Array<out Pair<kotlin.String, kotlin.String>>*/): A
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -17,10 +17,10 @@ public final class A {
 public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun get(/*0*/ s: Pair<kotlin.String, kotlin.String>): B
-    public final fun get(/*0*/ s: kotlin.String, /*1*/ q: kotlin.String): B
+    public final operator fun get(/*0*/ s: Pair<kotlin.String, kotlin.String>): B
+    public final operator fun get(/*0*/ s: kotlin.String, /*1*/ q: kotlin.String): B
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun invoke(/*0*/ q: B.() -> kotlin.Unit): B
+    public final operator fun invoke(/*0*/ q: B.() -> kotlin.Unit): B
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -28,8 +28,8 @@ public final class B {
     public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)
     public final val first: A
     public final val second: B
-    public final /*synthesized*/ fun component1(): A
-    public final /*synthesized*/ fun component2(): B
+    public final operator /*synthesized*/ fun component1(): A
+    public final operator /*synthesized*/ fun component2(): B
     public final /*synthesized*/ fun copy(/*0*/ first: A = ..., /*1*/ second: B = ...): Pair<A, B>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

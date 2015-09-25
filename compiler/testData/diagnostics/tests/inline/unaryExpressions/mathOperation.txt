@@ -1,12 +1,12 @@
 package
 
 @kotlin.inline() public fun </*0*/ T, /*1*/ V> inlineFunWithInvoke(/*0*/ s: (T) -> V, /*1*/ ext: T.(T) -> V): kotlin.Unit
-public fun </*0*/ T, /*1*/ V> ((T) -> V).dec(): (T) -> V
-public fun </*0*/ T, /*1*/ V> (T.(T) -> V).dec(): T.(T) -> V
-@kotlin.inline() public fun </*0*/ T, /*1*/ V> ((T) -> V).inc(): (T) -> V
-@kotlin.inline() public fun </*0*/ T, /*1*/ V> (T.(T) -> V).inc(): T.(T) -> V
+public operator fun </*0*/ T, /*1*/ V> ((T) -> V).dec(): (T) -> V
+public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).dec(): T.(T) -> V
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> ((T) -> V).inc(): (T) -> V
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).inc(): T.(T) -> V
 @kotlin.inline() public fun </*0*/ T, /*1*/ V> ((T) -> V).inlineFunWithInvoke(): kotlin.Unit
-public fun </*0*/ T, /*1*/ V> ((T) -> V).minus(): (T) -> V
-public fun </*0*/ T, /*1*/ V> (T.(T) -> V).minus(): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T, /*1*/ V> ((T) -> V).plus(): (T) -> V
-@kotlin.inline() public fun </*0*/ T, /*1*/ V> (T.(T) -> V).plus(): kotlin.Unit
+public operator fun </*0*/ T, /*1*/ V> ((T) -> V).minus(): (T) -> V
+public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).minus(): kotlin.Unit
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> ((T) -> V).plus(): (T) -> V
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).plus(): kotlin.Unit

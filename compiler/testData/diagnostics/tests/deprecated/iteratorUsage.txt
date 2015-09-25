@@ -6,15 +6,15 @@ public final class Iter {
     public constructor Iter()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.Deprecated(value = "text") public final fun iterator(): Iter.IterIterator
+    @kotlin.Deprecated(value = "text") public final operator fun iterator(): Iter.IterIterator
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final class IterIterator {
         public constructor IterIterator()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun hasNext(): kotlin.Boolean
+        public final operator fun hasNext(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun next(): kotlin.String
+        public final operator fun next(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
@@ -23,15 +23,15 @@ public final class Iter2 {
     public constructor Iter2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun iterator(): Iter2.Iter2Iterator
+    public final operator fun iterator(): Iter2.Iter2Iterator
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final class Iter2Iterator {
         public constructor Iter2Iterator()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @kotlin.Deprecated(value = "text") public final fun hasNext(): kotlin.Boolean
+        @kotlin.Deprecated(value = "text") public final operator fun hasNext(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.Deprecated(value = "text") public final fun next(): kotlin.String
+        @kotlin.Deprecated(value = "text") public final operator fun next(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

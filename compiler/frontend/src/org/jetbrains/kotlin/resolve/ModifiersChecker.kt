@@ -85,7 +85,6 @@ public object ModifierCheckerCore {
     )
 
     private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
-            PRIVATE_KEYWORD   to EnumSet.of(INTERFACE),
             INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(INTERFACE)
     )
@@ -116,6 +115,9 @@ public object ModifierCheckerCore {
         result += incompatibilityRegister(CONST_KEYWORD, ABSTRACT_KEYWORD)
         result += incompatibilityRegister(CONST_KEYWORD, OPEN_KEYWORD)
         result += incompatibilityRegister(CONST_KEYWORD, OVERRIDE_KEYWORD)
+
+        // private is incompatible with override
+        result += incompatibilityRegister(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
         return result
     }
 

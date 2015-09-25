@@ -1,7 +1,7 @@
 class MyClass
 
 // Correct at compile time but wrong at run-time
-fun MyClass?.inc(): MyClass? { return null }
+operator fun MyClass?.inc(): MyClass? { return null }
 
 public fun box() {
     var i : MyClass? 

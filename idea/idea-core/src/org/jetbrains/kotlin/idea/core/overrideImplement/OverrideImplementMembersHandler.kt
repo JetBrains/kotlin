@@ -23,18 +23,18 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.renderer.*
 import java.util.*
 
 public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
@@ -86,7 +86,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        generateMethods(editor, classOrObject, selectedElements)
+        generateMembers(editor, classOrObject, selectedElements)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) = invoke(project, editor, file, false)
@@ -94,50 +94,33 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     override fun startInWriteAction(): Boolean = false
 
     companion object {
-        private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
-            renderDefaultValues = false
-            modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
-            withDefinedIn = false
-            nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
-            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
-            unitReturnType = false
-            typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
-        }
-
-        public fun generateMethods(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
+        public fun generateMembers(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             runWriteAction {
+                if (selectedElements.isEmpty()) return@runWriteAction
+
                 val body = classOrObject.getOrCreateBody()
 
                 var afterAnchor = findInsertAfterAnchor(editor, body) ?: return@runWriteAction
 
                 var firstGenerated: PsiElement? = null
 
-                val elementsToCompact = ArrayList<JetElement>()
-                for (element in generateOverridingMembers(selectedElements, classOrObject)) {
-                    val added = body.addAfter(element, afterAnchor)
+                val project = classOrObject.project
+                val insertedMembers = ArrayList<JetCallableDeclaration>()
+                for (memberObject in selectedElements) {
+                    val member = memberObject.generateMember(project)
+                    val added = body.addAfter(member, afterAnchor) as JetCallableDeclaration
 
                     if (firstGenerated == null) {
                         firstGenerated = added
                     }
 
                     afterAnchor = added
-                    elementsToCompact.add(added as JetElement)
+                    insertedMembers.add(added)
                 }
 
-                ShortenReferences.Companion.DEFAULT.process(elementsToCompact)
+                ShortenReferences.DEFAULT.process(insertedMembers)
 
-                if (firstGenerated == null) return@runWriteAction
-
-                val project = classOrObject.project
-                val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(firstGenerated)
-
-                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-
-                val element = pointer.element
-                if (element != null) {
-                    moveCaretIntoGeneratedElement(editor, element)
-                }
-
+                moveCaretIntoGeneratedElement(editor, firstGenerated!!)
             }
         }
 
@@ -182,76 +165,5 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
             return whiteSpace
         }
-
-        private fun generateOverridingMembers(selectedElements: Collection<OverrideMemberChooserObject>,
-                                              classOrObject: JetClassOrObject): List<JetElement> {
-            val overridingMembers = ArrayList<JetElement>()
-            for (selectedElement in selectedElements) {
-                val descriptor = selectedElement.immediateSuper
-                when (descriptor) {
-                    is SimpleFunctionDescriptor -> overridingMembers.add(overrideFunction(classOrObject, descriptor, selectedElement.bodyType))
-                    is PropertyDescriptor -> overridingMembers.add(overrideProperty(classOrObject, descriptor, selectedElement.bodyType))
-                    else -> error("Unknown member to override: $descriptor")
-                }
-            }
-            return overridingMembers
-        }
-
-        private fun overrideProperty(classOrObject: JetClassOrObject, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetElement {
-            val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
-                                                descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
-            newDescriptor.addOverriddenDescriptor(descriptor)
-
-            val body = StringBuilder {
-                append("\nget()")
-                append(" = ")
-                append(generateUnsupportedOrSuperCall(descriptor, bodyType))
-                if (descriptor.isVar) {
-                    append("\nset(value) {}")
-                }
-            }
-            return JetPsiFactory(classOrObject.project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
-        }
-
-        private fun overrideFunction(classOrObject: JetClassOrObject, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetNamedFunction {
-            val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
-                                                descriptor.kind, /* copyOverrides = */ true)
-            newDescriptor.addOverriddenDescriptor(descriptor)
-
-            val returnType = descriptor.returnType
-            val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
-
-            val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
-
-            val body = "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
-
-            return JetPsiFactory(classOrObject.project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
-        }
-
-        private fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
-            if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
-                return "throw UnsupportedOperationException()"
-            }
-            else {
-                return StringBuilder {
-                    append("super")
-                    if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
-                        val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
-                        append("<").append(superClassFqName).append(">")
-                    }
-                    append(".").append(descriptor.escapedName())
-
-                    if (descriptor is FunctionDescriptor) {
-                        val paramTexts = descriptor.valueParameters.map {
-                            val renderedName = it.escapedName()
-                            if (it.varargElementType != null) "*$renderedName" else renderedName
-                        }
-                        paramTexts.joinTo(this, prefix="(", postfix=")")
-                    }
-                }.toString()
-            }
-        }
-
-        private fun DeclarationDescriptor.escapedName() = name.render()
     }
 }

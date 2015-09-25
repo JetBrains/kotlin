@@ -28,8 +28,8 @@ public final class MyWrapper : Wrapper<A> {
     public constructor Pair</*0*/ out T>(/*0*/ a: T, /*1*/ b: T)
     public final val a: T
     public final val b: T
-    public final /*synthesized*/ fun component1(): T
-    public final /*synthesized*/ fun component2(): T
+    public final operator /*synthesized*/ fun component1(): T
+    public final operator /*synthesized*/ fun component2(): T
     public final /*synthesized*/ fun copy(/*0*/ a: T = ..., /*1*/ b: T = ...): Pair<T>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

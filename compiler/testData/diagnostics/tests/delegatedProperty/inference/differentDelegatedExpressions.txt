@@ -5,8 +5,8 @@ package baz {
     public fun getMyConcreteProperty(): baz.MyProperty<kotlin.Any?, kotlin.String>
     public fun </*0*/ A, /*1*/ B> getMyProperty(): baz.MyProperty<A, B>
     public fun println(/*0*/ a: kotlin.Any?): kotlin.Any?
-    public fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.minus(/*0*/ i: kotlin.Int): baz.MyProperty<R, T>
-    public fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.plus(): baz.MyProperty<R, T>
+    public operator fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.minus(/*0*/ i: kotlin.Int): baz.MyProperty<R, T>
+    public operator fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.plus(): baz.MyProperty<R, T>
 
     public final class A {
         public constructor A(/*0*/ outer: baz.Outer)
