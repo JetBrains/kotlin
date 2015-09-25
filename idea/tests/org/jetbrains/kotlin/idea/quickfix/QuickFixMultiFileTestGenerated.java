@@ -1160,6 +1160,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
+        @TestMetadata("constVal.before.Main.kt")
+        public void testConstVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/constVal.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

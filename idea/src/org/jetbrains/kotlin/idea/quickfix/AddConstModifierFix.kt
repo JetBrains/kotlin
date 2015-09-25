@@ -82,7 +82,8 @@ public class AddConstModifierIntention : JetSelfTargetingIntention<JetProperty>(
     }
 
     override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
-        if (element.isVar || element.hasDelegate() || element.initializer == null || element.getter?.hasBody() == true) {
+        if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null || element.getter?.hasBody() == true ||
+            element.receiverTypeReference != null) {
             return false
         }
         val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false

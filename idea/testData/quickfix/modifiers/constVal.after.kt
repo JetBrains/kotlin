@@ -1,5 +1,7 @@
 // "Add 'const' modifier" "true"
-val i = 1
+package constVal
+
+const val i = 1
 
 annotation class Fancy(val param: Int)
 

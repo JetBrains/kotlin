@@ -4223,12 +4223,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("constVal.kt")
-        public void testConstVal() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/constVal.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("finalTrait.kt")
         public void testFinalTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/finalTrait.kt");
