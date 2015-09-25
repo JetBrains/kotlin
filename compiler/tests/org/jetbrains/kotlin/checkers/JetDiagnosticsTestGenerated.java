@@ -3342,6 +3342,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dataClassNoName.kt")
+            public void testDataClassNoName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassNoName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dataClassVarargParam.kt")
             public void testDataClassVarargParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassVarargParam.kt");
