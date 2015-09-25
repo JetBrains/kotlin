@@ -63,6 +63,7 @@ private object UNINITIALIZED_VALUE
 internal class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
+    // final field is required to enable safe publication of constructed instance
     private val lock = lock ?: this
 
     override val value: T
@@ -101,7 +102,7 @@ internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializ
         get() {
             if (_value === UNINITIALIZED_VALUE) {
                 _value = initializer!!()
-                initializer == null
+                initializer = null
             }
             return _value as T
         }

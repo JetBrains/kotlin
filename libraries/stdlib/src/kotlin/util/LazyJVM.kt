@@ -51,14 +51,19 @@ public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazy
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
+    // this final field is required to enable safe publication of constructed instance
     private val final: Any = UNINITIALIZED_VALUE
 
     override val value: T
         get() {
             if (_value === UNINITIALIZED_VALUE) {
-                val newValue = initializer!!()
-                if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
-                    initializer == null
+                val initializerValue = initializer
+                // if we see null in initializer here, it means that the value is already set by another thread
+                if (initializerValue != null) {
+                    val newValue = initializerValue()
+                    if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
+                        initializer = null
+                    }
                 }
             }
             return _value as T
