@@ -2,10 +2,12 @@ package test
 
 public fun unchangedFun() {}
 
-private fun removedFun(): Int = 10
+public fun removedFun(): Int = 10
 
-private val removedVal: String = "A"
+public val removedVal: String = "A"
 
-private val changedVal: Int = 20
+public val changedVal: Int = 20
 
-private fun changedFun(arg: Int) {}
+internal fun changedFun(arg: Int) {}
+
+private fun privateRemovedFun() {}
