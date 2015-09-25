@@ -288,6 +288,9 @@ public class AsmUtil {
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
+            if (((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().isConst()) {
+                return ACC_DEPRECATED;
+            }
             return KotlinBuiltIns.isDeprecated(descriptor)
                    ? ACC_DEPRECATED
                    : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());

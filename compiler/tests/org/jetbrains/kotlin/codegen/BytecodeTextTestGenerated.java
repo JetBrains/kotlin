@@ -95,6 +95,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("constValsGetterDeprecated.kt")
+    public void testConstValsGetterDeprecated() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constValsGetterDeprecated.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultDelegation.kt")
     public void testDefaultDelegation() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/defaultDelegation.kt");
