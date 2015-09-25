@@ -331,5 +331,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         BACKING_FIELD_USAGE_DEPRECATED.registerFactory(IntroduceBackingPropertyFix)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(OperatorModifierFixFactory)
+
+        UNDESCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
     }
 }
