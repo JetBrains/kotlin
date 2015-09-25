@@ -90,7 +90,7 @@ public final class JvmAbi {
                : SET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
     }
 
-    private static boolean startsWithIsPrefix(String name) {
+    public static boolean startsWithIsPrefix(String name) {
         if (!name.startsWith(IS_PREFIX)) return false;
         if (name.length() == IS_PREFIX.length()) return false;
         char c = name.charAt(IS_PREFIX.length());
