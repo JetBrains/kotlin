@@ -162,10 +162,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
 
         when {
-            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(false, null) }
+            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
-            line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { smartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
-            line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
+            line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
+            line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { doSmartStepInto() }
             line.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
         }
     }
