@@ -151,7 +151,8 @@
 
     <!-- Kotlin Console REPL-->
     <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"
-            text="Kotlin console...">
+            text="Kotlin console..."
+            icon="/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
