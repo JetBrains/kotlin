@@ -44,6 +44,12 @@ public enum class LazyThreadSafetyMode {
     SYNCHRONIZED,
 
     /**
+     * Initializer function can be called several times on concurrent access to uninitialized [Lazy] instance value,
+     * but only first returned value will be used as the value of [Lazy] instance.
+     */
+    PUBLICATION,
+
+    /**
      * No locks are used to synchronize the access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
      *
      * This mode should be used only when high performance is crucial and the [Lazy] instance is guaranteed never to be initialized from more than one thread.
