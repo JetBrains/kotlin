@@ -85,7 +85,6 @@ public object ModifierCheckerCore {
     )
 
     private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
-            PRIVATE_KEYWORD   to EnumSet.of(INTERFACE),
             INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(INTERFACE)
     )

@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 interface One {
   public open fun foo() : Int
-  <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>private<!> fun boo() = 10
+  private fun boo() = 10
 }
 interface Two {
   public open fun foo() : Int
