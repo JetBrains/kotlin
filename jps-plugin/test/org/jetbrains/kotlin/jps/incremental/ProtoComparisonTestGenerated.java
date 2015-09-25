@@ -113,12 +113,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
-        @TestMetadata("packageFacadeDifference")
-        public void testPackageFacadeDifference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/packageFacadeDifference/");
-            doTest(fileName);
-        }
-
     }
 
     @TestMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged")
@@ -159,9 +153,31 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
-        @TestMetadata("packageFacadeDifference")
-        public void testPackageFacadeDifference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/packageFacadeDifference/");
+    }
+
+    @TestMetadata("jps-plugin/testData/comparison/packageMembers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PackageMembers extends AbstractProtoComparisonTest {
+        public void testAllFilesPresentInPackageMembers() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("packageFacadeMultifileClassChanged")
+        public void testPackageFacadeMultifileClassChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadeMultifileClassChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFacadePrivateOnlyChanges")
+        public void testPackageFacadePrivateOnlyChanges() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFacadePublicChanges")
+        public void testPackageFacadePublicChanges() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges/");
             doTest(fileName);
         }
 
