@@ -88,6 +88,15 @@ public final class ClassId {
         return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
     }
 
+    /**
+     * @return a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
+     */
+    @NotNull
+    public String asString() {
+        if (packageFqName.isRoot()) return relativeClassName.asString();
+        return packageFqName.asString().replace('.', '/') + "/" + relativeClassName.asString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,7 +119,6 @@ public final class ClassId {
 
     @Override
     public String toString() {
-        if (packageFqName.isRoot()) return "/" + relativeClassName;
-        return packageFqName.toString().replace('.', '/') + "/" + relativeClassName;
+        return packageFqName.isRoot() ? "/" + asString() : asString();
     }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.*
 
 public class BuiltInsSerializerExtension : SerializerExtension() {
-    private val stringTable = StringTableImpl(this)
+    private val stringTable = StringTableImpl()
     private val annotationSerializer = AnnotationSerializer(stringTable)
 
     override fun getStringTable(): StringTable = stringTable

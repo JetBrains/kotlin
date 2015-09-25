@@ -61,11 +61,6 @@ public class StringTableImpl implements StringTable {
 
     private final Interner<String> strings = new Interner<String>();
     private final Interner<FqNameProto> qualifiedNames = new Interner<FqNameProto>();
-    private final SerializerExtension extension;
-
-    public StringTableImpl(@NotNull SerializerExtension extension) {
-        this.extension = extension;
-    }
 
     public int getSimpleNameIndex(@NotNull Name name) {
         return getStringIndex(name.asString());
@@ -86,25 +81,21 @@ public class StringTableImpl implements StringTable {
         builder.setKind(QualifiedName.Kind.CLASS);
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        String shortName;
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            shortName = descriptor.getName().asString();
             FqName packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
             if (!packageFqName.isRoot()) {
                 builder.setParentQualifiedName(getPackageFqNameIndex(packageFqName));
             }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
-            shortName = descriptor.getName().asString();
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
         }
         else {
-            builder.setKind(QualifiedName.Kind.LOCAL);
-            shortName = extension.getLocalClassName(descriptor);
+            throw new IllegalStateException("Cannot get FQ name of local class: " + descriptor);
         }
 
-        builder.setShortName(getStringIndex(shortName));
+        builder.setShortName(getStringIndex(descriptor.getName().asString()));
 
         return qualifiedNames.intern(new FqNameProto(builder));
     }

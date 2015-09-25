@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities;
-import org.jetbrains.kotlin.serialization.*;
+import org.jetbrains.kotlin.serialization.AnnotationSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.SerializerExtension;
+import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -34,18 +37,17 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.shortNameByAsmType;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 
 public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
-    private final JetTypeMapper typeMapper;
-    private final StringTable stringTable = new JvmStringTable(this);
-    private final AnnotationSerializer annotationSerializer = new AnnotationSerializer(stringTable);
+    private final StringTable stringTable;
+    private final AnnotationSerializer annotationSerializer;
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
         this.bindings = bindings;
-        this.typeMapper = typeMapper;
+        this.stringTable = new JvmStringTable(typeMapper);
+        this.annotationSerializer = new AnnotationSerializer(stringTable);
     }
 
     @NotNull
@@ -89,12 +91,6 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (type.getCapabilities() instanceof RawTypeCapabilities) {
             proto.setExtension(JvmProtoBuf.isRaw, true);
         }
-    }
-
-    @Override
-    @NotNull
-    public String getLocalClassName(@NotNull ClassDescriptor descriptor) {
-        return shortNameByAsmType(typeMapper.mapClass(descriptor));
     }
 
     private void saveSignature(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {

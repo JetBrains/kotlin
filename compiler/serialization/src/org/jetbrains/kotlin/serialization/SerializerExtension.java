@@ -46,9 +46,4 @@ public abstract class SerializerExtension {
 
     public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {
     }
-
-    @NotNull
-    public String getLocalClassName(@NotNull ClassDescriptor descriptor) {
-        throw new UnsupportedOperationException("Local classes are unsupported: " + descriptor);
-    }
 }

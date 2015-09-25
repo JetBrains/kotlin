@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.types.JetType
 
 public class KotlinJavascriptSerializerExtension : SerializerExtension() {
-    private val stringTable = StringTableImpl(this)
+    private val stringTable = StringTableImpl()
     private val annotationSerializer = AnnotationSerializer(stringTable)
 
     override fun getStringTable() = stringTable
