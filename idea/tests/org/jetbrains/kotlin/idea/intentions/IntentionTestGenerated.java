@@ -2264,6 +2264,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/protected"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("caretAfter.kt")
+            public void testCaretAfter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/caretAfter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifier.kt")
             public void testNoModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/noModifier.kt");
@@ -2321,15 +2327,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("caretAfter.kt")
-            public void testCaretAfter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/caretAfter.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("forOverride.kt")
             public void testForOverride() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/forOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forOverride2.kt")
+            public void testForOverride2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/forOverride2.kt");
                 doTest(fileName);
             }
 
@@ -4108,18 +4114,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("overridePublicFun.kt")
         public void testOverridePublicFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/overridePublicFun.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("protectedFunNoSelection.kt")
-        public void testProtectedFunNoSelection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/protectedFunNoSelection.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("publicFunNoSelection.kt")
-        public void testPublicFunNoSelection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/publicFunNoSelection.kt");
             doTest(fileName);
         }
 
@@ -6109,21 +6103,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("notOnDefaultVisibility.kt")
-        public void testNotOnDefaultVisibility() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnDefaultVisibility.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("notOnParameterOfFunctionType.kt")
         public void testNotOnParameterOfFunctionType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnParameterOfFunctionType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("notOnPublic.kt")
-        public void testNotOnPublic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnPublic.kt");
             doTest(fileName);
         }
 

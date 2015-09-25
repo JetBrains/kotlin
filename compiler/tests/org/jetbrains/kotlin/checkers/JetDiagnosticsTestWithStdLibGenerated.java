@@ -91,12 +91,6 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
-        @TestMetadata("decapitalized.kt")
-        public void testDecapitalized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/decapitalized.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("defaultValueMustBeConstant.kt")
         public void testDefaultValueMustBeConstant() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/defaultValueMustBeConstant.kt");
@@ -134,6 +128,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmName.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("multifileClassPart.kt")
+            public void testMultifileClassPart() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPart.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassPartWithJavaAnnotation.kt")
+            public void testMultifileClassPartWithJavaAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPartWithJavaAnnotation.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
@@ -153,6 +159,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("useOfNonConstVal.kt")
+            public void testUseOfNonConstVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/useOfNonConstVal.kt");
                 doTest(fileName);
             }
 
@@ -763,6 +775,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("ea66827_dataClassWrongToString.kt")
+        public void testEa66827_dataClassWrongToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/ea66827_dataClassWrongToString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ea70880_illegalJvmName.kt")
         public void testEa70880_illegalJvmName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/ea70880_illegalJvmName.kt");
@@ -820,6 +838,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("kt4711.kt")
         public void testKt4711() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/kt4711.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Smartcasts extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInSmartcasts() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/smartcasts"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("letUsesOwnReceiver.kt")
+        public void testLetUsesOwnReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letUsesOwnReceiver.kt");
             doTest(fileName);
         }
     }

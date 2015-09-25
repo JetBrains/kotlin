@@ -7,6 +7,6 @@ annotation class Ann(
         val b4: Short
 )
 
-Ann(1, 1.toShort(), 32768.toShort(), 32768) class MyClass
+@Ann(1, 1.toShort(), 32768.toShort(), 32768) class MyClass
 
-// EXPECTED: Ann(b1 = 1.toShort(), b2 = 1.toShort(), b3 = -32768.toShort(), b4 = 32768)
+// EXPECTED: @Ann(b1 = 1.toShort(), b2 = 1.toShort(), b3 = -32768.toShort(), b4 = 32768)

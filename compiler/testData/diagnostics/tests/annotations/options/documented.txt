@@ -1,27 +1,27 @@
 package
 
-kotlin.annotation.MustBeDocumented() kotlin.annotation.annotation() public final class DocAnn : kotlin.Annotation {
+@kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class DocAnn : kotlin.Annotation {
     public constructor DocAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-DocAnn() public final class My {
+@DocAnn() public final class My {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.annotation() public final class NotDocAnn : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class NotDocAnn : kotlin.Annotation {
     public constructor NotDocAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-NotDocAnn() public final class Your {
+@NotDocAnn() public final class Your {
     public constructor Your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

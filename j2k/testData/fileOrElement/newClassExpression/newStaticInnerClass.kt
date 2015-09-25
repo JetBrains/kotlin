@@ -1,10 +1,10 @@
 package demo
 
-class Foo {
-    class Bar
+internal class Foo {
+    internal class Bar
 }
 
-class User {
+internal class User {
     fun main() {
         val boo = Foo.Bar()
     }

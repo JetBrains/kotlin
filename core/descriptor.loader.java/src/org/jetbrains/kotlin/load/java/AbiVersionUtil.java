@@ -16,11 +16,16 @@
 
 package org.jetbrains.kotlin.load.java;
 
-public final class AbiVersionUtil {
-    public static final int INVALID_VERSION = -1;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
-    public static boolean isAbiVersionCompatible(int abiVersion) {
-        return abiVersion == JvmAbi.VERSION;
+public final class AbiVersionUtil {
+    public static final BinaryVersion INVALID_VERSION = BinaryVersion.create(new int[0]);
+
+    public static boolean isAbiVersionCompatible(@NotNull BinaryVersion actual) {
+        // TODO: compare versions according to Semantic Versioning
+        return actual.getMajor() == JvmAbi.VERSION.getMajor() &&
+               actual.getMinor() == JvmAbi.VERSION.getMinor();
     }
 
     private AbiVersionUtil() {

@@ -2,4 +2,4 @@ package test
 
 annotation class Anno
 
-Anno class X
+@Anno class X

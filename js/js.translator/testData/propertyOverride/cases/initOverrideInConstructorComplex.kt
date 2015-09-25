@@ -2,13 +2,13 @@
 
 package foo
 
-trait Holder {
+interface Holder {
     val element: String
 }
 
 open class BasicHolder : Holder {
     override val element: String
-        get() = $element + $element
+        get() = field + field
 
     init {
         element = "1"

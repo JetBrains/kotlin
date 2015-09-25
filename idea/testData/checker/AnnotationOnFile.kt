@@ -16,8 +16,8 @@
 
 package boo
 
-val BAZ = "baz"
-val N = 0
+const val BAZ = "baz"
+const val N = 0
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)

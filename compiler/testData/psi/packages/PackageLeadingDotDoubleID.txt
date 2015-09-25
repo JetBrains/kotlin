@@ -10,6 +10,8 @@ JetFile: PackageLeadingDotDoubleID.kt
     <empty list>
   PsiWhiteSpace(' ')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE

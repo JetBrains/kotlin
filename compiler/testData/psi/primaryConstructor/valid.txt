@@ -83,7 +83,13 @@ JetFile: valid.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
-        PsiElement(private)('@private')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('private')
       PsiWhiteSpace(' ')
       PsiElement(constructor)('constructor')
       VALUE_PARAMETER_LIST
@@ -106,6 +112,7 @@ JetFile: valid.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -143,6 +150,7 @@ JetFile: valid.kt
         PsiElement(private)('private')
         PsiWhiteSpace(' ')
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -182,6 +190,36 @@ JetFile: valid.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Ann')
+        PsiWhiteSpace(' ')
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      PsiElement(constructor)('constructor')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A6')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(private)('private')
       PsiWhiteSpace(' ')

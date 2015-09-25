@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
@@ -61,7 +61,6 @@ import java.util.Set;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -220,6 +219,11 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
+        if (DescriptorUtilPackage.isAnnotatedAsHidden(functionDescriptor)
+            || functionDescriptor instanceof PropertyAccessorDescriptor
+               && DescriptorUtilPackage.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+            flags |= ACC_SYNTHETIC;
+        }
         return flags;
     }
 
@@ -306,11 +310,11 @@ public class AsmUtil {
     @Nullable
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
+        Visibility memberVisibility = memberDescriptor.getVisibility();
         if (isInterface(containingDeclaration)) {
-            return ACC_PUBLIC;
+            return memberVisibility == Visibilities.PRIVATE ? NO_FLAG_PACKAGE_PRIVATE : ACC_PUBLIC;
         }
 
-        Visibility memberVisibility = memberDescriptor.getVisibility();
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
         }
@@ -360,6 +364,8 @@ public class AsmUtil {
                 return ACC_PROTECTED;
             }
         }
+
+        if (memberDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) memberDescriptor).isConst()) return null;
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;
@@ -823,7 +829,7 @@ public class AsmUtil {
 
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull KotlinSyntheticClass.Kind kind) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
-        av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        JvmCodegenUtil.writeAbiVersion(av);
         av.visitEnum(
                 JvmAnnotationNames.KIND_FIELD_NAME,
                 Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),

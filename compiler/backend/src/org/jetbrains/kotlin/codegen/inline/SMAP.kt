@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import java.util
 import java.util.*
 
 //TODO join parameter
@@ -352,7 +351,7 @@ data open public class RangeMapping(val source: Int, val dest: Int, var range: I
         return source + (destLine - dest)
     }
 
-    object Comparator : util.Comparator<RangeMapping> {
+    object Comparator : java.util.Comparator<RangeMapping> {
         override fun compare(o1: RangeMapping, o2: RangeMapping): Int {
             if (o1 == o2) return 0
 

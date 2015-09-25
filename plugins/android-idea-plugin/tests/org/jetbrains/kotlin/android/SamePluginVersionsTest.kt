@@ -40,7 +40,7 @@ public class SamePluginVersionsTest {
         return matcher.group(1)
     }
 
-    Test
+    @Test
     public fun sameIdeaVersionsTest() {
         val mainPluginXmlFile = File("idea/src/META-INF/plugin.xml")
         val androidExtensionsPluginXmlFile = File("plugins/android-idea-plugin/src/META-INF/plugin.xml")

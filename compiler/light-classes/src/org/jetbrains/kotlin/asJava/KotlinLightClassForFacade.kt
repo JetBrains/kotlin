@@ -42,7 +42,8 @@ public class KotlinLightClassForFacade private constructor(
         private val facadeClassFqName: FqName,
         private val searchScope: GlobalSearchScope,
         private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
-        files: Collection<JetFile>
+        files: Collection<JetFile>,
+        private val deprecated: Boolean
 ) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
 
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
@@ -125,9 +126,9 @@ public class KotlinLightClassForFacade private constructor(
 
     override fun getModifierList() = modifierList
 
-    override fun hasModifierProperty(NonNls name: String) = modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
 
-    override fun isDeprecated() = false
+    override fun isDeprecated() = deprecated
 
     override fun isInterface() = false
 
@@ -176,15 +177,17 @@ public class KotlinLightClassForFacade private constructor(
 
     override fun getInitializers() = PsiClassInitializer.EMPTY_ARRAY
 
-    override fun findInnerClassByName(NonNls name: String, checkBases: Boolean) = null
+    override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean) = null
 
     override fun getName() = facadeClassFqName.shortName().asString()
+
+    override fun setName(name: String): PsiElement? = this
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
     override fun isValid() = files.all { it.isValid() }
 
-    override fun copy() = KotlinLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files)
+    override fun copy() = KotlinLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files, deprecated)
 
     override fun getDelegate(): PsiClass {
         val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.getValue().javaFileStub)
@@ -249,7 +252,7 @@ public class KotlinLightClassForFacade private constructor(
 
             val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
             val lightClassDataCache = PackageFacadeStubCache.getInstance(manager.project).get(packageFqName, searchScope)
-            return KotlinLightClassForFacade(manager, packageClassFqName, searchScope, lightClassDataCache, files)
+            return KotlinLightClassForFacade(manager, packageClassFqName, searchScope, lightClassDataCache, files, true)
         }
 
         public fun createForFacade(
@@ -265,7 +268,7 @@ public class KotlinLightClassForFacade private constructor(
             assert(files.isNotEmpty()) { "No files for facade $facadeClassFqName" }
 
             val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
-            return KotlinLightClassForFacade(manager, facadeClassFqName, searchScope, lightClassDataCache, files)
+            return KotlinLightClassForFacade(manager, facadeClassFqName, searchScope, lightClassDataCache, files, false)
         }
     }
 }

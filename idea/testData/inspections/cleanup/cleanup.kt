@@ -2,9 +2,6 @@ import pack.oldFun1
 import pack.oldFun2 // should not be removed for non-deprecated overload used
 import pack.oldFun3
 
-trait Foo {
-}
-
 val f = { (a: Int, b: Int) -> a + b }
 
 class A private()
@@ -41,23 +38,4 @@ fun unnecessaryCast(x: String) = x as String
 
 fun unnecessaryElvis(x: String) = x ?: ""
 
-JavaAnn(1, "abc") class MyClass
-
-annotation class Ann()
-
-Ann class A1
-
-Ann() class A2
-
-kotlin.data class A3
-
-@inline @private fun <T> baz() {
-    @suppress("UNCHECKED_CAST")
-    (1 as T)
-
-    @data class Local
-}
-
-deprecated("123", ReplaceWith("34")) class Obsolete
-
-native fun nativeFun(): Int
+@JavaAnn(1, "abc") class MyClass

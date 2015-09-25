@@ -138,7 +138,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         TestCase.assertNull("Should not find class in empty scope", manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE))
     }
 
-    private fun configureManager(Language("JAVA") text: String, className: String): KotlinCliJavaFileManagerImpl {
+    private fun configureManager(@Language("JAVA") text: String, className: String): KotlinCliJavaFileManagerImpl {
         val root = PsiTestUtil.createTestProjectStructure(myProject, myModule, PlatformTestCase.myFilesToDelete)
         val pkg = root.createChildDirectory(this, "foo")
         val dir = myPsiManager.findDirectory(pkg)

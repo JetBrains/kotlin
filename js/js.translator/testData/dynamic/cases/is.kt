@@ -2,7 +2,7 @@ package foo
 
 class A
 
-native
+@native
 class B
 
 fun box(): String {

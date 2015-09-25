@@ -12,7 +12,7 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
 }
 
 internal fun capturedInLambda(state: State, a: Int, b: Int): Int {
-    @inline fun State.inc() {
+    inline fun State.inc() {
         count++
     }
 
@@ -26,7 +26,7 @@ internal fun capturedInLambda(state: State, a: Int, b: Int): Int {
 
 internal fun declaredInLambda(state: State, a: Int, b: Int): Int {
     repeatAction(a)  {
-        @inline fun State.inc() {
+        inline fun State.inc() {
             count++
         }
 

@@ -44,7 +44,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
         val substituted = substitutedDescriptors!!.getOrPut(descriptor, { descriptor.substitute(substitutor) })
 
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return substituted as D?
     }
 

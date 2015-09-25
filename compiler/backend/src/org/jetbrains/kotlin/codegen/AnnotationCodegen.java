@@ -188,7 +188,7 @@ public abstract class AnnotationCodegen {
             new EnumMap<KotlinTarget, ElementType>(KotlinTarget.class);
 
     static {
-        annotationTargetMap.put(KotlinTarget.CLASSIFIER, ElementType.TYPE);
+        annotationTargetMap.put(KotlinTarget.CLASS, ElementType.TYPE);
         annotationTargetMap.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
         annotationTargetMap.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
         annotationTargetMap.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);

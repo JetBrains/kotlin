@@ -1,14 +1,14 @@
 package demo
 
-class Container {
+internal class Container {
     var myBoolean = true
 }
 
-object One {
+internal object One {
     var myContainer = Container()
 }
 
-class Test {
+internal class Test {
     fun test() {
         if (One.myContainer.myBoolean)
             println("Ok")

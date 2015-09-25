@@ -1,9 +1,8 @@
 //NO_CHECK_LAMBDA_INLINING
 import builders.*
-import kotlin.InlineOption.*
 
 inline fun testAllInline(f: () -> String) : String {
-    val args = array("1", "2", "3")
+    val args = arrayOf("1", "2", "3")
     val result =
             html {
                 val htmlVal = 0
@@ -42,8 +41,8 @@ inline fun testAllInline(f: () -> String) : String {
     return result.toString()!!
 }
 
-inline fun testHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
-    val args = array("1", "2", "3")
+inline fun testHtmlNoInline(crossinline f: () -> String) : String {
+    val args = arrayOf("1", "2", "3")
     val result =
             htmlNoInline() {
                 val htmlVal = 0
@@ -82,8 +81,8 @@ inline fun testHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : 
     return result.toString()!!
 }
 
-inline fun testBodyNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
-    val args = array("1", "2", "3")
+inline fun testBodyNoInline(crossinline f: () -> String) : String {
+    val args = arrayOf("1", "2", "3")
     val result =
             html {
                 val htmlVal = 0
@@ -122,8 +121,8 @@ inline fun testBodyNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : 
     return result.toString()!!
 }
 
-inline fun testBodyHtmlNoInline(inlineOptions(ONLY_LOCAL_RETURN) f: () -> String) : String {
-    val args = array("1", "2", "3")
+inline fun testBodyHtmlNoInline(crossinline f: () -> String) : String {
+    val args = arrayOf("1", "2", "3")
     val result =
             htmlNoInline {
                 val htmlVal = 0

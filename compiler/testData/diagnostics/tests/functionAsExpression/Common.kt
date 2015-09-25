@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class ann(val name: String)
-val ok = "OK"
+const val ok = "OK"
 
 class A
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl.create
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
@@ -170,7 +171,8 @@ class FunctionDescriptorResolver(
                 valueParameterDescriptors,
                 returnType,
                 modality,
-                visibility
+                visibility,
+                function.hasModifier(JetTokens.OPERATOR_KEYWORD)
         )
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
@@ -310,7 +312,7 @@ class FunctionDescriptorResolver(
             val type: JetType
             if (typeReference != null) {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
-                if (expectedType != null) {
+                if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
                     if (!JetTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
                         trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }

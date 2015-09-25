@@ -9,7 +9,7 @@ public open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final val FOO: kotlin.String = "test"
+    public const final val FOO: kotlin.String = "test"
 }
 
 package foo {

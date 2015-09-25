@@ -1,7 +1,7 @@
 package foo
 
 fun testSize(expectedSize: Int, vararg i: Int): Boolean {
-    return (i.size == expectedSize)
+    return (i.size() == expectedSize)
 }
 
 fun testSum(expectedSum: Int, vararg i: Int): Boolean {
@@ -17,7 +17,7 @@ fun testSpreadOperator(vararg args: Int): Boolean {
     var sum = 0;
     for (a in args) sum += a
 
-    return testSize(args.size, *args) && testSum(sum, *args)
+    return testSize(args.size(), *args) && testSum(sum, *args)
 }
 
 class Bar(val size: Int, val sum: Int) {
@@ -74,34 +74,34 @@ fun box(): String {
     if (!spreadInObjectMethodCall(2, 3, 1, 2))
         return "failed when call method of object using spread operator"
 
-    if (!testVarargWithFunLit(1, 2, 3) { args -> args.size == 3 })
+    if (!testVarargWithFunLit(1, 2, 3) { args -> args.size() == 3 })
         return "failed when call function with vararg and fun literal"
 
-    val a = array(1, 2, 3)
-    val b = array(4, 5)
+    val a = arrayOf(1, 2, 3)
+    val b = arrayOf(4, 5)
 
-    assertEquals(5, array(*a, *b).size)
-    assertEquals(8, array(10, *a, 20,  *b, 30).size)
+    assertEquals(5, arrayOf(*a, *b).size())
+    assertEquals(8, arrayOf(10, *a, 20,  *b, 30).size())
 
-    assertEquals(5, idVarArgs(*a, *b).size)
-    assertEquals(8, idVarArgs(10, *a, 20,  *b, 30).size)
+    assertEquals(5, idVarArgs(*a, *b).size())
+    assertEquals(8, idVarArgs(10, *a, 20,  *b, 30).size())
 
-    assertEquals(9, array(1, *a, *a, 1, 2).size)
-    assertEquals(9, idVarArgs(1, *a, *a, 1, 2).size)
+    assertEquals(9, arrayOf(1, *a, *a, 1, 2).size())
+    assertEquals(9, idVarArgs(1, *a, *a, 1, 2).size())
 
-    assertEquals(9, array(1, *a, *array(1, 2, 3), 1, 2).size)
-    assertEquals(9, idVarArgs(1, *a, *array(1, 2, 3), 1, 2).size)
+    assertEquals(9, arrayOf(1, *a, *arrayOf(1, 2, 3), 1, 2).size())
+    assertEquals(9, idVarArgs(1, *a, *arrayOf(1, 2, 3), 1, 2).size())
 
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7), 8, 9) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5), *intArray(6, 7, 8, 9)) { 2*it })
-    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4), 5, 6, *intArray(7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7), 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5), *intArrayOf(6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4), 5, 6, *intArrayOf(7, 8, 9)) { 2*it })
 
-    assertEquals(2, idArrayVarArg(array(1), *array(array(2, 3, 4))).size())
-    assertEquals(3, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6))).size())
-    assertEquals(6, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6)), array(7), *array(array(8, 9), array(10, 11))).size())
+    assertEquals(2, idArrayVarArg(arrayOf(1), *arrayOf(arrayOf(2, 3, 4))).size())
+    assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size())
+    assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size())
 
     return "OK"
 }

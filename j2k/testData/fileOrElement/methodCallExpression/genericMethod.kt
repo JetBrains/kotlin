@@ -1,11 +1,11 @@
 package demo
 
-class Map {
+internal class Map {
     fun <K, V> put(k: K?, v: V) {
     }
 }
 
-class U {
+internal class U {
     fun test() {
         val m = Map()
         m.put<String, Int>(null, 10)

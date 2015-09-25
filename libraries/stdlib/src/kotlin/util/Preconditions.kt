@@ -14,7 +14,7 @@ public fun require(value: Boolean): Unit = require(value) { "Failed requirement"
  *
  * @sample test.collections.PreconditionsTest.failingRequireWithMessage
  */
-@deprecated("Use require with lazy message instead.", ReplaceWith("require(value) { message }"))
+@Deprecated("Use require with lazy message instead.", ReplaceWith("require(value) { message }"))
 public fun require(value: Boolean, message: Any = "Failed requirement"): Unit {
     if (!value) {
         throw IllegalArgumentException(message.toString())
@@ -44,7 +44,7 @@ public fun <T:Any> requireNotNull(value: T?): T = requireNotNull(value) { "Requi
  *
  * @sample test.collections.PreconditionsTest.requireNotNull
  */
-@deprecated("Use requireNotNull with lazy message instead.", ReplaceWith("requireNotNull(value) { message }"))
+@Deprecated("Use requireNotNull with lazy message instead.", ReplaceWith("requireNotNull(value) { message }"))
 public fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was null"): T {
     if (value == null) {
         throw IllegalArgumentException(message.toString())
@@ -78,7 +78,7 @@ public fun check(value: Boolean): Unit = check(value) { "Check failed" }
  *
  * @sample test.collections.PreconditionsTest.failingCheckWithMessage
  */
-@deprecated("Use check with lazy message instead.", ReplaceWith("check(value) { message }"))
+@Deprecated("Use check with lazy message instead.", ReplaceWith("check(value) { message }"))
 public fun check(value: Boolean, message: Any = "Check failed"): Unit {
     if (!value) {
         throw IllegalStateException(message.toString())
@@ -109,7 +109,7 @@ public fun <T:Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required 
  *
  * @sample test.collections.PreconditionsTest.checkNotNull
  */
-@deprecated("Use checkNotNull with lazy message instead.", ReplaceWith("checkNotNull(value) { message }"))
+@Deprecated("Use checkNotNull with lazy message instead.", ReplaceWith("checkNotNull(value) { message }"))
 public fun <T:Any> checkNotNull(value: T?, message: Any = "Required value was null"): T {
     if (value == null) {
         throw IllegalStateException(message.toString())

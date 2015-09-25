@@ -16,24 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import com.intellij.psi.PsiElement
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.ClassNameCollectionClassBuilderFactory
-import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.jvm
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.join
-import java.util.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 
 class BuilderFactoryForDuplicateClassNameDiagnostics(

@@ -2,7 +2,7 @@ package test
 
 public interface PrimitiveValueInParam {
 
-    test.PrimitiveValueInParam.Ann(bool = true, d = 1.0.toDouble(), f = 1.0.toFloat(), i = 1, l = 1.toLong(), str = "str") public open class A {
+    @test.PrimitiveValueInParam.Ann(bool = true, d = 1.0.toDouble(), f = 1.0.toFloat(), i = 1, l = 1.toLong(), str = "str") public open class A {
         public constructor A()
     }
 

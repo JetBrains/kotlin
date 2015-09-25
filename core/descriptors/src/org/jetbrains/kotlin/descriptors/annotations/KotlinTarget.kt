@@ -24,7 +24,7 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    CLASSIFIER("classifier"),                  // includes CLASS, OBJECT, INTERFACE, *_CLASS but not ENUM_ENTRY
+    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
     PROPERTY("property"),                      // includes *_PROPERTY, PROPERTY_PARAMETER, ENUM_ENTRY
@@ -32,19 +32,19 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     LOCAL_VARIABLE("local variable"),
     VALUE_PARAMETER("value parameter"),
     CONSTRUCTOR("constructor"),
-    FUNCTION("function"),                      // includes *_FUNCTION
+    FUNCTION("function"),                      // includes *_FUNCTION and FUNCTION_LITERAL
     PROPERTY_GETTER("getter"),
     PROPERTY_SETTER("setter"),
     TYPE("type usage", false),
-    EXPRESSION("expression", false),
+    EXPRESSION("expression", false),           // includes FUNCTION_LITERAL, OBJECT_LITERAL
     FILE("file", false),
 
     TYPE_PROJECTION("type projection", false),
     STAR_PROJECTION("star projection", false),
     PROPERTY_PARAMETER("property constructor parameter", false),
 
-    CLASS("class", false),
-    OBJECT("object", false),
+    CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
+    OBJECT("object", false),     // does not include OBJECT_LITERAL
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
     ENUM_ENTRY("enum entry", false),
@@ -59,7 +59,10 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER
     TOP_LEVEL_PROPERTY("top level property", false),
 
-    INITIALIZER("initializer", false)
+    INITIALIZER("initializer", false),
+    MULTI_DECLARATION("multi declaration", false),
+    FUNCTION_LITERAL("function literal", false),
+    OBJECT_LITERAL("object literal", false)
     ;
 
     companion object {
@@ -79,25 +82,25 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
         public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
         public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
-            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASSIFIER)
+            ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
                 if (descriptor.isInner) {
-                    listOf(INNER_CLASS, CLASSIFIER)
+                    listOf(INNER_CLASS, CLASS)
                 }
                 else if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS)
                 }
                 else {
-                    listOf(CLASS, CLASSIFIER)
+                    listOf(CLASS_ONLY, CLASS)
                 }
-            ClassKind.OBJECT -> listOf(OBJECT, CLASSIFIER)
-            ClassKind.INTERFACE -> listOf(INTERFACE, CLASSIFIER)
+            ClassKind.OBJECT -> listOf(OBJECT, CLASS)
+            ClassKind.INTERFACE -> listOf(INTERFACE, CLASS)
             ClassKind.ENUM_CLASS ->
                 if (DescriptorUtils.isLocal(descriptor)) {
-                    listOf(LOCAL_CLASS, CLASSIFIER)
+                    listOf(LOCAL_CLASS, CLASS)
                 }
                 else {
-                    listOf(ENUM_CLASS, CLASSIFIER)
+                    listOf(ENUM_CLASS, CLASS)
                 }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }

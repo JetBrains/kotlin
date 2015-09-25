@@ -53,7 +53,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
             override fun visitElement(element: PsiElement) {
                 if (!elementType.isInstance(element) || element.getTextLength() == 0) return
 
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 val targetElement = element as TElement
 
                 var problemRange: TextRange? = null

@@ -20,7 +20,7 @@ public interface LookupLocation {
 }
 
 public enum class NoLookupLocation : LookupLocation {
-    @deprecated("Use more suitable constant if possible")
+    @Deprecated("Use more suitable constant if possible")
     UNSORTED,
     FROM_IDE,
     FROM_BACKEND,

@@ -3,8 +3,8 @@ package multilineExpressionAtBreakpoint
 fun main(args: Array<String>) {
     //Breakpoint!
     args
-        .size
-        .indices
+        .size()
+        .downTo(0)
 }
 
 // EXPRESSION: 1 + 1

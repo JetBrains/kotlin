@@ -8,5 +8,6 @@ class C extends JavaClass {
         javaClass.setField(javaClass.getField() - getField());
         setField(getProperty());
         setField(getField() * 2);
+        setField(getField() * 2);
     }
 }

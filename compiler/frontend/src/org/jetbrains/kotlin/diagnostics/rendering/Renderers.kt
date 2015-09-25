@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.io.PrintWriter
 import java.io.StringWriter
-import kotlin.platform.platformStatic
 
 public object Renderers {
 
@@ -107,7 +106,7 @@ public object Renderers {
                 .joinToString(separator = "\n", prefix = "\n") { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
     }
 
-    platformStatic
+    @JvmStatic
     public fun <T> commaSeparated(itemRenderer: Renderer<T>): Renderer<Collection<T>> = Renderer {
         collection ->
         StringBuilder {
@@ -142,7 +141,7 @@ public object Renderers {
         renderCannotCaptureTypeParameterError(it, TabledDescriptorRenderer.create()).toString()
     }
 
-    platformStatic
+    @JvmStatic
     public fun renderConflictingSubstitutionsInferenceError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
@@ -197,7 +196,7 @@ public object Renderers {
         return result
     }
 
-    platformStatic
+    @JvmStatic
     public fun renderParameterConstraintError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
@@ -214,7 +213,7 @@ public object Renderers {
     }
 
 
-    platformStatic
+    @JvmStatic
     public fun renderNoInformationForParameterError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
@@ -239,7 +238,7 @@ public object Renderers {
                                .text("Please specify it explicitly."))
     }
 
-    platformStatic
+    @JvmStatic
     public fun renderUpperBoundViolatedInferenceError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
@@ -298,7 +297,7 @@ public object Renderers {
         return result
     }
 
-    platformStatic
+    @JvmStatic
     public fun renderCannotCaptureTypeParameterError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {

@@ -1,11 +1,11 @@
 package java.io
 
-library
+@library
 public class IOException(message: String = "") : Exception() {}
 
-library
-public trait Closeable {
+@library
+public interface Closeable {
     public open fun close() : Unit;
 }
 
-trait Serializable
+interface Serializable

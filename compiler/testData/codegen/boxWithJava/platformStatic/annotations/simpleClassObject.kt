@@ -8,14 +8,14 @@ class A {
     companion object {
         val b: String = "OK"
 
-        JvmStatic testAnnotation fun test1() = b
+        @JvmStatic @testAnnotation fun test1() = b
     }
 }
 
 object B {
     val b: String = "OK"
 
-    JvmStatic testAnnotation fun test1() = b
+    @JvmStatic @testAnnotation fun test1() = b
 }
 
 fun box(): String {

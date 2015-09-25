@@ -27,18 +27,20 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.storage.get
 
 /**
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
  * of reflection API which will fail at runtime.
  */
-class ReflectionAPICallChecker(private val module: ModuleDescriptor) : CallChecker {
-    private val isReflectionAvailable by lazy {
+class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : CallChecker {
+    private val isReflectionAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null
     }
 
-    private val kPropertyClasses by lazy {
+    private val kPropertyClasses by storageManager.createLazyValue {
         val reflectionTypes = ReflectionTypes(module)
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }

@@ -1,4 +1,4 @@
-class Test {
+internal class Test {
     fun putInt(i: Int) {
     }
 

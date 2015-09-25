@@ -1,10 +1,10 @@
-annotation class iHello
+annotation class SHello
 val v = 1
 
-fun foo(@[i<caret>) { }
+fun foo(@[S<caret>) { }
 
 // INVOCATION_COUNT: 1
-// EXIST: iHello
-// EXIST: inlineOptions
+// EXIST: SHello
+// EXIST: Suppress
 // ABSENT: String
 // ABSENT: v

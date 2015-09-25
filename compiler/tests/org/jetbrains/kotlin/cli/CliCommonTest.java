@@ -54,6 +54,16 @@ public class CliCommonTest extends CliBaseTest {
     }
 
     @Test
+    public void nonexistentPathInModule() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void nonexistentScript() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
     public void diagnosticsOrder() throws Exception {
         executeCompilerCompareOutputJVM();
     }

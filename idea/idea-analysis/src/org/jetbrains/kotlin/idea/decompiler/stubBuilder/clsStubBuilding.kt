@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -74,15 +75,18 @@ fun createFileFacadeStub(
 }
 
 fun createMultifileClassStub(
-        partHeaders: List<KotlinClassHeader>,
+        multifileClass: KotlinJvmBinaryClass,
+        partFiles: List<KotlinJvmBinaryClass>,
         facadeFqName: FqName,
         components: ClsStubBuilderComponents
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, packageFqName.isRoot)
+    val partNames = multifileClass.classHeader.filePartClassNames?.asList()
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     val multifileClassContainer = ProtoContainer(null, packageFqName)
-    for (partHeader in partHeaders) {
+    for (partFile in partFiles) {
+        val partHeader = partFile.classHeader
         val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!)
         val partContext = components.createContext(partData.nameResolver, packageFqName)
         for (partMember in partData.packageProto.memberList) {
@@ -181,6 +185,24 @@ enum class FlagsToModifiers {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
             return if (Flags.INNER.get(flags)) JetTokens.INNER_KEYWORD else null
         }
+    },
+
+    CONST {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_CONST.get(flags)) JetTokens.CONST_KEYWORD else null
+        }
+    },
+
+    LATEINIT {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.LATE_INIT.get(flags)) JetTokens.LATE_INIT_KEYWORD else null
+        }
+    },
+
+    OPERATOR {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_OPERATOR.get(flags)) JetTokens.OPERATOR_KEYWORD else null
+        }
     };
 
     abstract fun getModifiers(flags: Int): JetModifierKeywordToken?
@@ -212,25 +234,20 @@ fun createModifierListStub(
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>, needWrappingAnnotationEntries: Boolean = false) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent, needWrappingAnnotationEntries)
+fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
         annotationIds: List<ClassIdWithTarget>,
-        parent: KotlinStubBaseImpl<*>,
-        needWrappingAnnotationEntries: Boolean = false
+        parent: KotlinStubBaseImpl<*>
 ) {
     if (annotationIds.isEmpty()) return
-
-    val entriesParent =
-            if (needWrappingAnnotationEntries) KotlinPlaceHolderStubImpl<JetAnnotation>(parent, JetStubElementTypes.ANNOTATION)
-            else parent
 
     annotationIds.forEach { annotation ->
         val (annotationClassId, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
-                entriesParent,
+                parent,
                 shortName = annotationClassId.getShortClassName().ref(),
                 hasValueArguments = false
         )

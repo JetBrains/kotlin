@@ -6,6 +6,6 @@ annotation class Ann(
         val d3: Double
 )
 
-Ann(1.0 + 1.0, 1.0 + 1, 1 + 1.0) class MyClass
+@Ann(1.0 + 1.0, 1.0 + 1, 1 + 1.0) class MyClass
 
-// EXPECTED: Ann(d1 = 2.0.toDouble(), d2 = 2.0.toDouble(), d3 = 2.0.toDouble())
+// EXPECTED: @Ann(d1 = 2.0.toDouble(), d2 = 2.0.toDouble(), d3 = 2.0.toDouble())

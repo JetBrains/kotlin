@@ -1,0 +1,10 @@
+package
+
+internal abstract class Test</*0*/ in I> {
+    public constructor Test</*0*/ in I>()
+    private/*private to this*/ final val i: I
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private/*private to this*/ final fun foo(): I
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import java.util.Comparator
-import kotlin.platform.platformStatic
 
 public object CodegenUtilKt {
 
@@ -35,7 +34,8 @@ public object CodegenUtilKt {
     //   toTrait = Bar
     //   delegateExpressionType = typeof(baz)
     // return Map<member of Foo, corresponding member of typeOf(baz)>
-    public platformStatic fun getDelegates(
+    @JvmStatic
+    public fun getDelegates(
             descriptor: ClassDescriptor,
             toTrait: ClassDescriptor,
             delegateExpressionType: JetType? = null

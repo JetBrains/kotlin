@@ -12,10 +12,10 @@ abstract class MyAbstractClass() {
     abstract var b2: Int      private set
     abstract var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; private set
 
-    <!MUST_BE_INITIALIZED!>var c: Int<!>                set(v: Int) { $c = v }
-    var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    abstract var c2: Int                     <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { $c2 = v }<!>
-    abstract var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { $c3 = v }<!>
+    <!MUST_BE_INITIALIZED!>var c: Int<!>                set(v: Int) { field = v }
+    var c1: Int = 0;                         set(v: Int) { field = v }
+    abstract var c2: Int                     <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
+    abstract var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
 
     val e: Int                               get() = a
     val e1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;          get() = a

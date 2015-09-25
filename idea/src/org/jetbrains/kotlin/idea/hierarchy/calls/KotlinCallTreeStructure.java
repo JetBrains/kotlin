@@ -92,17 +92,17 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         }
 
         if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            return LightClassUtil.getLightClassMethod((JetFunction) element);
+            return LightClassUtil.INSTANCE$.getLightClassMethod((JetFunction) element);
         }
 
         if (element instanceof JetProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((JetProperty) element);
             return (propertyMethods.getGetter() != null) ? propertyMethods.getGetter() : propertyMethods.getSetter();
         }
 
         if (element instanceof JetClassOrObject) {
-            PsiClass psiClass = LightClassUtil.getPsiClass((JetClassOrObject) element);
+            PsiClass psiClass = LightClassUtil.INSTANCE$.getPsiClass((JetClassOrObject) element);
             if (psiClass == null) return null;
 
             PsiMethod[] constructors = psiClass.getConstructors();

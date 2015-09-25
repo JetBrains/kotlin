@@ -13,7 +13,7 @@ val prop3: Int = 1.times(1)
 val prop4: Int = 1.div(1)
 val prop5: Int = 1.mod(1)
 
-Ann(prop1, prop2, prop3, prop4, prop5) class MyClass
+@Ann(prop1, prop2, prop3, prop4, prop5) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

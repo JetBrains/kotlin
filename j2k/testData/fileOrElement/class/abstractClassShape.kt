@@ -1,4 +1,4 @@
-abstract class Shape {
-    public var color: String
-    public abstract fun area(): Double
+internal abstract class Shape {
+    var color: String
+    abstract fun area(): Double
 }

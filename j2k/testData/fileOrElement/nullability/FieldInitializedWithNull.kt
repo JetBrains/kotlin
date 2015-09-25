@@ -1,4 +1,4 @@
-class C {
+internal class C {
     private var s: String? = null
 
     fun foo() {

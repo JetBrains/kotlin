@@ -5,11 +5,11 @@ import org.jetbrains.annotations.*
 
 public interface LoadIterableWithPropagation {
     public interface LoadIterable<T> {
-        Mutable
+        @Mutable
         public fun getIterable(): MutableIterable<T>?
         public fun setIterable(@Mutable p0: MutableIterable<T>?)
 
-        ReadOnly
+        @ReadOnly
         public fun getReadOnlyIterable(): Iterable<T>?
         public fun setReadOnlyIterable(@ReadOnly p0: Iterable<T>?)
     }

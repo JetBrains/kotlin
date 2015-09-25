@@ -222,13 +222,13 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
     }
 
     private class MarkHiddenAndDeprecatedAction(property: JetProperty) : JetIntentionAction<JetProperty>(property) {
-        override fun getFamilyName() = "Mark with @HiddenDeclaration and @deprecated"
+        override fun getFamilyName() = "Mark with @HiddenDeclaration and @Deprecated"
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: JetFile) {
             val factory = JetPsiFactory(project)
             val name = element.nameAsName!!.render()
-            element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@deprecated(\"Is replaced with automatic synthetic extension\", ReplaceWith(\"$name\"))"))
+            element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@Deprecated(\"Is replaced with automatic synthetic extension\", ReplaceWith(\"$name\"))"))
             element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@HiddenDeclaration"))
         }
 

@@ -1,4 +1,4 @@
-trait Expr {
+interface Expr {
     public fun testThis() {
         if (this is Num) {
             this.<caret>

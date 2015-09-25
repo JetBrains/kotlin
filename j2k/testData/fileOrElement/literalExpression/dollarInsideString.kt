@@ -1,6 +1,6 @@
 package demo
 
-class Test {
+internal class Test {
     fun test() {
         var name = "$$$$"
         name = name.replaceAll("\\$[0-9]+", "\\$")

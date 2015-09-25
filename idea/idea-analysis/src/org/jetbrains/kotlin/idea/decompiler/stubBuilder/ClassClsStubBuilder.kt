@@ -96,14 +96,14 @@ private class ClassClsStubBuilder(
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(JetTokens.ENUM_KEYWORD)
-            ProtoBuf.Class.Kind.CLASS_OBJECT -> listOf(JetTokens.COMPANION_KEYWORD)
+            ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(JetTokens.COMPANION_KEYWORD)
             else -> listOf<JetModifierKeywordToken>()
         }
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
-        val isCompanionObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
+        val isCompanionObject = classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT
         val fqName = outerContext.containerFqName.child(classId.getShortClassName())
         val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filterNot {
@@ -111,7 +111,7 @@ private class ClassClsStubBuilder(
             KotlinBuiltIns.isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
         }.map { it.getShortClassName().ref() }.toTypedArray()
         return when (classKind) {
-            ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
+            ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
                         parentStub, shortName, fqName, superTypeRefs,
                         isTopLevel = !classId.isNestedClass(),
@@ -127,7 +127,7 @@ private class ClassClsStubBuilder(
                         fqName.ref(),
                         shortName,
                         superTypeRefs,
-                        isTrait = classKind == ProtoBuf.Class.Kind.TRAIT,
+                        isTrait = classKind == ProtoBuf.Class.Kind.INTERFACE,
                         isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                         isLocal = false,
                         isTopLevel = !classId.isNestedClass()
@@ -220,8 +220,8 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataProvider = c.components.classDataFinder.findClassData(nestedClassId)!!
-        val classData = classDataProvider.classData
-        createClassStub(classBody, classData.getClassProto(), nestedClassId, c.child(classData.getNameResolver()))
+        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)!!
+        val (nameResolver, classProto) = classDataWithSource.classData
+        createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver))
     }
 }

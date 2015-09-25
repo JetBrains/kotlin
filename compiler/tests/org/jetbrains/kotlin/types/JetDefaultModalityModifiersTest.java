@@ -227,9 +227,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testEnumModality("abstract enum class A {}", Modality.ABSTRACT);
         tc.testEnumModality("final enum class A {}", Modality.FINAL);
 
-        tc.testTraitModality("trait A {}", Modality.ABSTRACT);
-        tc.testTraitModality("open trait A {}", Modality.ABSTRACT);
-        tc.testTraitModality("abstract trait A {}", Modality.ABSTRACT);
+        tc.testTraitModality("interface A {}", Modality.ABSTRACT);
+        tc.testTraitModality("open interface A {}", Modality.ABSTRACT);
+        tc.testTraitModality("abstract interface A {}", Modality.ABSTRACT);
     }
 
     public void testFunctionModality() {
@@ -248,11 +248,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testFunctionModalityInEnum("abstract enum class A { ; open fun foo() }", Modality.OPEN);
         tc.testFunctionModalityInEnum("abstract enum class A { ; abstract fun foo() }", Modality.ABSTRACT);
 
-        tc.testFunctionModalityInTrait("trait A { fun foo() }", Modality.ABSTRACT);
-        tc.testFunctionModalityInTrait("trait A { abstract fun foo() }", Modality.ABSTRACT);
-        tc.testFunctionModalityInTrait("trait A { fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInTrait("trait A { open fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInTrait("trait A { final fun foo() {} }", Modality.FINAL);
+        tc.testFunctionModalityInTrait("interface A { fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInTrait("interface A { abstract fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInTrait("interface A { fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInTrait("interface A { open fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInTrait("interface A { final fun foo() {} }", Modality.FINAL);
     }
 
     public void testFunctionModalityWithOverride() {
@@ -272,11 +272,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testFunctionModalityInEnum("abstract enum class A : C { ; open override fun foo() }", Modality.OPEN);
         tc.testFunctionModalityInEnum("abstract enum class A : C { ; abstract override fun foo() }", Modality.ABSTRACT);
 
-        tc.testFunctionModalityInTrait("trait A : C { override fun foo() }", Modality.ABSTRACT);
-        tc.testFunctionModalityInTrait("trait A : C { abstract override fun foo() }", Modality.ABSTRACT);
-        tc.testFunctionModalityInTrait("trait A : C { override fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInTrait("trait A : C { open override fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInTrait("trait A : C { final override fun foo() {} }", Modality.FINAL);
+        tc.testFunctionModalityInTrait("interface A : C { override fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInTrait("interface A : C { abstract override fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInTrait("interface A : C { override fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInTrait("interface A : C { open override fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInTrait("interface A : C { final override fun foo() {} }", Modality.FINAL);
     }
 
     public void testPropertyModality() {
@@ -297,18 +297,18 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyModalityInEnum("abstract enum class A { ; open val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyModalityInEnum("abstract enum class A { ; abstract val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInTrait("trait A { val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { open val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { abstract val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { open abstract val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { open val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { abstract val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { open abstract val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInTrait("trait A { val a: Int get() = 10 }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A { var a: Int get() = 1; set(v: Int) {} }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A { val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { var a: Int open get open set}", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { open val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A { open val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A { open val a: Int final get() = 1 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A { val a: Int get() = 10 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A { var a: Int get() = 1; set(v: Int) {} }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A { val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { var a: Int open get open set}", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { open val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A { open val a: Int get() = 1 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A { open val a: Int final get() = 1 }", Modality.OPEN);
     }
 
     public void testPropertyModalityWithOverride() {
@@ -329,18 +329,18 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyModalityInEnum("abstract enum class A : C { ; open override val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyModalityInEnum("abstract enum class A : C { ; abstract override val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInTrait("trait A : C { override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { open override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { abstract override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { open abstract override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { open override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { abstract override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { open abstract override val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInTrait("trait A : C { override val a: Int get() = 10 }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A : C { override var a: Int get() = 1; set(v: Int) {} }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A : C { override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { override var a: Int open get open set }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { open override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyModalityInTrait("trait A : C { open override val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyModalityInTrait("trait A : C { open override val a: Int final get() = 1 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A : C { override val a: Int get() = 10 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A : C { override var a: Int get() = 1; set(v: Int) {} }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A : C { override val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { override var a: Int open get open set }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { open override val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyModalityInTrait("interface A : C { open override val a: Int get() = 1 }", Modality.OPEN);
+        tc.testPropertyModalityInTrait("interface A : C { open override val a: Int final get() = 1 }", Modality.OPEN);
     }
 
     public void testPropertyAccessorModality() {
@@ -381,23 +381,23 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyAccessorModalityInClass("abstract class A { open val a: Int open get() = 10 }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("abstract class A { open val a: Int final get() = 10 }", Modality.FINAL);
 
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int open get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int final get }", Modality.FINAL);
-        tc.testPropertyAccessorModalityInTrait("trait A { val a: Int final get() = 1 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int open get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("interface A { val a: Int final get() = 1 }", Modality.FINAL);
 
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int open get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int final get }", Modality.FINAL);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { val a: Int final get() = 1 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int open get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("abstract interface A { val a: Int final get() = 1 }", Modality.FINAL);
     }
 
     public void testPropertyAccessorModalityWithOverride() {
@@ -446,14 +446,14 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int open override get() = 10 }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int final override  get() = 10 }", Modality.FINAL);
 
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int override get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int open override get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int override get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int final get }", Modality.FINAL);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int final override get() = 1 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int open override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("interface A : C { override val a: Int final override get() = 1 }", Modality.FINAL);
     }
 }

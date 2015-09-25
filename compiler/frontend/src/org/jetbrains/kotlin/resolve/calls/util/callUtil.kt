@@ -82,7 +82,7 @@ public fun JetCallElement.getValueArgumentsInParentheses(): List<ValueArgument> 
 
 public fun Call.getValueArgumentListOrElement(): JetElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>
 
 public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {
@@ -177,7 +177,7 @@ public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingConte
     assert(resolvedCall.getResultingDescriptor() is FunctionDescriptor) {
         "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>: ${this.getTextWithLocation()}"
     }
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
 }
 

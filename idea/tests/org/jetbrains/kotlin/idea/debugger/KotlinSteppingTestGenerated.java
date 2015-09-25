@@ -423,5 +423,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepIntoStdlibInlineFun2step.kt");
             doCustomTest(fileName);
         }
+
+        @TestMetadata("stepOutInlineFunctionStdlib.kt")
+        public void testStepOutInlineFunctionStdlib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepOutInlineFunctionStdlib.kt");
+            doCustomTest(fileName);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import java.util.*
 
-class A {
+internal class A {
     fun createCollection(): MutableCollection<String> {
         return ArrayList()
     }

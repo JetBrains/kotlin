@@ -16,7 +16,6 @@
 
 package kotlin.reflect.jvm.internal;
 
-import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -50,19 +49,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        try {
-            return new KFunctionFromReferenceImpl(f);
-        }
-        catch (KotlinReflectionNotSupportedError e) {
-            // If this function reference is compiled with an older compiler, it doesn't have the newer methods
-            // (getName(), getOwner(), getSignature()), so the default implementation from FunctionReference will be invoked
-            // and KotlinReflectionNotSupportedError will be thrown.
-            // Instead it's much better to use the reference as a KFunction. Yes, it will throw "no kotlin-reflect.jar was found"
-            // exceptions even if it exists in the classpath. However, at least it can be used as a function (invoke() will work).
-            // Moreover, old function references were not supposed to be introspected anyway because there was no reflection API back then.
-            // TODO: drop after M13
-            return f;
-        }
+        return new KFunctionFromReferenceImpl(f);
     }
 
     // Properties

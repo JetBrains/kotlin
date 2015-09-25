@@ -157,7 +157,7 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    private static TextRange firstRange(@NotNull List<TextRange> ranges) {
+    public static TextRange firstRange(@NotNull List<TextRange> ranges) {
         return Collections.min(ranges, TEXT_RANGE_COMPARATOR);
     }
 

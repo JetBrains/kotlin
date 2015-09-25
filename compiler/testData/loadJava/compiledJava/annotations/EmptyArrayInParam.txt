@@ -2,7 +2,7 @@ package test
 
 public interface EmptyArrayInParam {
 
-    test.EmptyArrayInParam.MyAnnotation(value = {}) public open class A {
+    @test.EmptyArrayInParam.MyAnnotation(value = {}) public open class A {
         public constructor A()
     }
 

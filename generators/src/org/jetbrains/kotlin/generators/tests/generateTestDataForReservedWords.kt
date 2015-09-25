@@ -60,7 +60,6 @@ fun box(): String {
             commonCasesWithTestNotRenamed()
 
             case("class", "class $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
-            case("trait", "trait $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
             case("interface", "interface $KEYWORD_MARKER { companion object {} }", "", testNotRenamedByName)
             case("enum", "enum class $KEYWORD_MARKER { foo }", "", testNotRenamed("$KEYWORD_MARKER.foo"))
             case("object", "object $KEYWORD_MARKER {}", "", testNotRenamedByName)
@@ -165,7 +164,7 @@ fun box(): String {
 
         suite("delegated",
 """
-trait Trait {
+interface Trait {
     $DECLARATION_MARKER
 }
 
@@ -262,13 +261,17 @@ class TestDataBuilder() {
 
         val testDataDir = File(testDataDirPath)
 
+        val cases = suites.flatMap { suite -> suite.cases.map { case -> suite.name + " / " + case.name } }.sorted()
+
         val shouldBeEscapedFile = File("$testDataDirPath/SHOULD_BE_ESCAPED.txt")
         val shouldNotBeEscapedFile = File("$testDataDirPath/SHOULD_NOT_BE_ESCAPED.txt")
+        val casesFile = File("$testDataDirPath/CASES.txt")
 
         val shouldBeEscapedFromFile = shouldBeEscapedFile.readLinesOrNull()?.drop(1)
         val shouldNotBeEscapedFromFile = shouldNotBeEscapedFile.readLinesOrNull()?.drop(1)
+        val casesFromFile = casesFile.readLinesOrNull()?.drop(1)
 
-        val isCreatingFromScratch = shouldBeEscapedFromFile != SHOULD_BE_ESCAPED || shouldNotBeEscapedFromFile != SHOULD_NOT_BE_ESCAPED
+        val isCreatingFromScratch = shouldBeEscapedFromFile != SHOULD_BE_ESCAPED || shouldNotBeEscapedFromFile != SHOULD_NOT_BE_ESCAPED || casesFromFile != cases
 
         if (!testDataDir.exists() && !testDataDir.mkdirs()) {
             error("Unable to find or create test data directory: '$testDataDirPath'.")
@@ -321,6 +324,8 @@ class TestDataBuilder() {
         if (isCreatingFromScratch) {
             shouldBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_BE_ESCAPED.join("\n")}")
             shouldNotBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_NOT_BE_ESCAPED.join("\n")}")
+            casesFile.writeText("$PREAMBLE_MESSAGE\n${cases.join("\n")}")
+
         }
     }
 }
@@ -354,8 +359,8 @@ val testNotRenamedByRef = testNotRenamed("::$KEYWORD_MARKER")
 
 // KEYWORDS
 
-val SHOULD_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it in KeywordStringsGenerated.KEYWORDS }.toSortedList()
-val SHOULD_NOT_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it !in SHOULD_BE_ESCAPED }.toSortedList()
+val SHOULD_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it in KeywordStringsGenerated.KEYWORDS }.sorted()
+val SHOULD_NOT_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it !in SHOULD_BE_ESCAPED }.sorted()
 
 // all keywords by portions
 

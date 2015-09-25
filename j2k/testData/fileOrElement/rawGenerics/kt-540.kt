@@ -3,7 +3,7 @@ package demo
 
 import java.util.ArrayList
 
-class Test {
+internal class Test {
     fun main() {
         val common = ArrayList<String>()
         val raw = ArrayList<String>()

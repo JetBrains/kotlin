@@ -3,14 +3,14 @@ package
 public interface Some {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun f1(): kotlin.String.() -> kotlin.Int
-    public abstract fun f2(): @[kotlin.Extension()] kotlin.String.() -> kotlin.Int
-    public abstract fun f3(): @[ann()] kotlin.String.() -> kotlin.Int
-    public abstract fun f4(): @[kotlin.Extension() ann()] kotlin.String.() -> kotlin.Int
+    public abstract fun f2(): @kotlin.Extension() kotlin.String.() -> kotlin.Int
+    public abstract fun f3(): @ann() kotlin.String.() -> kotlin.Int
+    public abstract fun f4(): @kotlin.Extension() @ann() kotlin.String.() -> kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.annotation() public final class ann : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class ann : kotlin.Annotation {
     public constructor ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

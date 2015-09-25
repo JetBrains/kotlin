@@ -27,7 +27,7 @@ abstract class TestInitializationWithoutBackingField() {
 
     var varWithCustomSetter : Int
     set(v: Int) {
-        $varWithCustomSetter = v
+        field = v
     }
     init {
         <!INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER!>varWithCustomSetter<!> = 3
@@ -49,7 +49,7 @@ abstract class TestInitializationWithoutBackingField() {
 abstract class TestInitializationThroughBackingField() {
     val valWithBackingField : Int
     init {
-        $valWithBackingField = 2
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$valWithBackingField<!> = 2
     }
 
     val valWithoutBackingField : Int
@@ -60,20 +60,20 @@ abstract class TestInitializationThroughBackingField() {
 
     var finalDefaultVar : Int
     init {
-        $finalDefaultVar = 3
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$finalDefaultVar<!> = 3
     }
 
     open var openVar : Int
     init {
-        $openVar = 4
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$openVar<!> = 4
     }
 
     var varWithCustomSetter : Int
     set(v: Int) {
-        $varWithCustomSetter = v
+        field = v
     }
     init {
-        $varWithCustomSetter = 3
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$varWithCustomSetter<!> = 3
     }
 
     var varWithoutBackingField : Int
@@ -92,12 +92,12 @@ abstract class TestInitializationThroughBackingField() {
 class TestBackingFieldsVisibility() {
     var a : Int = 712
     init {
-        $a = 37
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!> = 37
         this.$a = 357
     }
 
     fun foo() {
-        $a = 334
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!> = 334
         this.$a = 347
     }
 
@@ -110,11 +110,11 @@ class TestBackingFieldsVisibility() {
     val x = <!INACCESSIBLE_BACKING_FIELD!>$topLevelVar<!>
 
     inner class Inner() {
-        val z = this@TestBackingFieldsVisibility.$x
+        val z = this@TestBackingFieldsVisibility.<!BACKING_FIELD_USAGE_DEPRECATED!>$x<!>
     }
 
     <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> val w = 11
-    get() = $w //test there is no second error here
+    get() = field //test there is no second error here
 }
 
 val topLevelVar = 11
@@ -141,31 +141,31 @@ class T() {
     get() {
         val <!UNUSED_VARIABLE!>o<!> = object {
             init {
-                $x = 34
+                field = 34
             }
             fun foo() {
-                $x = 23
+                field = 23
             }
         }
         return 1
     }
 
-    var r: Int = $x
+    var r: Int = <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!>
     set(v: Int) {
         if (true) {
-            $r = 33
+            field = 33
         }
         else {
-            $r = 35
+            field = 35
         }
     }
 
     fun bar() {
-        $x = 34
+        <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 34
         val <!UNUSED_VARIABLE!>o<!> = object {
-            val y = $x
+            val y = <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!>
             init {
-                $x = 422
+                <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 422
             }
         }
     }

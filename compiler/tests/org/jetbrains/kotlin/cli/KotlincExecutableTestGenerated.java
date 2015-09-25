@@ -169,6 +169,18 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("nonexistentPathInModule.args")
+        public void testNonexistentPathInModule() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/nonexistentPathInModule.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("nonexistentScript.args")
+        public void testNonexistentScript() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/nonexistentScript.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimple.args");
@@ -220,6 +232,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongAbiVersion.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("wrongAbiVersionNoErrors.args")
+        public void testWrongAbiVersionNoErrors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongAbiVersionNoErrors.args");
             doJvmTest(fileName);
         }
 

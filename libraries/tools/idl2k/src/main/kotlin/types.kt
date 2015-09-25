@@ -9,13 +9,13 @@ interface Type {
     protected fun String.withSuffix(): String = if (nullable) "$this?" else this
 }
 
-data object UnitType : Type {
+object UnitType : Type {
     override val nullable: Boolean
         get() = false
 
     override fun render() = "Unit"
 }
-data object DynamicType : Type {
+object DynamicType : Type {
     override val nullable: Boolean
         get() = false
 
@@ -52,7 +52,7 @@ data class ArrayType(val memberType: Type, override val nullable: Boolean) : Typ
     override fun render(): String = "Array<${memberType.render()}>".withSuffix()
 }
 
-suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 private fun <T: Type> T.copyWithNullability(nullable: Boolean): T = when (this) {
     is UnitType -> UnitType
     is DynamicType -> this

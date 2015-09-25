@@ -9,7 +9,7 @@ public final class A : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(arg = {kotlin.String::class, kotlin.Int::class}) public final class MyClass {
+@A(arg = {kotlin.String::class, kotlin.Int::class}) public final class MyClass {
     public constructor MyClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

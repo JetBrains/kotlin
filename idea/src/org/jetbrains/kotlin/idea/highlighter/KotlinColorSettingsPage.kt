@@ -44,7 +44,7 @@ public class KotlinColorSettingsPage : ColorSettingsPage {
  * Doc comment here for `SomeClass`
  * @see <KDOC_LINK>Iterator#next()</KDOC_LINK>
  */
-<ANNOTATION>@deprecated</ANNOTATION>("Deprecated class")
+<ANNOTATION>@Deprecated</ANNOTATION>("Deprecated class")
 <BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int)
     fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: dynamic) {
         <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>("length\nis ${"$"}{<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>")
@@ -65,7 +65,7 @@ public class KotlinColorSettingsPage : ColorSettingsPage {
 
 var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5
     <KEYWORD>get</KEYWORD>() {
-        return <BACKING_FIELD_ACCESS><PACKAGE_PROPERTY><MUTABLE_VARIABLE>${"$"}globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></BACKING_FIELD_ACCESS>
+        return <BACKING_FIELD_VARIABLE><LOCAL_VARIABLE><MUTABLE_VARIABLE>field</MUTABLE_VARIABLE></LOCAL_VARIABLE></BACKING_FIELD_VARIABLE>
     }
 
 <KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {
@@ -133,6 +133,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        JetBundle.message("options.kotlin.attribute.descriptor.package.property") to JetHighlightingColors.PACKAGE_PROPERTY, 
                        JetBundle.message("options.kotlin.attribute.descriptor.property.with.backing") to JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD,
                        JetBundle.message("options.kotlin.attribute.descriptor.backing.field.access") to JetHighlightingColors.BACKING_FIELD_ACCESS,
+                       JetBundle.message("options.kotlin.attribute.descriptor.field") to JetHighlightingColors.BACKING_FIELD_VARIABLE,
                        JetBundle.message("options.kotlin.attribute.descriptor.extension.property") to JetHighlightingColors.EXTENSION_PROPERTY,
                        JetBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to JetHighlightingColors.DYNAMIC_PROPERTY_CALL,
                        JetBundle.message("options.kotlin.attribute.descriptor.it") to JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER,

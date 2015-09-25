@@ -1,3 +1,3 @@
 package android.content
 
-trait Context
+interface Context

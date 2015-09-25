@@ -6,4 +6,4 @@ fun box() {
     foo( @Ann("OK1") fun() {})
 }
 
-//Ann(x = "OK1") local final fun <no name provided>(): kotlin.Unit defined in box
+//@Ann(x = "OK1") local final fun <no name provided>(): kotlin.Unit defined in box

@@ -40,6 +40,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final PropertyDescriptor original;
     private final Kind kind;
     private final boolean lateInit;
+    private final boolean isConst;
 
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
@@ -58,7 +59,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Name name,
             @NotNull Kind kind,
             @NotNull SourceElement source,
-            boolean lateInit
+            boolean lateInit,
+            boolean isConst
     ) {
         super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
@@ -66,6 +68,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.original = original == null ? this : original;
         this.kind = kind;
         this.lateInit = lateInit;
+        this.isConst = isConst;
     }
 
     @NotNull
@@ -78,10 +81,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Name name,
             @NotNull Kind kind,
             @NotNull SourceElement source,
-            boolean lateInit
+            boolean lateInit,
+            boolean isConst
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
-                                          modality, visibility, isVar, name, kind, source, lateInit);
+                                          modality, visibility, isVar, name, kind, source, lateInit, isConst);
     }
 
     public void setType(
@@ -177,6 +181,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @Override
     public boolean isLateInit() {
         return lateInit;
+    }
+
+    @Override
+    public boolean isConst() {
+        return isConst;
     }
 
     @Override
@@ -300,7 +309,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(newOwner, original,
                                           getAnnotations(), newModality, newVisibility,
-                                          isVar(), getName(), kind, SourceElement.NO_SOURCE, isLateInit());
+                                          isVar(), getName(), kind, SourceElement.NO_SOURCE, isLateInit(), isConst());
     }
 
     @NotNull

@@ -56,7 +56,7 @@ import kotlin.jvm.internal.Intrinsic
 /**
  * Creates an input stream for reading data from this byte array.
  */
-deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
+@Deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
 public val ByteArray.inputStream : ByteArrayInputStream
     get() = inputStream()
 
@@ -97,6 +97,6 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
 
 /** Internal unsafe construction of array based on reference array type */
-private fun <T, A: Array<out T>> arrayOfNulls(reference: A, size: Int): A {
-    return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as A
+private fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<out T> {
+    return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as Array<out T>
 }

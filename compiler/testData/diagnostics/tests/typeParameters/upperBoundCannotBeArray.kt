@@ -1,0 +1,18 @@
+fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>> f1() {}
+fun <T, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out T><!>> f2() {}
+fun <S, T : S, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out S><!>> f3() where A : Array<out T> {}
+
+fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>T : <!FINAL_UPPER_BOUND!>IntArray<!><!>> f4() {}
+
+fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>T<!>> f5() where T : Array<Any> {}
+
+val <<!UPPER_BOUND_CANNOT_BE_ARRAY!>T : Array<Any?><!>> v = ""
+
+class C2<T, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out T><!>>
+interface C3<S, T : S, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out S><!>> where A : Array<out T>
+
+fun foo() {
+    class C1<<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>> {
+        fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>, <!UPPER_BOUND_CANNOT_BE_ARRAY!>B : Array<Any><!>, C : A> f() {}
+    }
+}

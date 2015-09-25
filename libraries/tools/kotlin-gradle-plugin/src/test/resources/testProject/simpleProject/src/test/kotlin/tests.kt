@@ -8,7 +8,7 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test as test
 
 class TestSource() {
-    test fun f() {
+    @test fun f() {
         val example : KotlinGreetingJoiner = KotlinGreetingJoiner(Greeter("Hi"))
         example.addName("Harry")
         example.addName("Ron")

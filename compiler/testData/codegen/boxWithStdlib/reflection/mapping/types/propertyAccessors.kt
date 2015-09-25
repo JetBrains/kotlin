@@ -1,4 +1,4 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals
@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class A(private var foo: String)
 
 object O {
-    private static var bar: String = ""
+    private @static var bar: String = ""
 }
 
 fun box(): String {

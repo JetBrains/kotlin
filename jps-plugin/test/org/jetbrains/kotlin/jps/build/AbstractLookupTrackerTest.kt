@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.utils.join
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 import kotlin.test.fail
+
+private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "val", "var")
 
 abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
         allowNoFilesWithSuffixInTestData = true,
@@ -48,14 +50,13 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
             val matchResult = COMMENT_WITH_LOOKUP_INFO.match(text)
             if (matchResult != null) {
-                matchResult.groups
                 fail("File $file unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
             }
 
             val lines = text.lines().toArrayList()
 
             for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.lookupLine!! }) {
-                val columnToLookups = lookupsFromLine.groupBy { it.lookupColumn!! }.toList().sortBy { it.first }
+                val columnToLookups = lookupsFromLine.groupBy { it.lookupColumn!! }.toList().sortedBy { it.first }
 
                 val lineContent = lines[line - 1]
                 val parts = ArrayList<CharSequence>(columnToLookups.size() * 2)
@@ -67,8 +68,20 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                     parts.add(lineContent.subSequence(start, end))
 
                     val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
-                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName
+                        val rest = lineContent.substring(end)
+
+                        val name =
+                                when {
+                                    rest.startsWith(it.name) || // same name
+                                    rest.startsWith("$" + it.name) || // backing field
+                                    DECLARATION_KEYWORDS.any { w -> rest.startsWith(w) } // it's declaration
+                                         -> ""
+                                    else -> "(" + it.name + ")"
+                                }
+
+                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName + name
                     }
+
                     parts.add(lookups)
 
                     start = end

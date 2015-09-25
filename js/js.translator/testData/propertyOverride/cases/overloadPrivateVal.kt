@@ -5,7 +5,7 @@ open class A {
 
     private val b = 2
         get() {
-            return $b + 10 + 100 * a
+            return field + 10 + 100 * a
         }
     fun getBInA(): Int {
         return b

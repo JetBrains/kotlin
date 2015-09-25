@@ -1,8 +1,8 @@
 import java.io.*
 
-public class C {
-    Throws(IOException::class)
-    fun foo() {
+class C {
+    @Throws(IOException::class)
+    internal fun foo() {
         try {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something

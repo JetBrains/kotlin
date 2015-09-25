@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
@@ -185,7 +186,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
-            if (KotlinBuiltIns.isUnit(expectedReturnType!!)) {
+            if (!TypeUtils.noExpectedType(expectedReturnType!!) && KotlinBuiltIns.isUnit(expectedReturnType)) {
                 return components.builtIns.getUnitType()
             }
         }
@@ -201,7 +202,8 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionLiteral = expression.getFunctionLiteral()
         val declaredReturnType = functionLiteral.getTypeReference()?.let {
             val type = components.typeResolver.resolveType(context.scope, it, context.trace, true)
-            if (expectedReturnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
+            if (expectedReturnType != null && !TypeUtils.noExpectedType(expectedReturnType)
+                && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
                 context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(it, expectedReturnType))
             }
             type

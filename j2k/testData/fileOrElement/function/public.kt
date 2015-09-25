@@ -1,2 +1,2 @@
-public fun test() {
+fun test() {
 }

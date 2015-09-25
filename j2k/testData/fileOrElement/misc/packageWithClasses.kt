@@ -1,2 +1,2 @@
-class A
-class B
+internal class A
+internal class B

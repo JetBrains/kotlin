@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.runner.RunWith
 
-TestMetadata("idea/testData/quickfix.special")
-TestDataPath("\$PROJECT_ROOT")
-RunWith(JUnit3RunnerWithInners::class)
+@TestMetadata("idea/testData/quickfix.special")
+@TestDataPath("\$PROJECT_ROOT")
+@RunWith(JUnit3RunnerWithInners::class)
 public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
@@ -55,7 +55,7 @@ public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTes
         val element = getFile().findElementAt(offset)
         val nameExpression = element!!.parents.firstIsInstance<JetSimpleNameExpression>()
         getProject().executeWriteCommand("") {
-            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern)).invoke(getProject(), getEditor(), getFile())
+            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(getProject(), getEditor(), getFile())
         }
 
         myFixture.checkResultByFile("$testPath.after")

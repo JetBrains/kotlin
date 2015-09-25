@@ -156,7 +156,7 @@ class JavaRetentionAnnotationDescriptor(
 
 public object JavaAnnotationTargetMapper {
     private val targetNameLists = mapOf("PACKAGE"         to EnumSet.noneOf(KotlinTarget::class.java),
-                                        "TYPE"            to EnumSet.of(KotlinTarget.CLASSIFIER, KotlinTarget.FILE),
+                                        "TYPE"            to EnumSet.of(KotlinTarget.CLASS, KotlinTarget.FILE),
                                         "ANNOTATION_TYPE" to EnumSet.of(KotlinTarget.ANNOTATION_CLASS),
                                         "TYPE_PARAMETER"  to EnumSet.of(KotlinTarget.TYPE_PARAMETER),
                                         "FIELD"           to EnumSet.of(KotlinTarget.FIELD),

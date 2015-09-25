@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin
 
-import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.PackageEntry
-import org.jdom.Element
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -58,7 +56,6 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             val fileText = file.getText()
 
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
-            codeStyleSettings.IMPORT_PACKAGES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_PACKAGES:") ?: true
             codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
 
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGE_TO_USE_STAR_IMPORTS:").forEach {

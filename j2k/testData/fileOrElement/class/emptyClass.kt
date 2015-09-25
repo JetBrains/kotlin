@@ -1,1 +1,1 @@
-class A
+internal class A

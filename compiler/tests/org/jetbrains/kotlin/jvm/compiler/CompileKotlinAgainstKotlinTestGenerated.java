@@ -101,6 +101,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("JvmNameOnAccessor.A.kt")
+    public void testJvmNameOnAccessor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/JvmNameOnAccessor.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("KotlinPropertyAsAnnotationParameter.A.kt")
     public void testKotlinPropertyAsAnnotationParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/KotlinPropertyAsAnnotationParameter.A.kt");
@@ -164,6 +170,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SimpleValAnonymousObject.A.kt")
+    public void testSimpleValAnonymousObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SimpleValAnonymousObject.A.kt");
         doTest(fileName);
     }
 

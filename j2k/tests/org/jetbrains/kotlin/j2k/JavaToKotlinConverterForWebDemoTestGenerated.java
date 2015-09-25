@@ -2350,6 +2350,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("overrideWithHigherVisibility.java")
+        public void testOverrideWithHigherVisibility() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideWithHigherVisibility.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("ownGenericParam.java")
         public void testOwnGenericParam() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/ownGenericParam.java");

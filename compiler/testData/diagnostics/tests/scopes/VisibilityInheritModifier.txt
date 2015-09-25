@@ -110,21 +110,21 @@ package b {
 
     public interface P : b.R {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal open override /*1*/ fun foo(): kotlin.Unit
+        public open override /*1*/ fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     public interface Q : b.R {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        protected open override /*1*/ fun foo(): kotlin.Unit
+        public open override /*1*/ fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     public interface R {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        protected open fun foo(): kotlin.Unit
+        public open fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

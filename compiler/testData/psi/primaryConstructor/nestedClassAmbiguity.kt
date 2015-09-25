@@ -1,19 +1,19 @@
 class Outer1 {
     class Nested1
 
-    private Ann constructor()
+    private @Ann constructor()
 }
 
 class Outer2 {
     class Nested2;
 
-    private Ann constructor()
+    private @Ann constructor()
 }
 
 class Outer3 {
     class Nested3
 
-    private Ann constructor() : super() {}
+    private @Ann constructor() : super() {}
 }
 
 class Outer4 {

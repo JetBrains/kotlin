@@ -21,7 +21,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KotlinSyntheticClass {
+    @Deprecated
     int abiVersion();
+
+    int[] version() default {};
 
     Kind kind();
 

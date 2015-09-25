@@ -38,11 +38,11 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 object DynamicCallableDescriptors {
 
-    platformStatic fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
+    @JvmStatic
+    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
         override fun getContainingDeclaration() = owner
 
         override fun printScopeStructure(p: Printer) {
@@ -95,7 +95,8 @@ object DynamicCallableDescriptors {
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 SourceElement.NO_SOURCE,
-                false
+                /* lateInit = */ false,
+                /* isConst = */ false
         )
         propertyDescriptor.setType(
                 DynamicType,
@@ -128,7 +129,8 @@ object DynamicCallableDescriptors {
                 createValueParameters(functionDescriptor, call),
                 DynamicType,
                 Modality.FINAL,
-                Visibilities.PUBLIC
+                Visibilities.PUBLIC,
+                false
         )
         return functionDescriptor
     }
@@ -225,8 +227,8 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation, bindingTrace: BindingTrace): Collection<D> {
-        return delegate.getExtensionsByName(scope, name, receiverTypes, location, bindingTrace).filter {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, receiverTypes, location).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }
     }

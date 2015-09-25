@@ -6,7 +6,7 @@ annotation class Ann(
         val l: Long
 )
 
-Ann(1 / 1, 1 / 1, 1 / 1, 1 / 1) class MyClass
+@Ann(1 / 1, 1 / 1, 1 / 1, 1 / 1) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

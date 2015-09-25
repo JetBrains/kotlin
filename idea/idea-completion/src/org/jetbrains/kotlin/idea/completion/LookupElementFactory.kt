@@ -56,7 +56,7 @@ class LookupElementFactory(
 ) {
     private val basicFactory = BasicLookupElementFactory(resolutionFacade.project, insertHandlerProvider)
 
-    private val functionTypeContextVariables by lazy {
+    private val functionTypeContextVariables by lazy(LazyThreadSafetyMode.NONE) {
         contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
     }
 

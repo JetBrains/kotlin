@@ -88,7 +88,7 @@ class TryBlockCluster<T : IntervalWithHandler>(val blocks: MutableList<T>) {
 
 
 fun <T : IntervalWithHandler> doClustering(blocks: List<T>): List<TryBlockCluster<T>> {
-    @data class TryBlockInterval(val startLabel: LabelNode, val endLabel: LabelNode)
+    data class TryBlockInterval(val startLabel: LabelNode, val endLabel: LabelNode)
 
     val clusters = linkedMapOf<TryBlockInterval, TryBlockCluster<T>>()
     blocks.forEach { block ->

@@ -4,20 +4,20 @@
 // ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
 // ERROR: 'return' is not allowed here
 // ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
-public class Java8Class {
-    public fun foo0(r: Function0<String>) {
+class Java8Class {
+    fun foo0(r: Function0<String>) {
     }
 
-    public fun foo1(r: Function1<Int, String>) {
+    fun foo1(r: Function1<Int, String>) {
     }
 
-    public fun foo2(r: Function2<Int, Int, String>) {
+    fun foo2(r: Function2<Int, Int, String>) {
     }
 
-    public fun helper() {
+    fun helper() {
     }
 
-    public fun foo() {
+    fun foo() {
         foo0 { "42" }
         foo0 { "42" }
         foo0 {

@@ -1,6 +1,6 @@
-Resolve target: val kotlin.String.size: kotlin.Int
+Resolve target: fun kotlin.String.isNotEmpty(): kotlin.Boolean
 ----------------------------------------------
 fun foo(p: String) {
     /* STATEMENT DELETED: if (x()) return */
-    println(p.<caret>size)
+    println(p.<caret>isNotEmpty())
 }

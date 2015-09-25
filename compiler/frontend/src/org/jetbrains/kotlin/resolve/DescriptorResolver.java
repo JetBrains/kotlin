@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
@@ -38,16 +39,19 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 
 import java.util.*;
 
@@ -237,7 +241,8 @@ public class DescriptorResolver {
                 Collections.<ValueParameterDescriptor>emptyList(),
                 returnType,
                 Modality.FINAL,
-                property.getVisibility()
+                property.getVisibility(),
+                false
         );
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
@@ -285,7 +290,8 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC
+                Visibilities.PUBLIC,
+                false
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
@@ -642,7 +648,8 @@ public class DescriptorResolver {
                     JetPsiUtil.safeName(variable.getName()),
                     CallableMemberDescriptor.Kind.DECLARATION,
                     toSourceElement(variable),
-                    false
+                    /* lateInit = */ false,
+                    /* isConst = */ false
             );
             // For a local variable the type must not be deferred
             type = getVariableType(propertyDescriptor, scope, variable, dataFlowInfo, false, trace);
@@ -740,7 +747,8 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(property),
-                modifierList != null && modifierList.hasModifier(JetTokens.LATE_INIT_KEYWORD)
+                modifierList != null && modifierList.hasModifier(JetTokens.LATE_INIT_KEYWORD),
+                modifierList != null && modifierList.hasModifier(JetTokens.CONST_KEYWORD)
         );
         wrapper.setProperty(propertyDescriptor);
 
@@ -875,7 +883,7 @@ public class DescriptorResolver {
     }
 
     private void setConstantForVariableIfNeeded(
-            @NotNull VariableDescriptorWithInitializerImpl variableDescriptor,
+            @NotNull final VariableDescriptorWithInitializerImpl variableDescriptor,
             @NotNull final LexicalScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
@@ -893,7 +901,15 @@ public class DescriptorResolver {
                 public ConstantValue<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    return constantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
+                    CompileTimeConstant<?> constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType);
+
+                    if (constant == null) return null;
+
+                    if (constant.getUsesNonConstValAsConstant() && variableDescriptor.isConst()) {
+                        trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer));
+                    }
+
+                    return constant.toConstantValue(initializerType);
                 }
             }, null)
         );
@@ -930,25 +946,21 @@ public class DescriptorResolver {
             @NotNull JetType type,
             @NotNull BindingTrace trace
     ) {
-        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (classifierDescriptor == null || !DescriptorUtils.isAnonymousObject(classifierDescriptor)) {
+        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+        if (classifier == null || !DescriptorUtils.isAnonymousObject(classifier) || DescriptorUtils.isLocal(descriptor)) {
             return type;
         }
 
         boolean definedInClass = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) != null;
-        boolean isLocal = DescriptorUtils.isLocal(descriptor);
-        Visibility visibility = descriptor.getVisibility();
-        boolean transformNeeded = !isLocal && !visibility.getIsPublicAPI()
-                                  && !(definedInClass && Visibilities.isPrivate(visibility));
-        if (transformNeeded) {
+        if (!definedInClass || !Visibilities.isPrivate(descriptor.getVisibility())) {
             if (type.getConstructor().getSupertypes().size() == 1) {
-                assert type.getArguments().isEmpty() : "Object expression couldn't have any type parameters!";
                 return type.getConstructor().getSupertypes().iterator().next();
             }
             else {
                 trace.report(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.on(declaration, type.getConstructor().getSupertypes()));
             }
         }
+
         return type;
     }
 
@@ -1115,7 +1127,8 @@ public class DescriptorResolver {
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(parameter),
-                false
+                /* lateInit = */ false,
+                /* isConst = */ false
         );
         propertyWrapper.setProperty(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
@@ -1229,23 +1242,6 @@ public class DescriptorResolver {
     @Nullable
     public static ClassDescriptor getContainingClass(@NotNull LexicalScope scope) {
         return getParentOfType(scope.getOwnerDescriptor(), ClassDescriptor.class, false);
-    }
-
-    public static void resolvePackageHeader(
-            @NotNull JetPackageDirective packageDirective,
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingTrace trace
-    ) {
-        for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
-            FqName fqName = packageDirective.getFqName(nameExpression);
-
-            PackageViewDescriptor packageView = module.getPackage(fqName);
-            trace.record(REFERENCE_TARGET, nameExpression, packageView);
-
-            PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
-            assert parentPackageView != null : "Should not be null since " + fqName + " should not be root";
-            trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
-        }
     }
 
     public static void registerFileInPackage(@NotNull BindingTrace trace, @NotNull JetFile file) {

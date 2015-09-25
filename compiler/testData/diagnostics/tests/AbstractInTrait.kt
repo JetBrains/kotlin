@@ -7,15 +7,15 @@ interface MyTrait {
     <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> val a2: Int
     <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> val a3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>1<!>
 
-    var b: Int                                                  private set
-    var b1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;                             private set
-    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var b2: Int                     private set
-    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; private set
+    var b: Int
+    var b1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>
+    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var b2: Int
+    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>
 
-    <!BACKING_FIELD_IN_TRAIT!>var c: Int<!>                                   set(v: Int) { $c = v }
-    <!BACKING_FIELD_IN_TRAIT!>var c1: Int<!> = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;              set(v: Int) { $c1 = v }
-    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var c2: Int                     <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { $c2 = v }<!>
-    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { $c3 = v }<!>
+    <!BACKING_FIELD_IN_TRAIT!>var c: Int<!>                                   set(v: Int) { field = v }
+    <!BACKING_FIELD_IN_TRAIT!>var c1: Int<!> = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;              set(v: Int) { field = v }
+    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var c2: Int                     <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
+    <!ABSTRACT_MODIFIER_IN_TRAIT!>abstract<!> var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
 
     val e: Int                                                  get() = a
     val e1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;                             get() = a

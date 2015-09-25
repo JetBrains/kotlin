@@ -3,14 +3,12 @@ import java.lang.*
 import java.lang.Iterable
 import java.lang.Iterable
 import java.lang.Iterable as Foo
-import java.lang
-import java.lang as jl
 
 fun <T> a() : java.lang.Iterable<T>? {
     return null
 }
 
-fun b() : lang.Iterable<String>? {
+fun b() : java.lang.Iterable<String>? {
     return null
 }
 
@@ -18,7 +16,7 @@ fun c() : Foo<String><caret> {
     throw Exception()
 }
 
-fun d() : jl.Iterable<String>? {
+fun d() : java.lang.Iterable<String>? {
     return null
 }
 

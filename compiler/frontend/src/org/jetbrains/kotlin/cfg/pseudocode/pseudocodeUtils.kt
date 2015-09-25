@@ -197,7 +197,7 @@ public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingC
                     }
                 }
 
-                is MagicInstruction -> @suppress("NON_EXHAUSTIVE_WHEN") when (it.kind) {
+                is MagicInstruction -> @Suppress("NON_EXHAUSTIVE_WHEN") when (it.kind) {
                     AND, OR ->
                         addSubtypesOf(builtIns.getBooleanType())
 

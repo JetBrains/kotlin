@@ -1,7 +1,6 @@
 package kotlin
 
 import java.util.ArrayList
-import kotlin.platform.platformName
 
 /**
  * Returns a single list of all elements from all collections in the given collection.

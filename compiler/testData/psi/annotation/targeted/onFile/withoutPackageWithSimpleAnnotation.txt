@@ -18,6 +18,7 @@ JetFile: withoutPackageWithSimpleAnnotation.kt
   FUN
     MODIFIER_LIST
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -25,6 +26,7 @@ JetFile: withoutPackageWithSimpleAnnotation.kt
                 PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

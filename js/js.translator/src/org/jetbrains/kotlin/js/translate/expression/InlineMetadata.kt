@@ -22,20 +22,18 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
 
-import kotlin.platform.platformStatic
-
 private val METADATA_PROPERTIES_COUNT = 2
 
 public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
     companion object {
-        platformStatic
+        @JvmStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
             val program = function.getScope().getProgram()
             val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor))
             return InlineMetadata(tag, function)
         }
 
-        platformStatic
+        @JvmStatic
         fun decompose(expression: JsExpression?): InlineMetadata? =
                 when (expression) {
                     is JsInvocation -> decomposeCreateFunctionCall(expression)

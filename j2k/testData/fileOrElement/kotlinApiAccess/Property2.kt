@@ -1,6 +1,6 @@
 import kotlinApi.*
 
-class C {
+internal class C {
     fun foo(k: KotlinClass) {
         println(k.field)
         k.field = 1

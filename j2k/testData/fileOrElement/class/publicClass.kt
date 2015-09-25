@@ -1,1 +1,1 @@
-public class Test
+class Test

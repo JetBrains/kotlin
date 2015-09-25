@@ -206,10 +206,12 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
                 else -> throw IllegalArgumentException(element.toString())
             }
 
-            return result to findCallName(result)
+            val callName = findCallName(result)
+                           ?: error("No call name found in ${result.text}")
+            return result to callName
         }
 
-        private fun findCallName(result: JetExpression): JetSimpleNameExpression {
+        private fun findCallName(result: JetExpression): JetSimpleNameExpression? {
             return when (result) {
                 is JetBinaryExpression -> {
                     if (JetPsiUtil.isAssignment(result))
@@ -220,7 +222,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
 
                 is JetUnaryExpression -> findCallName(result.getBaseExpression()!!)
 
-                else -> result.getQualifiedElementSelector() as JetSimpleNameExpression
+                else -> result.getQualifiedElementSelector() as JetSimpleNameExpression?
             }
         }
     }

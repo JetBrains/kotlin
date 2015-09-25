@@ -1,0 +1,4 @@
+package
+
+public var x: kotlin.Int
+public var y: kotlin.Int

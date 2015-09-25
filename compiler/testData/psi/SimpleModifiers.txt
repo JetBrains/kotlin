@@ -42,6 +42,8 @@ JetFile: SimpleModifiers.kt
       PsiElement(in)('in')
       PsiWhiteSpace('\n')
       PsiElement(out)('out')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -84,6 +86,8 @@ JetFile: SimpleModifiers.kt
           PsiElement(in)('in')
           PsiWhiteSpace('\n        ')
           PsiElement(out)('out')
+          PsiErrorElement:Use '@' symbol before annotations
+            <empty list>
           PsiWhiteSpace('\n        ')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

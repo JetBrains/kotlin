@@ -1,4 +1,4 @@
-<!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
+<!UNRESOLVED_REFERENCE!>@<!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
 
 abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
@@ -15,7 +15,7 @@ abstract class A() {
 class FinalClass() {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun foo() {}
     val i: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = $i
+        <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = field
     var j: Int = 1
         <!WRONG_MODIFIER_TARGET!>open<!> set(v: Int) {}
 }
@@ -36,6 +36,7 @@ class IllegalModifiers1(
         <!WRONG_MODIFIER_TARGET!>reified<!>
         <!WRONG_MODIFIER_TARGET!>enum<!>
         <!WRONG_MODIFIER_TARGET!>private<!>
+        <!WRONG_MODIFIER_TARGET!>const<!>
         <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
@@ -83,9 +84,9 @@ abstract class IllegalModifiers6() {
     <!WRONG_MODIFIER_TARGET!>open<!> init {}
     <!WRONG_MODIFIER_TARGET!>final<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_ANNOTATION_TARGET!>annotated<!> init {}
+    <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_ANNOTATION_TARGET!>@annotated<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_ANNOTATION_TARGET, NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6()<!> init {}
+    <!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_ANNOTATION_TARGET, NOT_AN_ANNOTATION_CLASS!>@IllegalModifiers6()<!> init {}
 }
 
 // strange inappropriate modifiers usages
@@ -110,6 +111,7 @@ class IllegalModifiers7() {
     <!INCOMPATIBLE_MODIFIERS!>in<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
     <!WRONG_MODIFIER_TARGET!>reified<!>
+    <!WRONG_MODIFIER_TARGET!>const<!>
     fun foo() {}
 }
 
@@ -117,7 +119,7 @@ class IllegalModifiers7() {
 class IllegalModifiers8 {
     <!WRONG_MODIFIER_TARGET!>abstract<!>
     <!WRONG_MODIFIER_TARGET!>enum<!>
-    <!REDUNDANT_MODIFIER!>open<!>
+    <!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET, REDUNDANT_MODIFIER!>open<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
     <!WRONG_MODIFIER_TARGET!>annotation<!>
     <!WRONG_MODIFIER_TARGET!>override<!>
@@ -126,6 +128,7 @@ class IllegalModifiers8 {
     <!INCOMPATIBLE_MODIFIERS!>final<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
     <!WRONG_MODIFIER_TARGET!>reified<!>
+    <!INCOMPATIBLE_MODIFIERS!>const<!>
     constructor() {}
 
     constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
@@ -141,7 +144,7 @@ class IllegalModifiers9 {
 class IllegalModifiers10
 <!WRONG_MODIFIER_TARGET!>abstract<!>
 <!WRONG_MODIFIER_TARGET!>enum<!>
-<!REDUNDANT_MODIFIER!>open<!>
+<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET, REDUNDANT_MODIFIER!>open<!>
 <!WRONG_MODIFIER_TARGET!>inner<!>
 <!WRONG_MODIFIER_TARGET!>annotation<!>
 <!WRONG_MODIFIER_TARGET!>override<!>
@@ -149,6 +152,7 @@ class IllegalModifiers10
 <!INCOMPATIBLE_MODIFIERS!>in<!>
 <!INCOMPATIBLE_MODIFIERS!>final<!>
 <!WRONG_MODIFIER_TARGET!>vararg<!>
-<!WRONG_MODIFIER_TARGET!>reified<!> constructor()
+<!WRONG_MODIFIER_TARGET!>reified<!>
+<!INCOMPATIBLE_MODIFIERS!>const<!> constructor()
 
 class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor()

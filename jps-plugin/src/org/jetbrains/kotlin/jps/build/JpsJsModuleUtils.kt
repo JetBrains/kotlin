@@ -26,7 +26,6 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
 import java.util.ArrayList
-import kotlin.platform.platformStatic
 
 object JpsJsModuleUtils {
 
@@ -63,9 +62,9 @@ object JpsJsModuleUtils {
         })
     }
 
-    platformStatic
+    @JvmStatic
     fun getOutputFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.JS_EXT)
 
-    platformStatic
+    @JvmStatic
     fun getOutputMetaFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
 }

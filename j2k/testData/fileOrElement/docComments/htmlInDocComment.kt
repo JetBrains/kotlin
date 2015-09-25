@@ -13,4 +13,4 @@
  *  1. Second
  *
  */
-public class C
+class C

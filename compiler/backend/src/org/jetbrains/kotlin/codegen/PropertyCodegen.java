@@ -110,9 +110,9 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        Type implClassType = CodegenContextUtil.getImplClassTypeByOwnerIfRequired(context);
-        if (implClassType != null) {
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(implClassType));
+        String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
+        if (implClassName != null) {
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, implClassName);
         }
 
         if (CodegenContextUtil.isImplClassOwner(context)) {
@@ -300,10 +300,11 @@ public class PropertyCodegen {
         boolean hasPublicFieldAnnotation = AnnotationsPackage.findPublicFieldAnnotation(propertyDescriptor) != null;
 
         FieldOwnerContext backingFieldContext = context;
+        boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
-            if (propertyDescriptor.isLateInit()) {
+            if (takeVisibilityFromDescriptor) {
                 modifiers |= getVisibilityAccessFlag(propertyDescriptor);
             }
             else if (hasPublicFieldAnnotation && !isDelegate) {
@@ -320,7 +321,7 @@ public class PropertyCodegen {
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
         }
-        else if (propertyDescriptor.isLateInit()) {
+        else if (takeVisibilityFromDescriptor) {
             modifiers |= getVisibilityAccessFlag(propertyDescriptor);
         }
         else if (!isDelegate && hasPublicFieldAnnotation) {
@@ -492,6 +493,9 @@ public class PropertyCodegen {
         }
         else if (ownerContext instanceof PackageContext) {
             owner = ((PackageContext) ownerContext).getPackagePartType();
+        }
+        else if (ownerContext instanceof MultifileClassContextBase) {
+            owner = ((MultifileClassContextBase) ownerContext).getFilePartType();
         }
         else {
             throw new UnsupportedOperationException("Unknown context: " + ownerContext);

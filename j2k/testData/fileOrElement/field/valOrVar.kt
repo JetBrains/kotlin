@@ -1,4 +1,4 @@
-class A(private val field6: Int, private val field8: Int, a: A) {
+internal class A(private val field6: Int, private val field8: Int, a: A) {
     private val field1 = 0
     private val field2 = 0
     private var field3 = 0

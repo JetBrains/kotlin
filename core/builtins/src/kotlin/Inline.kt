@@ -23,7 +23,7 @@ package kotlin
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class noinline
+private annotation class noinline
 
 /**
  * Enables inlining of the annotated function and the function literals that it takes as parameters into the
@@ -32,25 +32,12 @@ public annotation class noinline
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/inline-functions.html) for more information.
  *
  * @see noinline
- * @see inlineOptions
+ * @see crossinline
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class inline
-
-/**
- * Specifies options for allowed control flow in inlined lambdas. Lambdas which are invoked directly by the
- * receiving function are allowed to use non-local control flow statements. Lambdas which are called from
- * a different execution context (for example, from an object contained in the receiving function)
- * are restricted to local control flow statements.
- *
- * @property value the inlining options selected for the annotated function parameter.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-public annotation class inlineOptions(vararg val value: InlineOption)
+private annotation class inline
 
 /**
  * Forbids use of non-local control flow statements within lambdas passed as arguments for this parameter.
@@ -58,25 +45,4 @@ public annotation class inlineOptions(vararg val value: InlineOption)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class crossinline
-
-/**
- * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda
- * passed as a parameter to an inline function.
- */
-public enum class InlineOption {
-    /**
-     * This option hasn't been implemented yet.
-     */
-    LOCAL_CONTINUE_AND_BREAK,
-
-    /**
-     * If this option is specified, lambdas may not use non-local return statements (statements which return from
-     * their calling function or one of its enclosing functions). This option must be specified if the lambda
-     * is not invoked directly by the receiving function but instead used in a different execution context
-     * (for example, from an object contained in the receiving function).
-     *
-     * By default, lambdas are allowed to use non-local returns.
-     */
-    ONLY_LOCAL_RETURN
-}
+private annotation class crossinline

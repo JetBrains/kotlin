@@ -9,7 +9,7 @@ class GetOrElseTest {
     val v2: String? = null
     var counter = 0
 
-    test fun defaultValue() {
+    @test fun defaultValue() {
         assertEquals("hello", v1?: "bar")
 
         expect("hello") {
@@ -17,7 +17,7 @@ class GetOrElseTest {
         }
     }
 
-    test fun defaultValueOnNull() {
+    @test fun defaultValueOnNull() {
         assertEquals("bar", v2?: "bar")
 
         expect("bar") {
@@ -30,7 +30,7 @@ class GetOrElseTest {
         return "bar"
     }
 
-    test fun lazyDefaultValue() {
+    @test fun lazyDefaultValue() {
         counter = 0
 
         assertEquals("hello", v1?: calculateBar())

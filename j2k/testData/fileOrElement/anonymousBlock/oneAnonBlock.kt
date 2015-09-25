@@ -1,4 +1,4 @@
-class Test {
+internal class Test {
     var str: String
 
     init {

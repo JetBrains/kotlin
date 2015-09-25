@@ -2,7 +2,7 @@ interface Test {
   companion object {
     public var prop: Int = 0
       set(i : Int) {
-        $prop = i
+        field = i
       }
   }
 }

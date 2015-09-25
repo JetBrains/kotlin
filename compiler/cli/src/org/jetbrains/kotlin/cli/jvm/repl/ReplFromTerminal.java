@@ -18,10 +18,15 @@ package org.jetbrains.kotlin.cli.jvm.repl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
-import jline.console.ConsoleReader;
-import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.UnescapeUtilsKt;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -36,16 +41,40 @@ public class ReplFromTerminal {
     private Throwable replInitializationFailed;
     private final Object waitRepl = new Object();
 
-    private final ConsoleReader consoleReader;
+    private final boolean ideMode;
+    private ReplSystemInWrapper replReader;
+    private final ReplSystemOutWrapper replWriter;
+    private final ReplErrorLogger replErrorLogger;
+
+    private ReplCommandReader commandReader;
 
     public ReplFromTerminal(
             @NotNull final Disposable disposable,
-            @NotNull final CompilerConfiguration compilerConfiguration) {
+            @NotNull final CompilerConfiguration compilerConfiguration
+    ) {
+        String replIdeMode = System.getProperty("kotlin.repl.ideMode");
+        ideMode = replIdeMode != null && replIdeMode.equals("true");
+
+        // wrapper for `out` is required to escape every input in [ideMode];
+        // if [ideMode == false] then just redirects all input to [System.out]
+        // if user calls [System.setOut(...)] then undefined behaviour
+        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
+        System.setOut(replWriter);
+
+        // wrapper for `in` is required to give user possibility of calling
+        // [readLine] from ide-console repl
+        if (ideMode) {
+            replReader = new ReplSystemInWrapper(System.in, replWriter);
+            System.setIn(replReader);
+        }
+
+        replErrorLogger = new ReplErrorLogger(ideMode, replWriter);
+
         new Thread("initialize-repl") {
             @Override
             public void run() {
                 try {
-                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration);
+                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, ideMode, replReader);
                 }
                 catch (Throwable e) {
                     replInitializationFailed = e;
@@ -57,14 +86,17 @@ public class ReplFromTerminal {
         }.start();
 
         try {
-            consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
-            consoleReader.setHistoryEnabled(true);
-            consoleReader.setExpandEvents(false);
-            consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
+            commandReader = createCommandReader();
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            replErrorLogger.logException(e);
         }
+    }
+
+    @NotNull
+    private ReplCommandReader createCommandReader() {
+        return ideMode ? new IdeReplCommandReader()
+                       : new ConsoleReplCommandReader();
     }
 
     private ReplInterpreter getReplInterpreter() {
@@ -89,9 +121,9 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            System.out.println("Welcome to Kotlin version " + KotlinVersion.VERSION +
+            replWriter.printlnInit("Welcome to Kotlin version " + KotlinVersion.VERSION +
                                " (JRE " + System.getProperty("java.runtime.version") + ")");
-            System.out.println("Type :help for help, :quit for quit");
+            replWriter.printlnInit("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
                 next = one(next);
@@ -101,19 +133,19 @@ public class ReplFromTerminal {
             }
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            replErrorLogger.logException(e);
         }
         finally {
             try {
-                ((FileHistory) consoleReader.getHistory()).flush();
+                commandReader.flushHistory();
             }
             catch (Exception e) {
-                System.err.println("failed to flush history: " + e);
+                replErrorLogger.logException(e);
             }
         }
     }
 
-    private enum WhatNextAfterOneLine {
+    public enum WhatNextAfterOneLine {
         READ_LINE,
         INCOMPLETE,
         QUIT,
@@ -122,10 +154,13 @@ public class ReplFromTerminal {
     @NotNull
     private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
-            String line = consoleReader.readLine(next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ");
+            String line = commandReader.readLine(next);
+
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
             }
+
+            line = UnescapeUtilsKt.unescapeLineBreaks(line);
 
             if (line.startsWith(":") && (line.length() == 1 || line.charAt(1) != ':')) {
                 boolean notQuit = oneCommand(line.substring(1));
@@ -150,13 +185,17 @@ public class ReplFromTerminal {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
         if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
             if (!lineResult.isUnit()) {
-                System.out.println(lineResult.getValue());
+                replWriter.printlnResult(lineResult.getValue());
             }
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
+            replWriter.printlnIncomplete();
         }
-        else if (lineResult.getType() == ReplInterpreter.LineResultType.ERROR) {
-            System.out.print(lineResult.getErrorText());
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.COMPILE_ERROR) {
+            replWriter.printlnCompileError(lineResult.getErrorText());
+        }
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.RUNTIME_ERROR) {
+            replWriter.printlnRuntimeError(lineResult.getErrorText());
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);
@@ -167,15 +206,16 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            System.out.println("Available commands:");
-            System.out.println(":help                   show this help");
-            System.out.println(":quit                   exit the interpreter");
-            System.out.println(":dump bytecode          dump classes to terminal");
-            System.out.println(":load <file>            load script from specified file");
+            replWriter.printlnHelp("Available commands:\n" +
+                                   ":help                   show this help\n" +
+                                   ":quit                   exit the interpreter\n" +
+                                   ":dump bytecode          dump classes to terminal\n" +
+                                   ":load <file>            load script from specified file"
+            );
             return true;
         }
         else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
-            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
+            getReplInterpreter().dumpClasses(new PrintWriter(replWriter));
             return true;
         }
         else if (split.size() >= 1 && split.get(0).equals("quit")) {
@@ -188,8 +228,9 @@ public class ReplFromTerminal {
             return true;
         }
         else {
-            System.out.println("Unknown command");
-            System.out.println("Type :help for help");
+            replWriter.printlnHelp("Unknown command\n" +
+                                   "Type :help for help"
+            );
             return true;
         }
     }

@@ -31,18 +31,18 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import java.util.ArrayList
+import java.util.*
 
 public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5

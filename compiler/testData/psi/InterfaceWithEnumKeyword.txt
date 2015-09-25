@@ -20,6 +20,8 @@ JetFile: InterfaceWithEnumKeyword.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       MODIFIER_LIST
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -45,6 +47,8 @@ JetFile: InterfaceWithEnumKeyword.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       MODIFIER_LIST
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE

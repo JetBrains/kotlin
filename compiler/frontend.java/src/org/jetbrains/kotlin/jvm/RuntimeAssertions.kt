@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.upperIfFlexible
-import kotlin.platform.platformStatic
 
 public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, public val message: String) {
     public interface DataFlowExtras {
@@ -47,7 +46,8 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
     }
 
     companion object {
-        platformStatic public fun create(
+        @JvmStatic
+        public fun create(
                 expectedType: JetType,
                 expressionType: JetType,
                 dataFlowExtras: DataFlowExtras

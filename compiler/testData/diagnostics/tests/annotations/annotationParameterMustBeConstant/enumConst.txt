@@ -2,7 +2,7 @@ package
 
 public val e: MyEnum
 
-kotlin.annotation.annotation() public final class AnnE : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AnnE : kotlin.Annotation {
     public constructor AnnE(/*0*/ i: MyEnum)
     public final val i: MyEnum
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -27,14 +27,14 @@ public final enum class MyEnum : kotlin.Enum<MyEnum> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
 
-AnnE() public final class Test {
+@AnnE() public final class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnE() public final class Test2 {
+@AnnE() public final class Test2 {
     public constructor Test2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,7 +1,7 @@
-open class Base {
+internal open class Base {
     private val myFirst: String? = null
 }
 
-class Child : Base() {
+internal class Child : Base() {
     private val mySecond: String? = null
 }

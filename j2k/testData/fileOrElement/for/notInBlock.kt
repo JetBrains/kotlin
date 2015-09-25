@@ -1,4 +1,4 @@
-class A {
+internal class A {
     fun foo(p: Boolean) {
         if (p) {
             var i = 1

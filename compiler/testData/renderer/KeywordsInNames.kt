@@ -2,7 +2,7 @@ annotation class `true`
 
 val `val` = 5
 
-`true` interface `interface`
+@`true` interface `interface`
 
 class `class`<`in`>(p: `in`?) {
    inner class `class`
@@ -17,10 +17,10 @@ val AS_SAFE = 1
 val NOT_IN = 2
 val NOT_IS = 3
 
-//kotlin.annotation.annotation public final class `true` : kotlin.Annotation defined in root package
+//@kotlin.annotation.annotation public final class `true` : kotlin.Annotation defined in root package
 //public constructor `true`() defined in `true`
 //public val `val`: kotlin.Int defined in root package
-//`true` public interface `interface` defined in root package
+//@`true` public interface `interface` defined in root package
 //public final class `class`<`in`> defined in root package
 //<`in`> defined in `class`
 //public constructor `class`<`in`>(p: `in`?) defined in `class`

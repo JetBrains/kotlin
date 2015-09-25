@@ -1,1 +1,1 @@
-class Entry<K, V>
+internal class Entry<K, V>

@@ -1,6 +1,6 @@
 import java.util.*
 
-class A {
+internal class A {
     fun foo(collection: MutableCollection<String>) {
         bar(collection)
     }

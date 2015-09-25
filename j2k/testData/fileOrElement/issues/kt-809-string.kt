@@ -1,16 +1,16 @@
 package demo
 
-class Container {
+internal class Container {
     var myString = "1"
 }
 
-object One {
+internal object One {
     var myContainer = Container()
 }
 
-class StringContainer(s: String)
+internal class StringContainer(s: String)
 
-class Test {
+internal class Test {
     fun putString(s: String) {
     }
 

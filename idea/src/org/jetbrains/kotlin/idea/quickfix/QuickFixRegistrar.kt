@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
-import org.jetbrains.kotlin.idea.quickfix.migration.*
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
 import org.jetbrains.kotlin.lexer.JetTokens.*
@@ -105,7 +104,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
         ABSTRACT_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
-        DEPRECATED_TRAIT_KEYWORD.registerFactory(DeprecatedTraitSyntaxFix, DeprecatedTraitSyntaxFix.createWholeProjectFixFactory())
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
         INCOMPATIBLE_MODIFIERS.registerFactory(RemoveModifierFix.createRemoveModifierFactory(false))
@@ -132,9 +130,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_BACKING_FIELD_CUSTOM_ACCESSORS.registerFactory(changeToPropertyNameFactory)
         INACCESSIBLE_BACKING_FIELD.registerFactory(changeToPropertyNameFactory)
 
-        val unresolvedReferenceFactory = AutoImportFix.createFactory()
-        UNRESOLVED_REFERENCE.registerFactory(unresolvedReferenceFactory)
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(unresolvedReferenceFactory)
+        UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
 
         val removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory()
         CONFLICTING_IMPORT.registerFactory(removeImportFixFactory)
@@ -196,7 +193,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         FINAL_SUPERTYPE.registerFactory(addOpenModifierToClassDeclarationFix)
         FINAL_UPPER_BOUND.registerFactory(addOpenModifierToClassDeclarationFix)
 
-        OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix.createFactory())
+        OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix)
 
         PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix.createFactory())
 
@@ -325,11 +322,5 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
-
-        DEPRECATED_UNESCAPED_ANNOTATION.registerFactory(UnescapedAnnotationFix.Factory)
-        DEPRECATED_ESCAPED_MODIFIER.registerFactory(EscapedModifierFix.Factory)
-        DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.registerFactory(ReplaceAnnotationWithModifierFix.Factory)
-        DEPRECATED_DECAPITALIZED_ANNOTATION.registerFactory(DecapitalizedAnnotationFix.Factory)
-        DEPRECATED_ANNOTATION_USE.registerFactory(RemoveAnnotationFix.Factory)
     }
 }

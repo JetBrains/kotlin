@@ -78,6 +78,8 @@ JetFile: forParameters.kt
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(in)('in')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -189,6 +191,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -221,6 +225,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -259,6 +265,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -276,6 +284,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
+              PsiErrorElement:Use '@' symbol before annotations
+                <empty list>
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -309,6 +319,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -323,6 +335,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
+              PsiErrorElement:Use '@' symbol before annotations
+                <empty list>
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -356,6 +370,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -390,6 +406,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -406,6 +424,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
+              PsiErrorElement:Use '@' symbol before annotations
+                <empty list>
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -440,6 +460,8 @@ JetFile: forParameters.kt
         VALUE_PARAMETER
           MODIFIER_LIST
             PsiElement(private)('private')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -476,6 +498,8 @@ JetFile: forParameters.kt
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
             PsiElement(private)('private')
+            PsiErrorElement:Use '@' symbol before annotations
+              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -493,6 +517,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
+              PsiErrorElement:Use '@' symbol before annotations
+                <empty list>
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE

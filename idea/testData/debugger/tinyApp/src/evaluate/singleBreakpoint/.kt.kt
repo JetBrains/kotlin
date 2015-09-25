@@ -2,7 +2,7 @@
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size
+    args.size()
 }
 
 // EXPRESSION: 1 + 1

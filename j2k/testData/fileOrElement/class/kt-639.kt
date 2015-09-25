@@ -4,7 +4,7 @@ package demo
 
 import java.util.HashMap
 
-class Test {
+internal class Test {
     constructor() {
     }
 
@@ -12,7 +12,7 @@ class Test {
     }
 }
 
-class User {
+internal class User {
     fun main() {
         val m = HashMap(1)
         val m2 = HashMap(10)

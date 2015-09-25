@@ -51,7 +51,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
     }
 
     override fun update(e: AnActionEvent) {
-        e.getPresentation().setVisible(incrementalCompilationEnabled(e.getProject()!!))
+        e.presentation.isVisible = e.project?.let { incrementalCompilationEnabled(it) } ?: false
     }
 
     override fun actionPerformed(e: AnActionEvent) {

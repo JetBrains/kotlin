@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.getAffectedCallables
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 
 public class KotlinCallerUsage(element: JetNamedDeclaration): JetUsageInfo<JetNamedDeclaration>(element) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {

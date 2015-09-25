@@ -1,5 +1,5 @@
 // ERROR: Unresolved reference: x
-class C {
+internal class C {
     private val s = x()
 
     fun foo() {

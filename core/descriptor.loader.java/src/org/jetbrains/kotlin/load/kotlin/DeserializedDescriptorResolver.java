@@ -26,24 +26,26 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.ClassData;
+import org.jetbrains.kotlin.serialization.ClassDataWithSource;
 import org.jetbrains.kotlin.serialization.PackageData;
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.CLASS;
+import static kotlin.KotlinPackage.setOf;
+import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public final class DeserializedDescriptorResolver {
     private final ErrorReporter errorReporter;
     private DeserializationComponents components;
+
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_CLASS = setOf(CLASS);
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART = setOf(FILE_FACADE, MULTIFILE_CLASS_PART);
+    public static final Set<KotlinClassHeader.Kind> KOTLIN_PACKAGE_FACADE = setOf(PACKAGE_FACADE);
 
     public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
@@ -57,19 +59,21 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, CLASS);
+        String[] data = readData(kotlinClass, KOTLIN_CLASS);
         if (data != null) {
             ClassData classData = JvmProtoBufUtil.readClassDataFrom(data);
             KotlinJvmBinarySourceElement sourceElement = new KotlinJvmBinarySourceElement(kotlinClass);
-            ClassDataProvider classDataProvider = new ClassDataProvider(classData, sourceElement);
-            return components.getClassDeserializer().deserializeClass(kotlinClass.getClassId(), classDataProvider);
+            return components.getClassDeserializer().deserializeClass(
+                    kotlinClass.getClassId(),
+                    new ClassDataWithSource(classData, sourceElement)
+            );
         }
         return null;
     }
 
     @Nullable
     public JetScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, KotlinClassHeader.Kind.FILE_FACADE);
+        String[] data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART);
         if (data != null) {
             //all classes are included in java scope
             PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
@@ -102,12 +106,12 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
+    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull Set<KotlinClassHeader.Kind> expectedKinds) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         if (!header.getIsCompatibleAbiVersion()) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getVersion());
         }
-        else if (header.getKind() == expectedKind) {
+        else if (expectedKinds.contains(header.getKind())) {
             return header.getAnnotationData();
         }
 

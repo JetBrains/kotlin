@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.Key
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+
+public var JetFile.doNotComplete: Boolean? by UserDataProperty(Key.create("DO_NOT_COMPLETE"))
 
 public class KotlinCompletionContributor : CompletionContributor() {
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
@@ -214,7 +217,9 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.getPosition()
-        if (position.getContainingFile() !is JetFile) return
+        val positionFile = position.containingFile
+        if (positionFile !is JetFile) return
+        if ((positionFile.originalFile as JetFile).doNotComplete ?: false) return
 
         performCompletionWithOutOfBlockTracking(position) {
             doComplete(parameters, position, result)

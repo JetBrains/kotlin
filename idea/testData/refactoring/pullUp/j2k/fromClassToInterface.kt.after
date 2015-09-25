@@ -1,21 +1,21 @@
 interface A {
     // INFO: {"checked": "true"}
-    class Y
+    internal class Y
 
     // INFO: {"checked": "true"}
-    fun foo(n: Int): Boolean {
+    internal fun foo(n: Int): Boolean {
         return n > 0
     }
 
     // INFO: {"checked": "true"}
-    fun bar(s: String): Int
+    internal fun bar(s: String): Int
 
     companion object {
         // INFO: {"checked": "true"}
-        var X = "1" + "2"
+        internal var X = "1" + "2"
 
         // INFO: {"checked": "true"}
-        JvmStatic fun foo2(n: Int): String {
+        JvmStatic internal fun foo2(n: Int): String {
             return "_" + n + "_"
         }
     }

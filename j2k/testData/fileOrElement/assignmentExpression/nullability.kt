@@ -1,6 +1,6 @@
 import java.util.HashSet
 
-class Foo {
+internal class Foo {
     fun foo(o: HashSet<Any>) {
         val o2 = o
         var foo = 0

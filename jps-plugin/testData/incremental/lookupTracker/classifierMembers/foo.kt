@@ -7,20 +7,20 @@ import bar.*
     var b = ""
 
     val c: /*c:foo.A c:foo.A.Companion p:foo*/String
-        get() = /*p:foo p:bar c:foo.A c:foo.A.Companion*/b
+        get() = /*c:foo.A*/b
 
     var d: /*c:foo.A c:foo.A.Companion p:foo*/String = "ddd"
-        get() = /*p:foo p:bar c:foo.A c:foo.A.Companion*/$d
-        set(v) { /*p:foo p:bar c:foo.A c:foo.A.Companion*/$d = v }
+        get() = /*c:foo.A*/$d
+        set(v) { /*c:foo.A*/$d = v }
 
     fun foo() {
-        /*p:foo p:bar c:foo.A c:foo.A.Companion*/a
-        /*p:foo p:bar c:foo.A c:foo.A.Companion*/foo()
+        /*c:foo.A*/a
+        /*c:foo.A*/foo()
         this./*c:foo.A*/a
         this./*c:foo.A*/foo()
-        /*p:foo p:bar c:foo.A c:foo.A.Companion*/baz()
-        /*p:foo p:bar c:foo.A c:foo.A.Companion*/Companion./*c:foo.A.Companion*/a
-        /*p:foo p:bar c:foo.A c:foo.A.Companion*/O./*c:foo.A.O*/v = "OK"
+        /*c:foo.A c:foo.A.Companion p:foo p:bar*/baz()
+        /*c:foo.A c:foo.A.Companion p:foo p:bar*/Companion./*c:foo.A.Companion*/a
+        /*c:foo.A c:foo.A.Companion p:foo p:bar*/O./*c:foo.A.O*/v = "OK"
     }
 
     class B {
@@ -59,10 +59,10 @@ import bar.*
 
     val a = 1
     fun foo() {
-        /*p:foo p:bar c:foo.E*/a
-        /*p:foo p:bar c:foo.E*/Y./*c:foo.E*/a
-        /*p:foo p:bar c:foo.E*/foo()
-        /*p:foo p:bar c:foo.E*/X./*c:foo.E*/foo()
+        /*c:foo.E*/a
+        /*c:foo.E p:foo p:bar*/Y./*c:foo.E*/a
+        /*c:foo.E*/foo()
+        /*c:foo.E p:foo p:bar*/X./*c:foo.E*/foo()
     }
 }
 

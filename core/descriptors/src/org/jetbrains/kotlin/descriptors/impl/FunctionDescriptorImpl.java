@@ -42,6 +42,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
     private Visibility visibility = Visibilities.UNKNOWN;
+    private boolean isOperator;
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
@@ -67,13 +68,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility
+            @NotNull Visibility visibility,
+            boolean isOperator
     ) {
         this.typeParameters = UtilsPackage.toReadOnlyList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
+        this.isOperator = isOperator;
         this.extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverParameterType);
         this.dispatchReceiverParameter = dispatchReceiverParameter;
         
@@ -139,6 +142,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public boolean isOperator() {
+        if (isOperator) return true;
+
+        for (FunctionDescriptor descriptor : overriddenFunctions) {
+            if (descriptor.isOperator()) return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
     }
@@ -187,7 +201,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, getOriginal(), true, getKind());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, isOperator, getOriginal(), true, getKind());
     }
 
     @Nullable
@@ -195,12 +209,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
+            boolean isOperator,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind
     ) {
         return doSubstitute(originalSubstitutor,
-                newOwner, newModality, newVisibility, original, copyOverrides, kind,
+                newOwner, newModality, newVisibility, isOperator, original, copyOverrides, kind,
                 getValueParameters(), getExtensionReceiverParameterType(), getReturnType()
         );
     }
@@ -217,6 +232,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
+            boolean isOperator,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind,
@@ -277,7 +293,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 substitutedValueParameters,
                 substitutedReturnType,
                 newModality,
-                newVisibility
+                newVisibility,
+                isOperator
         );
 
         if (copyOverrides) {

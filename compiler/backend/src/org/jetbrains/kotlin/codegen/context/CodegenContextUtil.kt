@@ -21,21 +21,19 @@ import org.jetbrains.org.objectweb.asm.Type
 
 
 public object CodegenContextUtil {
-    public @JvmStatic fun getImplClassTypeByOwnerIfRequired(owner: CodegenContext<*>): Type? =
+    @JvmStatic
+    public fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
             when (owner) {
-                is PackageFacadeContext ->
-                        owner.delegateToClassType
-                is PackageContext ->
-                        owner.packagePartType
-                is MultifileClassOrPartContext ->
-                        owner.filePartType
-                else ->
-                        null
+                is DelegatingFacadeContext -> owner.delegateToClassType
+                is DelegatingToPartContext -> owner.implementationOwnerClassType
+                else -> null
             }
 
-    public @JvmStatic fun getImplClassNameByOwnerIfRequired(owner: CodegenContext<*>): String? =
-            getImplClassTypeByOwnerIfRequired(owner)?.let{ AsmUtil.shortNameByAsmType(it) }
+    @JvmStatic
+    public fun getImplementationClassShortName(owner: CodegenContext<*>): String? =
+            getImplementationOwnerClassType(owner)?.let { AsmUtil.shortNameByAsmType(it) }
 
-    public @JvmStatic fun isImplClassOwner(owner: CodegenContext<*>): Boolean =
-            !(owner is PackageFacadeContext || owner is MultifileClassContext)
+    @JvmStatic
+    public fun isImplClassOwner(owner: CodegenContext<*>): Boolean =
+            owner !is DelegatingFacadeContext
 }

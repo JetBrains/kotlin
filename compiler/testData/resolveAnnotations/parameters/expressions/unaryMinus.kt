@@ -9,6 +9,6 @@ annotation class Ann(
         val b6: Float
 )
 
-Ann(-1, -1, -1, -1, -1.0, -1.0.toFloat()) class MyClass
+@Ann(-1, -1, -1, -1, -1.0, -1.0.toFloat()) class MyClass
 
-// EXPECTED: Ann(b1 = -1.toByte(), b2 = -1.toShort(), b3 = -1, b4 = -1.toLong(), b5 = -1.0.toDouble(), b6 = -1.0.toFloat())
+// EXPECTED: @Ann(b1 = -1.toByte(), b2 = -1.toShort(), b3 = -1, b4 = -1.toLong(), b5 = -1.0.toDouble(), b6 = -1.0.toFloat())

@@ -1,9 +1,9 @@
 package
 
-a() public fun <no name provided>(): kotlin.Unit
+@a() public fun <no name provided>(): kotlin.Unit
 public fun <no name provided>(): kotlin.Unit
 public fun outerFun(): kotlin.Unit
-public fun @[a()] A.<no name provided>(): kotlin.Unit
+public fun @a() A.<no name provided>(): kotlin.Unit
 public fun A.<no name provided>(): kotlin.Unit
 
 public interface A {
@@ -20,16 +20,16 @@ public interface B {
 
 public final class Outer {
     public constructor Outer()
-    a() public final fun <no name provided>(): kotlin.Unit
+    @a() public final fun <no name provided>(): kotlin.Unit
     public final fun <no name provided>(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun @[a()] A.<no name provided>(): kotlin.Unit
+    public final fun @a() A.<no name provided>(): kotlin.Unit
     public final fun B.<no name provided>(): kotlin.Unit
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() public final class a : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) @kotlin.annotation.annotation() public final class a : kotlin.Annotation {
     public constructor a()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

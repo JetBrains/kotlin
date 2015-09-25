@@ -37,15 +37,6 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         candidatesList.add(storageManager.createLazyValue { lazyCandidates().toReadOnlyList() })
     }
 
-    public fun addCandidates(candidatesList: List<Collection<ResolutionCandidate<D>>>) {
-        assertNotFinished()
-        for (candidates in candidatesList) {
-            if (candidates.isNotEmpty()) {
-                addCandidates { candidates }
-            }
-        }
-    }
-
     private fun assertNotFinished() {
         assert(internalTasks == null, "Can't add candidates after the resulting tasks were computed.")
     }

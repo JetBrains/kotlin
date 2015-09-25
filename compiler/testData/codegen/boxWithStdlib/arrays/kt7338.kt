@@ -3,5 +3,5 @@ fun foo(x : Any): String {
 }
 
 fun box(): String {
-    return foo(array("OK"))
+    return foo(arrayOf("OK"))
 }

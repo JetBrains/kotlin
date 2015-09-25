@@ -180,7 +180,7 @@ public class JetPsiFactory(private val project: Project) {
         val file = createFile(text)
         val declarations = file.getDeclarations()
         assert(declarations.size() == 1) { "${declarations.size()} declarations in $text" }
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         val result = declarations.first() as TDeclaration
         return result
     }

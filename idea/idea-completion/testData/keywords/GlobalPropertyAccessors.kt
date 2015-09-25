@@ -37,6 +37,7 @@ var a : Int
 // EXIST:  vararg
 /*why?*/
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data
@@ -46,5 +47,6 @@ var a : Int
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 /*TODO*/
 // NOTHING_ELSE

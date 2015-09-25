@@ -26,7 +26,7 @@ package kotlin.reflect
  */
 public class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
     init {
-        @suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         (this as java.lang.Throwable).initCause(cause)
     }
 }
@@ -37,7 +37,7 @@ public class IllegalCallableAccessException(cause: IllegalAccessException) : Exc
  */
 public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
     init {
-        @suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (cause != null) {
             (this as java.lang.Throwable).initCause(cause)
         }

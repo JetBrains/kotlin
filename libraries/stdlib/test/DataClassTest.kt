@@ -7,7 +7,8 @@ import java.io.Serializable
 /**
  */
 class DataClassTest {
-    Test fun dataClass() {
+    @Test
+    fun dataClass() {
         val p = Person("James", 43)
         println("Got $p")
         assertEquals("Person(name=James, age=43)", "$p", "toString")

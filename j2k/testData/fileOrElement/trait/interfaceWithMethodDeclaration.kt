@@ -1,4 +1,4 @@
-interface INode {
-    public fun getTag(): Tag
-    public fun toKotlin(): String
+internal interface INode {
+    fun getTag(): Tag
+    fun toKotlin(): String
 }

@@ -125,12 +125,6 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
-    @TestMetadata("KotlinPackage.kt")
-    public void testKotlinPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/KotlinPackage.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("Kt1850FullQualified.kt")
     public void testKt1850FullQualified() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/Kt1850FullQualified.kt");
@@ -170,12 +164,6 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("NestedClassReferenceOutsideClassBody.kt")
     public void testNestedClassReferenceOutsideClassBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/NestedClassReferenceOutsideClassBody.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("PartiallyQualified.kt")
-    public void testPartiallyQualified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/PartiallyQualified.kt");
         doTest(fileName);
     }
 

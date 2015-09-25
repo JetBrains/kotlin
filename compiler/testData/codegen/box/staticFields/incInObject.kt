@@ -12,7 +12,7 @@ object A {
     var r2: Int = 1;
         get() {
             holder += "getR2"
-            return $r2
+            return field
         }
 
     fun test2() : Int {
@@ -24,7 +24,7 @@ object A {
     var r3: Int = 1;
         set(p: Int) {
             holder += "setR3"
-            $r3 = p
+            field = p
         }
 
     fun test3() : Int {
@@ -36,11 +36,11 @@ object A {
     var r4: Int = 1;
         get() {
             holder += "getR4"
-            return $r4
+            return field
         }
         set(p: Int) {
             holder += "setR4"
-            $r4 = p
+            field = p
         }
 
     fun test4() : Int {

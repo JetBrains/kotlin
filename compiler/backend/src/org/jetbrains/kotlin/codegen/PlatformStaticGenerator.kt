@@ -65,8 +65,7 @@ class PlatformStaticGenerator(
 
                         val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
                                 codegen.getContext().accessibleDescriptor(descriptor, /* superCallExpression = */ null),
-                                false,
-                                codegen.getContext()
+                                false
                         )
                         syntheticOrOriginalMethod.genInvokeInstruction(iv)
                         iv.areturn(asmMethod.returnType)

@@ -1,6 +1,6 @@
 package kotlin.js
 
-native public class Json() {
+@native public class Json() {
     public fun get(propertyName: String): Any? = noImpl
     public fun set(propertyName: String, value: Any?): Unit = noImpl
 }
@@ -13,11 +13,11 @@ public fun json(vararg pairs: Pair<String, Any?>): Json {
     return res
 }
 
-library("jsonAddProperties")
+@library("jsonAddProperties")
 public fun Json.add(other: Json): Json = noImpl
 
-native
-public trait JsonClass {
+@native
+public interface JsonClass {
     public fun stringify(o: Any): String
     public fun stringify(o: Any, replacer: (key: String, value: Any?)->Any?): String
     public fun stringify(o: Any, replacer: (key: String, value: Any?)->Any?, space: Int): String
@@ -30,5 +30,5 @@ public trait JsonClass {
     public fun parse<T>(text: String, reviver: ((key: String, value: Any?)->Any?)): T
 }
 
-native
+@native
 public val JSON: JsonClass = noImpl

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 class JsArrayTest {
 
-    test fun arraySizeAndToList() {
+    @test fun arraySizeAndToList() {
         val a1 = arrayOf<String>()
         val a2 = arrayOf("foo")
         val a3 = arrayOf("foo", "bar")
@@ -21,7 +21,7 @@ class JsArrayTest {
 
     }
 
-    test fun arrayListFromCollection() {
+    @test fun arrayListFromCollection() {
         var c: Collection<String>  = arrayOf("A", "B", "C").toList()
         var a = ArrayList(c)
 

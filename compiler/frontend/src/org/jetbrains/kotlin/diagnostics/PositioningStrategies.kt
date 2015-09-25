@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.sure
-import kotlin.platform.platformStatic
 
 public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
@@ -234,7 +233,7 @@ public object PositioningStrategies {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun modifierSetPosition(vararg tokens: JetModifierKeywordToken): PositioningStrategy<JetModifierListOwner> {
         return object : PositioningStrategy<JetModifierListOwner>() {
             override fun mark(element: JetModifierListOwner): List<TextRange> {
@@ -453,4 +452,18 @@ public object PositioningStrategies {
             return listOf(TextRange(element.getOperationReference().startOffset, element.endOffset))
         }
     }
+
+    public val IMPORT_ALIAS: PositioningStrategy<JetImportDirective> = object: PositioningStrategy<JetImportDirective>() {
+        override fun mark(element: JetImportDirective): List<TextRange> {
+            element.aliasNameNode?.let { return markNode(it) }
+            element.importedReference?.let {
+                if (it is JetQualifiedExpression) {
+                    it.selectorExpression?.let { return markElement(it) }
+                }
+                return markElement(it)
+            }
+            return markElement(element)
+        }
+    }
+
 }

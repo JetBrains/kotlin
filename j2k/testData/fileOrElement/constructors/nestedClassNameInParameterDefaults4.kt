@@ -3,16 +3,16 @@ package pack
 
 import pack.A.*
 
-class A JvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)) {
+internal class A @JvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)) {
 
-    class Nested(p: Int) {
+    internal class Nested(p: Int) {
         companion object {
 
-            public val FIELD: Int = 0
+            val FIELD = 0
         }
     }
 }
 
-class B {
+internal class B {
     var nested: Nested
 }

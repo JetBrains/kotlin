@@ -18,17 +18,19 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
+    private static final Pattern AT_OUTPUT_FILE_PATTERN = Pattern.compile("^\\s*//\\s*@(.*):$");
     private static final Pattern EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$");
 
     public void doTest(@NotNull String filename) throws Exception {
@@ -39,10 +41,18 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     }
 
     protected void countAndCompareActualOccurrences(@NotNull List<OccurrenceInfo> expectedOccurrences) {
+        String text = generateToText();
+
+        checkGeneratedTextAgainstExpectedOccurrences(text, expectedOccurrences);
+    }
+
+    private static void checkGeneratedTextAgainstExpectedOccurrences(
+            @NotNull String text,
+            @NotNull List<OccurrenceInfo> expectedOccurrences
+    ) {
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
 
-        String text = generateToText();
         for (OccurrenceInfo info : expectedOccurrences) {
             expected.append(info.numberOfOccurrences).append(" ").append(info.needle).append("\n");
             int actualCount = StringUtil.findMatches(text, Pattern.compile("(" + info.needle + ")")).size();
@@ -58,6 +68,52 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         }
     }
 
+    public void doTestMultiFile(@NotNull String folderName) throws Exception {
+        final List<String> files = new ArrayList<String>(2);
+        FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                if (file.getName().endsWith(".kt")) {
+                    files.add(relativePath(file));
+                }
+                return true;
+            }
+        });
+
+        doTestMultiFile(files);
+    }
+
+    public void doTestMultiFile(@NotNull List<String> filenames) throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+        Collections.sort(filenames);
+        String[] sortedFilenames = ArrayUtil.toStringArray(filenames);
+        loadFiles(sortedFilenames);
+
+        Map<String, List<OccurrenceInfo>> expectedOccurrencesByOutputFile = new LinkedHashMap<String, List<OccurrenceInfo>>();
+        for (String filename : filenames) {
+            readExpectedOccurrencesForMultiFileTest(filename, expectedOccurrencesByOutputFile);
+        }
+
+        Map<String, String> generated = generateEachFileToText();
+        for (String expectedOutputFile : expectedOccurrencesByOutputFile.keySet()) {
+            assertTextWasGenerated(expectedOutputFile, generated);
+            String generatedText = generated.get(expectedOutputFile);
+            List<OccurrenceInfo> expectedOccurrences = expectedOccurrencesByOutputFile.get(expectedOutputFile);
+            checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences);
+        }
+    }
+
+    private static void assertTextWasGenerated(String expectedOutputFile, Map<String, String> generated) {
+        if (!generated.containsKey(expectedOutputFile)) {
+            StringBuilder failMessage = new StringBuilder();
+            failMessage.append("Missing output file ").append(expectedOutputFile).append(", got ").append(generated.size()).append(": ");
+            for (String generatedFile : generated.keySet()) {
+                failMessage.append(generatedFile).append(" ");
+            }
+            fail(failMessage.toString());
+        }
+    }
+
     @NotNull
     protected List<OccurrenceInfo> readExpectedOccurrences(@NotNull String filename) throws Exception {
         List<OccurrenceInfo> result = new ArrayList<OccurrenceInfo>();
@@ -66,13 +122,43 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         for (String line : lines) {
             Matcher matcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line);
             if (matcher.matches()) {
-                int numberOfOccurrences = Integer.parseInt(matcher.group(1));
-                String needle = matcher.group(2);
-                result.add(new OccurrenceInfo(numberOfOccurrences, needle));
+                result.add(parseOccurrenceInfo(matcher));
             }
         }
 
         return result;
+    }
+
+    protected void readExpectedOccurrencesForMultiFileTest(@NotNull String filename, @NotNull Map<String, List<OccurrenceInfo>> occurrenceMap) throws Exception {
+        String[] lines = FileUtil.loadFile(new File(codegenTestBasePath() + filename), true).split("\n");
+        List<OccurrenceInfo> currentOccurrenceInfos = null;
+        for (String line : lines) {
+            Matcher atOutputFileMatcher = AT_OUTPUT_FILE_PATTERN.matcher(line);
+            if (atOutputFileMatcher.matches()) {
+                String outputFileName = atOutputFileMatcher.group(1);
+                if (occurrenceMap.containsKey(outputFileName)) {
+                    throw new AssertionError(filename + ": Expected occurrences for output file " + outputFileName + " were already provided");
+                }
+                currentOccurrenceInfos = new ArrayList<OccurrenceInfo>();
+                occurrenceMap.put(outputFileName, currentOccurrenceInfos);
+            }
+
+            Matcher expectedOccurrencesMatcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line);
+            if (expectedOccurrencesMatcher.matches()) {
+                if (currentOccurrenceInfos == null) {
+                    throw new AssertionError(filename + ": Should specify output file with '// @<OUTPUT_FILE_NAME>:' before expectations");
+                }
+                OccurrenceInfo occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher);
+                currentOccurrenceInfos.add(occurrenceInfo);
+            }
+        }
+    }
+
+    @NotNull
+    private static OccurrenceInfo parseOccurrenceInfo(Matcher matcher) {
+        int numberOfOccurrences = Integer.parseInt(matcher.group(1));
+        String needle = matcher.group(2);
+        return new OccurrenceInfo(numberOfOccurrences, needle);
     }
 
     protected static class OccurrenceInfo {

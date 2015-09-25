@@ -27,7 +27,7 @@ class A {
         return "#org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinOverridingDialog"
     }
 
-    public fun getSelected(): ArrayList<UsageInfo> {
+    fun getSelected(): ArrayList<UsageInfo> {
         val result = ArrayList<UsageInfo>()
         for (i in 0..myChecked.length - 1) {
             if (myChecked[i]) {

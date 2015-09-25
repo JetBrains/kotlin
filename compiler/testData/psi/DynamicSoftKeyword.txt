@@ -5,6 +5,8 @@ JetFile: DynamicSoftKeyword.kt
     <empty list>
   CLASS
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

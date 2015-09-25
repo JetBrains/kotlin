@@ -19,11 +19,13 @@ abstract class BaseGradleIT {
     private val resourcesRootFile = File("src/test/resources")
     private var workingDir = File(".")
 
-    Before fun setUp() {
+    @Before
+    fun setUp() {
         workingDir = Files.createTempDir()
     }
 
-    After fun tearDown() {
+    @After
+    fun tearDown() {
         deleteRecursively(workingDir)
     }
 

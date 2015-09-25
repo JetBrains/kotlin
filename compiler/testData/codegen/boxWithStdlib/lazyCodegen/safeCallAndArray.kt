@@ -6,6 +6,6 @@ class C {
 
 fun box(): String? {
     val c: C? = C()
-    val arrayList = array(c?.calc(), "")
+    val arrayList = arrayOf(c?.calc(), "")
     return arrayList[0]
 }

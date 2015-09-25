@@ -1,4 +1,3 @@
-import kotlin.InlineOption.*
 
 inline fun <R> inlineFunWithAnnotation(crossinline p: () -> R) {
     inlineFun {

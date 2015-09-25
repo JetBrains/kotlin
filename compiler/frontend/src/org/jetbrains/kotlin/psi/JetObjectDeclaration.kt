@@ -17,12 +17,8 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.navigation.ItemPresentation
-import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
@@ -35,9 +31,9 @@ public class JetObjectDeclaration : JetClassOrObject {
     override fun getStub(): KotlinObjectStub? = super.getStub() as? KotlinObjectStub
 
     override fun getName(): String? {
-        val stub = getStub()
+        val stub = stub
         if (stub != null) {
-            return stub.getName()
+            return stub.name
         }
 
         val nameAsDeclaration = getNameAsDeclaration()
@@ -45,15 +41,15 @@ public class JetObjectDeclaration : JetClassOrObject {
             //NOTE: a hack in PSI that simplifies writing frontend code
             return SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
         }
-        return nameAsDeclaration?.getName()
+        return nameAsDeclaration?.name
     }
 
-    override fun getNameIdentifier(): PsiElement? = getNameAsDeclaration()?.getNameIdentifier()
+    override fun getNameIdentifier(): PsiElement? = getNameAsDeclaration()?.nameIdentifier
 
-    override fun setName(NonNls name: String): PsiElement {
+    override fun setName(@NonNls name: String): PsiElement {
         val declarationName = getNameAsDeclaration()
         if (declarationName == null) {
-            val psiFactory = JetPsiFactory(getProject())
+            val psiFactory = JetPsiFactory(project)
             val result = addAfter(psiFactory.createObjectDeclarationName(name), getObjectKeyword())
             addAfter(psiFactory.createWhiteSpace(), getObjectKeyword())
 
@@ -64,16 +60,16 @@ public class JetObjectDeclaration : JetClassOrObject {
         }
     }
 
-    public fun isCompanion(): Boolean = getStub()?.isCompanion() ?: hasModifier(JetTokens.COMPANION_KEYWORD)
+    public fun isCompanion(): Boolean = stub?.isCompanion() ?: hasModifier(JetTokens.COMPANION_KEYWORD)
 
-    override fun getTextOffset(): Int = getNameIdentifier()?.getTextRange()?.getStartOffset()
-                                        ?: getObjectKeyword().getTextRange().getStartOffset()
+    override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
+                                        ?: getObjectKeyword().textRange.startOffset
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
         return visitor.visitObjectDeclaration(this, data)
     }
 
-    public fun isObjectLiteral(): Boolean = getStub()?.isObjectLiteral() ?: (getParent() is JetObjectLiteralExpression)
+    public fun isObjectLiteral(): Boolean = stub?.isObjectLiteral() ?: (parent is JetObjectLiteralExpression)
 
     public fun getObjectKeyword(): PsiElement = findChildByType(JetTokens.OBJECT_KEYWORD)!!
 }

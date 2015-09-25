@@ -1,6 +1,6 @@
 import java.io.File
 
-class C {
+internal class C {
     fun foo(file: File): String {
         val parent = file.parentFile ?: return ""
         return parent.name

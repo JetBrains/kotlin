@@ -1,13 +1,13 @@
 package foo
 
-trait A : B, E
-trait B
+interface A : B, E
+interface B
 open class C {
     fun foo() = true
 }
-trait D
-trait E
-trait F : G, D
-trait G
+interface D
+interface E
+interface F : G, D
+interface G
 
 fun box() = C().foo()

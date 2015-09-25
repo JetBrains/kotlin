@@ -220,11 +220,14 @@ public class JetChangeSignature(project: Project,
     }
 }
 
-TestOnly public fun createChangeInfo(project: Project,
-                                             callableDescriptor: CallableDescriptor,
-                                             configuration: JetChangeSignatureConfiguration,
-                                             bindingContext: BindingContext,
-                                             defaultValueContext: PsiElement): JetChangeInfo? {
+@TestOnly
+public fun createChangeInfo(
+        project: Project,
+        callableDescriptor: CallableDescriptor,
+        configuration: JetChangeSignatureConfiguration,
+        bindingContext: BindingContext,
+        defaultValueContext: PsiElement
+): JetChangeInfo? {
     val jetChangeSignature = JetChangeSignature(project, callableDescriptor, configuration, bindingContext, defaultValueContext, null)
     val declarations = if (callableDescriptor is CallableMemberDescriptor) {
         OverrideResolver.getDeepestSuperDeclarations(callableDescriptor)

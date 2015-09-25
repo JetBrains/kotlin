@@ -1,6 +1,6 @@
 package foo
 
-trait WithName {
+interface WithName {
     var name: String
 }
 

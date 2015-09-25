@@ -40,4 +40,6 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     @NotNull
     @Override
     FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
+
+    boolean isOperator();
 }

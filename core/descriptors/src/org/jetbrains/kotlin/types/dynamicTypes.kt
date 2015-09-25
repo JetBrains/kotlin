@@ -44,7 +44,7 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         return if (capabilityClass in Impl.capabilityClasses) Impl(flexibility) as T else null
     }
 

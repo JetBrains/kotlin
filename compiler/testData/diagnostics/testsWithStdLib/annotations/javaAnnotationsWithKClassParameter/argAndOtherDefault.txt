@@ -11,14 +11,14 @@ public final class A : kotlin.Annotation {
     public abstract fun x(): kotlin.Int
 }
 
-A(arg = kotlin.String::class) public final class MyClass1 {
+@A(arg = kotlin.String::class) public final class MyClass1 {
     public constructor MyClass1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(arg = kotlin.String::class, x = 2) public final class MyClass2 {
+@A(arg = kotlin.String::class, x = 2) public final class MyClass2 {
     public constructor MyClass2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

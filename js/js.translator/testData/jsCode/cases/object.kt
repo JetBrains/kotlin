@@ -1,6 +1,6 @@
 package foo
 
-native trait Summizer {
+@native interface Summizer {
     fun sum(a: Int, b: Int): Int
 }
 

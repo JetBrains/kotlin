@@ -21,7 +21,7 @@ class B {
     private int x;
 
     // this constructor will disappear
-    B(int x) {
+    public B(int x) {
         this.x = x;
     } // end of constructor body
 

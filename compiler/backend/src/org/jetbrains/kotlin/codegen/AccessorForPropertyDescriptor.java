@@ -57,7 +57,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     ) {
         super(containingDeclaration, null, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier("access$" + getIndexedAccessorSuffix(original, index)),
-              Kind.DECLARATION, SourceElement.NO_SOURCE, false);
+              Kind.DECLARATION, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false);
 
         this.calleeDescriptor = original;
         this.accessorIndex = index;

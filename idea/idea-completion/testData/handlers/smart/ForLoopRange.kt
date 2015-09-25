@@ -1,5 +1,5 @@
-trait X
-trait Y
+interface X
+interface Y
 
 fun X.iterator(): Y
 fun Y.next(): Int

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
@@ -109,7 +108,7 @@ abstract public class JetClassOrObject :
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
+    @Deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
     public fun isAnnotation(): Boolean =
             getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString()) != null || hasModifier(JetTokens.ANNOTATION_KEYWORD)
 

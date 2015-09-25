@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -25,13 +26,11 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
@@ -41,8 +40,10 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -57,21 +58,23 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.creat
 public class DelegatedPropertyResolver {
 
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
+    public static final Name GETTER_NAME = Name.identifier("get");
+    public static final Name SETTER_NAME = Name.identifier("set");
 
     @NotNull private final ExpressionTypingServices expressionTypingServices;
-    @NotNull private final CallResolver callResolver;
+    @NotNull private final FakeCallResolver fakeCallResolver;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final SymbolUsageValidator symbolUsageValidator;
 
     public DelegatedPropertyResolver(
             @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull CallResolver callResolver,
+            @NotNull FakeCallResolver fakeCallResolver,
             @NotNull ExpressionTypingServices expressionTypingServices
     ) {
         this.symbolUsageValidator = symbolUsageValidator;
         this.builtIns = builtIns;
-        this.callResolver = callResolver;
+        this.fakeCallResolver = fakeCallResolver;
         this.expressionTypingServices = expressionTypingServices;
     }
 
@@ -143,15 +146,15 @@ public class DelegatedPropertyResolver {
                 traceToResolvePDMethod, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
-        arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
-        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(PROPERTY_DELEGATED_FUNCTION_NAME.asString());
+        List<JetExpression> arguments = Collections.singletonList(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
-        Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
 
-        OverloadResolutionResults<FunctionDescriptor> functionResults =
-                callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, PROPERTY_DELEGATED_FUNCTION_NAME);
+        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
+                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, PROPERTY_DELEGATED_FUNCTION_NAME, delegateExpression);
+
+        Call call = resolutionResult.getFirst();
+        OverloadResolutionResults<FunctionDescriptor> functionResults = resolutionResult.getSecond();
 
         if (!functionResults.isSuccess()) {
             String expectedFunction = renderCall(call, traceToResolvePDMethod.getBindingContext());
@@ -245,7 +248,6 @@ public class DelegatedPropertyResolver {
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
         arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
-
         arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
 
         if (!isGet) {
@@ -257,17 +259,17 @@ public class DelegatedPropertyResolver {
             trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
         }
 
-        Name functionName = Name.identifier(isGet ? "get" : "set");
-        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
-
+        Name functionName = isGet ? GETTER_NAME : SETTER_NAME;
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
-        Call call = CallMaker.makeCallWithExpressions(delegateExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
-        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, call);
 
-        return callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, functionName);
+        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
+                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);
+
+        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.getFirst());
+        return resolutionResult.getSecond();
     }
 
-    private String renderCall(@NotNull Call call, @NotNull BindingContext context) {
+    private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
         JetExpression calleeExpression = call.getCalleeExpression();
         assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
         StringBuilder builder = new StringBuilder(calleeExpression.getText());

@@ -5,7 +5,7 @@ public fun foo(): Int = 4
 public fun boo(): Int = 23
 fun boo(i: Int): String = "boo" + i
 
-trait T {
+interface T {
     public fun foo(): Int
     public fun boo(): Int
 }

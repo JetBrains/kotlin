@@ -70,7 +70,7 @@ public val KFunction<*>.javaMethod: Method?
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
  * or `null` if this function is not a constructor or cannot be represented by a Java [Constructor].
  */
-@suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public val <T> KFunction<T>.javaConstructor: Constructor<T>?
     get() = (this as? KCallableImpl<T>)?.caller?.member as? Constructor<T>
 
@@ -93,7 +93,7 @@ public val KType.javaType: Type
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
  * for more information.
  */
-@deprecated("After dropping old package facades it would be impossible to retrieve package by java class")
+@Deprecated("After dropping old package facades it would be impossible to retrieve package by java class")
 public val Class<*>.kotlinPackage: KPackage?
     get() = if (getSimpleName().endsWith("Package") &&
                 getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {

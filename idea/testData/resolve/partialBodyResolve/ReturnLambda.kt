@@ -5,5 +5,5 @@ fun foo(p: String?): () -> String {
             "a"
         }
     }
-    <caret>p.size
+    <caret>p.length()
 }

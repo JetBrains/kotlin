@@ -1,6 +1,6 @@
 package foo
 
-native
+@native
 val c: Any? = noImpl
 
 fun box(): Boolean {

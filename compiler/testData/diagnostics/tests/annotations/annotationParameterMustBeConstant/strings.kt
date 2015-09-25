@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 annotation class Ann(vararg val i: String)
 
-val topLevel = "topLevel"
+const val topLevel = "topLevel"
 
 fun foo() {
     val a1 = "a"

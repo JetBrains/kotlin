@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import kotlin.platform.platformStatic
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
@@ -41,7 +40,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
         }
-        if (annotated is JetFunction) {
+        if (annotated is JetDeclarationWithBody) {
+            // JetFunction or JetPropertyAccessor
             for (parameter in annotated.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace)
@@ -54,7 +54,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), TargetLists.T_EXPRESSION, trace)
+        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null), trace)
         if (expression is JetFunctionLiteralExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
@@ -70,20 +70,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
 
-            if (classDescriptor.fqNameSafe in ANNOTATIONS_SHOULD_BE_REPLACED_WITH_MODIFIERS_FQ_NAMES) {
-                if (descriptor.isInlineOptionsWithLocalBreaks()) {
-                    trace.report(Errors.DEPRECATED_ANNOTATION_USE.on(entry))
-                }
-                else {
-                    trace.report(Errors.DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER.on(entry, ANNOTATION_MODIFIERS_MAP[classDescriptor.fqNameSafe]!!))
-                }
-            }
-            else {
-                if (!entry.hasAtSymbolOrInList()) {
-                    trace.report(Errors.DEPRECATED_UNESCAPED_ANNOTATION.on(entry))
-                }
-            }
-
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
             val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
@@ -96,21 +82,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             existingTargetsForAnnotation.add(useSiteTarget)
         }
         additionalCheckers.forEach { it.checkEntries(entries, actualTargets.defaultTargets, trace) }
-    }
-
-    private fun AnnotationDescriptor.isInlineOptionsWithLocalBreaks(): Boolean {
-        val descriptor = type.constructor.declarationDescriptor
-        if (descriptor !is ClassDescriptor) return false
-
-        if (descriptor.fqNameSafe == KotlinBuiltIns.FQ_NAMES.inlineOptions) {
-            val vararg = (allValueArguments.values().firstOrNull() as? ArrayValue)?.value ?: return false
-            return vararg.all {
-                arg ->
-                val enumValue = (arg as? EnumValue) ?: return false
-                return enumValue.value.name.asString() == InlineOption.LOCAL_CONTINUE_AND_BREAK.name()
-            }
-        }
-        return false
     }
 
     private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {
@@ -146,7 +117,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        platformStatic
+        @JvmStatic
         public fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
@@ -169,6 +140,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         private fun getActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): TargetList {
             return when (annotated) {
                 is JetClassOrObject -> descriptor?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
+                is JetMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
                 is JetProperty -> {
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE
@@ -199,36 +171,43 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is JetTypeProjection ->
                     if (annotated.projectionKind == JetProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
                 is JetClassInitializer -> TargetLists.T_INITIALIZER
+                is JetMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
+                is JetFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
+                is JetObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
+                is JetExpression -> TargetLists.T_EXPRESSION
                 else -> TargetLists.EMPTY
             }
         }
 
         private object TargetLists {
-            val T_CLASSIFIER = targetList(CLASSIFIER)
+            val T_CLASSIFIER = targetList(CLASS)
 
             val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
                 onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
             }
 
+            val T_MULTI_DECLARATION = targetList(MULTI_DECLARATION)
+
             val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
-                canBeSubstituted(PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_TOP_LEVEL_PROPERTY = targetList(TOP_LEVEL_PROPERTY, PROPERTY) {
-                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_PROPERTY_GETTER = targetList(PROPERTY_GETTER)
             val T_PROPERTY_SETTER = targetList(PROPERTY_SETTER)
 
             val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER) {
-                onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+                onlyWithUseSiteTarget(PROPERTY, FIELD)
             }
 
             val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY) {
-                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+                extraTargets(FIELD)
+                onlyWithUseSiteTarget(PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
             val T_FILE = targetList(FILE)
@@ -248,6 +227,10 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }
 
             val T_EXPRESSION = targetList(EXPRESSION)
+
+            val T_FUNCTION_LITERAL = targetList(FUNCTION_LITERAL, FUNCTION, EXPRESSION)
+
+            val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 
             val T_TYPE_REFERENCE = targetList(TYPE) {
                 onlyWithUseSiteTarget(VALUE_PARAMETER)
@@ -273,7 +256,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 private var canBeSubstituted: List<KotlinTarget> = listOf()
                 private var onlyWithUseSiteTarget: List<KotlinTarget> = listOf()
 
-                fun canBeSubstituted(vararg targets: KotlinTarget) {
+                fun extraTargets(vararg targets: KotlinTarget) {
                     canBeSubstituted = targets.toList()
                 }
 

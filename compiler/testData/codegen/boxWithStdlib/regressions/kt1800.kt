@@ -20,7 +20,7 @@ public fun <T: Comparable<T>> Collection<T>.testMin(): T? {
 }
 
 fun box() : String {
-    val users = arrayList(
+    val users = arrayListOf(
             User("John", "Doe", 30),
             User("Jane", "Doe", 27))
 

@@ -11,19 +11,19 @@ class LazyValTest {
         ++result
     }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         assertTrue(a == 1, "fail: initializer should be invoked only once")
     }
 }
 
 class SynchronizedLazyValTest {
-    volatile var result = 0
+    @Volatile var result = 0
     val a by lazy(this) {
         ++result
     }
 
-    test fun doTest() {
+    @test fun doTest() {
         synchronized(this) {
             // thread { a } // not available in js // TODO: Make this test JVM-only
             result = 1
@@ -40,7 +40,7 @@ class UnsafeLazyValTest {
         ++result
     }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         assertTrue(a == 1, "fail: initializer should be invoked only once")
     }
@@ -53,7 +53,7 @@ class NullableLazyValTest {
     val a: Int? by lazy { resultA++; null}
     val b by lazy { foo() }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         b
 
@@ -76,7 +76,7 @@ class UnsafeNullableLazyValTest {
     val a: Int? by lazy(LazyThreadSafetyMode.NONE) { resultA++; null}
     val b by lazy(LazyThreadSafetyMode.NONE) { foo() }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         b
 
@@ -98,7 +98,7 @@ class UnsafeLazyValDeprecatedTest {
         ++result
     }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         assertTrue(a == 1, "fail: initializer should be invoked only once")
     }
@@ -110,7 +110,7 @@ class BlockingLazyValDeprecatedTest {
         ++result
     }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         assertTrue(a == 1, "fail: initializer should be invoked only once")
     }
@@ -123,7 +123,7 @@ class UnsafeNullableLazyValDeprecatedTest  {
     val a: Int? by Delegates.lazy { resultA++; null}
     val b by Delegates.lazy { foo() }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         b
 
@@ -146,7 +146,7 @@ class BlockingNullableLazyValDeprecatedTest {
     val a: Int? by Delegates.blockingLazy { resultA++; null}
     val b by Delegates.blockingLazy { foo() }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         b
 
@@ -166,7 +166,7 @@ class IdentityEqualsIsUsedToUnescapeLazyValTest {
     var equalsCalled = 0
     val a by lazy { ClassWithCustomEquality { equalsCalled++ } }
 
-    test fun doTest() {
+    @test fun doTest() {
         a
         a
         assertTrue(equalsCalled == 0, "fail: equals called $equalsCalled times.")

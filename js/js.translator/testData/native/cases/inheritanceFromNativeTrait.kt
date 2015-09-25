@@ -1,15 +1,15 @@
 package foo
 
-native
-trait NativeTrait {
+@native
+interface NativeTrait {
     val foo: String
     fun bar(a: Int): Any
 
-    native("boo")
+    @native("boo")
     fun baz(): String
 }
 
-trait Trait : NativeTrait
+interface Trait : NativeTrait
 
 class Class : NativeTrait {
     override val foo: String = "Class().foo"

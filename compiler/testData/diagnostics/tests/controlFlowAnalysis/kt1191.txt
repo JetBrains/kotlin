@@ -1,7 +1,7 @@
 package
 
 package kt1191 {
-    public fun foo(/*0*/ unused: kotlin.Int): kt1191.foo.<no name provided>
+    public fun foo(/*0*/ unused: kotlin.Int): kotlin.Any
     public fun </*0*/ T> kt1191.FunctionalList<T>.plus(/*0*/ element: T): kt1191.FunctionalList<T>
 
     public interface FunctionalList</*0*/ T> {

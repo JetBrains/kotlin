@@ -5,6 +5,6 @@ annotation class Ann(
         val b2: Long
 )
 
-Ann(1, 1.toLong()) class MyClass
+@Ann(1, 1.toLong()) class MyClass
 
-// EXPECTED: Ann(b1 = 1.toLong(), b2 = 1.toLong())
+// EXPECTED: @Ann(b1 = 1.toLong(), b2 = 1.toLong())

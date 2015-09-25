@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private var f1 = 1.0f
     private val f2 = 1.0f
     private val f3 = 1f

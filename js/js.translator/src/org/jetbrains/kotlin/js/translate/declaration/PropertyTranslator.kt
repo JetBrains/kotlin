@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.context.Namer.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
@@ -64,7 +63,7 @@ public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
         generateSetter: () -> JsPropertyInitializer
 ) {
     val to: MutableList<JsPropertyInitializer>
-    if (!isExtension(descriptor)) {
+    if (!descriptor.isExtension) {
         to = SmartList<JsPropertyInitializer>()
         this.add(JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
     }
@@ -138,7 +137,7 @@ private class PropertyTranslator(
         val delegateRef = getDelegateNameRef(propertyName)
         val delegatedJsCall = CallTranslator.translate(context(), delegatedCall, delegateRef)
 
-        if (isExtension(getterDescriptor)) {
+        if (getterDescriptor.isExtension) {
             val receiver = function.addParameter(getReceiverParameterName()).getName()
             val arguments = (delegatedJsCall as JsInvocation).getArguments()
             arguments.set(0, receiver.makeRef())
@@ -168,7 +167,7 @@ private class PropertyTranslator(
             val delegatedJsCall = CallTranslator.translate(withAliased, delegatedCall, getDelegateNameRef(correspondingPropertyName))
             function.addStatement(delegatedJsCall.makeStmt())
 
-            if (isExtension(setterDescriptor)) {
+            if (setterDescriptor.isExtension) {
                 val receiver = function.addParameter(getReceiverParameterName(), 0).getName()
                 (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
             }

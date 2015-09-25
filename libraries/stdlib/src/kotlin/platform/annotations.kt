@@ -21,11 +21,11 @@ import kotlin.annotation.AnnotationTarget.*
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-@deprecated("Use kotlin.jvm.JvmName instead", ReplaceWith("kotlin.jvm.JvmName"))
+@Deprecated("Use kotlin.jvm.platformName instead", ReplaceWith("kotlin.jvm.platformName"))
 public annotation class platformName(public val name: String)
 
 @Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-@deprecated("Use kotlin.jvm.JvmStatic instead", ReplaceWith("kotlin.jvm.JvmStatic"))
+@Deprecated("Use kotlin.jvm.JvmStatic instead", ReplaceWith("kotlin.jvm.JvmStatic"))
 public annotation class platformStatic

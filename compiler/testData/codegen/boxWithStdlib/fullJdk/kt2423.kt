@@ -1,5 +1,5 @@
 fun ok1(): Boolean {
-    val queue = linkedList(1, 2, 3)
+    val queue = linkedListOf(1, 2, 3)
     while (!queue.isEmpty()) {
         queue.poll()
         for (y in 1..3) {
@@ -12,8 +12,8 @@ fun ok1(): Boolean {
 }
 
 fun ok2(): Boolean {
-    val queue = linkedList(1, 2, 3)
-    val array = array(1, 2, 3)
+    val queue = linkedListOf(1, 2, 3)
+    val array = arrayOf(1, 2, 3)
     while (!queue.isEmpty()) {
         queue.poll()
         for (y in array) {
@@ -26,7 +26,7 @@ fun ok2(): Boolean {
 }
 
 fun ok3(): Boolean {
-    val queue = linkedList(1, 2, 3)
+    val queue = linkedListOf(1, 2, 3)
     while (!queue.isEmpty()) {
         queue.poll()
         var x = 0

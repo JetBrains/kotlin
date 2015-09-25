@@ -1,4 +1,4 @@
-class A {
+internal class A {
     fun foo(s: String?): Int {
         if (s != null) {
             return s.length()

@@ -6337,6 +6337,36 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("field.kt")
+        public void testField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/field.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fieldInClass.kt")
+        public void testFieldInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/fieldInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fieldInsideField.kt")
+        public void testFieldInsideField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/fieldInsideField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fieldInsideNested.kt")
+        public void testFieldInsideNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/fieldInsideNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fieldSimple.kt")
+        public void testFieldSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/fieldSimple.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("generalAccess.kt")
         public void testGeneralAccess() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/generalAccess.kt");
@@ -7027,6 +7057,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt8089.kt")
+        public void testKt8089() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/kt8089.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/syntheticAccessor.kt");
@@ -7555,6 +7591,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("traitWithPrivateExtension.kt")
         public void testTraitWithPrivateExtension() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitWithPrivateExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitWithPrivateMember.kt")
+        public void testTraitWithPrivateMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitWithPrivateMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitWithPrivateMemberAccessFromLambda.kt")
+        public void testTraitWithPrivateMemberAccessFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitWithPrivateMemberAccessFromLambda.kt");
             doTest(fileName);
         }
     }

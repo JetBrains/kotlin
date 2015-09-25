@@ -40,6 +40,7 @@ JetFile: basic.kt
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -90,6 +91,7 @@ JetFile: basic.kt
       SECONDARY_CONSTRUCTOR
         MODIFIER_LIST
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -190,6 +192,7 @@ JetFile: basic.kt
   CLASS
     MODIFIER_LIST
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

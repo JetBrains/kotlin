@@ -2,11 +2,11 @@ package foo
 
 fun box(): String {
     val testInput = "test data\t1foo  2 bar"
-    val tests = array(
-            " "     to array("test", "data\t1foo", "", "2", "bar"),
-            "\\s+"  to array("test", "data", "1foo", "2", "bar"),
-            "[sd]"  to array("te", "t ", "ata\t1foo  2 bar"),
-            "[\\d]" to array("test data\t", "foo  ", " bar")
+    val tests = arrayOf(
+            " "     to arrayOf("test", "data\t1foo", "", "2", "bar"),
+            "\\s+"  to arrayOf("test", "data", "1foo", "2", "bar"),
+            "[sd]"  to arrayOf("te", "t ", "ata\t1foo  2 bar"),
+            "[\\d]" to arrayOf("test data\t", "foo  ", " bar")
     )
 
     for (test in tests) {

@@ -51,7 +51,7 @@ public val File.directory: File
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
  */
-@deprecated("Use parentFile", ReplaceWith("parentFile"))
+@Deprecated("Use parentFile", ReplaceWith("parentFile"))
 public val File.parent: File?
     get() = parentFile
 
@@ -59,7 +59,7 @@ public val File.parent: File?
  * Returns the canonical path of this file.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"))
 public val File.canonicalPath: String
     get() = getCanonicalPath()
 
@@ -67,7 +67,7 @@ public val File.canonicalPath: String
  * Returns the file name.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
 public val File.name: String
     get() = getName()
 
@@ -75,7 +75,7 @@ public val File.name: String
  * Returns the file path.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"))
 public val File.path: String
     get() = getPath()
 
@@ -178,7 +178,7 @@ public fun File.relativeTo(base: File): String {
  * If this file matches the [descendant] directory or does not belong to it,
  * then an empty string will be returned.
  */
-deprecated("Use relativeTo() function instead")
+@Deprecated("Use relativeTo() function instead")
 public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath

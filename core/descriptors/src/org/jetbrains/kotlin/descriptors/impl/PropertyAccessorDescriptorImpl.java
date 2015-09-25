@@ -73,6 +73,11 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return kind;
     }
 
+    @Override
+    public boolean isOperator() {
+        return false;
+    }
+
     @NotNull
     @Override
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {

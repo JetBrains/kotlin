@@ -1,4 +1,4 @@
-@Target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASS)
 annotation class base
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)

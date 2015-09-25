@@ -1,6 +1,6 @@
 import kotlinApi.*
 
-class C {
+internal class C {
     fun foo() {
         val s = 1.extensionFunction()
     }

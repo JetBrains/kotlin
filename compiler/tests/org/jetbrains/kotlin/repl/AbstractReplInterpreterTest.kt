@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 import java.io.PrintWriter
-import java.util.ArrayDeque
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.text.Regex
 
@@ -83,7 +82,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
     protected fun doTest(path: String) {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val repl = ReplInterpreter(getTestRootDisposable()!!, configuration)
+        val repl = ReplInterpreter(getTestRootDisposable()!!, configuration, false, null)
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
@@ -94,7 +93,8 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
             val actual = when (lineResult.getType()) {
                 ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
-                ReplInterpreter.LineResultType.ERROR -> lineResult.getErrorText()
+                ReplInterpreter.LineResultType.RUNTIME_ERROR,
+                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.getErrorText()
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
             }
 

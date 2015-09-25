@@ -1,4 +1,4 @@
-trait I<T>
+interface I<T>
 
 fun <E, T : I<E>> T.ext() : T = this
 

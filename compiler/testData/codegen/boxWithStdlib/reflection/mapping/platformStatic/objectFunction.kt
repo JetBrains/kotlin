@@ -1,4 +1,4 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 

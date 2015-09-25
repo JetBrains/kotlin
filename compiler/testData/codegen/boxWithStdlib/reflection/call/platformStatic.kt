@@ -1,12 +1,12 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 
 object Obj {
-    static fun foo() {}
+    @static fun foo() {}
 }
 
 class C {
     companion object {
-        static fun bar() {}
+        @static fun bar() {}
     }
 }
 

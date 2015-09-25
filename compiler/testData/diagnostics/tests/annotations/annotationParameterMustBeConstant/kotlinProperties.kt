@@ -11,8 +11,8 @@ annotation class Ann(vararg val i: Int)
 class Test
 
 var i1 = 1  // var
-val i2 = 1  // val
+const val i2 = 1  // val
 val i3 = i1 // val with var in initializer
-val i4 = i2 // val with val in initializer
+const val i4 = i2 // val with val in initializer
 var i5 = i1 // var with var in initializer
 var i6 = i2 // var with val in initializer

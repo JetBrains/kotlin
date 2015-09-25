@@ -3,14 +3,12 @@ import java.lang.*
 import java.lang.Comparable
 import java.lang.Comparable
 import java.lang.Comparable<caret> as Foo
-import java.lang
-import java.lang as jl
 
 fun <T> a() : java.lang.Comparable<T>? {
     return null
 }
 
-fun b() : lang.Comparable<String> {
+fun b() : java.lang.Comparable<String> {
     throw Exception()
 }
 
@@ -18,7 +16,7 @@ fun c() : Foo<String> {
     throw Exception()
 }
 
-fun d() : jl.Comparable<String>? {
+fun d() : java.lang.Comparable<String>? {
     return null
 }
 

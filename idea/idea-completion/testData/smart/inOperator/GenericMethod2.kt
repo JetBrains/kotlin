@@ -1,8 +1,8 @@
-trait X<T> {
+interface X<T> {
     fun contains(t: T): Boolean
 }
 
-trait A {
+interface A {
     fun<T> createX(t: T): X<T>
 
     fun foo(s: String) {

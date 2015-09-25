@@ -35,7 +35,7 @@ class MyTest() {
             var i: Int = 23
             doSmth(i)
             <!UNUSED_VALUE!>i =<!> 34
-            $a = v
+            field = v
         }
 
     init {
@@ -134,7 +134,7 @@ fun testBackingFieldsNotMarked() {
     val <!UNUSED_VARIABLE!>a<!> = object {
         val x : Int
         init {
-            $x = 1
+            <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
         }
     }
 }

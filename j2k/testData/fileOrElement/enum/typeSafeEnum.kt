@@ -1,3 +1,3 @@
-enum class Coin {
+internal enum class Coin {
     PENNY, NICKEL, DIME, QUARTER
 }

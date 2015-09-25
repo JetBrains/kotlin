@@ -16,7 +16,7 @@ var fieldlessVar: String
     get() = ""
     set(value) {}
 
-deprecated("")
+@Deprecated("")
 val fieldlessValWithAnnotation: String
     get() = ""
 

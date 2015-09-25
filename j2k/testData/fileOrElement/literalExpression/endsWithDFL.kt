@@ -1,4 +1,4 @@
-class Test {
+internal class Test {
     fun test() {
         val l1 = 10L
         val d1 = 10.0

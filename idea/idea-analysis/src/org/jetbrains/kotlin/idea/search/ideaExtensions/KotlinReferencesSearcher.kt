@@ -81,7 +81,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         val resultProcessor = MyRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
         if (kotlinOptions.anyEnabled()) {
-            val name = unwrappedElement.name
+            val name = runReadAction { unwrappedElement.name }
             if (name != null) {
                 queryParameters.optimizer.searchWord(name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement,
                                                      resultProcessor)
@@ -223,8 +223,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: JetParameter) {
             val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-            searchNamedElement(queryParameters, propertyMethods.getter)
-            searchNamedElement(queryParameters, propertyMethods.setter)
+            propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
         }
 
         private fun searchDataClassComponentUsages(queryParameters: ReferencesSearch.SearchParameters,
@@ -243,10 +242,12 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
                 is JetNamedFunction, is JetSecondaryConstructor -> {
                     val function = element as JetFunction
-                    val name = function.getName()
+                    val name = runReadAction { function.getName() }
                     if (name != null) {
-                        val method = runReadAction { LightClassUtil.getLightClassMethod(function) }
-                        searchNamedElement(queryParameters, method)
+                        val methods = runReadAction { LightClassUtil.getLightClassMethods(function) }
+                        for (method in methods) {
+                            searchNamedElement(queryParameters, method)
+                        }
                     }
 
                     val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(element) }
@@ -257,10 +258,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
                 is JetProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    searchNamedElement(queryParameters, propertyMethods.getter)
-                    searchNamedElement(queryParameters, propertyMethods.setter)
-                    searchNamedElement(queryParameters, propertyMethods.backingField)
-
+                    propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
                 }
 
                 is JetParameter -> {

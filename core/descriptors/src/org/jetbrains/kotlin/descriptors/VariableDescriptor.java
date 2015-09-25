@@ -37,4 +37,10 @@ public interface VariableDescriptor extends CallableDescriptor {
 
     @Nullable
     ConstantValue<?> getCompileTimeInitializer();
+
+    /**
+     * @return true if iff original declaration has appropriate flags and type, e.g. `const` modifier in Kotlin.
+     * It completely does not means that if isConst then `getCompileTimeInitializer` is not null
+     */
+    boolean isConst();
 }

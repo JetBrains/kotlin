@@ -9,7 +9,7 @@ public open class Aaa {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final val i: kotlin.Int = 1
+    public const final val i: kotlin.Int = 1
 }
 
 public open class Bbb : Aaa {
@@ -19,5 +19,5 @@ public open class Bbb : Aaa {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final val i: kotlin.String = "s"
+    public const final val i: kotlin.String = "s"
 }

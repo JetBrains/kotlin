@@ -1,11 +1,11 @@
 package demo
 
-class TestT {
+internal class TestT {
     fun <T> getT() {
     }
 }
 
-class U {
+internal class U {
     fun main() {
         val t = TestT()
         t.getT<String>()

@@ -11,7 +11,7 @@ public class KotlinB: AClass() {
 
     public fun returnB(): BClass { }
 
-    AAnnotation fun annoA() {}
+    @AAnnotation fun annoA() {}
 
-    BAnnotation fun annoB() {}
+    @BAnnotation fun annoB() {}
 }

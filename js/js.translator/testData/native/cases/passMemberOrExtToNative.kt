@@ -8,7 +8,7 @@ class B(v: String): A(v) {
     override fun m(i:Int, s:String): String = "B.m ${this.v} $i $s"
 }
 
-native
+@native
 fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
 
 fun A.topLevelExt(i:Int, s:String): String = "A::topLevelExt ${this.v} $i $s"

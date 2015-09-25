@@ -11,7 +11,7 @@ class SimpleTest {
         assertEquals("hello world!", message)
     }
 
-    test fun cheese() {
+    @test fun cheese() {
         val name = "world"
         val message = "bye $name!"
         assertEquals("bye world!", message)

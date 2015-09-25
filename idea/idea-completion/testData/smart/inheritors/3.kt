@@ -1,4 +1,4 @@
-trait T
+interface T
 
 open class A : T
 

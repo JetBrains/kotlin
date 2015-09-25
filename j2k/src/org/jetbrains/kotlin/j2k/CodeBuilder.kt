@@ -46,7 +46,7 @@ fun<T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String,
     return this
 }
 
-platformName("appendElements")
+@JvmName("appendElements")
 fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     return buildList(elements.filter { !it.isEmpty }.map { { append(it) } }, separator, prefix, suffix)
 }

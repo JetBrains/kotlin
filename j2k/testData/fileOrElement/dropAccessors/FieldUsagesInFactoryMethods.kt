@@ -1,4 +1,4 @@
-class C(val arg1: Int) {
+internal class C(val arg1: Int) {
     var arg2: Int = 0
     var arg3: Int = 0
 

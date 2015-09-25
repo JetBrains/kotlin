@@ -26,7 +26,7 @@ public interface JetElement : NavigatablePsiElement {
 
     public fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R
 
-    @deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
+    @Deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }
 

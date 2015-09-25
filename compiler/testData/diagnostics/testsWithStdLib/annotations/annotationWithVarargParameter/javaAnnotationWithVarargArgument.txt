@@ -1,6 +1,6 @@
 package
 
-A(value = {1, "b"}) public fun test(): kotlin.Unit
+@A(value = {1, "b"}) public fun test(): kotlin.Unit
 
 public final class A : kotlin.Annotation {
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)

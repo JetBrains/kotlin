@@ -1,6 +1,6 @@
 package foo
 
-trait A {
+interface A {
     val bal: Int
         get() {
             return 5
@@ -17,7 +17,7 @@ trait A {
 }
 
 
-trait B {
+interface B {
     val bal: Int
         get() {
             return 42
@@ -37,10 +37,10 @@ class C : A, B {
     override val bal: Int = 1
     override var bar: Int = 2
         get() {
-            return $bar + 20
+            return field + 20
         }
         set(value: Int) {
-            $bar = value + 20
+            field = value + 20
         }
     override var realBar: Int = 3
 

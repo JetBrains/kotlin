@@ -5,11 +5,11 @@ package kotlin.test
 
 
 /** Asserts that the given [block] returns `false`. */
-@deprecated("Use assertFalse instead.", ReplaceWith("assertFalse(message, block)"))
+@Deprecated("Use assertFalse instead.", ReplaceWith("assertFalse(message, block)"))
 public fun assertNot(message: String, block: () -> Boolean): Unit = assertFalse(message, block)
 
 /** Asserts that the given [block] returns `false`. */
-@deprecated("Use assertFalse instead.", ReplaceWith("assertFalse(null, block)"))
+@Deprecated("Use assertFalse instead.", ReplaceWith("assertFalse(null, block)"))
 public fun assertNot(block: () -> Boolean): Unit = assertFalse(block = block)
 
 /** Asserts that the given [block] returns `true`. */
@@ -72,7 +72,7 @@ public fun <T> expect(expected: T, message: String?, block: () -> T) {
     assertEquals(expected, block(), message)
 }
 
-@deprecated("Use assertFails instead.", ReplaceWith("assertFails(block)"))
+@Deprecated("Use assertFails instead.", ReplaceWith("assertFails(block)"))
 public fun fails(block: () -> Unit): Throwable? = assertFails(block)
 
 /** Asserts that given function [block] fails by throwing an exception. */

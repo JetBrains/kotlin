@@ -25,7 +25,7 @@ public abstract class JetUsageInfo<T : PsiElement> : UsageInfo {
     public constructor(element: T) : super(element)
     public constructor(reference: PsiReference) : super(reference)
 
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun getElement() = super.getElement() as T?
 
     public abstract fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean

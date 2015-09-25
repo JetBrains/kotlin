@@ -1,6 +1,6 @@
 import java.util.ArrayList
 
-class C {
+internal class C {
     fun foo1(list: MutableList<String>) {
         for (i in list.indices) {
             list.set(i, "a")

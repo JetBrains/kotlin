@@ -20,57 +20,15 @@ import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_ENABLED_PROPERTY
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_LOG_PATH_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
 public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
-
     override fun setUp() {
         super.setUp()
         workDir = JetTestUtils.tmpDirForTest(this)
-    }
-
-    public fun testThreeModulesNoReexport() {
-        val aFile = createFile("a/a.kt",
-                               """
-                                   trait A1 {
-                                       fun bar()
-                                   }
-                                   trait A2 {
-                                       fun bar()
-                                   }
-                               """)
-        val a = addModule("a", PathUtil.getParentPath(aFile))
-
-        val bFile = createFile("b/b.kt",
-                               """
-                                    trait B1 {
-                                        fun foo(): B2? = null
-                                    }
-
-                                    trait B2 : A1, A2 {
-                                        override fun bar() {}
-                                    }
-                               """)
-        val b = addModule("b", PathUtil.getParentPath(bFile))
-        JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
-                b.getDependenciesList().addModuleDependency(a)
-        ).setExported(false)
-
-        val cFile = createFile("c/c.kt",
-                               """
-                                    class C : B1 {
-                                        fun test() {
-                                            foo()?.bar()
-                                        }
-                                    }
-                               """)
-        val c = addModule("c", PathUtil.getParentPath(cFile))
-        c.getDependenciesList().addModuleDependency(b)
-
-        addKotlinRuntimeDependency()
-        rebuildAll()
     }
 
     public fun testLoadingKotlinFromDifferentModules() {
@@ -78,7 +36,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                """
                                    package m1;
 
-                                   trait K {
+                                   interface K {
                                    }
                                """)
         createFile("m1/J.java",
@@ -96,29 +54,33 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                     import m1.J;
                                     import m1.K;
 
-                                    trait M2: J {
+                                    interface M2: J {
                                         override fun bar(): K
                                     }
                                """)
         val b = addModule("b", PathUtil.getParentPath(bFile))
         JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
-                b.getDependenciesList().addModuleDependency(a)
-        ).setExported(false)
+                b.dependenciesList.addModuleDependency(a)
+        ).isExported = false
 
         addKotlinRuntimeDependency()
         rebuildAll()
     }
 
-    public fun testThreeModulesNoReexportWithDaemon() {
+    public fun testDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
-        val flagFile = File.createTempFile("kotlin-jps-tests-", "-is-running");
+        // spaces in the name to test proper file name handling
+        val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running");
+        val logFile = File.createTempFile("kotlin-daemon", ".log")
+        System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
+        System.setProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY, logFile.absolutePath)
         try {
-            System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
-            testThreeModulesNoReexport()
+            testLoadingKotlinFromDifferentModules()
         }
         finally {
             flagFile.delete()
+            System.clearProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)
             System.clearProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
             System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
             System.clearProperty(COMPILE_DAEMON_ENABLED_PROPERTY)

@@ -48,7 +48,7 @@ public interface JetScope {
     public fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor>
 
     // Temporary overloads which will be dropped when all usages will be processed
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
+    @Deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
     public final fun getClassifier(name: Name): ClassifierDescriptor? = getClassifier(name, NoLookupLocation.UNSORTED)
 
     /**

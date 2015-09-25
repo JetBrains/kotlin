@@ -21,7 +21,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -43,17 +42,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
-import java.net.MalformedURLException
 import java.net.URL
 
 public class BuiltInsReferenceResolver(val project: Project, val startupManager: StartupManager) {
 
-    volatile private var moduleDescriptor: ModuleDescriptor? = null
-    volatile public var builtInsSources: Set<JetFile>? = null
+    @Volatile private var moduleDescriptor: ModuleDescriptor? = null
+
+    @Volatile public var builtInsSources: Set<JetFile>? = null
         private set
-    volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
+
+    @Volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
 
     init {
         startupManager.runWhenProjectIsInitialized { initialize() }
@@ -95,12 +94,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
         assert(vf != null) { "Virtual file not found by URL: $url" }
 
-        // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
-        vf!!.getChildren()
-        vf.refresh(false, true)
-        PathUtil.getLocalFile(vf).refresh(false, true)
-
-        val psiDirectory = PsiManager.getInstance(project).findDirectory(vf)
+        val psiDirectory = PsiManager.getInstance(project).findDirectory(vf!!)
         assert(psiDirectory != null) { "No PsiDirectory for $vf" }
         return psiDirectory!!.getFiles().filterIsInstance<JetFile>().toHashSet()
     }
@@ -178,7 +172,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         }
 
         public fun getBuiltInsDirUrls(): Set<URL> {
-            val defaultBuiltIns = LightClassUtil.getBuiltInsDirUrl()
+            val defaultBuiltIns = LightClassUtil.builtInsDirUrl
             // In production, the above URL is enough as it contains sources for both native and compilable built-ins
             // (it's simply the "kotlin" directory in kotlin-plugin.jar)
             // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
@@ -188,6 +182,19 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
                 return setOf(defaultBuiltIns, BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
             }
             return setOf(defaultBuiltIns)
+        }
+
+        public fun refreshBuiltIns() {
+            getBuiltInsDirUrls().forEach { url ->
+                val fromUrl = VfsUtilCore.convertFromUrl(url)
+                val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
+                assert(vf != null) { "Virtual file not found by URL: $url" }
+
+                // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
+                vf!!.getChildren()
+                vf.refresh(true, true)
+                PathUtil.getLocalFile(vf).refresh(true, true)
+            }
         }
     }
 }

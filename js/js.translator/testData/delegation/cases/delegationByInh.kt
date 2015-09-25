@@ -1,21 +1,21 @@
 package foo
 
-trait Base {
+interface Base {
     abstract fun foo(s: String): String
     var prop: String
 }
 
-trait Base1 : Base {
+interface Base1 : Base {
 }
 
-trait Base2 : Base1 {
+interface Base2 : Base1 {
     override fun foo(s: String): String = "Base2:foo ${s}"
 }
 
 class Base2Impl() : Base2 {
     override var prop: String = ""
         set(value) {
-            $prop = "prop:${value}"
+            field = "prop:${value}"
         }
 }
 

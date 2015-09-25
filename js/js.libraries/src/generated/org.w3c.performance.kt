@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public interface Performance {
+@native public interface Performance {
     val timing: PerformanceTiming
         get() = noImpl
     val navigation: PerformanceNavigation
@@ -28,7 +28,7 @@ native public interface Performance {
     fun now(): Double = noImpl
 }
 
-native public interface PerformanceTiming {
+@native public interface PerformanceTiming {
     val navigationStart: Int
         get() = noImpl
     val unloadEventStart: Int
@@ -73,7 +73,7 @@ native public interface PerformanceTiming {
         get() = noImpl
 }
 
-native public interface PerformanceNavigation {
+@native public interface PerformanceNavigation {
     val type: Short
         get() = noImpl
     val redirectCount: Short

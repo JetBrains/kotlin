@@ -46,7 +46,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
-            TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
+            TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
             FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet DECLARATION_FIRST = TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                                                      TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD));
@@ -399,7 +399,7 @@ public class JetParsing extends AbstractJetParsing {
 //            declType = parsePackageBlock();
 //        }
 //        else
-        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(detector.isEnumDetected(), TOP_LEVEL);
         }
         else if (keywordToken == FUN_KEYWORD) {
@@ -456,14 +456,13 @@ public class JetParsing extends AbstractJetParsing {
                 atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
             if (at(AT)) {
-                if (!tryParseModifier(tokenConsumer)) {
-                    parseAnnotationOrList(annotationParsingMode);
-                }
+                parseAnnotationOrList(annotationParsingMode);
             }
             else if (tryParseModifier(tokenConsumer)) {
                 // modifier advanced
             }
             else if (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER)) {
+                error("Use '@' symbol before annotations");
                 parseAnnotation(annotationParsingMode);
             }
             else {
@@ -482,15 +481,6 @@ public class JetParsing extends AbstractJetParsing {
 
     private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker marker = mark();
-
-        if (at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1))) {
-            advance(); // AT
-            if (atSet(ANNOTATION_MODIFIERS_KEYWORDS)) {
-                myBuilder.remapCurrentToken(IDENTIFIER);
-                marker.rollbackTo();
-                return false;
-            }
-        }
 
         if (atSet(MODIFIER_KEYWORDS)) {
             IElementType tt = tt();
@@ -543,11 +533,11 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotation
-     *   : annotationPrefix? unescapedAnnotation
+     *   : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
      *   ;
      *
      * annotationList
-     *   : annotationPrefix "[" unescapedAnnotation+ "]"
+     *   : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
      *   ;
      *
      *   annotationUseSiteTarget
@@ -559,16 +549,9 @@ public class JetParsing extends AbstractJetParsing {
      *   : "param"
      *   : "sparam"
      *   ;
-     *
-     *  annotationPrefix:
-     *   : ("@" (annotationUseSiteTarget ":")?)
-     *   ;
      */
     private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
-        if (mode.allowShortAnnotations && at(IDENTIFIER)) {
-            return parseAnnotation(mode);
-        }
-        else if (at(AT)) {
+        if (at(AT)) {
             IElementType nextRawToken = myBuilder.rawLookup(1);
             IElementType tokenToMatch = nextRawToken;
             boolean isTargetedAnnotation = false;
@@ -711,7 +694,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotation
-     *   : annotationPrefix? unescapedAnnotation
+     *   : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
      *   ;
      *
      * unescapedAnnotation
@@ -791,9 +774,9 @@ public class JetParsing extends AbstractJetParsing {
             assert _at(OBJECT_KEYWORD);
         }
         else {
-            assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD);
+            assert _atSet(CLASS_KEYWORD, INTERFACE_KEYWORD);
         }
-        advance(); // CLASS_KEYWORD, TRAIT_KEYWORD or OBJECT_KEYWORD
+        advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
             OptionalMarker marker = new OptionalMarker(object);
@@ -1085,7 +1068,7 @@ public class JetParsing extends AbstractJetParsing {
     private IElementType parseMemberDeclarationRest(boolean isEnum, boolean isDefault) {
         IElementType keywordToken = tt();
         IElementType declType = null;
-        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(isEnum, CLASS_MEMBER);
         }
         else if (keywordToken == FUN_KEYWORD) {

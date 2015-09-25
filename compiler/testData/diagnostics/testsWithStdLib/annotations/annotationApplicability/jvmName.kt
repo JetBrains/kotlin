@@ -6,10 +6,10 @@ fun foo() {}
 @JvmName("b")
 fun Any.foo() {}
 
-@JvmName("c")
+<!WRONG_ANNOTATION_TARGET!>@JvmName("c")<!>
 val px = 1
 
-@JvmName("d")
+<!WRONG_ANNOTATION_TARGET!>@JvmName("d")<!>
 val Any.px : Int
     get() = 1
 
@@ -39,10 +39,10 @@ class C <!WRONG_ANNOTATION_TARGET!>@JvmName("primary")<!> constructor() {
     @JvmName("b")
     fun Any.foo() {}
 
-    @JvmName("c")
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("c")<!>
     val px = 1
 
-    @JvmName("d")
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("d")<!>
     val Any.px : Int
     get() = 1
 

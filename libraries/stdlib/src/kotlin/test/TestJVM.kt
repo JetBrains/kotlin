@@ -3,7 +3,7 @@ package kotlin.test
 import java.util.ServiceLoader
 import kotlin.reflect.KClass
 
-@deprecated("Use assertFailsWith instead.", ReplaceWith("assertFailsWith(exceptionClass, block)"))
+@Deprecated("Use assertFailsWith instead.", ReplaceWith("assertFailsWith(exceptionClass, block)"))
 public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): T = assertFailsWith(exceptionClass, { block() })
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
@@ -32,7 +32,7 @@ public fun <T: Throwable> assertFailsWith(exceptionClass: KClass<T>, message: St
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
-public inline fun <reified T: Throwable> assertFailsWith(message: String, @noinline block: () -> Unit): T = assertFailsWith(T::class.java, message, block)
+public inline fun <reified T: Throwable> assertFailsWith(message: String, noinline block: () -> Unit): T = assertFailsWith(T::class.java, message, block)
 
 
 /**

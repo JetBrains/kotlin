@@ -1,8 +1,8 @@
 import kotlin.jvm.JvmStatic
 
-<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'class'">JvmStatic</error>
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'class'">@JvmStatic</error>
 class A {
-    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">JvmStatic</error>
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">@JvmStatic</error>
     companion object {
         @JvmStatic fun a1() {
 
@@ -29,7 +29,7 @@ class A {
     }
 }
 
-<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">JvmStatic</error>
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">@JvmStatic</error>
 interface B {
     companion object {
         <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a1()</error> {

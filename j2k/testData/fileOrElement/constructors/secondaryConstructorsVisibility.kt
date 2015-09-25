@@ -1,6 +1,6 @@
-class A() {
+internal class A() {
 
-    public constructor(a: Int) : this() {
+    constructor(a: Int) : this() {
     }
 
     protected constructor(c: Char) : this() {
@@ -13,15 +13,15 @@ class A() {
     }
 }
 
-public class B() {
+class B() {
 
-    public constructor(a: Int) : this() {
+    constructor(a: Int) : this() {
     }
 
     protected constructor(c: Char) : this() {
     }
 
-    constructor(f: Float) : this() {
+    internal constructor(f: Float) : this() {
     }
 
     private constructor(d: Double) : this() {

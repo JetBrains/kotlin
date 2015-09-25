@@ -53,16 +53,16 @@ fun ordering(): List<GenericFunction> {
 
     templates add f("reversedArray()") {
         doc { "Returns an array with elements of this array in reversed order." }
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
-        body(ArraysOfObjectsSubtype) {
+        body(ArraysOfObjects) {
             """
             if (isEmpty()) return this
             val result = arrayOfNulls(this, size()) as Array<T>
             val lastIndex = lastIndex
             for (i in 0..lastIndex)
                 result[lastIndex - i] = this[i]
-            return result as A
+            return result
             """
         }
         body(ArraysOfPrimitives) {
@@ -114,7 +114,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedArray()") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc {
             "Returns an array with all elements of this array sorted according to their natural sort order."
@@ -124,7 +124,7 @@ fun ordering(): List<GenericFunction> {
         body() {
             """
             if (isEmpty()) return this
-            return this.copyOf().apply { sort() } as SELF
+            return this.copyOf().apply { sort() }
             """
         }
     }
@@ -163,18 +163,18 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedArrayDescending()") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc {
             "Returns an array with all elements of this array sorted descending according to their natural sort order."
         }
         typeParam("T : Comparable<T>")
         returns("SELF")
-        body(ArraysOfObjectsSubtype) {
+        body(ArraysOfObjects) {
             """
             if (isEmpty()) return this
             // TODO: Use reverseOrder<T>()
-            return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) } as SELF
+            return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) }
             """
 
         }
@@ -182,7 +182,7 @@ fun ordering(): List<GenericFunction> {
             """
             if (isEmpty()) return this
             // TODO: Use in-place reverse
-            return this.copyOf().apply { sort() }.reversedArray() as SELF
+            return this.copyOf().apply { sort() }.reversedArray()
             """
         }
     }
@@ -221,7 +221,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedArrayWith(comparator: Comparator<in T>)") {
-        only(ArraysOfObjectsSubtype)
+        only(ArraysOfObjects)
         doc {
             "Returns an array with all elements of this array sorted according the specified [comparator]."
         }
@@ -229,12 +229,12 @@ fun ordering(): List<GenericFunction> {
         body() {
             """
             if (isEmpty()) return this
-            return this.copyOf().apply { sortWith(comparator) } as SELF
+            return this.copyOf().apply { sortWith(comparator) }
             """
         }
     }
 
-    templates add f("sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
+    templates add f("sortedBy(crossinline selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -256,7 +256,7 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
+    templates add f("sortedByDescending(crossinline selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -350,7 +350,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Strings)
     }
 
-    templates add f("sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
+    templates add f("sortBy(crossinline order: (T) -> R)") {
         inline(true)
 
         doc {
@@ -402,7 +402,7 @@ fun ordering(): List<GenericFunction> {
         only(Sequences, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
-    templates add f("sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
+    templates add f("sortDescendingBy(crossinline order: (T) -> R)") {
         inline(true)
 
         doc {

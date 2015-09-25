@@ -1,4 +1,4 @@
-trait KTrait : Test {
+interface KTrait : Test {
 
 }
 

@@ -2,7 +2,7 @@ import kotlin.test.assertEquals
 
 inline fun <reified T : Any, reified R : Any> foo(): Array<String> {
     val x = object {
-        inline fun <reified T1 : Any, reified T : Any> bar(): Array<String> = array(
+        inline fun <reified T1 : Any, reified T : Any> bar(): Array<String> = arrayOf(
                 javaClass<T1>().getName(), javaClass<T>().getName(), javaClass<R>().getName()
         )
         fun f1() = bar<T, R>()
@@ -16,7 +16,7 @@ inline fun <reified T : Any, reified R : Any> foo(): Array<String> {
     val x3 = x.f3()
     val x4 = x.f4()
 
-    return array(
+    return arrayOf(
             x1[0], x1[1], x1[2],
             x2[0], x2[1], x2[2],
             x3[0], x3[1], x3[2],
@@ -27,7 +27,7 @@ inline fun <reified T : Any, reified R : Any> foo(): Array<String> {
 fun box(): String {
     val result = foo<Double, Int>()
 
-    val expected = array(
+    val expected = arrayOf(
             "java.lang.Double", "java.lang.Integer", "java.lang.Integer",
             "java.lang.Integer", "java.lang.Double", "java.lang.Integer",
             "java.lang.Boolean", "java.lang.Double", "java.lang.Integer",

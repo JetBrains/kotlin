@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.keysToMap
-import kotlin.platform.platformStatic
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
 public class KotlinCacheService(val project: Project) {
     companion object {
-        platformStatic public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+        @JvmStatic
+        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
     public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
@@ -76,7 +76,7 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
+    @Deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
     public fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
         return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }

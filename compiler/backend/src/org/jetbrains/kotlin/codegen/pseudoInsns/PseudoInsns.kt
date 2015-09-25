@@ -22,7 +22,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import kotlin.platform.platformStatic
 
 public val PSEUDO_INSN_CALL_OWNER: String = "kotlin/jvm/internal/\$PseudoInsn"
 

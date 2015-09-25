@@ -30,7 +30,8 @@ import kotlin.platform.*
  */
 class KDocLinkParser(): PsiParser {
     companion object {
-        platformStatic public fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
+        @JvmStatic
+        public fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
             val parentElement = chameleon.getTreeParent().getPsi()
             val project = parentElement.getProject()
             val builder = PsiBuilderFactory.getInstance().createBuilder(project,

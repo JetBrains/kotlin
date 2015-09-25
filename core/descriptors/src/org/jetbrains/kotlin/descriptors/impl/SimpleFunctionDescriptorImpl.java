@@ -58,10 +58,11 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility
+            @NotNull Visibility visibility,
+            boolean isOperator
     ) {
         super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
-                         unsubstitutedReturnType, modality, visibility);
+                         unsubstitutedReturnType, modality, visibility, isOperator);
         return this;
     }
 
@@ -99,7 +100,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             boolean copyOverrides
     ) {
         return (SimpleFunctionDescriptorImpl) doSubstitute(
-                TypeSubstitutor.EMPTY, newOwner, modality, visibility, null, copyOverrides, kind
+                TypeSubstitutor.EMPTY, newOwner, modality, visibility, isOperator(), null, copyOverrides, kind
         );
     }
 }

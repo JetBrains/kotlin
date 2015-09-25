@@ -1,7 +1,7 @@
 import java.lang.annotation.*
 
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.annotation.Target(ElementType.PACKAGE)<!>
-@Target(AnnotationTarget.CLASSIFIER)
+@Target(AnnotationTarget.CLASS)
 annotation class my
 
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.annotation.Retention(RetentionPolicy.SOURCE)<!>

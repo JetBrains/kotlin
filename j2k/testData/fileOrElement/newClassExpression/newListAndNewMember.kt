@@ -2,9 +2,9 @@ package org.test
 
 import java.util.ArrayList
 
-class Member
+internal class Member
 
-class User {
+internal class User {
     fun main() {
         val members = ArrayList<Member>()
         members.add(Member())

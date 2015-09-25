@@ -1,19 +1,19 @@
 public var inc: Int = 0;
 
 public var propInc: Int = 0
-    get() {inc++; return $propInc}
+    get() {inc++; return field}
     set(a: Int) {
         inc++
-        $propInc = a
+        field = a
     }
 
 public var dec: Int = 0;
 
 public var propDec: Int = 0;
-    get() { dec--; return $propDec}
+    get() { dec--; return field}
     set(a: Int) {
         dec--
-        $propDec = a
+        field = a
     }
 
 fun box(): String {

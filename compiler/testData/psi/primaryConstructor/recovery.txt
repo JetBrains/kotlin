@@ -57,6 +57,8 @@ JetFile: recovery.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -86,6 +88,8 @@ JetFile: recovery.kt
   PsiWhiteSpace(' ')
   CLASS
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -99,6 +103,8 @@ JetFile: recovery.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
+        PsiErrorElement:Use '@' symbol before annotations
+          <empty list>
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -166,6 +172,7 @@ JetFile: recovery.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -198,6 +205,7 @@ JetFile: recovery.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -221,6 +229,7 @@ JetFile: recovery.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

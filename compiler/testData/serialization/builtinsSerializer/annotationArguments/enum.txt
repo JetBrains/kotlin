@@ -1,19 +1,19 @@
 package test
 
-test.JustEnum(weapon = Weapon.SCISSORS) test.EnumArray(enumArray = {}) public final class C1 {
+@test.JustEnum(weapon = Weapon.SCISSORS) @test.EnumArray(enumArray = {}) public final class C1 {
     public constructor C1()
 }
 
-test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) public final class C2 {
+@test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) public final class C2 {
     public constructor C2()
 }
 
-kotlin.annotation.annotation() public final class EnumArray : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class EnumArray : kotlin.Annotation {
     public constructor EnumArray(/*0*/ enumArray: kotlin.Array<test.Weapon>)
     public final val enumArray: kotlin.Array<test.Weapon>
 }
 
-kotlin.annotation.annotation() public final class JustEnum : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class JustEnum : kotlin.Annotation {
     public constructor JustEnum(/*0*/ weapon: test.Weapon)
     public final val weapon: test.Weapon
 }

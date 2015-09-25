@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.inline;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -125,7 +127,10 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         hasInlinable |= DescriptorUtils.containsReifiedTypeParameters(functionDescriptor);
 
         if (!hasInlinable) {
-            trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
+            JetModifierList modifierList = function.getModifierList();
+            PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(JetTokens.INLINE_KEYWORD);
+            PsiElement reportOn = inlineModifier == null ? function : inlineModifier;
+            trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor));
         }
     }
 

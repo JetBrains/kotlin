@@ -130,13 +130,21 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerContext = createDebuggerContext(suspendContext)
     }
 
-    protected fun SuspendContextImpl.stepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
+    protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
         dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
     protected fun SuspendContextImpl.stepOut() {
         dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
     }
+
+    /*
+    protected fun SuspendContextImpl.doStepOver() {
+        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, StepRequest.STEP_LINE) }
+                              ?: dp.createStepOverCommand(this, false)
+        dp.getManagerThread()!!.schedule(stepOverCommand)
+    }
+    */
 
     protected fun doStepping(path: String) {
         val file = File(path)
@@ -162,11 +170,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
     }
 
-    protected fun SuspendContextImpl.smartStepInto(chooseFromList: Int = 0) {
-        this.smartStepInto(chooseFromList, false)
+    protected fun SuspendContextImpl.doSmartStepInto(chooseFromList: Int = 0) {
+        this.doSmartStepInto(chooseFromList, false)
     }
 
-    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
+    private fun SuspendContextImpl.doSmartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
         val filters = createSmartStepIntoFilters()
         if (chooseFromList == 0) {
             filters.forEach {
@@ -307,9 +315,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     private fun createBreakpoint(fileName: String, lineMarker: String) {
         val project = getProject()!!
-        val sourceFiles = FilenameIndex.getAllFilesByExt(project, "kt").filter {
-            it.getName().contains(fileName) &&
-            it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+        val sourceFiles = runReadAction {
+            FilenameIndex.getAllFilesByExt(project, "kt").filter {
+                it.getName().contains(fileName) &&
+                it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+            }
         }
 
         assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }

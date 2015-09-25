@@ -1,9 +1,9 @@
-class C {
-    public fun foo(s: String?) {
+internal class C {
+    fun foo(s: String?) {
     }
 }
 
-class D {
+internal class D {
     fun bar(c: C) {
         c.foo(null)
     }

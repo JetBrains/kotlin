@@ -48,6 +48,12 @@ public class KotlinBuiltIns {
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
 
+    public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
+            BUILT_INS_PACKAGE_FQ_NAME,
+            ANNOTATION_PACKAGE_FQ_NAME,
+            BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
+    );
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static volatile KotlinBuiltIns instance = null;
@@ -114,8 +120,7 @@ public class KotlinBuiltIns {
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
-                storageManager, builtInsModule,
-                setOf(BUILT_INS_PACKAGE_FQ_NAME, ANNOTATION_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
+                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
                 new Function1<String, InputStream>() {
                     @Override
@@ -177,11 +182,9 @@ public class KotlinBuiltIns {
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("Deprecated");
         public final FqName tailRecursive = fqName("tailrec");
-        public final FqName tailRecursiveDeprecated = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
         public final FqName crossinline = fqName("crossinline");
-        public final FqName inlineOptions = fqName("inlineOptions");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
         public final FqName annotation = annotationName("annotation");
@@ -1059,8 +1062,7 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive)
-               || containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursiveDeprecated);
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
     }
 
     /** Checks that the symbol represented by the descriptor is annotated with the {@code kotlin.noinline} annotation */

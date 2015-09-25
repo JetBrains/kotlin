@@ -17,12 +17,6 @@
 package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.psi.stubs.IndexSink
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.util.aliasImportMap
@@ -74,13 +68,3 @@ private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declarat
         else -> error("Unsupported type: $this")
     }
 }
-
-public val JetFile.javaFileFacadeFqName: FqName
-    get() {
-        return CachedValuesManager.getCachedValue(this) {
-            val facadeFqName =
-                    if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
-                    else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
-            CachedValueProvider.Result(facadeFqName, this)
-        }
-    }

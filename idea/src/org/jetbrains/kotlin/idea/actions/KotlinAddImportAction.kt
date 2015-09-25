@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -80,7 +79,7 @@ public class KotlinAddImportAction(
     }
 
     private val variants = candidates
-            .groupBy { DescriptorUtils.getFqNameSafe(it) }
+            .groupBy { it.importableFqName!! }
             .map { Variant(it.key, it.value) }
             .sortBy { it.priority }
 
@@ -108,7 +107,7 @@ public class KotlinAddImportAction(
             override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: Variant?, finalChoice: Boolean): PopupStep<String>? {
-                if (selectedValue == null) return null
+                if (selectedValue == null || project.isDisposed) return null
 
                 if (finalChoice) {
                     addImport(selectedValue)
@@ -123,7 +122,7 @@ public class KotlinAddImportAction(
                     }
 
                     override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<Any>? {
-                        if (finalChoice) {
+                        if (finalChoice && !project.isDisposed) {
                             AddImportAction.excludeFromImport(project, selectedValue)
                         }
                         return null
@@ -149,8 +148,10 @@ public class KotlinAddImportAction(
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid()) return@executeWriteCommand
 
-            val location = ProximityLocation(file, ModuleUtilCore.findModuleForPsiElement(file))
-            StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, selectedVariant.declarationToImport, location)
+            selectedVariant.declarationToImport?.let {
+                val location = ProximityLocation(file, ModuleUtilCore.findModuleForPsiElement(file))
+                StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, it, location)
+            }
 
             val descriptor = selectedVariant.descriptorToImport
             // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name

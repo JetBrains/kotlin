@@ -1,0 +1,112 @@
+// -- Module: <m1> --
+package
+
+package a {
+
+    package a.b {
+
+        public final class c {
+            public constructor c()
+            public final fun ab_c(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package a {
+
+    public final class b</*0*/ T> {
+        public constructor b</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class c {
+            public constructor c()
+            public final fun a_bc(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+
+// -- Module: <m3> --
+package
+
+public fun test(/*0*/ ab_c: a.b.c): kotlin.Unit
+public fun test2(/*0*/ a_bc: a.b.c): kotlin.Unit
+
+package a {
+
+    public final class b</*0*/ T> {
+        // -- Module: <m2> --
+    }
+
+    package a.b {
+
+        public final class c {
+            // -- Module: <m1> --
+        }
+    }
+}
+
+
+// -- Module: <top_m1> --
+package
+
+package a {
+
+    public final class b {
+        public constructor b()
+        public final fun a_b(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <top_m2> --
+package
+
+public final class a</*0*/ T> {
+    public constructor a</*0*/ T>()
+    public final fun _a(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class b {
+        public constructor b()
+        public final fun _ab(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <top_m3> --
+package
+
+public fun test(/*0*/ a_b: a.b): kotlin.Unit
+public fun test2(/*0*/ _ab: a.b): kotlin.Unit
+
+public final class a</*0*/ T> {
+    // -- Module: <top_m2> --
+}
+
+package a {
+
+    public final class b {
+        // -- Module: <top_m1> --
+    }
+}

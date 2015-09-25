@@ -1,6 +1,6 @@
 package foo
 
-native
+@native
 open class A(val value: String) {
 }
 
@@ -9,9 +9,9 @@ class B : A("B") {
     var prop: String = "B prop"
 }
 
-native fun A.bar(): String = noImpl
+@native fun A.bar(): String = noImpl
 
-native var A.prop: String
+@native var A.prop: String
     get() = noImpl
     set(value) = noImpl
 

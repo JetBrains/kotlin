@@ -30,7 +30,7 @@ import java.util.*
 
 // Writes to: maps
 
-public class WritableScopeImpl @jvmOverloads constructor(
+public class WritableScopeImpl @JvmOverloads constructor(
         outerScope: JetScope,
         private val ownerDeclarationDescriptor: DeclarationDescriptor,
         override val redeclarationHandler: RedeclarationHandler,

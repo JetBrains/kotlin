@@ -68,7 +68,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
     }
 
-    @jvmOverloads
+    @JvmOverloads
     public fun process(element: JetElement, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): JetElement {
         return process(listOf(element), elementFilter).single()
     }
@@ -125,7 +125,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         PROCESS
     }
 
-    @jvmOverloads
+    @JvmOverloads
     public fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<JetElement> {
         return elements.groupBy { element -> element.getContainingJetFile() }
                 .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter) }

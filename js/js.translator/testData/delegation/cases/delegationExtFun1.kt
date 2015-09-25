@@ -1,6 +1,6 @@
 package foo
 
-trait Base {
+interface Base {
     abstract fun Int.foo(): String
 }
 

@@ -31,10 +31,10 @@ internal fun maxBySquare(a: Array<Int>, r: Result): Result {
 }
 
 fun box(): String {
-    var r1 = maxBySquare(array(1,2,3,4,5), Result())
+    var r1 = maxBySquare(arrayOf(1,2,3,4,5), Result())
     assertEquals(Result(5, 6), r1)
 
-    var r2 = maxBySquare(array(-5,1,2,3,4), Result())
+    var r2 = maxBySquare(arrayOf(-5,1,2,3,4), Result())
     assertEquals(Result(-5, 6), r2)
 
     return "OK"

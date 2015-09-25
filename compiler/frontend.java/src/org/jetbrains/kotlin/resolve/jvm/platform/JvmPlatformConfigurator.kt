@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
@@ -47,6 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
@@ -70,7 +74,8 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
                 OverloadsAnnotationChecker(),
-                PublicFieldAnnotationChecker()
+                PublicFieldAnnotationChecker(),
+                TypeParameterBoundIsNotArrayChecker()
         ),
 
         additionalCallCheckers = listOf(
@@ -89,7 +94,10 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
         additionalSymbolUsageValidators = listOf(),
 
-        additionalAnnotationCheckers = listOf(RepeatableAnnotationChecker)
+        additionalAnnotationCheckers = listOf(
+                RepeatableAnnotationChecker,
+                FileClassAnnotationsChecker
+        )
 ) {
 
     override fun configure(container: StorageComponentContainer) {
@@ -119,6 +127,34 @@ public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)
+        }
+    }
+}
+
+public object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
+    // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
+    private val ALWAYS_APPLICABLE = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
+
+    override fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+        val fileAnnotationsToCheck = arrayListOf<Pair<JetAnnotationEntry, ClassDescriptor>>()
+        for (entry in entries) {
+            if (entry.useSiteTarget?.getAnnotationUseSiteTarget() != AnnotationUseSiteTarget.FILE) continue
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
+            // This check matters for the applicable annotations only.
+            val applicableTargets = AnnotationChecker.applicableTargetSet(classDescriptor)
+            if (applicableTargets == null || !applicableTargets.contains(KotlinTarget.FILE)) continue
+            fileAnnotationsToCheck.add(Pair(entry, classDescriptor))
+        }
+
+        if (!fileAnnotationsToCheck.any { it.second.classId.asSingleFqName() == JvmFileClassUtil.JVM_MULTIFILE_CLASS }) return
+
+        for ((entry, classDescriptor) in fileAnnotationsToCheck) {
+            val classFqName = classDescriptor.classId.asSingleFqName()
+            if (ALWAYS_APPLICABLE.contains(classFqName)) continue
+            if (classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
+                trace.report(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES.on(entry, classFqName))
+            }
         }
     }
 }
@@ -264,6 +300,26 @@ public class PublicFieldAnnotationChecker: DeclarationChecker {
         if (descriptor is PropertyDescriptor
             && !bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
             report()
+        }
+    }
+}
+
+public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
+        val typeParameters = (descriptor as? CallableDescriptor)?.typeParameters
+                             ?: (descriptor as? ClassDescriptor)?.typeConstructor?.parameters
+                             ?: return
+
+        for (typeParameter in typeParameters) {
+            if (typeParameter.upperBounds.any { KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it) }) {
+                val element = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) ?: declaration
+                diagnosticHolder.report(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY.on(element))
+            }
         }
     }
 }
@@ -418,7 +474,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
 
     private fun <T: Any> doIfNotNull(dataFlowValue: DataFlowValue, c: ResolutionContext<*>, body: () -> T): T? {
         if (c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
-            && dataFlowValue.getType().mustNotBeNull() == NullabilityInformationSource.JAVA) {
+            && dataFlowValue.type.mustNotBeNull() == NullabilityInformationSource.JAVA) {
             return body()
         }
         return null

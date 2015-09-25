@@ -1,41 +1,41 @@
 package test
 
-kotlin.annotation.annotation() public final class AByte : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AByte : kotlin.Annotation {
     public constructor AByte(/*0*/ kotlin.Byte)
     public final val value: kotlin.Byte
 }
 
-kotlin.annotation.annotation() public final class AChar : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AChar : kotlin.Annotation {
     public constructor AChar(/*0*/ kotlin.Char)
     public final val value: kotlin.Char
 }
 
-kotlin.annotation.annotation() public final class ADouble : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class ADouble : kotlin.Annotation {
     public constructor ADouble(/*0*/ kotlin.Double)
     public final val value: kotlin.Double
 }
 
-kotlin.annotation.annotation() public final class AFloat : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AFloat : kotlin.Annotation {
     public constructor AFloat(/*0*/ kotlin.Float)
     public final val value: kotlin.Float
 }
 
-kotlin.annotation.annotation() public final class AInt : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AInt : kotlin.Annotation {
     public constructor AInt(/*0*/ kotlin.Int)
     public final val value: kotlin.Int
 }
 
-kotlin.annotation.annotation() public final class ALong : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class ALong : kotlin.Annotation {
     public constructor ALong(/*0*/ kotlin.Long)
     public final val value: kotlin.Long
 }
 
-kotlin.annotation.annotation() public final class AString : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class AString : kotlin.Annotation {
     public constructor AString(/*0*/ kotlin.String)
     public final val value: kotlin.String
 }
 
-test.AString(value = "Test") test.AChar(value = \u0063 ('c')) test.AInt(value = 10) test.AByte(value = 11) test.ALong(value = 12.toLong()) test.ADouble(value = 1.2.toDouble()) test.AFloat(value = 1.3.toFloat()) public open class AnnotationTrait {
+@test.AString(value = "Test") @test.AChar(value = \u0063 ('c')) @test.AInt(value = 10) @test.AByte(value = 11) @test.ALong(value = 12.toLong()) @test.ADouble(value = 1.2.toDouble()) @test.AFloat(value = 1.3.toFloat()) public open class AnnotationTrait {
     public constructor AnnotationTrait()
 }
 

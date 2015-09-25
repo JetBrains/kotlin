@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-kotlin.tailrec() public fun test(/*0*/ counter: kotlin.Int): kotlin.Int?
+@kotlin.tailrec() public fun test(/*0*/ counter: kotlin.Int): kotlin.Int?

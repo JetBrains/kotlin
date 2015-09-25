@@ -1,4 +1,4 @@
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals
 
@@ -7,7 +7,7 @@ class A {
 }
 
 object O {
-    static fun bar(a: A): String = ""
+    @static fun bar(a: A): String = ""
 }
 
 fun box(): String {

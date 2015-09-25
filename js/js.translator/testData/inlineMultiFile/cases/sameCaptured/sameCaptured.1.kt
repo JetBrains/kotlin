@@ -6,7 +6,6 @@
 package foo
 
 import test.*
-import kotlin.InlineOption.*
 
 fun testSameCaptured() : String {
     var result = 0;
@@ -14,7 +13,7 @@ fun testSameCaptured() : String {
     return if (result == 12) "OK" else "fail ${result}"
 }
 
-inline fun testSameCaptured(inlineOptions(ONLY_LOCAL_RETURN) lambdaWithResultCaptured: () -> Unit) : String {
+inline fun testSameCaptured(crossinline lambdaWithResultCaptured: () -> Unit) : String {
     var result = 1;
     result = doWork({result+=11; lambdaWithResultCaptured(); result})
     return if (result == 12) "OK" else "fail ${result}"

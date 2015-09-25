@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.TypeUtils
-import kotlin.platform.platformStatic
 
 public class JsCallChecker(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
@@ -54,13 +53,13 @@ public class JsCallChecker(
     companion object {
         private val JS_PATTERN: DescriptorPredicate = PatternBuilder.pattern("kotlin.js.js(String)")
 
-        platformStatic
+        @JvmStatic
         public fun <F : CallableDescriptor?> ResolvedCall<F>.isJsCall(): Boolean {
             val descriptor = getResultingDescriptor()
             return descriptor is SimpleFunctionDescriptor && JS_PATTERN.apply(descriptor)
         }
 
-        platformStatic
+        @JvmStatic
         public fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {
             return ((compileTimeConstant as? TypedCompileTimeConstant<*>)?.constantValue as? StringValue)?.value
         }

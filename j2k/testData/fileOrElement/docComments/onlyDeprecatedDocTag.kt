@@ -1,2 +1,2 @@
-Deprecated("do not use")
-class C
+@Deprecated("do not use")
+internal class C

@@ -1,4 +1,4 @@
-enum class Color : Runnable {
+internal enum class Color : Runnable {
     WHITE, BLACK, RED, YELLOW, BLUE;
 
     override fun run() {

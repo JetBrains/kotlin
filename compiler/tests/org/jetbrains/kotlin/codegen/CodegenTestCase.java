@@ -47,6 +47,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
@@ -177,6 +178,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             classFileFactory = generateFiles(myEnvironment, myFiles);
         }
         return classFileFactory.createText();
+    }
+
+    @NotNull
+    protected Map<String, String> generateEachFileToText() {
+        if (classFileFactory == null) {
+            classFileFactory = generateFiles(myEnvironment, myFiles);
+        }
+        return classFileFactory.createTextForEachFile();
     }
 
     @NotNull

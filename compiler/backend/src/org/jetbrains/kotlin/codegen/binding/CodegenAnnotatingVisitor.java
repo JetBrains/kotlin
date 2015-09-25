@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -394,7 +395,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             JetFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return fileClassesProvider.getFileClassInternalName(containingFile) + '$' + name;
+            return FileClassesPackage.getFileClassInternalName(fileClassesProvider, containingFile) + '$' + name;
         }
 
         return null;
@@ -575,7 +576,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             }
         }
 
-        return fileClassesProvider.getFileClassInternalName(file);
+        return FileClassesPackage.getFacadeClassInternalName(fileClassesProvider, file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

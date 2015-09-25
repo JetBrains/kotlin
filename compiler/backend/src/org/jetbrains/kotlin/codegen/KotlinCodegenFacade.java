@@ -63,32 +63,37 @@ public class KotlinCodegenFacade {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        MultiMap<FqName, JetFile> packageFqNameToFiles = new MultiMap<FqName, JetFile>();
-        MultiMap<FqName, JetFile> multifileClassFqNameToFiles = new MultiMap<FqName, JetFile>();
+        MultiMap<FqName, JetFile> filesInPackageClasses = new MultiMap<FqName, JetFile>();
+        MultiMap<FqName, JetFile> filesInMultifileClasses = new MultiMap<FqName, JetFile>();
 
         for (JetFile file : state.getFiles()) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
+
             JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
+
             if (fileClassInfo.getIsMultifileClass()) {
-                multifileClassFqNameToFiles.putValue(fileClassInfo.getFacadeClassFqName(), file);
+                filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
             }
-            else if (state.getPackageFacadesAsMultifileClasses()) {
-                multifileClassFqNameToFiles.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
+
+            if (state.getPackageFacadesAsMultifileClasses()) {
+                if (!fileClassInfo.getIsMultifileClass()) {
+                    filesInMultifileClasses.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
+                }
             }
             else {
-                packageFqNameToFiles.putValue(file.getPackageFqName(), file);
+                filesInPackageClasses.putValue(file.getPackageFqName(), file);
             }
         }
 
         Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
-        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, packageFqNameToFiles.keySet())) {
+        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackageClasses.keySet())) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            generatePackage(state, packageFqName, packageFqNameToFiles.get(packageFqName), errorHandler);
+            generatePackage(state, packageFqName, filesInPackageClasses.get(packageFqName), errorHandler);
         }
 
-        for (FqName multifileClassFqName : multifileClassFqNameToFiles.keySet()) {
+        for (FqName multifileClassFqName : filesInMultifileClasses.keySet()) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            generateMultifileClass(state, multifileClassFqName, multifileClassFqNameToFiles.get(multifileClassFqName), errorHandler);
+            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

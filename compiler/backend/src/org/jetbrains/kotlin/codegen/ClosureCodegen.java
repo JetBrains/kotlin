@@ -41,9 +41,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.SerializationUtil;
-import org.jetbrains.kotlin.serialization.StringTable;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -200,8 +197,8 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
             descriptorForBridges
                     .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
-                                erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(), Modality.OPEN,
-                                erasedInterfaceFunction.getVisibility());
+                                erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
+                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false);
 
             descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
@@ -233,13 +230,10 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
 
-        StringTable strings = serializer.getStringTable();
-        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
-
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        JvmCodegenUtil.writeAbiVersion(av);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(SerializationUtil.serializeCallableData(nameResolver, callableProto))) {
+        for (String string : BitEncoding.encodeBytes(serializer.serialize(callableProto))) {
             array.visit(null, string);
         }
         array.visitEnd();

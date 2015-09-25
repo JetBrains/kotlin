@@ -1,0 +1,74 @@
+// -- Module: <m1> --
+package
+
+package k {
+
+    public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        protected final class KProtected {
+            public constructor KProtected()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class KInternal {
+        public constructor KInternal()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private final class KPrivate {
+        public constructor KPrivate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class KPublic {
+        public constructor KPublic()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package k2 {
+}
+
+
+// -- Module: <m2> --
+package
+
+package k {
+
+    public final class A {
+        // -- Module: <m1> --
+    }
+
+    internal final class KInternal {
+        // -- Module: <m1> --
+    }
+
+    private final class KPrivate {
+        // -- Module: <m1> --
+    }
+
+    public final class KPublic {
+        // -- Module: <m1> --
+    }
+}
+
+package k2 {
+}
+
+package k3 {
+}
+
+

@@ -9,7 +9,7 @@ annotation class Ann(
         val p6: Long
 )
 
-Ann(
+@Ann(
     p1 = java.lang.Byte.MAX_VALUE + 1,
     p2 = java.lang.Short.MAX_VALUE + 1,
     p3 = java.lang.Integer.MAX_VALUE + 1,
@@ -18,4 +18,4 @@ Ann(
     p6 = java.lang.Long.MAX_VALUE + 1
 ) class MyClass
 
-// EXPECTED: Ann(p1 = 128, p2 = 32768, p3 = -2147483648, p4 = -2147483648, p5 = 2147483648.toLong(), p6 = -9223372036854775808.toLong())
+// EXPECTED: @Ann(p1 = 128, p2 = 32768, p3 = -2147483648, p4 = -2147483648, p5 = 2147483648.toLong(), p6 = -9223372036854775808.toLong())

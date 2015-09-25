@@ -51,26 +51,22 @@ fun specialJVM(): List<GenericFunction> {
 
 
     templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOfRange")"""}
         body {
             "return Arrays.copyOfRange(this, fromIndex, toIndex)"
-        }
-        body(ArraysOfObjectsSubtype) {
-            "return Arrays.copyOfRange(this, fromIndex, toIndex) as A"
         }
     }
 
     templates add f("copyOf()") {
-        only(ArraysOfObjectsSubtype, ArraysOfPrimitives)
+        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
         body {
             "return Arrays.copyOf(this, size())"
-        }
-        body(ArraysOfObjectsSubtype) {
-            "return Arrays.copyOf(this, size()) as A"
         }
     }
 
@@ -84,7 +80,7 @@ fun specialJVM(): List<GenericFunction> {
         }
         returns(ArraysOfObjects) { "Array<out T?>" }
         returns(InvariantArraysOfObjects) { "Array<T?>" }
-        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
+        annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
     }
 
     templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size())") {

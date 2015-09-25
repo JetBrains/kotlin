@@ -1,6 +1,6 @@
 import java.util.ArrayList
 
-class C<T> {
+internal class C<T> {
     fun foo1(src: Collection<T>) {
         val t = src.iterator().next()
     }

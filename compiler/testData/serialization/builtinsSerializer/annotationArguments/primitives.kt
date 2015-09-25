@@ -11,7 +11,7 @@ annotation class Primitives(
         val boolean: Boolean
 )
 
-Primitives(
+@Primitives(
         byte = 7,
         char = '%',
         short = 239,
@@ -23,7 +23,7 @@ Primitives(
 )
 class C
 
-Primitives(
+@Primitives(
         byte = 7: Byte,
         char = '%': Char,
         short = 239: Short,

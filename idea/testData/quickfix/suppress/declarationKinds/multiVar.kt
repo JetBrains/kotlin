@@ -1,4 +1,4 @@
-// "Suppress 'REDUNDANT_NULLABLE' for var (a, b)" "true"
+// "Suppress 'REDUNDANT_NULLABLE' for initializer " "true"
 
 fun foo() {
     var (a, b) = Pair<String?<caret>?, String>("", "")

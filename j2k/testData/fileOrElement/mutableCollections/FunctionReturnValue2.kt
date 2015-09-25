@@ -1,6 +1,6 @@
 import java.util.*
 
-class A {
+internal class A {
     private val collection: MutableCollection<String>
 
     init {
@@ -11,11 +11,11 @@ class A {
         return ArrayList()
     }
 
-    public fun foo() {
+    fun foo() {
         collection.add("1")
     }
 
-    public fun getCollection(): Collection<String> {
+    fun getCollection(): Collection<String> {
         return collection
     }
 }

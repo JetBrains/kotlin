@@ -7937,9 +7937,9 @@ public final class ProtoBuf {
        */
       CLASS(0, 0),
       /**
-       * <code>TRAIT = 1;</code>
+       * <code>INTERFACE = 1;</code>
        */
-      TRAIT(1, 1),
+      INTERFACE(1, 1),
       /**
        * <code>ENUM_CLASS = 2;</code>
        */
@@ -7957,9 +7957,9 @@ public final class ProtoBuf {
        */
       OBJECT(5, 5),
       /**
-       * <code>CLASS_OBJECT = 6;</code>
+       * <code>COMPANION_OBJECT = 6;</code>
        */
-      CLASS_OBJECT(6, 6),
+      COMPANION_OBJECT(6, 6),
       ;
 
       /**
@@ -7971,9 +7971,9 @@ public final class ProtoBuf {
        */
       public static final int CLASS_VALUE = 0;
       /**
-       * <code>TRAIT = 1;</code>
+       * <code>INTERFACE = 1;</code>
        */
-      public static final int TRAIT_VALUE = 1;
+      public static final int INTERFACE_VALUE = 1;
       /**
        * <code>ENUM_CLASS = 2;</code>
        */
@@ -7991,9 +7991,9 @@ public final class ProtoBuf {
        */
       public static final int OBJECT_VALUE = 5;
       /**
-       * <code>CLASS_OBJECT = 6;</code>
+       * <code>COMPANION_OBJECT = 6;</code>
        */
-      public static final int CLASS_OBJECT_VALUE = 6;
+      public static final int COMPANION_OBJECT_VALUE = 6;
 
 
       public final int getNumber() { return value; }
@@ -8001,12 +8001,12 @@ public final class ProtoBuf {
       public static Kind valueOf(int value) {
         switch (value) {
           case 0: return CLASS;
-          case 1: return TRAIT;
+          case 1: return INTERFACE;
           case 2: return ENUM_CLASS;
           case 3: return ENUM_ENTRY;
           case 4: return ANNOTATION_CLASS;
           case 5: return OBJECT;
-          case 6: return CLASS_OBJECT;
+          case 6: return COMPANION_OBJECT;
           default: return null;
         }
       }

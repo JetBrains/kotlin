@@ -1,1 +1,1 @@
-interface CommandHandler<T : INode, String>
+internal interface CommandHandler<T : INode, String>

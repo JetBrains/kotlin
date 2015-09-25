@@ -128,7 +128,13 @@ JetFile: primaryConstructor.kt
                     PsiElement(IDENTIFIER)('Ann4')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiElement(private)('@private')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expected annotation identifier after '@'
           PsiElement(AT)('@')
@@ -204,7 +210,13 @@ JetFile: primaryConstructor.kt
                     PsiElement(IDENTIFIER)('Ann5')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiElement(private)('@private')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expected annotation identifier after '@'
           PsiElement(AT)('@')

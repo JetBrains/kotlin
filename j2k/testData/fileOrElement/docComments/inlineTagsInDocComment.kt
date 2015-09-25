@@ -1,4 +1,4 @@
 /**
  * `A&lt;B`
  */
-public class C
+class C

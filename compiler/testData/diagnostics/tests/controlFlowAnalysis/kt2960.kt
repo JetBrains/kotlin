@@ -29,7 +29,7 @@ class A {
       get() {
           val x : Int
           doSmth(<!UNINITIALIZED_VARIABLE!>x<!>)
-          return $a
+          return field
       }
 }
 

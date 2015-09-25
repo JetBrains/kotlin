@@ -1005,8 +1005,9 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
             if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-            val currentRefExpr = result.nameByOffset[originalOffset] as JetSimpleNameExpression?
-            if (currentRefExpr == null) continue
+            val currentRefExpr = result.nameByOffset[originalOffset]?.let {
+                (it as? JetThisExpression)?.instanceReference ?: it as? JetSimpleNameExpression
+            } ?: continue
 
             if (currentRefExpr.getParent() is JetThisExpression) continue
 
@@ -1019,7 +1020,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             if (currentDescriptor is LocalVariableDescriptor
                 && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
-            if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
+            if (diagnostics.any { it.getFactory() in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }
                 || (currentDescriptor != null
                     && !ErrorUtils.isError(currentDescriptor)
                     && !comparePossiblyOverridingDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {

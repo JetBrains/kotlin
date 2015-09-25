@@ -1,4 +1,4 @@
 fun test() {
-    for ((x, y, z) in array<A>()) {
+    for ((x, y, z) in arrayOf<A>()) {
     }
 }

@@ -1,8 +1,8 @@
  var x : Int = 1 + <error>x</error>
    get() : Int = 1
    set(value : <error>Long</error>) {
-      $x = value.toInt()
-      $x = <error>1.toLong()</error>
+      field = value.toInt()
+      field = <error>1.toLong()</error>
     }
 
  val xx : Int = <error>1 + x</error>
@@ -14,15 +14,12 @@
 
 class Test() {
     var a : Int = 111
-    var b : Int get() = $a; set(x) {a = x; $a = x}
+    var b : Int get() = a; set(x) { a = x }
 
    init {
-    <error>$b</error> = $a
-    $a = <error>$b</error>
-    a = <error>$b</error>
+
    }
    fun f() {
-    <error>$b</error> = $a
-    a = <error>$b</error>
+
    }
 }

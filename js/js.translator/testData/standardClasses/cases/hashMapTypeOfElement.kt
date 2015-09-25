@@ -2,7 +2,7 @@ package foo
 
 import java.util.HashMap
 
-native fun typeof(a: Any): String = noImpl
+@native fun typeof(a: Any): String = noImpl
 
 fun box(): String {
 

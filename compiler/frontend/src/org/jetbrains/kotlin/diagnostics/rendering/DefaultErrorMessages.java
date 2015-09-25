@@ -114,13 +114,16 @@ public class DefaultErrorMessages {
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
+        MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presense of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
@@ -131,11 +134,6 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_RECEIVER_TARGET, "''@receiver:'' annotations could be applied only to extension function or extension property declarations");
         MAP.put(INAPPLICABLE_PARAM_TARGET, "''@param:'' annotations could be applied only to primary constructor parameters");
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
-
-        MAP.put(DEPRECATED_UNESCAPED_ANNOTATION, "Annotations without '@' are deprecated now");
-        MAP.put(DEPRECATED_ESCAPED_MODIFIER, "Modifiers with '@' are deprecated now");
-        MAP.put(DEPRECATED_ANNOTATION_THAT_BECOMES_MODIFIER, "This annotation will become a modifier soon. Use ''{0}'' modifier instead", STRING);
-        MAP.put(DEPRECATED_ANNOTATION_USE, "This annotation use is deprecated");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
@@ -148,9 +146,9 @@ public class DefaultErrorMessages {
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
         MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
-        MAP.put(CANNOT_IMPORT_FROM_ELEMENT, "Cannot import from ''{0}''", NAME);
-        MAP.put(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON, "Cannot import-on-demand from object ''{0}''", NAME);
-        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
+        MAP.put(CANNOT_IMPORT_MEMBERS_FROM_SINGLETON, "Cannot import members from object ''{0}''", NAME);
+        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", TO_STRING);
+        MAP.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported");
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
@@ -161,6 +159,9 @@ public class DefaultErrorMessages {
                 "This property doesn't have a backing field, because it has custom accessors without reference to the backing field");
         MAP.put(INACCESSIBLE_BACKING_FIELD, "The backing field is not accessible here");
         MAP.put(NOT_PROPERTY_BACKING_FIELD, "The referenced variable is not a property and doesn't have backing field");
+
+        MAP.put(BACKING_FIELD_SYNTAX_DEPRECATED, "This backing field syntax is deprecated, use 'field' instead");
+        MAP.put(BACKING_FIELD_USAGE_DEPRECATED, "Backing field usage is deprecated here, soon it will be possible only in property accessors");
 
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
@@ -274,7 +275,6 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
-        MAP.put(DEPRECATED_DECAPITALIZED_ANNOTATION, "Decapitalized annotations are deprecated. Use ''{0}'' instead", DEPRECATION_RENDERER);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
@@ -282,7 +282,6 @@ public class DefaultErrorMessages {
 
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
-        MAP.put(DEPRECATED_TRAIT_KEYWORD, "'trait' keyword is deprecated, use 'interface' instead");
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");
@@ -416,6 +415,7 @@ public class DefaultErrorMessages {
         MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
+        MAP.put(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES, "Data class inheritance from other classes is deprecated");
         MAP.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects");
         MAP.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
@@ -432,6 +432,8 @@ public class DefaultErrorMessages {
         MAP.put(INSTANCE_ACCESS_BEFORE_SUPER_CALL, "Cannot access ''{0}'' before superclass constructor has been called", NAME);
 
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", STRING);
+
+        MAP.put(SAFE_CALL_IN_QUALIFIER, "Safe call is not allowed for qualifier");
 
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
         MAP.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter");
@@ -597,6 +599,14 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL, "An annotation parameter must be a class literal (T::class)");
         MAP.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant");
 
+        MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
+        MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
+        MAP.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter");
+        MAP.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const 'val' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE);
+        MAP.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer");
+        MAP.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value");
+        MAP.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions");
+
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
 
 
@@ -612,6 +622,10 @@ public class DefaultErrorMessages {
                     "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''. " +
                     "This may cause problems when calling this function with named arguments.", commaSeparated(FQ_NAMES_IN_TYPES), TO_STRING);
 
+        MAP.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class without primary constructor parameters are deprecated");
+        MAP.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are deprecated for data classes");
+        MAP.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Primary constructor parameters without val / var are deprecated for data classes");
+
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
 
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
@@ -622,14 +636,14 @@ public class DefaultErrorMessages {
         MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
 
         //Inline
-        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
-        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
-        MAP.put(DECLARATION_CANT_BE_INLINED, "Inline annotation could be present only on nonvirtual members (private or final)");
+        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-API ''{0}'' member from effectively public-API ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction is not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(DECLARATION_CANT_BE_INLINED, "''inline'' modifier is not allowed on virtual members. Only private or final members can be inlined");
         MAP.put(NOTHING_TO_INLINE, "Expected performance impact of inlining ''{0}'' can be insignificant. Inlining works best for functions with lambda parameters", SHORT_NAMES_IN_TYPES);
-        MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
-        MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
-        MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
-        //Inline non Locals
+        MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Add ''noinline'' modifier to the parameter declaration", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(RECURSION_IN_INLINE, "Inline function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        //Inline non locals
         MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);
         MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");

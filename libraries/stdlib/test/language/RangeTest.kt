@@ -4,7 +4,7 @@ import kotlin.test.*
 import org.junit.Test as test
 
 public class RangeTest {
-    test fun intRange() {
+    @test fun intRange() {
         val range = -5..9
         assertFalse(-1000 in range)
         assertFalse(-6 in range)
@@ -36,7 +36,7 @@ public class RangeTest {
         assertTrue(fails { 1 until Int.MIN_VALUE } is IllegalArgumentException)
     }
 
-    test fun byteRange() {
+    @test fun byteRange() {
         val range = (-5).toByte()..9.toByte()
         assertFalse((-100).toByte() in range)
         assertFalse((-6).toByte() in range)
@@ -70,7 +70,7 @@ public class RangeTest {
 
     }
 
-    test fun shortRange() {
+    @test fun shortRange() {
         val range = (-5).toShort()..9.toShort()
         assertFalse((-1000).toShort() in range)
         assertFalse((-6).toShort() in range)
@@ -102,7 +102,7 @@ public class RangeTest {
         assertTrue(fails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
     }
 
-    test fun longRange() {
+    @test fun longRange() {
         val range = -5L..9L
         assertFalse(-10000000L in range)
         assertFalse(-6L in range)
@@ -135,7 +135,7 @@ public class RangeTest {
 
     }
 
-    test fun charRange() {
+    @test fun charRange() {
         val range = 'c'..'w'
         assertFalse('0' in range)
         assertFalse('b' in range)
@@ -159,7 +159,7 @@ public class RangeTest {
         assertTrue(fails { 'A' until '\u0000' } is IllegalArgumentException)
     }
 
-    test fun doubleRange() {
+    @test fun doubleRange() {
         val range = -1.0..3.14159265358979
         assertFalse(-1e200 in range)
         assertFalse(-100.0 in range)
@@ -185,7 +185,7 @@ public class RangeTest {
         assertTrue(1.toFloat() in range)
     }
 
-    test fun floatRange() {
+    @test fun floatRange() {
         val range = -1.0f..3.14159f
         assertFalse(-1e30f in range)
         assertFalse(-100.0f in range)
@@ -213,7 +213,7 @@ public class RangeTest {
         assertFalse(Double.MAX_VALUE in range)
     }
 
-    test fun isEmpty() {
+    @test fun isEmpty() {
         assertTrue((2..1).isEmpty())
         assertTrue((2L..0L).isEmpty())
         assertTrue((1.toShort()..-1.toShort()).isEmpty())
@@ -232,7 +232,7 @@ public class RangeTest {
         assertTrue(("range".."progression").isEmpty())
     }
 
-    test fun emptyEquals() {
+    @test fun emptyEquals() {
         assertTrue(IntRange.EMPTY == IntRange.EMPTY)
         assertEquals(IntRange.EMPTY, IntRange.EMPTY)
         assertEquals(0L..42L, 0L..42L)
@@ -259,7 +259,7 @@ public class RangeTest {
         assertFalse(("aa".."bb") == ("aaa".."bbb"))
     }
 
-    test fun emptyHashCode() {
+    @test fun emptyHashCode() {
         assertEquals((0..42).hashCode(), (0..42).hashCode())
         assertEquals((1.23..4.56).hashCode(), (1.23..4.56).hashCode())
 
@@ -279,7 +279,7 @@ public class RangeTest {
         assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())
     }
 
-    test fun comparableRange() {
+    @test fun comparableRange() {
         val range = "island".."isle"
         assertFalse("apple" in range)
         assertFalse("icicle" in range)

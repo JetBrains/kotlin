@@ -20,13 +20,12 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import kotlin.platform.platformStatic
 
 public interface JsVirtualFileFinderFactory : VirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JsVirtualFileFinder
 
     public object SERVICE {
-        platformStatic
+        @JvmStatic
         public fun getInstance(project: Project): JsVirtualFileFinderFactory =
                 ServiceManager.getService(project, javaClass<JsVirtualFileFinderFactory>())
     }

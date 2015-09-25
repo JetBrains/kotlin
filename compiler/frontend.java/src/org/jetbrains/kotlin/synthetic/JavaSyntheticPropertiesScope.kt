@@ -166,7 +166,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
     private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: TypeConstructor, name: Name, processedTypes: MutableSet<TypeConstructor>?): SmartList<PropertyDescriptor>? {
         if (processedTypes != null && !processedTypes.add(type)) return result
 
-        @suppress("NAME_SHADOWING")
+        @Suppress("NAME_SHADOWING")
         var result = result
 
         val classifier = type.declarationDescriptor
@@ -261,7 +261,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             kind: CallableMemberDescriptor.Kind,
             source: SourceElement
     ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(containingDeclaration, original, annotations,
-                                                                modality, visibility, isVar, name, kind, source, false) {
+                                                                modality, visibility, isVar, name, kind, source,
+                                                                /* lateInit = */ false, /* isConst = */ false) {
 
         override var getMethod: FunctionDescriptor by Delegates.notNull()
             private set

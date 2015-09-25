@@ -1,12 +1,12 @@
 package a.b
 
-open class Base {
+internal open class Base {
     fun foo() {
     }
 }
 
-class A : Base() {
-    inner class C {
+internal class A : Base() {
+    internal inner class C {
         fun test() {
             this@A.foo()
         }

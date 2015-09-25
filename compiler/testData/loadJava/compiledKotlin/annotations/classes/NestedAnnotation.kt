@@ -4,6 +4,6 @@ class A {
     annotation class Anno
 }
 
-A.Anno class B {
-    A.Anno fun f() {}
+@A.Anno class B {
+    @A.Anno fun f() {}
 }

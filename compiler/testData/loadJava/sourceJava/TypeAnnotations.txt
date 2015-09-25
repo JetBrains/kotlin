@@ -1,6 +1,6 @@
 package test
 
 public interface TypeAnnotations</*0*/ TT : kotlin.Any!> {
-    public abstract fun f(/*0*/ p: test.G2<@[test.A()] kotlin.String!, @[test.A()] kotlin.Int!>!): kotlin.Unit
-    public abstract fun f(/*0*/ p: test.G<@[test.A()] kotlin.String!>!): kotlin.Unit
+    public abstract fun f(/*0*/ p: test.G2<@test.A() kotlin.String!, @test.A() kotlin.Int!>!): kotlin.Unit
+    public abstract fun f(/*0*/ p: test.G<@test.A() kotlin.String!>!): kotlin.Unit
 }

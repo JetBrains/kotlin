@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.TraceEntryFilter
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
 public class FakeCallResolver(
@@ -78,17 +77,34 @@ public class FakeCallResolver(
             name: Name,
             callElement: JetExpression?
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
-        val fake = JetPsiFactory(project).createSimpleName("fake")
         val fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name)
-        val call = CallMaker.makeCallWithExpressions(callElement ?: fake, receiver, null, fake, valueArguments)
-        val results = callResolver.resolveCallWithGivenName(context.replaceBindingTrace(fakeTrace), call, fake, name)
-        if (results.isSuccess()) {
+        val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
+
+        return makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
             fakeTrace.commit({ _, key ->
                 // excluding all entries related to fake expression
                 key != fake
             }, true)
         }
-        return Pair(call, results)
     }
 
+    @JvmOverloads
+    public fun makeAndResolveFakeCallInContext(
+            receiver: ReceiverValue,
+            context: ExpressionTypingContext,
+            valueArguments: List<JetExpression>,
+            name: Name,
+            callElement: JetExpression?,
+            onSuccess: (JetSimpleNameExpression) -> Unit = doNothing()
+    ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
+        val fake = JetPsiFactory(project).createSimpleName(name.asString())
+        val call = CallMaker.makeCallWithExpressions(callElement ?: fake, receiver, null, fake, valueArguments)
+        val results = callResolver.resolveCallWithGivenName(context, call, fake, name)
+
+        if (results.isSuccess) {
+            onSuccess(fake)
+        }
+
+        return Pair(call, results)
+    }
 }

@@ -1,16 +1,16 @@
 package
 
-A(value = {"1", "2", "3"}) public fun test1(): kotlin.Unit
-A(value = {"5", "6"}, x = kotlin.Any::class, y = 3) public fun test10(): kotlin.Unit
-A(value = {"5", "6", "7"}, x = kotlin.Any::class, y = 3) public fun test11(): kotlin.Unit
-A(value = {"4"}) public fun test2(): kotlin.Unit
-A(value = {{"5", "6"}, "7"}) public fun test3(): kotlin.Unit
-A(value = {"1", "2", "3"}, x = kotlin.String::class) public fun test4(): kotlin.Unit
-A(value = {"4"}, y = 2) public fun test5(): kotlin.Unit
-A(value = {{"5", "6"}, "7"}, x = kotlin.Any::class, y = 3) public fun test6(): kotlin.Unit
-A(value = {}) public fun test7(): kotlin.Unit
-A(value = {}) public fun test8(): kotlin.Unit
-A(value = {}, x = kotlin.Any::class, y = 3) public fun test9(): kotlin.Unit
+@A(value = {"1", "2", "3"}) public fun test1(): kotlin.Unit
+@A(value = {"5", "6"}, x = kotlin.Any::class, y = 3) public fun test10(): kotlin.Unit
+@A(value = {"5", "6", "7"}, x = kotlin.Any::class, y = 3) public fun test11(): kotlin.Unit
+@A(value = {"4"}) public fun test2(): kotlin.Unit
+@A(value = {{"5", "6"}, "7"}) public fun test3(): kotlin.Unit
+@A(value = {"1", "2", "3"}, x = kotlin.String::class) public fun test4(): kotlin.Unit
+@A(value = {"4"}, y = 2) public fun test5(): kotlin.Unit
+@A(value = {{"5", "6"}, "7"}, x = kotlin.Any::class, y = 3) public fun test6(): kotlin.Unit
+@A(value = {}) public fun test7(): kotlin.Unit
+@A(value = {}) public fun test8(): kotlin.Unit
+@A(value = {}, x = kotlin.Any::class, y = 3) public fun test9(): kotlin.Unit
 
 public final class A : kotlin.Annotation {
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ x: kotlin.reflect.KClass<*> = ..., /*2*/ y: kotlin.Int = ...)

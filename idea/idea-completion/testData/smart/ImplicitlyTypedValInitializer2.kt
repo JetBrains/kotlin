@@ -2,5 +2,5 @@ class A(s: String) {
     val v = s.<caret>length()
 }
 
-// EXIST: size
+// EXIST: hashCode
 // ABSENT: substring

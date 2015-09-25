@@ -64,7 +64,7 @@ public abstract class BasicMap<K : Comparable<K>, V>(
         storage.close()
     }
 
-    TestOnly
+    @TestOnly
     public fun dump(): String {
         return with(StringBuilder()) {
             with(Printer(this)) {

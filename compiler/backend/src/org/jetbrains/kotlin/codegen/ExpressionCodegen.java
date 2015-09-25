@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -58,10 +59,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -1472,7 +1470,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     ConstructorDescriptor constructorToCall = SamCodegenUtil.resolveSamAdapter(superConstructor);
                     List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
                     int params = superValueParameters.size();
-                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(constructorToCall).getValueParameterTypes();
+                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(constructorToCall, false).getValueParameterTypes();
                     assert superMappedTypes.size() >= params : String
                             .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
                                     superMappedTypes.size(), params, classDescriptor);
@@ -1662,6 +1660,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         int index = myFrameMap.enter(variableDescriptor, type);
 
         if (isSharedVarType(type)) {
+            markLineNumber(statement, false);
             v.anew(type);
             v.dup();
             v.invokespecial(type.getInternalName(), "<init>", "()V", false);
@@ -1980,6 +1979,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null : "Couldn't find descriptor for '" + expression.getText() + "'";
         descriptor = descriptor.getOriginal();
 
+        boolean isSyntheticField = descriptor instanceof SyntheticFieldDescriptor;
+        if (isSyntheticField) {
+            descriptor = ((SyntheticFieldDescriptor) descriptor).getPropertyDescriptor();
+        }
         if (descriptor instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
@@ -2008,7 +2011,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             boolean directToField =
-                    expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
+                    (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER || isSyntheticField)
+                    && contextKind() != OwnerKind.TRAIT_IMPL;
             JetSuperExpression superExpression =
                     resolvedCall == null ? null : CallResolverUtilPackage.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
@@ -2209,22 +2213,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null) {
-                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper, context);
+                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                 }
             }
 
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null && !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context)) {
-                    callableSetter = typeMapper.mapToCallableMethod(setter, isSuper, context);
+                    callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }
             }
         }
 
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         Type backingFieldOwner =
-                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
-                                    isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
+                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor);
 
         String fieldName;
         if (isExtensionProperty && !isDelegatedProperty) {
@@ -2236,7 +2239,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
         }
         else {
-            fieldName = JvmAbi.getDefaultFieldNameForProperty(propertyDescriptor.getName(), isDelegatedProperty);
+            Name name;
+            if (propertyDescriptor instanceof AccessorForPropertyDescriptor) {
+                name = ((AccessorForPropertyDescriptor) propertyDescriptor).getCalleeDescriptor().getName();
+            }
+            else {
+                name = propertyDescriptor.getName();
+            }
+            fieldName = JvmAbi.getDefaultFieldNameForProperty(name, isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,
@@ -2246,11 +2256,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue.Property intermediateValueForSyntheticExtensionProperty(@NotNull SyntheticJavaPropertyDescriptor propertyDescriptor, StackValue receiver) {
+    private StackValue.Property intermediateValueForSyntheticExtensionProperty(
+            @NotNull SyntheticJavaPropertyDescriptor propertyDescriptor,
+            StackValue receiver
+    ) {
         Type type = typeMapper.mapType(propertyDescriptor.getOriginal().getType());
-        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false, context);
+        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false);
         FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();
-        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false, context) : null;
+        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false) : null;
         return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, state, receiver);
     }
 
@@ -2392,12 +2405,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return intrinsic.toCallable(fd, superCall, resolvedCall, this);
         }
 
-        return resolveToCallableMethod(fd, superCall, context);
+        return resolveToCallableMethod(fd, superCall);
     }
 
     @NotNull
-    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
-        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall, context);
+    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall) {
+        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall);
     }
 
     public void invokeMethodWithArguments(
@@ -3411,7 +3424,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
 
                 constructor = SamCodegenUtil.resolveSamAdapter(constructor);
-                CallableMethod method = typeMapper.mapToCallableMethod(constructor);
+                CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);
                 invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
                 return Unit.INSTANCE$;
@@ -3482,7 +3495,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean isGetter = "get".equals(operationDescriptor.getName().asString());
 
             Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
-            Callable callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
+            Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
             StackValue collectionElementReceiver = createCollectionElementReceiver(

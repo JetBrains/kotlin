@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Specify type explicitly"
 

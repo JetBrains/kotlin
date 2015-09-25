@@ -4,7 +4,7 @@ class A(val a: String) {
     fun A.foo() = { a + this.a + this@foo.a + this@A.a }()
     fun bar(a: A) = this.foo() + " " + a.foo()
 
-    fun A.boo() = { array(this, this@boo, this@A) }()
+    fun A.boo() = { arrayOf(this, this@boo, this@A) }()
     fun baz(a: A) = this.boo().stringify() + " " + a.boo().stringify()
 
     fun Array<A>.stringify(): String {

@@ -14,7 +14,7 @@ class MapValWithDifferentTypesTest() {
     val c by Delegates.mapVal<Any>(map)
     val d by Delegates.mapVal<Int?>(map)
 
-    test fun doTest() {
+    @test fun doTest() {
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == 1, "fail at 'b'")
         assertTrue(c == B(1), "fail at 'c'")
@@ -29,7 +29,7 @@ class MapVarWithDifferentTypesTest() {
     var c by Delegates.mapVar<Any>(map)
     var d by Delegates.mapVar<String?>(map)
 
-    test fun doTest() {
+    @test fun doTest() {
         a = "aa"
         b = 11
         c = B(11)
@@ -48,7 +48,7 @@ class MapNullableKeyTest {
     val map = hashMapOf<Any?, Any?>(null to "null")
     var a by FixedMapVar<Any?, Any?, Any?>(map, key = { desc -> null }, default = {ref, desc -> null})
 
-    test fun doTest() {
+    @test fun doTest() {
         assertTrue(a == "null", "fail at 'a'")
         a = "foo"
         assertTrue(a == "foo", "fail at 'a' after set")
@@ -61,7 +61,7 @@ class MapPropertyStringTest() {
     var b by Delegates.mapVar<String>(map)
     val c by Delegates.mapVal<String>(map)
 
-    test fun doTest() {
+    @test fun doTest() {
         b = "newB"
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == "newB", "fail at 'b'")
@@ -75,7 +75,7 @@ class MapValWithDefaultTest() {
     val b: String by FixedMapVal(map, default = { ref: MapValWithDefaultTest, desc: String -> "bDefault" }, key = {"b"})
     val c: String by FixedMapVal(map, default = { ref: MapValWithDefaultTest, desc: String -> "cDefault" }, key = { desc -> desc.name })
 
-    test fun doTest() {
+    @test fun doTest() {
         assertTrue(a == "aDefault", "fail at 'a'")
         assertTrue(b == "bDefault", "fail at 'b'")
         assertTrue(c == "cDefault", "fail at 'c'")
@@ -88,7 +88,7 @@ class MapVarWithDefaultTest() {
     var b: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "bDefault" }, key = {"b"})
     var c: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "cDefault" }, key = { desc -> desc.name })
 
-    test fun doTest() {
+    @test fun doTest() {
         assertTrue(a == "aDefault", "fail at 'a'")
         assertTrue(b == "bDefault", "fail at 'b'")
         assertTrue(c == "cDefault", "fail at 'c'")
@@ -106,7 +106,7 @@ class MapPropertyKeyTest() {
     val a by FixedMapVal<Any?, String, String>(map, key = {"a"})
     var b by FixedMapVar<Any?, String, String>(map, key = {"b"})
 
-    test fun doTest() {
+    @test fun doTest() {
         b = "c"
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == "c", "fail at 'b'")
@@ -118,7 +118,7 @@ class MapPropertyFunctionTest() {
     val a by FixedMapVal<Any?, String, String>(map, { desc -> "${desc.name}Desc" })
     var b by FixedMapVar<Any?, String, String>(map, { desc -> "${desc.name}Desc" })
 
-    test fun doTest() {
+    @test fun doTest() {
         b = "c"
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == "c", "fail at 'b' after set")
@@ -141,7 +141,7 @@ class MapPropertyCustomTest() {
     val a by mapVal
     var b by mapVar
 
-    test fun doTest() {
+    @test fun doTest() {
         b = "newB"
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == "newB", "fail at 'b' after set")
@@ -167,7 +167,7 @@ class MapPropertyCustomWithDefaultTest() {
     val a by mapValWithDefault
     var b by mapVarWithDefault
 
-    test fun doTest() {
+    @test fun doTest() {
         assertTrue(a == "default", "fail at 'a'")
         assertTrue(b == "default", "fail at 'b'")
         b = "c"

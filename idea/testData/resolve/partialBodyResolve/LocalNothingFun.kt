@@ -6,5 +6,5 @@ fun foo(p: String?, p1: Any?) {
     if (p == null) {
         localError()
     }
-    <caret>p.size
+    <caret>p.length()
 }

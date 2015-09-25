@@ -1,22 +1,22 @@
-open class Base {
-    public open fun foo(s: String?): String? {
+internal open class Base {
+    open fun foo(s: String?): String? {
         return ""
     }
 
-    public open fun bar(s: String?): String? {
+    open fun bar(s: String?): String? {
         return if (s != null) s + 1 else null
     }
 
-    public open fun zoo(o: Any): String {
+    open fun zoo(o: Any): String {
         return ""
     }
 }
 
-interface I {
-    public fun zoo(o: Any?): String?
+internal interface I {
+    fun zoo(o: Any?): String?
 }
 
-class C : Base(), I {
+internal class C : Base(), I {
     override fun foo(s: String?): String? {
         return ""
     }

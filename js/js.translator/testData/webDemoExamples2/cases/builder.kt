@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
     println(result)
 }
 
-trait Element {
+interface Element {
     fun render(builder: StringBuilder, indent: String)
 
     override fun toString(): String {

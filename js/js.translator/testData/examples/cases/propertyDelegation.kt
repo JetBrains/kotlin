@@ -4,13 +4,13 @@ open class Base() {
         get() = 239
 
     public var readwrite: Int = 0
-        get() = $readwrite + 1
+        get() = field + 1
         set(n: Int) {
-            $readwrite = n
+            field = n
         }
 }
 
-trait Abstract {
+interface Abstract {
 }
 
 class Derived1() : Base(), Abstract {

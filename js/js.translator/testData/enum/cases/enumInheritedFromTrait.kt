@@ -11,6 +11,6 @@ enum class MyEnum : T {
     }
 }
 
-trait T {
+interface T {
     fun f(): String
 }

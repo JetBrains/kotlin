@@ -12,7 +12,7 @@ public val currentThread: Thread
  * Exposes the name of this thread as a property.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
 public var Thread.name: String
     get() = getName()
     set(value) {
@@ -23,7 +23,7 @@ public var Thread.name: String
  * Exposes the daemon flag of this thread as a property.
  * The Java Virtual Machine exits when the only threads running are all daemon threads.
  */
-deprecated("Use synthetic extension property isDaemon instead.", ReplaceWith("this.isDaemon"))
+@Deprecated("Use synthetic extension property isDaemon instead.", ReplaceWith("this.isDaemon"))
 public var Thread.daemon: Boolean
     get() = isDaemon()
     set(value) {
@@ -33,7 +33,7 @@ public var Thread.daemon: Boolean
 /**
  * Exposes the alive state of this thread as a property.
  */
-deprecated("Use synthetic extension property isAlive instead.", ReplaceWith("this.isAlive"))
+@Deprecated("Use synthetic extension property isAlive instead.", ReplaceWith("this.isAlive"))
 public val Thread.alive: Boolean
     get() = isAlive()
 
@@ -41,7 +41,7 @@ public val Thread.alive: Boolean
  * Exposes the priority of this thread as a property.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("priority"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("priority"))
 public var Thread.priority: Int
     get() = getPriority()
     set(value) {
@@ -52,7 +52,7 @@ public var Thread.priority: Int
  * Exposes the context class loader of this thread as a property.
  */
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("contextClassLoader"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("contextClassLoader"))
 public var Thread.contextClassLoader: ClassLoader?
     get() = getContextClassLoader()
     set(value) {
@@ -108,7 +108,7 @@ public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
  * Allows you to use the executor as a function to
  * execute the given block on the [Executor].
  */
-deprecated("Use Executor.execute(Runnable) instead.")  // do not specify ReplaceWith("execute(action)") due to KT-8597
+@Deprecated("Use Executor.execute(Runnable) instead.")  // do not specify ReplaceWith("execute(action)") due to KT-8597
 public fun Executor.invoke(action: () -> Unit) {
     execute(action)
 }
@@ -117,7 +117,7 @@ public fun Executor.invoke(action: () -> Unit) {
  * Allows you to use the executor service as a function to
  * execute the given block on the [ExecutorService].
  */
-deprecated("Use ExecutorService.submit(Callable) instead.")  // do not specify ReplaceWith("submit(action)") due to KT-8597
+@Deprecated("Use ExecutorService.submit(Callable) instead.")  // do not specify ReplaceWith("submit(action)") due to KT-8597
 public fun <T> ExecutorService.invoke(action: () -> T): Future<T> {
     return submit(action)
 }

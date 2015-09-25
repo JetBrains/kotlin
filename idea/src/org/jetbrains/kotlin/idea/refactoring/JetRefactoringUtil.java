@@ -40,7 +40,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -48,8 +50,6 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringPackage;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -69,25 +69,6 @@ import java.util.List;
 public class JetRefactoringUtil {
 
     private JetRefactoringUtil() {
-    }
-
-    @NotNull
-    public static JetModifierKeywordToken getVisibilityToken(@NotNull Visibility visibility) {
-        Visibility normalized = visibility.normalize();
-        if (normalized == Visibilities.PUBLIC) {
-            return JetTokens.PUBLIC_KEYWORD;
-        }
-        else if (normalized == Visibilities.PROTECTED) {
-            return JetTokens.PROTECTED_KEYWORD;
-        }
-        else if (normalized == Visibilities.INTERNAL) {
-            return JetTokens.INTERNAL_KEYWORD;
-        }
-        else if (Visibilities.isPrivate(normalized)) {
-            return JetTokens.PRIVATE_KEYWORD;
-        }
-
-        throw new IllegalArgumentException("Unexpected visibility '" + normalized + "'");
     }
 
     @NotNull

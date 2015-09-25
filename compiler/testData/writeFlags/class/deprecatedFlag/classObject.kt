@@ -1,5 +1,5 @@
 class MyClass {
-    Deprecated("") companion object {
+    @Deprecated("") companion object {
 
     }
 }

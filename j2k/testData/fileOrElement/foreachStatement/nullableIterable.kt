@@ -1,4 +1,4 @@
-class A {
+internal class A {
     var list: List<String>? = null
 
     fun foo() {

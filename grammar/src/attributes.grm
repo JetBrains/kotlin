@@ -7,11 +7,11 @@ annotations
   ;
 
 annotation
-  : annotationPrefix? unescapedAnnotation
+  : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
   ;
 
 annotationList
-  : annotationPrefix "[" unescapedAnnotation+ "]"
+  : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
   ;
 
 annotationUseSiteTarget
@@ -22,10 +22,6 @@ annotationUseSiteTarget
   : "set"
   : "param"
   : "sparam"
-  ;
-
-annotationPrefix:
-  : ("@" (annotationUseSiteTarget ":")?)
   ;
 
 unescapedAnnotation

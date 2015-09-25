@@ -7,6 +7,6 @@ fun box(): String {
     return if (bar1 == "123" && bar2 == "1234") "OK" else "fail: $bar1 $bar2"
 }
 
-inline fun bar2(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) y: () -> String) = {
+inline fun bar2(crossinline y: () -> String) = {
     { { call(y) }() }()
 }

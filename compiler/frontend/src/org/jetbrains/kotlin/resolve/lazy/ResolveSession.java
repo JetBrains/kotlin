@@ -72,7 +72,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private DescriptorResolver descriptorResolver;
     private FunctionDescriptorResolver functionDescriptorResolver;
     private TypeResolver typeResolver;
-    private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ScriptBodyResolver scriptBodyResolver;
     private LazyDeclarationResolver lazyDeclarationResolver;
     private FileScopeProvider fileScopeProvider;
@@ -103,11 +102,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setTypeResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setQualifiedExpressionResolver(QualifiedExpressionResolver qualifiedExpressionResolver) {
-        this.qualifiedExpressionResolver = qualifiedExpressionResolver;
     }
 
     @Inject
@@ -390,11 +384,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public TypeResolver getTypeResolver() {
         return typeResolver;
-    }
-
-    @NotNull
-    public QualifiedExpressionResolver getQualifiedExpressionResolver() {
-        return qualifiedExpressionResolver;
     }
 
     @NotNull

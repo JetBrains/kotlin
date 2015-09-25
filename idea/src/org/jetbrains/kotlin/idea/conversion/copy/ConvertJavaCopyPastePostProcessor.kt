@@ -78,7 +78,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val document = editor.getDocument()
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? JetFile ?: return
 
-        @data class Result(val text: String?, val referenceData: Collection<KotlinReferenceData>, val explicitImports: Set<FqName>)
+        data class Result(val text: String?, val referenceData: Collection<KotlinReferenceData>, val explicitImports: Set<FqName>)
 
         fun doConversion(): Result {
             val dataForConversion = DataForConversion.prepare(data, project)

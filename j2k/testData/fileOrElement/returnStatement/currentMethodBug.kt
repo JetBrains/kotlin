@@ -1,8 +1,8 @@
-interface I {
-    public fun getInt(): Int
+internal interface I {
+    fun getInt(): Int
 }
 
-class C {
+internal class C {
     fun getObject(): Any? {
         foo(object : I {
             override fun getInt(): Int {

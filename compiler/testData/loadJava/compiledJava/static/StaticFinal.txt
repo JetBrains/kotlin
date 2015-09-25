@@ -4,10 +4,10 @@ public open class StaticFinal {
     public constructor StaticFinal()
 
     // Static members
-    public/*package*/ final val packageNonNull: kotlin.String = "bbb"
-    public/*package*/ final val packageNull: kotlin.String!
-    private final val privateNonNull: kotlin.String = "bbb"
-    private final val privateNull: kotlin.String!
-    public final val publicNonNull: kotlin.String = "aaa"
-    public final val publicNull: kotlin.String!
+    public/*package*/ const final val packageNonNull: kotlin.String = "bbb"
+    public/*package*/ const final val packageNull: kotlin.String!
+    private const final val privateNonNull: kotlin.String = "bbb"
+    private const final val privateNull: kotlin.String!
+    public const final val publicNonNull: kotlin.String = "aaa"
+    public const final val publicNull: kotlin.String!
 }

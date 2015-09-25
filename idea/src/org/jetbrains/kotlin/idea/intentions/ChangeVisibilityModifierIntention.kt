@@ -19,14 +19,15 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public open class ChangeVisibilityModifierIntention protected constructor(
@@ -83,21 +84,7 @@ public open class ChangeVisibilityModifierIntention protected constructor(
     }
 
     override fun applyTo(element: JetDeclaration, editor: Editor) {
-        val modifierToChange = element.visibilityModifier()
-        if (modifierToChange != null) {
-            modifierToChange.replace(JetPsiFactory(element).createModifier(modifier))
-        }
-        else {
-            element.addModifier(modifier)
-        }
-    }
-
-    private fun JetDeclaration.visibilityModifier(): PsiElement? {
-        val modifierList = getModifierList() ?: return null
-        return JetTokens.VISIBILITY_MODIFIERS.getTypes()
-                       .asSequence()
-                       .map { modifierList.getModifier(it as JetModifierKeywordToken) }
-                       .firstOrNull { it != null } ?: return null
+        element.setVisibility(modifier)
     }
 
     private fun JetModifierKeywordToken.toVisibility(): Visibility {

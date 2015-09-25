@@ -1,4 +1,4 @@
-class C {
+internal class C {
     fun foo(p: Boolean): Int {
         var a: Int
         var b: Int

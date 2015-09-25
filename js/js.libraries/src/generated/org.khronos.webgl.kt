@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public interface WebGLContextAttributes {
+@native public interface WebGLContextAttributes {
     var alpha: Boolean
     var depth: Boolean
     var stencil: Boolean
@@ -31,7 +31,7 @@ native public interface WebGLContextAttributes {
     var failIfMajorPerformanceCaveat: Boolean
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
     val o = js("({})")
 
@@ -47,31 +47,31 @@ public inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean =
     return o
 }
 
-native public interface WebGLObject {
+@native public interface WebGLObject {
 }
 
-native public interface WebGLBuffer : WebGLObject {
+@native public interface WebGLBuffer : WebGLObject {
 }
 
-native public interface WebGLFramebuffer : WebGLObject {
+@native public interface WebGLFramebuffer : WebGLObject {
 }
 
-native public interface WebGLProgram : WebGLObject {
+@native public interface WebGLProgram : WebGLObject {
 }
 
-native public interface WebGLRenderbuffer : WebGLObject {
+@native public interface WebGLRenderbuffer : WebGLObject {
 }
 
-native public interface WebGLShader : WebGLObject {
+@native public interface WebGLShader : WebGLObject {
 }
 
-native public interface WebGLTexture : WebGLObject {
+@native public interface WebGLTexture : WebGLObject {
 }
 
-native public interface WebGLUniformLocation {
+@native public interface WebGLUniformLocation {
 }
 
-native public interface WebGLActiveInfo {
+@native public interface WebGLActiveInfo {
     val size: Int
         get() = noImpl
     val type: Int
@@ -80,7 +80,7 @@ native public interface WebGLActiveInfo {
         get() = noImpl
 }
 
-native public interface WebGLShaderPrecisionFormat {
+@native public interface WebGLShaderPrecisionFormat {
     val rangeMin: Int
         get() = noImpl
     val rangeMax: Int
@@ -89,7 +89,7 @@ native public interface WebGLShaderPrecisionFormat {
         get() = noImpl
 }
 
-native public interface WebGLRenderingContext : RenderingContext {
+@native public interface WebGLRenderingContext : RenderingContext {
     val canvas: HTMLCanvasElement
         get() = noImpl
     val drawingBufferWidth: Int
@@ -552,16 +552,16 @@ native public interface WebGLRenderingContext : RenderingContext {
     }
 }
 
-native public open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
+@native public open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
     open val statusMessage: String
         get() = noImpl
 }
 
-native public interface WebGLContextEventInit : EventInit {
+@native public interface WebGLContextEventInit : EventInit {
     var statusMessage: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
     val o = js("({})")
 
@@ -572,7 +572,7 @@ public inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean 
     return o
 }
 
-native public open class ArrayBuffer(length: Int) : Transferable {
+@native public open class ArrayBuffer(length: Int) : Transferable {
     open val byteLength: Int
         get() = noImpl
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
@@ -582,7 +582,7 @@ native public open class ArrayBuffer(length: Int) : Transferable {
     }
 }
 
-native public open class Int8Array : ArrayBufferView {
+@native public open class Int8Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int8Array)
     constructor(array: Array<Byte>)
@@ -606,7 +606,7 @@ native public open class Int8Array : ArrayBufferView {
     }
 }
 
-native public open class Uint8Array : ArrayBufferView {
+@native public open class Uint8Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint8Array)
     constructor(array: Array<Byte>)
@@ -630,7 +630,7 @@ native public open class Uint8Array : ArrayBufferView {
     }
 }
 
-native public open class Uint8ClampedArray : ArrayBufferView {
+@native public open class Uint8ClampedArray : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint8ClampedArray)
     constructor(array: Array<Byte>)
@@ -654,7 +654,7 @@ native public open class Uint8ClampedArray : ArrayBufferView {
     }
 }
 
-native public open class Int16Array : ArrayBufferView {
+@native public open class Int16Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int16Array)
     constructor(array: Array<Short>)
@@ -678,7 +678,7 @@ native public open class Int16Array : ArrayBufferView {
     }
 }
 
-native public open class Uint16Array : ArrayBufferView {
+@native public open class Uint16Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint16Array)
     constructor(array: Array<Short>)
@@ -702,7 +702,7 @@ native public open class Uint16Array : ArrayBufferView {
     }
 }
 
-native public open class Int32Array : ArrayBufferView {
+@native public open class Int32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int32Array)
     constructor(array: Array<Int>)
@@ -726,7 +726,7 @@ native public open class Int32Array : ArrayBufferView {
     }
 }
 
-native public open class Uint32Array : ArrayBufferView {
+@native public open class Uint32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint32Array)
     constructor(array: Array<Int>)
@@ -750,7 +750,7 @@ native public open class Uint32Array : ArrayBufferView {
     }
 }
 
-native public open class Float32Array : ArrayBufferView {
+@native public open class Float32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Float32Array)
     constructor(array: Array<Float>)
@@ -774,7 +774,7 @@ native public open class Float32Array : ArrayBufferView {
     }
 }
 
-native public open class Float64Array : ArrayBufferView {
+@native public open class Float64Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Float64Array)
     constructor(array: Array<Double>)
@@ -798,7 +798,7 @@ native public open class Float64Array : ArrayBufferView {
     }
 }
 
-native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
+@native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
     open val buffer: ArrayBuffer
         get() = noImpl
     open val byteOffset: Int

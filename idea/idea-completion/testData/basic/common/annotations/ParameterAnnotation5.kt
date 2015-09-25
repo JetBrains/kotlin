@@ -5,6 +5,6 @@ fun foo(<caret>
 
 // INVOCATION_COUNT: 1
 // EXIST: Hello
-// EXIST: inlineOptions
+// EXIST: Suppress
 // ABSENT: String
 // ABSENT: v

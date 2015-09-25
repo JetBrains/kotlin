@@ -1,4 +1,4 @@
-class C(private val s: String?) {
+internal class C(private val s: String?) {
 
     init {
         if (s == null) {

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptorKt;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -400,8 +401,8 @@ public class JetFlowInformationProvider {
             @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated
     ) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (JetPsiUtil.isBackingFieldReference(expression) && variableDescriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+        PropertyDescriptor propertyDescriptor = SyntheticFieldDescriptorKt.getReferencedProperty(variableDescriptor);
+        if (JetPsiUtil.isBackingFieldReference(expression, variableDescriptor) && propertyDescriptor != null) {
             JetPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, JetPropertyAccessor.class);
             if (accessor != null) {
                 DeclarationDescriptor accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor);
@@ -553,6 +554,9 @@ public class JetFlowInformationProvider {
         DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
         if ((containingDeclaration instanceof ClassDescriptor)
                 && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
+            if (element instanceof JetSimpleNameExpression) {
+                report(Errors.BACKING_FIELD_USAGE_DEPRECATED.on((JetSimpleNameExpression) element), cxtx);
+            }
             return false;
         }
         report(Errors.INACCESSIBLE_BACKING_FIELD.on(element), cxtx);
@@ -566,7 +570,7 @@ public class JetFlowInformationProvider {
             boolean reportError
     ) {
         error[0] = false;
-        if (JetPsiUtil.isBackingFieldReference(element)) {
+        if (JetPsiUtil.isBackingFieldReference(element, null)) {
             return true;
         }
         if (element instanceof JetDotQualifiedExpression && isCorrectBackingFieldReference(

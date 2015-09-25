@@ -1,6 +1,6 @@
 import kotlinApi.*
 
-class C {
+internal class C {
     fun foo() {
         val v = globalGenericFunction(1)
     }

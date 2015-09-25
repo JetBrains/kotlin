@@ -1,11 +1,11 @@
 interface T {
     public var foo: Short
-        internal set
+        <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>internal<!> set
 }
 
 interface U {
     public var foo: Short
-        protected set
+        <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>protected<!> set
 }
 
 interface V : T, U {

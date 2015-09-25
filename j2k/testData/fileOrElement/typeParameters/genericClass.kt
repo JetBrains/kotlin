@@ -1,1 +1,1 @@
-class Comparable<T>
+internal class Comparable<T>

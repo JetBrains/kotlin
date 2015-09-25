@@ -20,6 +20,11 @@
       <option name="FONT_TYPE" value="1" />
     </value>
   </option>
+  <option name="KOTLIN_BACKING_FIELD_VARIABLE">
+    <value>
+      <option name="FONT_TYPE" value="1" />
+    </value>
+  </option>
   <option name="KOTLIN_SMART_CAST_VALUE">
     <value>
       <option name="BACKGROUND" value="dbffdb" />

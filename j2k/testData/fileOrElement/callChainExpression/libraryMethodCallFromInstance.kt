@@ -1,4 +1,4 @@
-class Library {
+internal class Library {
     fun call() {
     }
 
@@ -7,7 +7,7 @@ class Library {
     }
 }
 
-class User {
+internal class User {
     fun main() {
         val lib = Library()
         lib.call()

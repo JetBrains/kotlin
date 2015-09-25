@@ -1,12 +1,12 @@
 package foo
 
-trait Test {
+interface Test {
     fun addFoo(s: String): String {
         return s + "FOO"
     }
 }
 
-trait ExtendedTest : Test {
+interface ExtendedTest : Test {
     fun hooray(): String {
         return "hooray"
     }

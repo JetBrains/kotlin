@@ -1,6 +1,6 @@
 package test
 
-kotlin.inline() public fun a(): kotlin.Unit
-kotlin.inline() public fun b(): kotlin.Unit
-kotlin.inline() public fun c(): kotlin.Unit
-kotlin.inline() public fun d(): kotlin.Unit
+@kotlin.inline() public fun a(): kotlin.Unit
+@kotlin.inline() public fun b(): kotlin.Unit
+@kotlin.inline() public fun c(): kotlin.Unit
+@kotlin.inline() public fun d(): kotlin.Unit

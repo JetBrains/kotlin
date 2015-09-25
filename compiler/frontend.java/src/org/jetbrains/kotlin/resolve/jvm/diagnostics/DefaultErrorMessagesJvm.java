@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
-
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
@@ -62,7 +60,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");
         MAP.put(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''{0}'' instead", Renderers.TO_STRING);
-        MAP.put(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION, "Only annotations with SOURCE retention can be repeated on JVM platform");
+        MAP.put(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION, "Only annotations with SOURCE retention can be repeated on JVM version before 1.8");
+        MAP.put(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation {0} is not applicable to the multi-file classes", Renderers.TO_STRING);
 
         MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                                        "Make sure you have kotlin-reflect.jar in the classpath");
@@ -86,6 +85,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
 
         MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
+
+        MAP.put(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
     }
 
     @NotNull

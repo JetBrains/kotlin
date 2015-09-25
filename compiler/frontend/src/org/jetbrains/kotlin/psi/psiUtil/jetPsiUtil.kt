@@ -25,6 +25,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -90,7 +91,7 @@ public fun JetElement.getQualifiedElementSelector(): JetElement? {
 public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
     val parent = getParent()
     when {
-        parent is JetQualifiedExpression && !isImportDirectiveExpression() -> {
+        parent is JetQualifiedExpression -> {
             val receiverExpression = parent.getReceiverExpression()
             // Name expression can't be receiver for itself
             if (receiverExpression != this) {
@@ -341,12 +342,12 @@ public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRI
 
 public fun JetSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = getParent()
-    if (parent == null) {
-        return false
-    }
-    else {
-        return parent is JetImportDirective || parent.getParent() is JetImportDirective
-    }
+    return parent is JetImportDirective || parent?.getParent() is JetImportDirective
+}
+
+public fun JetSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
+    val parent = getParent()
+    return parent is JetPackageDirective || parent?.getParent() is JetPackageDirective
 }
 
 public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
@@ -394,3 +395,13 @@ public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingCont
 public fun JetExpression.asAssignment(): JetBinaryExpression? =
         if (JetPsiUtil.isAssignment(this)) this as JetBinaryExpression else null
 
+public fun JetDeclaration.visibilityModifier(): PsiElement? {
+    val modifierList = modifierList ?: return null
+    return JetTokens.VISIBILITY_MODIFIERS.types
+                   .asSequence()
+                   .map { modifierList.getModifier(it as JetModifierKeywordToken) }
+                   .firstOrNull { it != null }
+}
+
+public fun JetDeclaration.visibilityModifierType(): JetModifierKeywordToken?
+        = visibilityModifier()?.node?.elementType as JetModifierKeywordToken?

@@ -32,8 +32,8 @@ import java.util.*
 
 fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean = true): List<String> {
     fun PropertyAccessorsPsiMethods.toNameList(): List<String> {
-        val getter = getGetter()
-        val setter = getSetter()
+        val getter = getter
+        val setter = setter
 
         val result = ArrayList<String>()
         if (readable && getter != null) result.add(getter.getName())

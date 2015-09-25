@@ -1,9 +1,9 @@
-class A JvmOverloads constructor(nested: A.Nested = A.Nested(A.Nested.FIELD)) {
+internal class A @JvmOverloads constructor(nested: A.Nested = A.Nested(A.Nested.FIELD)) {
 
-    class Nested(p: Int) {
+    internal class Nested(p: Int) {
         companion object {
 
-            public val FIELD: Int = 0
+            val FIELD = 0
         }
     }
 }

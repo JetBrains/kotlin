@@ -2,15 +2,15 @@ package kotlin.browser
 
 import org.w3c.dom.*
 
-native
+@native
 public val window: Window = noImpl
 
-native
+@native
 public val document: Document = noImpl
 
-native
+@native
 public val localStorage: Storage = noImpl
 
-native
+@native
 public val sessionStorage: Storage = noImpl
 

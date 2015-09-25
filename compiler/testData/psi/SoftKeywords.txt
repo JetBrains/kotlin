@@ -55,6 +55,8 @@ JetFile: SoftKeywords.kt
       PsiElement(in)('in')
       PsiWhiteSpace('\n')
       PsiElement(out)('out')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -315,6 +317,11 @@ JetFile: SoftKeywords.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('lateinit')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('const')
         PsiWhiteSpace('\n      ')
         PROPERTY_ACCESSOR
           PsiElement(get)('get')
@@ -817,6 +824,22 @@ JetFile: SoftKeywords.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('lateinit')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('const')
+        PsiWhiteSpace('  ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('const')
       PsiWhiteSpace('\n\n    ')
       FUN
         PsiElement(fun)('fun')
@@ -1136,6 +1159,17 @@ JetFile: SoftKeywords.kt
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('lateinit')
             PsiWhiteSpace('  ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('const')
+            PsiWhiteSpace('     ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
@@ -1522,6 +1556,17 @@ JetFile: SoftKeywords.kt
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('lateinit')
           PsiWhiteSpace('  ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('const')
+          PsiWhiteSpace('     ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

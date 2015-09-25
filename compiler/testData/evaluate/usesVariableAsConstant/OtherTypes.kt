@@ -1,6 +1,6 @@
 package test
 
-enum class MyEnum { A;B }
+enum class MyEnum { A, B }
 
 fun foo(): Boolean = true
 

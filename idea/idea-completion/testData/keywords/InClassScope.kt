@@ -29,6 +29,7 @@ class TestClass {
 // EXIST:  constructor
 // EXIST:  init
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data
@@ -38,4 +39,5 @@ class TestClass {
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 // NOTHING_ELSE

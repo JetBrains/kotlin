@@ -48,7 +48,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         )
     }
 
-    val explicitModuleInfo = containingJetFile?.moduleInfo
+    val explicitModuleInfo = containingJetFile?.moduleInfo ?: (containingJetFile?.originalFile as? JetFile)?.moduleInfo
     if (explicitModuleInfo is IdeaModuleInfo) return explicitModuleInfo
 
     if (containingJetFile is JetCodeFragment) {

@@ -150,7 +150,7 @@ public class PropertyReferenceCodegen(
                         SourceElement.NO_SOURCE
                 )
                 fakeDescriptor.initialize(null, classDescriptor.getThisAsReceiverParameter(), emptyList(), emptyList(),
-                                          classDescriptor.builtIns.getAnyType(), Modality.OPEN, Visibilities.PUBLIC)
+                                          classDescriptor.builtIns.getAnyType(), Modality.OPEN, Visibilities.PUBLIC, false)
 
                 val fakeCodegen = ExpressionCodegen(
                         this, FrameMap(), OBJECT_TYPE, context.intoFunction(fakeDescriptor), state, this@PropertyReferenceCodegen

@@ -1,4 +1,4 @@
-trait KTrait: Simple {
+interface KTrait: Simple {
     override fun test(s: String): String {
         return s + "K"
     }

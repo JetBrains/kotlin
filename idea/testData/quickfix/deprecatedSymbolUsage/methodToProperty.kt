@@ -1,6 +1,6 @@
 // "Replace with 'x'" "true"
 
-trait X {
+interface X {
     @Deprecated("", ReplaceWith("x"))
     fun getX(): String
 

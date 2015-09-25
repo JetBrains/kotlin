@@ -1,10 +1,10 @@
 @kotlin.jvm.internal.KotlinClass A {
     field $kotlinClass: kotlin.reflect.KClass
-    @AnnProp @AnnField field p: int
+    @AnnField field p: int
     @AnnField field x: int
     field y: int
     method <clinit>(): void
-    @AnnProp2 method p$annotations(): void
+    @AnnProp @AnnProp2 method p$annotations(): void
     @AnnGetter method getP(): int
     @AnnSetter method setP(@AnnParam p0: int): void
     @AnnProp2 method x$annotations(): void

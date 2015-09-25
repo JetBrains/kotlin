@@ -31,7 +31,7 @@ public object NullQuickFix : IntentionAction {
 
     override fun startInWriteAction() = false
 
-    override fun invoke(NotNull project: Project, editor: Editor?, file: PsiFile?) {
+    override fun invoke(@NotNull project: Project, editor: Editor?, file: PsiFile?) {
         throw UnsupportedOperationException("invoke() shouldn't be called")
     }
 }

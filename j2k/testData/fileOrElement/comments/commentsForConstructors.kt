@@ -1,5 +1,5 @@
-class A// this is a primary constructor
-JvmOverloads constructor(p: Int = 1) {
+internal class A// this is a primary constructor
+@JvmOverloads constructor(p: Int = 1) {
     private val v: Int
 
     init {
@@ -12,7 +12,7 @@ JvmOverloads constructor(p: Int = 1) {
 }// this is a secondary constructor 1
 // end of secondary constructor 1 body
 
-class B// this constructor will disappear
+internal class B// this constructor will disappear
 (private val x: Int) // end of constructor body
 {
 

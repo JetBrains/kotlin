@@ -9,7 +9,7 @@ This is a block comment
 //one line comment of class
 //another one
 /*another doc*/
-class C {
+internal class C {
     // This is a class comment
 
     /**
@@ -20,7 +20,7 @@ class C {
     /**
      * This is a function doc comment.
      */
-    public fun foo() {
+    fun foo() {
         /* This is a function comment */
     }
 

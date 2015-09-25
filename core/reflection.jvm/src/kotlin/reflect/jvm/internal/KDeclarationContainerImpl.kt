@@ -158,7 +158,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     // TODO: check resulting method's return type
     fun findMethodBySignature(
-            @suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
+            @Suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
             signature: JvmProtoBuf.JvmMethodSignature,
             nameResolver: NameResolver,
             declared: Boolean

@@ -128,7 +128,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
 
                 val visibility = syntheticExtensionVisibility(sourceFunction)
 
-                descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, visibility)
+                descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, visibility, false)
 
                 return descriptor
             }
@@ -148,6 +148,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 newOwner: DeclarationDescriptor,
                 newModality: Modality,
                 newVisibility: Visibility,
+                newIsOperator: Boolean,
                 original: FunctionDescriptor?,
                 copyOverrides: Boolean,
                 kind: CallableMemberDescriptor.Kind,
@@ -156,7 +157,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 newReturnType: JetType
         ): FunctionDescriptor? {
             val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
-                    originalSubstitutor, newOwner, newModality, newVisibility, original,
+                    originalSubstitutor, newOwner, newModality, newVisibility, newIsOperator, original,
                     copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType)
                 as MyFunctionDescriptor? ?: return null
 

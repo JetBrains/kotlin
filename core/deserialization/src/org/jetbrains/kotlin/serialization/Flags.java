@@ -48,7 +48,11 @@ public class Flags {
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
 
-    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(HAS_CONSTANT);
+    public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_CONSTANT);
+
+    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
+
+    public static final FlagField<Boolean> IS_OPERATOR = FlagField.booleanAfter(LATE_INIT);
 
     // Parameters
 
@@ -87,13 +91,13 @@ public class Flags {
     }
 
     private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isCompanionObject) {
-        if (isCompanionObject) return ProtoBuf.Class.Kind.CLASS_OBJECT;
+        if (isCompanionObject) return ProtoBuf.Class.Kind.COMPANION_OBJECT;
 
         switch (kind) {
             case CLASS:
                 return ProtoBuf.Class.Kind.CLASS;
             case INTERFACE:
-                return ProtoBuf.Class.Kind.TRAIT;
+                return ProtoBuf.Class.Kind.INTERFACE;
             case ENUM_CLASS:
                 return ProtoBuf.Class.Kind.ENUM_CLASS;
             case ENUM_ENTRY:
@@ -115,7 +119,9 @@ public class Flags {
             boolean hasGetter,
             boolean hasSetter,
             boolean hasConstant,
-            boolean lateInit
+            boolean lateInit,
+            boolean isConst,
+            boolean isOperator
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -126,6 +132,8 @@ public class Flags {
                | HAS_SETTER.toFlags(hasSetter)
                | HAS_CONSTANT.toFlags(hasConstant)
                | LATE_INIT.toFlags(lateInit)
+               | IS_CONST.toFlags(isConst)
+               | IS_OPERATOR.toFlags(isOperator)
                ;
     }
 

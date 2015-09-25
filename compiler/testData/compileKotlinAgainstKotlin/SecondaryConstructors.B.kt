@@ -1,4 +1,3 @@
-import java.lang
 
 class B1() : A("123") {
     constructor(x1: Int): this() {}

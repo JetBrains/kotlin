@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import kotlin.platform.platformStatic
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 
 //TODO: this should go away to support cross-platform projects
 public object JsProjectDetector {
-    platformStatic public fun isJsProject(project: Project): Boolean {
+    @JvmStatic
+    public fun isJsProject(project: Project): Boolean {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
             val result = ModuleManager.getInstance(project).getModules().any { ProjectStructureUtil.isJsKotlinModule(it) }
             CachedValueProvider.Result(result, ProjectRootModificationTracker.getInstance(project))

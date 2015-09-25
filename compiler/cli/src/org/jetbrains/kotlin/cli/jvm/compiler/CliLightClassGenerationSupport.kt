@@ -193,7 +193,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         }
     }
 
-    public open class CliBindingTrace TestOnly constructor() : BindingTraceContext() {
+    public open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
         private var kotlinCodeAnalyzer: KotlinCodeAnalyzer? = null
 
         override fun toString(): String {

@@ -53,7 +53,7 @@ private object UNINITIALIZED_VALUE
 
 private open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
-    private volatile var _value: Any? = UNINITIALIZED_VALUE
+    @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     protected open val lock: Any
         get() = this
 

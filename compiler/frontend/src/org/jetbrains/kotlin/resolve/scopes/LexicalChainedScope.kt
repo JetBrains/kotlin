@@ -48,7 +48,7 @@ public class LexicalChainedScope(
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
-                  " with implicitReceiver: ", implicitReceiver?.value, " {")
+                  " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 
         for (scope in scopeChain) {

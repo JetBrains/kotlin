@@ -25,14 +25,14 @@ import com.intellij.openapi.vfs.VirtualFileAdapter
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.roots.ProjectFileIndex
-import kotlin.platform.platformStatic
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.ExternalAnnotationsListener
 import com.intellij.psi.PsiModifierListOwner
 
 class LibraryModificationTracker(project: Project) : SimpleModificationTracker() {
     companion object {
-        platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<LibraryModificationTracker>())!!
+        @JvmStatic
+        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<LibraryModificationTracker>())!!
     }
 
     init {

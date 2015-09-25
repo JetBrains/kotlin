@@ -13,32 +13,32 @@ fun fibonacci(): Sequence<Int> {
 
 class IteratorsTest {
 
-    test fun filterAndTakeWhileExtractTheElementsWithinRange() {
+    @test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(arrayListOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
     }
 
-    test fun foldReducesTheFirstNElements() {
+    @test fun foldReducesTheFirstNElements() {
         val sum = { a: Int, b: Int -> a + b }
         assertEquals(arrayListOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
-    test fun takeExtractsTheFirstNElements() {
+    @test fun takeExtractsTheFirstNElements() {
         assertEquals(arrayListOf(0, 1, 1, 2, 3, 5, 8, 13, 21, 34), fibonacci().take(10).toList())
     }
 
-    test fun mapAndTakeWhileExtractTheTransformedElements() {
+    @test fun mapAndTakeWhileExtractTheTransformedElements() {
         assertEquals(arrayListOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
-    test fun mapIndexed() {
+    @test fun mapIndexed() {
         assertEquals(arrayListOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
-    test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
+    @test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
     }
 
-    test fun plus() {
+    @test fun plus() {
         val iter = arrayListOf("foo", "bar").asSequence()
         val iter2 = iter + "cheese"
         assertEquals(arrayListOf("foo", "bar", "cheese"), iter2.toList())
@@ -49,7 +49,7 @@ class IteratorsTest {
         assertEquals(arrayListOf("a", "b", "c"), mi.toList())
     }
 
-    test fun plusCollection() {
+    @test fun plusCollection() {
         val a = arrayListOf("foo", "bar")
         val b = arrayListOf("cheese", "wine")
         val iter = a.asSequence() + b.asSequence()
@@ -64,7 +64,7 @@ class IteratorsTest {
         assertEquals(arrayListOf("a", "foo", "bar", "beer", "cheese", "wine", "z"), ml.toList())
     }
 
-    test fun requireNoNulls() {
+    @test fun requireNoNulls() {
         val iter = arrayListOf<String?>("foo", "bar").asSequence()
         val notNull = iter.requireNoNulls()
         assertEquals(arrayListOf("foo", "bar"), notNull.toList())
@@ -77,23 +77,23 @@ class IteratorsTest {
         }
     }
 
-    test fun toStringJoinsNoMoreThanTheFirstTenElements() {
+    @test fun toStringJoinsNoMoreThanTheFirstTenElements() {
         assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter {  it > 10 }.joinToString(limit = 10))
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
     }
 
-    test fun pairIterator() {
+    @test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
         assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
     }
 
-    test fun skippingIterator() {
+    @test fun skippingIterator() {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
     }
 
-    test fun iterationOverIterator() {
+    @test fun iterationOverIterator() {
         val c = arrayListOf(0, 1, 2, 3, 4, 5)
         var s = ""
         for (i in c.iterator()) {
@@ -107,7 +107,7 @@ class IteratorsTest {
         return result
     }
 
-    test fun iterableExtension() {
+    @test fun iterableExtension() {
         val c = arrayListOf(0, 1, 2, 3, 4, 5)
         val d = ArrayList<Int>()
         c.iterator().takeWhileTo(d, {i -> i < 4 })

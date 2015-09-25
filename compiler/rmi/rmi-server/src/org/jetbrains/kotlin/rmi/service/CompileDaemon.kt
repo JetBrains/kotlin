@@ -30,6 +30,7 @@ import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
+import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.timer
@@ -58,18 +59,19 @@ class LogStream(name: String) : OutputStream() {
 public object CompileDaemon {
 
     init {
-        val logPath: String = System.getProperty("kotlin.daemon.log.path")?.trimEnd('/','\\') ?: "%t"
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
+        val (logPath: String, fileIsGiven: Boolean) =
+                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
-            "handlers = java.util.logging.FileHandler\n" +
-            "java.util.logging.FileHandler.level     = ALL\n" +
-            "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-            "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-            "java.util.logging.FileHandler.limit     = 1073741824\n" + // 1Mb
-            "java.util.logging.FileHandler.count     = 3\n" +
-            "java.util.logging.FileHandler.append    = false\n" +
-            "java.util.logging.FileHandler.pattern   = $logPath/$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log\n" +
-            "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
+                "handlers = java.util.logging.FileHandler\n" +
+                "java.util.logging.FileHandler.level     = ALL\n" +
+                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
+                "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
+                "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
+                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
@@ -88,7 +90,8 @@ public object CompileDaemon {
         return null
     }
 
-    @JvmStatic public fun main(args: Array<String>) {
+    @JvmStatic
+    public fun main(args: Array<String>) {
 
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
@@ -120,11 +123,13 @@ public object CompileDaemon {
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
-                               makeRunFilenameString(timestamp = "%tFT%<tT.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                               makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
                                                      digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
                                                      port = port.toString()))
-            if (!runFile.createNewFile()) {
-                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'")
+            try {
+                if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
+            } catch (e: Exception) {
+                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
             }
             runFile.deleteOnExit()
 
@@ -159,26 +164,31 @@ public object CompileDaemon {
 
             // stopping daemon if any shutdown condition is met
             timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
-                val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
-                if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
-                    shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds},
-                                      "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
-                    shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
-                                      "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down"))
-                {
-                    cancel()
-                    compilerService.shutdown()
+                try {
+                    val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
+                    if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
+                        shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds },
+                                          "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
+                        shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
+                                          "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down")) {
+                        cancel()
+                        compilerService.shutdown()
+                    }
+                }
+                catch (e: Exception) {
+                    System.err.println("Exception in timer thread: " + e.getMessage())
+                    e.printStackTrace(System.err)
                 }
             }
         }
         catch (e: Exception) {
             System.err.println("Exception: " + e.getMessage())
-            log.info("Exception" + e.getMessage())
-            log.info(e.toString())
+            e.printStackTrace(System.err)
+            // repeating it to log for the cases when stderr is not redirected yet
+            log.log(Level.INFO, "Exception: ", e)
             // TODO consider exiting without throwing
             throw e
         }
-
     }
 
     val random = Random()

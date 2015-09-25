@@ -1,8 +1,8 @@
-enum class ColorEnum {
+internal enum class ColorEnum {
     GREEN
 }
 
-class MyClass {
+internal class MyClass {
     fun method(colorEnum: ColorEnum): Int {
         when (colorEnum) {
             ColorEnum.GREEN -> return 1

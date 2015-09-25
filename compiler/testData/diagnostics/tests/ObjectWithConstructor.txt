@@ -1,6 +1,6 @@
 package
 
-public val x: x.<no name provided>
+public val x: kotlin.Any
 
 public object A1 {
     private constructor A1()

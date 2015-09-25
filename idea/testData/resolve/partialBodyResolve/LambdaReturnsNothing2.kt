@@ -3,5 +3,5 @@ fun foo(p: String?, errorHandler: () -> Nothing) {
         errorHandler()
     }
 
-    <caret>p.size
+    <caret>p.length()
 }

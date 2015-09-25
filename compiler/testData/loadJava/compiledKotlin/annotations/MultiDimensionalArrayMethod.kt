@@ -4,9 +4,9 @@ package test
 annotation class Anno(val s: String)
 
 interface T {
-    Anno("foo")
+    @Anno("foo")
     fun foo(): Array<Array<Array<T>>>
 
-    Anno("bar")
+    @Anno("bar")
     val bar: Array<Array<BooleanArray>>
 }

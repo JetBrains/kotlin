@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import kotlin.platform.platformStatic
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -154,10 +153,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
                         when (factory) {
                             Errors.DEPRECATED_SYMBOL,
-                            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE,
-                            Errors.DEPRECATED_TRAIT_KEYWORD,
-                            Errors.DEPRECATED_DECAPITALIZED_ANNOTATION
-                            -> annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
+                            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE -> annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
                         }
 
                         setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
@@ -225,13 +221,15 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         var namesHighlightingEnabled = true
             @TestOnly set
 
-        platformStatic fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
+        @JvmStatic
+        fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {
                 holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
             }
         }
 
-        platformStatic fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
+        @JvmStatic
+        fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {
                 holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
             }

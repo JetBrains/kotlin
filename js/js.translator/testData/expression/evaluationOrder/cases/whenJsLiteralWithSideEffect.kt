@@ -8,9 +8,9 @@ fun bar(s: String): Int {
 }
 fun testWhen() {
     global = ""
-    when(array(bar("A"),2,3)) {
-        array(1) -> println("1")
-        array(2) -> println("2")
+    when(arrayOf(bar("A"),2,3)) {
+        arrayOf(1) -> println("1")
+        arrayOf(2) -> println("2")
         else  -> println("else")
     }
     assertEquals("A", global)
@@ -19,13 +19,13 @@ fun testWhen() {
 
 fun testIntrinsic() {
     global = ""
-    val x = array(bar("A")) == try { array(bar("B")) } finally {}
+    val x = arrayOf(bar("A")) == try { arrayOf(bar("B")) } finally {}
     assertEquals("AB", global)
 }
 
 fun testElvis() {
     global = ""
-    var x = array(bar("A")) ?: 10
+    var x = arrayOf(bar("A")) ?: 10
     assertEquals("A", global)
 }
 

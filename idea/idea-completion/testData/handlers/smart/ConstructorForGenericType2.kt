@@ -4,9 +4,9 @@ fun test() {
     registerHandler(<caret>)
 }
 
-trait Message
+interface Message
 
-trait Handler<E> {
+interface Handler<E> {
     fun handle(e: E)
 }
 

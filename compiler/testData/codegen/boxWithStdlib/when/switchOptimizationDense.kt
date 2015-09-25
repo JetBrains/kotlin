@@ -17,7 +17,7 @@ fun dense(x: Int): Int {
 }
 
 fun box(): String {
-    var result = (-5..10).map(::dense).makeString()
+    var result = (-5..10).map(::dense).joinToString()
 
     if (result != "19, 9, 19, 19, 10, 11, 12, 19, 19, 13, 14, 15, 16, 17, 18, 19") return "dense:" + result
     return "OK"

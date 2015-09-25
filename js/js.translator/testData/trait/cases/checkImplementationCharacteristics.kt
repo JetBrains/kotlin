@@ -1,15 +1,15 @@
 package foo
 
-public trait A {
+public interface A {
     fun foo() {
     }
 }
-public trait B : A {
+public interface B : A {
     fun boo() {
     }
 }
 
-native class Function(vararg args: String)
+@native class Function(vararg args: String)
 
 val hasProp = Function("obj, prop", "return obj[prop] !== undefined") as ((Any, String) -> Boolean)
 

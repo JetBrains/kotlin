@@ -1,4 +1,4 @@
-class A {
+internal class A {
     fun foo(p: Boolean) {
         if (p) {
             val i = 10

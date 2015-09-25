@@ -30,13 +30,16 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedType
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 public class DeserializedClassDescriptor(
@@ -48,11 +51,11 @@ public class DeserializedClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.getFqName()).getShortClassName()
 ) {
-    private val modality = deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
-    private val visibility = deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
+    private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
+    private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
-    private val kind = deserialization.classKind(kindFromProto)
-    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
+    private val kind = Deserialization.classKind(kindFromProto)
+    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
     val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
@@ -132,12 +135,25 @@ public class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    private fun computeSuperTypes(): Collection<JetType> {
-        val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())
-        for (supertype in classProto.getSupertypeList()) {
-            supertypes.add(c.typeDeserializer.type(supertype))
+    private fun computeSupertypes(): Collection<JetType> {
+        val result = ArrayList<JetType>(classProto.supertypeCount)
+        val unresolved = ArrayList<DeserializedType>(0)
+
+        for (supertypeProto in classProto.supertypeList) {
+            val supertype = c.typeDeserializer.type(supertypeProto)
+            if (supertype.isError) {
+                unresolved.add(supertype.upperIfFlexible() as? DeserializedType ?: error("Not a deserialized type: $supertype"))
+            }
+            else {
+                result.add(supertype)
+            }
         }
-        return supertypes
+
+        if (unresolved.isNotEmpty()) {
+            c.components.errorReporter.reportIncompleteHierarchy(this, unresolved.map(DeserializedType::getPresentableText))
+        }
+
+        return result.toReadOnlyList()
     }
 
     internal fun hasNestedClass(name: Name): Boolean {
@@ -149,20 +165,13 @@ public class DeserializedClassDescriptor(
     override fun getSource() = sourceElement
 
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
-        private val supertypes = computeSuperTypes()
+        private val supertypes = c.storageManager.createLazyValue {
+            computeSupertypes()
+        }
 
         override fun getParameters() = c.typeDeserializer.ownTypeParameters
 
-        override fun getSupertypes(): Collection<JetType> {
-            // We cannot have error supertypes because subclasses inherit error functions from them
-            // Filtering right away means copying the list every time, so we check for the rare condition first, and only then filter
-            for (supertype in supertypes) {
-                if (supertype.isError()) {
-                    return supertypes.filter { !it.isError() }
-                }
-            }
-            return supertypes
-        }
+        override fun getSupertypes() = supertypes()
 
         override fun isFinal() = !getModality().isOverridable()
 
@@ -195,7 +204,7 @@ public class DeserializedClassDescriptor(
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
@@ -207,7 +216,7 @@ public class DeserializedClassDescriptor(
                 override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                     // TODO: report "cannot infer visibility"
                     OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
-                    @suppress("UNCHECKED_CAST")
+                    @Suppress("UNCHECKED_CAST")
                     result.add(fakeOverride as D)
                 }
 

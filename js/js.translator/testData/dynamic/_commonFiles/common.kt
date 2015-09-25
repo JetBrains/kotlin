@@ -1,12 +1,12 @@
 package foo
 
-native
+@native
 var bar: dynamic = noImpl
 
-native
+@native
 var arr: dynamic = noImpl
 
-native
+@native
 var baz: dynamic = noImpl
 
 object t {

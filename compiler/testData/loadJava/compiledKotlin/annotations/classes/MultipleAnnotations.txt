@@ -1,17 +1,17 @@
 package test
 
-kotlin.annotation.annotation() public final class A1 : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class A1 : kotlin.Annotation {
     /*primary*/ public constructor A1()
 }
 
-kotlin.annotation.annotation() public final class A2 : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class A2 : kotlin.Annotation {
     /*primary*/ public constructor A2()
 }
 
-kotlin.annotation.annotation() public final class A3 : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class A3 : kotlin.Annotation {
     /*primary*/ public constructor A3()
 }
 
-test.A1() test.A2() test.A3() public final class Class {
+@test.A1() @test.A2() @test.A3() public final class Class {
     /*primary*/ public constructor Class()
 }

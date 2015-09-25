@@ -4,5 +4,5 @@
 class A() {
     val c = 1
     val a = <!UNINITIALIZED_VARIABLE!>b<!>
-    val b = $c  // '$c' is unresolved
+    val b = <!BACKING_FIELD_USAGE_DEPRECATED!>$c<!>  // '$c' is unresolved
 }

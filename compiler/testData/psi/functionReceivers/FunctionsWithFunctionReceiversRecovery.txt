@@ -311,6 +311,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     PsiWhiteSpace(' ')
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
@@ -331,6 +333,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -351,6 +355,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
     PsiElement(DOT)('.')
   FUN
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -436,6 +442,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACKET)('[')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -450,6 +458,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -474,6 +484,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
     PsiElement(DOT)('.')
   FUN
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -543,6 +555,8 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
   PsiWhiteSpace('\n')
   CLASS
     MODIFIER_LIST
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

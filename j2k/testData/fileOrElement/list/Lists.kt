@@ -3,8 +3,8 @@
 // ERROR: Null can not be a value of a non-null type kotlin.Any
 import java.util.*
 
-public class Lists {
-    public fun test() {
+class Lists {
+    fun test() {
         val xs = ArrayList<Any>()
         val ys = LinkedList<Any>()
         val zs = ArrayList<Any>()

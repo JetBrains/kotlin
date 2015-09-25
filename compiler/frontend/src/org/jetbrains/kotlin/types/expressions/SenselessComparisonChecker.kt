@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.diagnostics.Errors
-import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 object SenselessComparisonChecker {
-    platformStatic fun checkSenselessComparisonWithNull(
+    @JvmStatic fun checkSenselessComparisonWithNull(
             expression: JetBinaryExpression,
             left: JetExpression,
             right: JetExpression,

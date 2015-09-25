@@ -1,14 +1,14 @@
-open class A {
-    open fun foo() {
+internal open class A {
+    internal open fun foo() {
     }
 }
 
-open class B : A() {
+internal open class B : A() {
     override fun foo() {
     }
 }
 
-class C : B() {
+internal class C : B() {
     override fun foo() {
     }
 }

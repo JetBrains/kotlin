@@ -1,6 +1,6 @@
 import java.util.HashMap
 
-class A {
+internal class A {
     fun foo() {
         val map1 = getMap1<String, Int>()
         val map2 = getMap2("a", 1)

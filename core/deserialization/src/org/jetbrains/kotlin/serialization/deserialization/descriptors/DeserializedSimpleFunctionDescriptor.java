@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.Flags;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 
@@ -98,7 +99,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
                 null,
                 annotations,
                 nameResolver.getName(proto.getName()),
-                DeserializationPackage.memberKind(Flags.MEMBER_KIND.get(proto.getFlags())),
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(proto.getFlags())),
                 proto,
                 nameResolver
         );

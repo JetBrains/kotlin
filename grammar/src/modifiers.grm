@@ -7,7 +7,7 @@ modifiers
   ;
 
 modifier
-  : "@"? ++ modifierKeyword
+  : modifierKeyword
   ;
 
 modifierKeyword

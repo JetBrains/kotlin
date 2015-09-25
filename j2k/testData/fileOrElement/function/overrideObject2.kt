@@ -1,7 +1,7 @@
 // ERROR: Unresolved reference: clone
-open class Base
+internal open class Base
 
-class X : Base() {
+internal class X : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -14,7 +14,7 @@ class X : Base() {
         return super.toString()
     }
 
-    Throws(CloneNotSupportedException::class)
+    @Throws(CloneNotSupportedException::class)
     protected fun clone(): Any {
         return super.clone()
     }

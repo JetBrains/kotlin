@@ -5,7 +5,8 @@ import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
 
-    Test fun testCrossCompile() {
+    @Test
+    fun testCrossCompile() {
         val project = Project("kotlinJavaProject", "1.6")
 
         project.build("compileDeployKotlin", "build") {
@@ -20,7 +21,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKotlinOnlyCompile() {
+    @Test
+    fun testKotlinOnlyCompile() {
         val project = Project("kotlinProject", "1.6")
 
         project.build("build") {
@@ -38,7 +40,8 @@ class KotlinGradleIT: BaseGradleIT() {
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
-    Test fun testKotlinOnlyDaemonMemory() {
+    @Test
+    fun testKotlinOnlyDaemonMemory() {
         val project = Project("kotlinProject", "2.4")
         val VARIANT_CONSTANT = "ForTest"
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
@@ -74,7 +77,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKotlinClasspath() {
+    @Test
+    fun testKotlinClasspath() {
         Project("classpathTest", "1.6").build("build") {
             assertSuccessful()
             assertReportExists()
@@ -82,7 +86,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testMultiprojectPluginClasspath() {
+    @Test
+    fun testMultiprojectPluginClasspath() {
         Project("multiprojectClassPathTest", "1.6").build("build") {
             assertSuccessful()
             assertReportExists("subproject")
@@ -90,7 +95,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKotlinInJavaRoot() {
+    @Test
+    fun testKotlinInJavaRoot() {
         Project("kotlinInJavaRoot", "1.6").build("build") {
             assertSuccessful()
             assertReportExists()
@@ -98,7 +104,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKaptSimple() {
+    @Test
+    fun testKaptSimple() {
         val project = Project("kaptSimple", "1.12")
 
         project.build("build") {
@@ -117,7 +124,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKaptStubs() {
+    @Test
+    fun testKaptStubs() {
         val project = Project("kaptStubs", "1.12")
 
         project.build("build") {
@@ -136,7 +144,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKaptArguments() {
+    @Test
+    fun testKaptArguments() {
         Project("kaptArguments", "1.12").build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
@@ -149,7 +158,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKaptInheritedAnnotations() {
+    @Test
+    fun testKaptInheritedAnnotations() {
         Project("kaptInheritedAnnotations", "1.12").build("build") {
             assertSuccessful()
             assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
@@ -159,7 +169,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKaptOutputKotlinCode() {
+    @Test
+    fun testKaptOutputKotlinCode() {
         Project("kaptOutputKotlinCode", "1.12").build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")

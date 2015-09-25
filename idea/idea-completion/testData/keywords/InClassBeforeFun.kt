@@ -35,6 +35,7 @@ public class Test {
 // EXIST:  init
 /*why?*/
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data
@@ -44,4 +45,5 @@ public class Test {
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 // NOTHING_ELSE

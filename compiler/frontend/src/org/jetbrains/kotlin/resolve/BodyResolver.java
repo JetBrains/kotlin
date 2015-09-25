@@ -25,6 +25,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -50,7 +52,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
@@ -439,6 +440,10 @@ public class BodyResolver {
                         trace.report(TRAIT_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
+                    else if (jetClass.hasModifier(JetTokens.DATA_KEYWORD)) {
+                        trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
+                        addSupertype = false;
+                    }
 
                     if (classAppeared) {
                         trace.report(MANY_CLASSES_IN_SUPERTYPE_LIST.on(typeReference));
@@ -647,7 +652,11 @@ public class BodyResolver {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
                             trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
+                            trace.report(Errors.BACKING_FIELD_SYNTAX_DEPRECATED.on(simpleNameExpression));
                         }
+                    }
+                    if (descriptor instanceof SyntheticFieldDescriptor) {
+                        trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
                     }
                 }
             }
@@ -765,6 +774,28 @@ public class BodyResolver {
                 ExpressionTypingContext.newContext(
                         trace, innerScope, outerDataFlowInfo, NO_EXPECTED_TYPE, callChecker)
         );
+
+        // Synthetic "field" creation
+        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
+            JetProperty property = (JetProperty) function.getParent();
+            final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
+            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, functionDescriptor.getExtensionReceiverParameter(),
+                                              "Accessor inner scope with synthetic field",
+                                              RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                @Override
+                public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                    handler.addVariableOrClassDescriptor(fieldDescriptor);
+                    return Unit.INSTANCE$;
+                }
+            });
+            // Check parameter name shadowing
+            for (JetParameter parameter : function.getValueParameters()) {
+                if (SyntheticFieldDescriptor.NAME.equals(parameter.getNameAsName())) {
+                    trace.report(Errors.ACCESSOR_PARAMETER_NAME_SHADOWING.on(parameter));
+                }
+            }
+        }
 
         DataFlowInfo dataFlowInfo = null;
 

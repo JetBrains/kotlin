@@ -66,8 +66,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.serialization.*;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -248,24 +248,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             kind = KotlinClass.Kind.LOCAL_CLASS;
         }
 
-        // Temporarily write class kind anyway because old compiler may not expect its absence
-        // TODO: remove after M13
-        if (kind == null) {
-            kind = KotlinClass.Kind.CLASS;
-        }
-
         DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        StringTable strings = serializer.getStringTable();
-        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
-        ClassData data = new ClassData(nameResolver, classProto);
-
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
-        //noinspection ConstantConditions
+        JvmCodegenUtil.writeAbiVersion(av);
         if (kind != null) {
             av.visitEnum(
                     JvmAnnotationNames.KIND_FIELD_NAME,
@@ -274,7 +263,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             );
         }
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(SerializationUtil.serializeClassData(data))) {
+        for (String string : BitEncoding.encodeBytes(serializer.serialize(classProto))) {
             array.visit(null, string);
         }
         array.visitEnd();
@@ -484,17 +473,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties) {
-            KotlinBuiltIns builtins = getBuiltIns(descriptor);
-            FunctionDescriptor equalsFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.EQUALS_METHOD_NAME), builtins.getBoolean(), builtins.getAny()
-            );
-
-            assert equalsFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                          CodegenUtil.EQUALS_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(equalsFunction);
-            MethodVisitor mv = v.newMethod(OtherOrigin(equalsFunction), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+        public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -522,18 +503,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 2);
                 StackValue.coerce(otherPropertyType, asmType, iv);
 
-                if (asmType.getSort() == Type.ARRAY) {
-                    Type elementType = correctElementType(asmType);
-                    if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z", false);
-                    }
-                    else {
-                        iv.invokestatic("java/util/Arrays", "equals",
-                                        "(" + asmType.getDescriptor() + asmType.getDescriptor() + ")Z", false);
-                    }
-                    iv.ifeq(ne);
-                }
-                else if (asmType.getSort() == Type.FLOAT) {
+                if (asmType.getSort() == Type.FLOAT) {
                     iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
                     iv.ifne(ne);
                 }
@@ -560,16 +530,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties) {
-            FunctionDescriptor hashCodeFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME), getBuiltIns(descriptor).getInt()
-            );
-
-            assert hashCodeFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                            CodegenUtil.HASH_CODE_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(hashCodeFunction);
-            MethodVisitor mv = v.newMethod(OtherOrigin(hashCodeFunction), ACC_PUBLIC, "hashCode", "()I", null, null);
+        public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -616,16 +579,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateToStringMethod(@NotNull List<PropertyDescriptor> properties) {
-            FunctionDescriptor toString = CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME), getBuiltIns(descriptor).getString()
-            );
-
-            assert toString != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
-                                                    CodegenUtil.TO_STRING_METHOD_NAME, descriptor.getName(), descriptor);
-
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(toString);
-            MethodVisitor mv = v.newMethod(OtherOrigin(toString), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties) {
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
+            MethodVisitor mv = v.newMethod(OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -959,17 +915,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
     ) {
-        boolean isConstructor = functionDescriptor instanceof ConstructorDescriptor;
-        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
-
-        boolean superCall = accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                            ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null;
-        CallableMethod callableMethod = isConstructor ?
-                                        typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
-                                        typeMapper.mapToCallableMethod(functionDescriptor, superCall, context);
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
+                functionDescriptor,
+                accessorDescriptor instanceof AccessorForCallableDescriptor &&
+                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
+        );
 
         int reg = 1;
-        if (isConstructor && !accessorIsConstructor) {
+
+        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+        if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
@@ -1106,8 +1061,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v,
-                                                                                         constructorContext, myClass);
+        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
 
         if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
@@ -1132,8 +1086,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(myClass, constructorDescriptor, constructorDescriptor,
-                                                                              constructorContext, v);
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
+                myClass, constructorDescriptor, constructorDescriptor, kind, v
+        );
     }
 
     private void generatePrimaryConstructorImpl(
@@ -1518,8 +1473,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.load(0, OBJECT_TYPE);
         ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(codegen.getConstructorDescriptor(delegationConstructorCall));
 
-        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor);
-        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);
+        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor, false);
+        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor, false);
 
         List<JvmMethodParameterSignature> delegatingParameters = delegateConstructorCallable.getValueParameters();
         List<JvmMethodParameterSignature> parameters = callable.getValueParameters();
@@ -1733,7 +1688,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumEntry)) {
             ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(delegationSpecifiers.get(0), bindingContext);
 
-            CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
+            CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor(), false);
 
             codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
         }

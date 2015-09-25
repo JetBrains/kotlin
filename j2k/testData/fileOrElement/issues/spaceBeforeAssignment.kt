@@ -1,5 +1,5 @@
 import java.util.*
 
-class A {
+internal class A {
     var list: List<String> = ArrayList()
 }

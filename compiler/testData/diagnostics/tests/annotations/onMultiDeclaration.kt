@@ -1,5 +1,5 @@
 fun test(): Any? {
-    @ann val (a, b) = P(1, 1)
+    <!WRONG_ANNOTATION_TARGET!>@ann<!> val (a, b) = P(1, 1)
     return a + b
 }
 

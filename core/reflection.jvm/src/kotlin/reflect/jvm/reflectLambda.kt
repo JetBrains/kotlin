@@ -43,6 +43,6 @@ public fun <R> Function<R>.reflect(): KFunction<R>? {
     val context = DeserializationContext(moduleData.deserialization, nameResolver, moduleData.module,
                                          parentTypeDeserializer = null, typeParameters = listOf())
     val descriptor = MemberDeserializer(context).loadCallable(proto) as FunctionDescriptor
-    @suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
 }

@@ -27,8 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DiagnosticFactoryToRendererMap {
-    private final Map<DiagnosticFactory<?>, DiagnosticRenderer<?>> map =
-            new HashMap<DiagnosticFactory<?>, DiagnosticRenderer<?>>();
+    private final Map<DiagnosticFactory<?>, DiagnosticRenderer<?>> map = new HashMap<DiagnosticFactory<?>, DiagnosticRenderer<?>>();
     private boolean immutable = false;
 
     private void checkMutability() {

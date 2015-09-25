@@ -1,6 +1,6 @@
 package foo
 
-trait I {
+interface I {
     fun test(): String
 }
 

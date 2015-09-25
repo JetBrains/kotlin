@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.types.JetType
 
 import java.util.ArrayList
 import java.util.Collections
-import kotlin.platform.platformStatic
 
 public class CallArgumentTranslator private constructor(
         private val resolvedCall: ResolvedCall<*>,
@@ -170,12 +169,12 @@ public class CallArgumentTranslator private constructor(
 
     companion object {
 
-        platformStatic
+        @JvmStatic
         public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext): ArgumentsInfo {
             return translate(resolvedCall, receiver, context, context.dynamicContext().jsBlock())
         }
 
-        platformStatic
+        @JvmStatic
         public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext, block: JsBlock): ArgumentsInfo {
             val innerContext = context.innerBlock(block)
             val argumentTranslator = CallArgumentTranslator(resolvedCall, receiver, innerContext)

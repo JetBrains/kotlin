@@ -1,7 +1,7 @@
 package inlineFunctionalExpression
 
 fun main(args: Array<String>) {
-    val a = array(1)
+    val a = arrayOf(1)
     // EXPRESSION: it
     // RESULT: 1: I
     // RESUME: 1

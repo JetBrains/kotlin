@@ -34,12 +34,15 @@ public interface CompileTimeConstant<out T> {
 
     public val usesVariableAsConstant: Boolean get() = parameters.usesVariableAsConstant
 
+    public val usesNonConstValAsConstant: Boolean get() = parameters.usesNonConstValAsConstant
+
     public val isPure: Boolean get() = parameters.isPure
 
     public class Parameters(
             public val canBeUsedInAnnotation: Boolean,
             public val isPure: Boolean,
-            public val usesVariableAsConstant: Boolean
+            public val usesVariableAsConstant: Boolean,
+            public val usesNonConstValAsConstant: Boolean
     )
 }
 

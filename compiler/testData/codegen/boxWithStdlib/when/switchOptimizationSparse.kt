@@ -10,7 +10,7 @@ fun sparse(x: Int): Int {
 }
 
 fun box(): String {
-    var result = (0..3).map(::sparse).makeString()
+    var result = (0..3).map(::sparse).joinToString()
 
     if (result != "4, 1, 2, 3") return "sparse:" + result
     return "OK"

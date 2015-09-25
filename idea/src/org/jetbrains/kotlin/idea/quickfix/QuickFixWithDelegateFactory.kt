@@ -46,7 +46,7 @@ public open class QuickFixWithDelegateFactory(
 
     override fun startInWriteAction() = startInWriteAction
 
-    override fun invoke(NotNull project: Project, editor: Editor?, file: PsiFile?) {
+    override fun invoke(@NotNull project: Project, editor: Editor?, file: PsiFile?) {
         delegateFactory().invoke(project, editor, file)
     }
 }

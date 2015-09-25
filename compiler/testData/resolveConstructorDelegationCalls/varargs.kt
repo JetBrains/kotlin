@@ -3,5 +3,5 @@ open class B {
 }
 
 class A : B {
-    <caret>constructor(vararg x: Int): super(*x, *intArray(1, 2, 3), 4) {}
+    <caret>constructor(vararg x: Int): super(*x, *intArrayOf(1, 2, 3), 4) {}
 }

@@ -102,4 +102,9 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     public JetType getReturnType() {
         return getType();
     }
+
+    @Override
+    public boolean isConst() {
+        return false;
+    }
 }

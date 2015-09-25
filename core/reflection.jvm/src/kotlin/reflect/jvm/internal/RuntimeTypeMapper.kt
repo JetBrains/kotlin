@@ -131,7 +131,8 @@ internal object RuntimeTypeMapper {
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
                 return mapIntrinsicFunctionSignature(function) ?:
-                       throw KotlinReflectionInternalError("No metadata found for $function")
+                       throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
+                                                           "No metadata found for $function")
             }
             is JavaMethodDescriptor -> {
                 val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member ?:

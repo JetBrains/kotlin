@@ -1,4 +1,4 @@
 class CustomGetVal() {
     val zz = 1
-        get() = $zz * 2
+        get() = field * 2
 }

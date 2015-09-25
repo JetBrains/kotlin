@@ -4,7 +4,7 @@ import kotlin.jvm.*
 
 public object TestObject {
 
-    @jvmStatic
+    @JvmStatic
     public val test: String = "test"
 
 }

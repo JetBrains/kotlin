@@ -10,7 +10,7 @@ annotation class Ann(val i: IntArray)
 class Test
 
 var i = 1
-val i2 = 1
+const val i2 = 1
 val i3 = foo()
 
 fun foo(): Int = 1

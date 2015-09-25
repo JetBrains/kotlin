@@ -3,7 +3,7 @@ open class B {
 }
 
 class A : B {
-    <caret>constructor(vararg x: Int): super(*x, *intArray(1, 2, 3), 4) {}
+    <caret>constructor(vararg x: Int): super(*x, *intArrayOf(1, 2, 3), 4) {}
 }
 
 
@@ -18,5 +18,5 @@ Extension receiver = NO_RECEIVER
 Value arguments mapping:
 
 SUCCESS  x : IntArray = x
-SUCCESS  x : IntArray = intArray(1, 2, 3)
+SUCCESS  x : IntArray = intArrayOf(1, 2, 3)
 SUCCESS  x : IntArray = 4

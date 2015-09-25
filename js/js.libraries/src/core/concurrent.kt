@@ -16,21 +16,20 @@
 
 package kotlin
 
-import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 // Note:
 // Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime,
 // so they annotated as 'native' to avoid warnings/errors from some minifiers.
 // They was reserved word in ECMAScript 2, but is not since ECMAScript 5.
 
-native
+@native
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class volatile
+public annotation class Volatile
 
-native
+@native
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class synchronized
+public annotation class Synchronized
 
-public inline fun <R> synchronized(lock: Any, @inlineOptions(ONLY_LOCAL_RETURN) block: () -> R): R = block()
+public inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()

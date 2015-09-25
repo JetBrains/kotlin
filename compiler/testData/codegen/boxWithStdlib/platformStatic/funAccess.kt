@@ -8,7 +8,7 @@ fun getA(): A {
 }
 
 object A {
-    platformStatic fun a(): String {
+    @platformStatic fun a(): String {
         return holder
     }
 }

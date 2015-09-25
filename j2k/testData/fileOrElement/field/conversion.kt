@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private var i: Int? = getByte().toInt()
 
     fun foo() {

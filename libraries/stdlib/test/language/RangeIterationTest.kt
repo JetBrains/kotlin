@@ -22,7 +22,7 @@ public class RangeIterationTest {
             assertEquals(expectedElements, sequence.toList())
     }
 
-    test fun emptyConstant() {
+    @test fun emptyConstant() {
         doTest(IntRange.EMPTY, 1, 0, 1, listOf())
         doTest(ByteRange.EMPTY, 1.toByte(), 0.toByte(), 1, listOf())
         doTest(ShortRange.EMPTY, 1.toShort(), 0.toShort(), 1, listOf())
@@ -34,7 +34,7 @@ public class RangeIterationTest {
         doTest(FloatRange.EMPTY, 1.0.toFloat(), 0.0.toFloat(), 1.0.toFloat(), listOf())
     }
 
-    test fun emptyRange() {
+    @test fun emptyRange() {
         doTest(10..5, 10, 5, 1, listOf())
         doTest(10.toByte()..(-5).toByte(), 10.toByte(), (-5).toByte(), 1, listOf())
         doTest(10.toShort()..(-5).toShort(), 10.toShort(), (-5).toShort(), 1, listOf())
@@ -46,7 +46,7 @@ public class RangeIterationTest {
         doTest(5.0.toFloat()..-1.0.toFloat(), 5.0.toFloat(), -1.0.toFloat(), 1.toFloat(), listOf())
     }
 
-    test fun oneElementRange() {
+    @test fun oneElementRange() {
         doTest(5..5, 5, 5, 1, listOf(5))
         doTest(5.toByte()..5.toByte(), 5.toByte(), 5.toByte(), 1, listOf(5.toByte()))
         doTest(5.toShort()..5.toShort(), 5.toShort(), 5.toShort(), 1, listOf(5.toShort()))
@@ -58,7 +58,7 @@ public class RangeIterationTest {
         doTest(5.0.toFloat()..5.0.toFloat(), 5.0.toFloat(), 5.0.toFloat(), 1.toFloat(), listOf(5.0.toFloat()))
     }
 
-    test fun simpleRange() {
+    @test fun simpleRange() {
         doTest(3..9, 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest(3.toByte()..9.toByte(), 3.toByte(), 9.toByte(), 1, listOf<Byte>(3, 4, 5, 6, 7, 8, 9))
         doTest(3.toShort()..9.toShort(), 3.toShort(), 9.toShort(), 1, listOf<Short>(3, 4, 5, 6, 7, 8, 9))
@@ -72,7 +72,7 @@ public class RangeIterationTest {
     }
 
 
-    test fun simpleRangeWithNonConstantEnds() {
+    @test fun simpleRangeWithNonConstantEnds() {
         doTest((1 + 2)..(10 - 1), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest((1.toByte() + 2.toByte()).toByte()..(10.toByte() - 1.toByte()).toByte(), 3.toByte(), 9.toByte(), 1, listOf<Byte>(3, 4, 5, 6, 7, 8, 9))
         doTest((1.toShort() + 2.toShort()).toShort()..(10.toShort() - 1.toShort()).toShort(), 3.toShort(), 9.toShort(), 1, listOf<Short>(3, 4, 5, 6, 7, 8, 9))
@@ -85,7 +85,7 @@ public class RangeIterationTest {
                 listOf<Float>(3.0.toFloat(), 4.0.toFloat(), 5.0.toFloat(), 6.0.toFloat(), 7.0.toFloat(), 8.0.toFloat(), 9.0.toFloat()))
     }
 
-    test fun openRange() {
+    @test fun openRange() {
         doTest(1 until 5, 1, 4, 1, listOf(1, 2, 3, 4))
         doTest(1.toByte() until 5.toByte(), 1.toByte(), 4.toByte(), 1, listOf<Byte>(1, 2, 3, 4))
         doTest(1.toShort() until 5.toShort(), 1.toShort(), 4.toShort(), 1, listOf<Short>(1, 2, 3, 4))
@@ -94,7 +94,7 @@ public class RangeIterationTest {
     }
 
 
-    test fun emptyDownto() {
+    @test fun emptyDownto() {
         doTest(5 downTo 10, 5, 10, -1, listOf())
         doTest(5.toByte() downTo 10.toByte(), 5.toByte(), 10.toByte(), -1, listOf())
         doTest(5.toShort() downTo 10.toShort(), 5.toShort(), 10.toShort(), -1, listOf())
@@ -106,7 +106,7 @@ public class RangeIterationTest {
         doTest(-1.0.toFloat() downTo 5.0.toFloat(), -1.0.toFloat(), 5.0.toFloat(), -1.0.toFloat(), listOf())
     }
 
-    test fun oneElementDownTo() {
+    @test fun oneElementDownTo() {
         doTest(5 downTo 5, 5, 5, -1, listOf(5))
         doTest(5.toByte() downTo 5.toByte(), 5.toByte(), 5.toByte(), -1, listOf(5.toByte()))
         doTest(5.toShort() downTo 5.toShort(), 5.toShort(), 5.toShort(), -1, listOf(5.toShort()))
@@ -118,7 +118,7 @@ public class RangeIterationTest {
         doTest(5.0.toFloat() downTo 5.0.toFloat(), 5.0.toFloat(), 5.0.toFloat(), -1.0.toFloat(), listOf(5.0.toFloat()))
     }
 
-    test fun simpleDownTo() {
+    @test fun simpleDownTo() {
         doTest(9 downTo 3, 9, 3, -1, listOf(9, 8, 7, 6, 5, 4, 3))
         doTest(9.toByte() downTo 3.toByte(), 9.toByte(), 3.toByte(), -1, listOf<Byte>(9, 8, 7, 6, 5, 4, 3))
         doTest(9.toShort() downTo 3.toShort(), 9.toShort(), 3.toShort(), -1, listOf<Short>(9, 8, 7, 6, 5, 4, 3))
@@ -132,7 +132,7 @@ public class RangeIterationTest {
     }
 
 
-    test fun simpleSteppedRange() {
+    @test fun simpleSteppedRange() {
         doTest(3..9 step 2, 3, 9, 2, listOf(3, 5, 7, 9))
         doTest(3.toByte()..9.toByte() step 2, 3.toByte(), 9.toByte(), 2, listOf<Byte>(3, 5, 7, 9))
         doTest(3.toShort()..9.toShort() step 2, 3.toShort(), 9.toShort(), 2, listOf<Short>(3, 5, 7, 9))
@@ -145,7 +145,7 @@ public class RangeIterationTest {
                 listOf<Float>(4.0.toFloat(), 4.5.toFloat(), 5.0.toFloat(), 5.5.toFloat(), 6.0.toFloat()))
     }
 
-    test fun simpleSteppedDownTo() {
+    @test fun simpleSteppedDownTo() {
         doTest(9 downTo 3 step 2, 9, 3, -2, listOf(9, 7, 5, 3))
         doTest(9.toByte() downTo 3.toByte() step 2, 9.toByte(), 3.toByte(), -2, listOf<Byte>(9, 7, 5, 3))
         doTest(9.toShort() downTo 3.toShort() step 2, 9.toShort(), 3.toShort(), -2, listOf<Short>(9, 7, 5, 3))
@@ -160,7 +160,7 @@ public class RangeIterationTest {
 
 
     // 'inexact' means last element is not equal to sequence end
-    test fun inexactSteppedRange() {
+    @test fun inexactSteppedRange() {
         doTest(3..8 step 2, 3, 8, 2, listOf(3, 5, 7))
         doTest(3.toByte()..8.toByte() step 2, 3.toByte(), 8.toByte(), 2, listOf<Byte>(3, 5, 7))
         doTest(3.toShort()..8.toShort() step 2, 3.toShort(), 8.toShort(), 2, listOf<Short>(3, 5, 7))
@@ -174,7 +174,7 @@ public class RangeIterationTest {
     }
 
     // 'inexact' means last element is not equal to sequence end
-    test fun inexactSteppedDownTo() {
+    @test fun inexactSteppedDownTo() {
         doTest(8 downTo 3 step 2, 8, 3, -2, listOf(8, 6, 4))
         doTest(8.toByte() downTo 3.toByte() step 2, 8.toByte(), 3.toByte(), -2, listOf<Byte>(8, 6, 4))
         doTest(8.toShort() downTo 3.toShort() step 2, 8.toShort(), 3.toShort(), -2, listOf<Short>(8, 6, 4))
@@ -188,7 +188,7 @@ public class RangeIterationTest {
     }
 
 
-    test fun reversedEmptyRange() {
+    @test fun reversedEmptyRange() {
         doTest((5..3).reversed(), 3, 5, -1, listOf())
         doTest((5.toByte()..3.toByte()).reversed(), 3.toByte(), 5.toByte(), -1, listOf())
         doTest((5.toShort()..3.toShort()).reversed(), 3.toShort(), 5.toShort(), -1, listOf())
@@ -200,7 +200,7 @@ public class RangeIterationTest {
         doTest((5.0.toFloat()..3.0.toFloat()).reversed(), 3.0.toFloat(), 5.0.toFloat(), -1.toFloat(), listOf())
     }
 
-    test fun reversedEmptyBackSequence() {
+    @test fun reversedEmptyBackSequence() {
         doTest((3 downTo 5).reversed(), 5, 3, 1, listOf())
         doTest((3.toByte() downTo 5.toByte()).reversed(), 5.toByte(), 3.toByte(), 1, listOf())
         doTest((3.toShort() downTo 5.toShort()).reversed(), 5.toShort(), 3.toShort(), 1, listOf())
@@ -212,7 +212,7 @@ public class RangeIterationTest {
         doTest((3.0.toFloat() downTo 5.0.toFloat()).reversed(), 5.0.toFloat(), 3.0.toFloat(), 1.toFloat(), listOf())
     }
 
-    test fun reversedRange() {
+    @test fun reversedRange() {
         doTest((3..5).reversed(), 5, 3, -1, listOf(5, 4, 3))
         doTest((3.toByte()..5.toByte()).reversed(), 5.toByte(), 3.toByte(), -1, listOf<Byte>(5, 4, 3))
         doTest((3.toShort()..5.toShort()).reversed(), 5.toShort(), 3.toShort(), -1, listOf<Short>(5, 4, 3))
@@ -225,7 +225,7 @@ public class RangeIterationTest {
                 listOf<Float>(5.0.toFloat(), 4.0.toFloat(), 3.0.toFloat()))
     }
 
-    test fun reversedBackSequence() {
+    @test fun reversedBackSequence() {
         doTest((5 downTo 3).reversed(), 3, 5, 1, listOf(3, 4, 5))
         doTest((5.toByte() downTo 3.toByte()).reversed(), 3.toByte(), 5.toByte(), 1, listOf<Byte>(3, 4, 5))
         doTest((5.toShort() downTo 3.toShort()).reversed(), 3.toShort(), 5.toShort(), 1, listOf<Short>(3, 4, 5))
@@ -238,7 +238,7 @@ public class RangeIterationTest {
                 listOf<Float>(3.0.toFloat(), 4.0.toFloat(), 5.0.toFloat()))
     }
 
-    test fun reversedSimpleSteppedRange() {
+    @test fun reversedSimpleSteppedRange() {
         doTest((3..9 step 2).reversed(), 9, 3, -2, listOf(9, 7, 5, 3))
         doTest((3.toByte()..9.toByte() step 2).reversed(), 9.toByte(), 3.toByte(), -2, listOf<Byte>(9, 7, 5, 3))
         doTest((3.toShort()..9.toShort() step 2).reversed(), 9.toShort(), 3.toShort(), -2, listOf<Short>(9, 7, 5, 3))
@@ -252,7 +252,7 @@ public class RangeIterationTest {
     }
 
     // 'inexact' means last element is not equal to sequence end
-    test fun reversedInexactSteppedDownTo() {
+    @test fun reversedInexactSteppedDownTo() {
         doTest((8 downTo 3 step 2).reversed(), 3, 8, 2, listOf(3, 5, 7))
         doTest((8.toByte() downTo 3.toByte() step 2).reversed(), 3.toByte(), 8.toByte(), 2, listOf<Byte>(3, 5, 7))
         doTest((8.toShort() downTo 3.toShort() step 2).reversed(), 3.toShort(), 8.toShort(), 2, listOf<Short>(3, 5, 7))

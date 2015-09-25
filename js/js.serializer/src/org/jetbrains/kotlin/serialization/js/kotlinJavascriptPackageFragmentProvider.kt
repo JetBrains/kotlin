@@ -44,6 +44,7 @@ public fun createKotlinJavascriptPackageFragmentProvider(
             KotlinJavascriptAnnotationAndConstantLoader(module),
             provider,
             localClassResolver,
+            ErrorReporter.DO_NOTHING,
             FlexibleTypeCapabilitiesDeserializer.Dynamic,
             ClassDescriptorFactory.EMPTY
     )

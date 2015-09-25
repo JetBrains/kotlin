@@ -1,4 +1,4 @@
-object F {
+internal object F {
 
     //c1
 

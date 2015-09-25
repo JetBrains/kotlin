@@ -5,7 +5,7 @@ import kotlin.test.*
 import kotlin.properties.*
 
 class NotNullVarTest() {
-    test fun doTest() {
+    @test fun doTest() {
         NotNullVarTestGeneric("a", "b").doTest()
     }
 }
@@ -27,7 +27,7 @@ class ObservablePropertyInChangeSupportTest: ChangeSupport() {
     var b by property(init = 2)
     var c by property(3)
 
-    test fun doTest() {
+    @test fun doTest() {
         var result = false
         addChangeListener("b", object: ChangeListener {
             public override fun onPropertyChange(event: ChangeEvent) {
@@ -54,7 +54,7 @@ class ObservablePropertyTest {
         assertEquals(new, b, "New value has already been set")
     })
 
-    test fun doTest() {
+    @test fun doTest() {
         b = 4
         assertTrue(b == 4, "fail: b != 4")
         assertTrue(result, "fail: result should be true")
@@ -72,7 +72,7 @@ class VetoablePropertyTest {
         result
     })
 
-    test fun doTest() {
+    @test fun doTest() {
         val firstValue = A(true)
         b = firstValue
         assertTrue(b == firstValue, "fail1: b should be firstValue = A(true)")

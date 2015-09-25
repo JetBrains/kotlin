@@ -41,7 +41,7 @@ public class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticsWithS
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
         if (diagnostic.getFactory() != Errors.UNINITIALIZED_VARIABLE) return false
 
-        @suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetSimpleNameExpression, VariableDescriptor>
 
         val variableDescriptor = diagnosticWithParameters.getA()

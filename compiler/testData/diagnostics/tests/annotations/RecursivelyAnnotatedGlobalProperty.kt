@@ -1,3 +1,3 @@
 // Properties can be recursively annotated
 annotation class ann(val x: Int)
-@ann(x) val x: Int = 1
+@ann(x) const val x: Int = 1

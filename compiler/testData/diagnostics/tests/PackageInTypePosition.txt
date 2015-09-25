@@ -1,6 +1,6 @@
 package
 
-[ERROR : foo]() public fun bar(/*0*/ p: [ERROR : foo]): [ERROR : foo]
+@[ERROR : foo]() public fun bar(/*0*/ p: [ERROR : foo]): [ERROR : foo]
 
 package foo {
 }

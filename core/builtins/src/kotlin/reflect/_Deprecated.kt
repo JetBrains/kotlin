@@ -16,14 +16,14 @@
 
 package kotlin.reflect
 
-@Deprecated("This class will be dropped in M13 because it was a part of an overly complex API. Use KFunction instead")
+@Deprecated("This class will be dropped after M13 because it was a part of an overly complex API. Use KFunction instead")
 public interface KTopLevelFunction<out R> : KFunction<R>
 
-@Deprecated("This class will be dropped in M13 because it was a part of an overly complex API. Use KFunction instead")
+@Deprecated("This class will be dropped after M13 because it was a part of an overly complex API. Use KFunction instead")
 public interface KTopLevelExtensionFunction<in E, out R>
 
-@Deprecated("This class will be dropped in M13 because it was a part of an overly complex API. Use KFunction instead")
+@Deprecated("This class will be dropped after M13 because it was a part of an overly complex API. Use KFunction instead")
 public interface KMemberFunction<in T, out R> : KFunction<R>
 
-@Deprecated("This class will be dropped in M13 because it was a part of an overly complex API. Use KFunction instead")
+@Deprecated("This class will be dropped after M13 because it was a part of an overly complex API. Use KFunction instead")
 public interface KLocalFunction<out R> : KFunction<R>

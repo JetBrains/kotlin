@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private fun foo(o: Any?, b: Boolean): String? {
         if (b) return o as String?
         return ""

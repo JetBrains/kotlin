@@ -1,8 +1,8 @@
 package org.test
 
-class Library
+internal class Library
 
-class User {
+internal class User {
     fun main() {
         val lib = Library()
     }

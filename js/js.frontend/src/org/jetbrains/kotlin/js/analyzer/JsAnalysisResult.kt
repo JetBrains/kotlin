@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
-import kotlin.platform.platformStatic
 
 public class JsAnalysisResult(
         public val bindingTrace: BindingTrace,
@@ -29,7 +28,8 @@ public class JsAnalysisResult(
 ) : AnalysisResult(bindingTrace.getBindingContext(), moduleDescriptor) {
 
     companion object {
-        platformStatic public fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
+        @JvmStatic
+        public fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
             return JsAnalysisResult(trace, module)
         }
     }

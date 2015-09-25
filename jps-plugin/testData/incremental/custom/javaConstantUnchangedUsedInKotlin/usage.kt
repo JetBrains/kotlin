@@ -1,2 +1,2 @@
-deprecated(JavaClass.CONST + JavaClass.CONST)
+@Deprecated(JavaClass.CONST + JavaClass.CONST)
 class Usage

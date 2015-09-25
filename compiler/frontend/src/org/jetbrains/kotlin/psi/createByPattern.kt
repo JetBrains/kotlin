@@ -93,7 +93,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
     }
 
     // convert arguments that can be converted into plain text
-    @suppress("NAME_SHADOWING")
+    @Suppress("NAME_SHADOWING")
     val args = args.zip(argumentTypes).map {
         val (arg, type) = it
         if (type is PlainTextArgumentType)

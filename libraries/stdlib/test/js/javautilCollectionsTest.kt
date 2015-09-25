@@ -14,23 +14,23 @@ class JavautilCollectionsTest {
     val MAX_ELEMENT = 9
     val COMPARATOR = comparator { x: Int, y: Int ->  if (x > y) 1 else if (x < y) -1 else 0 }
 
-    test fun maxWithComparator() {
+    @test fun maxWithComparator() {
         assertEquals(MAX_ELEMENT, Collections.max(TEST_LIST, COMPARATOR))
     }
 
-    test fun sort() {
+    @test fun sort() {
         val list = TEST_LIST.toArrayList()
         Collections.sort(list)
         assertEquals(SORTED_TEST_LIST, list)
     }
 
-    test fun sortWithComparator() {
+    @test fun sortWithComparator() {
         val list = TEST_LIST.toArrayList()
         Collections.sort(list, COMPARATOR)
         assertEquals(SORTED_TEST_LIST, list)
     }
 
-    test fun collectionToArray() {
+    @test fun collectionToArray() {
         val array = TEST_LIST.toTypedArray()
         assertEquals(array.toList(), TEST_LIST)
     }

@@ -1,8 +1,8 @@
-class X {
-    public var length: Int = 5
+internal class X {
+    var length = 5
 }
 
-class C {
+internal class C {
     fun foo(x: X) {
         for (i in 0..x.length - 1) {
             print(i)

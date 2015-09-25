@@ -16,11 +16,11 @@ class Z {
 
     public var prop: X = X(0)
         get()  {
-            counter++; return $prop
+            counter++; return field
         }
         set(a: X) {
             counter++
-            $prop = a;
+            field = a;
         }
 }
 

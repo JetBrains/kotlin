@@ -2,36 +2,36 @@ package kotlin
 
 import java.util.*
 
-library
+@library
 public fun <T> arrayOf(vararg value : T): Array<T> = noImpl
 
 // "constructors" for primitive types array
 
-library
+@library
 public fun doubleArrayOf(vararg content : Double): DoubleArray    = noImpl
 
-library
+@library
 public fun floatArrayOf(vararg content : Float): FloatArray       = noImpl
 
-library
+@library
 public fun longArrayOf(vararg content : Long): LongArray          = noImpl
 
-library
+@library
 public fun intArrayOf(vararg content : Int): IntArray             = noImpl
 
-library
+@library
 public fun charArrayOf(vararg content : Char): CharArray          = noImpl
 
-library
+@library
 public fun shortArrayOf(vararg content : Short): ShortArray       = noImpl
 
-library
+@library
 public fun byteArrayOf(vararg content : Byte): ByteArray          = noImpl
 
-library
+@library
 public fun booleanArrayOf(vararg content : Boolean): BooleanArray = noImpl
 
-library("copyToArray")
+@library("copyToArray")
 public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
 
 

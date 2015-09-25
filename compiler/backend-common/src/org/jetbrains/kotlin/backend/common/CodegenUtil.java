@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.backend.common;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
@@ -41,18 +39,10 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
-/**
- * Backend-independent utility class.
- */
 public class CodegenUtil {
 
     private CodegenUtil() {
     }
-
-    // TODO: consider putting predefined method signatures here too.
-    public static final String EQUALS_METHOD_NAME = "equals";
-    public static final String TO_STRING_METHOD_NAME = "toString";
-    public static final String HASH_CODE_METHOD_NAME = "hashCode";
 
     @Nullable
     public static FunctionDescriptor getDeclaredFunctionByRawSignature(
@@ -71,29 +61,6 @@ public class CodegenUtil {
             }
         }
         return null;
-    }
-
-    public static FunctionDescriptor getAnyEqualsMethod(@NotNull KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function = getDeclaredFunctionByRawSignature(
-                anyClass, Name.identifier(EQUALS_METHOD_NAME), builtIns.getBoolean(), anyClass
-        );
-        assert function != null;
-        return function;
-    }
-
-    public static FunctionDescriptor getAnyToStringMethod(@NotNull KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function = getDeclaredFunctionByRawSignature(anyClass, Name.identifier(TO_STRING_METHOD_NAME), builtIns.getString());
-        assert function != null;
-        return function;
-    }
-
-    public static FunctionDescriptor getAnyHashCodeMethod(@NotNull KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function = getDeclaredFunctionByRawSignature(anyClass, Name.identifier(HASH_CODE_METHOD_NAME), builtIns.getInt());
-        assert function != null;
-        return function;
     }
 
     @Nullable

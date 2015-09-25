@@ -131,7 +131,7 @@ fun ranges(): List<GenericFunction> {
             only(RangesOfPrimitives)
             only(rangeType)
             returns("Nothing")
-            annotations("""deprecated("The 'contains' operation for a range of $rangeType and $itemType item is not supported and should not be used.")""")
+            annotations("""@Deprecated("The 'contains' operation for a range of $rangeType and $itemType item is not supported and should not be used.")""")
             body { """throw UnsupportedOperationException()""" }
         }
     }

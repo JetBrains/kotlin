@@ -57,7 +57,12 @@ class DeserializedType(
 
     override fun getCapabilities() = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
 
-    private fun <E: Any> List<E>.getOrNull(index: Int): E? {
-        return if (index in indices) this[index] else null
+    fun getPresentableText(): String {
+        val typeConstructorData = typeProto.getTypeConstructorData()
+        val id = typeConstructorData.id
+        return if (typeConstructorData.kind == TypeConstructorKind.CLASS)
+            c.nameResolver.getClassId(id).asSingleFqName().asString()
+        else
+            "Unknown type parameter $id"
     }
 }

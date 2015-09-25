@@ -269,6 +269,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinFile/renameFile.test")
+    public void testRenameKotlinFile_RenameFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFile/renameFile.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test")
     public void testRenameKotlinFunctionInEnum_RenameKotlinFunctionInEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test");
@@ -323,6 +329,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinPackageFunctionFromJavaNewFacade/renameKotlinPackageFunctionFromJava.test")
+    public void testRenameKotlinPackageFunctionFromJavaNewFacade_RenameKotlinPackageFunctionFromJava() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPackageFunctionFromJavaNewFacade/renameKotlinPackageFunctionFromJava.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinPrimaryConstructorProperty/renameKotlinPrimaryConstructorProperty.test")
     public void testRenameKotlinPrimaryConstructorProperty_RenameKotlinPrimaryConstructorProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPrimaryConstructorProperty/renameKotlinPrimaryConstructorProperty.test");
@@ -338,6 +350,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinStaticMethod/renameKotlinStaticMethod.test")
     public void testRenameKotlinStaticMethod_RenameKotlinStaticMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinStaticMethod/renameKotlinStaticMethod.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinTopLevelVarProperty/renameTopLevelVarProperty.test")
+    public void testRenameKotlinTopLevelVarProperty_RenameTopLevelVarProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinTopLevelVarProperty/renameTopLevelVarProperty.test");
         doTest(fileName);
     }
 

@@ -1,4 +1,4 @@
-class C(val myArg1: Int) {
+internal class C(val myArg1: Int) {
     var myArg2: Int = 0
     var myArg3: Int = 0
 
@@ -18,8 +18,8 @@ class C(val myArg1: Int) {
     }
 }
 
-public object User {
-    public fun main() {
+object User {
+    fun main() {
         val c1 = C(100, 100, 100)
         val c2 = C(100, 100)
         val c3 = C(100)

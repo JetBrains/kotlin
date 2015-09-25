@@ -100,10 +100,10 @@ class Logo(override var pos: Vector) : Shape() {
 
 val gradientGenerator: RadialGradientGenerator? = null
     get() {
-        if ($gradientGenerator == null) {
-            $gradientGenerator = RadialGradientGenerator(context)
+        if (field == null) {
+            field = RadialGradientGenerator(context)
         }
-        return $gradientGenerator
+        return field
     }
 
 class Creature(override var pos: Vector, val state: CanvasState) : Shape() {

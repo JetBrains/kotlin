@@ -6,6 +6,6 @@ annotation class Ann(
         val b3: Boolean
 )
 
-Ann(true and false, false or true, true xor false) class MyClass
+@Ann(true and false, false or true, true xor false) class MyClass
 
-// EXPECTED: Ann(b1 = false, b2 = true, b3 = true)
+// EXPECTED: @Ann(b1 = false, b2 = true, b3 = true)

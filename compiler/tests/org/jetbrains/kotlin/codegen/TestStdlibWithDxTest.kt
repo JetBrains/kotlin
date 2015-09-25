@@ -23,11 +23,13 @@ import java.io.FileInputStream
 import java.util.zip.ZipInputStream
 
 public class TestStdlibWithDxTest {
-    Test public fun testRuntimeWithDx() {
+    @Test
+    public fun testRuntimeWithDx() {
         doTest(ForTestCompileRuntime.runtimeJarForTests())
     }
 
-    Test public fun testReflectWithDx() {
+    @Test
+    public fun testReflectWithDx() {
         doTest(ForTestCompileRuntime.reflectJarForTests())
     }
 

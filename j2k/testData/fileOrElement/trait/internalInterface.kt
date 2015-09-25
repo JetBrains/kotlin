@@ -1,1 +1,1 @@
-interface Test
+internal interface Test

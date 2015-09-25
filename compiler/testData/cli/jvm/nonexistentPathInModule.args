@@ -1,0 +1,2 @@
+-module
+$TESTDATA_DIR$/nonexistentPathInModule.xml

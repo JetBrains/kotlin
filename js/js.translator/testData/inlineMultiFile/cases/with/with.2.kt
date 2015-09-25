@@ -5,7 +5,6 @@
 
 package test
 
-import kotlin.InlineOption.*
 
 public class Data()
 
@@ -33,4 +32,4 @@ public fun Input.copyTo(output: Output, size: Int): Int {
     return output.doOutput(this.data())
 }
 
-public inline fun with2<T>(receiver : T, inlineOptions(ONLY_LOCAL_RETURN) body :  T.() -> Unit) : Unit = {receiver.body()}()
+public inline fun with2<T>(receiver : T, crossinline body :  T.() -> Unit) : Unit = {receiver.body()}()

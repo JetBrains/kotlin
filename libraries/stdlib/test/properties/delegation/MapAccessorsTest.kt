@@ -18,7 +18,7 @@ class ValByMapExtensionsTest {
     val x: Double by genericMap
 
 
-    test fun doTest() {
+    @test fun doTest() {
         assertEquals("all", a)
         assertEquals("bar", b)
         assertEquals("code", c)
@@ -42,7 +42,7 @@ class VarByMapExtensionsTest {
     var a2: String by map2.withDefault { "empty" }
     //var x: Int by map2  // prohibited by type system
 
-    test fun doTest() {
+    @test fun doTest() {
         assertEquals("all", a)
         assertEquals(null, b)
         assertEquals(1, c)

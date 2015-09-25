@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -39,11 +40,9 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.utils.recursePostOrder
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -136,8 +135,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
               BuiltInsSerializedResourcePaths.fallbackPaths.getPackageFilePath(fqName))
 
         val nameStream = ByteArrayOutputStream()
-        val strings = serializer.getStringTable()
-        SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
+        serializer.serializeStringTable(nameStream)
         write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream,
               BuiltInsSerializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
     }

@@ -3,7 +3,7 @@ package
 package b {
     public var f: () -> kotlin.Unit
     public val g: () -> kotlin.Int
-    public val o: b.o.<no name provided>
+    public val o: kotlin.Any
     public val p: b.P
     public fun doSmth(/*0*/ i: kotlin.Int): kotlin.Int
 

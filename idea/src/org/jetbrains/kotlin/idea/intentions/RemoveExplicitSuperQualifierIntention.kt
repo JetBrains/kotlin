@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<JetSuperExpression>(RemoveExplicitSuperQualifierIntention()) {
+public class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<JetSuperExpression>(RemoveExplicitSuperQualifierIntention()), CleanupLocalInspectionTool {
     override val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }

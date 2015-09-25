@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.findLabelAndCall
@@ -40,13 +42,13 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
 
-@tailRecursive
-fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
+tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
     if (this is LookupElementDecorator<*>) {
         getDelegate().putUserDataDeep(key, value)
     }
@@ -55,8 +57,7 @@ fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
     }
 }
 
-@tailRecursive
-fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
+tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
     if (this is LookupElementDecorator<*>) {
         return getDelegate().getUserDataDeep(key)
     }
@@ -187,13 +188,13 @@ class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, v
 fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
         .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
 
-fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String): Collection<ThisItemLookupObject> {
-    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return listOf()
+fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
+    val scope = position.getResolutionScope(bindingContext, resolutionFacade)
 
     val psiFactory = JetPsiFactory(position)
 
     val result = ArrayList<ThisItemLookupObject>()
-    for ((receiver, expressionFactory) in scope.getImplicitReceiversWithInstanceToExpression()) {
+    for ((receiver, expressionFactory) in scope.asJetScope().getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
         val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? JetThisExpression ?: continue

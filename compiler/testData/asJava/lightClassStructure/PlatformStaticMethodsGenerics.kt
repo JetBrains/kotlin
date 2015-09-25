@@ -4,7 +4,7 @@ import kotlin.platform.platformStatic
 
 class PlatformStaticClass {
     companion object {
-        platformStatic
+        @platformStatic
         fun inClassObject<T>() {}
     }
 

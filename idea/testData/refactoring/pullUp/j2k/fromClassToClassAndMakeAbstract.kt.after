@@ -1,25 +1,25 @@
 abstract class A {
     // INFO: {"checked": "true", "toAbstract": "true"}
-    var x = 2 * 3
+    internal var x = 2 * 3
 
     // INFO: {"checked": "true", "toAbstract": "true"}
-    inner class X
+    internal inner class X
 
     // INFO: {"checked": "true", "toAbstract": "true"}
-    class Y
+    internal class Y
 
     // INFO: {"checked": "true", "toAbstract": "true"}
-    abstract fun foo(n: Int): Boolean
+    internal abstract fun foo(n: Int): Boolean
 
     // INFO: {"checked": "true", "toAbstract": "true"}
-    abstract fun bar(s: String): Int
+    internal abstract fun bar(s: String): Int
 
     companion object {
         // INFO: {"checked": "true", "toAbstract": "true"}
-        var X = "1" + "2"
+        internal var X = "1" + "2"
 
         // INFO: {"checked": "true", "toAbstract": "true"}
-        JvmStatic fun foo2(n: Int): String {
+        JvmStatic internal fun foo2(n: Int): String {
             return "_" + n + "_"
         }
     }

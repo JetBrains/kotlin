@@ -70,7 +70,13 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
     return CallableBuilder(builderTarget).let { builder ->
         builder.modifier(descriptor.visibility)
 
-        builder.typeParams(descriptor.typeParameters.map { it.originalDeclaration.getText()!! })
+        builder.typeParams(
+                descriptor.typeParameters.map {
+                    val typeParameter = it.originalDeclaration
+                    val bound = typeParameter.extendsBound
+                    typeParameter.name + (bound?.let { " : " + it.text } ?: "")
+                }
+        )
 
         fun JetType.typeAsString(): String {
             return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
@@ -449,7 +455,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     fun adjustDeclarationBody(declaration: JetNamedDeclaration) {
         val body = declaration.getGeneratedBody()
 
-        val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
+        val exprReplacementMap = HashMap<JetElement, (ExtractableCodeDescriptor, JetElement) -> JetElement>()
         val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
 
         val bodyOffset = body.getBlockContentOffset()
@@ -466,9 +472,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             originalOffsetByExpr[expr!!] = offsetInBody
 
             descriptor.replacementMap[offsetInBody]?.let { replacement ->
-                if (replacement !is ParameterReplacement || replacement.parameter != descriptor.receiverParameter) {
-                    exprReplacementMap[expr] = replacement
-                }
+                exprReplacementMap[expr] = replacement
             }
         }
 
@@ -499,7 +503,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         for ((expr, originalOffset) in originalOffsetByExpr) {
             if (expr.isValid()) {
-                nameByOffset.put(originalOffset, exprReplacementMap[expr]?.invoke(expr) ?: expr)
+                nameByOffset.put(originalOffset, exprReplacementMap[expr]?.invoke(descriptor, expr) ?: expr)
             }
         }
 

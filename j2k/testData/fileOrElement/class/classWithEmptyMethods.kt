@@ -1,4 +1,4 @@
-class T {
+internal class T {
     fun main() {
     }
 

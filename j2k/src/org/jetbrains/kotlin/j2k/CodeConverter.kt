@@ -71,7 +71,7 @@ class CodeConverter(
                     !variable.hasWriteAccesses(converter.referenceSearcher, variable.getContainingMethod())
         return LocalVariable(variable.declarationIdentifier(),
                              converter.convertAnnotations(variable),
-                             converter.convertModifiers(variable),
+                             converter.convertModifiers(variable, false),
                              converter.variableTypeToDeclare(variable, settings.specifyLocalVariableTypeByDefault, isVal),
                              convertExpression(variable.getInitializer(), variable.getType()),
                              isVal).assignPrototype(variable)

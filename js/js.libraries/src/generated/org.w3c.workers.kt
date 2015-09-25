@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.xhr.*
 
-native public interface ServiceWorkerRegistration : EventTarget {
+@native public interface ServiceWorkerRegistration : EventTarget {
     val installing: ServiceWorker?
         get() = noImpl
     val waiting: ServiceWorker?
@@ -41,7 +41,7 @@ native public interface ServiceWorkerRegistration : EventTarget {
     fun getNotifications(filter: GetNotificationOptions = noImpl): dynamic = noImpl
 }
 
-native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
+@native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
     val clients: Clients
         get() = noImpl
     val registration: ServiceWorkerRegistration
@@ -67,7 +67,7 @@ native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
     fun skipWaiting(): dynamic = noImpl
 }
 
-native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
+@native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     val scriptURL: String
         get() = noImpl
     val state: String
@@ -83,7 +83,7 @@ native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWo
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
-native public interface ServiceWorkerContainer : EventTarget {
+@native public interface ServiceWorkerContainer : EventTarget {
     val controller: ServiceWorker?
         get() = noImpl
     val ready: dynamic
@@ -102,11 +102,11 @@ native public interface ServiceWorkerContainer : EventTarget {
     fun getRegistrations(): dynamic = noImpl
 }
 
-native public interface RegistrationOptions {
+@native public interface RegistrationOptions {
     var scope: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun RegistrationOptions(scope: String): RegistrationOptions {
     val o = js("({})")
 
@@ -115,7 +115,7 @@ public inline fun RegistrationOptions(scope: String): RegistrationOptions {
     return o
 }
 
-native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
+@native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
     open val data: Any?
         get() = noImpl
     open val origin: String
@@ -129,7 +129,7 @@ native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: 
     fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
-native public interface ServiceWorkerMessageEventInit : EventInit {
+@native public interface ServiceWorkerMessageEventInit : EventInit {
     var data: Any?
     var origin: String
     var lastEventId: String
@@ -137,7 +137,7 @@ native public interface ServiceWorkerMessageEventInit : EventInit {
     var ports: Array<MessagePort>
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
@@ -152,7 +152,7 @@ public inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, last
     return o
 }
 
-native public interface Client : UnionClientOrMessagePortOrServiceWorker {
+@native public interface Client : UnionClientOrMessagePortOrServiceWorker {
     val url: String
         get() = noImpl
     val frameType: String
@@ -162,7 +162,7 @@ native public interface Client : UnionClientOrMessagePortOrServiceWorker {
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
-native public interface WindowClient : Client {
+@native public interface WindowClient : Client {
     val visibilityState: dynamic
         get() = noImpl
     val focused: Boolean
@@ -170,18 +170,18 @@ native public interface WindowClient : Client {
     fun focus(): dynamic = noImpl
 }
 
-native public interface Clients {
+@native public interface Clients {
     fun matchAll(options: ClientQueryOptions = noImpl): dynamic = noImpl
     fun openWindow(url: String): dynamic = noImpl
     fun claim(): dynamic = noImpl
 }
 
-native public interface ClientQueryOptions {
+@native public interface ClientQueryOptions {
     var includeUncontrolled: Boolean
     var type: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type: String = "window"): ClientQueryOptions {
     val o = js("({})")
 
@@ -191,14 +191,14 @@ public inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type:
     return o
 }
 
-native public open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : Event(type, eventInitDict) {
+@native public open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : Event(type, eventInitDict) {
     fun waitUntil(f: dynamic): Unit = noImpl
 }
 
-native public interface ExtendableEventInit : EventInit {
+@native public interface ExtendableEventInit : EventInit {
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Boolean = false): ExtendableEventInit {
     val o = js("({})")
 
@@ -208,7 +208,7 @@ public inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Bool
     return o
 }
 
-native public open class FetchEvent(type: String, eventInitDict: FetchEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
+@native public open class FetchEvent(type: String, eventInitDict: FetchEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
     open val request: Request
         get() = noImpl
     open val client: Client
@@ -218,13 +218,13 @@ native public open class FetchEvent(type: String, eventInitDict: FetchEventInit 
     fun respondWith(r: dynamic): Unit = noImpl
 }
 
-native public interface FetchEventInit : ExtendableEventInit {
+@native public interface FetchEventInit : ExtendableEventInit {
     var request: Request
     var client: Client
     var isReload: Boolean
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun FetchEventInit(request: Request, client: Client, isReload: Boolean = false, bubbles: Boolean = false, cancelable: Boolean = false): FetchEventInit {
     val o = js("({})")
 
@@ -237,7 +237,7 @@ public inline fun FetchEventInit(request: Request, client: Client, isReload: Boo
     return o
 }
 
-native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
+@native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
     open val data: Any?
         get() = noImpl
     open val origin: String
@@ -251,7 +251,7 @@ native public open class ExtendableMessageEvent(type: String, eventInitDict: Ext
     fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
-native public interface ExtendableMessageEventInit : ExtendableEventInit {
+@native public interface ExtendableMessageEventInit : ExtendableEventInit {
     var data: Any?
     var origin: String
     var lastEventId: String
@@ -259,7 +259,7 @@ native public interface ExtendableMessageEventInit : ExtendableEventInit {
     var ports: Array<MessagePort>
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ExtendableMessageEventInit {
     val o = js("({})")
 
@@ -274,7 +274,7 @@ public inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEve
     return o
 }
 
-native public interface Cache {
+@native public interface Cache {
     fun match(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun matchAll(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun add(request: dynamic): dynamic = noImpl
@@ -284,14 +284,14 @@ native public interface Cache {
     fun keys(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl
 }
 
-native public interface CacheQueryOptions {
+@native public interface CacheQueryOptions {
     var ignoreSearch: Boolean
     var ignoreMethod: Boolean
     var ignoreVary: Boolean
     var cacheName: String
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod: Boolean = false, ignoreVary: Boolean = false, cacheName: String): CacheQueryOptions {
     val o = js("({})")
 
@@ -303,14 +303,14 @@ public inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod:
     return o
 }
 
-native public interface CacheBatchOperation {
+@native public interface CacheBatchOperation {
     var type: String
     var request: Request
     var response: Response
     var options: CacheQueryOptions
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun CacheBatchOperation(type: String, request: Request, response: Response, options: CacheQueryOptions): CacheBatchOperation {
     val o = js("({})")
 
@@ -322,7 +322,7 @@ public inline fun CacheBatchOperation(type: String, request: Request, response: 
     return o
 }
 
-native public interface CacheStorage {
+@native public interface CacheStorage {
     fun match(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun has(cacheName: String): dynamic = noImpl
     fun open(cacheName: String): dynamic = noImpl
@@ -330,9 +330,9 @@ native public interface CacheStorage {
     fun keys(): dynamic = noImpl
 }
 
-native public open class FunctionalEvent : ExtendableEvent(noImpl, noImpl) {
+@native public open class FunctionalEvent : ExtendableEvent(noImpl, noImpl) {
 }
 
-native public marker interface UnionClientOrMessagePortOrServiceWorker {
+@native public @marker interface UnionClientOrMessagePortOrServiceWorker {
 }
 

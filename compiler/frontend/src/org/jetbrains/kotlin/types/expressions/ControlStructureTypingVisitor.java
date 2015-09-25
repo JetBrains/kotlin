@@ -392,6 +392,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetParameter loopParameter = expression.getLoopParameter();
         if (loopParameter != null) {
             VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
+            components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(loopParameter, variableDescriptor);
 
             loopScope.addVariableDescriptor(variableDescriptor);
         }
@@ -404,6 +405,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
+                components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiParameter);
             }
         }
 

@@ -1,6 +1,6 @@
 package foo
 
-native
+@native
 enum class JsEnum {
     Foo,
     Bar,

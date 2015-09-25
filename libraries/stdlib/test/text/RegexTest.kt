@@ -7,7 +7,7 @@ import org.junit.Test as test
 
 class RegexTest {
 
-    test fun matchResult() {
+    @test fun matchResult() {
         val p = "\\d+".toRegex()
         val input = "123 456 789"
 
@@ -35,12 +35,12 @@ class RegexTest {
         assertEquals(null, noMatch)
     }
 
-    test fun matchIgnoreCase() {
+    @test fun matchIgnoreCase() {
         for (input in listOf("ascii", "shrödinger"))
             assertTrue(input.toUpperCase().matches(input.toLowerCase().toRegex(RegexOption.IGNORE_CASE)))
     }
 
-    test fun matchSequence() {
+    @test fun matchSequence() {
         val input = "123 456 789"
         val pattern = "\\d+".toRegex()
 
@@ -54,7 +54,7 @@ class RegexTest {
         assertEquals(listOf(0..2, 4..6, 8..10), matches.map { it.range }.toList())
     }
 
-    test fun matchAllSequence() {
+    @test fun matchAllSequence() {
         val input = "test"
         val pattern = ".*".toRegex()
         val matches = pattern.matchAll(input).toList()
@@ -63,7 +63,7 @@ class RegexTest {
         assertEquals(2, matches.size())
     }
 
-    test fun matchGroups() {
+    @test fun matchGroups() {
         val input = "1a 2b 3c"
         val pattern = "(\\d)(\\w)".toRegex()
 
@@ -79,7 +79,7 @@ class RegexTest {
         assertEquals("b", m2.groups[2]?.value)
     }
 
-    test fun matchOptionalGroup() {
+    @test fun matchOptionalGroup() {
         val pattern = "(hi)|(bye)".toRegex(RegexOption.IGNORE_CASE)
 
         val m1 = pattern.match("Hi!")!!
@@ -93,19 +93,19 @@ class RegexTest {
         assertEquals("bye", m2.groups[2]?.value)
     }
 
-    test fun matchMultiline() {
+    @test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         val matchedValues = regex.matchAll("test\n\nLine").map { it.value }.toList()
         assertEquals(listOf("test", "", "Line"), matchedValues)
     }
 
-    test fun escapeLiteral() {
+    @test fun escapeLiteral() {
         val literal = """[-\/\\^$*+?.()|[\]{}]"""
         assertTrue(Regex.fromLiteral(literal).matches(literal))
         assertTrue(Regex.escape(literal).toRegex().matches(literal))
     }
 
-    test fun replace() {
+    @test fun replace() {
         val input = "123-456"
         val pattern = "(\\d+)".toRegex()
         assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
@@ -114,14 +114,14 @@ class RegexTest {
         assertEquals("X-456", pattern.replaceFirst(input, "X"))
     }
 
-    test fun replaceEvaluator() {
+    @test fun replaceEvaluator() {
         val input = "/12/456/7890/"
         val pattern = "\\d+".toRegex()
         assertEquals("/2/3/4/", pattern.replace(input, { it.value.length().toString() } ))
     }
 
 
-    test fun split() {
+    @test fun split() {
         val input = """
          some  ${"\t"}  word
          split

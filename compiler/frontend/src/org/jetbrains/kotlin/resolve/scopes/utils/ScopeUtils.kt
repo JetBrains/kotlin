@@ -87,7 +87,7 @@ public fun LexicalScope.getDescriptorsFiltered(
 }
 
 
-@deprecated("Use getOwnProperties instead")
+@Deprecated("Use getOwnProperties instead")
 public fun LexicalScope.getLocalVariable(name: Name): VariableDescriptor? {
     processForMeAndParent {
         if (it is LazyFileScope) {
@@ -120,7 +120,7 @@ public fun LexicalScope.asJetScope(): JetScope {
 
 public fun JetScope.memberScopeAsFileScope(): FileScope = MemberScopeToFileScopeAdapter(this)
 
-@deprecated("Remove this method after scope refactoring")
+@Deprecated("Remove this method after scope refactoring")
 public fun JetScope.asLexicalScope(): LexicalScope
         = if (this is LexicalToJetScopeAdapter) {
             lexicalScope
@@ -266,7 +266,7 @@ private inline fun <T: Any> LexicalScope.collectFromMeAndParent(
     return result ?: emptyList()
 }
 
-private inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
+internal inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
         collect: (LexicalScope) -> Collection<T>
 ): Collection<T> {
     var result: Collection<T>? = null

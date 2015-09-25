@@ -16,20 +16,15 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.debugger.engine
-import com.intellij.debugger.engine.SuspendContext
-import org.jetbrains.kotlin.idea.debugger.JetPositionManager
-import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.debugger.NoDataException
-import com.sun.jdi.request.StepRequest
-import java.util.regex.Pattern
-import java.util.WeakHashMap
-import com.intellij.openapi.extensions.Extensions
-import com.intellij.ui.classFilter.DebuggerClassFilterProvider
+import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.settings.DebuggerSettings
+import com.sun.jdi.Location
+import com.sun.jdi.request.StepRequest
+import org.jetbrains.kotlin.idea.debugger.JetPositionManager
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-public class ExtraSteppingFilter : engine.ExtraSteppingFilter {
+public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
 
     override fun isApplicable(context: SuspendContext?): Boolean {
         if (context == null) {

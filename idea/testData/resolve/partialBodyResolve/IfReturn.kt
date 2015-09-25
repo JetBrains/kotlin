@@ -1,4 +1,4 @@
 fun foo(p: String) {
     if (x()) return
-    println(p.<caret>size)
+    println(p.<caret>isNotEmpty())
 }

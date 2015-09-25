@@ -3,7 +3,7 @@ import kotlin.platform.*
 
 class C {
     companion object {
-        private platformStatic external fun foo()
+        private @platformStatic external fun foo()
     }
 
     fun bar() {

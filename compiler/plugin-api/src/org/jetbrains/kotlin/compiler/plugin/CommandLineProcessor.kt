@@ -22,6 +22,6 @@ public interface CommandLineProcessor {
     public val pluginId: String
     public val pluginOptions: Collection<CliOption>
 
-    throws(CliOptionProcessingException::class)
+    @Throws(CliOptionProcessingException::class)
     public fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
 }

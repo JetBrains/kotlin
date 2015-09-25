@@ -99,7 +99,7 @@ public object Main {
         runner.run(classpath, arguments)
     }
 
-    @jvmStatic
+    @JvmStatic
     public fun main(args: Array<String>) {
         try {
             run(args)

@@ -93,7 +93,7 @@ public abstract class JetCodeFragment(
     override fun getSuperType() = superType
 
     override fun setSuperType(superType: PsiType?) {
-        $superType = superType
+        this.superType = superType
     }
 
     override fun importsToString(): String {

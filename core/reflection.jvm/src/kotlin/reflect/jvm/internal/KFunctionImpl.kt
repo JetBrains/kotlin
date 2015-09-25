@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
+@file:Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor

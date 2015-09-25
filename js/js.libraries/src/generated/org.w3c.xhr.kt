@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 
-native public interface XMLHttpRequestEventTarget : EventTarget {
+@native public interface XMLHttpRequestEventTarget : EventTarget {
     var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -44,10 +44,10 @@ native public interface XMLHttpRequestEventTarget : EventTarget {
         set(value) = noImpl
 }
 
-native public interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {
+@native public interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 }
 
-native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
+@native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var onreadystatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -94,7 +94,7 @@ native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
     }
 }
 
-native public open class FormData(form: HTMLFormElement = noImpl) {
+@native public open class FormData(form: HTMLFormElement = noImpl) {
     fun append(name: String, value: dynamic): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): dynamic = noImpl
@@ -103,7 +103,7 @@ native public open class FormData(form: HTMLFormElement = noImpl) {
     fun set(name: String, value: dynamic): Unit = noImpl
 }
 
-native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
+@native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
     open val lengthComputable: Boolean
         get() = noImpl
     open val loaded: Int
@@ -112,13 +112,13 @@ native public open class ProgressEvent(type: String, eventInitDict: ProgressEven
         get() = noImpl
 }
 
-native public interface ProgressEventInit : EventInit {
+@native public interface ProgressEventInit : EventInit {
     var lengthComputable: Boolean
     var loaded: Int
     var total: Int
 }
 
-suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Int = 0, total: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
     val o = js("({})")
 

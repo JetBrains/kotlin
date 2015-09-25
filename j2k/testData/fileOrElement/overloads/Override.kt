@@ -1,18 +1,18 @@
-interface I {
-    public fun foo(i: Int, c: Char, s: String)
-    public fun bar()
+internal interface I {
+    fun foo(i: Int, c: Char, s: String)
+    fun bar()
 }
 
-open class A : I {
+internal open class A : I {
     override fun foo(i: Int, c: Char, s: String) {
         println("foo" + i + c + s)
     }
 
-    public fun foo(i: Int, c: Char) {
+    fun foo(i: Int, c: Char) {
         foo(i, c, "")
     }
 
-    public fun foo(i: Int) {
+    fun foo(i: Int) {
         foo(i, 'a', "")
     }
 
@@ -20,25 +20,25 @@ open class A : I {
         bar(1)
     }
 
-    public fun bar(i: Int) {
+    fun bar(i: Int) {
     }
 
-    public open fun x() {
+    open fun x() {
         x(1)
     }
 
-    public fun x(i: Int) {
+    fun x(i: Int) {
     }
 
-    public fun y() {
+    fun y() {
         y(1)
     }
 
-    public open fun y(i: Int) {
+    open fun y(i: Int) {
     }
 }
 
-class B : A() {
+internal class B : A() {
     override fun x() {
         super.x()
     }

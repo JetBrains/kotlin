@@ -122,7 +122,7 @@ public fun createContainerForLazyResolve(
     useImpl<ResolveSession>()
 }
 
-jvmOverloads
+@JvmOverloads
 public fun createLazyResolveSession(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,

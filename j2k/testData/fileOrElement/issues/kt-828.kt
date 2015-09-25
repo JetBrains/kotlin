@@ -1,4 +1,4 @@
-class Test {
+internal class Test {
     fun test() {
         var res = true
         res = res and false

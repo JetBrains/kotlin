@@ -1,6 +1,6 @@
-open class Base
+internal open class Base
 
-class C : Base {
+internal class C : Base {
     constructor(arg1: Int, arg2: Int, arg3: Int) {
     }
 
@@ -13,8 +13,8 @@ class C : Base {
     }
 }
 
-public object User {
-    public fun main() {
+object User {
+    fun main() {
         val c1 = C(1, 2, 3)
         val c2 = C(5, 6)
         val c3 = C(7)

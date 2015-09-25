@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
 class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, val isNullable: Boolean) : UsageProcessing {
-    override val targetElement: PsiElement get() = field
+    override val targetElement: PsiElement get() = this.field
 
     override val convertedCodeProcessor = if (field.getName() != propertyName) MyConvertedCodeProcessor() else null
 

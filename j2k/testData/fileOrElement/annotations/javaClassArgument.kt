@@ -1,6 +1,6 @@
 import kotlin.reflect.KClass
 
-annotation class Ann(public val value: KClass<*>, public val other: KClass<*>)
+internal annotation class Ann(val value: KClass<*>, val other: KClass<*>)
 
-Ann(other = String::class, value = Any::class)
-class C
+@Ann(other = String::class, value = Any::class)
+internal class C

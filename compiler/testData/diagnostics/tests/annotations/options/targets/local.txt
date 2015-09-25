@@ -1,12 +1,12 @@
 package
 
-base() public val z: kotlin.Int = 0
-base() public fun foo(/*0*/ base() y: @[base()] kotlin.Int): kotlin.Int
+@base() public val z: kotlin.Int = 0
+@base() public fun foo(/*0*/ @base() y: @base() kotlin.Int): kotlin.Int
 
-base() public final enum class My : kotlin.Enum<My> {
-    base() enum entry FIRST
+@base() public final enum class My : kotlin.Enum<My> {
+    @base() enum entry FIRST
 
-    base() enum entry SECOND
+    @base() enum entry SECOND
 
     private constructor My()
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -22,23 +22,23 @@ base() public final enum class My : kotlin.Enum<My> {
     public final /*synthesized*/ fun values(): kotlin.Array<My>
 }
 
-kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) @kotlin.annotation.annotation() public final class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-base() public final class correct {
-    base() public constructor correct()
+@base() public final class correct {
+    @base() public constructor correct()
     public constructor correct(/*0*/ x: kotlin.Int)
-    base() public final val x: kotlin.Int
+    @base() public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-base() kotlin.annotation.annotation() public final class derived : kotlin.Annotation {
+@base() @kotlin.annotation.annotation() public final class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2187,6 +2187,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("OperatorKeyword.kt")
+            public void testOperatorKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PropagateDeepSubclass.kt")
             public void testPropagateDeepSubclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");
@@ -2577,6 +2583,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("CollectionSize.kt")
             public void testCollectionSize() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Const.kt")
+            public void testConst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
                 doTest(fileName);
             }
 

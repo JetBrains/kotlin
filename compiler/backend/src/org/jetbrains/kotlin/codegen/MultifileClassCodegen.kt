@@ -26,23 +26,29 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.fileClasses.getFileClassType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
 
 public class MultifileClassCodegen(
         private val state: GenerationState,
-        private val files: Collection<JetFile>,
+        public val files: Collection<JetFile>,
         private val facadeFqName: FqName
 ) {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
@@ -50,6 +56,8 @@ public class MultifileClassCodegen(
     private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.bindingContext)
 
     private val compiledPackageFragment = getCompiledPackageFragment(facadeFqName.parent(), state)
+
+    public val packageParts = PackageParts(facadeFqName.parent().asString())
 
     // TODO incremental compilation support
     // TODO previouslyCompiledCallables
@@ -108,6 +116,7 @@ public class MultifileClassCodegen(
             tasks: Map<CallableMemberDescriptor, () -> Unit>,
             partFqNames: List<FqName>
     ) {
+        generateKotlinPackageReflectionField()
         MemberCodegen.generateModuleNameField(state, classBuilder)
 
         for (member in tasks.keySet().sortedWith(MemberComparator.INSTANCE)) {
@@ -147,7 +156,6 @@ public class MultifileClassCodegen(
                 }
             }
             else if (declaration is JetScript) {
-
                 // SCRIPT: generate script code, should be separate execution branch
                 if (state.generateDeclaredClassFilter.shouldGenerateScript(declaration)) {
                     ScriptCodegen.createScriptCodegen(declaration, state, partContext).generate()
@@ -160,8 +168,8 @@ public class MultifileClassCodegen(
 
         partFqNames.add(partClassInfo.fileClassFqName)
 
-//        val name = partType.internalName
-//        packageParts.parts.add(name.substring(name.lastIndexOf('/') + 1))
+        val name = partType.internalName
+        packageParts.parts.add(name.substring(name.lastIndexOf('/') + 1))
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment, facadeFqName), partType, file)
 
@@ -179,12 +187,22 @@ public class MultifileClassCodegen(
         }
     }
 
+    private fun generateKotlinPackageReflectionField() {
+        val mv = classBuilder.newMethod(JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
+        val method = AsmUtil.method("createKotlinPackage",
+                                    AsmTypes.K_PACKAGE_TYPE, AsmTypes.getType(Class::class.java), AsmTypes.getType(String::class.java))
+        val iv = InstructionAdapter(mv)
+        MemberCodegen.generateReflectionObjectField(state, facadeClassType, classBuilder, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv)
+        iv.areturn(Type.VOID_TYPE)
+        FunctionCodegen.endVisit(mv, "package facade static initializer", null)
+    }
+
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames: List<FqName>) {
         if (state.classBuilderMode != ClassBuilderMode.FULL) return
         if (files.any { it.isScript }) return
 
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION)
+        JvmCodegenUtil.writeAbiVersion(av)
 
         val shortNames = partFqNames.map { it.shortName().asString() }.sorted()
         val filePartClassNamesArray = av.visitArray(JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)

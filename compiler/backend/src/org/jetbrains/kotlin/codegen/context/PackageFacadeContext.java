@@ -17,20 +17,22 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class PackageFacadeContext extends PackageContext {
+public class PackageFacadeContext extends PackageContext implements DelegatingFacadeContext {
 
     public PackageFacadeContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
             @NotNull CodegenContext parent,
-            @NotNull Type delegateTo
+            @NotNull Type packagePartType
     ) {
-        super(contextDescriptor, parent, delegateTo);
+        super(contextDescriptor, parent, packagePartType);
     }
 
-    @NotNull
+    @Override
+    @Nullable
     public Type getDelegateToClassType() {
         return getPackagePartType();
     }

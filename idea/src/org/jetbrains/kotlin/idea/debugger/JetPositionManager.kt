@@ -175,8 +175,6 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val project = myDebugProcess.getProject()
 
-        if (DumbService.getInstance(project).isDumb()) return null
-
         return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1)
     }
 
@@ -281,7 +279,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
     }
 
-    @deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
+    @Deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
         if (sourcePosition.getFile() !is JetFile) {
             throw NoDataException.INSTANCE
@@ -303,7 +301,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }.filterNotNull()
     }
 
-    TestOnly
+    @TestOnly
     public fun addTypeMapper(file: JetFile, typeMapper: JetTypeMapper) {
         val value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
                 { CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
@@ -410,8 +408,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         public fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
             return typeMapper.mapOwner(
-                    if (AsmUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.getContainingDeclaration() else descriptor,
-                    true).getInternalName()
+                    if (AsmUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
+            ).internalName
         }
 
         private fun isInPropertyAccessor(element: PsiElement?) =

@@ -8,7 +8,7 @@ class A {
 fun box(): String {
     val a = A()
 
-    (A::q).set(a, array(array(A.B("array"))))
+    (A::q).set(a, arrayOf(arrayOf(A.B("array"))))
     if (a.q!![0][0].result != "array") return "Fail array"
 
     (A::p).set(a, A.B("OK"))

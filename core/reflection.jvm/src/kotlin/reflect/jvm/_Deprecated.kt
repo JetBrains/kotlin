@@ -19,39 +19,39 @@ package kotlin.reflect.jvm
 import java.lang.reflect.Field
 import kotlin.reflect.*
 
-@deprecated("Use kotlinProperty instead.", ReplaceWith("kotlinProperty"))
+@Deprecated("Use kotlinProperty instead.", ReplaceWith("kotlinProperty"))
 public val Field.kotlin: KProperty<*>?
     get() = kotlinProperty
 
 
-@deprecated("Use memberProperties instead.", ReplaceWith("memberProperties"))
+@Deprecated("Use memberProperties instead.", ReplaceWith("memberProperties"))
 public val <T : Any> KClass<T>.properties: Collection<KProperty1<T, *>>
     get() = memberProperties
 
-@deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties"))
+@Deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties"))
 public val <T : Any> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
     get() = memberExtensionProperties
 
-@deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties"))
+@Deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties"))
 public val <T : Any> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
     get() = declaredMemberProperties
 
-@deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
+@Deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
 public val <T : Any> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = declaredMemberExtensionProperties
 
 
-@deprecated("Use isAccessible instead.", ReplaceWith("isAccessible"))
+@Deprecated("Use isAccessible instead.", ReplaceWith("isAccessible"))
 public var KProperty<*>.accessible: Boolean
     get() = isAccessible
     set(value) { isAccessible = value }
 
 @HiddenDeclaration
-@deprecated("Moved to package kotlin.jvm", ReplaceWith("java"))
+@Deprecated("Moved to package kotlin.jvm", ReplaceWith("java"))
 public val <T : Any> KClass<T>.java: Class<T>
     get() = java
 
 @HiddenDeclaration
-@deprecated("Moved to package kotlin.jvm", ReplaceWith("kotlin"))
+@Deprecated("Moved to package kotlin.jvm", ReplaceWith("kotlin"))
 public val <T : Any> Class<T>.kotlin: KClass<T>
     get() = kotlin

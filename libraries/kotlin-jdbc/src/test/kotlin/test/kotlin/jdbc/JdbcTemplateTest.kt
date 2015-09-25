@@ -9,7 +9,7 @@ import test.kotlin.jdbc.*
 class JdbcTemplateTest {
     //val dataSource = createDataSource()
 
-    test fun templateInsert() {
+    @test fun templateInsert() {
         val id = 3
         val name = "Stepan"
 

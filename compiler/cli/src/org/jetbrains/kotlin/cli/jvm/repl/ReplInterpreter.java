@@ -33,11 +33,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
 import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
@@ -73,10 +75,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
@@ -102,7 +101,15 @@ public class ReplInterpreter {
     private final ResolveSession resolveSession;
     private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
+    private final boolean ideMode;
+    private final ReplSystemInWrapper replReader;
+
+    public ReplInterpreter(
+            @NotNull Disposable disposable,
+            @NotNull CompilerConfiguration configuration,
+            boolean ideMode,
+            @Nullable ReplSystemInWrapper replReader
+    ) {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         Project project = environment.getProject();
@@ -153,6 +160,9 @@ public class ReplInterpreter {
         }
 
         this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()]), null));
+
+        this.ideMode = ideMode;
+        this.replReader = replReader;
     }
 
     private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
@@ -161,7 +171,8 @@ public class ReplInterpreter {
 
     public enum LineResultType {
         SUCCESS,
-        ERROR,
+        COMPILE_ERROR,
+        RUNTIME_ERROR,
         INCOMPLETE,
     }
 
@@ -204,23 +215,42 @@ public class ReplInterpreter {
             return errorText;
         }
 
-        public static LineResult successful(Object value, boolean unit) {
-            return new LineResult(value, unit, null, LineResultType.SUCCESS);
-        }
-
-        public static LineResult error(@NotNull String errorText) {
+        @NotNull
+        private static LineResult error(@NotNull String errorText, @NotNull LineResultType errorType) {
             if (errorText.isEmpty()) {
                 errorText = "<unknown error>";
             }
             else if (!errorText.endsWith("\n")) {
                 errorText += "\n";
             }
-            return new LineResult(null, false, errorText, LineResultType.ERROR);
+
+            return new LineResult(null, false, errorText, errorType);
+        }
+
+        @NotNull
+        public static LineResult successful(Object value, boolean unit) {
+            return new LineResult(value, unit, null, LineResultType.SUCCESS);
+        }
+
+        @NotNull
+        public static LineResult compileError(@NotNull String errorText) {
+            return error(errorText, LineResultType.COMPILE_ERROR);
+        }
+
+        @NotNull
+        public static LineResult runtimeError(@NotNull String errorText) {
+            return error(errorText, LineResultType.RUNTIME_ERROR);
         }
 
         public static LineResult incomplete() {
             return new LineResult(null, false, null, LineResultType.INCOMPLETE);
         }
+    }
+
+    @NotNull
+    private DiagnosticMessageHolder createDiagnosticHolder() {
+        return ideMode ? new ReplIdeDiagnosticMessageHolder()
+                       : new ReplTerminalDiagnosticMessageHolder();
     }
 
     @NotNull
@@ -241,20 +271,24 @@ public class ReplInterpreter {
         JetFile psiFile = (JetFile) psiFileFactory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
 
-        ReplMessageCollectorWrapper errorCollector = new ReplMessageCollectorWrapper();
+        DiagnosticMessageHolder errorHolder = createDiagnosticHolder();
 
-        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport =
-                AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector.getMessageCollector());
+        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder);
 
         if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
-            previousIncompleteLines.add(line);
-            return LineResult.incomplete();
+            if (ideMode) {
+                return LineResult.compileError(errorHolder.getRenderedDiagnostics());
+            }
+            else {
+                previousIncompleteLines.add(line);
+                return LineResult.incomplete();
+            }
         }
 
         previousIncompleteLines.clear();
 
         if (syntaxErrorReport.isHasErrors()) {
-            return LineResult.error(errorCollector.getString());
+            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
         }
 
         prepareForTheNextReplLine(topDownAnalysisContext);
@@ -263,9 +297,9 @@ public class ReplInterpreter {
         //noinspection ConstantConditions
         psiFile.getScript().putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber);
 
-        ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorCollector);
+        ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorHolder);
         if (scriptDescriptor == null) {
-            return LineResult.error(errorCollector.getString());
+            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
         }
 
         List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
@@ -300,11 +334,15 @@ public class ReplInterpreter {
             Constructor<?> scriptInstanceConstructor = scriptClass.getConstructor(constructorParams);
             Object scriptInstance;
             try {
+                setReplScriptExecuting(true);
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                return LineResult.error(renderStackTrace(e.getCause()));
+                return LineResult.runtimeError(renderStackTrace(e.getCause()));
+            } finally {
+                setReplScriptExecuting(false);
             }
+
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
@@ -320,6 +358,12 @@ public class ReplInterpreter {
             classLoader.dumpClasses(writer);
             writer.flush();
             throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    private void setReplScriptExecuting(boolean isExecuting) {
+        if (replReader != null) {
+            replReader.setIsReplScriptExecuting(isExecuting);
         }
     }
 
@@ -340,12 +384,16 @@ public class ReplInterpreter {
             }
         }
         Collections.reverse(newTrace);
-        cause.setStackTrace(newTrace.toArray(new StackTraceElement[newTrace.size()]));
+
+        // throw away last element which contains Line1.kts<init>(Unknown source)
+        List<StackTraceElement> resultingTrace = newTrace.subList(0, newTrace.size() - 1);
+
+        cause.setStackTrace(resultingTrace.toArray(new StackTraceElement[resultingTrace.size()]));
         return Throwables.getStackTraceAsString(cause);
     }
 
     @Nullable
-    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull ReplMessageCollectorWrapper messageCollector) {
+    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull DiagnosticMessageReporter errorReporter) {
         scriptDeclarationFactory.setDelegateFactory(
                 new FileBasedDeclarationProviderFactory(resolveSession.getStorageManager(), Collections.singletonList(psiFile)));
 
@@ -358,9 +406,7 @@ public class ReplInterpreter {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
         }
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(
-                trace.getBindingContext().getDiagnostics(), messageCollector.getMessageCollector()
-        );
+        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter, false);
         if (hasErrors) {
             return null;
         }

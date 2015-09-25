@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.codegen.PackageCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -215,6 +217,17 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                        if (!files.isEmpty()) {
+                            JetFile representativeFile = files.iterator().next();
+                            JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE$.getFileClassInfo(representativeFile);
+                            if (!fileClassInfo.getIsMultifileClass()) {
+                                PackageCodegen codegen = state.getFactory().forPackage(representativeFile.getPackageFqName(), files);
+                                codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
+                                state.getFactory().asList();
+                                return;
+                            }
+                        }
+
                         MultifileClassCodegen codegen = state.getFactory().forMultifileClass(facadeFqName, files);
                         codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                         state.getFactory().asList();
@@ -499,7 +512,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
     private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
-            if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
+            if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(file)) {
                 // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
                 // If it fails later, there will be an exception logged
                 logErrorWithOSInfo(null, fqName, file.getVirtualFile());
@@ -511,7 +524,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
         String path = virtualFile == null ? "<null>" : virtualFile.getPath();
         LOG.error(
                 "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + LightClassUtil.getBuiltInsDirUrl() + "\n" +
+                "built-ins dir URL is " + LightClassUtil.INSTANCE$.getBuiltInsDirUrl() + "\n" +
                 "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
                 cause);
     }

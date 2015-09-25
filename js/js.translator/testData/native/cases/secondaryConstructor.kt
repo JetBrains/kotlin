@@ -1,6 +1,6 @@
 package foo
 
-native
+@native
 class A {
     constructor()
     constructor(s: String)

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -121,10 +122,9 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull FunctionDescriptor delegateFunctionDescriptor
     ) {
-        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(function,
-                                                                              functionDescriptor,
-                                                                              delegateFunctionDescriptor,
-                                                                              owner, v);
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
+                function, functionDescriptor, delegateFunctionDescriptor, owner.getContextKind(), v
+        );
     }
 
     public void generateMethod(
@@ -142,15 +142,20 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
+        if (isTrait(functionDescriptor.getContainingDeclaration()) &&
+            functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
+            contextKind != OwnerKind.TRAIT_IMPL) {
+            return;
+        }
+
         JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, contextKind);
         Method asmMethod = jvmSignature.getAsmMethod();
 
         int flags = getMethodAsmFlags(functionDescriptor, contextKind);
         boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
 
-        //TODO: generate native method only in new mini facades (now it equals to package part)
-        if (isNative && owner instanceof PackageFacadeContext) {
-            // Native methods are only defined in package facades and do not need package part implementations
+        if (isNative && owner instanceof DelegatingFacadeContext) {
+            // Native methods are only defined in facades and do not need package part implementations
             return;
         }
         MethodVisitor mv = v.newMethod(origin,
@@ -160,7 +165,7 @@ public class FunctionCodegen {
                                        jvmSignature.getGenericsSignature(),
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
-        String implClassName = CodegenContextUtil.getImplClassNameByOwnerIfRequired(owner);
+        String implClassName = CodegenContextUtil.getImplementationClassShortName(owner);
         if (implClassName != null) {
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, implClassName);
         }
@@ -226,6 +231,22 @@ public class FunctionCodegen {
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        }
+
+        writePackageFacadeMethodAnnotationsIfNeeded(mv);
+    }
+
+    private void writePackageFacadeMethodAnnotationsIfNeeded(MethodVisitor mv) {
+        if (owner instanceof PackageFacadeContext) {
+            PackageFacadeContext packageFacadeContext = (PackageFacadeContext) owner;
+            Type delegateToClassType = packageFacadeContext.getDelegateToClassType();
+            if (delegateToClassType != null) {
+                String className = delegateToClassType.getClassName();
+                AnnotationVisitor
+                        av = mv.visitAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_DELEGATED_METHOD), true);
+                av.visit(JvmAnnotationNames.IMPLEMENTATION_CLASS_NAME_FIELD_NAME, className);
+                av.visitEnd();
+            }
         }
     }
 
@@ -329,8 +350,8 @@ public class FunctionCodegen {
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
         Label methodEnd;
-        if (context.getParentContext() instanceof PackageFacadeContext) {
-            generatePackageDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
+        if (context.getParentContext() instanceof DelegatingFacadeContext) {
+            generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (DelegatingFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
         else {
@@ -402,10 +423,10 @@ public class FunctionCodegen {
         }
     }
 
-    private static void generatePackageDelegateMethodBody(
+    private static void generateFacadeDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull PackageFacadeContext context
+            @NotNull DelegatingFacadeContext context
     ) {
         generateDelegateToMethodBody(true, mv, asmMethod, context.getDelegateToClassType().getInternalName());
     }
@@ -562,9 +583,7 @@ public class FunctionCodegen {
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
-        if (kind != OwnerKind.TRAIT_IMPL &&
-            contextClass instanceof ClassDescriptor &&
-            ((ClassDescriptor) contextClass).getKind() == ClassKind.INTERFACE) {
+        if (kind != OwnerKind.TRAIT_IMPL && isTrait(contextClass)) {
             return;
         }
 
@@ -581,7 +600,7 @@ public class FunctionCodegen {
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         flags &= ~ACC_PRIVATE;
 
-        Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
+        Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind);
 
         MethodVisitor mv = v.newMethod(
                 Synthetic(function, functionDescriptor),
@@ -596,9 +615,9 @@ public class FunctionCodegen {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            if (this.owner instanceof PackageFacadeContext) {
+            if (this.owner instanceof DelegatingFacadeContext) {
                 mv.visitCode();
-                generatePackageDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
+                generateFacadeDelegateMethodBody(mv, defaultMethod, (DelegatingFacadeContext) this.owner);
                 endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
             }
             else {
@@ -663,13 +682,7 @@ public class FunctionCodegen {
             generator.putValueIfNeeded(parameterDescriptor, type, StackValue.local(parameterIndex, type));
         }
 
-        CallableMethod method;
-        if (functionDescriptor instanceof ConstructorDescriptor) {
-            method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
-        }
-        else {
-            method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext);
-        }
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
 
         generator.genCallWithoutAssertions(method, codegen);
 

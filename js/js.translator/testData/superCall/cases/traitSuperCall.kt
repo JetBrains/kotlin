@@ -1,11 +1,11 @@
 package foo
 
-trait A {
+interface A {
     fun bar(): Int = 2
     fun foo(t: Int): Int = t + 1
 }
 
-trait B : A {
+interface B : A {
     override fun bar(): Int = 3
 }
 

@@ -49,9 +49,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import kotlin.platform.platformStatic
 
-SuppressWarnings("UseOfSystemOutOrSystemErr")
 public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
@@ -125,6 +123,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments))
 
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
+
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
@@ -134,8 +134,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             CommandLineScriptUtils.scriptParameters()
         else
             emptyList<AnalyzerScriptParameter>())
-
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         putAdvancedOptions(configuration, arguments)
 
@@ -171,19 +169,22 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val compilerConfiguration = KotlinToJVMBytecodeCompiler.createCompilerConfiguration(configuration, moduleScript.getModules(), directory)
                 environment = createCoreEnvironment(rootDisposable, compilerConfiguration)
 
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+
                 KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size())
                 environment = createCoreEnvironment(rootDisposable, configuration)
+
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+
                 KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
             }
             else {
                 environment = createCoreEnvironment(rootDisposable, configuration)
 
-                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) {
-                    return COMPILATION_ERROR
-                }
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
@@ -241,7 +242,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        platformStatic public fun main(args: Array<String>) {
+        @JvmStatic
+        public fun main(args: Array<String>) {
             CLICompiler.doMain(K2JVMCompiler(), args)
         }
 

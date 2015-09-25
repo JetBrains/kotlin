@@ -65,6 +65,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Const")
+    public void testConst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Const/");
+        doTest(fileName);
+    }
+
     @TestMetadata("DataClass")
     public void testDataClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/DataClass/");

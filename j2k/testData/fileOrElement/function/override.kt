@@ -1,9 +1,9 @@
-open class A {
-    open fun a() {
+internal open class A {
+    internal open fun a() {
     }
 }
 
-class B : A() {
+internal class B : A() {
     override fun a() {
     }
 }

@@ -51,7 +51,7 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
             storageManager.compute { context.addOwnDataTo(trace, commitDiagnostics) }
         }
 
-        TestOnly
+        @TestOnly
         override fun <K, V> getSliceContents(slice: ReadOnlySlice<K, V>) = storageManager.compute { context.getSliceContents<K, V>(slice) }
     }
 

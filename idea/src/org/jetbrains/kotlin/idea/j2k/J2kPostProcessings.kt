@@ -21,6 +21,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
@@ -28,9 +29,11 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import java.util.ArrayList
+import java.util.*
 
 interface J2kPostProcessing {
     fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)?
@@ -44,6 +47,7 @@ object J2KPostProcessingRegistrar {
 
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
+        _processings.add(RemoveRedundantOverrideVisibilityProcessing())
         _processings.add(MoveLambdaOutsideParenthesesProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
@@ -93,12 +97,12 @@ object J2KPostProcessingRegistrar {
 
     private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) apply: TIntention.(TElement) -> Unit
+            crossinline apply: TIntention.(TElement) -> Unit
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
-                @suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST")
                 if (intention.applicabilityRange(element as TElement) == null) return null
                 return { intention.apply(element) }
             }
@@ -107,14 +111,14 @@ object J2KPostProcessingRegistrar {
 
     private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessing(
             diagnosticFactory: DiagnosticFactory<*>,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fix: (TElement, Diagnostic) -> Unit
+            crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
         registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
     private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessingFactory(
             diagnosticFactory: DiagnosticFactory<*>,
-            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+            crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
@@ -130,6 +134,14 @@ object J2KPostProcessingRegistrar {
             if (element !is JetTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
             return { element.delete() }
+        }
+    }
+
+    private class RemoveRedundantOverrideVisibilityProcessing : J2kPostProcessing {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallableDeclaration || !element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
+            val modifier = element.visibilityModifierType() ?: return null
+            return { element.setVisibility(modifier) }
         }
     }
 

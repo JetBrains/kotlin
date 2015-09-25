@@ -30,7 +30,7 @@ internal fun test3(list: Array<String>): String {
 fun box(): String {
     assertEquals("", test1())
     assertEquals("abc", test2())
-    assertEquals("abcd", test3(array("a", "b", "c", "d")))
+    assertEquals("abcd", test3(arrayOf("a", "b", "c", "d")))
 
     return "OK"
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.Printer
 
-public class LexicalScopeImpl jvmOverloads constructor(
+public class LexicalScopeImpl @JvmOverloads constructor(
         parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
@@ -56,7 +56,7 @@ public class LexicalScopeImpl jvmOverloads constructor(
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
-                  " with implicitReceiver: ", implicitReceiver?.value, " {")
+                  " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 
         p.print("parent = ")

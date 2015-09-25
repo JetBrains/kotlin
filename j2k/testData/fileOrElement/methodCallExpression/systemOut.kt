@@ -1,4 +1,4 @@
-class A {
+internal class A {
     fun foo() {
         println()
         println(1)

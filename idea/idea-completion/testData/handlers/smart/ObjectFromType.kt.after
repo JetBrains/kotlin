@@ -1,7 +1,7 @@
 package p
 
 class Outer {
-    trait T {
+    interface T {
         object Null : T { }
     }
 }

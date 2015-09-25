@@ -15,5 +15,5 @@ public open class Test {
 
     // Static members
     public final var i1: kotlin.Int
-    public final val i2: kotlin.Int = 2147483647
+    public const final val i2: kotlin.Int = 2147483647
 }

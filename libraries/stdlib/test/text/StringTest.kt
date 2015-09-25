@@ -11,7 +11,7 @@ class IsEmptyCase(val value: String?, val isNull: Boolean = false, val isEmpty: 
 
 class StringTest {
 
-    test fun isEmptyAndBlank() {
+    @test fun isEmptyAndBlank() {
 
         val cases = listOf(
             IsEmptyCase(null,              isNull = true),
@@ -32,7 +32,7 @@ class StringTest {
         }
     }
 
-    test fun startsWithString() {
+    @test fun startsWithString() {
         assertTrue("abcd".startsWith("ab"))
         assertTrue("abcd".startsWith("abcd"))
         assertTrue("abcd".startsWith("a"))
@@ -46,7 +46,7 @@ class StringTest {
         assertTrue("abcd".startsWith("aB", ignoreCase = true))
     }
 
-    test fun endsWithString() {
+    @test fun endsWithString() {
         assertTrue("abcd".endsWith("d"))
         assertTrue("abcd".endsWith("abcd"))
         assertFalse("abcd".endsWith("b"))
@@ -57,7 +57,7 @@ class StringTest {
         assertTrue("".endsWith(""))
     }
 
-    test fun startsWithChar() {
+    @test fun startsWithChar() {
         assertTrue("abcd".startsWith('a'))
         assertFalse("abcd".startsWith('b'))
         assertFalse("abcd".startsWith('A', ignoreCase = false))
@@ -65,7 +65,7 @@ class StringTest {
         assertFalse("".startsWith('a'))
     }
 
-    test fun endsWithChar() {
+    @test fun endsWithChar() {
         assertTrue("abcd".endsWith('d'))
         assertFalse("abcd".endsWith('b'))
         assertFalse("strö".endsWith('Ö', ignoreCase = false))
@@ -73,7 +73,7 @@ class StringTest {
         assertFalse("".endsWith('a'))
     }
 
-    test fun commonPrefix() {
+    @test fun commonPrefix() {
         assertEquals("", "".commonPrefixWith(""))
         assertEquals("", "any".commonPrefixWith(""))
         assertEquals("", "".commonPrefixWith("any"))
@@ -90,7 +90,7 @@ class StringTest {
 
     }
 
-    test fun commonSuffix() {
+    @test fun commonSuffix() {
         assertEquals("", "".commonSuffixWith(""))
         assertEquals("", "any".commonSuffixWith(""))
         assertEquals("", "".commonSuffixWith("any"))
@@ -106,14 +106,14 @@ class StringTest {
         assertEquals("$dth54", "d$dth54".commonSuffixWith("s$dth54"))
     }
 
-    test fun capitalize() {
+    @test fun capitalize() {
         assertEquals("A", "A".capitalize())
         assertEquals("A", "a".capitalize())
         assertEquals("Abcd", "abcd".capitalize())
         assertEquals("Abcd", "Abcd".capitalize())
     }
 
-    test fun decapitalize() {
+    @test fun decapitalize() {
         assertEquals("a", "A".decapitalize())
         assertEquals("a", "a".decapitalize())
         assertEquals("abcd", "abcd".decapitalize())
@@ -121,7 +121,7 @@ class StringTest {
         assertEquals("uRL", "URL".decapitalize())
     }
 
-    test fun slice() {
+    @test fun slice() {
         val iter = listOf(4, 3, 0, 1)
         // abcde
         // 01234
@@ -130,19 +130,19 @@ class StringTest {
         assertEquals("edab", "abcde".slice(iter))
     }
 
-    test fun reverse() {
+    @test fun reverse() {
         assertEquals("dcba", "abcd".reversed())
         assertEquals("4321", "1234".reversed())
         assertEquals("", "".reversed())
     }
 
-    test fun indices() {
+    @test fun indices() {
         assertEquals(0..4, "abcde".indices)
         assertEquals(0..0, "a".indices)
         assertTrue("".indices.isEmpty())
     }
 
-    test fun replaceRange() {
+    @test fun replaceRange() {
         val s = "sample text"
         assertEquals("sa??e text", s.replaceRange(2, 5, "??"))
         assertEquals("sa?? text", s.replaceRange(2..5, "??"))
@@ -157,7 +157,7 @@ class StringTest {
         assertEquals("??", s.replaceRange(s.indices, "??"))
     }
 
-    test fun removeRange() {
+    @test fun removeRange() {
         val s = "sample text"
         assertEquals("sae text", s.removeRange(2, 5))
         assertEquals("sa text", s.removeRange(2..5))
@@ -172,7 +172,7 @@ class StringTest {
         assertEquals(s.replaceRange(2..5, ""), s.removeRange(2..5))
     }
 
-    test fun substringDelimited() {
+    @test fun substringDelimited() {
         val s = "-1,22,3+"
         // chars
         assertEquals("22,3+", s.substringAfter(','))
@@ -196,7 +196,7 @@ class StringTest {
 
     }
 
-    test fun replaceDelimited() {
+    @test fun replaceDelimited() {
         val s = "/user/folder/file.extension"
         // chars
         assertEquals("/user/folder/file.doc", s.replaceAfter('.', "doc"))
@@ -219,14 +219,14 @@ class StringTest {
         assertEquals("xxx", s.replaceBeforeLast("=", "/new/path", "xxx"))
     }
 
-    test fun stringIterator() {
+    @test fun stringIterator() {
         var sum = 0
         for(c in "239")
             sum += (c.toInt() - '0'.toInt())
         assertTrue(sum == 14)
     }
 
-    test fun trimStart() {
+    @test fun trimStart() {
         assertEquals("", "".trimStart())
         assertEquals("a", "a".trimStart())
         assertEquals("a", " a".trimStart())
@@ -245,7 +245,7 @@ class StringTest {
         assertEquals("123a", "ab123a".trimStart { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
-    test fun trimEnd() {
+    @test fun trimEnd() {
         assertEquals("", "".trimEnd())
         assertEquals("a", "a".trimEnd())
         assertEquals("a", "a ".trimEnd())
@@ -264,7 +264,7 @@ class StringTest {
         assertEquals("ab123", "ab123a".trimEnd { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
-    test fun trimStartAndEnd() {
+    @test fun trimStartAndEnd() {
         val examples = arrayOf("a",
                 " a ",
                 "  a  ",
@@ -293,7 +293,7 @@ class StringTest {
         }
     }
 
-    test fun padStart() {
+    @test fun padStart() {
         assertEquals("s", "s".padStart(0))
         assertEquals("s", "s".padStart(1))
         assertEquals("  ", "".padStart(2))
@@ -303,7 +303,7 @@ class StringTest {
         }
     }
 
-    test fun padEnd() {
+    @test fun padEnd() {
         assertEquals("s", "s".padEnd(0))
         assertEquals("s", "s".padEnd(1))
         assertEquals("  ", "".padEnd(2))
@@ -313,21 +313,21 @@ class StringTest {
         }
     }
 
-    test fun removePrefix() {
+    @test fun removePrefix() {
         assertEquals("fix", "prefix".removePrefix("pre"), "Removes prefix")
         assertEquals("prefix", "preprefix".removePrefix("pre"), "Removes prefix once")
         assertEquals("sample", "sample".removePrefix("value"))
         assertEquals("sample", "sample".removePrefix(""))
     }
 
-    test fun removeSuffix() {
+    @test fun removeSuffix() {
         assertEquals("suf", "suffix".removeSuffix("fix"), "Removes suffix")
         assertEquals("suffix", "suffixfix".removeSuffix("fix"), "Removes suffix once")
         assertEquals("sample", "sample".removeSuffix("value"))
         assertEquals("sample", "sample".removeSuffix(""))
     }
 
-    test fun removeSurrounding() {
+    @test fun removeSurrounding() {
         assertEquals("value", "<value>".removeSurrounding("<", ">"))
         assertEquals("<value>", "<<value>>".removeSurrounding("<", ">"), "Removes surrounding once")
         assertEquals("<value", "<value".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
@@ -353,7 +353,7 @@ class StringTest {
     */
 
 
-    test fun split() {
+    @test fun split() {
         assertEquals(listOf(""), "".split(";"))
         assertEquals(listOf("test"), "test".split(*charArrayOf()), "empty list of delimiters, none matched -> entire string returned")
         assertEquals(listOf("test"), "test".split(*arrayOf<String>()), "empty list of delimiters, none matched -> entire string returned")
@@ -368,7 +368,7 @@ class StringTest {
         assertEquals(listOf("", "", "b", "b", "", ""), "abba".split("a", ""))
     }
 
-    test fun splitToLines() {
+    @test fun splitToLines() {
         val string = "first line\rsecond line\nthird line\r\nlast line"
         assertEquals(listOf("first line", "second line", "third line", "last line"), string.lines())
 
@@ -378,7 +378,7 @@ class StringTest {
     }
 
 
-    test fun indexOfAnyChar() {
+    @test fun indexOfAnyChar() {
         val string = "abracadabra"
         val chars = charArrayOf('d', 'b')
         assertEquals(1, string.indexOfAny(chars))
@@ -392,7 +392,7 @@ class StringTest {
         assertEquals(-1, string.indexOfAny(charArrayOf()))
     }
 
-    test fun indexOfAnyCharIgnoreCase() {
+    @test fun indexOfAnyCharIgnoreCase() {
         val string = "abraCadabra"
         val chars = charArrayOf('B', 'c')
         assertEquals(1, string.indexOfAny(chars, ignoreCase = true))
@@ -404,7 +404,7 @@ class StringTest {
         assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0, ignoreCase = true))
     }
 
-    test fun indexOfAnyString() {
+    @test fun indexOfAnyString() {
         val string = "abracadabra"
         val substrings = listOf("rac", "ra")
         assertEquals(2, string.indexOfAny(substrings))
@@ -421,7 +421,7 @@ class StringTest {
         assertEquals(-1, string.indexOfAny(listOf()))
     }
 
-    test fun indexOfAnyStringIgnoreCase() {
+    @test fun indexOfAnyStringIgnoreCase() {
         val string = "aBraCadaBrA"
         val substrings = listOf("rAc", "Ra")
 
@@ -434,7 +434,7 @@ class StringTest {
         assertEquals(-1, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
     }
 
-    test fun findAnyOfStrings() {
+    @test fun findAnyOfStrings() {
         val string = "abracadabra"
         val substrings = listOf("rac", "ra")
         assertEquals(2 to "rac", string.findAnyOf(substrings))
@@ -451,7 +451,7 @@ class StringTest {
         assertEquals(null, string.findAnyOf(listOf()))
     }
 
-    test fun findAnyOfStringsIgnoreCase() {
+    @test fun findAnyOfStringsIgnoreCase() {
         val string = "aBraCadaBrA"
         val substrings = listOf("rAc", "Ra")
 
@@ -464,7 +464,7 @@ class StringTest {
         assertEquals(null, string.findLastAnyOf(substrings, startIndex = 1, ignoreCase = true))
     }
 
-    test fun indexOfChar() {
+    @test fun indexOfChar() {
         val string = "bcedef"
         assertEquals(-1, string.indexOf('a'))
         assertEquals(2, string.indexOf('e'))
@@ -480,7 +480,7 @@ class StringTest {
 
     }
 
-    test fun indexOfCharIgnoreCase() {
+    @test fun indexOfCharIgnoreCase() {
         val string = "bCEdef"
         assertEquals(-1, string.indexOf('a', ignoreCase = true))
         assertEquals(2, string.indexOf('E', ignoreCase = true))
@@ -496,7 +496,7 @@ class StringTest {
         }
     }
 
-    test fun indexOfString() {
+    @test fun indexOfString() {
         val string = "bceded"
         for (index in string.indices)
             assertEquals(index, string.indexOf("", index))
@@ -505,7 +505,7 @@ class StringTest {
         assertEquals(-1, string.indexOf("abcdefgh"))
     }
 
-    test fun indexOfStringIgnoreCase() {
+    @test fun indexOfStringIgnoreCase() {
         val string = "bceded"
         for (index in string.indices)
             assertEquals(index, string.indexOf("", index, ignoreCase = true))
@@ -515,7 +515,7 @@ class StringTest {
     }
 
 
-    test fun contains() {
+    @test fun contains() {
         assertTrue("pl" in "sample")
         assertFalse("PL" in "sample")
         assertTrue("sömple".contains("Ö", ignoreCase = true))
@@ -528,13 +528,13 @@ class StringTest {
         assertTrue("sömple".contains('Ö', ignoreCase = true))
     }
 
-    test fun equalsIgnoreCase() {
+    @test fun equalsIgnoreCase() {
         assertFalse("sample".equals("Sample", ignoreCase = false))
         assertTrue("sample".equals("Sample", ignoreCase = true))
     }
 
 
-    test fun replace() {
+    @test fun replace() {
         val input = "abbAb"
         assertEquals("abb${'$'}b", input.replace('A', '$'))
         assertEquals("/bb/b", input.replace('A', '/', ignoreCase = true))
@@ -545,7 +545,7 @@ class StringTest {
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
     }
 
-    test fun replaceFirst() {
+    @test fun replaceFirst() {
         val input = "AbbabA"
         assertEquals("Abb${'$'}bA", input.replaceFirst('a','$'))
         assertEquals("${'$'}bbabA", input.replaceFirst('a','$', ignoreCase = true))
@@ -558,7 +558,7 @@ class StringTest {
         assertEquals("-test", "test".replaceFirst("", "-"))
     }
 
-    test fun trimMargin() {
+    @test fun trimMargin() {
         // WARNING
         // DO NOT REFORMAT AS TESTS MAY FAIL DUE TO INDENTATION CHANGE
 
@@ -605,7 +605,7 @@ class StringTest {
         assertEquals("\u0000|ABC", "${"\u0000"}|ABC".trimMargin())
     }
 
-    test fun trimIndent() {
+    @test fun trimIndent() {
         // WARNING
         // DO NOT REFORMAT AS TESTS MAY FAIL DUE TO INDENTATION CHANGE
 
@@ -669,7 +669,7 @@ ${"    "}
         assertEquals(1, deindented.lines().count { it.isEmpty() })
     }
 
-    test fun testIndent() {
+    @test fun testIndent() {
         assertEquals("  ABC\n  123", "ABC\n123".prependIndent("  "))
         assertEquals("  ABC\n  \n  123", "ABC\n\n123".prependIndent("  "))
         assertEquals("  ABC\n  \n  123", "ABC\n \n123".prependIndent("  "))

@@ -1,13 +1,13 @@
 package test
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
 public final class Class {
     /*primary*/ public constructor Class()
 
-    test.Anno() public companion object Companion {
+    @test.Anno() public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 }

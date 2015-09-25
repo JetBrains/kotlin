@@ -17,7 +17,7 @@ public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
  * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
  * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
  */
-deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.")
+@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.")
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
     throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
 

@@ -91,7 +91,11 @@ public open class KotlinLightClassForExplicitDeclaration(
 
         var declaration: PsiElement? = JetPsiUtil.getTopmostParentOfTypes(
                 classOrObject,
-                javaClass<JetNamedFunction>(), javaClass<JetConstructor<*>>(), javaClass<JetProperty>(), javaClass<JetClassInitializer>(), javaClass<JetParameter>())
+                JetNamedFunction::class.java,
+                JetConstructor::class.java,
+                JetProperty::class.java,
+                JetClassInitializer::class.java,
+                JetParameter::class.java)
 
         if (declaration is JetParameter) {
             declaration = declaration.getStrictParentOfType<JetNamedDeclaration>()
@@ -304,7 +308,7 @@ public open class KotlinLightClassForExplicitDeclaration(
 
     private fun isAbstract(): Boolean = classOrObject.hasModifier(ABSTRACT_KEYWORD) || isInterface
 
-    override fun hasModifierProperty(NonNls name: String): Boolean = getModifierList().hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String): Boolean = getModifierList().hasModifierProperty(name)
 
     override fun isDeprecated(): Boolean {
         val jetModifierList = classOrObject.modifierList ?: return false
@@ -353,8 +357,8 @@ public open class KotlinLightClassForExplicitDeclaration(
         return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
     }
 
-    throws(IncorrectOperationException::class)
-    override fun setName(NonNls name: String): PsiElement {
+    @Throws(IncorrectOperationException::class)
+    override fun setName(@NonNls name: String): PsiElement {
         getOrigin().setName(name)
         return this
     }

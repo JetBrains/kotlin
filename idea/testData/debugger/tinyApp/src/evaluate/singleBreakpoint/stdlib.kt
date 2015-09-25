@@ -2,16 +2,16 @@ package stdlib
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size
+    args.size()
 }
 
-// EXPRESSION: array(100, 101)
+// EXPRESSION: arrayOf(100, 101)
 // RESULT: instance of java.lang.Integer[2] (id=ID): [Ljava/lang/Integer;
 
-// EXPRESSION: array("a", "b", "c")
+// EXPRESSION: arrayOf("a", "b", "c")
 // RESULT: instance of java.lang.String[3] (id=ID): [Ljava/lang/String;
 
-// EXPRESSION: intArray(1, 2)
+// EXPRESSION: intArrayOf(1, 2)
 // RESULT: instance of int[2] (id=ID): [I
 
 // EXPRESSION: javaClass<String>()

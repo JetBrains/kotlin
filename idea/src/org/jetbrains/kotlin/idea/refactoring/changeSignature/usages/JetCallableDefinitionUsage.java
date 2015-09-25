@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
+import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt.createPrimaryConstructorIfAbsent;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
@@ -293,7 +296,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
         else {
             if (element instanceof JetClass) {
-                JetPrimaryConstructor constructor = ((JetClass) element).createPrimaryConstructorIfAbsent();
+                JetPrimaryConstructor constructor = createPrimaryConstructorIfAbsent((JetClass) element);
                 JetParameterList oldParameterList = constructor.getValueParameterList();
                 assert oldParameterList != null : "primary constructor from factory has parameter list";
                 newParameterList = (JetParameterList) oldParameterList.replace(newParameterList);
@@ -343,13 +346,13 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     private static void changeVisibility(JetChangeInfo changeInfo, PsiElement element) {
-        JetModifierKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
+        JetModifierKeywordToken newVisibilityToken = DescriptorUtilsKt.toKeywordToken(changeInfo.getNewVisibility());
 
         if (element instanceof JetCallableDeclaration) {
-            ((JetCallableDeclaration)element).addModifier(newVisibilityToken);
+            PsiModificationUtilsKt.setVisibility((JetCallableDeclaration)element, newVisibilityToken);
         }
         else if (element instanceof JetClass) {
-            ((JetClass) element).createPrimaryConstructorIfAbsent().addModifier(newVisibilityToken);
+            PsiModificationUtilsKt.setVisibility(createPrimaryConstructorIfAbsent((JetClass) element), newVisibilityToken);
         }
         else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
     }

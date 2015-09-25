@@ -3,7 +3,7 @@ package foo
 class Test() {
     var a: Int = 5
         set(b: Int) {
-            $a = 3
+            field = 3
         }
 }
 

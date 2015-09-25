@@ -2,7 +2,7 @@
 // ERROR: Unresolved reference: finalize
 package test
 
-class Test : Base() {
+internal class Test : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -11,7 +11,7 @@ class Test : Base() {
         return super.equals(o)
     }
 
-    Throws(CloneNotSupportedException::class)
+    @Throws(CloneNotSupportedException::class)
     override fun clone(): Any {
         return super.clone()
     }
@@ -20,13 +20,13 @@ class Test : Base() {
         return super.toString()
     }
 
-    Throws(Throwable::class)
+    @Throws(Throwable::class)
     override fun finalize() {
         super.finalize()
     }
 }
 
-open class Base {
+internal open class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -35,7 +35,7 @@ open class Base {
         return super.equals(o)
     }
 
-    Throws(CloneNotSupportedException::class)
+    @Throws(CloneNotSupportedException::class)
     protected open fun clone(): Any {
         return super.clone()
     }
@@ -44,7 +44,7 @@ open class Base {
         return super.toString()
     }
 
-    Throws(Throwable::class)
+    @Throws(Throwable::class)
     protected open fun finalize() {
         super.finalize()
     }

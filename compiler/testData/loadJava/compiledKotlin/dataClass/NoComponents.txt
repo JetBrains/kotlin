@@ -1,11 +1,11 @@
 package test
 
-kotlin.data() public final class DataClass {
+@kotlin.data() public final class DataClass {
     /*primary*/ public constructor DataClass()
     public final /*synthesized*/ fun copy(): test.DataClass
 }
 
-kotlin.data() public final class OtherDataClass {
+@kotlin.data() public final class OtherDataClass {
     /*primary*/ public constructor OtherDataClass()
     public final /*synthesized*/ fun copy(): test.OtherDataClass
 }

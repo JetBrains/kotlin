@@ -175,23 +175,32 @@ public class ModifiersChecker {
 
         public void checkModifiersForDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
             checkNestedClassAllowed(modifierListOwner, descriptor);
-            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
             checkTypeParametersModifiers(modifierListOwner);
+            checkModifierListCommon(modifierListOwner, descriptor);
+        }
+
+        private void checkModifierListCommon(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
             AnnotationUseSiteTargetChecker.INSTANCE$.check(modifierListOwner, descriptor, trace);
             runDeclarationCheckers(modifierListOwner, descriptor);
             ClassDescriptor classDescriptor = descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
             annotationChecker.check(modifierListOwner, trace, classDescriptor);
+            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
         }
 
         public void checkModifiersForLocalDeclaration(
                 @NotNull JetDeclaration modifierListOwner,
                 @NotNull DeclarationDescriptor descriptor
         ) {
-            AnnotationUseSiteTargetChecker.INSTANCE$.check(modifierListOwner, descriptor, trace);
-            runDeclarationCheckers(modifierListOwner, descriptor);
-            annotationChecker.check(modifierListOwner, trace,
-                                              descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
-            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
+            checkModifierListCommon(modifierListOwner, descriptor);
+        }
+
+        public void checkModifiersForMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+            annotationChecker.check(multiDeclaration, trace, null);
+            ModifierCheckerCore.INSTANCE$.check(multiDeclaration, trace, null);
+            for (JetMultiDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
+                annotationChecker.check(multiEntry, trace, null);
+                ModifierCheckerCore.INSTANCE$.check(multiEntry, trace, null);
+            }
         }
 
         private void checkNestedClassAllowed(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {

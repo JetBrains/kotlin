@@ -1,0 +1,18 @@
+package
+
+public fun test(): kotlin.Unit
+
+package k {
+    public fun all(): kotlin.Unit
+    public fun all(/*0*/ a: kotlin.Int): kotlin.Unit
+    public fun all(/*0*/ a: kotlin.String): kotlin.Unit
+    public fun one(): kotlin.Unit
+    private fun one(/*0*/ a: kotlin.Int): kotlin.Unit
+    private fun one(/*0*/ a: kotlin.String): kotlin.Unit
+    public fun two(): kotlin.Unit
+    public fun two(/*0*/ a: kotlin.Int): kotlin.Unit
+    private fun two(/*0*/ a: kotlin.String): kotlin.Unit
+    private fun zero(): kotlin.Unit
+    private fun zero(/*0*/ a: kotlin.Int): kotlin.Unit
+    private fun zero(/*0*/ a: kotlin.String): kotlin.Unit
+}

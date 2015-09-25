@@ -83,6 +83,12 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
     }
 
     @NotNull
+    @Override
+    public File getCompilerPath() {
+        return getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR);
+    }
+
+    @NotNull
     private File getLibraryFile(@NotNull String fileName) {
         return new File(getLibPath(), fileName);
     }

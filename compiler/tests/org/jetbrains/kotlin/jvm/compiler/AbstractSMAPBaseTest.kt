@@ -23,14 +23,13 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.File
 
-public trait AbstractSMAPBaseTest {
+public interface AbstractSMAPBaseTest {
 
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.map { outputFile ->

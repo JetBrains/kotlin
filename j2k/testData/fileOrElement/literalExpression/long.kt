@@ -1,4 +1,4 @@
-class A {
+internal class A {
     private var l1 = 1L
     private var l2: Long = 1
     private val l3 = 1L

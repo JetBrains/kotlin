@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization;
 
+import com.google.protobuf.MessageLite;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,12 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.utils.Interner;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +52,24 @@ public class DescriptorSerializer {
         this.stringTable = stringTable;
         this.typeParameters = typeParameters;
         this.extension = extension;
+    }
+
+    @NotNull
+    public byte[] serialize(@NotNull MessageLite message) {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            serializeStringTable(result);
+            message.writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    public void serializeStringTable(@NotNull OutputStream out) throws IOException {
+        stringTable.serializeSimpleNames().writeDelimitedTo(out);
+        stringTable.serializeQualifiedNames().writeDelimitedTo(out);
     }
 
     @NotNull
@@ -155,10 +179,17 @@ public class DescriptorSerializer {
         boolean hasSetter = false;
         boolean hasConstant = false;
         boolean lateInit = false;
+        boolean isConst = false;
+        boolean isOperator = false;
+
+        if (descriptor instanceof FunctionDescriptor) {
+            isOperator = ((FunctionDescriptor) descriptor).isOperator();
+        }
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             lateInit = propertyDescriptor.isLateInit();
+            isConst = propertyDescriptor.isConst();
 
             int propertyFlags = Flags.getAccessorFlags(
                     hasAnnotations(propertyDescriptor),
@@ -208,7 +239,9 @@ public class DescriptorSerializer {
                 hasGetter,
                 hasSetter,
                 hasConstant,
-                lateInit
+                lateInit,
+                isConst,
+                isOperator
         ));
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
@@ -408,6 +441,15 @@ public class DescriptorSerializer {
     @NotNull
     public ProtoBuf.Package.Builder packageProto(@NotNull Collection<PackageFragmentDescriptor> fragments) {
         return packageProto(fragments, null);
+    }
+
+    @NotNull
+    public ProtoBuf.Package.Builder packageProtoWithoutDescriptors() {
+        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
+
+        extension.serializePackage(Collections.<PackageFragmentDescriptor>emptyList(), builder, stringTable);
+
+        return builder;
     }
 
     @NotNull

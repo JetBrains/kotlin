@@ -137,13 +137,20 @@ public inline fun JetFile.createTempCopy(textTransform: (String) -> String): Jet
 public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<JetElement> {
     val containers = ArrayList<JetElement>()
 
-    var element: PsiElement? = if (strict) getParent() else this
-    while (element != null) {
-        when (element) {
-            is JetBlockExpression, is JetClassBody, is JetFile -> containers.add(element as JetElement)
+    var objectFound = false
+    val parents = if (strict) parents else parentsWithSelf
+    for (element in parents) {
+        val isValidContainer = when (element) {
+            is JetFile -> true
+            is JetClassBody -> !objectFound || element.parent is JetObjectDeclaration
+            is JetBlockExpression -> !objectFound
+            else -> false
         }
+        if (!isValidContainer) continue
 
-        element = element.getParent()
+        containers.add(element as JetElement)
+
+        ((element as? JetClassBody)?.parent as? JetObjectDeclaration)?.let { objectFound = true }
     }
 
     return containers
@@ -517,7 +524,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
 }
 
 fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
-    val template = LightClassUtil.getLightClassPropertyMethods(property).getGetter()
+    val template = LightClassUtil.getLightClassPropertyMethods(property).getter
                    ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
     val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
@@ -653,7 +660,7 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
     this()
 }
 
-@throws(ConfigurationException::class)
+@Throws(ConfigurationException::class)
 public fun JetElement.validateElement(errorMessage: String) {
     try {
         AnalyzingUtils.checkForSyntacticErrors(this)
@@ -683,3 +690,19 @@ public fun invokeOnceOnCommandFinish(action: () -> Unit) {
 public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
 public fun FqNameBase.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
+
+public fun JetClass.createPrimaryConstructorIfAbsent(): JetPrimaryConstructor {
+    val constructor = getPrimaryConstructor()
+    if (constructor != null) return constructor
+    var anchor: PsiElement? = typeParameterList
+    if (anchor == null) anchor = nameIdentifier
+    if (anchor == null) anchor = lastChild
+    return addAfter(JetPsiFactory(project).createPrimaryConstructor(), anchor) as JetPrimaryConstructor
+}
+
+public fun JetClass.createPrimaryConstructorParameterListIfAbsent(): JetParameterList {
+    val constructor = createPrimaryConstructorIfAbsent()
+    val parameterList = constructor.valueParameterList
+    if (parameterList != null) return parameterList
+    return constructor.add(JetPsiFactory(project).createParameterList("()")) as JetParameterList
+}

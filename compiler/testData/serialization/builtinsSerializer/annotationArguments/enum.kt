@@ -10,9 +10,9 @@ annotation class JustEnum(val weapon: Weapon)
 
 annotation class EnumArray(val enumArray: Array<Weapon>)
 
-JustEnum(Weapon.SCISSORS)
-EnumArray(array())
+@JustEnum(Weapon.SCISSORS)
+@EnumArray(arrayOf())
 class C1
 
-EnumArray(array(Weapon.PAPER, Weapon.ROCK))
+@EnumArray(arrayOf(Weapon.PAPER, Weapon.ROCK))
 class C2

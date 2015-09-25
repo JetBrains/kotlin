@@ -28,6 +28,12 @@ import org.jetbrains.kotlin.utils.Printer
 public abstract class AbstractScopeAdapter : JetScope {
     protected abstract val workerScope: JetScope
 
+    public fun getActualScope(): JetScope =
+            if (workerScope is AbstractScopeAdapter)
+                (workerScope as AbstractScopeAdapter).getActualScope()
+            else
+                workerScope
+
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         return workerScope.getImplicitReceiversHierarchy()
     }

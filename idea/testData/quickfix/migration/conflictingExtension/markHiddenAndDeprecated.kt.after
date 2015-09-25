@@ -1,7 +1,7 @@
-// "Mark with @HiddenDeclaration and @deprecated" "true"
+// "Mark with @HiddenDeclaration and @Deprecated" "true"
 import java.io.File
 
 @HiddenDeclaration
-@deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
 val File.<caret>name: String
     get() = getName()

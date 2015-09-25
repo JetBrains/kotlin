@@ -9,7 +9,7 @@ inline fun foo() = "-"
 
 fun box(): String {
     val result1 = foobar1(if (1 == 1) true else bar(), foo(), "OK")
-    val result2 = foobar2(if (1 == 1) "true" else array("false"), foo(), "OK")
+    val result2 = foobar2(if (1 == 1) "true" else arrayOf("false"), foo(), "OK")
     assertEquals("true-OK", result1)
     assertEquals("true-OK", result2)
     return "OK"

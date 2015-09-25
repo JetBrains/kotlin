@@ -1,9 +1,5 @@
 import java.io.Closeable
 
-import java.io.Closeable
-
-import java.io.Closeable
-
 class MyException(message: String) : Exception(message)
 
 class Holder(var value: String) {

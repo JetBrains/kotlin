@@ -1,6 +1,6 @@
 package
 
-kotlin.annotation.annotation() public final class annotation : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class annotation : kotlin.Annotation {
     public constructor annotation()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9,28 +9,21 @@ kotlin.annotation.annotation() public final class annotation : kotlin.Annotation
 
 package other {
 
-    kotlin.annotation.annotation() public final class His : kotlin.Annotation {
-        public constructor His()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    kotlin.annotation.annotation() public final class My : kotlin.Annotation {
+    @kotlin.annotation.annotation() public final class My : kotlin.Annotation {
         public constructor My()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    other.My() public final class Our {
+    @other.My() public final class Our {
         public constructor Our()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    test.annotation() public final class Your {
+    @test.annotation() public final class Your {
         public constructor Your()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -40,22 +33,8 @@ package other {
 
 package test {
 
-    test.realAnnotation() public final class My {
-        public constructor My()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    test.annotation() public final class annotation {
+    @test.annotation() public final class annotation {
         public constructor annotation()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    kotlin.annotation.annotation() public final class realAnnotation : kotlin.Annotation {
-        public constructor realAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

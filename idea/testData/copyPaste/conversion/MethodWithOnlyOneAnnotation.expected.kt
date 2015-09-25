@@ -1,6 +1,6 @@
 package to
 
-SomeAnnotation
-public fun foo(): String {
+@SomeAnnotation
+fun foo(): String {
     return ""
 }

@@ -1,7 +1,7 @@
 // !openByDefault: true
 
-open class A {
-    open fun foo1() {
+internal open class A {
+    internal open fun foo1() {
     }
 
     private fun foo2() {
@@ -11,25 +11,25 @@ open class A {
     }
 }
 
-class B {
+internal class B {
     fun foo() {
     }
 }
 
-abstract class C {
-    abstract fun foo()
+internal abstract class C {
+    internal abstract fun foo()
 }
 
-interface I {
-    public fun foo()
+internal interface I {
+    fun foo()
 }
 
-open class D : I {
+internal open class D : I {
     override fun foo() {
     }
 }
 
-enum class E {
+internal enum class E {
     ;
     fun foo(): Int {
         return 0

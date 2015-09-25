@@ -1,6 +1,12 @@
 val v = 1
 
-fun foo(inlineOptions(<caret>) { }
+enum class class InlineOption {
+    A, B
+}
+
+annotation class inlineOptions(val x: InlineOption)
+
+fun foo(@inlineOptions(<caret>) { }
 
 // INVOCATION_COUNT: 1
 // EXIST: InlineOption

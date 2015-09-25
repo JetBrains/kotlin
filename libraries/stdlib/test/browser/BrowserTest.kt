@@ -8,7 +8,7 @@ import org.junit.Test as test
 
 class BrowserTest {
 
-    test fun accessBrowserDOM() {
+    @test fun accessBrowserDOM() {
         registerBrowserPage()
 
         val h1 = document["h1"].first()

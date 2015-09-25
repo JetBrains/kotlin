@@ -5,7 +5,7 @@ import kotlin.platform.*
 annotation class A(val s: String)
 
 @platformName("bar")
-A("1")
+@A("1")
 fun foo() = "foo"
 
 @field:A("2")

@@ -9,7 +9,7 @@ import java.util.Timer
 import org.junit.Test as test
 
 class TimerTest {
-    test fun scheduledTask() {
+    @test fun scheduledTask() {
         val counter = AtomicInteger(0)
         val timer = Timer()
 

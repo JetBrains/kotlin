@@ -1,6 +1,5 @@
 import java.*
 import java.util.*
-import java.util
 import <error>utils</error>.*
 
 import java.io.PrintStream
@@ -14,7 +13,7 @@ fun test(<warning>l</warning> : List<Int>) {
   val <warning>x</warning> : java.<error>List</error>
   val <warning>y</warning> : List<Int>
   val <warning>b</warning> : <warning>java.lang.Object</warning>
-  val <warning>a</warning> : <warning>util.List<Int></warning>
+  val <warning>a</warning> : <warning>java.util.List<Int></warning>
   val <warning>z</warning> : java.<error>utils</error>.<error>List</error><Int>
 
   val <warning>f</warning> : java.io.File? = null

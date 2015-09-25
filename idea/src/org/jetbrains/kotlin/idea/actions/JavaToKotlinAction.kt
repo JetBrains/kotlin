@@ -73,7 +73,7 @@ public class JavaToKotlinAction : AnAction() {
                 ProgressManager.getInstance().runProcessWithProgressSynchronously(
                         {
                             runReadAction {
-                                externalCodeUpdate = converterResult!!.externalCodeProcessing.prepareWriteOperation(ProgressManager.getInstance().getProgressIndicator())
+                                externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().getProgressIndicator())
                             }
                         },
                         title,

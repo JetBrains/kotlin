@@ -7,14 +7,14 @@ import kotlin.test.*
 
 public class RangeJVMTest {
 
-    test fun doubleRange() {
+    @test fun doubleRange() {
         val range = -1.0..3.14159265358979
         assertFalse(jDouble.NEGATIVE_INFINITY in range)
         assertFalse(jDouble.POSITIVE_INFINITY in range)
         assertFalse(jDouble.NaN in range)
     }
 
-    test fun floatRange() {
+    @test fun floatRange() {
         val range = -1.0f..3.14159f
         assertFalse(jFloat.NEGATIVE_INFINITY in range)
         assertFalse(jFloat.POSITIVE_INFINITY in range)
@@ -22,7 +22,7 @@ public class RangeJVMTest {
         assertFalse(jFloat.NaN in range)
     }
 
-    test fun illegalProgressionCreation() {
+    @test fun illegalProgressionCreation() {
         fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith(IllegalArgumentException::class, block = f)
         // create Progression explicitly with increment = 0
         assertFailsWithIllegalArgument { IntProgression(0, 5, 0) }

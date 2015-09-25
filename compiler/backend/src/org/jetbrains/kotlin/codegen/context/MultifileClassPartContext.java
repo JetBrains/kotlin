@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
-import org.jetbrains.kotlin.codegen.OwnerKind;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class MultifileClassPartContext extends MultifileClassOrPartContext {
+public class MultifileClassPartContext extends MultifileClassContextBase implements DelegatingToPartContext {
     public MultifileClassPartContext(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
@@ -31,4 +30,9 @@ public class MultifileClassPartContext extends MultifileClassOrPartContext {
         super(descriptor, parent, multifileClassType, filePartType);
     }
 
+    @Nullable
+    @Override
+    public Type getImplementationOwnerClassType() {
+        return getFilePartType();
+    }
 }

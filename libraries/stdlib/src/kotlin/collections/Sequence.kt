@@ -26,7 +26,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> {
     return iteratorSequence.constrainOnce()
 }
 
-deprecated("Use asSequence() instead.", ReplaceWith("asSequence()"))
+@Deprecated("Use asSequence() instead.", ReplaceWith("asSequence()"))
 public fun <T> Iterator<T>.sequence(): Sequence<T> = asSequence()
 
 

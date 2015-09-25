@@ -34,6 +34,8 @@ JetFile: ParameterType_ERR.kt
       PsiErrorElement:Expecting ')'
         PsiElement(LPAR)('(')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -66,6 +68,8 @@ JetFile: ParameterType_ERR.kt
       PsiErrorElement:Expecting ')'
         PsiElement(LPAR)('(')
   MODIFIER_LIST
+    PsiErrorElement:Use '@' symbol before annotations
+      <empty list>
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE

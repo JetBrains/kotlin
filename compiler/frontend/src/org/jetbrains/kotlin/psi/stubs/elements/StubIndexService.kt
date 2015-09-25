@@ -48,13 +48,13 @@ public open class StubIndexService protected constructor() {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
     }
 
-    throws(IOException::class)
+    @Throws(IOException::class)
     public open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getPackageFqName().asString())
         dataStream.writeBoolean(stub.isScript())
     }
 
-    throws(IOException::class)
+    @Throws(IOException::class)
     public open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
         val packageFqNameAsString = dataStream.readName()
         val isScript = dataStream.readBoolean()
@@ -62,7 +62,7 @@ public open class StubIndexService protected constructor() {
     }
 
     companion object {
-        @jvmStatic
+        @JvmStatic
         public fun getInstance(): StubIndexService {
             return ServiceManager.getService(StubIndexService::class.java) ?: NO_INDEX
         }

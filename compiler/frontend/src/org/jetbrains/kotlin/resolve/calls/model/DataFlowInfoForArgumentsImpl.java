@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -27,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArguments {
-    private final Call call; //for better debug messages only
-    private Map<ValueArgument, DataFlowInfo> infoMap = null;
-    private Map<ValueArgument, ValueArgument> nextArgument = null;
-    private DataFlowInfo initialInfo;
-    private DataFlowInfo resultInfo;
+    @NotNull  private final Call call; //for better debug messages only
+    @Nullable private Map<ValueArgument, DataFlowInfo> infoMap = null;
+    @Nullable private Map<ValueArgument, ValueArgument> nextArgument = null;
+    @Nullable private DataFlowInfo initialInfo;
+    @Nullable private DataFlowInfo resultInfo;
 
     public DataFlowInfoForArgumentsImpl(@NotNull Call call) {
         this.call = call;
@@ -62,6 +63,7 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     @NotNull
     @Override
     public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
+        assert initialInfo != null : "Initial data flow info was not set for call: " + call;
         DataFlowInfo infoForArgument = infoMap == null ? null : infoMap.get(valueArgument);
         if (infoForArgument == null) {
             return initialInfo;
@@ -86,8 +88,8 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     @NotNull
     @Override
     public DataFlowInfo getResultInfo() {
-        if (resultInfo == null) return initialInfo;
         assert initialInfo != null : "Initial data flow info was not set for call: " + call;
+        if (resultInfo == null) return initialInfo;
         return initialInfo.and(resultInfo);
     }
 }

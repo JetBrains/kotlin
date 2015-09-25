@@ -1,6 +1,6 @@
 package foo
 
-trait WithNumber {
+interface WithNumber {
     var number: Int
 }
 

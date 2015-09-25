@@ -33,10 +33,6 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.scopes.DECAPITALIZED_DEPRECATED_ANNOTATIONS
-import org.jetbrains.kotlin.resolve.scopes.DECAPITALIZED_SHORT_NAMES
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private val JAVA_DEPRECATED = FqName(java.lang.Deprecated::class.java.name)
@@ -49,9 +45,6 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
         }
         else if (targetDescriptor is PropertyDescriptor) {
             propertyGetterWorkaround(targetDescriptor, trace, element)
-        }
-        else {
-            checkDecapitalizedAnnotation(element, targetDescriptor, trace)
         }
     }
 
@@ -70,32 +63,6 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
         if (deprecated != null) {
             val (annotation, target) = deprecated
             trace.report(createDeprecationDiagnostic(element, target, annotation))
-        }
-        else {
-            checkDecapitalizedAnnotation(element, targetDescriptor, trace)
-        }
-    }
-
-    private fun checkDecapitalizedAnnotation(element: PsiElement, targetDescriptor: DeclarationDescriptor, trace: BindingTrace) {
-        val effectiveTargetDescriptor = when (targetDescriptor) {
-            is ConstructorDescriptor -> targetDescriptor.containingDeclaration
-            else -> targetDescriptor
-        } as? ClassDescriptor ?: return
-
-        val unsafeFqName = effectiveTargetDescriptor.fqNameUnsafe
-        if (!unsafeFqName.isSafe) return
-
-        val simpleName = unwrapSimpleName(element) ?: return
-        if (unsafeFqName.toSafe() in DECAPITALIZED_DEPRECATED_ANNOTATIONS && simpleName.getReferencedName() in DECAPITALIZED_SHORT_NAMES) {
-            trace.report(Errors.DEPRECATED_DECAPITALIZED_ANNOTATION.on(simpleName, effectiveTargetDescriptor))
-        }
-    }
-
-    private fun unwrapSimpleName(element: PsiElement): JetSimpleNameExpression? {
-        return when (element) {
-            is JetConstructorCalleeExpression -> (element.typeReference?.typeElement as? JetUserType)?.referenceExpression
-            is JetSimpleNameExpression -> element
-            else -> null
         }
     }
 

@@ -41,7 +41,7 @@ public class KotlinBeforeResolveHighlightingPass(
         document: Document
 ) : TextEditorHighlightingPass(file.project, document), DumbAware {
 
-    private volatile var annotationHolder: AnnotationHolderImpl? = null
+    @Volatile private var annotationHolder: AnnotationHolderImpl? = null
 
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))

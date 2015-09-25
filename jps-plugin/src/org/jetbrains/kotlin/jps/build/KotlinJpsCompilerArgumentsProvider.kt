@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.CompileContext
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 
-public trait KotlinJpsCompilerArgumentsProvider {
+public interface KotlinJpsCompilerArgumentsProvider {
     public fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String>
     public fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String>
 }

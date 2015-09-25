@@ -5,6 +5,6 @@ fun main(args: Array<String>) {
 
 fun getStringLength(obj: Any): Int? {
     if (obj is String)
-        return obj.length // no cast to String is needed
+        return obj.length() // no cast to String is needed
     return null
 }

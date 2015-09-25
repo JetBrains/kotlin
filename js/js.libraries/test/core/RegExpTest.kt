@@ -23,13 +23,13 @@ import org.junit.Test as test
 
 class RegExpTest {
 
-    test fun regExpToString() {
+    @test fun regExpToString() {
         val pattern = "q(\\d+)d"
         val re = RegExp(pattern, "i")
         assertEquals("/$pattern/i", re.toString())
     }
 
-    test fun regExpProperties() {
+    @test fun regExpProperties() {
         val re1 = RegExp("[a-z]", "img")
         assertTrue(re1.global)
         assertTrue(re1.ignoreCase)
@@ -41,7 +41,7 @@ class RegExpTest {
         
     }
 
-    test fun regExpTest() {
+    @test fun regExpTest() {
         val pattern = "q(\\d+)d"
         val re = RegExp(pattern, "i")
 
@@ -52,16 +52,16 @@ class RegExpTest {
     }
 
 
-    test fun regExpExec() {
+    @test fun regExpExec() {
         val string = "R2D2 beats A5D5 "
         var re = RegExp("""(\w\d)(\w\d)""", "g")
         val m1 = re.exec(string)!!
-        assertEquals(array("R2D2", "R2", "D2"), m1)
+        assertEquals(arrayOf("R2D2", "R2", "D2"), m1)
         assertEquals(0, (m1 as RegExpMatch).index)
         assertEquals(4, re.lastIndex)
 
         val m2 = re.exec(string)!!
-        assertEquals(array("A5D5", "A5", "D5"), m2)
+        assertEquals(arrayOf("A5D5", "A5", "D5"), m2)
         assertEquals(string.indexOf(m2[0]!!), (m2 as RegExpMatch).index)
 
         val noMatch = re.exec(string)

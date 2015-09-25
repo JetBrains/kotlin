@@ -17,7 +17,7 @@
 package org.jetbrains.eval4j.jdi.test
 
 import org.jetbrains.eval4j.*
-import com.sun.jdi
+import com.sun.jdi.*
 import junit.framework.TestSuite
 import org.jetbrains.eval4j.test.buildTestSuite
 import junit.framework.TestCase
@@ -30,11 +30,13 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.eval4j.test.getTestName
 import com.sun.jdi.ObjectReference
+import com.sun.jdi.event.BreakpointEvent
+import com.sun.jdi.event.ClassPrepareEvent
 
 val DEBUGEE_CLASS = javaClass<Debugee>()
 
 fun suite(): TestSuite {
-    val connectors = jdi.Bootstrap.virtualMachineManager().launchingConnectors()
+    val connectors = Bootstrap.virtualMachineManager().launchingConnectors()
     val connector = connectors[0]
     println("Using connector $connector")
 
@@ -54,8 +56,8 @@ fun suite(): TestSuite {
     req.enable()
 
     val latch = CountDownLatch(1)
-    var classLoader : jdi.ClassLoaderReference? = null
-    var thread : jdi.ThreadReference? = null
+    var classLoader : ClassLoaderReference? = null
+    var thread : ThreadReference? = null
 
     Thread {
         val eventQueue = vm.eventQueue()
@@ -63,7 +65,7 @@ fun suite(): TestSuite {
             val eventSet = eventQueue.remove()
             for (event in eventSet.eventIterator()) {
                 when (event) {
-                    is jdi.event.ClassPrepareEvent -> {
+                    is ClassPrepareEvent -> {
                         val _class = event.referenceType()!!
                         if (_class.name() == debugeeName) {
                             for (l in _class.allLineLocations()) {
@@ -78,7 +80,7 @@ fun suite(): TestSuite {
                             }
                         }
                     }
-                    is jdi.event.BreakpointEvent -> {
+                    is BreakpointEvent -> {
                         println("Suspended at: " + event.location())
 
                         thread = event.thread()
@@ -122,7 +124,7 @@ fun suite(): TestSuite {
                         eval
                 )
 
-                fun jdi.ObjectReference?.callToString(): String? {
+                fun ObjectReference?.callToString(): String? {
                     if (this == null) return "null"
                     return (eval.invokeMethod(
                                                 this.asValue(),
@@ -132,7 +134,7 @@ fun suite(): TestSuite {
                                                         "()Ljava/lang/String;",
                                                         false
                                                 ),
-                                                listOf()).jdiObj as jdi.StringReference).value()
+                                                listOf()).jdiObj as StringReference).value()
 
                 }
 

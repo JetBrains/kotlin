@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
-import kotlin.platform.platformStatic
 
 // TODO: add hash checksum to defineModule?
 /**

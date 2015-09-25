@@ -28,6 +28,7 @@ package Test
 // EXIST:  vararg
 /*why?*/
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data
@@ -37,5 +38,6 @@ package Test
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 /*TODO*/
 // NOTHING_ELSE

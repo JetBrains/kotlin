@@ -2,7 +2,7 @@ class A() {
     var x: Int = 0
         get() = <error>"s"</error>
         set(value: <error>String</error>) {
-            $x = <error>value</error>
+            field = <error>value</error>
         }
     val y: Int
         get(): <error>String</error> = "s"
@@ -13,7 +13,7 @@ class A() {
 
     var a: Any = 1
         set(v: <error>String</error>) {
-            $a = v
+            field = v
         }
     val b: Int
         get(): <error>Any</error> = "s"
@@ -23,11 +23,11 @@ class A() {
         }
     val d = 1
         get() {
-            return $d
+            return field
         }
     val e = 1
         get(): <error>String</error> {
-            return <error>$e</error>
+            return <error>field</error>
         }
 
 }

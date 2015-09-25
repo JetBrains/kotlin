@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.serialization.StringTable
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
@@ -33,7 +32,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import kotlin.platform.platformStatic
 
 public object KotlinJavascriptSerializationUtil {
     public val CLASS_METADATA_FILE_EXTENSION: String = "kjsm"
@@ -51,13 +49,13 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private val STRING_TABLE_DEFAULT_BYTES = run {
-        val nameStream = ByteArrayOutputStream()
-        val strings = StringTable(KotlinJavascriptSerializerExtension)
-        SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        nameStream.toByteArray()
+        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension)
+        val stream = ByteArrayOutputStream()
+        serializer.serializeStringTable(stream)
+        stream.toByteArray()
     }
 
-    platformStatic
+    @JvmStatic
     public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
         val contentMap = metadata.toContentMap()
 
@@ -100,7 +98,7 @@ public object KotlinJavascriptSerializationUtil {
     public fun metadataAsString(moduleName: String, moduleDescriptor: ModuleDescriptor): String =
         KotlinJavascriptMetadataUtils.formatMetadataAsString(moduleName, moduleDescriptor.toBinaryMetadata())
 
-    fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArrayOutputStream) -> Unit) {
+    fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArray) -> Unit) {
         val packageView = module.getPackage(fqName)
 
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
@@ -113,29 +111,27 @@ public object KotlinJavascriptSerializationUtil {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
                 val stream = ByteArrayOutputStream()
                 classProto.writeTo(stream)
-                writeFun(getFileName(classDescriptor), stream)
+                writeFun(getFileName(classDescriptor), stream.toByteArray())
             }
         }, skip)
 
         val packageStream = ByteArrayOutputStream()
         val fragments = packageView.fragments
         val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
-        if (packageProto.getMemberCount() > 0) {
+        if (packageProto.memberCount > 0) {
             packageProto.writeTo(packageStream)
-            writeFun(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName), packageStream)
+            writeFun(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName), packageStream.toByteArray())
         }
 
-        val nameStream = ByteArrayOutputStream()
-        val strings = serializer.getStringTable()
-
+        val strings = serializer.stringTable
         serializeClassNamesInPackage(fqName, fragments, strings, skip, writeFun)
 
-        val simpleNames = strings.serializeSimpleNames()
-        val qualifiedNames = strings.serializeQualifiedNames()
+        val nameStream = ByteArrayOutputStream()
+        serializer.serializeStringTable(nameStream)
+        val stringBytes = nameStream.toByteArray()
 
-        if (simpleNames.getStringCount() > 0 || qualifiedNames.getQualifiedNameCount() > 0) {
-            SerializationUtil.serializeStringTable(nameStream, simpleNames, qualifiedNames)
-            writeFun(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName), nameStream)
+        if (!stringBytes.isEmpty()) {
+            writeFun(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName), stringBytes)
         }
     }
 
@@ -144,7 +140,7 @@ public object KotlinJavascriptSerializationUtil {
             packageFragments: Collection<PackageFragmentDescriptor>,
             stringTable: StringTable,
             skip: (DeclarationDescriptor) -> Boolean,
-            writeFun: (String, ByteArrayOutputStream) -> Unit
+            writeFun: (String, ByteArray) -> Unit
     ) {
         val classes = packageFragments.flatMap {
             it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
@@ -158,10 +154,10 @@ public object KotlinJavascriptSerializationUtil {
 
         val classesProto = builder.build()
 
-        if (classesProto.getClassNameCount() > 0) {
+        if (classesProto.classNameCount > 0) {
             val stream = ByteArrayOutputStream()
             classesProto.writeTo(stream)
-            writeFun(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName), stream)
+            writeFun(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName), stream.toByteArray())
         }
     }
 
@@ -174,7 +170,7 @@ public object KotlinJavascriptSerializationUtil {
 
         DescriptorUtils.getPackagesFqNames(this).forEach {
             serializePackage(this, it) {
-                fileName, stream -> contentMap[fileName] = stream.toByteArray()
+                fileName, bytes -> contentMap[fileName] = bytes
             }
         }
 

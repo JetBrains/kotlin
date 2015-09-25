@@ -4,6 +4,6 @@ annotation class Anno
 
 class Class {
     companion object {
-        Anno class Nested
+        @Anno class Nested
     }
 }

@@ -1,3 +1,3 @@
-open class Base
+internal open class Base
 
-class One : Base()
+internal class One : Base()

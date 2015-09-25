@@ -1,4 +1,4 @@
-enum class E {
+internal enum class E {
     FOO;
 
     fun foo() {

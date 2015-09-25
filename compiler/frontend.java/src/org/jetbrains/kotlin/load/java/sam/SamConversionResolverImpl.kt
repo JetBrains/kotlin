@@ -38,7 +38,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
         return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)
     }
 
-    suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     override fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D? {
         return when {
             !SingleAbstractMethodUtils.isSamAdapterNecessary(original) -> null

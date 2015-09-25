@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -298,6 +300,9 @@ public class JetPsiUtil {
 
     @Nullable
     public static Name getAliasName(@NotNull JetImportDirective importDirective) {
+        if (importDirective.isAllUnder()) {
+            return null;
+        }
         String aliasName = importDirective.getAliasName();
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
@@ -407,12 +412,12 @@ public class JetPsiUtil {
         return declaration.getBodyExpression() == null;
     }
 
-    public static boolean isBackingFieldReference(@NotNull JetSimpleNameExpression expression) {
-        return expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+    public static boolean isBackingFieldReference(@NotNull JetSimpleNameExpression expression, @Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof SyntheticFieldDescriptor || expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
     }
 
-    public static boolean isBackingFieldReference(@Nullable JetElement element) {
-        return element instanceof JetSimpleNameExpression && isBackingFieldReference((JetSimpleNameExpression)element);
+    public static boolean isBackingFieldReference(@Nullable JetElement element, @Nullable DeclarationDescriptor descriptor) {
+        return element instanceof JetSimpleNameExpression && isBackingFieldReference((JetSimpleNameExpression) element, descriptor);
     }
 
     @Nullable

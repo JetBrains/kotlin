@@ -8,7 +8,7 @@ import org.junit.Test as test
 
 class LazyJVMTest {
 
-    test fun lazyInitializationForcedOnSerialization() {
+    @test fun lazyInitializationForcedOnSerialization() {
         for(mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.NONE)) {
             val lazy = lazy(mode) { "initialized" }
             assertFalse(lazy.isInitialized())

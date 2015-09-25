@@ -18,7 +18,7 @@ class A() {
 var a: A = A()
     get() {
         c0++
-        return $a
+        return field
     }
 
 fun box(): String {

@@ -20,13 +20,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptAnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
@@ -35,13 +31,13 @@ import java.io.ByteArrayInputStream
 
 public class KotlinJavaScriptDeserializerForDecompiler(
         classFile: VirtualFile
-) : DeserializerForDecompilerBase(classFile.getParent()!!, JsMetaFileUtils.getPackageFqName(classFile)) {
+) : DeserializerForDecompilerBase(classFile.parent!!, JsMetaFileUtils.getPackageFqName(classFile)) {
 
     private val nameResolver = run {
         val moduleDirectory = JsMetaFileUtils.getModuleDirectory(packageDirectory)
         val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(directoryPackageFqName)
         val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
-        assert(stringsFile != null, "strings file not found: $stringsFileName")
+        assert(stringsFile != null) { "strings file not found: $stringsFileName" }
         NameResolver.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
     }
 
@@ -53,7 +49,8 @@ public class KotlinJavaScriptDeserializerForDecompiler(
 
     override val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
+            ResolveEverythingToKotlinAnyLocalClassResolver, ErrorReporter.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.Dynamic,
+            ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
@@ -68,18 +65,15 @@ public class KotlinJavaScriptDeserializerForDecompiler(
         }
 
         val content = file.contentsToByteArray(false)
-        val packageData = content.toPackageData(nameResolver)
+        val (nameResolver, packageProto) = content.toPackageData(nameResolver)
 
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName),
-                packageData.getPackageProto(),
-                packageData.getNameResolver(),
-                deserializationComponents
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }
         return membersScope.getDescriptors()
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinJavaScriptDeserializerForDecompiler>())
+        private val LOG = Logger.getInstance(KotlinJavaScriptDeserializerForDecompiler::class.java)
     }
 }

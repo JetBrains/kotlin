@@ -61,4 +61,6 @@ public class FakeCallableDescriptorForObject(
     override fun getCompileTimeInitializer() = null
 
     override fun getSource(): SourceElement = classDescriptor.getSource()
+
+    override fun isConst(): Boolean = false
 }

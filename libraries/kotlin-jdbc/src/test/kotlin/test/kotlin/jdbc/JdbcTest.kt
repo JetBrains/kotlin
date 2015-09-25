@@ -23,7 +23,7 @@ fun createDataSource() : DataSource {
 }
 
 class JdbcTest {
-    test fun queryWithIndexColumnAccess() {
+    @test fun queryWithIndexColumnAccess() {
         dataSource.query("select * from foo") {
             for (row in it) {
                 println("id ${row[1]} and name: ${row[2]}")
@@ -31,7 +31,7 @@ class JdbcTest {
         }
     }
 
-    test fun queryWithNamedColumnAccess() {
+    @test fun queryWithNamedColumnAccess() {
         // query using names
         dataSource.query("select * from foo") {
             for (row in it) {
@@ -40,7 +40,7 @@ class JdbcTest {
         }
     }
 
-    test fun getValuesAsMap() {
+    @test fun getValuesAsMap() {
         dataSource.query("select * from foo") {
             for (row in it) {
                 println(row.getValuesAsMap())
@@ -48,7 +48,7 @@ class JdbcTest {
         }
     }
 
-    test fun stringFormat() {
+    @test fun stringFormat() {
         dataSource.query(kotlin.template.StringTemplate(arrayOf("select * from foo where id = ", 1))) {
             for (row in it) {
                 println(row.getValuesAsMap())
@@ -56,7 +56,7 @@ class JdbcTest {
         }
     }
 
-    test fun mapIterator() {
+    @test fun mapIterator() {
         val mapper = { rs: ResultSet ->
             "id: ${rs["id"]}"
         }
@@ -68,7 +68,7 @@ class JdbcTest {
         }
     }
 
-    test fun map() {
+    @test fun map() {
         dataSource.query("select * from foo") {
             val rows = it.map { "id: ${it["id"]}" }
             for (row in rows) {
@@ -77,13 +77,13 @@ class JdbcTest {
         }
     }
 
-    test fun count() {
+    @test fun count() {
         dataSource.query("select count(*) from foo") {
             println("count: ${it.singleInt()}")
         }
     }
 
-    test fun formatCursor() {
+    @test fun formatCursor() {
         dataSource.query("select * from foo") {
             println(it.getColumnNames().toList().joinToString("\t"))
 

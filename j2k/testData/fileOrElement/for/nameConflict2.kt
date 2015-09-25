@@ -1,4 +1,4 @@
-class A {
+internal class A {
     fun foo() {
         run {
             var i = 1

@@ -1,4 +1,4 @@
-class F {
+internal class F {
 
 
     //c3

@@ -1,4 +1,4 @@
-object Library {
+internal object Library {
     fun call() {
     }
 
@@ -7,7 +7,7 @@ object Library {
     }
 }
 
-class User {
+internal class User {
     fun main() {
         Library.call()
         Library.getString().isEmpty()

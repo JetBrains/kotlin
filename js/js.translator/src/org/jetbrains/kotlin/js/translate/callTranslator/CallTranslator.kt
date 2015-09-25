@@ -32,11 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import kotlin.platform.platformStatic
 
 object CallTranslator {
-    jvmOverloads
-    platformStatic
+    @JvmOverloads
+    @JvmStatic
     fun translate(context: TranslationContext,
                   resolvedCall: ResolvedCall<out FunctionDescriptor>,
                   extensionOrDispatchReceiver: JsExpression? = null

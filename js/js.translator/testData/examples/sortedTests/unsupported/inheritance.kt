@@ -2,7 +2,7 @@
 
 open class X(val x: Int) {
 }
-trait Y {
+interface Y {
     abstract val y: Int
 }
 
@@ -13,7 +13,7 @@ class Point(x: Int, yy: Int) : X(x), Y {
     override val y: Int = yy
 }
 
-trait Abstract {
+interface Abstract {
 }
 
 class P1(x: Int, yy: Y) : Abstract, X(x), Y by yy {

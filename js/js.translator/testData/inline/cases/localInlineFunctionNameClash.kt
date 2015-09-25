@@ -9,7 +9,7 @@ internal inline fun run(action: () -> Int): Int {
 internal fun add(a: Int, b: Int): Int {
     var sum = a + b
 
-    @inline fun getSum(): Int {
+    inline fun getSum(): Int {
         return sum
     }
 

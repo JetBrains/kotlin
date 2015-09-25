@@ -26,12 +26,11 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
@@ -216,27 +215,27 @@ public class InlineCodegenUtil {
             @NotNull CodegenContext codegenContext,
             @NotNull DeclarationDescriptor currentDescriptor,
             @NotNull JetTypeMapper typeMapper,
-            @NotNull JvmFileClassesProvider fileClassesManager
+            @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
             PsiFile file = getContainingFile(codegenContext);
 
-            Type packagePartType;
+            Type implementationOwnerType;
             if (file == null) {
-                //in case package fragment clinit
-                assert codegenContext instanceof PackageContext : "Expected package context but " + codegenContext;
-                packagePartType = ((PackageContext) codegenContext).getPackagePartType();
+                implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
             } else {
-                packagePartType = fileClassesManager.getFileClassType((JetFile) file);
+                implementationOwnerType = FileClassesPackage.getFileClassType(fileClassesProvider, (JetFile) file);
             }
 
-            if (packagePartType == null) {
+            if (implementationOwnerType == null) {
                 DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
                 //noinspection ConstantConditions
-                throw new RuntimeException("Couldn't find declaration for " + contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() );
+                throw new RuntimeException("Couldn't find declaration for " +
+                                           contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() +
+                                           "; context: " + codegenContext);
             }
 
-            return packagePartType.getInternalName();
+            return implementationOwnerType.getInternalName();
         }
         else if (currentDescriptor instanceof ClassifierDescriptor) {
             Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
@@ -254,7 +253,7 @@ public class InlineCodegenUtil {
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
         //noinspection ConstantConditions
-        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesManager) + "$" + suffix;
+        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesProvider) + "$" + suffix;
     }
 
     public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {

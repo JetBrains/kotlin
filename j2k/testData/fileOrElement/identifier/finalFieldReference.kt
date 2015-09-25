@@ -1,10 +1,10 @@
-class `$$$$$`
+internal class `$$$$$`
 
-open class `$`
+internal open class `$`
 
-class `$$`(val `$$$`: `$$$$$`) : `$`() {
+internal class `$$`(val `$$$`: `$$$$$`) : `$`() {
 
-    public fun `$$$$$$`(): `$$$$$` {
+    fun `$$$$$$`(): `$$$$$` {
         return `$$$`
     }
 }

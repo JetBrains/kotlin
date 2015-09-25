@@ -13,7 +13,7 @@ internal fun localWithoutCapture(a: Int, b: Int): Int {
     var mult = 0
 
     repeatAction(a) {
-        @inline fun inc(x: Int): Int {
+        inline fun inc(x: Int): Int {
             return x + 1
         }
 
@@ -29,7 +29,7 @@ internal fun localWithCapture(a: Int, b: Int): Int {
     var mult = 0
 
     repeatAction(a) {
-        @inline fun inc() {
+        inline fun inc() {
             mult++
         }
 

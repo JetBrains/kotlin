@@ -9,6 +9,10 @@ text and files.
 
 Core functions and types, available on all supported platforms.
 
+# Package kotlin.annotation
+
+Library support for the Kotlin annotation facility.
+
 # Package kotlin.browser
 
 API to access the web browser DOM.
@@ -32,10 +36,6 @@ IO API for working with files and streams.
 # Package kotlin.math
 
 Mathematics API.
-
-# Package kotlin.modules
-
-API for defining compilation units.
 
 # Package kotlin.platform
 

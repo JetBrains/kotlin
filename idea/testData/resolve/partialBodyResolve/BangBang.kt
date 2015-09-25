@@ -3,14 +3,14 @@ fun foo(p: String?, p1: Any?) {
     y(f()!!)
 
     if (a) {
-        print(p!!.size)
+        print(p!!.length())
     }
     else {
-        print(p!!.length)
+        print(p!!.get(1))
     }
 
     if (y()) {
-        print(<caret>p.size)
+        print(<caret>p.charAt(1))
         p1!!
     }
 

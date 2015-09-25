@@ -4,7 +4,7 @@
  */
 
 import java.util.*
-import java.util.Collections.max
+import java.util.Collections
 
 /*
  * A field where cells live. Effectively immutable
@@ -132,16 +132,16 @@ fun <T, C : MutableCollection<T>> Array<T>.to(result: C): C {
 fun makeField(s: String): Field {
     val lines: List<String> = s.splitBy("\n")
 
-    val w = max<String>(lines.toList(), comparator<String> { o1, o2 ->
-        val l1: Int = o1.size
-        val l2 = o2.size
+    val w = Collections.max<String>(lines.toList(), comparator<String> { o1, o2 ->
+        val l1: Int = o1.length()
+        val l2 = o2.length()
         l1 - l2
     })!!
-    val data = Array(lines.size) { Array(w.size) { false } }
+    val data = Array(lines.size()) { Array(w.length()) { false } }
 
     // workaround
     for (i in data.indices) {
-        data[i] = Array(w.size) { false }
+        data[i] = Array(w.length()) { false }
         for (j in data[i].indices)
             data[i][j] = false
     }
@@ -153,7 +153,7 @@ fun makeField(s: String): Field {
         }
     }
 
-    return Field(w.size, lines.size) { i, j -> data[i][j] }
+    return Field(w.length(), lines.size()) { i, j -> data[i][j] }
 }
 
 // An excerpt from the Standard Library
@@ -163,4 +163,4 @@ fun <K, V> MutableMap<K, V>.set(k: K, v: V) {
     put(k, v)
 }
 
-val <T> Array<T>.isEmpty: Boolean get() = size == 0
+val <T> Array<T>.isEmpty: Boolean get() = size() == 0

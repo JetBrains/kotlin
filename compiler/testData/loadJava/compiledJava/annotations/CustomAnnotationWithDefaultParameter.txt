@@ -10,7 +10,7 @@ public interface CustomAnnotationWithDefaultParameter {
         public abstract fun second(): kotlin.String
     }
 
-    test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f", second = "s") public open class MyTest {
+    @test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f", second = "s") public open class MyTest {
         public constructor MyTest()
     }
 }

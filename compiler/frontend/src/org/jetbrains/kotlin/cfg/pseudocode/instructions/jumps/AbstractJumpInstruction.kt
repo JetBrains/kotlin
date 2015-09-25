@@ -31,7 +31,7 @@ public abstract class AbstractJumpInstruction(
 ) : JetElementInstructionImpl(element, lexicalScope), JumpInstruction {
     public var resolvedTarget: Instruction? = null
         set(value: Instruction?) {
-            $resolvedTarget = outgoingEdgeTo(value)
+            field = outgoingEdgeTo(value)
         }
 
     protected abstract fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction

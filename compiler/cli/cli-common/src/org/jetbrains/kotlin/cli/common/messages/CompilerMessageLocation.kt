@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
-import kotlin.platform.platformStatic
-
 public data class CompilerMessageLocation private constructor(
         public val path: String?,
         public val line: Int,
@@ -28,9 +26,11 @@ public data class CompilerMessageLocation private constructor(
             path + (if (line != -1 || column != -1) " (" + line + ":" + column + ")" else "")
 
     companion object {
-        public platformStatic val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
+        @JvmStatic
+        public val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
 
-        public platformStatic fun create(
+        @JvmStatic
+        public fun create(
                 path: String?,
                 line: Int,
                 column: Int,

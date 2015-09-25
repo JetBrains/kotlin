@@ -20,11 +20,11 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class DOMParser {
+@native public open class DOMParser {
     fun parseFromString(str: String, type: dynamic): Document = noImpl
 }
 
-native public open class XMLSerializer {
+@native public open class XMLSerializer {
     fun serializeToString(root: Node): String = noImpl
 }
 

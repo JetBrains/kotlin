@@ -2,18 +2,18 @@
 // !specifyLocalVariableTypeByDefault: true
 package test
 
-class Foo {
+internal class Foo {
     fun execute() {
     }
 }
 
-class Bar {
+internal class Bar {
     var fooNotNull = Foo()
     var fooNullable: Foo? = null
 }
 
-class Test {
-    public fun test(barNotNull: Bar, barNullable: Bar?) {
+internal class Test {
+    fun test(barNotNull: Bar, barNullable: Bar?) {
         barNotNull.fooNotNull.execute()
         barNotNull.fooNullable!!.execute()
         barNullable!!.fooNotNull.execute()

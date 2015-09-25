@@ -1,4 +1,4 @@
-class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
+internal class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
 
     fun foo(p: Int): Int {
         return p
@@ -13,7 +13,7 @@ class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
             return p
         }
 
-        public fun staticFoo2(): Int {
+        fun staticFoo2(): Int {
             return 0
         }
     }

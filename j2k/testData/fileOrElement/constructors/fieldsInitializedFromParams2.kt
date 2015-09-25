@@ -1,4 +1,4 @@
-class C(private val field: Int) {
+internal class C(private val field: Int) {
 
     init {
         println(field)

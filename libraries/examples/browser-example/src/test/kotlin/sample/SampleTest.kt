@@ -10,7 +10,7 @@ import kotlin.test.*
 open class SampleTest {
     open val driver: WebDriver = HtmlUnitDriver(true)
 
-    test fun homePage(): Unit {
+    @test fun homePage(): Unit {
         driver.get("file://" + File("sample.html").getCanonicalPath())
         Thread.sleep(1000)
 

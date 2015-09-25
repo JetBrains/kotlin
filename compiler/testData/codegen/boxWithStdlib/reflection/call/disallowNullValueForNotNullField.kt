@@ -1,13 +1,13 @@
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 
 class A {
     private var foo: String = ""
 }
 
 object O {
-    private static var bar: String = ""
+    private @static var bar: String = ""
 }
 
 class CounterTest<T>(t: T) {

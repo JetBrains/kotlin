@@ -1,4 +1,3 @@
-import java.sql
 import java.util.Date
 
-val x = sql.Date(1)
+val x = java.sql.Date(1)

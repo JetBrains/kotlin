@@ -1,4 +1,3 @@
-import kotlin.InlineOption.*
 
 inline fun <R> toOnlyLocal(crossinline p: () -> R) {
     p()

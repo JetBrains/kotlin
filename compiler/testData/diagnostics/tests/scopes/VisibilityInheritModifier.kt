@@ -69,17 +69,17 @@ class M : L() {
 }
 //---------------
 interface R {
-    <!INCOMPATIBLE_MODIFIERS!>internal<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> fun foo() {}
+    fun foo() {}
 }
 
 interface P : R {
-    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
+    override fun foo() {}
 }
 
 interface Q : R {
-    protected override fun foo() {}
+    override fun foo() {}
 }
 
 class S : P, Q {
-    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }

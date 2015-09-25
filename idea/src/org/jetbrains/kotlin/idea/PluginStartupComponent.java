@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.decompiler.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -30,6 +32,10 @@ import java.io.IOException;
 
 public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
+
+    public static PluginStartupComponent getInstance() {
+        return ApplicationManager.getApplication().getComponent(PluginStartupComponent.class);
+    }
 
     @Override
     @NotNull
@@ -43,6 +49,8 @@ public class PluginStartupComponent implements ApplicationComponent {
 
         JarUserDataManager.INSTANCE$.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE$);
         JarUserDataManager.INSTANCE$.register(HasCompiledKotlinInJar.INSTANCE$);
+
+        BuiltInsReferenceResolver.Companion.refreshBuiltIns();
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
     }

@@ -1,7 +1,7 @@
 package test
 
 interface A {
-    private val a: String
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>private<!> val a: String
       get() = "AAAA!"
 }
 

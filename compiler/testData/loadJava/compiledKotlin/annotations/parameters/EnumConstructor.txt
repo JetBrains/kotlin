@@ -1,15 +1,15 @@
 package test
 
-kotlin.annotation.annotation() public final class A : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 
-kotlin.annotation.annotation() public final class B : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class B : kotlin.Annotation {
     /*primary*/ public constructor B()
 }
 
 public final enum class E : kotlin.Enum<test.E> {
-    /*primary*/ private constructor E(/*0*/ test.A() x: kotlin.String, /*1*/ test.B() y: kotlin.Int)
+    /*primary*/ private constructor E(/*0*/ @test.A() x: kotlin.String, /*1*/ @test.B() y: kotlin.Int)
     public final val x: kotlin.String
         public final fun <get-x>(): kotlin.String
     public final val y: kotlin.Int

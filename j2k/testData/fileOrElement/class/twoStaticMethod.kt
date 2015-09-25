@@ -1,4 +1,4 @@
-object S {
+internal object S {
     fun sB(): Boolean {
         return true
     }

@@ -77,6 +77,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
+    @TestMetadata("Const")
+    public void testConst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Const/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Enum/");

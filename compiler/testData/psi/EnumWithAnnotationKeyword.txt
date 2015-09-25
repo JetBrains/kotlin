@@ -29,6 +29,8 @@ JetFile: EnumWithAnnotationKeyword.kt
       PsiElement(enum)('enum')
       PsiWhiteSpace(' ')
       PsiElement(annotation)('annotation')
+      PsiErrorElement:Use '@' symbol before annotations
+        <empty list>
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE

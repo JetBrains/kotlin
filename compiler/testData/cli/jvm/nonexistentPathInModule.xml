@@ -1,0 +1,6 @@
+<modules>
+    <module name="name" outputDir="whatever" type="java-production">
+        <sources path="nonexistentFile.kt"/>
+        <sources path="some/nonexistent/dir/"/>
+    </module>
+</modules>

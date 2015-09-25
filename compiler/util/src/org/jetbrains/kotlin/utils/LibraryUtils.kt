@@ -27,7 +27,6 @@ import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.jar.Manifest
 import java.util.zip.ZipFile
-import kotlin.platform.platformStatic
 
 public object LibraryUtils {
     private val LOG = Logger.getInstance(javaClass<LibraryUtils>())
@@ -65,33 +64,33 @@ public object LibraryUtils {
         TITLE_KOTLIN_JAVASCRIPT_LIB = jsLib
     }
 
-    platformStatic
+    @JvmStatic
     public fun getJarFile(classesRoots: List<VirtualFile>, jarName: String): VirtualFile? {
         return classesRoots.firstOrNull { it.name == jarName }
     }
 
-    platformStatic
+    @JvmStatic
     public fun getKotlinJsModuleName(library: File): String? {
         return getManifestMainAttributesFromJarOrDirectory(library)?.getValue(KOTLIN_JS_MODULE_ATTRIBUTE_NAME)
     }
 
-    platformStatic
+    @JvmStatic
     public fun isOldKotlinJavascriptLibrary(library: File): Boolean =
             checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE) && getKotlinJsModuleName(library) != null
 
-    platformStatic
+    @JvmStatic
     public fun isKotlinJavascriptLibraryWithMetadata(library: File): Boolean = KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
 
-    platformStatic
+    @JvmStatic
     public fun isKotlinJavascriptLibrary(library: File): Boolean =
             isOldKotlinJavascriptLibrary(library) || isKotlinJavascriptLibraryWithMetadata(library)
 
-    platformStatic
+    @JvmStatic
     public fun isKotlinJavascriptStdLibrary(library: File): Boolean {
         return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)
     }
 
-    platformStatic
+    @JvmStatic
     public fun copyJsFilesFromLibraries(libraries: List<String>, outputLibraryJsPath: String) {
         for (library in libraries) {
             val file = File(library)
@@ -106,12 +105,12 @@ public object LibraryUtils {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun traverseJsLibraries(libs: List<File>, action: (content: String, path: String)->Unit) {
         libs.forEach { traverseJsLibrary(it, action) }
     }
 
-    platformStatic
+    @JvmStatic
     public fun traverseJsLibrary(lib: File, action: (content: String, path: String)->Unit) {
         when {
             lib.isDirectory() -> traverseDirectory(lib, action)

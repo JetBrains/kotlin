@@ -1,7 +1,7 @@
 // ERROR: Variable cannot be initialized before declaration
 package demo
 
-class C(a: Int) {
+internal class C(a: Int) {
     init {
         abc = a * 2
     }

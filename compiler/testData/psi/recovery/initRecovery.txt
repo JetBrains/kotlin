@@ -29,6 +29,7 @@ JetFile: initRecovery.kt
       ANONYMOUS_INITIALIZER
         MODIFIER_LIST
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE

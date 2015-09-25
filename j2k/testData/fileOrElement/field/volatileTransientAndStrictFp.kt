@@ -1,8 +1,10 @@
-class A {
-    Deprecated("")
-    Volatile var field1 = 0
+// ERROR: This annotation is not applicable to target 'member property'
+internal class A {
+    @Deprecated("")
+    @Volatile var field1 = 0
 
-    Transient var field2 = 1
+    @Transient var field2 = 1
 
-    Strictfp var field3 = 2.0
+    // Should work even for bad modifiers
+    @Strictfp var field3 = 2.0
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.utils;
 
 import com.intellij.util.containers.hash.EqualityPolicy;
+import com.intellij.util.containers.hash.HashSet;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,5 +33,18 @@ public class HashSetUtil {
             map.put(t, "");
         }
         return map.keySet();
+    }
+
+    @NotNull
+    public static <T> Set<T> symmetricDifference(@NotNull Set<T> set1, @NotNull Set<T> set2) {
+        Set<T> intersection = new HashSet<T>();
+        intersection.addAll(set1);
+        intersection.retainAll(set2);
+        Set<T> result = new HashSet<T>();
+        result.addAll(set1);
+        result.addAll(set2);
+        result.removeAll(intersection);
+
+        return result;
     }
 }

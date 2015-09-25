@@ -19,16 +19,12 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.MethodIntoObjectProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.ToObjectWithOnlyMethodsProcessing
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.LinkedHashMap
+import java.util.*
 
 class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
     val identifier = Identifier(name).assignNoPrototype()
@@ -42,7 +38,8 @@ enum class AccessorKind {
 class ClassBodyConverter(private val psiClass: PsiClass,
                          private val converter: Converter,
                          private val isOpenClass: Boolean,
-                         private val isObject: Boolean) {
+                         private val isObject: Boolean,
+                         private val isAnonymousObject: Boolean = false) {
     private val membersToRemove = HashSet<PsiMember>()
     private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
 
@@ -93,7 +90,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, false)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, false, false)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -120,6 +117,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
 
         if (primaryConstructorSignature != null
+            && !isAnonymousObject
             && primaryConstructorSignature.annotations.isEmpty
             && primaryConstructorSignature.accessModifier == null
             && primaryConstructorSignature.parameterList.parameters.isEmpty()
@@ -128,7 +126,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, psiClass.isEnum())
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, psiClass.isEnum(), isAnonymousObject)
     }
 
     private fun Converter.convertMember(member: PsiMember,
@@ -187,11 +185,11 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 membersToRemove.add(setterInfo.method)
             }
 
-            val getterAccess = converter.convertModifiers(getterInfo.method).accessModifier()
+            val getterAccess = converter.convertModifiers(getterInfo.method, isOpenClass).accessModifier()
             val setterAccess = if (setterInfo != null)
-                converter.convertModifiers(setterInfo.method).accessModifier()
+                converter.convertModifiers(setterInfo.method, isOpenClass).accessModifier()
             else
-                converter.convertModifiers(field).accessModifier()
+                converter.convertModifiers(field, false).accessModifier()
             //TODO: check that setter access is not bigger
             fieldCorrections[field] = FieldCorrectionInfo(propertyName, getterAccess, setterAccess)
 

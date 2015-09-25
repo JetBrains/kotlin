@@ -1,7 +1,7 @@
 package
 
 package a {
-    public val o: a.o.<no name provided>
+    public val o: kotlin.Any
     public fun </*0*/ T> a.A.foo(/*0*/ f: T): kotlin.Unit
 
     public final class A {

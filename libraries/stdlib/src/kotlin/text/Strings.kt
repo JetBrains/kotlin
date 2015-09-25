@@ -6,11 +6,11 @@ import kotlin.text.MatchResult
 import kotlin.text.Regex
 
 /** Returns the string with leading and trailing text matching the given string removed */
-deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
+@Deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
 public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
 
 /** Returns the string with the prefix and postfix text trimmed */
-deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
+@Deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
 public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
 
 /**
@@ -79,10 +79,10 @@ public fun String.trimStart(vararg chars: Char): String = trimStart { it in char
  */
 public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
-deprecated("Use removePrefix() instead", ReplaceWith("removePrefix(prefix)"))
+@Deprecated("Use removePrefix() instead", ReplaceWith("removePrefix(prefix)"))
 public fun String.trimLeading(prefix: String): String = removePrefix(prefix)
 
-deprecated("Use removeSuffix() instead", ReplaceWith("removeSuffix(postfix)"))
+@Deprecated("Use removeSuffix() instead", ReplaceWith("removeSuffix(postfix)"))
 public fun String.trimTrailing(postfix: String): String = removeSuffix(postfix)
 
 /**
@@ -95,7 +95,7 @@ public fun String.trim(): String = trim { it.isWhitespace() }
  */
 public fun String.trimStart(): String = trimStart { it.isWhitespace() }
 
-deprecated("Use trimStart instead.", ReplaceWith("trimStart()"))
+@Deprecated("Use trimStart instead.", ReplaceWith("trimStart()"))
 public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
 
 /**
@@ -103,7 +103,7 @@ public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
  */
 public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
 
-deprecated("Use trimEnd instead.", ReplaceWith("trimEnd()"))
+@Deprecated("Use trimEnd instead.", ReplaceWith("trimEnd()"))
 public fun String.trimTrailing(): String = trimEnd { it.isWhitespace() }
 
 /**
@@ -149,8 +149,8 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 }
 
 /** Returns `true` if the string is not `null` and not empty */
-deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
-platformName("isNotEmptyNullable")
+@Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
+@platformName("isNotEmptyNullable")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
@@ -738,7 +738,7 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
-kotlin.jvm.jvmOverloads
+@kotlin.jvm.JvmOverloads
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         indexOfAny(listOf(string), startIndex, ignoreCase)
@@ -920,7 +920,7 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
 public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
-deprecated("Use split(delimiters) instead.", ReplaceWith("split(*delimiters, ignoreCase = ignoreCase, limit = limit)"))
+@Deprecated("Use split(delimiters) instead.", ReplaceWith("split(*delimiters, ignoreCase = ignoreCase, limit = limit)"))
 public fun String.splitBy(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 

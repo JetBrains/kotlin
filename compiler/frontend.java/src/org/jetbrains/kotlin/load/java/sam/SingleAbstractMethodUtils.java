@@ -170,7 +170,8 @@ public class SingleAbstractMethodUtils {
                 Arrays.asList(parameter),
                 returnType,
                 Modality.FINAL,
-                samInterface.getVisibility()
+                samInterface.getVisibility(),
+                false
         );
 
         return result;
@@ -206,7 +207,8 @@ public class SingleAbstractMethodUtils {
                         valueParameters,
                         returnType,
                         Modality.FINAL,
-                        original.getVisibility()
+                        original.getVisibility(),
+                        false
                 );
             }
         });

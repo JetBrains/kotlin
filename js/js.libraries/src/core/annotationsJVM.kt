@@ -19,4 +19,9 @@ package kotlin.jvm
 // is used in common generated code in stdlib
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-internal annotation class jvmOverloads
+public annotation class JvmOverloads
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+public annotation class JvmName(public val name: String)

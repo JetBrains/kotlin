@@ -1,16 +1,16 @@
-public class AAA {
-    public var x: Int = 42
+class AAA {
+    var x = 42
 
-    public fun foo() {
+    fun foo() {
         x = x + 1
     }
 
-    public fun bar(other: AAA) {
+    fun bar(other: AAA) {
         other.x = other.x + 1
     }
 }
 
-class B {
+internal class B {
     fun foo(a: AAA) {
         a.x = a.x + 1
     }

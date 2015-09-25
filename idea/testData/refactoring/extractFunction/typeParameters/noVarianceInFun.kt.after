@@ -1,0 +1,17 @@
+// PARAM_DESCRIPTOR: val e: T? defined in EntityClass.foo
+// PARAM_TYPES: T?, Entity?
+// SIBLING:
+abstract public class EntityClass<out T: Entity>() {
+    fun foo() {
+        val e: T? = null
+        __dummyTestFun__(e)
+    }
+}
+
+private fun <T : Entity> __dummyTestFun__(e: T?) {
+    e?.value
+}
+
+open class Entity {
+    var value: String? = null
+}

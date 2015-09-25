@@ -23,14 +23,14 @@ import kotlin.test.*
 import org.junit.Test as test
 
 class CompanionObjectsExtensionsTest {
-    test fun intTest() {
+    @test fun intTest() {
         val i = Int
 
         assertEquals(java.lang.Integer.MAX_VALUE, Int.MAX_VALUE)
         assertEquals(java.lang.Integer.MIN_VALUE, Int.MIN_VALUE)
     }
 
-    test fun doubleTest() {
+    @test fun doubleTest() {
         val d = Double
 
         assertEquals(java.lang.Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
@@ -41,7 +41,7 @@ class CompanionObjectsExtensionsTest {
         assertEquals(java.lang.Double.MIN_VALUE, Double.MIN_VALUE)
     }
 
-    test fun floatTest() {
+    @test fun floatTest() {
         val f = Float
 
         assertEquals(java.lang.Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
@@ -52,34 +52,34 @@ class CompanionObjectsExtensionsTest {
         assertEquals(java.lang.Float.MIN_VALUE, Float.MIN_VALUE)
     }
 
-    test fun longTest() {
+    @test fun longTest() {
         val l = Long
 
         assertEquals(java.lang.Long.MAX_VALUE, Long.MAX_VALUE)
         assertEquals(java.lang.Long.MIN_VALUE, Long.MIN_VALUE)
     }
 
-    test fun shortTest() {
+    @test fun shortTest() {
         val s = Short
 
         assertEquals(java.lang.Short.MAX_VALUE, Short.MAX_VALUE)
         assertEquals(java.lang.Short.MIN_VALUE, Short.MIN_VALUE)
     }
 
-    test fun byteTest() {
+    @test fun byteTest() {
         val b = Byte
 
         assertEquals(java.lang.Byte.MAX_VALUE, Byte.MAX_VALUE)
         assertEquals(java.lang.Byte.MIN_VALUE, Byte.MIN_VALUE)
     }
 
-    test fun charTest() {
+    @test fun charTest() {
         val ch = Char
 
         assertEquals(ch, Char)
     }
 
-    test fun stringTest() {
+    @test fun stringTest() {
         val s = String
 
         assertEquals(s, String)

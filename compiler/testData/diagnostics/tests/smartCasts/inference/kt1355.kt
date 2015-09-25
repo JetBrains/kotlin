@@ -14,7 +14,7 @@ fun foo(map: MutableMap<Int, String>, value: String?) {
 
 //---------------------------
 
-public data open class Tag(public var tagName: String) {
+public data class Tag(public var tagName: String) {
     public val attributes: MutableMap<String, String> = HashMap<String, String>()
     public val contents: MutableList<Tag> = arrayListOf()
 

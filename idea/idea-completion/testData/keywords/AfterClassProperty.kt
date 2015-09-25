@@ -34,6 +34,7 @@ class MouseMovedEventArgs
 // EXIST:  init
 /*why?*/
 // EXIST:  companion object
+// EXIST:  operator
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data
@@ -43,4 +44,5 @@ class MouseMovedEventArgs
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  crossinline
+// EXIST:  const
 // NOTHING_ELSE

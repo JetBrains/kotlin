@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -71,6 +72,7 @@ public class DebuggerUtils {
     ) {
         String extension = FileUtilRt.getExtension(fileName);
         if (!KOTLIN_EXTENSIONS.contains(extension)) return null;
+        if (DumbService.getInstance(project).isDumb()) return null;
 
         Collection<JetFile> filesInPackage = findFilesWithExactPackage(className.getPackageFqName(), searchScope, project);
         Collection<JetFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<JetFile>() {

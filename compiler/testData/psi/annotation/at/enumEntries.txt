@@ -122,7 +122,13 @@ JetFile: enumEntries.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Ann')
           PsiWhiteSpace(' ')
-          PsiElement(private)('@private')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('Q')

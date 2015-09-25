@@ -43,7 +43,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         return object : JetVisitorVoid() {
             private fun check(callableDeclaration: JetCallableDeclaration) {
                 val receiverTypeReference = callableDeclaration.getReceiverTypeReference()
-                if (receiverTypeReference == null) return
+                if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
                 if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
 
                 if (callableDeclaration is JetProperty && callableDeclaration.getAccessors().isEmpty()) return

@@ -1,6 +1,6 @@
 package p
 
-trait T {
+interface T {
     object Null : T { }
 
     object Other {}

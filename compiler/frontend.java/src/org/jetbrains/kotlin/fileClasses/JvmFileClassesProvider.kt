@@ -22,12 +22,29 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
 public interface JvmFileClassesProvider {
-    public fun getFileClassFqName(file: JetFile): FqName
-
-    public fun getFileClassInternalName(file: JetFile): String =
-            JvmClassName.byFqNameWithoutInnerClasses(getFileClassFqName(file)).internalName
-
-    public fun getFileClassType(file: JetFile): Type =
-            Type.getObjectType(getFileClassInternalName(file))
+    public fun getFileClassInfo(file: JetFile): JvmFileClassInfo
 }
 
+public fun FqName.getInternalName(): String =
+        JvmClassName.byFqNameWithoutInnerClasses(this).internalName
+
+public fun FqName.getClassType(): Type =
+        Type.getObjectType(getInternalName())
+
+public fun JvmFileClassesProvider.getFileClassFqName(file: JetFile): FqName =
+        getFileClassInfo(file).fileClassFqName
+
+public fun JvmFileClassesProvider.getFileClassInternalName(file: JetFile): String =
+        getFileClassFqName(file).getInternalName()
+
+public fun JvmFileClassesProvider.getFileClassType(file: JetFile): Type =
+        getFileClassFqName(file).getClassType()
+
+public fun JvmFileClassesProvider.getFacadeClassFqName(file: JetFile): FqName =
+        getFileClassInfo(file).facadeClassFqName
+
+public fun JvmFileClassesProvider.getFacadeClassInternalName(file: JetFile): String =
+        getFacadeClassFqName(file).getInternalName()
+
+public fun JvmFileClassesProvider.getFacadeClassType(file: JetFile): Type =
+        getFacadeClassFqName(file).getClassType()

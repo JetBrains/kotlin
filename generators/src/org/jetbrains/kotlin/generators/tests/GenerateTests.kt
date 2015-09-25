@@ -97,6 +97,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
+import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
@@ -183,6 +184,14 @@ fun main(args: Array<String>) {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 
+        testClass(AbstractBlackBoxMultifileClassCodegenTest::class.java, "BlackBoxMultifileClassKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doTestMultifileClassAgainstSources")
+        }
+
+        testClass(AbstractCompileKotlinAgainstMultifileKotlinTest::class.java, "CompileKotlinAgainstMultifileKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doBoxTest")
+        }
+
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
             model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
@@ -203,8 +212,12 @@ fun main(args: Array<String>) {
             model("codegen/script", extension = "kts")
         }
 
-        testClass(javaClass<AbstractBytecodeTextTest>()) {
+        testClass(AbstractBytecodeTextTest::class.java) {
             model("codegen/bytecodeText")
+        }
+
+        testClass(AbstractBytecodeTextTest::class.java, "BytecodeTextMultifileTestGenerated") {
+            model("codegen/bytecodeTextMultifile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
         testClass(javaClass<AbstractBytecodeListingTest>()) {
@@ -819,6 +832,15 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("jps-plugin/test", "jps-plugin/testData") {
+        testClass(javaClass<AbstractProtoComparisonTest>()) {
+            model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
+            model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
+            model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
+            model("comparison/unchanged", extension = null, excludeParentDirs = true)
+        }
+    }
+
     testGroup("plugins/android-compiler-plugin/tests", "plugins/android-compiler-plugin/testData") {
         testClass(javaClass<AbstractAndroidXml2KConversionTest>()) {
             model("android/converter/simple", recursive = false, extension = null)
@@ -940,7 +962,7 @@ fun main(args: Array<String>) {
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(javaClass<T>()),
-            @noinline init: TestClass.() -> Unit
+            noinline init: TestClass.() -> Unit
     ) {
         testClass(javaClass<T>(), suiteTestClass, init)
     }

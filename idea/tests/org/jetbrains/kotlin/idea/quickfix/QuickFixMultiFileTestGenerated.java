@@ -1158,7 +1158,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 doTestWithExtraFile(fileName);
             }
         }
-
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")

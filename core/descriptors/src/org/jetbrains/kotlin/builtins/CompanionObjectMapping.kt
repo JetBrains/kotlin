@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.builtins
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
-import kotlin.platform.platformStatic
 
 public object CompanionObjectMapping {
     private val classes = linkedSetOf<ClassDescriptor>()
@@ -33,10 +32,12 @@ public object CompanionObjectMapping {
         classes.add(builtIns.getEnum())
     }
 
-    public platformStatic fun allClassesWithIntrinsicCompanions(): Set<ClassDescriptor> =
+    @JvmStatic
+    public fun allClassesWithIntrinsicCompanions(): Set<ClassDescriptor> =
             Collections.unmodifiableSet(classes)
 
-    public platformStatic fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
+    @JvmStatic
+    public fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
         return DescriptorUtils.isCompanionObject(classDescriptor) &&
                classDescriptor.getContainingDeclaration() in classes
     }

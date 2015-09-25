@@ -1,6 +1,6 @@
 package inlineFun1
 
-inline fun myFun(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) f: () -> Int): Int {
+inline fun myFun(crossinline f: () -> Int): Int {
     val o = object {
         fun test() = 1
     }

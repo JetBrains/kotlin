@@ -1,3 +1,3 @@
-open class Base(name: String)
+internal open class Base(name: String)
 
-class One(name: String, second: String) : Base(name)
+internal class One(name: String, second: String) : Base(name)

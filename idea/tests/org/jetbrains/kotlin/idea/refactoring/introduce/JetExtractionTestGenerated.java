@@ -695,6 +695,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/traitFunction.kt");
                 doExtractFunctionTest(fileName);
             }
+
+            @TestMetadata("unresolvedWrongReceiver.kt")
+            public void testUnresolvedWrongReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/unresolvedWrongReceiver.kt");
+                doExtractFunctionTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")
@@ -1985,6 +1991,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("javaSyntheticProperty.kt")
+                public void testJavaSyntheticProperty() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticProperty.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("missingReceiver.kt")
                 public void testMissingReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/missingReceiver.kt");
@@ -2000,6 +2012,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("paramWithExtensionInvoke.kt")
                 public void testParamWithExtensionInvoke() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/paramWithExtensionInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("qualifiedThis.kt")
+                public void testQualifiedThis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/qualifiedThis.kt");
                     doExtractFunctionTest(fileName);
                 }
 
@@ -2289,6 +2307,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("localClassInTypeConstraint.kt")
             public void testLocalClassInTypeConstraint() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/localClassInTypeConstraint.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("noVarianceInFun.kt")
+            public void testNoVarianceInFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/noVarianceInFun.kt");
                 doExtractFunctionTest(fileName);
             }
 

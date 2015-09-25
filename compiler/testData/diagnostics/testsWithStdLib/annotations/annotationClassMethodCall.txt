@@ -14,7 +14,7 @@ public final class A : kotlin.Annotation {
     public abstract fun value(): kotlin.String
 }
 
-A(arg = 1, value = "a") public final class MyClass {
+@A(arg = 1, value = "a") public final class MyClass {
     public constructor MyClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

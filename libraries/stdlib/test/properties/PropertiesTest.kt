@@ -11,14 +11,14 @@ class Customer : ChangeSupport() {
     // via KT-1299
     var name: String? = null
     set(value) {
-        changeProperty("name", $name, value)
-        $name = value
+        changeProperty("name", field, value)
+        field = value
     }
 
     var city: String? = null
     set(value) {
-        changeProperty("city", $city, value)
-        $city = value
+        changeProperty("city", field, value)
+        field = value
     }
 
     override fun toString() = "Customer($name, $city)"
@@ -35,7 +35,7 @@ class MyChangeListener : ChangeListener {
 
 class PropertiesTest {
 
-    test fun testModel() {
+    @test fun testModel() {
         val c = Customer()
         c.name = "James"
         c.city = "Mells"

@@ -1,1 +1,1 @@
-class A : Base()
+internal class A : Base()

@@ -8,7 +8,7 @@ annotation class Ann(
         val p5: Byte
 )
 
-Ann(
+@Ann(
     p1 = java.lang.Byte.MAX_VALUE + 1,
     p2 = 1 + 1,
     p3 = java.lang.Byte.MAX_VALUE + 1,
@@ -16,4 +16,4 @@ Ann(
     p5 = 1.toByte() + 1.toByte()
 ) class MyClass
 
-// EXPECTED: Ann(p1 = 128, p2 = 2.toByte(), p3 = 128, p4 = 2, p5 = 2)
+// EXPECTED: @Ann(p1 = 128, p2 = 2.toByte(), p3 = 128, p4 = 2, p5 = 2)

@@ -2,15 +2,15 @@ package test
 
 public interface AnnotationInParam {
 
-    test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test")) public open class A {
+    @test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test")) public open class A {
         public constructor A()
     }
 
-    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"})) public open class B {
+    @test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"})) public open class B {
         public constructor B()
     }
 
-    test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f", second = "s")) public open class C {
+    @test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f", second = "s")) public open class C {
         public constructor C()
     }
 

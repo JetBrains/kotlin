@@ -1,1 +1,1 @@
-enum class A
+internal enum class A

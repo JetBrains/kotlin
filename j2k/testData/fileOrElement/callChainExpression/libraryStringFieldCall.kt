@@ -1,9 +1,9 @@
 // ERROR: Property must be initialized or be abstract
-class Library {
-    public val myString: String
+internal class Library {
+    val myString: String
 }
 
-class User {
+internal class User {
     fun main() {
         Library().myString.isEmpty()
     }

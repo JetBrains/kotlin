@@ -1,5 +1,5 @@
-class C {
-    public fun equals(c: C): Boolean {
+internal class C {
+    fun equals(c: C): Boolean {
         return false
     }
 

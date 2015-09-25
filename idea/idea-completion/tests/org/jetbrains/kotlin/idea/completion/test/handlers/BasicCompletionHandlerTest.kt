@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 
-deprecated("All tests from here to be moved to the generated test")
+@Deprecated("All tests from here to be moved to the generated test")
 public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     private fun checkResult(){
         fixture.checkResultByFile(getTestName(false) + ".kt.after")

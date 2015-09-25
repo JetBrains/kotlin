@@ -28,7 +28,7 @@ public class MethodOrderTest: CodegenTestCase() {
     public fun testDelegatedMethod() {
         doTest(
                 """
-                    trait Trait {
+                    interface Trait {
                         fun f0()
                         fun f4()
                         fun f3()

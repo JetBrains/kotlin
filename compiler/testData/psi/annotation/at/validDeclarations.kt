@@ -1,4 +1,4 @@
-private @open @[Ann1(1)] @Ann2("1") Ann3("2") class A(
+private @open @[Ann1(1)] @Ann2("1") @Ann3("2") class A(
         @Volatile(1) private val x: @AnnType("3") @open Int,
         @private var y: Int,
         @open z: Int

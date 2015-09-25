@@ -1,13 +1,13 @@
 package foo
 
-native
+@native
 internal class A(val v: String)
 
 internal class B {
     fun bar(a: A, extLambda: A.(Int, String) -> String): String = a.extLambda(7, "_rr_")
 }
 
-native
+@native
 internal fun nativeBox(b: B): String = noImpl
 
 fun box(): String {

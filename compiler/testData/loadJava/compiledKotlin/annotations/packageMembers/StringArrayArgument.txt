@@ -2,10 +2,10 @@ package test
 
 @field:test.Anno(t = {"prosper"}) public val bar: kotlin.Int = 42
     public fun <get-bar>(): kotlin.Int
-test.Anno(t = {}) public fun baz(): kotlin.Unit
-test.Anno(t = {"live", "long"}) public fun foo(): kotlin.Unit
+@test.Anno(t = {}) public fun baz(): kotlin.Unit
+@test.Anno(t = {"live", "long"}) public fun foo(): kotlin.Unit
 
-kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val t: kotlin.Array<out kotlin.String>
         public final fun <get-t>(): kotlin.Array<out kotlin.String>

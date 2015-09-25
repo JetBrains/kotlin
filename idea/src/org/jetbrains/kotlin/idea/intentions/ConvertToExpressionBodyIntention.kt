@@ -87,8 +87,6 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
     }
 
     private fun canOmitType(declaration: JetCallableDeclaration, expression: JetExpression): Boolean {
-        if (!declaration.canRemoveTypeSpecificationByVisibility()) return false
-
         // Workaround for anonymous objects and similar expressions without resolution scope
         // TODO: This should probably be fixed in front-end so that resolution scope is recorded for anonymous objects as well
         val scopeExpression = ((declaration as? JetDeclarationWithBody)?.getBodyExpression() as? JetBlockExpression)

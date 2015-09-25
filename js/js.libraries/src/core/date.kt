@@ -1,6 +1,6 @@
 package kotlin.js
 
-native
+@native
 public class Date() {
     public fun getTime() : Int = noImpl
 }

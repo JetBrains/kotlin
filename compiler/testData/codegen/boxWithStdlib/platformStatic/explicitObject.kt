@@ -2,9 +2,9 @@ import kotlin.platform.platformStatic
 
 object AX {
 
-    platformStatic val c: String = "OK"
+    @platformStatic val c: String = "OK"
 
-    platformStatic fun aStatic(): String {
+    @platformStatic fun aStatic(): String {
         return AX.b()
     }
 
@@ -12,7 +12,7 @@ object AX {
         return AX.b()
     }
 
-    platformStatic fun b(): String {
+    @platformStatic fun b(): String {
         return "OK"
     }
 

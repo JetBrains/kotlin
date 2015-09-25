@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -47,7 +45,7 @@ public abstract class DeserializedPackageFragment(
     protected var components: DeserializationComponents by Delegates.notNull()
 
     // component dependency cycle
-    Inject
+    @Inject
     public fun setDeserializationComponents(components: DeserializationComponents) {
         this.components = components
     }
@@ -58,17 +56,10 @@ public abstract class DeserializedPackageFragment(
         DeserializedPackageMemberScope(this, packageProto, nameResolver, components, classNames = { loadClassNames(packageProto) })
     }
 
-    // Just a temporary hack to inject deprecated decapitalized annotation
-    internal val deserializedMemberScopeWrapped by storageManager.createLazyValue {
-        DecapitalizedAnnotationScope.wrapIfNeeded(deserializedMemberScope, fqName)
-    }
-
-    override fun getMemberScope(): JetScope {
-        return deserializedMemberScopeWrapped
-    }
+    override fun getMemberScope() = deserializedMemberScope
 
     internal fun hasTopLevelClass(name: Name): Boolean {
-        return name in deserializedMemberScope.classNames
+        return name in getMemberScope().classNames
     }
 
     protected abstract fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name>

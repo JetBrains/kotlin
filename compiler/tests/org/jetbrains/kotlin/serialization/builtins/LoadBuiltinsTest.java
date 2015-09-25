@@ -21,10 +21,15 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
@@ -33,14 +38,21 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static kotlin.KotlinPackage.single;
+import static org.jetbrains.kotlin.builtins.BuiltinsPackage.createBuiltInPackageFragmentProvider;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
@@ -66,15 +78,15 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                         )
                 );
 
+        PackageFragmentDescriptor deserialized = createBuiltInsPackageFragment();
+
         List<JetFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src")
         ));
 
-        PackageFragmentDescriptor deserialized = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
-
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
-        List<PackageFragmentDescriptor> fragments = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).getFragments();
+        List<PackageFragmentDescriptor> fragments = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME).getFragments();
         for (PackageFragmentDescriptor fromLazyResolve : fragments) {
             if (fromLazyResolve instanceof LazyPackageDescriptor) {
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(
@@ -84,6 +96,30 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                 break;
             }
         }
+    }
+
+    @NotNull
+    private static PackageFragmentDescriptor createBuiltInsPackageFragment() {
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
+        );
+
+        PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
+                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
+                new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                new Function1<String, InputStream>() {
+                    @Override
+                    public InputStream invoke(String path) {
+                        return ForTestCompileRuntime.runtimeJarClassLoader().getResourceAsStream(path);
+                    }
+                }
+        );
+
+        builtInsModule.initialize(packageFragmentProvider);
+        builtInsModule.setDependencies(builtInsModule);
+
+        return single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
     }
 
     @NotNull

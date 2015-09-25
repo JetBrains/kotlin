@@ -159,7 +159,7 @@ public class EnumValue(
 
 public abstract class ErrorValue : ConstantValue<Unit>(Unit) {
 
-    deprecated("Should not be called, for this is not a real value, but a indication of an error")
+    @Deprecated("Should not be called, for this is not a real value, but a indication of an error")
     override val value: Unit
         get() = throw UnsupportedOperationException()
 

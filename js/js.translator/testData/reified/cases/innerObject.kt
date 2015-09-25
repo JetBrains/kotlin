@@ -8,7 +8,7 @@ class B
 
 class C : A()
 
-trait TypePredicate {
+interface TypePredicate {
     fun invoke(x: Any): Boolean
 }
 

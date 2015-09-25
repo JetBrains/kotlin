@@ -32,7 +32,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
         get() = "A"
 
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e9: String
-        set(v) { $e9 = v }
+        set(v) { field = v }
 
     abstract <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val e10: String
 

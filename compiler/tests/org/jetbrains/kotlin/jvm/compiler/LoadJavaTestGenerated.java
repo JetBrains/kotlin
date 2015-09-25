@@ -4078,6 +4078,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("OperatorKeyword.kt")
+            public void testOperatorKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("PropagateDeepSubclass.kt")
             public void testPropagateDeepSubclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");
@@ -4468,6 +4474,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("CollectionSize.kt")
             public void testCollectionSize() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("Const.kt")
+            public void testConst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
                 doTestCompiledKotlin(fileName);
             }
 

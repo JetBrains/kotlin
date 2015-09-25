@@ -1,8 +1,8 @@
-object Outer {
-    public var o: Any? = Object()
+internal object Outer {
+    var o: Any? = Object()
 
-    public class Nested {
-        public fun foo() {
+    class Nested {
+        fun foo() {
             o = null
         }
     }

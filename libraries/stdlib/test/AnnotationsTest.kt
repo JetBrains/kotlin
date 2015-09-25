@@ -13,7 +13,7 @@ class AnnotatedClass
 
 
 class AnnotationTest {
-    test fun annotationType() {
+    @test fun annotationType() {
         val annotations = javaClass<AnnotatedClass>().getAnnotations()!!
         
         var foundMyAnno = false

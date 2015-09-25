@@ -139,7 +139,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
             }
         }, " ");
 
-        String expectedAnnotationWithTarget = "@" + AnnotationUseSiteTarget.FILE.getRenderName() + ":" + expectedAnnotation;
+        String expectedAnnotationWithTarget = "@" + AnnotationUseSiteTarget.FILE.getRenderName() + ":" + expectedAnnotation.substring(1);
 
         assertEquals(expectedAnnotationWithTarget, actualAnnotation);
     }

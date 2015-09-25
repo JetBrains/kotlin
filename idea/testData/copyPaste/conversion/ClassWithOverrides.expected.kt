@@ -2,7 +2,7 @@ package to
 
 import javaPack.I
 
-public class C : I {
+class C : I {
     override fun foo(): String {
         return ""
     }

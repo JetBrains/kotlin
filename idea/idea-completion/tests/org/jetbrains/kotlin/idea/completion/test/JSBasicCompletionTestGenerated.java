@@ -253,6 +253,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InEmptyPackage.kt")
+        public void testInEmptyPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InEmptyPackage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InExpressionNoPrefix.kt")
         public void testInExpressionNoPrefix() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InExpressionNoPrefix.kt");
@@ -352,6 +358,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("InObjectInDelegationSpecifier.kt")
         public void testInObjectInDelegationSpecifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InObjectInDelegationSpecifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InPackage.kt")
+        public void testInPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InPackage.kt");
             doTest(fileName);
         }
 
@@ -598,12 +610,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("OverloadFunctions.kt")
         public void testOverloadFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/OverloadFunctions.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("PackageCompletionInClassBody.kt")
-        public void testPackageCompletionInClassBody() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/PackageCompletionInClassBody.kt");
             doTest(fileName);
         }
 

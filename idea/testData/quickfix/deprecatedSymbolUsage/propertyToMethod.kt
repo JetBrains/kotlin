@@ -1,6 +1,6 @@
 // "Replace with 'getX()'" "true"
 
-trait X {
+interface X {
     @Deprecated("", ReplaceWith("getX()"))
     val x: String
 

@@ -7,7 +7,13 @@ JetFile: validDeclarations.kt
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace(' ')
-      PsiElement(open)('@open')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('open')
       PsiWhiteSpace(' ')
       ANNOTATION
         PsiElement(AT)('@')
@@ -44,6 +50,7 @@ JetFile: validDeclarations.kt
           PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
+        PsiElement(AT)('@')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -122,7 +129,13 @@ JetFile: validDeclarations.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiElement(private)('@private')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
           PsiWhiteSpace(' ')
@@ -137,7 +150,13 @@ JetFile: validDeclarations.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiElement(open)('@open')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('open')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('z')
           PsiElement(COLON)(':')
@@ -154,7 +173,13 @@ JetFile: validDeclarations.kt
       PsiWhiteSpace('\n    ')
       FUN
         MODIFIER_LIST
-          PsiElement(private)('@private')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace(' ')
           ANNOTATION
             PsiElement(AT)('@')
@@ -284,7 +309,13 @@ JetFile: validDeclarations.kt
               PsiWhiteSpace('\n        ')
               PsiElement(private)('private')
               PsiWhiteSpace('\n        ')
-              PsiElement(abstract)('@abstract')
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('abstract')
               PsiWhiteSpace('\n        ')
               ANNOTATION_ENTRY
                 PsiElement(AT)('@')
@@ -315,7 +346,13 @@ JetFile: validDeclarations.kt
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
                       MODIFIER_LIST
-                        PsiElement(vararg)('@vararg')
+                        ANNOTATION_ENTRY
+                          PsiElement(AT)('@')
+                          CONSTRUCTOR_CALLEE
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('vararg')
                         PsiWhiteSpace(' ')
                         ANNOTATION_ENTRY
                           PsiElement(AT)('@')
@@ -381,7 +418,13 @@ JetFile: validDeclarations.kt
             PsiWhiteSpace(' ')
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            PsiElement(open)('@open')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('open')
           PsiWhiteSpace(' ')
           PsiElement(get)('get')
           PsiElement(LPAR)('(')
@@ -394,7 +437,13 @@ JetFile: validDeclarations.kt
       PsiWhiteSpace('\n\n    ')
       ANONYMOUS_INITIALIZER
         MODIFIER_LIST
-          PsiElement(open)('@open')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('open')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -412,15 +461,30 @@ JetFile: validDeclarations.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(companion)('@companion')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
-      PsiWhiteSpace('\n\n    ')
+        PsiWhiteSpace('\n\n    ')
+        OBJECT_DECLARATION_NAME
+          PsiErrorElement:Name expected
+            PsiElement(AT)('@')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(companion)('@companion')
+          PsiElement(companion)('companion')
           PsiWhiteSpace(' ')
-          PsiElement(private)('@private')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -438,7 +502,13 @@ JetFile: validDeclarations.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('main')
           PsiWhiteSpace('\n\n    ')
-          PsiElement(private)('@private')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace('\n    ')
         PsiElement(constructor)('constructor')
         VALUE_PARAMETER_LIST
@@ -504,7 +574,13 @@ JetFile: validDeclarations.kt
   PsiWhiteSpace('\n')
   PROPERTY
     MODIFIER_LIST
-      PsiElement(private)('@private')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('private')
     PsiWhiteSpace(' ')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')

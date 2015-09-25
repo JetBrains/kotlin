@@ -1,6 +1,6 @@
 package builders
 
-inline fun call(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) init: () -> Unit) {
+inline fun call(crossinline init: () -> Unit) {
     return init()
 }
 //NO_CHECK_LAMBDA_INLINING

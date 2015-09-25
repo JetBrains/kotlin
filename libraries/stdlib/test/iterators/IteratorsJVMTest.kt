@@ -6,7 +6,7 @@ import org.junit.Test as test
 class IteratorsJVMTest {
 
 
-    test fun flatMapAndTakeExtractTheTransformedElements() {
+    @test fun flatMapAndTakeExtractTheTransformedElements() {
         fun intToBinaryDigits() = { i: Int ->
             val binary = Integer.toBinaryString(i)!!
             var index = 0
@@ -25,7 +25,7 @@ class IteratorsJVMTest {
         assertEquals(expected, fibonacci().flatMap<Int, Char>(intToBinaryDigits()).take(10).toList())
     }
 
-    test fun flatMapOnIterator() {
+    @test fun flatMapOnIterator() {
         val result = sequenceOf(1, 2).flatMap { i -> (0..i).asSequence()}
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }

@@ -1,4 +1,4 @@
-trait Base
+interface Base
 class Derived: Base
 class Another: Base
 fun Base.inc(): Derived { return Derived() }

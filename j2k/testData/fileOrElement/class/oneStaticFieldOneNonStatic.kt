@@ -1,4 +1,4 @@
-class S {
+internal class S {
     fun sB(): Boolean {
         return true
     }

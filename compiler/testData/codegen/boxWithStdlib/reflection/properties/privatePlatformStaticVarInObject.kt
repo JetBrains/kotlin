@@ -1,9 +1,9 @@
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
-import kotlin.platform.platformStatic as static
+import kotlin.jvm.JvmStatic as static
 
 object Obj {
-    private static var result: String = "Fail"
+    private @static var result: String = "Fail"
 }
 
 fun box(): String {

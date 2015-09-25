@@ -33,7 +33,7 @@ class C {
 class D {
     private var foo = 1
         set(i: Int) {
-            $foo = i + 1
+            field = i + 1
         }
 
     fun foo() {

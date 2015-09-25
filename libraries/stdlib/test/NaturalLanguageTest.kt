@@ -5,12 +5,12 @@ import kotlin.test.*
 
 class NaturalLanguageTest {
 
-    test fun `strings equal`() {
+    @test fun `strings equal`() {
         val actual = "abc"
         assertEquals("abc", actual)
     }
 
-    test fun `numbers equal`() {
+    @test fun `numbers equal`() {
         val actual = 5
         assertEquals(5, actual)
     }

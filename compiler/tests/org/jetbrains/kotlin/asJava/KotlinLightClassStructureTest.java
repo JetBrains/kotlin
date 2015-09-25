@@ -163,7 +163,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testPackage() throws Exception {
-            checkModifiers("test.TestPackage", PUBLIC, FINAL);
+            checkModifiers("test.TestPackage", PUBLIC, FINAL, DEPRECATED);
         }
     }
 
