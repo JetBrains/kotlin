@@ -1644,24 +1644,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-            generateSuperCallArgument(i);
+        public Type generateExpression(int i, @NotNull ExpressionValueArgument argument) {
+            return generateSuperCallArgument(i);
         }
 
         @Override
-        public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-            pushDefaultValueOnStack(parameters.get(i).getAsmType(), iv);
+        public Type generateDefault(int i, @NotNull DefaultValueArgument argument) {
+            Type type = parameters.get(i).getAsmType();
+            pushDefaultValueOnStack(type, iv);
+            return type;
         }
 
         @Override
-        public void generateVararg(int i, @NotNull VarargValueArgument argument) {
-            generateSuperCallArgument(i);
+        public Type generateVararg(int i, @NotNull VarargValueArgument argument) {
+            return generateSuperCallArgument(i);
         }
 
-        private void generateSuperCallArgument(int i) {
+        private Type generateSuperCallArgument(int i) {
             Type type = parameters.get(i).getAsmType();
             iv.load(offset, type);
             offset += type.getSize();
+            return type;
         }
     }
 

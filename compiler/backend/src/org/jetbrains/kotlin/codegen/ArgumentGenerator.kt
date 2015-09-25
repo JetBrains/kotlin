@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-
-import java.util.ArrayList
-import java.util.Collections
+import org.jetbrains.kotlin.utils.mapToIndex
+import org.jetbrains.org.objectweb.asm.Type
+import java.util.*
 
 abstract class ArgumentGenerator {
     /**
@@ -30,54 +30,59 @@ abstract class ArgumentGenerator {
      * * any default arguments, or an empty `List` if there were none
      * *
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
+     * @param valueArgumentsByIndex
+     * *
+     * @param actualArgs
      */
-    open fun generate(valueArguments: List<ResolvedValueArgument>): List<Int> {
-        val masks = ArrayList<Int>(1)
-        var mask = 0
-        val n = valueArguments.size()
-        for (i in 0..n - 1) {
-            if (i != 0 && i % Integer.SIZE == 0) {
-                masks.add(mask)
-                mask = 0
-            }
-            val argument = valueArguments.get(i)
-            if (argument is ExpressionValueArgument) {
-                generateExpression(i, argument)
-            }
-            else if (argument is DefaultValueArgument) {
-                mask = mask or (1 shl (i % Integer.SIZE))
-                generateDefault(i, argument)
-            }
-            else if (argument is VarargValueArgument) {
-                generateVararg(i, argument)
-            }
-            else {
-                generateOther(i, argument)
-            }
+    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallMask {
+        //HACK: see tempVariable in ExpressionCodegen
+        val actualArguments = if (actualArgs.isNotEmpty()) actualArgs else valueArgumentsByIndex
+
+        assert(valueArgumentsByIndex.size() == actualArguments.size()) {
+            "Value arguments collection should have same size, but ${valueArgumentsByIndex.size()} != ${actualArguments.size()}"
         }
 
-        if (mask == 0 && masks.isEmpty()) {
-            return emptyList()
+        val arg2Index = valueArgumentsByIndex.mapToIndex()
+
+        val masks = DefaultCallMask(valueArgumentsByIndex.size())
+        for ((index, argument) in valueArgumentsByIndex.withIndex()) {
+            //var i = arg2Index[argument]!!
+            var i = index
+
+            var type = when (argument) {
+                is ExpressionValueArgument -> {
+                    generateExpression(i, argument)
+                }
+                is DefaultValueArgument -> {
+                    masks.mark(i)
+                    generateDefault(i, argument)
+                }
+                is VarargValueArgument -> {
+                    generateVararg(i, argument)
+                }
+                else -> {
+                    generateOther(i, argument)
+                }
+            }
+
         }
 
-        masks.add(mask)
         return masks
     }
 
-    protected open fun generateExpression(i: Int, argument: ExpressionValueArgument) {
+    protected open fun generateExpression(i: Int, argument: ExpressionValueArgument): Type {
         throw UnsupportedOperationException("Unsupported expression value argument #$i: $argument")
     }
 
-    protected open fun generateDefault(i: Int, argument: DefaultValueArgument) {
+    protected open fun generateDefault(i: Int, argument: DefaultValueArgument): Type {
         throw UnsupportedOperationException("Unsupported default value argument #$i: $argument")
     }
 
-    protected open fun generateVararg(i: Int, argument: VarargValueArgument) {
+    protected open fun generateVararg(i: Int, argument: VarargValueArgument): Type {
         throw UnsupportedOperationException("Unsupported vararg value argument #$i: $argument")
     }
 
-    @SuppressWarnings("MethodMayBeStatic") // is supposed to be overridden
-    protected fun generateOther(i: Int, argument: ResolvedValueArgument) {
+    protected open fun generateOther(i: Int, argument: ResolvedValueArgument): Type {
         throw UnsupportedOperationException("Unsupported value argument #$i: $argument")
     }
 }

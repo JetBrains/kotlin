@@ -53,16 +53,17 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @NotNull
     @Override
-    public List<Integer> generate(@NotNull List<? extends ResolvedValueArgument> valueArguments) {
+    public DefaultCallMask generate(@NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex, @NotNull List<? extends ResolvedValueArgument> valueArgs) {
         boolean shouldMarkLineNumbers = codegen.isShouldMarkLineNumbers();
         codegen.setShouldMarkLineNumbers(false);
-        List<Integer> masks = super.generate(valueArguments);
+        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs);
         codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
         return masks;
     }
 
+    @NotNull
     @Override
-    protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
+    protected Type generateExpression(int i, @NotNull ExpressionValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         ValueArgument valueArgument = argument.getValueArgument();
@@ -70,21 +71,26 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
         callGenerator.genValueAndPut(parameter, argumentExpression, type);
+        return type;
     }
 
+    @NotNull
     @Override
-    protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
+    protected Type generateDefault(int i, @NotNull DefaultValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
         callGenerator.afterParameterPut(type, null, parameter);
+        return type;
     }
 
+    @NotNull
     @Override
-    protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
+    protected Type generateVararg(int i, @NotNull VarargValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
         callGenerator.afterParameterPut(type, null, parameter);
+        return type;
     }
 }

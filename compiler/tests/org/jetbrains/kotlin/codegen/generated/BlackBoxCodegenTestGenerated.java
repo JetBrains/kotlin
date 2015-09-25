@@ -35,6 +35,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("compiler/testData/codegen/box/argumentOrder")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ArgumentOrder extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInArgumentOrder() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arguments.kt")
+        public void testArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/argumentOrder/arguments.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/arrays")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
