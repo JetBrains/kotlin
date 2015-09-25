@@ -53,7 +53,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @NotNull
     @Override
-    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+    public List<Integer> generate(@NotNull List<? extends ResolvedValueArgument> valueArguments) {
         boolean shouldMarkLineNumbers = codegen.isShouldMarkLineNumbers();
         codegen.setShouldMarkLineNumbers(false);
         List<Integer> masks = super.generate(valueArguments);

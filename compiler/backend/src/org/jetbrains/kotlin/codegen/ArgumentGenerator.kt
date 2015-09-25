@@ -14,73 +14,70 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList
+import java.util.Collections
 
-public abstract class ArgumentGenerator {
+abstract class ArgumentGenerator {
     /**
-     * @return a {@code List} of bit masks of default arguments that should be passed as last arguments to $default method, if there were
-     * any default arguments, or an empty {@code List} if there were none
-     * @see kotlin.reflect.jvm.internal.KCallableImpl#callBy(Map...)
+     * @return a `List` of bit masks of default arguments that should be passed as last arguments to $default method, if there were
+     * * any default arguments, or an empty `List` if there were none
+     * *
+     * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
      */
-    @NotNull
-    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
-        List<Integer> masks = new ArrayList<Integer>(1);
-        int mask = 0;
-        int n = valueArguments.size();
-        for (int i = 0; i < n; i++) {
+    open fun generate(valueArguments: List<ResolvedValueArgument>): List<Int> {
+        val masks = ArrayList<Int>(1)
+        var mask = 0
+        val n = valueArguments.size()
+        for (i in 0..n - 1) {
             if (i != 0 && i % Integer.SIZE == 0) {
-                masks.add(mask);
-                mask = 0;
+                masks.add(mask)
+                mask = 0
             }
-            ResolvedValueArgument argument = valueArguments.get(i);
-            if (argument instanceof ExpressionValueArgument) {
-                generateExpression(i, (ExpressionValueArgument) argument);
+            val argument = valueArguments.get(i)
+            if (argument is ExpressionValueArgument) {
+                generateExpression(i, argument)
             }
-            else if (argument instanceof DefaultValueArgument) {
-                mask |= 1 << (i % Integer.SIZE);
-                generateDefault(i, (DefaultValueArgument) argument);
+            else if (argument is DefaultValueArgument) {
+                mask = mask or (1 shl (i % Integer.SIZE))
+                generateDefault(i, argument)
             }
-            else if (argument instanceof VarargValueArgument) {
-                generateVararg(i, (VarargValueArgument) argument);
+            else if (argument is VarargValueArgument) {
+                generateVararg(i, argument)
             }
             else {
-                generateOther(i, argument);
+                generateOther(i, argument)
             }
         }
 
         if (mask == 0 && masks.isEmpty()) {
-            return Collections.emptyList();
+            return emptyList()
         }
 
-        masks.add(mask);
-        return masks;
+        masks.add(mask)
+        return masks
     }
 
-    protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-        throw new UnsupportedOperationException("Unsupported expression value argument #" + i + ": " + argument);
+    protected open fun generateExpression(i: Int, argument: ExpressionValueArgument) {
+        throw UnsupportedOperationException("Unsupported expression value argument #$i: $argument")
     }
 
-    protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        throw new UnsupportedOperationException("Unsupported default value argument #" + i + ": " + argument);
+    protected open fun generateDefault(i: Int, argument: DefaultValueArgument) {
+        throw UnsupportedOperationException("Unsupported default value argument #$i: $argument")
     }
 
-    protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
-        throw new UnsupportedOperationException("Unsupported vararg value argument #" + i + ": " + argument);
+    protected open fun generateVararg(i: Int, argument: VarargValueArgument) {
+        throw UnsupportedOperationException("Unsupported vararg value argument #$i: $argument")
     }
 
     @SuppressWarnings("MethodMayBeStatic") // is supposed to be overridden
-    protected void generateOther(int i, @NotNull ResolvedValueArgument argument) {
-        throw new UnsupportedOperationException("Unsupported value argument #" + i + ": " + argument);
+    protected fun generateOther(i: Int, argument: ResolvedValueArgument) {
+        throw UnsupportedOperationException("Unsupported value argument #$i: $argument")
     }
 }
