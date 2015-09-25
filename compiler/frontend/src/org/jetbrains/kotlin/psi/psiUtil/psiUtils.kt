@@ -310,10 +310,3 @@ public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUt
 
 public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
-
-fun PsiElement.resolveAllReferences(): Sequence<PsiElement?> {
-    return PsiReferenceService.getService().getReferences(this, PsiReferenceService.Hints.NO_HINTS)
-            .asSequence()
-            .map { it.resolve() }
-}
-

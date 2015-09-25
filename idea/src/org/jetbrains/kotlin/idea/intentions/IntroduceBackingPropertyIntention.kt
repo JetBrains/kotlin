@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -35,11 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty>(javaClass(), "Introduce backing property") {
     override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
-        var elementAtCaret = element.containingFile.findElementAt(caretOffset)
-        if (elementAtCaret is PsiWhiteSpace) {
-            elementAtCaret = element.containingFile.findElementAt(caretOffset - 1)
-        }
-        return elementAtCaret == element.nameIdentifier || elementAtCaret == element.valOrVarKeyword
+        return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {
@@ -47,43 +44,46 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
     }
 
     companion object {
-        public fun canIntroduceBackingProperty(element: JetProperty): Boolean {
-            val name = element.name ?: return false
-            if (name.startsWith('_')) return false
+        fun canIntroduceBackingProperty(property: JetProperty): Boolean {
+            val name = property.name ?: return false
 
-            if (element.hasDelegate() || element.receiverTypeReference != null) return false
+            val bindingContext = property.getResolutionFacade().analyzeFullyAndGetResult(listOf(property)).bindingContext
+            val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property) as? PropertyDescriptor ?: return false
+            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 
-            val containingClass = element.getStrictParentOfType<JetClassOrObject>() ?: return false
+            val containingClass = property.getStrictParentOfType<JetClassOrObject>() ?: return false
             return containingClass.declarations.none { it is JetProperty && it.name == "_" + name }
         }
 
-        fun introduceBackingProperty(element: JetProperty) {
-            createBackingProperty(element)
+        fun introduceBackingProperty(property: JetProperty) {
+            createBackingProperty(property)
 
-            val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(element)
-            SpecifyTypeExplicitlyIntention.addTypeAnnotation(null, element, type)
+            if (property.typeReference == null) {
+                val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(property)
+                SpecifyTypeExplicitlyIntention.addTypeAnnotation(null, property, type)
+            }
 
-            val getter = element.getter
+            val getter = property.getter
             if (getter == null) {
-                createGetter(element)
+                createGetter(property)
             }
             else {
-                replaceFieldReferences(getter, element.name!!)
+                replaceFieldReferences(getter, property.name!!)
             }
 
-            if (element.isVar) {
-                val setter = element.setter
+            if (property.isVar) {
+                val setter = property.setter
                 if (setter == null) {
-                    createSetter(element)
+                    createSetter(property)
                 }
                 else {
-                    replaceFieldReferences(setter, element.name!!)
+                    replaceFieldReferences(setter, property.name!!)
                 }
             }
 
-            element.setInitializer(null)
+            property.setInitializer(null)
 
-            replaceBackingFieldReferences(element)
+            replaceBackingFieldReferences(property)
         }
 
         private fun createGetter(element: JetProperty) {
@@ -98,41 +98,41 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
             element.add(newSetter)
         }
 
-        private fun createBackingProperty(element: JetProperty) {
-            val backingPropertyText = StringBuilder {
-                append("private ")
-                append(element.valOrVarKeyword.text)
-                append(" _")
-                append(element.name)
-                val typeRef = element.typeReference
-                if (typeRef != null) {
-                    append(": ")
-                    append(typeRef.text)
+        private fun createBackingProperty(property: JetProperty) {
+            val backingProperty = JetPsiFactory(property).buildDeclaration {
+                appendFixedText("private ")
+                appendFixedText(property.valOrVarKeyword.text)
+                appendFixedText(" _${property.name}")
+                if (property.typeReference != null) {
+                    appendFixedText(": ")
+                    appendTypeReference(property.typeReference)
                 }
-
-                val initializer = element.initializer
-                if (initializer != null) {
-                    append(" = ")
-                    append(initializer.text)
+                if (property.initializer != null) {
+                    appendFixedText(" = ")
+                    appendExpression(property.initializer)
                 }
-            }.toString()
+            }
 
-            val backingProp = JetPsiFactory(element).createProperty(backingPropertyText)
-            element.parent.addBefore(backingProp, element)
+            property.parent.addBefore(backingProperty, property)
         }
 
         private fun replaceFieldReferences(element: JetElement, propertyName: String) {
-            val bindingContext = element.analyze()
             element.acceptChildren(object : JetTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    val bindingContext = expression.analyze()
                     val target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
                     if (target is SyntheticFieldDescriptor) {
                         expression.replace(JetPsiFactory(element).createSimpleName("_$propertyName"))
                     }
                 }
+
+                override fun visitPropertyAccessor(accessor: JetPropertyAccessor) {
+                    // don't go into accessors of properties in local classes because 'field' will mean something different in them
+                }
             })
         }
 
+        // TODO: drop this when we get rid of backing field syntax
         private fun replaceBackingFieldReferences(prop: JetProperty) {
             val containingClass = prop.getStrictParentOfType<JetClassOrObject>()!!
             ReferencesSearch.search(prop, LocalSearchScope(containingClass)).forEach {

@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.LinkedHashMap
+import java.util.*
 
 public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): JetExpression
         = createByPattern(pattern, *args) { createExpression(it) }
@@ -294,6 +293,10 @@ public class BuilderByPattern<TElement> {
 
 public fun JetPsiFactory.buildExpression(build: BuilderByPattern<JetExpression>.() -> Unit): JetExpression {
     return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
+}
+
+public fun JetPsiFactory.buildDeclaration(build: BuilderByPattern<JetDeclaration>.() -> Unit): JetDeclaration {
+    return buildByPattern({ pattern, args -> this.createDeclarationByPattern(pattern, *args) }, build)
 }
 
 public fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {

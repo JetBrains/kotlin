@@ -5187,9 +5187,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inapplicableAbstractProperty.kt")
+        public void testInapplicableAbstractProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/inapplicableAbstractProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableNoBackingField.kt")
+        public void testInapplicableNoBackingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/inapplicableNoBackingField.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleVal.kt")
         public void testSimpleVal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleValWithType.kt")
+        public void testSimpleValWithType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleValWithType.kt");
             doTest(fileName);
         }
 
