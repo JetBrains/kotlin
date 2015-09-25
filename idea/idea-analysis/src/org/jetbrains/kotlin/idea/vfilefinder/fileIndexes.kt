@@ -92,7 +92,7 @@ public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScri
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 1
+    private val VERSION = 2
 
     private val INDEXER = indexer() { file ->
         if (file.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(file) else null
