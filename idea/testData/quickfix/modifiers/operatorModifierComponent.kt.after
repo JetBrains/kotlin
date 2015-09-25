@@ -1,0 +1,10 @@
+// "Add 'operator' modifier" "true"
+class A {
+    operator fun component1(): Int = 0
+    fun component2(): Int = 1
+}
+
+fun foo() {
+    val (zero, one) = A()
+}
+

@@ -46,3 +46,13 @@ class Foo {
         get = field
         set(value) { field = value }
 }
+
+class B {
+    operator fun plus(a: A): A = A()
+}
+
+fun foo() {
+    B() + B()
+    B() + B()
+    B() + B()
+}

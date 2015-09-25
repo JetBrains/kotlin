@@ -1204,8 +1204,7 @@
                      groupName="Kotlin"
                      language="jet"
                      enabledByDefault="true"
-                     level="WARNING"
-                     cleanupTool="true"/>
+                     level="WARNING"/>
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
                        displayName="Extension property conflicts with synthetic one"

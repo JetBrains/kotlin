@@ -47,3 +47,13 @@ class Foo {
         get = $x
         set(value) { $x = value }
 }
+
+class B {
+    fun plus(a: A): A = A()
+}
+
+fun foo() {
+    B() + B()
+    B() + B()
+    B() + B()
+}

@@ -16,23 +16,31 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
+import org.jetbrains.kotlin.idea.quickfix.CleanupFix
+import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetModifierListOwner
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class OperatorModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+public class OperatorModifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : JetVisitorVoid() {
             override fun visitNamedFunction(function: JetNamedFunction) {
@@ -97,5 +105,13 @@ private class AddModifierLocalQuickFix() : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val modifierListOwner = descriptor.psiElement.getNonStrictParentOfType<JetModifierListOwner>()
         modifierListOwner?.addModifier(JetTokens.OPERATOR_KEYWORD)
+    }
+}
+
+object OperatorModifierFixFactory : JetSingleIntentionActionFactory() {
+    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+        val param = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
+        val target = (param.source as? PsiSourceElement)?.psi as? JetDeclaration ?: return null
+        return object : AddModifierFix(target, JetTokens.OPERATOR_KEYWORD), CleanupFix {}
     }
 }
