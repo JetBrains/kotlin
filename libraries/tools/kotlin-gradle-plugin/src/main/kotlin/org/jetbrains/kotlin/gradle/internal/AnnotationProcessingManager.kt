@@ -46,7 +46,7 @@ fun Project.initKapt(
         val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
         kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
 
-        javaTask.classpath = javaTask.classpath + files(stubsDir)
+        javaTask.classpath += files(stubsDir)
 
         kotlinTask.doFirst {
             kotlinAfterJavaTask.source(kotlinTask.source)
@@ -226,7 +226,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun JavaCompile.appendClasspath(file: File) {
-        setClasspath(getClasspath() + project.files(file))
+        classpath += project.files(file)
     }
 
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {

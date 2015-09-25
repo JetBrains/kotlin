@@ -25,6 +25,7 @@ import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
 import org.gradle.api.logging.*
@@ -537,6 +538,9 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
             resolveDependencies(kotlinPluginArtifactCoordinates(artifact))
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
+
+internal operator fun FileCollection.plus(other: FileCollection) = this.plus(other)
+internal operator fun FileCollection.minus(other: FileCollection) = this.minus(other)
 
 fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
     extensions.extraProperties.set("kaptAnnotationsFile", kapt.getAnnotationFile())
