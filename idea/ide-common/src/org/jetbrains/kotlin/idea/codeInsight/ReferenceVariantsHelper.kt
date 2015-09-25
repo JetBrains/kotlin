@@ -154,13 +154,8 @@ public class ReferenceVariantsHelper(
         else {
             descriptors.processAll(implicitReceiverTypes, implicitReceiverTypes, resolutionScope, CallType.NORMAL, kindFilter, nameFilter)
 
-            // process non-instance members
+            // process non-instance members.
             for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
-                if (descriptor is CallableDescriptor) {
-                    assert(descriptor is SyntheticFieldDescriptor || descriptor.dispatchReceiverParameter == null) {
-                        "Resolution scope with member descriptor: $descriptor. Scope structure: ${JetScopeUtils.printStructure(resolutionScope)}"
-                    }
-                }
                 if (!descriptor.isExtension) {
                     descriptors.add(descriptor)
                 }
@@ -271,9 +266,7 @@ public class ReferenceVariantsHelper(
         }
 
         for (descriptor in resolutionScope.getDescriptors(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter)) {
-            assert(descriptor !is CallableDescriptor || descriptor is SyntheticFieldDescriptor || descriptor.dispatchReceiverParameter == null) {
-                "Resolution scope with member descriptor: $descriptor. Scope structure: ${JetScopeUtils.printStructure(resolutionScope)}"
-            }
+            // todo: sometimes resolution scope here is LazyJavaClassMemberScope. see ea.jetbrains.com/browser/ea_problems/72572
             if (descriptor.isExtension) {
                 process(descriptor as CallableDescriptor)
             }
