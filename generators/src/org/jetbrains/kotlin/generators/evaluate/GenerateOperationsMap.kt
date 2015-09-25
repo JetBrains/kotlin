@@ -94,7 +94,7 @@ fun generate(): String {
 
     p.println()
 
-    p.println("private val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>>")
+    p.println("internal val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>>")
     p.println("            = hashMapOf<BinaryOperationKey<*, *>, Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>>(")
     p.pushIndent()
 
