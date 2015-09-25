@@ -253,6 +253,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("typeParameterRef.kt")
+        public void testTypeParameterRef() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/typeParameterRef.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("unboxParam.kt")
         public void testUnboxParam() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/unboxParam.kt");

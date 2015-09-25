@@ -672,14 +672,16 @@ private fun ExtractionData.inferParametersInfo(
             continue
         }
 
-        val referencedClassDescriptor: ClassDescriptor? = (thisDescriptor ?: originalDescriptor).let {
+        val referencedClassifierDescriptor: ClassifierDescriptor? = (thisDescriptor ?: originalDescriptor).let {
             when (it) {
                 is ClassDescriptor ->
                     when(it.getKind()) {
-                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
+                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassifierDescriptor
                         ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
-                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it : ClassDescriptor else null
+                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it as ClassifierDescriptor else null
                     }
+
+                is TypeParameterDescriptor -> it as ClassifierDescriptor
 
                 is ConstructorDescriptor -> it.getContainingDeclaration()
 
@@ -687,12 +689,14 @@ private fun ExtractionData.inferParametersInfo(
             }
         }
 
-        if (referencedClassDescriptor != null) {
-            if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
-                    info.typeParameters, info.nonDenotableTypes, options, targetScope, false
+        if (referencedClassifierDescriptor != null) {
+            if (!referencedClassifierDescriptor.getDefaultType().processTypeIfExtractable(
+                    info.typeParameters, info.nonDenotableTypes, options, targetScope, referencedClassifierDescriptor is TypeParameterDescriptor
             )) continue
 
-            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
+            if (referencedClassifierDescriptor is ClassDescriptor) {
+                info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
+            }
         }
         else {
             val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
@@ -998,6 +1002,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     ).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
+    val typeParameterList = (result.declaration as? JetNamedFunction)?.getTypeParameterList()
     val body = result.declaration.getGeneratedBody()
     val bindingContext = body.analyzeFully()
 
@@ -1017,6 +1022,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             val currentTarget =
                     currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
             if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
+            if (currentTarget is JetTypeParameter && currentTarget.getParent() == typeParameterList) continue
             if (currentDescriptor is LocalVariableDescriptor
                 && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 

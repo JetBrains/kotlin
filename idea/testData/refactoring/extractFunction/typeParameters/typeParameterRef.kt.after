@@ -1,0 +1,8 @@
+// SUGGESTED_NAMES: i, getA
+fun foo<U>() = 1
+
+fun test<T>() {
+    val a = i<T>()
+}
+
+private fun <T> i() = foo<T>()

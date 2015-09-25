@@ -2340,6 +2340,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("typeParameterRef.kt")
+            public void testTypeParameterRef() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterRef.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("typeParameterRefCanOmit.kt")
+            public void testTypeParameterRefCanOmit() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterRefCanOmit.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("typeParameterResolvableInTargetScope.kt")
             public void testTypeParameterResolvableInTargetScope() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterResolvableInTargetScope.kt");

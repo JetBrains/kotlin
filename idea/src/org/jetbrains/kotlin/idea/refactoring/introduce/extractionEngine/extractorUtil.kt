@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
@@ -205,7 +208,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
     val unifier = JetPsiUnifier(unifierParameters, true)
 
-    val scopeElement = extractionData.duplicateContainer ?: extractionData.targetSibling.getParent() ?: return Collections.emptyList()
+    val scopeElement = getOccurrenceContainer() ?: return Collections.emptyList()
     val originalTextRange = extractionData.originalRange.getTextRange()
     return extractionData
             .originalRange
@@ -218,6 +221,10 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             }
             .filterNotNull()
             .toList()
+}
+
+private fun ExtractableCodeDescriptor.getOccurrenceContainer(): PsiElement? {
+    return extractionData.duplicateContainer ?: extractionData.targetSibling.getParent()
 }
 
 private fun makeCall(
@@ -264,8 +271,14 @@ private fun makeCall(
 
     val calleeName = declaration.getName()
     val callText = when (declaration) {
-        is JetNamedFunction ->
-            arguments.joinToString(separator = ", ", prefix = "$calleeName(", postfix = ")")
+        is JetNamedFunction -> {
+            val argumentsText = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")")
+            val typeArguments = extractableDescriptor.typeParameters.map { it.originalDeclaration.name }
+            val typeArgumentsText = with(typeArguments) {
+                if (isNotEmpty()) joinToString(separator = ", ", prefix = "<", postfix = ">") else ""
+            }
+            "$calleeName$typeArgumentsText$argumentsText"
+        }
         else -> calleeName
     }
 
@@ -634,6 +647,18 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         ShortenReferences.DEFAULT.process(declaration)
     }
 
+    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, emptyMap(), nameByOffset)
+
     val duplicateReplacers = duplicates.map { it.range to { makeCall(descriptor, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
+
+    if (descriptor.typeParameters.isNotEmpty()) {
+        for (ref in ReferencesSearch.search(declaration, LocalSearchScope(descriptor.getOccurrenceContainer()!!))) {
+            val typeArgumentList = (ref.element.parent as? JetCallExpression)?.typeArgumentList ?: continue
+            if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, false)) {
+                typeArgumentList.delete()
+            }
+        }
+    }
+
     return ExtractionResult(this, declaration, duplicateReplacers, nameByOffset)
 }
