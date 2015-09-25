@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
@@ -34,11 +31,8 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
@@ -121,43 +115,11 @@ public class JvmCodegenUtil {
 
         CallableMemberDescriptor directMember = getDirectMember(declarationDescriptor);
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            return isContainedByCompiledPartOfOurModule(((DeserializedCallableMemberDescriptor) directMember), outDirectory);
+            return ModuleVisibilityUtilsKt.isContainedByCompiledPartOfOurModule(directMember, outDirectory);
         }
         else {
             return DescriptorUtils.areInSameModule(directMember, contextDescriptor);
         }
-    }
-
-    private static boolean isContainedByCompiledPartOfOurModule(
-            @NotNull DeserializedCallableMemberDescriptor descriptor,
-            @Nullable File outDirectory
-    ) {
-        DeclarationDescriptor packageFragment = descriptor.getContainingDeclaration();
-        if (packageFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
-            return true;
-        }
-
-        if (outDirectory == null) {
-            return false;
-        }
-
-        if (!(packageFragment instanceof LazyJavaPackageFragment)) {
-            return false;
-        }
-
-        SourceElement source = ((LazyJavaPackageFragment) packageFragment).getSource();
-        if (source instanceof KotlinJvmBinarySourceElement) {
-            KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
-            if (binaryClass instanceof VirtualFileKotlinClass) {
-                VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
-                if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
-                    File ioFile = VfsUtilCore.virtualToIoFile(file);
-                    return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
-                }
-            }
-        }
-
-        return false;
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {

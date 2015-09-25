@@ -1379,6 +1379,183 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/detectProperties")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DetectProperties extends AbstractJavaToKotlinConverterForWebDemoTest {
+        @TestMetadata("AccessInGetterWithThis.java")
+        public void testAccessInGetterWithThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AccessorsImplementInterface.java")
+        public void testAccessorsImplementInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessorsImplementInterface.java");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInDetectProperties() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/detectProperties"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("AnonymousClass.java")
+        public void testAnonymousClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AnonymousClass.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CannotDropOnlySetter.java")
+        public void testCannotDropOnlySetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/CannotDropOnlySetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClass.java")
+        public void testDataClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClass.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassWithMutableField.java")
+        public void testDataClassWithMutableField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithMutableField.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DifferentFieldName.java")
+        public void testDifferentFieldName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DifferentFieldNameAndDefaultParameterValue.java")
+        public void testDifferentFieldNameAndDefaultParameterValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndDefaultParameterValue.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DifferentFieldNameAndSuperClass.java")
+        public void testDifferentFieldNameAndSuperClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndSuperClass.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DifferentProtectedFieldName.java")
+        public void testDifferentProtectedFieldName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentProtectedFieldName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DropGetter.java")
+        public void testDropGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DropGetterAndSetter.java")
+        public void testDropGetterAndSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterAndSetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DropGetterForMutable.java")
+        public void testDropGetterForMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterForMutable.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FalseGetter.java")
+        public void testFalseGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseGetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FalseSetter.java")
+        public void testFalseSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseSetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FieldUsagesInFactoryMethods.java")
+        public void testFieldUsagesInFactoryMethods() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FieldUsagesInFactoryMethods.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterAndSetterNamesDifferent.java")
+        public void testGetterAndSetterNamesDifferent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterAndSetterNamesDifferent.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterSetterUsages.java")
+        public void testGetterSetterUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterSetterUsages.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterTypeNotMatch.java")
+        public void testGetterTypeNotMatch() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterTypeNotMatch.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InCompanionObject.java")
+        public void testInCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InCompanionObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InInterface.java")
+        public void testInInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InInterface.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InObject.java")
+        public void testInObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IsPrefix.java")
+        public void testIsPrefix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/IsPrefix.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JavaKeywordPropertyName.java")
+        public void testJavaKeywordPropertyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/JavaKeywordPropertyName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KeywordPropertyName.java")
+        public void testKeywordPropertyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/KeywordPropertyName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Overrides.java")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Overrides.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OverridesOfExternalCode.java")
+        public void testOverridesOfExternalCode() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/OverridesOfExternalCode.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterTypeNotMatch.java")
+        public void testSetterTypeNotMatch() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterTypeNotMatch.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/doWhileStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1465,159 +1642,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("seeTag.java")
         public void testSeeTag() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/seeTag.java");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("j2k/testData/fileOrElement/dropAccessors")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class DropAccessors extends AbstractJavaToKotlinConverterForWebDemoTest {
-        @TestMetadata("AccessInGetterWithThis.java")
-        public void testAccessInGetterWithThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/AccessInGetterWithThis.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("AccessorsImplementInterface.java")
-        public void testAccessorsImplementInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/AccessorsImplementInterface.java");
-            doTest(fileName);
-        }
-
-        public void testAllFilesPresentInDropAccessors() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/dropAccessors"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("AnonymousClass.java")
-        public void testAnonymousClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/AnonymousClass.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("CannotDropOnlySetter.java")
-        public void testCannotDropOnlySetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/CannotDropOnlySetter.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DataClass.java")
-        public void testDataClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DataClass.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DataClassWithMutableField.java")
-        public void testDataClassWithMutableField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DataClassWithMutableField.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DifferentFieldName.java")
-        public void testDifferentFieldName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DifferentFieldName.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DifferentFieldNameAndDefaultParameterValue.java")
-        public void testDifferentFieldNameAndDefaultParameterValue() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DifferentFieldNameAndDefaultParameterValue.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DifferentFieldNameAndSuperClass.java")
-        public void testDifferentFieldNameAndSuperClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DifferentFieldNameAndSuperClass.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DifferentProtectedFieldName.java")
-        public void testDifferentProtectedFieldName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DifferentProtectedFieldName.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DropGetter.java")
-        public void testDropGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DropGetter.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DropGetterAndSetter.java")
-        public void testDropGetterAndSetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DropGetterAndSetter.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DropGetterForMutable.java")
-        public void testDropGetterForMutable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/DropGetterForMutable.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FalseGetter.java")
-        public void testFalseGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/FalseGetter.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FalseSetter.java")
-        public void testFalseSetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/FalseSetter.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FieldUsagesInFactoryMethods.java")
-        public void testFieldUsagesInFactoryMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/FieldUsagesInFactoryMethods.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("GetterAndSetterNamesDifferent.java")
-        public void testGetterAndSetterNamesDifferent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/GetterAndSetterNamesDifferent.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("GetterSetterUsages.java")
-        public void testGetterSetterUsages() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/GetterSetterUsages.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("GetterTypeNotMatch.java")
-        public void testGetterTypeNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/GetterTypeNotMatch.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("InCompanionObject.java")
-        public void testInCompanionObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InCompanionObject.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("InObject.java")
-        public void testInObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InObject.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("JavaKeywordPropertyName.java")
-        public void testJavaKeywordPropertyName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/JavaKeywordPropertyName.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KeywordPropertyName.java")
-        public void testKeywordPropertyName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/KeywordPropertyName.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SetterTypeNotMatch.java")
-        public void testSetterTypeNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/SetterTypeNotMatch.java");
             doTest(fileName);
         }
     }

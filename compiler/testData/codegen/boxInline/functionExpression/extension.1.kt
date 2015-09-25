@@ -1,6 +1,6 @@
 fun test1(): Int {
     val inlineX = Inline(9)
-    return inlineX.calcExt(fun smth(z: Int) = z, 25)
+    return inlineX.calcExt(fun(z: Int) = z, 25)
 }
 
 fun test2(): Int {

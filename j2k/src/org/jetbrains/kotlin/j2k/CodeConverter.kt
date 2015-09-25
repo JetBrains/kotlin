@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class CodeConverter(
         public val converter: Converter,
@@ -69,10 +70,12 @@ class CodeConverter(
         val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
                     variable.getInitializer() == null/* we do not know actually and prefer val until we have better analysis*/ ||
                     !variable.hasWriteAccesses(converter.referenceSearcher, variable.getContainingMethod())
+        val type = typeConverter.convertVariableType(variable)
+        val explicitType = type.check { settings.specifyLocalVariableTypeByDefault || converter.shouldDeclareVariableType(variable, type, isVal) }
         return LocalVariable(variable.declarationIdentifier(),
                              converter.convertAnnotations(variable),
                              converter.convertModifiers(variable, false),
-                             converter.variableTypeToDeclare(variable, settings.specifyLocalVariableTypeByDefault, isVal),
+                             explicitType,
                              convertExpression(variable.getInitializer(), variable.getType()),
                              isVal).assignPrototype(variable)
     }

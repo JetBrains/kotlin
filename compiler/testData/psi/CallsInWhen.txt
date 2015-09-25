@@ -192,10 +192,9 @@ JetFile: CallsInWhen.kt
               FUNCTION_LITERAL_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
-                  VALUE_PARAMETER_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
+                  VALUE_PARAMETER_LIST
+                    <empty list>
                   PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   BLOCK

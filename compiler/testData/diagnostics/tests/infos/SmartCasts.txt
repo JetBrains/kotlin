@@ -17,6 +17,7 @@ public fun illegalWhenBody(/*0*/ a: kotlin.Any): kotlin.Int
 public fun mergeSmartCasts(/*0*/ a: kotlin.Any?): kotlin.Unit
 public fun returnFunctionLiteral(/*0*/ a: kotlin.Any?): () -> kotlin.Int
 public fun returnFunctionLiteralBlock(/*0*/ a: kotlin.Any?): () -> kotlin.Int
+public fun returnFunctionLiteralDoesntWork(/*0*/ a: kotlin.Any?): () -> kotlin.Int
 public fun toInt(/*0*/ i: kotlin.Int?): kotlin.Int
 public fun vars(/*0*/ a: kotlin.Any?): kotlin.Unit
 

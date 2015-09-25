@@ -5,6 +5,6 @@ import java.util.LinkedHashSet
 
 fun foo(f: ((java.util.LinkedHashSet<Int>) -> java.util.HashSet<Int>) -> String) {
     foo {
-        (f: (LinkedHashSet<Int>) -> HashSet<Int>) -> "42"
+        f: (LinkedHashSet<Int>) -> HashSet<Int> -> "42"
     }
 }

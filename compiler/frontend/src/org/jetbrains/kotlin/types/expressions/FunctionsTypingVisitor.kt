@@ -136,10 +136,6 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
-        if (JetPsiUtil.isDeprecatedLambdaSyntax(expression)) {
-            context.trace.report(DEPRECATED_LAMBDA_SYNTAX.on(expression))
-        }
-
         val expectedType = context.expectedType
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
@@ -200,16 +196,8 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             expectedReturnType: JetType?
     ): JetType? {
         val functionLiteral = expression.getFunctionLiteral()
-        val declaredReturnType = functionLiteral.getTypeReference()?.let {
-            val type = components.typeResolver.resolveType(context.scope, it, context.trace, true)
-            if (expectedReturnType != null && !TypeUtils.noExpectedType(expectedReturnType)
-                && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
-                context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(it, expectedReturnType))
-            }
-            type
-        }
 
-        val expectedType = declaredReturnType ?: (expectedReturnType ?: NO_EXPECTED_TYPE)
+        val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
         val newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
 
@@ -218,7 +206,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val typeOfBodyExpression = // Type-check the body
                 components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression()!!, COERCION_TO_UNIT, newContext).type
 
-        return declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
+        return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }
 
     private fun computeReturnTypeBasedOnReturnExpressions(

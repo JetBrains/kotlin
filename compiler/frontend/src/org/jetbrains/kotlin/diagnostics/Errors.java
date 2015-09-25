@@ -354,7 +354,7 @@ public interface Errors {
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetFunction> FUNCTION_DECLARATION_WITH_NO_NAME = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<PsiElement>  FUNCTION_EXPRESSION_WITH_NAME     = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement>  FUNCTION_EXPRESSION_WITH_NAME     = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
@@ -363,9 +363,6 @@ public interface Errors {
     DiagnosticFactory0<JetParameter> FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     DiagnosticFactory0<JetParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
-
-    DiagnosticFactory0<JetFunctionLiteralExpression> DEPRECATED_LAMBDA_SYNTAX =
-            DiagnosticFactory0.create(WARNING, FUNCTION_LITERAL_EXPRESSION_DECLARATION);
 
     // Named parameters
 
@@ -652,7 +649,6 @@ public interface Errors {
     DiagnosticFactory0<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetFunction, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
             DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 

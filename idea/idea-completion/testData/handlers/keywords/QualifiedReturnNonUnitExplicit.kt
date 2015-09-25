@@ -1,6 +1,6 @@
 fun foo() {
     takeHandler1 {
-        takeHandler2({ (): String -> ret<caret> })
+        takeHandler2({ -> ret<caret> })
     }
 }
 

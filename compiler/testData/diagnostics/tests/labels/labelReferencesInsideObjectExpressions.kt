@@ -14,12 +14,14 @@ fun B.b() {
     }
 }
 
+
 fun test() {
-    b@ <!UNUSED_FUNCTION_LITERAL!>{ <!DEPRECATED_LAMBDA_SYNTAX!>B.()<!> ->
+    fun <T> without(f: T.() -> Unit): Unit = (null!!).f<!UNREACHABLE_CODE!>()<!>
+    without<B>() b@ {
         object : A {
             override fun foo() {
                 this@b.bar()
             }
         }
-    }<!>
+    }
 }

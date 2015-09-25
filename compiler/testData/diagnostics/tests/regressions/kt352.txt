@@ -3,6 +3,7 @@ package
 package kt352 {
     public val f: (kotlin.Any) -> kotlin.Unit
     public val g: () -> kotlin.Unit
+    public val gFunction: () -> kotlin.Unit
     public val h: () -> kotlin.Unit
     public val testIt: (kotlin.Any) -> kotlin.Unit
     public fun doSmth(): kotlin.Int

@@ -222,10 +222,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactory())
         UNUSED_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactoryForUnusedParameter())
         EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch())
-        DEPRECATED_LAMBDA_SYNTAX.registerFactory(DeprecatedLambdaSyntaxFix, DeprecatedLambdaSyntaxFix.createWholeProjectFixFactory())
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
-        EXPECTED_RETURN_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch())
 
         val changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch()
         EXPECTED_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
@@ -305,8 +303,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
                                                MissingConstructorKeywordFix.createWholeProjectFixFactory())
 
-        FUNCTION_EXPRESSION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix,
-                                                 RemoveNameFromFunctionExpressionFix.createWholeProjectFixFactory())
+        FUNCTION_EXPRESSION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix)
 
         UNRESOLVED_REFERENCE.registerFactory(ReplaceObsoleteLabelSyntaxFix,
                                         ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())

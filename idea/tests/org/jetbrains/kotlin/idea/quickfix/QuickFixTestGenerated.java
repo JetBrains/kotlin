@@ -4124,69 +4124,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class LambdaSyntax extends AbstractQuickFixTest {
-            public void testAllFilesPresentInLambdaSyntax() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/lambdaSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("labelInLiteralArgument.kt")
-            public void testLabelInLiteralArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/labelInLiteralArgument.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("labelInLiteralArgumentImplicitReceiverType.kt")
-            public void testLabelInLiteralArgumentImplicitReceiverType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/labelInLiteralArgumentImplicitReceiverType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("labelInLiteralArgumentImplicitReturnType.kt")
-            public void testLabelInLiteralArgumentImplicitReturnType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/labelInLiteralArgumentImplicitReturnType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("labelInLiteralArgumentOneStatement.kt")
-            public void testLabelInLiteralArgumentOneStatement() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/labelInLiteralArgumentOneStatement.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("lambdaInFunctionArgument.kt")
-            public void testLambdaInFunctionArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/lambdaInFunctionArgument.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("lambdaInsideLambda.kt")
-            public void testLambdaInsideLambda() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/lambdaInsideLambda.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("lastStatementIsComment.kt")
-            public void testLastStatementIsComment() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/lastStatementIsComment.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("paranthesizedParameters.kt")
-            public void testParanthesizedParameters() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/paranthesizedParameters.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("receiverAndReturnInExpression.kt")
-            public void testReceiverAndReturnInExpression() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/receiverAndReturnInExpression.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6036,12 +5973,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("expectedReturnTypeMismatch.kt")
-        public void testExpectedReturnTypeMismatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/expectedReturnTypeMismatch.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("hasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/hasNextFunctionReturnTypeMismatch.kt");
@@ -6314,18 +6245,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("changeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt")
-            public void testChangeFunctionLiteralTypeWithoutChangingFunctionParameterType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("changeFunctionLiteralTypeWithoutChangingPropertyType.kt")
-            public void testChangeFunctionLiteralTypeWithoutChangingPropertyType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionLiteralTypeWithoutChangingPropertyType.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("changeFunctionReturnTypeToFunctionType.kt")
             public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionReturnTypeToFunctionType.kt");
@@ -6341,12 +6260,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("dontChangeFunctionReturnTypeToErrorType.kt")
             public void testDontChangeFunctionReturnTypeToErrorType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/dontChangeFunctionReturnTypeToErrorType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("expectedTypeMismatch.kt")
-            public void testExpectedTypeMismatch() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/expectedTypeMismatch.kt");
                 doTest(fileName);
             }
 

@@ -1,2 +1,3 @@
-fun getT(): T {
-}
+val t: T
+    get() {
+    }

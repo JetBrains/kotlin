@@ -176,9 +176,15 @@ fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
     if (a is Int) return { <!DEBUG_INFO_SMARTCAST!>a<!> }
     else return { 1 }
 }
-fun returnFunctionLiteral(a: Any?): Function0<Int> =
-    if (a is Int) { <!DEPRECATED_LAMBDA_SYNTAX!>(): Int<!> -> <!DEBUG_INFO_SMARTCAST!>a<!> }
-    else { <!DEPRECATED_LAMBDA_SYNTAX!>()<!> -> 1 }
+fun returnFunctionLiteral(a: Any?): Function0<Int> {
+    if (a is Int) return { -> <!DEBUG_INFO_SMARTCAST!>a<!> }
+    else return { -> 1 }
+}
+
+fun returnFunctionLiteralDoesntWork(a: Any?): Function0<Int> =
+        if (a is Int) <!TYPE_MISMATCH!>{ -> a }<!>
+        else { -> 1 }
+
 
 fun mergeSmartCasts(a: Any?) {
   if (a is String || a is Int) {

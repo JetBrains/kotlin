@@ -1,3 +1,2 @@
-fun getString(): String {
-    return ""
-}
+val string: String
+    get() = ""

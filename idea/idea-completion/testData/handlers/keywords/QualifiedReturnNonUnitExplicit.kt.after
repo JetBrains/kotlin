@@ -1,6 +1,6 @@
 fun foo() {
     takeHandler1 {
-        takeHandler2({ (): String -> return@takeHandler2 <caret> })
+        takeHandler2({ -> return@takeHandler2 <caret> })
     }
 }
 

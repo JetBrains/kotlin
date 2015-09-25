@@ -4027,6 +4027,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignPlus.kt")
+        public void testAssignPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/assignPlus.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignment.kt")
         public void testAssignment() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/assignment.kt");

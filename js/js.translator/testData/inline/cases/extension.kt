@@ -42,7 +42,7 @@ fun test1(): Int {
 
 fun test2(): Int {
     val inlineX = Inline(9)
-    return inlineX.calcExt2({Int.() -> this}, 25)
+    return inlineX.calcExt2({ -> this}, 25)
 }
 
 fun test3(): Int {

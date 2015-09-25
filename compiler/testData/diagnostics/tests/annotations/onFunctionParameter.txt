@@ -1,7 +1,6 @@
 package
 
 public val bar: (kotlin.Int) -> kotlin.Unit
-public val bas: (kotlin.Int) -> kotlin.Unit
 public fun test(/*0*/ @ann() p: kotlin.Int): kotlin.Unit
 
 @kotlin.annotation.annotation() public final class ann : kotlin.Annotation {

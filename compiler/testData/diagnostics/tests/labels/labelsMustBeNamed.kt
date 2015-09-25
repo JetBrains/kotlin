@@ -1,5 +1,5 @@
 fun foo(a: Any?): Int {
-    <!SYNTAX!>@<!>{ () : Unit ->
+    <!SYNTAX!>@<!>{ ->
         return<!SYNTAX!>@<!>
     }
 

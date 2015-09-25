@@ -124,8 +124,8 @@ public val A.boo: Int
     get() = 1
 public fun A.boo(): Int = 2
 
-val public_ext_f = { A.(): Int -> this.foo() + this.foo }
-val public_ext_b = { A.(): Int -> this.boo() + this.boo }
+val public_ext_f: A.() -> Int = { -> this.foo() + this.foo }
+val public_ext_b: A.() -> Int = { -> this.boo() + this.boo }
 
 interface TestPublicInTrait {
     public fun foo(): Int = 2

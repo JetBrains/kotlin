@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 package a
 
 interface Super
@@ -8,12 +9,12 @@ fun foo(f: (Trait) -> Trait) = f
 
 fun test(s: Sub) {
     foo {
-        <!DEPRECATED_LAMBDA_SYNTAX!>(t: Super): Sub<!> -> s
+        t: Super -> s
     }
     foo {
-        <!DEPRECATED_LAMBDA_SYNTAX!>(t: Trait): Trait<!> -> s
+        t: Trait -> s
     }
-    foo {
-        <!DEPRECATED_LAMBDA_SYNTAX!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>): <!EXPECTED_RETURN_TYPE_MISMATCH!>Super<!><!> -> s
-    }
+
+    foo(<!TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
+    foo(<!TYPE_MISMATCH!>fun(t): Super = s<!>)
 }

@@ -1,16 +1,16 @@
-val receiver = { <!DEPRECATED_LAMBDA_SYNTAX!>Int.()<!> -> }
-val receiverWithParameter = { <!DEPRECATED_LAMBDA_SYNTAX!>Int.(<!CANNOT_INFER_PARAMETER_TYPE!>a<!>)<!> -> }
+val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
+val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)<!> <!SYNTAX!>-><!> }
 
-val receiverAndReturnType = { <!DEPRECATED_LAMBDA_SYNTAX!>Int.(): Int<!> ->  5 }
-val receiverAndReturnTypeWithParameter = { <!DEPRECATED_LAMBDA_SYNTAX!>Int.(a: Int): Int<!> ->  5 }
+val receiverAndReturnType = { Int.(<!SYNTAX!><!>): Int <!SYNTAX!>->  5<!> }
+val receiverAndReturnTypeWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>: Int <!SYNTAX!>->  5<!> }
 
-val returnType = { <!DEPRECATED_LAMBDA_SYNTAX!>(): Int<!> -> 5 }
-val returnTypeWithParameter = { <!DEPRECATED_LAMBDA_SYNTAX!>(b: Int): Int<!> -> 5 }
+val returnType = { (<!SYNTAX!><!>): Int <!SYNTAX!>-> 5<!> }
+val returnTypeWithParameter = { (<!UNRESOLVED_REFERENCE!>b<!>: Int)<!DEPRECATED_STATIC_ASSERT!>: Int<!> <!SYNTAX!>-> 5<!> }
 
-val receiverWithFunctionType = { <!DEPRECATED_LAMBDA_SYNTAX!>((Int) -> Int).()<!> -> }
+val receiverWithFunctionType = { ((Int)<!SYNTAX!><!> <!SYNTAX!>-> Int).() -><!> }
 
-val parenthesizedParameters = { <!DEPRECATED_LAMBDA_SYNTAX!>(a: Int)<!> -> }
-val parenthesizedParameters2 = { <!DEPRECATED_LAMBDA_SYNTAX!>(<!CANNOT_INFER_PARAMETER_TYPE!>b<!>)<!> -> }
+val parenthesizedParameters = { (<!UNRESOLVED_REFERENCE!>a<!>: Int) <!SYNTAX!>-><!> }
+val parenthesizedParameters2 = { (<!UNRESOLVED_REFERENCE!>b<!>) <!SYNTAX!>-><!> }
 
 val none = { -> }
 

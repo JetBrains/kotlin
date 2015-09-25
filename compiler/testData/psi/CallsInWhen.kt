@@ -7,7 +7,7 @@ fun foo() {
     a.foo<T>(a, d) -> a
     a.{bar} -> a
     a.{!bar} -> a
-    a.{() -> !bar} -> a
+    a.{ -> !bar} -> a
     else -> a
   }
 }

@@ -1,5 +1,5 @@
 internal class A {
-    private var i: Int? = getByte().toInt()
+    private var i: Int? = byte.toInt()
 
     fun foo() {
         i = 10
@@ -7,8 +7,7 @@ internal class A {
 
     companion object {
 
-        fun getByte(): Byte {
-            return 0
-        }
+        val byte: Byte
+            get() = 0
     }
 }

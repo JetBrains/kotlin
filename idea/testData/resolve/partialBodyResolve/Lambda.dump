@@ -5,6 +5,6 @@ class C {
 }
 
 fun foo() {
-    val lambda = {() -> /* STATEMENT DELETED: x() */; C() }
+    val lambda = { -> /* STATEMENT DELETED: x() */; C() }
     lambda().<caret>f()
 }

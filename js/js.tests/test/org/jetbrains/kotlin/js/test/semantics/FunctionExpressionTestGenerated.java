@@ -41,12 +41,6 @@ public class FunctionExpressionTestGenerated extends AbstractFunctionExpressionT
         doTest(fileName);
     }
 
-    @TestMetadata("functionExpressionWithName.kt")
-    public void testFunctionExpressionWithName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithName.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("functionExpressionWithThisReference.kt")
     public void testFunctionExpressionWithThisReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");

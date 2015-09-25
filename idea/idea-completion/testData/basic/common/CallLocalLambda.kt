@@ -4,7 +4,7 @@ class TestClass {
 }
 
 fun testFun() {
-    val lambda = {() -> TestClass() }
+    val lambda = { -> TestClass() }
     lambda().<caret>
 }
 

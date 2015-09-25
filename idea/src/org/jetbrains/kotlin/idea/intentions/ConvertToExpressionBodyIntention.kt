@@ -114,7 +114,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
             is JetDeclaration, is JetLoopExpression -> return null // is JetExpression but does not have value
 
             else  -> {
-                if (statement is JetBinaryExpression && statement.getOperationToken() == JetTokens.EQ) return null // assignment does not have value
+                if (statement is JetBinaryExpression && statement.operationToken in JetTokens.ALL_ASSIGNMENTS) return null // assignment does not have value
                 val expressionType = statement.analyze().getType(statement) ?: return null
                 if (!KotlinBuiltIns.isUnit(expressionType) && !KotlinBuiltIns.isNothing(expressionType)) return null
                 return statement

@@ -407,50 +407,6 @@ JetFile: FunctionsAndTypes.kt
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('//type Function1<in T, out R> = {(input : T) => R}')
   PsiWhiteSpace('\n\n\n')
-  PROPERTY
-    PsiElement(val)('val')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f1')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
-      FUNCTION_LITERAL
-        PsiElement(LBRACE)('{')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('t')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('X')
-        PsiWhiteSpace(' ')
-        PsiElement(ARROW)('->')
-        PsiWhiteSpace(' ')
-        BLOCK
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('something')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
-              PsiElement(RPAR)(')')
-        PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -498,7 +454,6 @@ JetFile: FunctionsAndTypes.kt
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace(' ')
@@ -508,7 +463,6 @@ JetFile: FunctionsAndTypes.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
@@ -521,43 +475,6 @@ JetFile: FunctionsAndTypes.kt
               VALUE_ARGUMENT
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('t')
-              PsiElement(RPAR)(')')
-        PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f1')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
-      FUNCTION_LITERAL
-        PsiElement(LBRACE)('{')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('T')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('X')
-        PsiWhiteSpace(' ')
-        PsiElement(ARROW)('->')
-        PsiWhiteSpace(' ')
-        BLOCK
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('something')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('it')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')

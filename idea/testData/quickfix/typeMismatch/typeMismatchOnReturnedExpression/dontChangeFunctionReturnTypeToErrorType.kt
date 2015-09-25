@@ -8,5 +8,5 @@
 // ERROR: Unresolved reference: NoSuchType
 
 fun foo(): Int {
-    return { (x: NoSuchType<caret>) -> 42 }
+    return { x: NoSuchType<caret> -> 42 }
 }

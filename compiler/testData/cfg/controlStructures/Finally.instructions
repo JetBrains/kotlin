@@ -89,7 +89,7 @@ sink:
 fun t3() {
   try {
     1
-    l@{ () ->
+    l@{ ->
         if (2 > 3) {
           return@l
         }
@@ -101,38 +101,38 @@ fun t3() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 } })
-    mark(try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 })
-    jmp?(L2)                                                                           NEXT:[mark({ 2 }), mark({ 1 l@{ () -> if (2 > 3) { return@l } } })]
-  3 mark({ 1 l@{ () -> if (2 > 3) { return@l } } })
+  2 mark({ try { 1 l@{ -> if (2 > 3) { return@l } } } finally { 2 } })
+    mark(try { 1 l@{ -> if (2 > 3) { return@l } } } finally { 2 })
+    jmp?(L2)                                                                        NEXT:[mark({ 2 }), mark({ 1 l@{ -> if (2 > 3) { return@l } } })]
+  3 mark({ 1 l@{ -> if (2 > 3) { return@l } } })
     r(1) -> <v0>
-    mark(l@{ () -> if (2 > 3) { return@l } })
-    mark({ () -> if (2 > 3) { return@l } })
-    jmp?(L3)                                                                           NEXT:[r({ () -> if (2 > 3) { return@l } }) -> <v1>, d({ () -> if (2 > 3) { return@l } })]
-    d({ () -> if (2 > 3) { return@l } })                                               NEXT:[<SINK>]
+    mark(l@{ -> if (2 > 3) { return@l } })
+    mark({ -> if (2 > 3) { return@l } })
+    jmp?(L3)                                                                        NEXT:[r({ -> if (2 > 3) { return@l } }) -> <v1>, d({ -> if (2 > 3) { return@l } })]
+    d({ -> if (2 > 3) { return@l } })                                               NEXT:[<SINK>]
 L3 [after local declaration]:
-    r({ () -> if (2 > 3) { return@l } }) -> <v1>                                       PREV:[jmp?(L3)]
-  2 jmp(L8)                                                                            NEXT:[mark({ 2 })]
+    r({ -> if (2 > 3) { return@l } }) -> <v1>                                       PREV:[jmp?(L3)]
+  2 jmp(L8)                                                                         NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L9 [start finally]:
-  3 mark({ 2 })                                                                        PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                     PREV:[jmp?(L2)]
     r(2) -> <v2>
 L10 [finish finally]:
-  2 jmp(error)                                                                         NEXT:[<ERROR>]
+  2 jmp(error)                                                                      NEXT:[<ERROR>]
 L8 [skipFinallyToErrorBlock]:
 L11 [copy of L2, onExceptionToFinallyBlock]:
-  3 mark({ 2 })                                                                        PREV:[jmp(L8)]
+  3 mark({ 2 })                                                                     PREV:[jmp(L8)]
     r(2) -> <v2>
-  2 merge(try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 }|<v1>) -> <v3>
+  2 merge(try { 1 l@{ -> if (2 > 3) { return@l } } } finally { 2 }|<v1>) -> <v3>
 L1:
-  1 <END>                                                                              NEXT:[<SINK>]
+  1 <END>                                                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                                                            PREV:[jmp(error)]
+    <ERROR>                                                                         PREV:[jmp(error)]
 sink:
-    <SINK>                                                                             PREV:[<ERROR>, <END>, d({ () -> if (2 > 3) { return@l } })]
+    <SINK>                                                                          PREV:[<ERROR>, <END>, d({ -> if (2 > 3) { return@l } })]
 =====================
 == anonymous_0 ==
-{ () ->
+{ ->
         if (2 > 3) {
           return@l
         }
@@ -163,7 +163,7 @@ sink:
 =====================
 == t4 ==
 fun t4() {
-  l@{ () ->
+  l@{ ->
     try {
       1
       if (2 > 3) {
@@ -177,22 +177,22 @@ fun t4() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ l@{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } })
-    mark(l@{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
-    mark({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
-    jmp?(L2)                                                                 NEXT:[r({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }) -> <v0>, d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
-    d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })             NEXT:[<SINK>]
+  2 mark({ l@{ -> try { 1 if (2 > 3) { return@l } } finally { 2 } } })
+    mark(l@{ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
+    mark({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
+    jmp?(L2)                                                              NEXT:[r({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } }) -> <v0>, d({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
+    d({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })             NEXT:[<SINK>]
 L2 [after local declaration]:
-    r({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }) -> <v0>     PREV:[jmp?(L2)]
+    r({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } }) -> <v0>     PREV:[jmp?(L2)]
 L1:
-  1 <END>                                                                    NEXT:[<SINK>]
+  1 <END>                                                                 NEXT:[<SINK>]
 error:
-    <ERROR>                                                                  PREV:[]
+    <ERROR>                                                               PREV:[]
 sink:
-    <SINK>                                                                   PREV:[<ERROR>, <END>, d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
+    <SINK>                                                                PREV:[<ERROR>, <END>, d({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
 =====================
 == anonymous_1 ==
-{ () ->
+{ ->
     try {
       1
       if (2 > 3) {

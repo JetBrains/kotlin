@@ -1,7 +1,7 @@
 fun <T> foo(f: (T) -> String) {}
 
 fun test() {
-    <caret>foo { (x: Int) -> "$x"}
+    <caret>foo { x: Int -> "$x"}
 }
 
 
@@ -16,4 +16,4 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-SUCCESS  f : (Int) -> String = { (x: Int) -> "$x"}
+SUCCESS  f : (Int) -> String = { x: Int -> "$x"}

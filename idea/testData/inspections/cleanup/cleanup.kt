@@ -2,11 +2,7 @@ import pack.oldFun1
 import pack.oldFun2 // should not be removed for non-deprecated overload used
 import pack.oldFun3
 
-val f = { (a: Int, b: Int) -> a + b }
-
 class A private()
-
-val x = fun foo(x: String) { }
 
 fun foo() {
     @loop

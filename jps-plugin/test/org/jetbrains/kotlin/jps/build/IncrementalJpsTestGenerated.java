@@ -329,6 +329,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("internalClassChanged")
+        public void testInternalClassChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalClassChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internalMemberInClassChanged")
+        public void testInternalMemberInClassChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalMemberInClassChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("localClassChanged")
         public void testLocalClassChanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/localClassChanged/");
@@ -548,6 +560,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("traitClassObjectConstantChanged")
         public void testTraitClassObjectConstantChanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valAddCustomAccessor")
+        public void testValAddCustomAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valRemoveCustomAccessor")
+        public void testValRemoveCustomAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/valRemoveCustomAccessor/");
             doTest(fileName);
         }
 

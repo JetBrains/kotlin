@@ -1,28 +1,28 @@
 == TestFunctionLiteral ==
 class TestFunctionLiteral {
-    val sum: (Int)->Int = { (x: Int) ->
+    val sum: (Int)->Int = { x: Int ->
         sum(x - 1) + x
     }
 }
 ---------------------
 L0:
-  1 <START>                                                    INIT: in: {} out: {}
-    v(val sum: (Int)->Int = { (x: Int) -> sum(x - 1) + x })    INIT: in: {} out: {sum=D}
-    mark({ (x: Int) -> sum(x - 1) + x })                       INIT: in: {sum=D} out: {sum=D}
+  1 <START>                                                  INIT: in: {} out: {}
+    v(val sum: (Int)->Int = { x: Int -> sum(x - 1) + x })    INIT: in: {} out: {sum=D}
+    mark({ x: Int -> sum(x - 1) + x })                       INIT: in: {sum=D} out: {sum=D}
     jmp?(L2)
-    d({ (x: Int) -> sum(x - 1) + x })                                                                USE: in: {sum=READ} out: {sum=READ}
+    d({ x: Int -> sum(x - 1) + x })                                                                USE: in: {sum=READ} out: {sum=READ}
 L2 [after local declaration]:
-    r({ (x: Int) -> sum(x - 1) + x }) -> <v0>
-    w(sum|<v0>)                                                INIT: in: {sum=D} out: {sum=ID}
+    r({ x: Int -> sum(x - 1) + x }) -> <v0>
+    w(sum|<v0>)                                              INIT: in: {sum=D} out: {sum=ID}
 L1:
-    <END>                                                      INIT: in: {sum=ID} out: {sum=ID}
+    <END>                                                    INIT: in: {sum=ID} out: {sum=ID}
 error:
-    <ERROR>                                                    INIT: in: {} out: {}
+    <ERROR>                                                  INIT: in: {} out: {}
 sink:
-    <SINK>                                                     INIT: in: {sum=I?D} out: {sum=I?D}    USE: in: {} out: {}
+    <SINK>                                                   INIT: in: {sum=I?D} out: {sum=I?D}    USE: in: {} out: {}
 =====================
 == anonymous_0 ==
-{ (x: Int) ->
+{ x: Int ->
         sum(x - 1) + x
     }
 ---------------------

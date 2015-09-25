@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     // RESULT: 1: I
     // STEP_INTO: 2
     //Breakpoint!
-    a.foo (fun b(it): A { return a })
+    a.foo (fun(it): A { return a })
 }
 
 class A {

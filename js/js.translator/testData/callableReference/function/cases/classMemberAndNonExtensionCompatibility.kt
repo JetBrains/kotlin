@@ -25,7 +25,7 @@ fun box():String {
     r = run(a, "!!", A::locExtBar)
     if (r != "sA:locExtBar:!!") return r
 
-    r = run(a, "!!") {(a: A, other: String): String -> a.s + ":literal:" + other }
+    r = run(a, "!!") { a: A, other: String -> a.s + ":literal:" + other }
     if (r != "sA:literal:!!") return r
 
     return "OK"

@@ -21,9 +21,12 @@ import org.jetbrains.kotlin.j2k.CodeBuilder
 abstract class FunctionLike(
         annotations: Annotations,
         modifiers: Modifiers,
-        val parameterList: ParameterList,
+        open val parameterList: ParameterList?,
         val body: DeferredElement<Block>?
-) : Member(annotations, modifiers)
+) : Member(annotations, modifiers) {
+
+    protected open fun presentationModifiers(): Modifiers = modifiers
+}
 
 class Function(
         val name: Identifier,
@@ -33,10 +36,13 @@ class Function(
         val typeParameterList: TypeParameterList,
         parameterList: ParameterList,
         body: DeferredElement<Block>?,
-        val isInInterface: Boolean
+        private val isInInterface: Boolean
 ) : FunctionLike(annotations, modifiers, parameterList, body) {
 
-    private fun presentationModifiers(): Modifiers {
+    override val parameterList: ParameterList
+        get() = super.parameterList!!
+
+    protected override fun presentationModifiers(): Modifiers {
         var modifiers = this.modifiers
         if (isInInterface) {
             modifiers = modifiers.without(Modifier.ABSTRACT)

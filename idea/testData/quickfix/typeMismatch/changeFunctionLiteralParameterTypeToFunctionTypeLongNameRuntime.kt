@@ -2,6 +2,6 @@
 
 fun foo(f: ((java.util.LinkedHashSet<Int>) -> java.util.HashSet<Int>) -> String) {
     foo {
-        (f: String<caret>) -> "42"
+        f: String<caret> -> "42"
     }
 }

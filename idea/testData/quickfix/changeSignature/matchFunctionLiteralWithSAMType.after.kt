@@ -2,5 +2,5 @@
 // DISABLE-ERRORS
 
 fun main(args: Array<String>) {
-    Test<String>().perform("") {(s: String?, s1: String?) -> }
+    Test<String>().perform("") { s: String?, s1: String? -> }
 }

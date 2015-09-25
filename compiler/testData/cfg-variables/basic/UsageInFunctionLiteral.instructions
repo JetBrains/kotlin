@@ -1,34 +1,34 @@
 == foo ==
 fun foo() {
     val a = 1
-    val f = { (x: Int) ->
+    val f = { x: Int ->
         val y = x + a
         use(a)
     }
 }
 ---------------------
 L0:
-  1 <START>                                                             INIT: in: {} out: {}                       USE: in: {} out: {}
-  2 mark({ val a = 1 val f = { (x: Int) -> val y = x + a use(a) } })
-    v(val a = 1)                                                        INIT: in: {} out: {a=D}
-    r(1) -> <v0>                                                        INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                                                           INIT: in: {a=D} out: {a=ID}
-    v(val f = { (x: Int) -> val y = x + a use(a) })                     INIT: in: {a=ID} out: {a=ID, f=D}
-    mark({ (x: Int) -> val y = x + a use(a) })                          INIT: in: {a=ID, f=D} out: {a=ID, f=D}
+  1 <START>                                                           INIT: in: {} out: {}                       USE: in: {} out: {}
+  2 mark({ val a = 1 val f = { x: Int -> val y = x + a use(a) } })
+    v(val a = 1)                                                      INIT: in: {} out: {a=D}
+    r(1) -> <v0>                                                      INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                                         INIT: in: {a=D} out: {a=ID}
+    v(val f = { x: Int -> val y = x + a use(a) })                     INIT: in: {a=ID} out: {a=ID, f=D}
+    mark({ x: Int -> val y = x + a use(a) })                          INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     jmp?(L2)
-    d({ (x: Int) -> val y = x + a use(a) })                                                                        USE: in: {a=READ} out: {a=READ}
+    d({ x: Int -> val y = x + a use(a) })                                                                        USE: in: {a=READ} out: {a=READ}
 L2 [after local declaration]:
-    r({ (x: Int) -> val y = x + a use(a) }) -> <v1>
-    w(f|<v1>)                                                           INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
+    r({ x: Int -> val y = x + a use(a) }) -> <v1>
+    w(f|<v1>)                                                         INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
 L1:
-  1 <END>                                                               INIT: in: {} out: {}
+  1 <END>                                                             INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                         USE: in: {} out: {}
+    <SINK>                                                                                                       USE: in: {} out: {}
 =====================
 == anonymous_0 ==
-{ (x: Int) ->
+{ x: Int ->
         val y = x + a
         use(a)
     }

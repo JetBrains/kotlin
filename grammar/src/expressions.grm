@@ -256,7 +256,6 @@ jump
 functionLiteral
   : "{" statements "}"
   : "{" (modifiers SimpleName){","} "->" statements "}"
-  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "->" statements "}"
   ;
 
 statements

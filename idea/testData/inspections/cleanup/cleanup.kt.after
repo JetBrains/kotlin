@@ -1,11 +1,7 @@
 import pack.bar
 import pack.oldFun2 // should not be removed for non-deprecated overload used
 
-val f = { a: Int, b: Int -> a + b }
-
 class A private constructor()
-
-val x = fun(x: String) { }
 
 fun foo() {
     loop@

@@ -16,24 +16,41 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.AccessorKind
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.getDefaultInitializer
 
 class Property(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
+        val isVar: Boolean,
         val type: Type,
-        private val initializer: DeferredElement<Expression>,
-        val isVal: Boolean,
         val explicitType: Boolean,
-        private val defaultInitializer: Boolean,
-        val setterAccess: Modifier?
+        private val initializer: DeferredElement<Expression>,
+        private val needInitializer: Boolean,
+        private val getter: PropertyAccessor?,
+        private val setter: PropertyAccessor?,
+        private val isInInterface: Boolean
 ) : Member(annotations, modifiers) {
+
+    private fun presentationModifiers(): Modifiers {
+        var modifiers = this.modifiers
+        if (isInInterface) {
+            modifiers = modifiers.without(Modifier.ABSTRACT)
+        }
+
+        if (modifiers.contains(Modifier.OVERRIDE)) {
+            modifiers = modifiers.filter { it != Modifier.OPEN }
+        }
+
+        return modifiers
+    }
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
-                .appendWithSpaceAfter(modifiers)
-                .append(if (isVal) "val " else "var ")
+                .appendWithSpaceAfter(presentationModifiers())
+                .append(if (isVar) "var " else "val ")
                 .append(identifier)
 
         if (explicitType) {
@@ -41,19 +58,47 @@ class Property(
         }
 
         var initializerToUse: Element = initializer
-        if (initializerToUse.isEmpty && defaultInitializer) {
+        if (initializerToUse.isEmpty && needInitializer) {
             initializerToUse = getDefaultInitializer(this) ?: Element.Empty
         }
         if (!initializerToUse.isEmpty) {
             builder append " = " append initializerToUse
         }
 
-        if (!isVal && setterAccess != modifiers.accessModifier()) {
-            builder.append("\n")
-            if (setterAccess != null) {
-                builder.appendWithSpaceAfter(Modifiers(listOf(setterAccess)).assignNoPrototype())
-            }
-            builder.append("set")
+        if (getter != null) {
+            builder append "\n" append getter
+        }
+
+        if (setter != null) {
+            builder append "\n" append setter
+        }
+    }
+}
+
+class PropertyAccessor(
+        private val kind: AccessorKind,
+        annotations: Annotations,
+        modifiers: Modifiers,
+        parameterList: ParameterList?,
+        body: DeferredElement<Block>?
+) : FunctionLike(annotations, modifiers, parameterList, body) {
+
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+
+        builder.appendWithSpaceAfter(presentationModifiers())
+
+        when (kind) {
+            AccessorKind.GETTER -> builder.append("get")
+            AccessorKind.SETTER -> builder.append("set")
+        }
+
+        if (parameterList != null) {
+            builder append "(" append parameterList append ")"
+        }
+
+        if (body != null) {
+            builder append " " append body
         }
     }
 }

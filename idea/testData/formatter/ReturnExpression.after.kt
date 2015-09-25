@@ -16,19 +16,19 @@ fun test3(): Int {
 }
 
 fun test4(): Int {
-    return synchronized(this) {(): Int ->
+    return synchronized(this) { ->
         return@synchronized 12
     }
 }
 
 fun test5(): Int {
-    return synchronized(this) {(): Int ->
+    return synchronized(this) { ->
         return@synchronized 12
     }
 }
 
 fun test6(): Int {
-    return synchronized(this) {(): Int ->
+    return synchronized(this) { ->
         return
 
         @synchronized

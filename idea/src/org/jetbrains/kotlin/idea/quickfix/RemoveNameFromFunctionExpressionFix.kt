@@ -16,18 +16,13 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : JetIntentionAction<JetNamedFunction>(element), CleanupFix {
@@ -40,24 +35,6 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Je
 
         override fun createAction(diagnostic: Diagnostic) =
                 diagnostic.createIntentionForFirstParentOfType(::RemoveNameFromFunctionExpressionFix)
-
-        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
-            JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetNamedFunction>(
-                    predicate = { isFunctionExpression(it) },
-                    taskProcessor = { removeNameFromFunction(it) },
-                    name = "Remove identifier from function expressions in the whole project"
-            )
-        }
-
-        private fun isFunctionExpression(function: JetNamedFunction): Boolean {
-            var parent = function.getParent()
-
-            while (parent is JetAnnotatedExpression || parent is JetLabeledExpression) {
-                parent = parent.getParent()
-            }
-
-            return function.isLocal() && parent !is JetBlockExpression
-        }
 
         private fun removeNameFromFunction(function: JetNamedFunction) {
             var wereAutoLabelUsages = false

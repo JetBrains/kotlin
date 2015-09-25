@@ -324,14 +324,12 @@ JetFile: Comparison.kt
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('a')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_PARAMETER
             PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
         PsiWhiteSpace('\n  ')

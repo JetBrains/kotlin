@@ -1,6 +1,6 @@
 fun foo() {
     val (i: Int, s: String) = bar()
-    val h = {(): Unit -> bar() }
+    val h = { -> bar() }
     for (i: Int in collection) {
     }
 }

@@ -3,6 +3,6 @@ class C {
 }
 
 fun foo() {
-    val lambda = {() -> x(); C() }
+    val lambda = { -> x(); C() }
     lambda().<caret>f()
 }

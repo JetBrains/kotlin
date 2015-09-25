@@ -6,6 +6,6 @@ class AAA {
     }
 
     fun bar(b: B) {
-        println(b.YY)
+        println(b.yy)
     }
 }

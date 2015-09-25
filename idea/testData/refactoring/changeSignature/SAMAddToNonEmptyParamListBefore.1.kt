@@ -1,3 +1,3 @@
 fun test() {
-    JTest.samTest(SAM { (s, n) -> s + " " + n })
+    JTest.samTest(SAM { s, n -> s + " " + n })
 }

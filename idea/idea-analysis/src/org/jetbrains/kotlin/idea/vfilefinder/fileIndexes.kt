@@ -30,7 +30,7 @@ import java.io.DataOutput
 import java.util.Collections
 
 abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
-    public val KEY: ID<FqName, Void> = ID.create(classOfIndex.getCanonicalName())
+    public val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
 
     private val KEY_DESCRIPTOR : KeyDescriptor<FqName> = object : KeyDescriptor<FqName> {
         override fun save(output: DataOutput, value: FqName) = output.writeUTF(value.asString())
@@ -51,9 +51,9 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
     override fun getKeyDescriptor() = KEY_DESCRIPTOR
 
     protected fun indexer(f: (VirtualFile) -> FqName?): DataIndexer<FqName, Void, FileContent> =
-            DataIndexer<FqName, Void, FileContent> {
+            DataIndexer {
                 try {
-                    val fqName = f(it.getFile())
+                    val fqName = f(it.file)
                     if (fqName != null) {
                         Collections.singletonMap<FqName, Void>(fqName, null)
                     }
@@ -62,17 +62,17 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
                     }
                 }
                 catch (e: Throwable) {
-                    LOG.warn("Error while indexing file " + it.getFileName(), e)
+                    LOG.warn("Error while indexing file " + it.fileName, e)
                     emptyMap()
                 }
             }
 }
 
-public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(javaClass<KotlinClassFileIndex>()) {
+public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinClassFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.getFileType() == JavaClassFileType.INSTANCE }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == JavaClassFileType.INSTANCE }
 
     override fun getVersion() = VERSION
 
@@ -80,21 +80,21 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(j
 
     private val INDEXER = indexer() { file ->
         val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
-        if (kotlinClass != null && kotlinClass.getClassHeader().isCompatibleAbiVersion) kotlinClass.getClassId().asSingleFqName() else null
+        if (kotlinClass != null && kotlinClass.classHeader.isCompatibleAbiVersion) kotlinClass.classId.asSingleFqName() else null
     }
 }
 
-public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(javaClass<KotlinJavaScriptMetaFileIndex>()) {
+public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(KotlinJavaScriptMetaFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.getFileType() == KotlinJavaScriptMetaFileType }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == KotlinJavaScriptMetaFileType }
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 1
+    private val VERSION = 2
 
     private val INDEXER = indexer() { file ->
-        if (file.getFileType() == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(file) else null
+        if (file.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(file) else null
     }
 }

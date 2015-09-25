@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.j2k.ClassKind
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.j2k.OverloadReducer
 import org.jetbrains.kotlin.j2k.append
 
 abstract class Member(var annotations: Annotations, val modifiers: Modifiers) : Element()
@@ -31,16 +29,15 @@ class ClassBody (
         val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
         val rBrace: RBrace,
-        val isEnumBody: Boolean,
-        val isAnonymousClassBody: Boolean) {
-
+        val classKind: ClassKind
+) {
     fun appendTo(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }
-        if (!isAnonymousClassBody && membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
+        if (classKind != ClassKind.ANONYMOUS_OBJECT && membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 
-        if (!isEnumBody) {
+        if (!classKind.isEnum()) {
             builder.append(membersFiltered, "\n")
         }
         else {

@@ -22,11 +22,9 @@ typealias Function1<in T, out R> =  (input : T) -> R
 //type Function1<in T, out R> = {(input : T) => R}
 
 
-val f1 = {(t : T) : X -> something(t)}
 fun f1(t : T) : X = something(t)
 
-val f1 = {(t : T) -> something(t)}
-val f1 = {(T) : X -> something(it)}
+val f1 = {t : T -> something(t)}
 val f1 = {t -> something(t)}
 val f1 = {something(it)}
 

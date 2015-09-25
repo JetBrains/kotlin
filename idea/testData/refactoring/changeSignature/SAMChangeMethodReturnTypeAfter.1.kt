@@ -1,4 +1,4 @@
 fun test() {
-    JTest.samTest(SAM { (s, n) -> s + " " })
-    JTest.samTest(SAM { (s, n): Any? -> s + " " })
+    JTest.samTest(SAM { s, n -> s + " " })
+    JTest.samTest(SAM { s, n -> s + " " })
 }

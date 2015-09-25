@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.Converter
 
 abstract class Constructor(
         annotations: Annotations,
         modifiers: Modifiers,
         parameterList: ParameterList,
         body: DeferredElement<Block>
-) : FunctionLike(annotations, modifiers, parameterList, body)
+) : FunctionLike(annotations, modifiers, parameterList, body) {
+    override val parameterList: ParameterList
+        get() = super.parameterList!!
+}
 
 class PrimaryConstructor(
         annotations: Annotations,

@@ -5,5 +5,5 @@ fun foo(f: Int.(Int, Int) -> Int) {
 }
 
 fun test() {
-    foo { <caret>(a: Int) -> 0 }
+    foo { <caret>a: Int -> 0 }
 }

@@ -178,12 +178,6 @@ public object PositioningStrategies {
         }
     }
 
-    public val FUNCTION_LITERAL_EXPRESSION_DECLARATION: PositioningStrategy<JetFunctionLiteralExpression>
-            = object : PositioningStrategy<JetFunctionLiteralExpression>() {
-                override fun mark(element: JetFunctionLiteralExpression) = DECLARATION_SIGNATURE_OR_DEFAULT.mark(element.getFunctionLiteral())
-                override fun isValid(element: JetFunctionLiteralExpression) = DECLARATION_SIGNATURE_OR_DEFAULT.isValid(element.getFunctionLiteral())
-            }
-
     public val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : PositioningStrategy<JetDeclaration>() {
         override fun mark(element: JetDeclaration): List<TextRange> {
             if (element is JetTypeParameterListOwner) {

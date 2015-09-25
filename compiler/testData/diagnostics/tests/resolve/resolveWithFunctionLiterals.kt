@@ -16,11 +16,11 @@ object A {
 fun foo(i: Int, f: (Int)->Int) = f(i)
 
 fun test() {
-    foo(1) { <!DEPRECATED_LAMBDA_SYNTAX!>(x1: Int):Int<!> ->
-        foo(2) { <!DEPRECATED_LAMBDA_SYNTAX!>(x2: Int): Int<!> ->
-            foo(3) { <!DEPRECATED_LAMBDA_SYNTAX!>(x3: Int): Int<!> ->
-                foo(4) { <!DEPRECATED_LAMBDA_SYNTAX!>(x4: Int): Int<!> ->
-                    foo(5) { <!DEPRECATED_LAMBDA_SYNTAX!>(x5: Int): Int<!> ->
+    foo(1) { x1: Int ->
+        foo(2) { x2: Int ->
+            foo(3) { x3: Int ->
+                foo(4) { x4: Int ->
+                    foo(5) { x5: Int ->
                         x1 + x2 + x3 + x4 + x5 + A.iii
                     }
                 }
