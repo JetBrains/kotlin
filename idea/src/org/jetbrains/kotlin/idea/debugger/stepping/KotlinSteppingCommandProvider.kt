@@ -99,7 +99,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val result = arrayListOf<PsiElement>()
         val ifParent = getParentOfType<JetIfExpression>(false)
         if (ifParent != null) {
-            if (ifParent.then?.textRange?.contains(this.textRange) ?: false) {
+            if (ifParent.then.contains(this)) {
                 ifParent.elseKeyword?.let { result.add(it) }
                 ifParent.`else`?.let { result.add(it) }
             }
@@ -114,7 +114,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
         val whenEntry = getParentOfType<JetWhenEntry>(false)
         if (whenEntry != null) {
-            if (whenEntry.expression?.textRange?.contains(this.textRange) ?: false) {
+            if (whenEntry.expression.contains(this)) {
                 val whenParent = whenEntry.getParentOfType<JetWhenExpression>(false)
                 if (whenParent != null) {
                     result.addAll(whenParent.entries.filter { it != whenEntry })
@@ -129,7 +129,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val ifParent = getParentOfType<JetIfExpression>(false)
         if (ifParent != null) {
             // if (inlineFunCall()) {...}
-            if (ifParent.condition?.textRange?.contains(this.textRange) ?: false) {
+            if (ifParent.condition.contains(this)) {
                 return true
             }
 
@@ -139,10 +139,10 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
              */
             val ifParentElementAt = elementAt.getParentOfType<JetIfExpression>(false)
             if (ifParentElementAt == null) {
-                if (ifParent.then?.textRange?.contains(this.textRange) ?: false) {
+                if (ifParent.then.contains(this)) {
                     return true
                 }
-                if (ifParent.`else`?.textRange?.contains(this.textRange) ?: false) {
+                if (ifParent.`else`.contains(this)) {
                     return true
                 }
             }
@@ -153,7 +153,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             /* try { inlineFunCall() }
                catch()...
              */
-            if (tryParent.tryBlock.textRange?.contains(this.textRange) ?: false) {
+            if (tryParent.tryBlock.contains(this)) {
                 return true
             }
         }
@@ -161,19 +161,23 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val whenEntry = getParentOfType<JetWhenEntry>(false)
         if (whenEntry != null) {
             // <caret>inlineFunCall -> ...
-            if (whenEntry.conditions.any { it.textRange.contains(this.textRange) } ) {
+            if (whenEntry.conditions.any { it.contains(this) } ) {
                 return true
             }
 
             // <caret>1 == 2 -> inlineFunCall()
-            if (whenEntry.expression?.textRange?.contains(this.textRange) ?: false) {
+            if (whenEntry.expression.contains(this)) {
                 val parentEntryElementAt = elementAt.getParentOfType<JetWhenEntry>(false) ?: return true
                 return parentEntryElementAt == whenEntry &&
-                        whenEntry.conditions.any { it.textRange.contains(elementAt.textRange) }
+                        whenEntry.conditions.any { it.contains(elementAt) }
             }
         }
 
         return false
+    }
+
+    private fun PsiElement?.contains(element: PsiElement): Boolean {
+        return this?.textRange?.contains(element.textRange) ?: false
     }
 
     override fun getStepOutCommand(suspendContext: SuspendContextImpl?, stepSize: Int): DebugProcessImpl.ResumeCommand? {
