@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessT
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -47,6 +48,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
     override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
+        if (refExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
         return refExpr
     }
 

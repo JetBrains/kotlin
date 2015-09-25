@@ -2465,6 +2465,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonIdentifier.kt")
+                public void testNonIdentifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/nonIdentifier.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("nullableType.kt")
                 public void testNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/nullableType.kt");
@@ -2711,6 +2717,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("namedArgInFunctionCall.kt")
                 public void testNamedArgInFunctionCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/namedArgInFunctionCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonIdentifier.kt")
+                public void testNonIdentifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/nonIdentifier.kt");
                     doTest(fileName);
                 }
 
