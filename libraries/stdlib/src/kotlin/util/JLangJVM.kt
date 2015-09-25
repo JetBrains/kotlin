@@ -54,6 +54,6 @@ public fun <T : Annotation> T.annotationType() : Class<out T> =
  * Invokes the underlying method represented by this [Method] object, on the specified [instance] with the specified parameters.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun Method.invoke(instance: Any, vararg args: Any?): Any? {
+public inline operator fun Method.invoke(instance: Any, vararg args: Any?): Any? {
     return invoke(instance, *args)
 }

@@ -168,7 +168,7 @@ private object ReflectClassStructure {
             annotationType: Class<*>
     ) {
         for (method in annotationType.getDeclaredMethods()) {
-            processAnnotationArgumentValue(visitor, Name.identifier(method.getName()), method(annotation))
+            processAnnotationArgumentValue(visitor, Name.identifier(method.getName()), method(annotation)!!)
         }
         visitor.visitEnd()
     }
