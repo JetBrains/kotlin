@@ -59,6 +59,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("interfaceDefaultImpls")
+    public void testInterfaceDefaultImpls() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaceDefaultImpls/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("platformName")
     public void testPlatformName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformName/");
