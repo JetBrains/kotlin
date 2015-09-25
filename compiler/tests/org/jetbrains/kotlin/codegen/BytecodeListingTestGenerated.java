@@ -49,6 +49,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("literals.kt")
+        public void testLiterals() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onProperties.kt")
         public void testOnProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/onProperties.kt");

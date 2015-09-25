@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
@@ -104,6 +105,16 @@ public abstract class AnnotationCodegen {
 
             // Skip if the target is not the same
             if (allowedTarget != null && annotationTarget != null && allowedTarget != annotationTarget) continue;
+
+            Set<KotlinTarget> applicableTargets = AnnotationChecker.applicableTargetSet(annotation);
+            if (annotated instanceof AnonymousFunctionDescriptor
+                && !applicableTargets.contains(KotlinTarget.FUNCTION)
+                && !applicableTargets.contains(KotlinTarget.PROPERTY_GETTER)
+                && !applicableTargets.contains(KotlinTarget.PROPERTY_SETTER)) {
+                assert (applicableTargets.contains(KotlinTarget.EXPRESSION)) :
+                        "Inconsistent target list for lambda annotation: " + applicableTargets + " on " + annotated;
+                continue;
+            }
 
             String descriptor = genAnnotation(annotation);
             if (descriptor != null) {
