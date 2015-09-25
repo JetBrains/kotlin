@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 public final class JvmAbi {
     /**
@@ -79,7 +79,7 @@ public final class JvmAbi {
     public static String getterName(@NotNull String propertyName) {
         return startsWithIsPrefix(propertyName)
                ? propertyName
-               : GET_PREFIX + KotlinPackage.capitalize(propertyName);
+               : GET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
 
     }
 
@@ -87,14 +87,14 @@ public final class JvmAbi {
     public static String setterName(@NotNull String propertyName) {
         return startsWithIsPrefix(propertyName)
                ? SET_PREFIX + propertyName.substring(IS_PREFIX.length())
-               : SET_PREFIX + KotlinPackage.capitalize(propertyName);
+               : SET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
     }
 
     private static boolean startsWithIsPrefix(String name) {
         if (!name.startsWith(IS_PREFIX)) return false;
         if (name.length() == IS_PREFIX.length()) return false;
         char c = name.charAt(IS_PREFIX.length());
-        return !Character.isLowerCase(c);
+        return !('a' <= c && c <= 'z');
     }
 }
 

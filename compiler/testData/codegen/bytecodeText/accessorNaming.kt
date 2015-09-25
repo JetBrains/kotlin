@@ -15,6 +15,8 @@ interface I {
     var HTTPProtocol: String
 
     var issueFlag: Boolean
+
+    var русскаяПропертя: Int // should not capitalize it because we only do it for ASCII
 }
 
 // 1 getSimpleFoo
@@ -39,3 +41,5 @@ interface I {
 // 1 setHTTPProtocol
 // 1 getIssueFlag
 // 1 setIssueFlag
+// 1 getрусскаяПропертя
+// 1 setрусскаяПропертя

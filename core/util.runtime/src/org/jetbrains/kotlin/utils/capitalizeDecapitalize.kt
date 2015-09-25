@@ -44,3 +44,13 @@ public fun String.capitalizeFirstWord(): String {
     return substring(0, secondWordStart).toUpperCase() + substring(secondWordStart)
 }
 
+public fun String.capitalizeAsciiOnly(): String {
+    if (isEmpty()) return this
+    val c = charAt(0)
+    return if (c in 'a'..'z')
+        c.toUpperCase() + substring(1)
+    else
+        this
+}
+
+
