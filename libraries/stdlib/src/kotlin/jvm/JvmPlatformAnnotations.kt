@@ -94,6 +94,6 @@ public annotation class Throws(public vararg val exceptionClasses: KClass<out Th
 
 @Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)
+internal annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)
 
 
