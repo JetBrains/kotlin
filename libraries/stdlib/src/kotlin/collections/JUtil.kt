@@ -6,7 +6,7 @@ package kotlin
 import java.io.Serializable
 import java.util.*
 
-private object EmptyIterator : ListIterator<Nothing> {
+internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
     override fun hasPrevious(): Boolean = false
     override fun nextIndex(): Int = 0
@@ -15,7 +15,7 @@ private object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-private object EmptyList : List<Nothing>, Serializable {
+internal object EmptyList : List<Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
     override fun hashCode(): Int = 1
     override fun toString(): String = "[]"
@@ -125,7 +125,7 @@ public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this
 private fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
         when(this) {
             is Set -> this
             is Collection ->
@@ -137,7 +137,7 @@ private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>)
         }
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
         when(this) {
             is Set -> this
             is Collection -> if (this.safeToConvertToSet()) toHashSet() else this

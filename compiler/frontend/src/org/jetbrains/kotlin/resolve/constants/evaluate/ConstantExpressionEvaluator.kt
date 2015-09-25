@@ -839,19 +839,19 @@ private fun getCompileTimeType(c: JetType): CompileTimeType<out Any>? {
 
 private class CompileTimeType<T>
 
-private val BYTE = CompileTimeType<Byte>()
-private val SHORT = CompileTimeType<Short>()
-private val INT = CompileTimeType<Int>()
-private val LONG = CompileTimeType<Long>()
-private val DOUBLE = CompileTimeType<Double>()
-private val FLOAT = CompileTimeType<Float>()
-private val CHAR = CompileTimeType<Char>()
-private val BOOLEAN = CompileTimeType<Boolean>()
-private val STRING = CompileTimeType<String>()
-private val ANY = CompileTimeType<Any>()
+internal val BYTE = CompileTimeType<Byte>()
+internal val SHORT = CompileTimeType<Short>()
+internal val INT = CompileTimeType<Int>()
+internal val LONG = CompileTimeType<Long>()
+internal val DOUBLE = CompileTimeType<Double>()
+internal val FLOAT = CompileTimeType<Float>()
+internal val CHAR = CompileTimeType<Char>()
+internal val BOOLEAN = CompileTimeType<Boolean>()
+internal val STRING = CompileTimeType<String>()
+internal val ANY = CompileTimeType<Any>()
 
 @Suppress("UNCHECKED_CAST")
-private fun <A, B> binaryOperation(
+internal fun <A, B> binaryOperation(
         a: CompileTimeType<A>,
         b: CompileTimeType<B>,
         functionName: String,
@@ -860,12 +860,12 @@ private fun <A, B> binaryOperation(
 ) = BinaryOperationKey(a, b, functionName) to Pair(operation, checker) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
 
 @Suppress("UNCHECKED_CAST")
-private fun <A> unaryOperation(
+internal fun <A> unaryOperation(
         a: CompileTimeType<A>,
         functionName: String,
         operation: Function1<A, Any>,
         checker: Function1<Long, Long>
 ) = UnaryOperationKey(a, functionName) to Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>>
 
-private data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
-private data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)
+internal data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
+internal data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)

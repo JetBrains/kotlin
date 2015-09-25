@@ -1069,7 +1069,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     }
 }
 
-private fun JetNamedDeclaration.getReturnTypeReference(): JetTypeReference? {
+internal fun JetNamedDeclaration.getReturnTypeReference(): JetTypeReference? {
     return when (this) {
         is JetCallableDeclaration -> getTypeReference()
         is JetClassOrObject -> getDelegationSpecifiers().firstOrNull()?.getTypeReference()

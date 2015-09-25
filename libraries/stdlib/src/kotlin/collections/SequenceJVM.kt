@@ -6,7 +6,7 @@ package kotlin
 import java.util.concurrent.atomic.AtomicReference
 
 
-private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
+internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
     private val sequenceRef = AtomicReference(sequence)
 
     override fun iterator(): Iterator<T> {

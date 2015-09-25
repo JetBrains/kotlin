@@ -20,7 +20,7 @@ import org.gradle.api.logging.Logger
 import java.io.FileNotFoundException
 import java.util.*
 
-private fun Any.loadKotlinVersionFromResource(log: Logger): String {
+internal fun Any.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
     val props = Properties()
     val propFileName = "project.properties"

@@ -39,7 +39,7 @@ import java.util.LinkedHashSet
 /**
  * Special <code>Expression</code> for parameter names based on its type.
  */
-private class ParameterNameExpression(
+internal class ParameterNameExpression(
         private val names: Array<String>,
         private val parameterTypeToNamesMap: Map<String, Array<String>>) : Expression() {
     init {
@@ -102,7 +102,7 @@ private class ParameterNameExpression(
 /**
  * An <code>Expression</code> for type references and delegation specifiers.
  */
-private abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
+internal abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.toTypedArray()
@@ -132,7 +132,7 @@ private abstract class TypeExpression(public val typeCandidates: List<TypeCandid
 /**
  * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
  */
-private class TypeParameterListExpression(private val mandatoryTypeParameters: List<RenderedTypeParameter>,
+internal class TypeParameterListExpression(private val mandatoryTypeParameters: List<RenderedTypeParameter>,
                                           private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>,
                                           insertLeadingSpace: Boolean) : Expression() {
     private val prefix = if (insertLeadingSpace) " <" else "<"
@@ -185,7 +185,7 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
     override fun calculateLookupItems(context: ExpressionContext?) = arrayOf<LookupElement>()
 }
 
-private object ValVarExpression: Expression() {
+internal object ValVarExpression: Expression() {
     private val cachedLookupElements = listOf("val", "var").map { LookupElementBuilder.create(it) }.toTypedArray<LookupElement>()
 
     override fun calculateResult(context: ExpressionContext?): Result? = TextResult("val")

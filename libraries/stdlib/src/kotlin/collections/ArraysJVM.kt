@@ -5,7 +5,6 @@ package kotlin
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
-import java.util.Arrays
 import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
@@ -104,6 +103,6 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
 
 /** Internal unsafe construction of array based on reference array type */
-private fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<out T> {
+internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<out T> {
     return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as Array<out T>
 }

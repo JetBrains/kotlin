@@ -83,7 +83,7 @@ fun DeclarationDescriptor.renderForConflicts(): String {
     }
 }
 
-private fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
+internal fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     val memberInSuper = memberDescriptor.substitute(sourceToTargetClassSubstitutor) ?: return null
     return targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor)
 }

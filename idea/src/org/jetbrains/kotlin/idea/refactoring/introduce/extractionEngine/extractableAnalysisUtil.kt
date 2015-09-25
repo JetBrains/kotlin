@@ -89,7 +89,7 @@ import org.jetbrains.kotlin.utils.DFS.Neighbors
 import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 
-private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
+internal val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
 private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private fun DeclarationDescriptor.renderForMessage(): String =
@@ -104,7 +104,7 @@ private fun JetType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
 private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
-private fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
+internal fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
 
 private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
     val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
@@ -968,7 +968,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     return functionNames.toList()
 }
 
-private fun JetNamedDeclaration.getGeneratedBody() =
+internal fun JetNamedDeclaration.getGeneratedBody() =
         when (this) {
             is JetNamedFunction -> getBodyExpression()
             else -> {

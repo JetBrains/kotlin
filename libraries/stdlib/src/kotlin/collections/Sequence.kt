@@ -96,7 +96,7 @@ public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
  * @param sendWhen If `true`, values for which the predicate returns `true` are returned. Otherwise,
 * values for which the predicate returns `false` are returned
  */
-private class FilteringSequence<T>(private val sequence: Sequence<T>,
+internal class FilteringSequence<T>(private val sequence: Sequence<T>,
                                   private val sendWhen: Boolean = true,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -142,7 +142,7 @@ private class FilteringSequence<T>(private val sequence: Sequence<T>,
  * in the underlying [sequence].
  */
 
-private class TransformingSequence<T, R>
+internal class TransformingSequence<T, R>
 constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -161,7 +161,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
  * in the underlying [sequence], where the transformer function takes the index of the value in the underlying
  * sequence along with the value itself.
  */
-private class TransformingIndexedSequence<T, R>
+internal class TransformingIndexedSequence<T, R>
 constructor(private val sequence: Sequence<T>, private val transformer: (Int, T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -180,7 +180,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
  * A sequence which combines values from the underlying [sequence] with their indices and returns them as
  * [IndexedValue] objects.
  */
-private class IndexingSequence<T>
+internal class IndexingSequence<T>
 constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
     override fun iterator(): Iterator<IndexedValue<T>> = object : Iterator<IndexedValue<T>> {
         val iterator = sequence.iterator()
@@ -200,7 +200,7 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
  * [transform] function and returns the values returned by that function. The sequence stops returning
  * values as soon as one of the underlying sequences stops returning values.
  */
-private class MergingSequence<T1, T2, V>
+internal class MergingSequence<T1, T2, V>
                                        constructor(private val sequence1: Sequence<T1>,
                                         private val sequence2: Sequence<T2>,
                                         private val transform: (T1, T2) -> V
@@ -218,7 +218,7 @@ private class MergingSequence<T1, T2, V>
     }
 }
 
-private class FlatteningSequence<T, R>
+internal class FlatteningSequence<T, R>
                                      constructor(private val sequence: Sequence<T>,
                                       private val transformer: (T) -> Sequence<R>
                                      ) : Sequence<R> {
@@ -257,7 +257,7 @@ private class FlatteningSequence<T, R>
     }
 }
 
-private class MultiSequence<T>
+internal class MultiSequence<T>
 constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -298,7 +298,7 @@ constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
  */
-private class TakeSequence<T>
+internal class TakeSequence<T>
                             constructor(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -327,7 +327,7 @@ private class TakeSequence<T>
  * A sequence that returns values from the underlying [sequence] while the [predicate] function returns
  * `true`, and stops returning values once the function returns `false` for the next element.
  */
-private class TakeWhileSequence<T>
+internal class TakeWhileSequence<T>
                                  constructor(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -373,7 +373,7 @@ private class TakeWhileSequence<T>
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
  */
-private class DropSequence<T>
+internal class DropSequence<T>
                             constructor(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -409,7 +409,7 @@ private class DropSequence<T>
  * A sequence that skips the values from the underlying [sequence] while the given [predicate] returns `true` and returns
  * all values after that.
  */
-private class DropWhileSequence<T>
+internal class DropWhileSequence<T>
                                  constructor(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -452,7 +452,7 @@ private class DropWhileSequence<T>
     }
 }
 
-private class DistinctSequence<T, K>(private val source : Sequence<T>, private val keySelector : (T) -> K) : Sequence<T> {
+internal class DistinctSequence<T, K>(private val source : Sequence<T>, private val keySelector : (T) -> K) : Sequence<T> {
     override fun iterator(): Iterator<T> = DistinctIterator(source.iterator(), keySelector)
 }
 

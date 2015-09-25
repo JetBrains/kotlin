@@ -29,7 +29,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import java.util.LinkedHashSet
+import java.util.*
 
 public val LIBRARY_NAME_PREFIX: String = "library "
 
@@ -111,7 +111,7 @@ public data class ModuleTestSourceInfo(override val module: Module) : ModuleSour
     })
 }
 
-private fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
+internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
@@ -160,7 +160,7 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
     override fun toString() = "LibraryInfo(libraryName=${library.getName()})"
 }
 
-private data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
+internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
     override val name: Name = Name.special("<sources for library ${library.getName()}>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -184,7 +184,7 @@ public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo()
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-private object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
+internal object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
     override val name: Name = Name.special("<special module for files not under source root>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -201,4 +201,4 @@ private data class LibraryWithoutSourceScope(project: Project, private val libra
 private data class SdkScope(project: Project, private val sdk: Sdk) :
         LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>())
 
-private fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
+internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo

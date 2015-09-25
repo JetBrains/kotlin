@@ -68,10 +68,10 @@ fun generate(): String {
         }
     }
 
-    p.println("private val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { a, b -> BigInteger(\"0\") }")
-    p.println("private val emptyUnaryFun: Function1<Long, Long> = { a -> 1.toLong() }")
+    p.println("internal val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { a, b -> BigInteger(\"0\") }")
+    p.println("internal val emptyUnaryFun: Function1<Long, Long> = { a -> 1.toLong() }")
     p.println()
-    p.println("private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>")
+    p.println("internal val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>")
     p.println("            = hashMapOf<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>(")
     p.pushIndent()
 

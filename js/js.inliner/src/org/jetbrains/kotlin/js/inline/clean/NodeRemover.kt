@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
-import com.google.dart.compiler.backend.js.ast.JsNode
 import com.google.dart.compiler.backend.js.ast.JsContext
+import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
 
-private class NodeRemover<T>(val klass: Class<T>, val predicate: (T) -> Boolean): JsVisitorWithContextImpl() {
+internal class NodeRemover<T>(val klass: Class<T>, val predicate: (T) -> Boolean): JsVisitorWithContextImpl() {
 
     override fun <T : JsNode> doTraverse(node: T, ctx: JsContext<*>) {
         if (klass.isInstance(node)) {

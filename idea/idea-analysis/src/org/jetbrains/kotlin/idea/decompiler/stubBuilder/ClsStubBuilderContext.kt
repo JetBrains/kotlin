@@ -74,7 +74,7 @@ class ClsStubBuilderContext(
         val typeParameters: TypeParameters
 )
 
-private fun ClsStubBuilderContext.child(typeParameterList: List<ProtoBuf.TypeParameter>, name: Name? = null): ClsStubBuilderContext {
+internal fun ClsStubBuilderContext.child(typeParameterList: List<ProtoBuf.TypeParameter>, name: Name? = null): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
             this.nameResolver,

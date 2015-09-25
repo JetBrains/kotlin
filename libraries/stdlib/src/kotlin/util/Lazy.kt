@@ -54,7 +54,7 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+internal open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     protected open val lock: Any
@@ -88,9 +88,9 @@ private open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializab
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
-private class ExternallySynchronizedLazyImpl<out T>(override val lock: Any, initializer: () -> T): LazyImpl<T>(initializer)
+internal class ExternallySynchronizedLazyImpl<out T>(override val lock: Any, initializer: () -> T): LazyImpl<T>(initializer)
 
-private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = UNINITIALIZED_VALUE
 

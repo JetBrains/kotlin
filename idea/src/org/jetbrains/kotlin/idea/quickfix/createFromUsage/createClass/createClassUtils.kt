@@ -43,11 +43,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
-private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
+internal fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
 
 private fun String.checkPackageName(): Boolean = isNotEmpty() && Character.isLowerCase(first())
 
-private fun getTargetParentByQualifier(
+internal fun getTargetParentByQualifier(
         file: JetFile,
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
@@ -68,7 +68,7 @@ private fun getTargetParentByQualifier(
     return if (targetParent.canRefactor()) return targetParent else null
 }
 
-private fun getTargetParentByCall(call: Call, file: JetFile): PsiElement? {
+internal fun getTargetParentByCall(call: Call, file: JetFile): PsiElement? {
     val receiver = call.getExplicitReceiver()
     return when (receiver) {
         ReceiverValue.NO_RECEIVER -> getTargetParentByQualifier(file, false, null)
@@ -77,12 +77,12 @@ private fun getTargetParentByCall(call: Call, file: JetFile): PsiElement? {
     }
 }
 
-private fun isInnerClassExpected(call: Call): Boolean {
+internal fun isInnerClassExpected(call: Call): Boolean {
     val receiver = call.getExplicitReceiver()
     return receiver != ReceiverValue.NO_RECEIVER && receiver !is Qualifier
 }
 
-private fun JetExpression.getInheritableTypeInfo(
+internal fun JetExpression.getInheritableTypeInfo(
         context: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         containingDeclaration: PsiElement): Pair<TypeInfo, (ClassKind) -> Boolean> {
@@ -108,7 +108,7 @@ private fun JetExpression.getInheritableTypeInfo(
     }
 }
 
-private fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent: PsiElement): IntentionAction? {
+internal fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent: PsiElement): IntentionAction? {
     val name = getReferencedName()
     if (!name.checkPackageName()) return null
 

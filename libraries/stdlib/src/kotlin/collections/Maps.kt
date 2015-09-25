@@ -79,7 +79,7 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
 
 private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
-private fun mapCapacity(expectedSize: Int): Int {
+internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }

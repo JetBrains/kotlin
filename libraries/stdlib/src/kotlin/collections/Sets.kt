@@ -7,7 +7,7 @@ import java.io.Serializable
 import java.util.*
 
 
-private object EmptySet : Set<Nothing>, Serializable {
+internal object EmptySet : Set<Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
     override fun hashCode(): Int = 0
     override fun toString(): String = "[]"

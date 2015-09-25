@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-private class ProjectResolutionFacade(
+internal class ProjectResolutionFacade(
         val project: Project,
         computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) {
@@ -85,7 +85,7 @@ private class ProjectResolutionFacade(
     }
 }
 
-private class ResolutionFacadeImpl(
+internal class ResolutionFacadeImpl(
         private val projectFacade: ProjectResolutionFacade,
         private val moduleInfo: IdeaModuleInfo
 ) : ResolutionFacade {

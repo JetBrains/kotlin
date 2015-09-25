@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitution
@@ -54,7 +54,7 @@ private class ScopeWithMissingDependencies(val fqName: FqName, val containing: D
     }
 }
 
-private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor: ModuleDescriptor) : PackageFragmentProvider {
+internal class PackageFragmentProviderForMissingDependencies(val moduleDescriptor: ModuleDescriptor) : PackageFragmentProvider {
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         return listOf(PackageFragmentWithMissingDependencies(fqName, moduleDescriptor))
     }

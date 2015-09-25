@@ -70,11 +70,11 @@ public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = 
 public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 
-private fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
+internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size) as Array<T>
 }
 
-private fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
+internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
     val result = source.slice(0, newSize)
     var index: Int = source.length
     if (newSize > index) {
@@ -84,7 +84,7 @@ private fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): 
     return result
 }
 
-private fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
+internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
     val result = array.slice(0)
     result.length += collection.size()
     var index: Int = array.length

@@ -14,22 +14,22 @@ import kotlin.text.Regex
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
-private fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
+internal fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
-private fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
+internal fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
-private fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
+internal fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
-private fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
+internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 
 /**
