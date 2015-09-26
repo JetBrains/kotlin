@@ -36,6 +36,7 @@ import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -480,7 +481,8 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertFailed()
 
         val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
-                .map { it.messageText }.sorted().joinToString("\n")
+                .map { it as CompilerMessage }
+                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
         val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
         val expectedFile = File(projectRoot, "errors.txt")
         JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
