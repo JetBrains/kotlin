@@ -1,3 +1,4 @@
-'internal open val member: kotlin.Int defined in test.ClassBB1' has no access to 'internal abstract val member: kotlin.Int defined in test.ClassB1', so it cannot override it
-Cannot access 'InternalClass1': it is 'internal' in 'test'
-Cannot access 'member': it is 'invisible_fake' in 'ClassAA1'
+'internal open val member: kotlin.Int defined in test.ClassBB1' has no access to 'internal abstract val member: kotlin.Int defined in test.ClassB1', so it cannot override it at line 11, column 14
+Cannot access 'InternalClass1': it is 'internal' in 'test' at line 3, column 13
+Cannot access 'InternalClass1': it is 'internal' in 'test' at line 6, column 36
+Cannot access 'member': it is 'invisible_fake' in 'ClassAA1' at line 24, column 25
