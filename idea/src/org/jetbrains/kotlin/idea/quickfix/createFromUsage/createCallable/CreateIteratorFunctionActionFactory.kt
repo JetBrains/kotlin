@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
-import java.util.Collections
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.util.*
 
 object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
@@ -56,6 +57,6 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
                                            returnJetTypeArguments,
                                            returnJetType.memberScope)
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
-        return FunctionInfo("iterator", iterableType, returnType)
+        return FunctionInfo(OperatorConventions.ITERATOR.asString(), iterableType, returnType, isOperator = true)
     }
 }

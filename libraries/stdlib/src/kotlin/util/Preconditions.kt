@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("PreconditionsKt")
 package kotlin
 
 // TODO should not need this - its here for the JS stuff

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
@@ -38,17 +37,11 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .add(JetTokens.BY_KEYWORD)
         .build()
 
-public val ALL_SEARCHABLE_OPERATION_PATTERNS: Set<String> =
-        ALL_SEARCHABLE_OPERATIONS.map { (it as JetSingleValueToken).getValue() }.toSet()
+public val INDEXING_OPERATION_NAMES = setOf(GET, SET)
 
-public val INDEXING_OPERATION_NAMES: ImmutableSet<Name> =
-        ImmutableSet.of(Name.identifier("get"), Name.identifier("set"))
+public val IN_OPERATIONS_TO_SEARCH = setOf(JetTokens.IN_KEYWORD)
 
-public val ITERATOR_OPERATION_NAME: Name = Name.identifier("iterator")
-
-public val IN_OPERATIONS_TO_SEARCH: ImmutableSet<JetToken> = ImmutableSet.of(JetTokens.IN_KEYWORD)
-
-public val COMPARISON_OPERATIONS_TO_SEARCH: ImmutableSet<JetToken> = ImmutableSet.of<JetToken>(JetTokens.LT, JetTokens.GT)
+public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(JetTokens.LT, JetTokens.GT)
 
 public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
     when (this) {
@@ -56,24 +49,24 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         EQUALS -> return EQUALS_OPERATIONS
         IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         CONTAINS -> return IN_OPERATIONS_TO_SEARCH
-        ITERATOR_OPERATION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.IN_KEYWORD)
-        in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
-        DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.BY_KEYWORD)
+        ITERATOR -> return IN_OPERATIONS_TO_SEARCH
+        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
+        DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(JetTokens.BY_KEYWORD)
     }
 
-    if (isComponentLike(this)) return ImmutableSet.of<JetToken>(JetTokens.LPAR)
+    if (isComponentLike(this)) return setOf(JetTokens.LPAR)
 
     val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
-    if (unaryOp != null) return ImmutableSet.of(unaryOp)
+    if (unaryOp != null) return setOf(unaryOp)
 
     val binaryOp = BINARY_OPERATION_NAMES.inverse()[this]
     if (binaryOp != null) {
         val assignmentOp = ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
-        return if (assignmentOp != null) ImmutableSet.of<JetToken>(binaryOp, assignmentOp) else ImmutableSet.of<JetToken>(binaryOp)
+        return if (assignmentOp != null) setOf(binaryOp, assignmentOp) else setOf(binaryOp)
     }
 
     val assignmentOp = ASSIGNMENT_OPERATIONS.inverse()[this]
-    if (assignmentOp != null) return ImmutableSet.of<JetToken>(assignmentOp)
+    if (assignmentOp != null) return setOf(assignmentOp)
 
-    return ImmutableSet.of<JetToken>()
+    return emptySet()
 }

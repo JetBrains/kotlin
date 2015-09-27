@@ -39,6 +39,6 @@ public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFa
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo(operationName.asString(), receiverType, returnType)
+        return FunctionInfo(operationName.asString(), receiverType, returnType, isOperator = true)
     }
 }

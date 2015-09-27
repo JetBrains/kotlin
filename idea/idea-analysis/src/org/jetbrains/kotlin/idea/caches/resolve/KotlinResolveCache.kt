@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import java.util.HashMap
+import java.util.*
 
-private class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
+internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
     private val cache = HashMap<PsiElement, AnalysisResult>()
 
     private fun lookUp(analyzableElement: JetElement): AnalysisResult? {

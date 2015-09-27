@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmName("LazyKt")
+
 package kotlin
 
 import java.io.Serializable
@@ -23,6 +25,50 @@ public abstract class Lazy<out T> internal constructor() {
 public fun lazyOf<T>(value: T): Lazy<T> = InitializedLazyImpl(value)
 
 /**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * and the default thread-safety mode [LazyThreadSafetyMode.SYNCHRONIZED].
+ *
+ * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
+ *
+ * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
+ * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
+ */
+@kotlin.jvm.JvmVersion
+public fun lazy<T>(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
+
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * and thread-safety [mode].
+ *
+ * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
+ *
+ * Note that when the [LazyThreadSafetyMode.SYNCHRONIZED] mode is specified the returned instance uses itself
+ * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
+ * Also this behavior can be changed in the future.
+ */
+@kotlin.jvm.JvmVersion
+public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
+        when (mode) {
+            LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
+            LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
+            LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
+        }
+
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * and the default thread-safety mode [LazyThreadSafetyMode.SYNCHRONIZED].
+ *
+ * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
+ *
+ * The returned instance uses the specified [lock] object to synchronize on.
+ * When the [lock] is not specified the instance uses itself to synchronize on,
+ * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
+ * Also this behavior can be changed in the future.
+ */
+@kotlin.jvm.JvmVersion
+public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
+
+/**
  * An extension to delegate a read-only property of type [T] to an instance of [Lazy].
  *
  * This extension allows to use instances of Lazy for property delegation:
@@ -41,6 +87,12 @@ public enum class LazyThreadSafetyMode {
     SYNCHRONIZED,
 
     /**
+     * Initializer function can be called several times on concurrent access to uninitialized [Lazy] instance value,
+     * but only first returned value will be used as the value of [Lazy] instance.
+     */
+    PUBLICATION,
+
+    /**
      * No locks are used to synchronize the access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
      *
      * This mode should be used only when high performance is crucial and the [Lazy] instance is guaranteed never to be initialized from more than one thread.
@@ -51,11 +103,11 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
-    protected open val lock: Any
-        get() = this
+    // final field is required to enable safe publication of constructed instance
+    private val lock = lock ?: this
 
     override val value: T
         get() {
@@ -85,9 +137,8 @@ private open class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializab
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
-private class ExternallySynchronizedLazyImpl<out T>(override val lock: Any, initializer: () -> T): LazyImpl<T>(initializer)
-
-private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+// internal to be called from lazy in JS
+internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = UNINITIALIZED_VALUE
 
@@ -95,7 +146,7 @@ private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializa
         get() {
             if (_value === UNINITIALIZED_VALUE) {
                 _value = initializer!!()
-                initializer == null
+                initializer = null
             }
             return _value as T
         }
@@ -113,4 +164,40 @@ private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>(), Ser
 
     override fun toString(): String = value.toString()
 
+}
+
+@kotlin.jvm.JvmVersion
+private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+    private var initializer: (() -> T)? = initializer
+    @Volatile private var _value: Any? = UNINITIALIZED_VALUE
+    // this final field is required to enable safe publication of constructed instance
+    private val final: Any = UNINITIALIZED_VALUE
+
+    override val value: T
+        get() {
+            if (_value === UNINITIALIZED_VALUE) {
+                val initializerValue = initializer
+                // if we see null in initializer here, it means that the value is already set by another thread
+                if (initializerValue != null) {
+                    val newValue = initializerValue()
+                    if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
+                        initializer = null
+                    }
+                }
+            }
+            return _value as T
+        }
+
+    override fun isInitialized(): Boolean = _value !== UNINITIALIZED_VALUE
+
+    override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
+
+    private fun writeReplace(): Any = InitializedLazyImpl(value)
+
+    companion object {
+        private val valueUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(
+                SafePublicationLazyImpl::class.java,
+                Any::class.java,
+                "_value")
+    }
 }

@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("TestAssertionsKt")
 package kotlin.test
 
 import java.util.ServiceLoader

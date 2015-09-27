@@ -1,3 +1,6 @@
+@file:JvmVersion
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("OperationsKt")
 package kotlin.math
 
 import java.math.BigDecimal

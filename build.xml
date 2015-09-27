@@ -1,6 +1,4 @@
 <project name="Kotlin" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
-    <include file="jslib_files.xml" />
-
     <property file="resources/kotlinManifest.properties"/>
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
@@ -16,6 +14,7 @@
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
 
     <property name="output" value="${basedir}/dist"/>
+    <property name="intermediate-sources" value="out/src" />
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
@@ -38,6 +37,8 @@
             </not>
         </or>
     </condition>
+
+    <include file="jslib_files.xml" />
 
     <!--
     The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
@@ -86,6 +87,7 @@
         <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
+        <include name="compiler/conditional-preprocessor/src/"/>
         <include name="compiler/rmi/rmi-server/src"/>
         <include name="compiler/rmi/rmi-interface/src"/>
         <include name="compiler/container/src"/>
@@ -202,6 +204,7 @@
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
+            <fileset dir="compiler/conditional-preprocessor/src"/>
             <fileset dir="compiler/rmi/rmi-server/src"/>
             <fileset dir="compiler/rmi/rmi-interface/src"/>
             <fileset dir="compiler/container/src"/>
@@ -303,6 +306,8 @@
         <property name="compiled.stdlib.js" value="stdlib.js"/>
         <property name="compiled.stdlib.meta.js" value="stdlib.meta.js"/>
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
+
+        <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
 
         <new-kotlin2js output="${output}/${compiled.builtins.js}">
             <src>
@@ -724,6 +729,29 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="kotlin-pp">
+        <attribute name="src"/>
+        <attribute name="output"/>
+        <attribute name="profile"/>
+
+        <sequential>
+            <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
+                <classpath>
+                    <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
+                </classpath>
+                <assertions>
+                    <enable/>
+                </assertions>
+                <arg value="-cp"/>
+                <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorPackage"/>
+                <arg value="@{src}"/>
+                <arg value="@{output}"/>
+                <arg value="@{profile}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
     <target name="builtins">
         <new-kotlinc output="${output}/classes/builtins" moduleName="kotlin-builtins">
             <src>
@@ -738,7 +766,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-package-facades">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>

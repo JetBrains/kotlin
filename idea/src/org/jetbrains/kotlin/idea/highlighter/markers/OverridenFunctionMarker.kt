@@ -16,34 +16,34 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.search.PsiElementProcessor
-import com.intellij.psi.search.searches.OverridingMethodsSearch
-import com.intellij.psi.PsiModifier
 import com.intellij.codeInsight.daemon.DaemonBundle
-import com.intellij.ide.util.MethodCellRenderer
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
-import java.awt.event.MouseEvent
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.progress.ProgressManager
-import javax.swing.JComponent
-import com.intellij.psi.util.PsiUtil
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
+import com.intellij.ide.util.MethodCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.util.CommonProcessors
-import com.intellij.psi.search.PsiElementProcessorAdapter
-import com.intellij.psi.PsiElement
-import gnu.trove.THashSet
-import com.intellij.psi.PsiClass
-import com.intellij.psi.search.searches.AllOverridingMethodsSearch
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Pair
-import java.util.HashSet
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.AllOverridingMethodsSearch
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.psi.util.PsiUtil
+import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.KotlinLightMethodForTraitFakeOverride
+import java.awt.event.MouseEvent
+import java.util.*
+import javax.swing.JComponent
 
-private fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
+internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
     for (aClass in classes) {
         AllOverridingMethodsSearch.search(aClass)!!.forEach(object : Processor<Pair<PsiMethod, PsiMethod>> {

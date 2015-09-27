@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.config.EcmaVersion
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetModifierListOwner
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import java.util.*
 import kotlin.test.fail
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.HashSet
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
-import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 
 private val ANALYZE_PACKAGE_ROOTS_FOR_JVM = listOf("kotlin")
 private val ANALYZE_PACKAGE_ROOTS_FOR_JS = listOf("kotlin", "jquery", "html5")
@@ -80,18 +78,18 @@ class NoInternalVisibilityInStdLibTest {
             if (internalDescriptors.isEmpty()) return
 
             val byFile = internalDescriptors.groupBy { descriptor ->
-                DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.getContainingFile() as JetFile
+                DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.containingFile as JetFile
             }
-            val byPackage = byFile.keySet().groupBy { it.getPackageFqName() }
+            val byPackage = byFile.keySet().groupBy { it.packageFqName }
 
             val message = StringBuilder {
                 appendln("There are ${internalDescriptors.size()} descriptors that have internal visibility:")
                 for ((packageFqName, files) in byPackage) {
 
-                    appendln("In package ${packageFqName}:")
+                    appendln("In package $packageFqName:")
                     for (file in files) {
 
-                        appendln("In file ${file.getName()}")
+                        appendln("In file ${file.name}")
                         appendln("--------------")
                         val descriptors = byFile[file]!!
                         descriptors.forEach {
@@ -143,7 +141,7 @@ class NoInternalVisibilityInStdLibTest {
             val configuration = CompilerConfiguration()
             val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val project = environment.project
-            val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
+            val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.path
             val config = LibrarySourcesConfig.Builder(project, "testModule", listOf(pathToJsStdlibJar))
                     .ecmaVersion(EcmaVersion.defaultVersion())
                     .sourceMap(false)
@@ -165,7 +163,7 @@ class NoInternalVisibilityInStdLibTest {
         val sink = OutputSink(requiredPackages map { FqName(it) })
 
         for (testPackage in testPackages) {
-            val packageView = module.getPackage(FqName(testPackage))!!
+            val packageView = module.getPackage(FqName(testPackage))
             validateDescriptor(module, packageView, sink)
         }
 
@@ -176,12 +174,15 @@ class NoInternalVisibilityInStdLibTest {
         if (DescriptorUtils.getContainingModule(descriptor) != module) return
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
-            if (descriptor.getVisibility() == Visibilities.INTERNAL) {
-                sink.reportInternalVisibility(descriptor)
+            if (descriptor.visibility == Visibilities.INTERNAL) {
+                val psi = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+                if (psi !is JetModifierListOwner || psi.modifierList?.hasModifier(JetTokens.INTERNAL_KEYWORD) != true) {
+                    sink.reportInternalVisibility(descriptor)
+                }
             }
         }
         when (descriptor) {
-            is ClassDescriptor -> descriptor.getDefaultType().getMemberScope().getAllDescriptors().forEach {
+            is ClassDescriptor -> descriptor.defaultType.memberScope.getAllDescriptors().forEach {
                 validateDescriptor(module, it, sink)
             }
             is PackageViewDescriptor -> {

@@ -1,9 +1,12 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("CollectionsKt")
+
 package kotlin
 
 import java.io.Serializable
 import java.util.*
 
-private object EmptyIterator : ListIterator<Nothing> {
+internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
     override fun hasPrevious(): Boolean = false
     override fun nextIndex(): Int = 0
@@ -12,7 +15,7 @@ private object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-private object EmptyList : List<Nothing>, Serializable {
+internal object EmptyList : List<Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
     override fun hashCode(): Int = 1
     override fun toString(): String = "[]"
@@ -41,25 +44,10 @@ private object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
-private object EmptySet : Set<Nothing>, Serializable {
-    override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
-    override fun hashCode(): Int = 0
-    override fun toString(): String = "[]"
 
-    override fun size(): Int = 0
-    override fun isEmpty(): Boolean = true
-    override fun contains(o: Any?): Boolean = false
-    override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
-
-    override fun iterator(): Iterator<Nothing> = EmptyIterator
-
-    private fun readResolve(): Any = EmptySet
-}
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun emptyList<T>(): List<T> = EmptyList
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun emptySet<T>(): Set<T> = EmptySet
 
 /** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
 public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayListOf(*values) else emptyList()
@@ -67,23 +55,18 @@ public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayLi
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun listOf<T>(): List<T> = emptyList()
 
-/** Returns a new read-only ordered set with the given elements.  The returned set is serializable (JVM). */
-public fun setOf<T>(vararg values: T): Set<T> = if (values.size() > 0) values.toSet() else emptySet()
-
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun setOf<T>(): Set<T> = emptySet()
+/**
+ * Returns an immutable list containing only the specified object [value].
+ * The returned list is serializable.
+ */
+@JvmVersion
+public fun listOf<T>(value: T): List<T> = Collections.singletonList(value)
 
 /** Returns a new [LinkedList] with the given elements. */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
 
 /** Returns a new [ArrayList] with the given elements. */
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
-
-/** Returns a new [HashSet] with the given elements. */
-public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(mapCapacity(values.size())))
-
-/** Returns a new [LinkedHashSet] with the given elements. */
-public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
 public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
@@ -121,8 +104,12 @@ public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 /** Returns this List if it's not `null` and the empty list otherwise. */
 public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
-/** Returns this Set if it's not `null` and the empty set otherwise. */
-public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
+/**
+ * Returns a list containing the elements returned by this enumeration
+ * in the order they are returned by the enumeration.
+ */
+@JvmVersion
+public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
@@ -138,7 +125,7 @@ public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this
 private fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
         when(this) {
             is Set -> this
             is Collection ->
@@ -150,7 +137,7 @@ private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>)
         }
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
         when(this) {
             is Set -> this
             is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
@@ -262,3 +249,31 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
         toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
     }
 }
+
+/**
+ * Returns a single list of all elements from all collections in the given collection.
+ */
+public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
+    val result = ArrayList<T>()
+    for (element in this) {
+        result.addAll(element)
+    }
+    return result
+}
+
+/**
+ * Returns a pair of lists, where
+ * *first* list is built from the first values of each pair from this collection,
+ * *second* list is built from the second values of each pair from this collection.
+ */
+public fun <T, R> Iterable<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
+    val expectedSize = collectionSizeOrDefault(10)
+    val listT = ArrayList<T>(expectedSize)
+    val listR = ArrayList<R>(expectedSize)
+    for (pair in this) {
+        listT.add(pair.first)
+        listR.add(pair.second)
+    }
+    return listT to listR
+}
+

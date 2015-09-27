@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.getSourceElement
 import org.jetbrains.kotlin.load.kotlin.isContainedByCompiledPartOfOurModule
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 import java.io.File
@@ -31,13 +33,15 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
 
     override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean {
         val fromSource = getSourceElement(from)
-        // We only interested in case when fromSource is KotlinSourceElement,
-        // because at this point
         // We should check accessibility of 'from' in current module (some set of source files, which are compiled together),
-        // so we can assume that 'from' should have sources.
-        if (fromSource !is KotlinSourceElement) return true
+        // so we can assume that 'from' should have sources or is a LazyPackageDescriptor with some package files.
+        val project: Project = if (fromSource is KotlinSourceElement) {
+                fromSource.psi.project
+            }
+            else {
+                (from as? LazyPackageDescriptor)?.declarationProvider?.getPackageFiles()?.firstOrNull()?.project ?: return true
+            }
 
-        val project = fromSource.psi.project
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
 
         val whatSource = getSourceElement(what)

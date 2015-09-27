@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
@@ -123,7 +122,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, resource: AndroidResource, stubCall: String) {
         val className = if (isFromSupportV4Package(receiver)) resource.supportClassName else resource.className
-        val cast = if (resource.className != "View") " as? $className" else ""
+        val cast = if (resource.className != AndroidConst.VIEW_FQNAME) " as? $className" else ""
         val body = arrayListOf("return $stubCall$cast")
 
         // Annotation on wrong widget type
@@ -164,6 +163,16 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }
         return null
     }
+
+    protected fun parseAndroidResource(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource {
+        return when (tag) {
+            "fragment" -> AndroidFragment(id)
+            "include" -> AndroidWidget(id, AndroidConst.VIEW_FQNAME)
+            else -> parseAndroidWidget(id, tag, fqNameResolver)
+        }
+    }
+
+    protected abstract fun parseAndroidWidget(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource
 
     protected fun supportV4Available(): Boolean = checkIfClassExist(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
 

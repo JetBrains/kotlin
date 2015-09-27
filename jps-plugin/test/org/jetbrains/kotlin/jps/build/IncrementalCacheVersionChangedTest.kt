@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
-import java.io.File
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
-import kotlin.test.assertTrue
-import org.jetbrains.kotlin.jps.incremental.CacheFormatVersion
+import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
 
 public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     fun testCacheVersionChanged() {
@@ -31,22 +27,25 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(all
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedAndFileModified/")
     }
 
-    fun testCacheVersionChangedMultiModule() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedMultiModule/")
+    fun testCacheVersionChangedMultiModule1() {
+        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule1/")
     }
 
-    override fun performAdditionalModifications() {
-        val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)
+    fun testCacheVersionChangedMultiModule2() {
+        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule2/")
+    }
 
+    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
+        val targets = projectDescriptor.allModuleTargets
+        val paths = projectDescriptor.dataManager.dataPaths
 
-        val moduleNames = if (getTestName(false) == "CacheVersionChangedMultiModule") listOf("module1", "module2") else listOf("module")
+        for (target in targets) {
+            val cacheVersion = paths.getKotlinCacheVersion(target)
+            val cacheVersionFile = cacheVersion.formatVersionFile
 
-        for (moduleName in moduleNames) {
-            val relativePath = "$moduleName/${CacheFormatVersion.FORMAT_VERSION_FILE_PATH}"
-            val cacheVersionFile = File(storageForTargetType, relativePath)
-
-            assertTrue(cacheVersionFile.exists())
-            cacheVersionFile.writeText("777")
+            if (cacheVersionFile.exists()) {
+                cacheVersionFile.writeText("777")
+            }
         }
     }
 }

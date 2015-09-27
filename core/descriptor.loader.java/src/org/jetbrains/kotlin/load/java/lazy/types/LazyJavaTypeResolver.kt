@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
-import java.util.HashSet
+import java.util.*
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -337,7 +336,7 @@ class LazyJavaTypeResolver(
 
 }
 
-private fun makeStarProjection(
+internal fun makeStarProjection(
         typeParameter: TypeParameterDescriptor,
         attr: JavaTypeAttributes
 ): TypeProjection {
@@ -418,7 +417,7 @@ fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
 // ErasedUpperBound(T : G<t>) = G<*> // UpperBound(T) is a type G<t> with arguments
 // ErasedUpperBound(T : A) = A // UpperBound(T) is a type A without arguments
 // ErasedUpperBound(T : F) = UpperBound(F) // UB(T) is another type parameter F
-private fun TypeParameterDescriptor.getErasedUpperBound(
+internal fun TypeParameterDescriptor.getErasedUpperBound(
         // Calculation of `potentiallyRecursiveTypeParameter.upperBounds` may recursively depend on `this.getErasedUpperBound`
         // E.g. `class A<T extends A, F extends A>`
         // To prevent recursive calls return defaultValue() instead

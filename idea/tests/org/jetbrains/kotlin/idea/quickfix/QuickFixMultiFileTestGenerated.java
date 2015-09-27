@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
     }
 
     @TestMetadata("idea/testData/quickfix/addStarProjections")
@@ -40,7 +40,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddStarProjections extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInAddStarProjections() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
     }
@@ -50,7 +50,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AutoImports extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInAutoImports() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("ambiguousNamePreferFromJdk.before.Main.kt")
@@ -293,7 +293,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
 
         public void testAllFilesPresentInChangeSignature() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("matchFunctionLiteralWithSAMType.before.Main.kt")
@@ -314,7 +314,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckArguments extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInCheckArguments() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
     }
@@ -324,7 +324,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createClass")
@@ -332,7 +332,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateClass extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateClass() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry")
@@ -340,7 +340,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class AnnotationEntry extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInAnnotationEntry() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/annotationEntry"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/annotationEntry"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("nestedGroovyAnnotation.before.Main.kt")
@@ -367,7 +367,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallExpression extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInCallExpression() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("callInAnnotationEntryWithJavaQualifier.before.Main.kt")
@@ -441,7 +441,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeArguments extends AbstractQuickFixMultiFileTest {
                     public void testAllFilesPresentInTypeArguments() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                     }
 
                     @TestMetadata("javaClassMember.before.Main.kt")
@@ -481,7 +481,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class DelegationSpecifier extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInDelegationSpecifier() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("delegatorToNestedJavaSupercall.before.Main.kt")
@@ -514,7 +514,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ImportDirective extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInImportDirective() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("annotationWithJavaQualifier.before.Main.kt")
@@ -565,7 +565,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ReferenceExpression extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInReferenceExpression() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/referenceExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/referenceExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("classByNestedGroovyQualifier.before.Main.kt")
@@ -628,7 +628,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class TypeReference extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInTypeReference() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/typeReference"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/typeReference"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("annotationJavaTypeReceiver.before.Main.kt")
@@ -674,7 +674,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateFunction extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateFunction() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call")
@@ -682,7 +682,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Call extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInCall() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("extensionFunOnGroovyType.before.Main.kt")
@@ -744,7 +744,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeArguments extends AbstractQuickFixMultiFileTest {
                     public void testAllFilesPresentInTypeArguments() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                     }
 
                     @TestMetadata("javaClassMember.before.Main.kt")
@@ -774,7 +774,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateSecondaryConstructor extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateSecondaryConstructor() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("delegatorToSuperCallJavaClass.before.Main.kt")
@@ -807,7 +807,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter")
@@ -815,7 +815,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Parameter extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInParameter() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("platformType.before.Main.kt")
@@ -830,7 +830,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Property extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInProperty() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("extensionValOnGroovyType.before.Main.kt")
@@ -901,7 +901,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeprecatedSymbolUsage extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInDeprecatedSymbolUsage() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("javaDeprecated.before.Main.kt")
@@ -927,7 +927,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
 
             public void testAllFilesPresentInClassUsages() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject")
@@ -935,7 +935,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class WholeProject extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInWholeProject() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("annotation.before.Main.kt")
@@ -975,7 +975,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
 
             public void testAllFilesPresentInImports() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("rootPackage.before.Main.kt")
@@ -990,7 +990,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeArguments extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInTypeArguments() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("platformType.before.Main.kt")
@@ -1005,7 +1005,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WholeProject extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInWholeProject() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("function.before.Main.kt")
@@ -1027,7 +1027,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInMigration() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
@@ -1035,7 +1035,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConflictingExtension extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInConflictingExtension() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/conflictingExtension"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/conflictingExtension"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("removeImports.before.Main.kt")
@@ -1051,12 +1051,33 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/deprecatedPackageFacade")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeprecatedPackageFacade extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInDeprecatedPackageFacade() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deprecatedPackageFacade"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
+            }
+
+            @TestMetadata("basic.before.Main.java")
+            public void testBasic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedPackageFacade/basic.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("staticImport.before.Main.java")
+            public void testStaticImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedPackageFacade/staticImport.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/javaAnnotationPositionedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaAnnotationPositionedArguments extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInJavaAnnotationPositionedArguments() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/javaAnnotationPositionedArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/javaAnnotationPositionedArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("basicMultiple.before.Main.kt")
@@ -1083,7 +1104,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MigrateJavaAnnotationMethodCall extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInMigrateJavaAnnotationMethodCall() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("basicMultiple.before.Main.kt")
@@ -1104,7 +1125,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MissingConstructorKeyword extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInMissingConstructorKeyword() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/missingConstructorKeyword"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/missingConstructorKeyword"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("manyFilesMuitliple.before.Main.kt")
@@ -1119,7 +1140,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ObsoleteLabelSyntax extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInObsoleteLabelSyntax() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/obsoleteLabelSyntax"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/obsoleteLabelSyntax"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("manyFilesMuitliple.before.Main.kt")
@@ -1136,7 +1157,13 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Modifiers extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInModifiers() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
+        }
+
+        @TestMetadata("constVal.before.Main.kt")
+        public void testConstVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/constVal.before.Main.kt");
+            doTestWithExtraFile(fileName);
         }
 
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
@@ -1144,7 +1171,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AddOpenToClassDeclaration extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
@@ -1152,7 +1179,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class FinalJavaClass extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInFinalJavaClass() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                 }
 
                 @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode")
@@ -1160,7 +1187,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class JavaCode extends AbstractQuickFixMultiFileTest {
                     public void testAllFilesPresentInJavaCode() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
                     }
 
                 }
@@ -1173,7 +1200,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nullables extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInNullables() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
     }
@@ -1183,7 +1210,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Override extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInOverride() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/override/nothingToOverride")
@@ -1191,7 +1218,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NothingToOverride extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInNothingToOverride() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("import.before.Main.kt")
@@ -1214,7 +1241,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PrivateInFiles extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInPrivateInFiles() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/privateInFiles"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/privateInFiles"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("privateTopLevelFunInFile.before.Main.kt")
@@ -1247,7 +1274,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Suppress extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInSuppress() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/suppress/forStatement")
@@ -1255,7 +1282,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForStatement extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInForStatement() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
         }
@@ -1266,7 +1293,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeImports extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInTypeImports() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("importFromAnotherFile.before.Main.kt")
@@ -1281,7 +1308,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation")
@@ -1289,7 +1316,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericVarianceViolation extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInGenericVarianceViolation() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
             }
 
             @TestMetadata("basicMultiple.before.Main.kt")
@@ -1306,7 +1333,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Variables extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInVariables() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
         }
 
     }

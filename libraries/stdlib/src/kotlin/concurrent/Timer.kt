@@ -1,3 +1,5 @@
+@file:JvmVersion
+@file:JvmName("TimersKt")
 package kotlin.concurrent
 
 import java.util.Date

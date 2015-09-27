@@ -80,7 +80,7 @@ public object RawTypeCapabilities : TypeCapabilities {
     }
 }
 
-private object RawSubstitution : TypeSubstitution() {
+internal object RawSubstitution : TypeSubstitution() {
     override fun get(key: JetType) = TypeProjectionImpl(eraseType(key))
 
     private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)

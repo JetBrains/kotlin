@@ -1,0 +1,6 @@
+// "Add 'operator' modifier" "true"
+class A {
+    operator fun get(i: Int): String = ""
+}
+
+fun foo() = A()[0]

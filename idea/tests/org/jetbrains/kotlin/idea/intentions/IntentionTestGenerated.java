@@ -92,6 +92,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addConstModifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddConstModifier extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddConstModifier() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addConstModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addForLoopIndices")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5173,6 +5188,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/introduceBackingProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceBackingProperty extends AbstractIntentionTest {
+        public void testAllFilesPresentInIntroduceBackingProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/introduceBackingProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("backingFieldRef.kt")
+        public void testBackingFieldRef() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/backingFieldRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableAbstractProperty.kt")
+        public void testInapplicableAbstractProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/inapplicableAbstractProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableNoBackingField.kt")
+        public void testInapplicableNoBackingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/inapplicableNoBackingField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleVal.kt")
+        public void testSimpleVal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleValWithType.kt")
+        public void testSimpleValWithType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleValWithType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleVar.kt")
+        public void testSimpleVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valWithAccessor.kt")
+        public void testValWithAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/valWithAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varWithAccessor.kt")
+        public void testVarWithAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/varWithAccessor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/invertIfCondition")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5373,6 +5445,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/moveAssignmentToInitializer")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveAssignmentToInitializer extends AbstractIntentionTest {
+        public void testAllFilesPresentInMoveAssignmentToInitializer() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveAssignmentToInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("backingField.kt")
+        public void testBackingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/backingField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comment.kt")
+        public void testComment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/comment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deleteInitBlock.kt")
+        public void testDeleteInitBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/deleteInitBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedLocal.kt")
+        public void testUsedLocal() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/usedLocal.kt");
             doTest(fileName);
         }
     }

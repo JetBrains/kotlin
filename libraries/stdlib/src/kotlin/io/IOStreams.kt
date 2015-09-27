@@ -1,3 +1,5 @@
+@file:JvmVersion
+@file:JvmName("ByteStreamsKt")
 package kotlin.io
 
 import java.io.*
@@ -39,6 +41,22 @@ public fun InputStream.iterator(): ByteIterator =
                 return res
             }
         }
+
+
+/** Creates a new byte input stream for the string. */
+public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
+
+/**
+ * Creates an input stream for reading data from this byte array.
+ */
+public fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(this)
+
+/**
+ * Creates an input stream for reading data from the specified portion of this byte array.
+ * @param offset the start offset of the portion of the array to read.
+ * @param length the length of the portion of the array to read.
+ */
+public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 /**
  * Creates a buffered input stream wrapping this stream.

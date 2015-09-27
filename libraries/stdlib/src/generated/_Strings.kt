@@ -1,3 +1,6 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("StringsKt")
+
 package kotlin
 
 //
@@ -5,327 +8,774 @@ package kotlin
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import kotlin.platform.*
 import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
-public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
+public fun String.elementAt(index: Int): Char {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun String.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun String.elementAtOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns the first character matching the given [predicate], or `null` if character was not found.
+ */
+public inline fun String.find(predicate: (Char) -> Boolean): Char? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ */
+public inline fun String.findLast(predicate: (Char) -> Boolean): Char? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns first character.
+ * @throws [NoSuchElementException] if the string is empty.
+ */
+public fun String.first(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Collection is empty.")
+    return this[0]
+}
+
+/**
+ * Returns the first character matching the given [predicate].
+ * @throws [NoSuchElementException] if no such character is found.
+ */
+public inline fun String.first(predicate: (Char) -> Boolean): Char {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("No element matching predicate was found.")
+}
+
+/**
+ * Returns the first character, or `null` if string is empty.
+ */
+public fun String.firstOrNull(): Char? {
+    return if (isEmpty()) null else this[0]
+}
+
+/**
+ * Returns the first character matching the given [predicate], or `null` if character was not found.
+ */
+public inline fun String.firstOrNull(predicate: (Char) -> Boolean): Char? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun String.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun String.getOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
+ */
+public inline fun String.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return -1
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
-public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+public inline fun String.indexOfLast(predicate: (Char) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return -1
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * "Returns the last character.
+ * @throws [NoSuchElementException] if the string is empty.
  */
-public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.last(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Collection is empty.")
+    return this[lastIndex]
+}
+
+/**
+ * "Returns the last character matching the given [predicate].
+ * @throws [NoSuchElementException] if no such character is found.
+ */
+public inline fun String.last(predicate: (Char) -> Boolean): Char {
+    var last: Char? = null
+    var found = false
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        if (predicate(element)) {
+            last = element
+            found = true
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    return last as Char
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the last character, or `null` if the string is empty.
  */
-public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.lastOrNull(): Char? {
+    return if (isEmpty()) null else this[length() - 1]
+}
+
+/**
+ * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ */
+public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
+    var last: Char? = null
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        if (predicate(element)) {
+            last = element
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return last
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the single character, or throws an exception if the string is empty or has more than one character.
  */
-public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.single(): Char {
+    return when (length()) {
+        0 -> throw NoSuchElementException("Collection is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Collection has more than one element.")
+    }
+}
+
+/**
+ * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
+ */
+public inline fun String.single(predicate: (Char) -> Boolean): Char {
+    var single: Char? = null
+    var found = false
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
+            single = element
+            found = true
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+    return single as Char
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the single character, or `null` if the string is empty or has more than one character.
  */
-public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.singleOrNull(): Char? {
+    return if (length() == 1) this[0] else null
+}
+
+/**
+ * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
+ */
+public inline fun String.singleOrNull(predicate: (Char) -> Boolean): Char? {
+    var single: Char? = null
+    var found = false
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    if (!found) return null
+    return single
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns a string with the first [n] characters removed.
  */
-public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.drop(n: Int): String {
+    return substring(Math.min(n, length()))
+}
+
+/**
+ * Returns a string with the last [n] characters removed.
+ */
+public fun String.dropLast(n: Int): String {
+    require(n >= 0, { "Requested character count $n is less than zero." })
+    return take((length() - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a string containing all characters except last characters that satisfy the given [predicate].
+ */
+public inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String {
+    return trimEnd(predicate)
+}
+
+/**
+ * Returns a string containing all characters except first characters that satisfy the given [predicate].
+ */
+public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
+    return trimStart(predicate)
+}
+
+/**
+ * Returns a string containing only those characters from the original string that match the given [predicate].
+ */
+public inline fun String.filter(predicate: (Char) -> Boolean): String {
+    return filterTo(StringBuilder(), predicate).toString()
+}
+
+/**
+ * Returns a string containing only those characters from the original string that do not match the given [predicate].
+ */
+public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
+    return filterNotTo(StringBuilder(), predicate).toString()
+}
+
+/**
+ * Appends all characters not matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : Appendable> String.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.append(element)
+    return destination
+}
+
+/**
+ * Appends all characters matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (index in 0..length() - 1) {
+        val element = get(index)
+        if (predicate(element)) destination.append(element)
+    }
+    return destination
+}
+
+/**
+ * Returns a string containing characters at indices at the specified [indices].
+ */
+public fun String.slice(indices: IntRange): String {
+    if (indices.isEmpty()) return ""
+    return substring(indices)
+}
+
+/**
+ * Returns a string containing characters at specified [indices].
+ */
+public fun String.slice(indices: Iterable<Int>): String {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return ""
+    val result = StringBuilder(size)
+    for (i in indices) {
+        result.append(get(i))
+    }
+    return result.toString()
+}
+
+/**
+ * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
+ */
+public fun String.take(n: Int): String {
+    require(n >= 0, { "Requested character count $n is less than zero." })
+    return substring(0, Math.min(n, length()))
+}
+
+/**
+ * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter.
+ */
+public fun String.takeLast(n: Int): String {
+    require(n >= 0, { "Requested character count $n is less than zero." })
+    val length = length()
+    return substring(length - Math.min(n, length), length)
+}
+
+/**
+ * Returns a string containing last characters that satisfy the given [predicate].
+ */
+public inline fun String.takeLastWhile(predicate: (Char) -> Boolean): String {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return substring(index + 1)
+        }
+    }
+    return this
+}
+
+/**
+ * Returns a string containing the first characters that satisfy the given [predicate].
+ */
+public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
+    for (index in 0..length() - 1)
+        if (!predicate(get(index))) {
+            return substring(0, index)
+        }
+    return this
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+public fun String.reverse(): String {
+    return reversed()
+}
+
+/**
+ * Returns a string with characters in reversed order.
+ */
+public fun String.reversed(): String {
+    return StringBuilder().append(this).reverse().toString()
+}
+
+/**
+ * Returns an [ArrayList] of all elements.
+ */
+public fun String.toArrayList(): ArrayList<Char> {
+    return toCollection(ArrayList<Char>(length()))
+}
+
+/**
+ * Appends all elements to the given [collection].
+ */
+public fun <C : MutableCollection<in Char>> String.toCollection(collection: C): C {
+    for (item in this) {
+        collection.add(item)
+    }
+    return collection
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun String.toHashSet(): HashSet<Char> {
+    return toCollection(HashSet<Char>(mapCapacity(length())))
+}
+
+/**
+ * Returns a [LinkedList] containing all elements.
+ */
+public fun String.toLinkedList(): LinkedList<Char> {
+    return toCollection(LinkedList<Char>())
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun String.toList(): List<Char> {
+    return this.toArrayList()
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
+    val capacity = (length()/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        result.put(selector(element), element)
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return result
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
+    val capacity = (length()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        result.put(selector(element), transform(element))
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return result
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns a [Set] of all elements.
  */
-public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public fun String.toSet(): Set<Char> {
+    return toCollection(LinkedHashSet<Char>(mapCapacity(length())))
+}
+
+/**
+ * Returns a [SortedSet] of all elements.
+ */
+public fun String.toSortedSet(): SortedSet<Char> {
+    return toCollection(TreeSet<Char>())
+}
+
+/**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
+ */
+public inline fun <R> String.flatMap(transform: (Char) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
+ */
+public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else element.toString()
-            buffer.append(text)
-        } else break
+        val list = transform(element)
+        destination.addAll(list)
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return destination
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns a map of the elements in original collection grouped by the result of given [toKey] function.
  */
-public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
-    buffer.append(prefix)
-    var count = 0
+public inline fun <K> String.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
+}
+
+/**
+ * Appends elements from original collection grouped by the result of given [toKey] function to the given [map].
+ */
+public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, toKey: (Char) -> K): Map<K, MutableList<Char>> {
     for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
+        val key = toKey(element)
+        val list = map.getOrPut(key) { ArrayList<Char>() }
+        list.add(element)
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return map
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns a list containing the results of applying the given [transform] function to each element of the original collection.
  */
-public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
-    buffer.append(prefix)
+public inline fun <R> String.map(transform: (Char) -> R): List<R> {
+    return mapTo(ArrayList<R>(length()), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function to each element and its index of the original collection.
+ */
+public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(length()), transform)
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given [transform] function
+ * to the given [destination].
+ */
+public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements of the original collection using the given [transform] function
+ * to the given [destination].
+ */
+public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, transform: (Char) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection.
+ */
+public fun String.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a list containing pairs of each element of the original collection and their index.
+ */
+@Deprecated("Use withIndex() instead.")
+public fun String.withIndices(): List<Pair<Int, Char>> {
+    var index = 0
+    return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if collection has at least one element.
+ */
+public fun String.any(): Boolean {
+    for (element in this) return true
+    return false
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ */
+public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns the length of this string.
+ */
+public fun String.count(): Int {
+    return length()
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+public inline fun String.count(predicate: (Char) -> Boolean): Int {
     var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
+    for (element in this) if (predicate(element)) count++
+    return count
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ */
+public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
     }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-    return buffer
+    return accumulator
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Performs the given [operation] on each element.
  */
-public fun <T> Array<out T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.forEach(operation: (Char) -> Unit): Unit {
+    for (element in this) operation(element)
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
-public fun BooleanArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the largest element or `null` if there are no elements.
  */
-public fun ByteArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public fun String.max(): Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public fun CharArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun <R : Comparable<R>> String.maxBy(f: (Char) -> R): Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxElem = iterator.next()
+    var maxValue = f(maxElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the smallest element or `null` if there are no elements.
  */
-public fun DoubleArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public fun String.min(): Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public fun FloatArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun <R : Comparable<R>> String.minBy(f: (Char) -> R): Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minElem = iterator.next()
+    var minValue = f(minElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns `true` if collection has no elements.
  */
-public fun IntArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public fun String.none(): Boolean {
+    for (element in this) return false
+    return true
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns `true` if no elements match the given [predicate].
  */
-public fun LongArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public fun ShortArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
 }
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * Returns the sum of all values produced by [transform] function from characters in the string.
  */
-public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+public inline fun String.sumBy(transform: (Char) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += transform(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [transform] function from characters in the string.
+ */
+public inline fun String.sumByDouble(transform: (Char) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += transform(element)
+    }
+    return sum
+}
+
+/**
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
+ */
+public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for (element in this) {
+        if (predicate(element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first.toString(), second.toString())
+}
+
+/**
+ * Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
+ */
+public fun String.zip(other: String): List<Pair<Char, Char>> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = ArrayList<Pair<Char, Char>>(length())
+    while (first.hasNext() && second.hasNext()) {
+        list.add(first.next() to second.next())
+    }
+    return list
+}
+
+/**
+ * Returns a sequence from the given collection.
+ */
+public fun String.asSequence(): Sequence<Char> {
+    if (isEmpty()) return emptySequence()
+    return object : Sequence<Char> {
+        override fun iterator(): Iterator<Char> {
+            return this@asSequence.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a sequence from the given collection
+ */
+@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
+public fun String.sequence(): Sequence<Char> {
+    return asSequence()
 }
 

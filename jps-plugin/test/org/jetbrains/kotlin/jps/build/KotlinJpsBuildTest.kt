@@ -31,10 +31,12 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -479,7 +481,8 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertFailed()
 
         val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
-                .map { it.messageText }.sorted().joinToString("\n")
+                .map { it as CompilerMessage }
+                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
         val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
         val expectedFile = File(projectRoot, "errors.txt")
         JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
@@ -641,6 +644,26 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         )
     }
 
+    public fun testDoNotCreateUselessKotlinIncrementalCaches() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
+        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+    }
+
+    public fun testDoNotCreateUselessKotlinIncrementalCachesForDependentTargets() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
+
+        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
+        assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
+    }
+
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
         val scopeBuilder = CompileScopeTestBuilder.make().all()
         val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))
@@ -650,6 +673,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             builder.build(scopeBuilder.build(), false)
         }
         finally {
+            descriptor.dataManager.flush(false)
             descriptor.release()
         }
     }

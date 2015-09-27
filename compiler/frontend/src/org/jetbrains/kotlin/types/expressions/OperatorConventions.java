@@ -33,6 +33,8 @@ public class OperatorConventions {
     public static final Name CONTAINS = Name.identifier("contains");
     public static final Name INVOKE = Name.identifier("invoke");
     public static final Name ITERATOR = Name.identifier("iterator");
+    public static final Name GET = Name.identifier("get");
+    public static final Name SET = Name.identifier("set");
     public static final Name NEXT = Name.identifier("next");
     public static final Name HAS_NEXT = Name.identifier("hasNext");
 

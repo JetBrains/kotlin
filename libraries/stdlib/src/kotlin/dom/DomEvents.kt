@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("DomEventsKt")
 package kotlin.dom
 
 import java.io.Closeable

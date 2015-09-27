@@ -1,3 +1,7 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("StringsKt")
+
+
 package kotlin
 
 import java.util.NoSuchElementException

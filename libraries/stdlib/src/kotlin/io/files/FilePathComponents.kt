@@ -1,3 +1,6 @@
+@file:JvmVersion
+@file:JvmMultifileClass
+@file:JvmName("FilesKt")
 package kotlin.io
 
 import java.io.File

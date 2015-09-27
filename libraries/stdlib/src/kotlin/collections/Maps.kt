@@ -1,3 +1,6 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("MapsKt")
+
 package kotlin
 
 import java.io.Serializable
@@ -37,6 +40,13 @@ public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size()
 public fun mapOf<K, V>(): Map<K, V> = emptyMap()
 
 /**
+ * Returns an immutable map, mapping only the specified key to the
+ * specified value.  The returned map is serializable.
+ */
+@JvmVersion
+public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = Collections.singletonMap(keyValuePair.first, keyValuePair.second)
+
+/**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *
@@ -69,7 +79,7 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
 
 private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
-private fun mapCapacity(expectedSize: Int): Int {
+internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }

@@ -38,7 +38,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
 public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @NotNull private final JetModifierKeywordToken modifier;
 
-    private AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier) {
+    public AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier) {
         super(element);
         this.modifier = modifier;
     }

@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.android.synthetic.res.AndroidFragment
-import org.jetbrains.kotlin.android.synthetic.res.AndroidResource
-import org.jetbrains.kotlin.android.synthetic.res.AndroidWidget
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 
@@ -53,8 +50,8 @@ public object AndroidConst {
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
-    val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
-            .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
+    val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.types + JetTokens.SOFT_KEYWORDS.types)
+            .map { it as? JetKeywordToken }.filterNotNull().map { it.value }.toSet()
 
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
@@ -74,16 +71,4 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
 
 fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
-}
-
-public fun parseAndroidResource(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource {
-   return when (tag) {
-        "fragment" -> AndroidFragment(id)
-        "include" -> AndroidWidget(id, AndroidConst.VIEW_FQNAME)
-        else -> {
-            val fqName = fqNameResolver(tag)
-            val invalidType = if (fqName != null) null else tag
-            AndroidWidget(id, fqName ?: AndroidConst.VIEW_FQNAME, invalidType)
-        }
-   }
 }

@@ -30,12 +30,10 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.jps.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
@@ -56,92 +54,51 @@ import java.util.*
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
-private val CACHE_DIRECTORY_NAME = "kotlin"
+internal val CACHE_DIRECTORY_NAME = "kotlin"
 
-
-class CacheFormatVersion(targetDataRoot: File) {
-    companion object {
-        // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 5
-
-        private val CACHE_FORMAT_VERSION =
-                INCREMENTAL_CACHE_OWN_VERSION * 1000000 +
-                JvmAbi.VERSION.major * 1000 +
-                JvmAbi.VERSION.minor
-
-        private val NON_INCREMENTAL_MODE_PSEUDO_VERSION = Int.MAX_VALUE
-
-        val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
-    }
-
-    private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
-
-    private fun actualCacheFormatVersion() = if (IncrementalCompilation.ENABLED) CACHE_FORMAT_VERSION else NON_INCREMENTAL_MODE_PSEUDO_VERSION
-
-    public fun isIncompatible(): Boolean {
-        if (!file.exists()) return false
-
-        val versionNumber = file.readText().toInt()
-        val expectedVersionNumber = actualCacheFormatVersion()
-
-        if (versionNumber != expectedVersionNumber) {
-            KotlinBuilder.LOG.info("Incompatible incremental cache version, expected $expectedVersionNumber, actual $versionNumber")
-            return true
-        }
-        return false
-    }
-
-    fun saveIfNeeded() {
-        if (!file.exists()) {
-            file.writeText(actualCacheFormatVersion().toString())
-        }
-    }
-
-    fun clean() {
-        file.delete()
-    }
-}
+@TestOnly
+public fun getCacheDirectoryName(): String =
+        CACHE_DIRECTORY_NAME
 
 public class IncrementalCacheImpl(
         targetDataRoot: File,
         private val target: ModuleBuildTarget
 ) : StorageOwner, IncrementalCache {
     companion object {
-        val PROTO_MAP = "proto.tab"
-        val CONSTANTS_MAP = "constants.tab"
-        val INLINE_FUNCTIONS = "inline-functions.tab"
-        val PACKAGE_PARTS = "package-parts.tab"
-        val SOURCE_TO_CLASSES = "source-to-classes.tab"
-        val CLASS_TO_SOURCES = "class-to-sources.tab"
-        val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
-        val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
-        val INLINED_TO = "inlined-to.tab"
+        val CACHE_EXTENSION = "tab"
+
+        private val PROTO_MAP = "proto"
+        private val CONSTANTS_MAP = "constants"
+        private val INLINE_FUNCTIONS = "inline-functions"
+        private val PACKAGE_PARTS = "package-parts"
+        private val SOURCE_TO_CLASSES = "source-to-classes"
+        private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        private val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions"
+        private val INLINED_TO = "inlined-to"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
+    private val maps = arrayListOf<BasicMap<*, *>>()
 
     private val String.storageFile: File
-        get() = File(baseDir, this)
+        get() = File(baseDir, this + "." + CACHE_EXTENSION)
 
-    private val protoMap = ProtoMap(PROTO_MAP.storageFile)
-    private val constantsMap = ConstantsMap(CONSTANTS_MAP.storageFile)
-    private val inlineFunctionsMap = InlineFunctionsMap(INLINE_FUNCTIONS.storageFile)
-    private val packagePartMap = PackagePartMap(PACKAGE_PARTS.storageFile)
-    private val sourceToClassesMap = SourceToClassesMap(SOURCE_TO_CLASSES.storageFile)
-    private val classToSourcesMap = ClassToSourcesMap(CLASS_TO_SOURCES.storageFile)
-    private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
-    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
-    private val inlinedTo = InlineFunctionsFilesMap(INLINED_TO.storageFile)
+    private fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
+        maps.add(map)
+        return map
+    }
 
-    private val maps = listOf(protoMap,
-                              constantsMap,
-                              inlineFunctionsMap,
-                              packagePartMap,
-                              sourceToClassesMap,
-                              dirtyOutputClassesMap,
-                              inlinedTo)
+    private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
+    private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
+    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
+    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
+    private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
+    private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
+    // TODO: can be removed?
+    private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
+    private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
@@ -165,7 +122,6 @@ public class IncrementalCacheImpl(
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {
                 dirtyOutputClassesMap.markDirty(it.internalName)
-                classToSourcesMap.remove(it)
             }
 
             sourceToClassesMap.clearOutputsForSource(sourceFile)
@@ -225,7 +181,6 @@ public class IncrementalCacheImpl(
         dirtyOutputClassesMap.notDirty(className.internalName)
         sourceFiles.forEach {
             sourceToClassesMap.add(it, className)
-            classToSourcesMap.add(className, it)
         }
 
         val header = kotlinClass.classHeader
@@ -271,9 +226,8 @@ public class IncrementalCacheImpl(
                                 .toList()
 
         val changesInfo = dirtyClasses.fold(ChangesInfo.NO_CHANGES) { info, className ->
-            val internalName = className.internalName
-            val newInfo = ChangesInfo(protoChanged = internalName in protoMap,
-                                      constantsChanged = internalName in constantsMap)
+            val newInfo = ChangesInfo(protoChanged = className in protoMap,
+                                      constantsChanged = className in constantsMap)
             newInfo.logIfSomethingChanged(className)
             info + newInfo
         }
@@ -334,7 +288,7 @@ public class IncrementalCacheImpl(
             val data = ProtoMapValue(isPackage, bytes)
 
             if (oldData == null || !Arrays.equals(bytes, oldData.bytes) || isPackage != oldData.isPackageFacade) {
-                storage.put(key, data)
+                storage[key] = data
             }
 
             return ChangesInfo(protoChanged = oldData == null ||
@@ -342,12 +296,14 @@ public class IncrementalCacheImpl(
                                               difference(oldData, data) != DifferenceKind.NONE)
         }
 
-        public fun get(className: JvmClassName): ProtoMapValue? {
-            return storage[className.getInternalName()]
-        }
+        public fun contains(className: JvmClassName): Boolean =
+                className.internalName in storage
+
+        public fun get(className: JvmClassName): ProtoMapValue? =
+                storage[className.internalName]
 
         public fun remove(className: JvmClassName) {
-            storage.remove(className.getInternalName())
+            storage.remove(className.internalName)
         }
 
         override fun dumpValue(value: ProtoMapValue): String {
@@ -372,6 +328,9 @@ public class IncrementalCacheImpl(
             return if (result.isEmpty()) null else result
         }
 
+        fun contains(className: JvmClassName): Boolean =
+                className.internalName in storage
+
         public fun process(kotlinClass: LocalFileKotlinClass): ChangesInfo {
             return put(kotlinClass.className, getConstantsMap(kotlinClass.fileContents))
         }
@@ -383,7 +342,7 @@ public class IncrementalCacheImpl(
             if (oldMap == constantsMap) return ChangesInfo.NO_CHANGES
 
             if (constantsMap != null) {
-                storage.put(key, constantsMap)
+                storage[key] = constantsMap
             }
             else {
                 storage.remove(key)
@@ -514,7 +473,7 @@ public class IncrementalCacheImpl(
             }
 
             when {
-                newMap.isNotEmpty() -> storage.put(internalName, newMap)
+                newMap.isNotEmpty() -> storage[internalName] = newMap
                 else -> storage.remove(internalName)
             }
 
@@ -536,77 +495,55 @@ public class IncrementalCacheImpl(
 
     private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun addPackagePart(className: JvmClassName) {
-            storage.put(className.getInternalName(), true)
-        }
-
-        public fun remove(className: JvmClassName) {
-            storage.remove(className.getInternalName())
-        }
-
-        public fun isPackagePart(className: JvmClassName): Boolean {
-            return storage.containsMapping(className.getInternalName())
-        }
-
-        override fun dumpValue(value: Boolean) = ""
-    }
-
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
-        public fun clearOutputsForSource(sourceFile: File) {
-            storage.remove(sourceFile.getAbsolutePath())
-        }
-
-        public fun add(sourceFile: File, className: JvmClassName) {
-            storage.appendData(sourceFile.getAbsolutePath(), { out -> IOUtil.writeUTF(out, className.getInternalName()) })
-        }
-
-        public fun get(sourceFile: File): Collection<JvmClassName> {
-            return storage[sourceFile.getAbsolutePath()].orEmpty().map { JvmClassName.byInternalName(it) }
-        }
-
-        override fun dumpValue(value: List<String>) = value.toString()
-    }
-
-    private inner class ClassToSourcesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathCollectionExternalizer) {
-        public fun get(className: JvmClassName): Collection<String> =
-                storage[className.internalName] ?: emptySet()
-
-        public fun add(className: JvmClassName, sourceFile: File) {
-            storage.appendData(className.internalName) { out ->
-                IOUtil.writeUTF(out, sourceFile.normalizedPath)
-            }
+            storage[className.internalName] = true
         }
 
         public fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: Collection<String>): String =
-                value.dumpCollection()
+        public fun isPackagePart(className: JvmClassName): Boolean =
+                className.internalName in storage
+
+        override fun dumpValue(value: Boolean) = ""
+    }
+
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
+        public fun clearOutputsForSource(sourceFile: File) {
+            storage.remove(sourceFile.absolutePath)
+        }
+
+        public fun add(sourceFile: File, className: JvmClassName) {
+            storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.getInternalName()) })
+        }
+
+        public fun get(sourceFile: File): Collection<JvmClassName> =
+                storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
+
+        override fun dumpValue(value: List<String>) = value.toString()
     }
 
     private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun markDirty(className: String) {
-            storage.put(className, true)
+            storage[className] = true
         }
 
         public fun notDirty(className: String) {
             storage.remove(className)
         }
 
-        public fun getDirtyOutputClasses(): Collection<String> {
-            return storage.getAllKeysWithExistingMapping()
-        }
+        public fun getDirtyOutputClasses(): Collection<String> =
+                storage.keys
 
         override fun dumpValue(value: Boolean) = ""
     }
 
     private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
-            storage.allKeysWithExistingMapping
-                   .toMap(JvmClassName::byInternalName) { storage[it] }
+            storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
 
         public fun put(className: JvmClassName, changedFunctions: List<String>) {
-            storage.put(className.internalName, changedFunctions)
+            storage[className.internalName] = changedFunctions
         }
 
         override fun dumpValue(value: List<String>) =
@@ -625,7 +562,7 @@ public class IncrementalCacheImpl(
     private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
-            storage.appendData(key) { out ->
+            storage.append(key) { out ->
                 IOUtil.writeUTF(out, targetPath)
             }
         }
@@ -752,9 +689,6 @@ private object PathCollectionExternalizer : DataExternalizer<Collection<String>>
         return result
     }
 }
-
-private val File.normalizedPath: String
-    get() = FileUtil.toSystemIndependentName(canonicalPath)
 
 @TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =

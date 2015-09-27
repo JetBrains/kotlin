@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("RangesKt")
 package kotlin
 
 /**
@@ -30,6 +32,6 @@ public fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
 }
 
 
-private fun checkStepIsPositive(isPositive: Boolean, step: Number) {
+internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {
     if (!isPositive) throw IllegalArgumentException("Step must be positive, was: $step")
 }

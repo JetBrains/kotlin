@@ -185,12 +185,11 @@ public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinl
 
 public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
     var result: T? = null
-    this.accept(object : PsiRecursiveElementVisitor() {
+    this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
-            if (result != null) return
-
             if (element is T && predicate(element)) {
                 result = element
+                stopWalking()
                 return
             }
 

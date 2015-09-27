@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmName("MapAccessorsKt")
 package kotlin.properties
 
 import java.io.Serializable

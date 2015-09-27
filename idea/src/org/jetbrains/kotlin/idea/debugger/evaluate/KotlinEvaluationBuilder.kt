@@ -82,8 +82,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
-private val RECEIVER_NAME = "\$receiver"
-private val THIS_NAME = "this"
+internal val RECEIVER_NAME = "\$receiver"
+internal val THIS_NAME = "this"
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {

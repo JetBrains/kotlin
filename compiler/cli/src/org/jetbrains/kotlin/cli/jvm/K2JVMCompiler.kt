@@ -65,7 +65,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
 
-        if (IncrementalCompilation.ENABLED) {
+        if (IncrementalCompilation.isEnabled()) {
             val incrementalCompilationComponents = services.get(javaClass<IncrementalCompilationComponents>())
             configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, incrementalCompilationComponents)
         }

@@ -89,7 +89,10 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.USELESS_ELVIS,
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE,
-            Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE
+            Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE,
+            Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
+            Errors.BACKING_FIELD_SYNTAX_DEPRECATED,
+            Errors.OPERATOR_MODIFIER_REQUIRED
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

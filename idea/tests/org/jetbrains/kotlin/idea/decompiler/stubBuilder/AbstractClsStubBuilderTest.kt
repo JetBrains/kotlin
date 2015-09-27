@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
-import org.jetbrains.kotlin.test.JetTestUtils
-import java.io.File
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import com.google.common.io.Files
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.util.indexing.FileContentImpl
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import com.google.common.io.Files
-import com.intellij.openapi.vfs.VirtualFile
-import org.junit.Assert
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
-import java.util.LinkedHashSet
-import com.intellij.openapi.vfs.VfsUtilCore
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.junit.Assert
+import java.io.File
+import java.util.*
 
 public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {
@@ -64,7 +64,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     }
 }
 
-private fun StubElement<out PsiElement>.serializeToString(): String {
+internal fun StubElement<out PsiElement>.serializeToString(): String {
     return AbstractStubBuilderTest.serializeStubToString(this)
 }
 

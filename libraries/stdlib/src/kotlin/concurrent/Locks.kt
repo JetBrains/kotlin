@@ -1,3 +1,5 @@
+@file:JvmVersion
+@file:JvmName("LocksKt")
 package kotlin.concurrent
 
 import java.util.concurrent.locks.Lock

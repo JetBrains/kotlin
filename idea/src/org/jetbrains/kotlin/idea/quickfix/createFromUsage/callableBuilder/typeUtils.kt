@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-private fun JetType.contains(inner: JetType): Boolean {
+internal fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
@@ -61,10 +61,10 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     return "$typeString$typeArgumentString$nullifier"
 }
 
-private fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
-private fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
+internal fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
+internal fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
 
-private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
+internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
         val classifier = scope.getClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
         classifier == null || classifier != typeParameter
@@ -215,9 +215,9 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 /**
  * Encapsulates a single type substitution of a <code>JetType</code> by another <code>JetType</code>.
  */
-private class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
+internal class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
 
-private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
+internal fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
     val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 

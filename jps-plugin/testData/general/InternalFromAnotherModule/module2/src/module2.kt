@@ -1,5 +1,7 @@
 package test
 
+import test.InternalClass1
+
 // InternalClass1, ClassA1, ClassB1 are in module1
 class ClassInheritedFromInternal1: InternalClass1()
 

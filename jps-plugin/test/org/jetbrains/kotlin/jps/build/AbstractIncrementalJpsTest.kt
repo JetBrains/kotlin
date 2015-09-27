@@ -75,6 +75,8 @@ public abstract class AbstractIncrementalJpsTest(
 
     protected var workDir: File by Delegates.notNull()
 
+    protected var projectDescriptor: ProjectDescriptor by Delegates.notNull()
+
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
         TestLoggerFactory.dumpLogToStdout("")
@@ -106,19 +108,20 @@ public abstract class AbstractIncrementalJpsTest(
 
     protected open fun createLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
 
-    protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker) {}
+    protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker) {
+    }
 
     fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
         val logger = MyLogger(workDirPath)
-        val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
+        projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
 
         val lookupTracker = createLookupTracker()
         val dataContainer = JpsElementFactory.getInstance().createSimpleElement(lookupTracker)
-        descriptor.project.container.setChild(KotlinBuilder.LOOKUP_TRACKER, dataContainer)
+        projectDescriptor.project.container.setChild(KotlinBuilder.LOOKUP_TRACKER, dataContainer)
 
         try {
-            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
+            val builder = IncProjectBuilder(projectDescriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
             builder.build(scope.build(), false)
@@ -135,11 +138,12 @@ public abstract class AbstractIncrementalJpsTest(
                 return MakeResult(logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n", true, null)
             }
             else {
-                return MakeResult(logger.log, false, createMappingsDump(descriptor))
+                return MakeResult(logger.log, false, createMappingsDump(projectDescriptor))
             }
-        } finally {
-            descriptor.dataManager.flush(false)
-            descriptor.release()
+        }
+        finally {
+            projectDescriptor.dataManager.flush(false)
+            projectDescriptor.release()
         }
     }
 
@@ -289,10 +293,7 @@ public abstract class AbstractIncrementalJpsTest(
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
         return StringBuilder {
-            val allTargets = project.buildTargetIndex.allTargets
-            val moduleTargets = allTargets.filterIsInstance(ModuleBuildTarget::class.java)
-
-            for (target in moduleTargets.sortedBy { it.presentableName }) {
+            for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
                 append("<target $target>\n")
                 append(project.dataManager.getKotlinCache(target).dump())
                 append("</target $target>\n\n\n")
@@ -307,7 +308,7 @@ public abstract class AbstractIncrementalJpsTest(
         result.println("Begin of SourceToOutputMap")
         result.pushIndent()
 
-        for (target in project.buildTargetIndex.allTargets) {
+        for (target in project.allModuleTargets) {
             result.println(target)
             result.pushIndent()
 
@@ -344,13 +345,13 @@ public abstract class AbstractIncrementalJpsTest(
         val modifications = getModificationsToPerform(moduleNames)
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
-            performAdditionalModifications()
+            performAdditionalModifications(step)
             results.add(make())
         }
         return results
     }
 
-    protected open fun performAdditionalModifications() {
+    protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
 
     // null means one module
@@ -414,13 +415,13 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private abstract class Modification(val path: String) {
+    protected abstract class Modification(val path: String) {
         abstract fun perform(workDir: File)
 
         override fun toString(): String = "${javaClass.simpleName} $path"
     }
 
-    private class ModifyContent(path: String, val dataFile: File) : Modification(path) {
+    protected class ModifyContent(path: String, val dataFile: File) : Modification(path) {
         override fun perform(workDir: File) {
             val file = File(workDir, path)
 
@@ -436,7 +437,7 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private class DeleteFile(path: String) : Modification(path) {
+    protected class DeleteFile(path: String) : Modification(path) {
         override fun perform(workDir: File) {
             val fileToDelete = File(workDir, path)
             if (!fileToDelete.delete()) {
@@ -445,3 +446,6 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 }
+
+internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
+    get() = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>()

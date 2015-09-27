@@ -1,11 +1,13 @@
 package templates
 
+import generators.SourceFile
 import templates.Family.*
 
 fun comparables(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("coerceAtLeast(minimumValue: SELF)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives, Generic)
         only(numericPrimitives)
         returns("SELF")
@@ -26,6 +28,7 @@ fun comparables(): List<GenericFunction> {
     }
 
     templates add f("coerceAtMost(maximumValue: SELF)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives, Generic)
         only(numericPrimitives)
         returns("SELF")
@@ -45,6 +48,7 @@ fun comparables(): List<GenericFunction> {
     }
 
     templates add f("coerceIn(range: Range<T>)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives, Generic)
         only(numericPrimitives)
         returns("SELF")
@@ -65,6 +69,7 @@ fun comparables(): List<GenericFunction> {
     }
 
     templates add f("coerceIn(minimumValue: SELF?, maximumValue: SELF?)") {
+        sourceFile(SourceFile.Ranges)
         only(Primitives, Generic)
         only(numericPrimitives)
         returns("SELF")

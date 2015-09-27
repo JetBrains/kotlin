@@ -16,7 +16,7 @@
 
 package com.google.dart.compiler.backend.js.ast.metadata
 
-private class MetadataProperty<in T : HasMetadata, R>(val default: R) {
+internal class MetadataProperty<in T : HasMetadata, R>(val default: R) {
     fun get(thisRef: T, desc: PropertyMetadata): R {
         if (!thisRef.hasData(desc.name)) return default
         return thisRef.getData<R>(desc.name)

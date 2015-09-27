@@ -10,18 +10,18 @@ public abstract class A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?> {
     private final lateinit var c: kotlin.CharSequence
     public final lateinit val d: kotlin.String
     public final lateinit var e: kotlin.String
-    public final lateinit val e1: V
-    public abstract lateinit val e10: kotlin.String
-    public final lateinit val e2: kotlin.String?
-    public final lateinit val e3: kotlin.Int
-    public final lateinit val e4: kotlin.Int?
+    public final lateinit var e1: V
+    public abstract lateinit var e10: kotlin.String
+    public final lateinit var e2: kotlin.String?
+    public final lateinit var e3: kotlin.Int
+    public final lateinit var e4: kotlin.Int?
     public final lateinit var e5: kotlin.String
     public final lateinit var e6: kotlin.Int
     public final lateinit val e7: kotlin.String
     public final lateinit val e8: kotlin.String
     public final lateinit var e9: kotlin.String
-    public final val p2: kotlin.String
-    public final lateinit val kotlin.String.e11: kotlin.String
+    public final var p2: kotlin.String
+    public final lateinit var kotlin.String.e11: kotlin.String
     public final lateinit var kotlin.String.e12: kotlin.String
     public final fun a(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -31,7 +31,7 @@ public abstract class A</*0*/ T : kotlin.Any, /*1*/ V : kotlin.String?> {
 
 public abstract class AbstractClass {
     public constructor AbstractClass()
-    public abstract val str: kotlin.String
+    public abstract var str: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -39,7 +39,7 @@ public abstract class AbstractClass {
 
 public final class AbstractClassImpl : AbstractClass {
     public constructor AbstractClassImpl()
-    public open override /*1*/ lateinit val str: kotlin.String
+    public open override /*1*/ lateinit var str: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -54,7 +54,7 @@ public final class CustomDelegate {
 }
 
 public interface Intf {
-    public abstract lateinit val str: kotlin.String
+    public abstract lateinit var str: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

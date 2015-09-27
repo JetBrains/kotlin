@@ -1,10 +1,12 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("SequencesKt")
 
 package kotlin
 
 import java.util.concurrent.atomic.AtomicReference
 
 
-private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
+internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
     private val sequenceRef = AtomicReference(sequence)
 
     override fun iterator(): Iterator<T> {

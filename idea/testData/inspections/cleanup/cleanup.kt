@@ -35,3 +35,25 @@ fun unnecessaryCast(x: String) = x as String
 fun unnecessaryElvis(x: String) = x ?: ""
 
 @JavaAnn(1, "abc") class MyClass
+
+val i = 1
+
+annotation class Fancy(val param: Int)
+
+@Fancy(<caret>i) class D
+
+class Foo {
+    var x: Int = 0
+        get = $x
+        set(value) { $x = value }
+}
+
+class B {
+    fun plus(a: A): A = A()
+}
+
+fun foo() {
+    B() + B()
+    B() + B()
+    B() + B()
+}

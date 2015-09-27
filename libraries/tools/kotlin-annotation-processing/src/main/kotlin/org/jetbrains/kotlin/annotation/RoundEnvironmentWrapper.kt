@@ -9,7 +9,7 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeVisitor
 
-private class RoundEnvironmentWrapper(
+internal class RoundEnvironmentWrapper(
         val processingEnv: ProcessingEnvironment,
         val parent: RoundEnvironment,
         val roundNumber: Int,

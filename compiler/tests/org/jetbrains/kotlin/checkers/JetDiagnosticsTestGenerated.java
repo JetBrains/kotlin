@@ -12735,6 +12735,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("visibility3.kt")
+            public void testVisibility3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/visibility3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("VisibilityInClassObject.kt")
             public void testVisibilityInClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/VisibilityInClassObject.kt");

@@ -71,7 +71,7 @@ public interface Errors {
     DiagnosticFactory3<JetSimpleNameExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
-    DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, JetFile> ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE = DiagnosticFactory3.create(WARNING, CALL_ELEMENT);
+    DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, JetFile> ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
 
     DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
@@ -328,11 +328,16 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
-    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_SYNTAX_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_USAGE_DEPRECATED = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 

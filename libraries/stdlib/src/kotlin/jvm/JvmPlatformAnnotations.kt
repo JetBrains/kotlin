@@ -67,6 +67,7 @@ public annotation class JvmMultifileClass
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
+@Deprecated("Use lateinit instead")
 public annotation class publicField
 
 /**
@@ -89,3 +90,10 @@ public annotation class publicField
  */
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
+
+
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)
+
+

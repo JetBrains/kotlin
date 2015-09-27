@@ -1027,6 +1027,21 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.quickfix.AddConstModifierIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveAssignmentToInitializerIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="Add 'replaceWith' argument to 'deprecated' annotation"
                      groupName="Kotlin"
@@ -1183,12 +1198,27 @@
                      level="WARNING"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OperatorModifierInspection"
+                     displayName="Missing 'operator' modifier"
+                     groupName="Kotlin"
+                     language="jet"
+                     enabledByDefault="true"
+                     level="WARNING"/>
+
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
                        displayName="Extension property conflicts with synthetic one"
                        groupName="Kotlin"
                        enabledByDefault="true"
                        level="WARNING"
       />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedFacadeUsageInspection"
+                     displayName="Usage of deprecated Kotlin package facade"
+                     groupName="Kotlin"
+                     language="JAVA"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
                        displayName="Invalid property key"

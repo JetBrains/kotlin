@@ -1,6 +1,9 @@
+
 /**
  * JVM specific API implementations using JAXP and so forth which would not be used when compiling to JS
  */
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("DomKt")
 package kotlin.dom
 
 import org.w3c.dom.*

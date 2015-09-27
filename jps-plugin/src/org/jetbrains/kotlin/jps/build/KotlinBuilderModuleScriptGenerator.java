@@ -72,7 +72,7 @@ public class KotlinBuilderModuleScriptGenerator {
             File outputDir = getOutputDirSafe(target);
 
             List<File> moduleSources = new ArrayList<File>(
-                    IncrementalCompilation.ENABLED
+                    IncrementalCompilation.isEnabled()
                     ? sourceFiles.get(target)
                     : KotlinSourceFileCollector.getAllKotlinSourceFiles(target));
 

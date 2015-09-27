@@ -1,5 +1,5 @@
-// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
-// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
+// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract operator fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
+// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract operator fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
 package demo
 
 import java.util.*

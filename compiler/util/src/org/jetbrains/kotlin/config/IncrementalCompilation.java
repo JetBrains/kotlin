@@ -16,6 +16,22 @@
 
 package org.jetbrains.kotlin.config;
 
+import org.jetbrains.annotations.TestOnly;
+
 public class IncrementalCompilation {
-    public static final boolean ENABLED = !"false".equals(System.getProperty("kotlin.incremental.compilation"));
+    private static final String INCREMENTAL_COMPILATION_PROPERTY = "kotlin.incremental.compilation";
+
+    public static boolean isEnabled() {
+        return !"false".equals(System.getProperty(INCREMENTAL_COMPILATION_PROPERTY));
+    }
+
+    @TestOnly
+    public static void disableIncrementalCompilation() {
+        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, "false");
+    }
+
+    @TestOnly
+    public static void enableIncrementalCompilation() {
+        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, "true");
+    }
 }

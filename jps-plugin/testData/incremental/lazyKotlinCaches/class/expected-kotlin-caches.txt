@@ -1,0 +1,5 @@
+Module 'module' production
+    format-version.txt
+    proto.tab
+    source-to-classes.tab
+Module 'module' tests

@@ -1,23 +1,10 @@
+@file:JvmVersion
+@file:JvmName("ConsoleKt")
 package kotlin.io
 
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.BufferedReader
-
-/**
- * Returns the default buffer size when working with buffered streams.
- */
-public val defaultBufferSize: Int = 64 * 1024
-
-/**
- * Returns the default block size for forEachBlock().
- */
-public val defaultBlockSize: Int = 4096
-
-/**
- * Returns the minimum block size for forEachBlock().
- */
-public val minimumBlockSize: Int = 512
 
 /** Prints the given message to the standard output stream. */
 public fun print(message: Any?) {

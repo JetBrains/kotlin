@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
+import org.jetbrains.kotlin.idea.inspections.OperatorModifierFixFactory
+import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -319,5 +321,13 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
+
+        NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
+
+        BACKING_FIELD_SYNTAX_DEPRECATED.registerFactory(MigrateBackingFieldSyntaxFix)
+        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(MigrateBackingFieldUsageFix)
+        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(IntroduceBackingPropertyFix)
+
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(OperatorModifierFixFactory)
     }
 }

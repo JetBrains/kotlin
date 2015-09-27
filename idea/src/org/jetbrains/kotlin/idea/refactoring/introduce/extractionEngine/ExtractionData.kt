@@ -257,7 +257,7 @@ data class ExtractionData(
 // Hack:
 // we can't get first element offset through getStatement()/getChildren() since they skip comments and whitespaces
 // So we take offset of the left brace instead and increase it by 2 (which is length of "{\n" separating block start and its first element)
-private fun JetExpression.getBlockContentOffset(): Int {
+internal fun JetExpression.getBlockContentOffset(): Int {
     (this as? JetBlockExpression)?.getLBrace()?.let {
         return it.getTextRange()!!.getStartOffset() + 2
     }

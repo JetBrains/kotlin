@@ -79,7 +79,6 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
             if (insertAfter != null) {
                 function.addAfter(psiFactory.createParameterList("()"), insertAfter)
                 function.addAfter(propertySample.getGetter()!!.getNamePlaceholder(), insertAfter)
-                function.addAfter(psiFactory.createNewLine(), insertAfter)
             }
 
             val property = originalFunction.replace(psiFactory.createProperty(function.getText())) as JetProperty

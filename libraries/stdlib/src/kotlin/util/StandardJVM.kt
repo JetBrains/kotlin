@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("ExceptionsKt")
 package kotlin
 
 import java.io.PrintStream

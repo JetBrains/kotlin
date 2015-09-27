@@ -42,7 +42,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
                 return
             }
 
-            if (checkIfLayoutFile(child)) {
+            if (child != null && checkIfLayoutFile(child)) {
                 incModificationCount()
                 return
             }

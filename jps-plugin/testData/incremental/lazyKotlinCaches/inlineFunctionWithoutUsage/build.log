@@ -1,0 +1,8 @@
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/inline/InlineKt.class
+out/production/module/inline/InlinePackage.class
+End of files
+Compiling files:
+src/inline.kt
+End of files

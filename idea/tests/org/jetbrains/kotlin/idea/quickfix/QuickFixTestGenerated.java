@@ -4031,6 +4031,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/backingFieldSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BackingFieldSyntax extends AbstractQuickFixTest {
+            @TestMetadata("accessor.kt")
+            public void testAccessor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/accessor.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInBackingFieldSyntax() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/backingFieldSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("introduceBackingField.kt")
+            public void testIntroduceBackingField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/introduceBackingField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usage.kt")
+            public void testUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/usage.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4160,6 +4187,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/operatorModifier")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OperatorModifier extends AbstractQuickFixTest {
+            public void testAllFilesPresentInOperatorModifier() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/operatorModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("containsInt.kt")
+            public void testContainsInt() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/containsInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extension.kt")
+            public void testExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/extension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("toplevel.kt")
+            public void testToplevel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/toplevel.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/removeNameFromFunctionExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4253,6 +4313,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("openModifierInEnum.kt")
         public void testOpenModifierInEnum() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/openModifierInEnum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorModifier.kt")
+        public void testOperatorModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorModifierCollection.kt")
+        public void testOperatorModifierCollection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifierCollection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorModifierComponent.kt")
+        public void testOperatorModifierComponent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifierComponent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorModifierGet.kt")
+        public void testOperatorModifierGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifierGet.kt");
             doTest(fileName);
         }
 

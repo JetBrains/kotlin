@@ -1,5 +1,8 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("ExtensionsKt")
 package kotlin
 
+import java.lang.reflect.Method
 import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.KClass
@@ -40,21 +43,17 @@ public val <T: Any> T.javaClass : Class<T>
 @Deprecated("Use the class reference and .java extension property instead: MyClass::class.java", ReplaceWith("T::class.java"))
 public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
-/**
- * Executes the given function [block] while holding the monitor of the given object [lock].
- */
-public inline fun <R> synchronized(lock: Any, block: () -> R): R {
-    monitorEnter(lock)
-    try {
-        return block()
-    }
-    finally {
-        monitorExit(lock)
-    }
-}
 
 /**
  * Returns the annotation type of this annotation.
  */
 public fun <T : Annotation> T.annotationType() : Class<out T> =
     (this as java.lang.annotation.Annotation).annotationType() as Class<out T>
+
+/**
+ * Invokes the underlying method represented by this [Method] object, on the specified [instance] with the specified parameters.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline operator fun Method.invoke(instance: Any, vararg args: Any?): Any? {
+    return invoke(instance, *args)
+}

@@ -141,7 +141,7 @@ public class PackageCodegen {
 
     @Nullable
     private PackageFragmentDescriptor getCompiledPackageFragment(@NotNull FqName fqName) {
-        if (!IncrementalCompilation.ENABLED) {
+        if (!IncrementalCompilation.isEnabled()) {
             return null;
         }
 

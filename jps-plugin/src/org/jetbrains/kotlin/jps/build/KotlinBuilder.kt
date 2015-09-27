@@ -30,7 +30,10 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ABORT
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ADDITIONAL_PASS_REQUIRED
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.NOTHING_DONE
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.OK
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
@@ -134,11 +137,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val dataManager = projectDescriptor.dataManager
 
-        if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
-            LOG.info("Clearing caches for " + chunk.getTargets().map { it.getPresentableName() }.join())
+        if (chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }) {
+            LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
             val incrementalCaches = getIncrementalCaches(chunk, context)
             incrementalCaches.values().forEach(StorageOwner::clean)
-            return CHUNK_REBUILD_REQUIRED
+            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
+            return ADDITIONAL_PASS_REQUIRED
         }
 
         if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()
@@ -199,7 +203,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             isJsModule -> ChangesInfo.NO_CHANGES
             else -> {
                 val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
-                val info = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
+                val info = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles, chunk)
                 updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
                 info
             }
@@ -213,7 +217,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             copyJsLibraryFilesIfNeeded(chunk, project)
         }
 
-        if (!IncrementalCompilation.ENABLED) return OK
+        if (!IncrementalCompilation.isEnabled()) return OK
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
         val marker = ChangesProcessor(context, chunk, allCompiledFiles, caches)
@@ -258,7 +262,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         private fun recompileEverything() {
             allCompiledFiles.clear()
-            FSOperations.markDirtyRecursively(context, chunk)
+            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
         }
 
         private fun recompileOtherAndDependents() {
@@ -291,8 +295,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
         }
 
-        if (IncrementalCompilation.ENABLED) {
-            for (target in chunk.getTargets()) {
+        if (IncrementalCompilation.isEnabled()) {
+            for (target in chunk.targets) {
                 val cache = incrementalCaches[target]!!
                 val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
                 cache.markOutputClassesDirty(removedAndDirtyFiles)
@@ -408,7 +412,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return sources
         }
 
-        if (!IncrementalCompilation.ENABLED) {
+        if (!IncrementalCompilation.isEnabled()) {
             return
         }
 
@@ -443,13 +447,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
-            generatedFiles: List<GeneratedFile>
+            generatedFiles: List<GeneratedFile>,
+            chunk: ModuleChunk
     ): ChangesInfo {
-        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
-
-        if (!IncrementalCompilation.ENABLED) {
+        if (!IncrementalCompilation.isEnabled()) {
             return ChangesInfo.NO_CHANGES
         }
+
+        chunk.targets.forEach { incrementalCaches[it]!!.saveCacheFormatVersion() }
 
         var changesInfo = ChangesInfo.NO_CHANGES
         for (generatedFile in generatedFiles) {

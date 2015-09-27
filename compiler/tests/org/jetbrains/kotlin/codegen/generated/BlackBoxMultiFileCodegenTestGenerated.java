@@ -89,12 +89,6 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
-    @TestMetadata("kt2257")
-    public void testKt2257() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt2257/");
-        doTestMultiFile(fileName);
-    }
-
     @TestMetadata("multifileClassPartsInitialization")
     public void testMultifileClassPartsInitialization() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/multifileClassPartsInitialization/");

@@ -1,3 +1,5 @@
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
 /**
@@ -18,13 +20,6 @@ public fun TODO(): Nothing = throw NotImplementedError()
 public fun TODO(reason: String): Nothing = throw NotImplementedError("An operation is not implemented: $reason")
 
 
-/**
- * Creates a tuple of type [Pair] from this and [that].
- *
- * This can be useful for creating [Map] literals with less noise, for example:
- * @sample test.collections.MapTest.createUsingTo
- */
-public fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
  * Calls the specified function [f] and returns its result.
