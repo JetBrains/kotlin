@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
-    <property name="ideaVersion" value="142.4859.6"/>
+    <property name="ideaVersion" value="142.5047.6"/>
 
     <property name="kotlin.bootstrap.branch" value=""/>
     <property name="kotlin.bootstrap.branch.locator" value=""/>
