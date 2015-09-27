@@ -1486,7 +1486,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     ArgumentGenerator argumentGenerator =
                             new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
 
-                    argumentGenerator.generate(valueArguments, valueArguments);
+                    argumentGenerator.generate(valueArguments, valueArguments, ExpressionCodegen.this);
                 }
 
                 Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
@@ -2455,7 +2455,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
         List<Integer> masks =
-                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()))
+                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()), this)
                         .toInts();
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {

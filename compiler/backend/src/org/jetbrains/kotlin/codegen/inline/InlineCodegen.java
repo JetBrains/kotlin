@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -84,8 +83,8 @@ public class InlineCodegen extends CallGenerator {
     private final int initialFrameSize;
     private final boolean isSameModule;
 
-    protected final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
-    protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
+    private final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
+    private final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
     private final ReifiedTypeInliner reifiedTypeInliner;
 
@@ -116,7 +115,6 @@ public class InlineCodegen extends CallGenerator {
         jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
 
         // TODO: implement AS_FUNCTION inline strategy
-        InlineStrategy inlineStrategy = InlineUtil.getInlineStrategy(functionDescriptor);
         this.asFunctionInline = false;
 
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
@@ -413,15 +411,17 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor) {
-        putCapturedInLocal(type, stackValue, valueParameterDescriptor, -1);
+        putArgumentOrCapturedToLocalVal(type, stackValue, -1);
     }
 
-    private void putCapturedInLocal(
-            @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int capturedParamIndex
+    private void putArgumentOrCapturedToLocalVal(
+            @NotNull Type type,
+            @Nullable StackValue stackValue,
+            int capturedParamIndex
     ) {
         if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            boolean couldBeRemapped = !shouldPutValue(type, stackValue, valueParameterDescriptor);
+            boolean couldBeRemapped = !shouldPutValue(type, stackValue);
             StackValue remappedIndex = couldBeRemapped ? stackValue : null;
 
             ParameterInfo info;
@@ -434,15 +434,14 @@ public class InlineCodegen extends CallGenerator {
                 info = invocationParamBuilder.addNextParameter(type, false, remappedIndex);
             }
 
-            putParameterOnStack(info);
+            recordParameterValueInLocalVal(info);
         }
     }
 
     /*descriptor is null for captured vars*/
-    public boolean shouldPutValue(
+    public static boolean shouldPutValue(
             @NotNull Type type,
-            @Nullable StackValue stackValue,
-            @Nullable ValueParameterDescriptor descriptor
+            @Nullable StackValue stackValue
     ) {
 
         if (stackValue == null) {
@@ -478,7 +477,7 @@ public class InlineCodegen extends CallGenerator {
         return true;
     }
 
-    private void putParameterOnStack(ParameterInfo... infos) {
+    private void recordParameterValueInLocalVal(ParameterInfo... infos) {
         int[] index = new int[infos.length];
         for (int i = 0; i < infos.length; i++) {
             ParameterInfo info = infos[i];
@@ -515,7 +514,7 @@ public class InlineCodegen extends CallGenerator {
         }
 
         List<ParameterInfo> infos = invocationParamBuilder.listNotCaptured();
-        putParameterOnStack(infos.toArray(new ParameterInfo[infos.size()]));
+        recordParameterValueInLocalVal(infos.toArray(new ParameterInfo[infos.size()]));
     }
 
     public void leaveTemps() {
@@ -633,7 +632,7 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void putValueIfNeeded(@Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value) {
-        if (shouldPutValue(parameterType, value, valueParameterDescriptor)) {
+        if (shouldPutValue(parameterType, value)) {
             value.put(parameterType, codegen.v);
         }
         afterParameterPut(parameterType, value, valueParameterDescriptor);
@@ -643,10 +642,10 @@ public class InlineCodegen extends CallGenerator {
     public void putCapturedValueOnStack(
             @NotNull StackValue stackValue, @NotNull Type valueType, int paramIndex
     ) {
-        if (shouldPutValue(stackValue.type, stackValue, null)) {
+        if (shouldPutValue(stackValue.type, stackValue)) {
             stackValue.put(stackValue.type, codegen.v);
         }
-        putCapturedInLocal(stackValue.type, stackValue, null, paramIndex);
+        putArgumentOrCapturedToLocalVal(stackValue.type, stackValue, paramIndex);
     }
 
 

@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
@@ -51,13 +48,18 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
                 "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
     }
 
+
     @NotNull
     @Override
-    public DefaultCallMask generate(@NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex, @NotNull List<? extends ResolvedValueArgument> valueArgs) {
-        boolean shouldMarkLineNumbers = codegen.isShouldMarkLineNumbers();
-        codegen.setShouldMarkLineNumbers(false);
-        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs);
-        codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
+    public DefaultCallMask generate(
+            @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
+            @NotNull List<? extends ResolvedValueArgument> valueArgs,
+            @NotNull ExpressionCodegen codegen
+    ) {
+        boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
+        this.codegen.setShouldMarkLineNumbers(false);
+        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs, codegen);
+        this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
         return masks;
     }
 

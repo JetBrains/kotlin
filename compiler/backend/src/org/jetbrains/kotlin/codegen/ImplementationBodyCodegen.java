@@ -1643,11 +1643,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             this.offset = firstValueParamOffset;
         }
 
+        @NotNull
         @Override
         public Type generateExpression(int i, @NotNull ExpressionValueArgument argument) {
             return generateSuperCallArgument(i);
         }
 
+        @NotNull
         @Override
         public Type generateDefault(int i, @NotNull DefaultValueArgument argument) {
             Type type = parameters.get(i).getAsmType();
@@ -1655,6 +1657,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return type;
         }
 
+        @NotNull
         @Override
         public Type generateVararg(int i, @NotNull VarargValueArgument argument) {
             return generateSuperCallArgument(i);

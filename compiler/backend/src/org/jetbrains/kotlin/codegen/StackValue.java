@@ -769,7 +769,7 @@ public abstract class StackValue {
             ResolvedCall<?> call = isGetter ? resolvedGetCall : resolvedSetCall;
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
             newReceiver.put(newReceiver.type, v);
-            argumentGenerator.generate(valueArguments, valueArguments);
+            argumentGenerator.generate(valueArguments, valueArguments, codegen);
         }
 
         @Override

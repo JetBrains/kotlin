@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.utils.mapToIndex
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
+
+private class ArgumentAndIndex(val arg: ResolvedValueArgument, val declIndex: Int, var type: Type? = null, var reoder: Boolean = false, var tempValue: StackValue? = null)
 
 abstract class ArgumentGenerator {
     /**
@@ -34,7 +33,7 @@ abstract class ArgumentGenerator {
      * *
      * @param actualArgs
      */
-    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallMask {
+    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>, codegen: ExpressionCodegen): DefaultCallMask {
         //HACK: see tempVariable in ExpressionCodegen
         val actualArguments = if (actualArgs.isNotEmpty()) actualArgs else valueArgumentsByIndex
 
@@ -44,29 +43,61 @@ abstract class ArgumentGenerator {
 
         val arg2Index = valueArgumentsByIndex.mapToIndex()
 
-        val masks = DefaultCallMask(valueArgumentsByIndex.size())
-        for ((index, argument) in valueArgumentsByIndex.withIndex()) {
-            //var i = arg2Index[argument]!!
-            var i = index
+        val actualArgsWithDeclIndex: ArrayList<ArgumentAndIndex> = ArrayList(actualArguments.filter { it !is DefaultValueArgument }.map {
+            ArgumentAndIndex(it, arg2Index[it]!!)
+        })
 
-            var type = when (argument) {
+        valueArgumentsByIndex.withIndex().forEach {
+            if (it.value is DefaultValueArgument) {
+                actualArgsWithDeclIndex.add(it.index, ArgumentAndIndex(it.value, it.index))
+            }
+        }
+
+        val masks = DefaultCallMask(valueArgumentsByIndex.size())
+        var orderChanged = false
+
+        for ((actualIndex, argumentWithDeclIndex) in actualArgsWithDeclIndex.withIndex()) {
+            val argument = argumentWithDeclIndex.arg
+            val declIndex = argumentWithDeclIndex.declIndex
+
+            argumentWithDeclIndex.type = when (argument) {
                 is ExpressionValueArgument -> {
-                    generateExpression(i, argument)
+                    generateExpression(declIndex, argument)
                 }
                 is DefaultValueArgument -> {
-                    masks.mark(i)
-                    generateDefault(i, argument)
+                    masks.mark(declIndex)
+                    generateDefault(declIndex, argument)
                 }
                 is VarargValueArgument -> {
-                    generateVararg(i, argument)
+                    generateVararg(declIndex, argument)
                 }
                 else -> {
-                    generateOther(i, argument)
+                    generateOther(declIndex, argument)
                 }
             }
 
+            if (actualIndex != declIndex || orderChanged) {
+                orderChanged = true
+                argumentWithDeclIndex.reoder = true
+            }
         }
 
+        val mark = codegen.myFrameMap.mark()
+        actualArgsWithDeclIndex.reversed().forEach {
+            if (it.reoder) {
+                val type = it.type!!
+                it.tempValue = StackValue.local(codegen.frameMap.enterTemp(type), type)
+                it.tempValue?.store(StackValue.onStack(type), codegen.v)
+            }
+        }
+
+        actualArgsWithDeclIndex.sortedBy { it.declIndex }.forEach {
+            it.tempValue?.let {
+                it.put(it.type, codegen.v)
+            }
+        }
+
+        mark.dropTo()
         return masks
     }
 
