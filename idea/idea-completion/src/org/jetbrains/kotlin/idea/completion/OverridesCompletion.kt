@@ -80,7 +80,9 @@ class OverridesCompletion(
                 AllIcons.Gutter.ImplementingMethod
             else
                 AllIcons.Gutter.OverridingMethod
-            val icon = RowIcon(baseIcon, additionalIcon)
+            val icon = RowIcon(2)
+            icon.setIcon(baseIcon, 0)
+            icon.setIcon(additionalIcon, 1)
 
             val baseClassDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(position.project, baseClass)
             val baseClassIcon = JetDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
