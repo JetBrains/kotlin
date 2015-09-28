@@ -20,6 +20,7 @@
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
 
   <idea-version since-build="141.1009.5" until-build="141.9999999"/>
 
@@ -156,7 +157,8 @@
 
     <!-- Kotlin Console REPL-->
     <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"
-            text="Kotlin console...">
+            text="Kotlin REPL"
+            icon="/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
@@ -367,7 +369,6 @@
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
-    <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
@@ -1219,13 +1220,6 @@
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"/>
-
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
-                       displayName="Invalid property key"
-                       groupName="Kotlin"
-                       enabledByDefault="true"
-                       level="ERROR"
-      />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
