@@ -559,7 +559,7 @@ public class IncrementalCacheImpl(
 
     private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun add(facadeName: JvmClassName, partNames: List<String>) {
-            storage.put(facadeName.internalName, partNames)
+            storage[facadeName.internalName] = partNames
         }
 
         public fun getMultifileClassParts(facadeName: String): List<String>? = storage[facadeName]
@@ -573,7 +573,7 @@ public class IncrementalCacheImpl(
 
     private inner class MultifileClassPartMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
         public fun add(partName: String, facadeName: String) {
-            storage.put(partName, facadeName)
+            storage[partName] = facadeName
         }
 
         public fun getFacadeName(partName: String): String? {
@@ -614,7 +614,8 @@ public class IncrementalCacheImpl(
         public fun getDirtyOutputClasses(): Collection<String> =
                 storage.keys
 
-        public fun isDirty(className: String): Boolean = storage.containsMapping(className)
+        public fun isDirty(className: String): Boolean =
+                storage.contains(className)
 
         override fun dumpValue(value: Boolean) = ""
     }

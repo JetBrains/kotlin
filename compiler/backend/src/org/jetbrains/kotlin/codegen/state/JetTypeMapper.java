@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -85,15 +86,18 @@ public class JetTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
     private final JvmFileClassesProvider fileClassesProvider;
+    private final IncrementalCache incrementalCache;
 
     public JetTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
-            @NotNull JvmFileClassesProvider fileClassesProvider
+            @NotNull JvmFileClassesProvider fileClassesProvider,
+            @Nullable IncrementalCache incrementalCache
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
         this.fileClassesProvider = fileClassesProvider;
+        this.incrementalCache = incrementalCache;
     }
 
     @NotNull
@@ -191,7 +195,7 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
+    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
         // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack
         // introduced to make stdlib work with package facades built as multifile facades for M13.
         // We need some safe, concise way to identify multifile facade and multifile part
@@ -214,7 +218,7 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    private static String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
+    private String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
         // XXX Dirty hack; see getPackageMemberOwnerInternalName above for more details.
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
@@ -235,11 +239,12 @@ public class JetTypeMapper {
                 return PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()).shortName().asString();
             }
             else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
-                IncrementalPackageFragmentProvider.IncrementalPackageFragment incrementalPackageFragment =
-                        (IncrementalPackageFragmentProvider.IncrementalPackageFragment) packageFragmentDescriptor;
+                assert incrementalCache != null : "IncrementalPackageFragment found outside of incremental compilation context " +
+                                                  "for " + descriptor + " in package " + packageFragmentDescriptor;
+
                 String implClassInternalName = internalNameByFqNameWithoutInnerClasses(
                         packageFragmentDescriptor.getFqName().child(implClassName));
-                String facadeClassInternalName = incrementalPackageFragment.getMultifileFacade(implClassInternalName);
+                String facadeClassInternalName = incrementalCache.getMultifileFacade(implClassInternalName);
                 if (facadeClassInternalName == null) {
                     return implClassName.asString();
                 }

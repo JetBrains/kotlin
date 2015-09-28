@@ -48,6 +48,9 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -221,7 +224,14 @@ public class PackageCodegen {
     private FieldOwnerContext getPackageFacadeContextForPreviouslyCompiled(@NotNull FqName delegateToFqName) {
         Type delegateToType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(delegateToFqName);
         String partInternalName = JvmClassName.byFqNameWithoutInnerClasses(delegateToFqName).getInternalName();
-        String facadeInternalName = compiledPackageFragment.getMultifileFacade(partInternalName);
+        TargetId targetId = state.getTargetId();
+        assert targetId != null
+                : "targetId is required for incremental compilation of " + packageClassType;
+        IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
+        assert incrementalCompilationComponents != null
+                : "incrementalCompilationComponents is required for incremental compilation of " + packageClassType;
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
+        String facadeInternalName = incrementalCache.getMultifileFacade(partInternalName);
 
         Type publicFacadeType;
         if (facadeInternalName != null) {

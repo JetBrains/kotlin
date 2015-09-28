@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -86,10 +87,16 @@ public class GenerationState @JvmOverloads constructor(
 
     public val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider(packageFacadesAsMultifileClasses)
 
+    private fun getIncrementalCacheForThisTarget() =
+            if (incrementalCompilationComponents != null && targetId != null)
+                incrementalCompilationComponents.getIncrementalCache(targetId)
+            else null
+
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     public val bindingContext: BindingContext = bindingTrace.getBindingContext()
-    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider)
+    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider,
+                                                         getIncrementalCacheForThisTarget())
     public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
@@ -117,7 +124,8 @@ public class GenerationState @JvmOverloads constructor(
     init {
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
         var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
-                optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesProvider)
+                optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesProvider,
+                getIncrementalCacheForThisTarget())
 
         interceptedBuilderFactory = BuilderFactoryForDuplicateClassNameDiagnostics(interceptedBuilderFactory, diagnostics);
 
