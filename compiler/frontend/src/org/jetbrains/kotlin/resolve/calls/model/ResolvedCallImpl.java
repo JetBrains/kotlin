@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.model;
 
 import com.google.common.collect.Maps;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMP
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
 public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableResolvedCall<D> {
+    private static final Logger LOG = Logger.getInstance(ResolvedCallImpl.class);
 
     public static final Function<MutableResolvedCall<?>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<MutableResolvedCall<?>, CallableDescriptor>() {
         @Override
@@ -275,6 +277,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     public ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument) {
         ArgumentMatch argumentMatch = argumentToParameterMap.get(valueArgument);
         if (argumentMatch == null) {
+            if (ArgumentMappingKt.isReallySuccess(this)) {
+                LOG.error("ArgumentUnmapped for " + valueArgument + " in successfully resolved call: " + call.getCallElement().getText());
+            }
             return ArgumentUnmapped.INSTANCE$;
         }
         return argumentMatch;

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -82,7 +83,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val resolutionFacade = callExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
-        if (!resolvedCall.getStatus().isSuccess()) return null
+        if (!resolvedCall.isReallySuccess()) return null
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)

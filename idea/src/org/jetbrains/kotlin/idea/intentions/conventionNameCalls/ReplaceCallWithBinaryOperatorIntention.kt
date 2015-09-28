@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
@@ -32,7 +33,7 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
         val operation = operation(element.calleeName) ?: return null
 
         val resolvedCall = element.toResolvedCall() ?: return null
-        if (!resolvedCall.getStatus().isSuccess()) return null
+        if (!resolvedCall.isReallySuccess()) return null
         if (resolvedCall.getCall().getTypeArgumentList() != null) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null

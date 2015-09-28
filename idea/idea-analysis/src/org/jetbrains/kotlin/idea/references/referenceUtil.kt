@@ -28,15 +28,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import java.util.HashSet
+import java.util.*
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -168,7 +168,7 @@ public fun JetExpression.readWriteAccess(useResolveForReadWrite: Boolean): Refer
 
                 val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE
-                if (!resolvedCall.status.isSuccess) return ReferenceAccess.READ_WRITE
+                if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE
                 return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values())
                     ReferenceAccess.READ
                 else

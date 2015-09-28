@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 public object OptionalParametersHelper {
     public fun detectArgumentsToDropForDefaults(
@@ -42,7 +42,7 @@ public object OptionalParametersHelper {
             project: Project,
             canDrop: (ValueArgument) -> Boolean = { true }
     ): Collection<ValueArgument> {
-        if (!resolvedCall.getStatus().isSuccess()) return emptyList()
+        if (!resolvedCall.isReallySuccess()) return emptyList()
         val descriptor = resolvedCall.getResultingDescriptor()
 
         val parameterToDefaultValue = descriptor.getValueParameters()
