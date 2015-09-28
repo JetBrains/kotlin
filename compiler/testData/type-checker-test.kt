@@ -49,3 +49,8 @@ interface SubRec<T>: Rec<T>
 
 interface Star<T : Star<T>>
 interface SubStar<T : SubStar<T>> : Star<T>
+
+interface I
+class AI : I
+class BI : I
+class CI : I

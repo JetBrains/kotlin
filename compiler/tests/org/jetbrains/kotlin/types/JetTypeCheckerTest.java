@@ -151,7 +151,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("if (true) 1 else null", "Int?");
         assertType("if (true) null else null", "Nothing?");
 
-        assertType("if (true) 1 else '1'", "Comparable<out Any?>");
+        assertType("if (true) AI() else BI()", "I");
 
         assertType("if (true) else '1'", "Unit");
         assertType("if (true) else { var a = 0; a = 1 }", "Unit");
@@ -159,19 +159,19 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     public void testWhen() throws Exception {
         assertType("when (1) { is 1 -> 2; }", "Int");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'}", "Comparable<out Any?>");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> null}", "Comparable<out Any?>?");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; else -> null}", "Comparable<out Any?>?");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> when(2) {is 1 -> null}}", "Comparable<out Any?>?");
+        assertType("when (1) { is 1 -> AI(); is 1 -> BI()}", "I");
+        assertType("when (1) { is 1 -> AI(); is 1 -> BI(); is 1 -> null}", "I?");
+        assertType("when (1) { is 1 -> AI(); is 1 -> BI(); else -> null}", "I?");
+        assertType("when (1) { is 1 -> AI(); is 1 -> BI(); is 1 -> when(2) {is 1 -> null}}", "I?");
     }
 
     public void testTry() throws Exception {
         assertType("try {1} finally{2}", "Int");
-        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Comparable<out Any?>");
+        assertType("try { AI() } catch (e : Exception) { BI() } finally{ CI() }", "I");
         assertType("try {1} catch (e : Exception) {2} finally{'a'}", "Int");
-        assertType("try {1} catch (e : Exception) {'a'} finally{'2'}", "Comparable<out Any?>");
-        assertType("try {1} catch (e : Exception) {'a'}", "Comparable<out Any?>");
-        assertType("try {1} catch (e : Exception) {'a'} catch (e : Exception) {null}", "Comparable<out Any?>?");
+        assertType("try {CI()} catch (e : Exception) {AI(} finally{BI()}", "I");
+        assertType("try {AI()} catch (e : Exception) {BI()}", "I");
+        assertType("try {AI()} catch (e : Exception) {BI()} catch (e : Exception) {null}", "I?");
         assertType("try {} catch (e : Exception) {}", "Unit");
     }
 
@@ -185,8 +185,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertCommonSupertype("Int?", "Int", "Nothing?");
         assertCommonSupertype("Nothing?", "Nothing?", "Nothing?");
 
-        assertCommonSupertype("Any", "Char", "Number");
-        assertCommonSupertype("Comparable<out Any?>", "Int", "Char");
+        assertCommonSupertype("I", "AI", "BI");
 
         assertCommonSupertype("Base_T<*>", "Base_T<*>", "Derived_T<*>");
         assertCommonSupertype("Any", "Base_inT<*>", "Derived_T<*>");
@@ -194,7 +193,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "DDerived1_T<Int>");
 
         assertCommonSupertype("Comparable<*>", "Comparable<Int>", "Comparable<Boolean>");
-        assertCommonSupertype("Base_T<out Comparable<*>>", "Base_T<Int>", "Base_T<String>");
+        assertCommonSupertype("Base_T<out I>", "Base_T<AI>", "Base_T<BI>");
         assertCommonSupertype("Base_T<in Int>", "Base_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<in Int>", "Base_T<Int>");
