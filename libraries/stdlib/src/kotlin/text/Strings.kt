@@ -189,7 +189,7 @@ public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 /**
  * Iterator for characters of given CharSequence.
  */
-public fun CharSequence.iterator(): CharIterator = object : CharIterator() {
+public operator fun CharSequence.iterator(): CharIterator = object : CharIterator() {
     private var index = 0
 
     public override fun nextChar(): Char = get(index++)
