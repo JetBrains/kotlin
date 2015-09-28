@@ -485,6 +485,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateConstantsChanged")
+        public void testPrivateConstantsChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateConstantsChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateMethodAdded")
         public void testPrivateMethodAdded() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateMethodAdded/");
