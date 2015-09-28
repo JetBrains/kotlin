@@ -222,8 +222,14 @@ object ReplaceWithAnnotationAnalyzer {
             resolutionFacade: ResolutionFacade
     ): BindingContext {
         val traceContext = BindingTraceContext()
-        resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
-                .getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
+        val frontendService = if (module.builtIns.builtInsModule == module) {
+            // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
+            resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
+        }
+        else {
+            resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
+        }
+        frontendService.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
         return traceContext.bindingContext
     }
 
