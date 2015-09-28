@@ -4,7 +4,7 @@ fun foo(javaClass: JavaClass) {
     javaClass.isSomething2 = !javaClass.isSomething2
 
     javaClass.<!UNRESOLVED_REFERENCE!>something<!>
-    javaClass.<!FUNCTION_CALL_EXPECTED!>isSomethingWrong<!>
+    javaClass.isSomethingWrong
     javaClass.<!UNRESOLVED_REFERENCE!>somethingWrong<!>
 
     javaClass.<!FUNCTION_CALL_EXPECTED!>issueFlag<!>

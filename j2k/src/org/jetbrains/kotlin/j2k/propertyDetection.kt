@@ -385,11 +385,6 @@ private class PropertyDetector(
         if (!Name.isValidIdentifier(name)) return null
         val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(Name.identifier(name))?.identifier ?: return null
 
-        if (name.startsWith("is")) {
-            val typeText = method.returnType?.canonicalText
-            if (typeText != "boolean" && typeText != "java.lang.Boolean") return null
-        }
-
         val returnType = method.returnType ?: return null
         if (returnType.canonicalText == "void") return null
         if (method.typeParameters.isNotEmpty()) return null

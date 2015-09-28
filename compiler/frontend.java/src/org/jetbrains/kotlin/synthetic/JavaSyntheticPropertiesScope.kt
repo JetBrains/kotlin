@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -118,7 +117,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
         val returnType = descriptor.returnType ?: return false
         if (returnType.isUnit()) return false
-        if (descriptor.name.asString().startsWith("is") && !returnType.isBoolean()) return false
 
         return descriptor.valueParameters.isEmpty()
                && descriptor.typeParameters.isEmpty()
