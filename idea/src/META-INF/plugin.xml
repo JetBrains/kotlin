@@ -16,6 +16,7 @@
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
 
   <project-components>
     <component>
@@ -361,7 +362,6 @@
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
-    <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
@@ -1220,13 +1220,6 @@
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"/>
-
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
-                       displayName="Invalid property key"
-                       groupName="Kotlin"
-                       enabledByDefault="true"
-                       level="ERROR"
-      />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
