@@ -4195,6 +4195,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/operatorModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("containsBool.kt")
+            public void testContainsBool() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/containsBool.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("containsInt.kt")
             public void testContainsInt() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/containsInt.kt");
@@ -4204,6 +4210,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("extension.kt")
             public void testExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/extension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overridden.kt")
+            public void testOverridden() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/overridden.kt");
                 doTest(fileName);
             }
 

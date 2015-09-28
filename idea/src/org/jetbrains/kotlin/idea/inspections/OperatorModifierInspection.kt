@@ -24,19 +24,20 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -48,12 +49,13 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
                 if (nameIdentifier != null &&
                     function.isMemberOrExtension() &&
                     function.isOperator() &&
-                    !function.hasModifier(JetTokens.OPERATOR_KEYWORD)) {
+                    !function.isAnnotatedAsOperator()) {
 
                     holder.registerProblem(nameIdentifier, "Function defines an operator but isn't annotated as such",
                                            AddModifierLocalQuickFix())
                 }
             }
+
         }
     }
 
@@ -86,15 +88,25 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
         return false
     }
 
+    private fun JetNamedFunction.isAnnotatedAsOperator(): Boolean {
+        if (hasModifier(JetTokens.OPERATOR_KEYWORD)) return true
+        val descriptor = descriptor as? CallableMemberDescriptor ?: return false
+        return OverrideResolver.getOverriddenDeclarations(descriptor).any {
+            (it as? FunctionDescriptor)?.isOperator == true
+        }
+    }
+
     private fun JetNamedFunction.isMemberOrExtension(): Boolean =
         receiverTypeReference != null || getStrictParentOfType<JetClassOrObject>() != null
 
     private fun JetNamedFunction.isIntReturnType(): Boolean {
-        return KotlinBuiltIns.isInt(analyze(BodyResolveMode.PARTIAL).getType(this) ?: return false)
+        val returnType = (descriptor as? FunctionDescriptor)?.returnType ?: return false
+        return KotlinBuiltIns.isInt(returnType)
     }
 
     private fun JetNamedFunction.isBooleanReturnType(): Boolean {
-        return KotlinBuiltIns.isBoolean(analyze(BodyResolveMode.PARTIAL).getType(this) ?: return false)
+        val returnType = (descriptor as? FunctionDescriptor)?.returnType ?: return false
+        return KotlinBuiltIns.isBoolean(returnType)
     }
 }
 
