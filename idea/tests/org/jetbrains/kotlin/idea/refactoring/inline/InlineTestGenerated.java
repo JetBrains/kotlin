@@ -101,9 +101,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
-    @TestMetadata("Var.kt")
-    public void testVar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/Var.kt");
+    @TestMetadata("varNoWrite.kt")
+    public void testVarNoWrite() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varNoWrite.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("varWithAssignment.kt")
+    public void testVarWithAssignment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithAssignment.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("varWithInc.kt")
+    public void testVarWithInc() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithInc.kt");
         doTest(fileName);
     }
 

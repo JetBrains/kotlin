@@ -1,5 +1,6 @@
 // ERROR: Cannot perform refactoring.\nCannot find a single definition to inline
-fun f() {
-    val v = if (true) a else b
-    println(<caret>v++)
+fun foo() {
+    var x = 1
+    val t = <caret>x + 1
+    x = 2
 }
