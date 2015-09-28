@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -30,12 +31,20 @@ import org.jetbrains.kotlin.psi.*
 
 public object ModifierCheckerCore {
     private enum class Compatibility {
+        // modifier pair is compatible: ok (default)
         COMPATIBLE,
+        // second is redundant to first: warning
         REDUNDANT,
+        // first is redundant to second: warning
         REVERSE_REDUNDANT,
+        // error
         REPEATED,
+        // pair is deprecated, will become incompatible: warning
         DEPRECATED,
-        INCOMPATIBLE
+        // pair is incompatible: error
+        INCOMPATIBLE,
+        // same but only for functions / properties: error
+        COMPATIBLE_FOR_CLASSES_ONLY
     }
 
     private val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
@@ -121,6 +130,9 @@ public object ModifierCheckerCore {
 
         // private is incompatible with override
         result += incompatibilityRegister(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
+        // private is compatible with open / abstract only for classes
+        result += compatibilityForClassesRegister(PRIVATE_KEYWORD, OPEN_KEYWORD)
+        result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
         return result
     }
 
@@ -146,6 +158,9 @@ public object ModifierCheckerCore {
         return result
     }
 
+    private fun compatibilityForClassesRegister(vararg list: JetModifierKeywordToken) =
+            compatibilityRegister(Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, *list)
+
     private fun incompatibilityRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
 
     private fun deprecationRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
@@ -159,7 +174,11 @@ public object ModifierCheckerCore {
         }
     }
 
-    private fun checkCompatibility(trace: BindingTrace, firstNode: ASTNode, secondNode: ASTNode, incorrectNodes: MutableSet<ASTNode>) {
+    private fun checkCompatibility(trace: BindingTrace,
+                                   firstNode: ASTNode,
+                                   secondNode: ASTNode,
+                                   owner: PsiElement,
+                                   incorrectNodes: MutableSet<ASTNode>) {
         val first = firstNode.elementType as JetModifierKeywordToken
         val second = secondNode.elementType as JetModifierKeywordToken
         val compatibility = compatibility(first, second)
@@ -176,7 +195,10 @@ public object ModifierCheckerCore {
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))
             }
-            Compatibility.INCOMPATIBLE -> {
+            Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INCOMPATIBLE -> {
+                if (compatibility == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY) {
+                    if (owner is JetClassOrObject) return
+                }
                 if (incorrectNodes.add(firstNode)) {
                     trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(firstNode.psi, first, second))
                 }
@@ -234,7 +256,7 @@ public object ModifierCheckerCore {
                 if (first == second) {
                     break;
                 }
-                checkCompatibility(trace, first, second, incorrectNodes)
+                checkCompatibility(trace, first, second, list.owner, incorrectNodes)
             }
             if (second !in incorrectNodes) {
                 if (!checkTarget(trace, second, actualTargets)) {

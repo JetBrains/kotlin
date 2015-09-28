@@ -11,7 +11,7 @@ public abstract class TestBug1() {
         position(m1().second)
     }
 
-    private abstract fun m1(): Pair<Int, Int>
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> fun m1(): Pair<Int, Int>
 
     private fun position(<!UNUSED_PARAMETER!>p<!>: Int) {}
 
