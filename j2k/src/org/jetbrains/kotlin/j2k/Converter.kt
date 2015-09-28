@@ -400,7 +400,12 @@ class Converter private constructor(
                                     setter,
                                     classKind == ClassKind.INTERFACE
             )
-            return property.assignPrototype(field as PsiElement? ?: getMethod ?: setMethod)
+
+            val placementElement = field ?: getMethod ?: setMethod
+            val prototypes = listOf<PsiElement?>(field, getMethod, setMethod)
+                    .filterNotNull()
+                    .map { PrototypeInfo(it, if (it == placementElement) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES) }
+            return property.assignPrototypes(*prototypes.toTypedArray())
         }
     }
 

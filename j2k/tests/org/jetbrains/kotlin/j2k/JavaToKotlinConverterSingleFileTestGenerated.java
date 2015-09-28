@@ -1411,6 +1411,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("Comments.java")
+        public void testComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Comments.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClass.java")
         public void testDataClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClass.java");
