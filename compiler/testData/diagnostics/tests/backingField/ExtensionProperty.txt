@@ -1,0 +1,12 @@
+package
+
+public val kotlin.String.bar: kotlin.Int = 13
+public val kotlin.String.foo: kotlin.Int
+
+public final class My {
+    public constructor My()
+    public final val kotlin.String.x: kotlin.Int = 7
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

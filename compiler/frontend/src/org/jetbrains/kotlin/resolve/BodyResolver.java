@@ -776,11 +776,11 @@ public class BodyResolver {
         );
 
         // Synthetic "field" creation
-        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+        if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             JetProperty property = (JetProperty) function.getParent();
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
-            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, functionDescriptor.getExtensionReceiverParameter(),
+            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               "Accessor inner scope with synthetic field",
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
