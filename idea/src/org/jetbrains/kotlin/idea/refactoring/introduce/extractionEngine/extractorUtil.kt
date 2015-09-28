@@ -81,7 +81,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         )
 
         fun JetType.typeAsString(): String {
-            return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
+            return if (descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
         }
 
         descriptor.receiverParameter?.let {
