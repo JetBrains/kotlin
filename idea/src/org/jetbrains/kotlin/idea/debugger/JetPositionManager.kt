@@ -78,7 +78,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 try {
                     val javaSourceFileName = location.sourceName("Java")
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
-                    val project = myDebugProcess.getProject()
+                    val project = myDebugProcess.project
 
                     val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName, 0)
                     if (defaultPsiFile != null) {
@@ -104,7 +104,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (lineNumber >= 0) {
             val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as JetFile, lineNumber)
             if (lambdaOrFunIfInside != null) {
-                return SourcePosition.createFromElement(lambdaOrFunIfInside.getBodyExpression()!!)
+                return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
             }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
@@ -121,25 +121,25 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (start == null || end == null) return null
 
         val literalsOrFunctions = CodeInsightUtils.
-                findElementsOfClassInRange(file, start, end, javaClass<JetFunctionLiteral>(), javaClass<JetNamedFunction>()).
+                findElementsOfClassInRange(file, start, end, JetFunctionLiteral::class.java, JetNamedFunction::class.java).
                 filter { JetPsiUtil.getParentCallIfPresent(it as JetExpression) != null }
 
         if (literalsOrFunctions.isEmpty()) return null;
 
-        val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
+        val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
         val typeMapper = if (!isInLibrary)
             prepareTypeMapper(file)
         else
             createTypeMapperForLibraryFile(file.findElementAt(start), file)
 
-        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).getInternalName()
+        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
         for (literal in literalsOrFunctions) {
             val functionLiteral = literal as JetFunction
-            if (isInlinedLambda(functionLiteral, typeMapper.getBindingContext())) {
+            if (isInlinedLambda(functionLiteral, typeMapper.bindingContext)) {
                 continue
             }
 
-            val internalClassName = getInternalClassNameForElement(literal.getFirstChild(), typeMapper, file, isInLibrary).className
+            val internalClassName = getInternalClassNameForElement(literal.firstChild, typeMapper, file, isInLibrary).className
             if (internalClassName == currentLocationClassName) {
                 return functionLiteral
             }
@@ -173,7 +173,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val className = JvmClassName.byInternalName(referenceInternalName)
 
-        val project = myDebugProcess.getProject()
+        val project = myDebugProcess.project
 
         return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1)
     }
@@ -186,7 +186,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     }
 
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
-        val psiFile = sourcePosition.getFile()
+        val psiFile = sourcePosition.file
         if (psiFile is JetFile) {
             val result = ArrayList<ReferenceType>()
 
@@ -194,16 +194,16 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
             val names = classNameForPositionAndInlinedOnes(sourcePosition)
             for (name in names) {
-                result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name))
+                result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
             }
             return result
         }
 
         if (psiFile is ClsFileImpl) {
-            val decompiledPsiFile = runReadAction { psiFile.getDecompiledPsiFile() }
-            if (decompiledPsiFile is JetClsFile && sourcePosition.getLine() == -1) {
-                val className = PackageClassUtils.getPackageClassInternalName(decompiledPsiFile.getPackageFqName())
-                return myDebugProcess.getVirtualMachineProxy().classesByName(className)
+            val decompiledPsiFile = runReadAction { psiFile.decompiledPsiFile }
+            if (decompiledPsiFile is JetClsFile && sourcePosition.line == -1) {
+                val className = PackageClassUtils.getPackageClassInternalName(decompiledPsiFile.packageFqName)
+                return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }
 
@@ -216,28 +216,25 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (name != null) {
             result.add(name)
         }
-        val list = findInlinedCalls(sourcePosition.getElementAt(), sourcePosition.getFile())
+        val list = findInlinedCalls(sourcePosition.elementAt, sourcePosition.file)
         result.addAll(list)
 
         return result;
     }
 
     public fun classNameForPosition(sourcePosition: SourcePosition): String? {
-        val psiElement = runReadAction { sourcePosition.getElementAt() }
-        if (psiElement == null) {
-            return null
-        }
+        val psiElement = runReadAction { sourcePosition.elementAt } ?: return null
         return classNameForPosition(psiElement)
     }
 
     private fun classNameForPosition(element: PsiElement): String? {
         return runReadAction {
-            if (DumbService.getInstance(element.getProject()).isDumb()) {
+            if (DumbService.getInstance(element.project).isDumb) {
                 null
             }
             else {
-                val file = element.getContainingFile() as JetFile
-                val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
+                val file = element.containingFile as JetFile
+                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
                 getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
             }
@@ -249,25 +246,25 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         var value: CachedValue<JetTypeMapper>? = myTypeMappers.get(key)
         if (value == null) {
-            value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
+            value = CachedValuesManager.getManager(file.project).createCachedValue<JetTypeMapper>(
                     {
                         val typeMapper = createTypeMapper(file)
-                        CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
+                        CachedValueProvider.Result(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
                     }, false)
 
             myTypeMappers.put(key, value)
         }
 
-        return value.getValue()
+        return value.value
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
-        if (position.getFile() !is JetFile) {
+        if (position.file !is JetFile) {
             throw NoDataException.INSTANCE
         }
         try {
-            val line = position.getLine() + 1
-            val locations = if (myDebugProcess.getVirtualMachineProxy().versionHigher("1.4"))
+            val line = position.line + 1
+            val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
                 type.locationsOfLine("Kotlin", null, line)
             else
                 type.locationsOfLine(line)
@@ -281,37 +278,34 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     @Deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
-        if (sourcePosition.getFile() !is JetFile) {
+        if (sourcePosition.file !is JetFile) {
             throw NoDataException.INSTANCE
         }
-        val className = classNameForPosition(sourcePosition)
-        if (className == null) {
-            return null
-        }
-        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
+        val className = classNameForPosition(sourcePosition) ?: return null
+        return myDebugProcess.requestsManager.createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
     }
 
     override fun createPrepareRequests(requestor: ClassPrepareRequestor, position: SourcePosition): List<ClassPrepareRequest> {
-        if (position.getFile() !is JetFile) {
+        if (position.file !is JetFile) {
             throw NoDataException.INSTANCE
         }
 
         return classNameForPositionAndInlinedOnes(position).map {
-            className -> myDebugProcess.getRequestsManager().createClassPrepareRequest(requestor, className.replace('/', '.'))
+            className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
         }.filterNotNull()
     }
 
     @TestOnly
     public fun addTypeMapper(file: JetFile, typeMapper: JetTypeMapper) {
-        val value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
-                { CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
+        val value = CachedValuesManager.getManager(file.project).createCachedValue<JetTypeMapper>(
+                { CachedValueProvider.Result(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
         val key = createKeyForTypeMapper(file)
         myTypeMappers.put(key, value)
     }
 
     companion object {
         public fun createTypeMapper(file: JetFile): JetTypeMapper {
-            val project = file.getProject()
+            val project = file.project
 
             val analysisResult = file.analyzeFullyAndGetResult()
             analysisResult.throwIfError()
@@ -331,49 +325,49 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             when {
                 element is JetClassOrObject -> return PositionedElement(getJvmInternalNameForImpl(typeMapper, element), element)
                 element is JetFunctionLiteral -> {
-                    if (isInlinedLambda(element, typeMapper.getBindingContext())) {
-                        return getInternalClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
+                    if (isInlinedLambda(element, typeMapper.bindingContext)) {
+                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                     }
                     else {
-                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
-                        return PositionedElement(asmType.getInternalName(), element)
+                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                        return PositionedElement(asmType.internalName, element)
                     }
                 }
                 element is JetClassInitializer -> {
-                    val parent = getElementToCalculateClassName(element.getParent())
+                    val parent = getElementToCalculateClassName(element.parent)
                     // Class-object initializer
                     if (parent is JetObjectDeclaration && parent.isCompanion()) {
-                        return PositionedElement(getInternalClassNameForElement(parent.getParent(), typeMapper, file, isInLibrary).className, parent)
+                        return PositionedElement(getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary).className, parent)
                     }
-                    return getInternalClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
+                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
-                element is JetProperty && (!element.isTopLevel() || !isInLibrary) -> {
+                element is JetProperty && (!element.isTopLevel || !isInLibrary) -> {
                     if (isInPropertyAccessor(notPositionedElement)) {
-                        val classOrObject = PsiTreeUtil.getParentOfType(element, javaClass<JetClassOrObject>())
+                        val classOrObject = PsiTreeUtil.getParentOfType(element, JetClassOrObject::class.java)
                         if (classOrObject != null) {
                             return PositionedElement(getJvmInternalNameForImpl(typeMapper, classOrObject), element)
                         }
                     }
 
-                    val descriptor = typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+                    val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                     if (descriptor !is PropertyDescriptor) {
-                        return getInternalClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
+                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                     }
 
                     return PositionedElement(getJvmInternalNameForPropertyOwner(typeMapper, descriptor), element)
                 }
                 element is JetNamedFunction -> {
-                    if (isInlinedLambda(element, typeMapper.getBindingContext())) {
-                        return getInternalClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
+                    if (isInlinedLambda(element, typeMapper.bindingContext)) {
+                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                     }
 
-                    val parent = getElementToCalculateClassName(element.getParent())
+                    val parent = getElementToCalculateClassName(element.parent)
                     if (parent is JetClassOrObject) {
                         return PositionedElement(getJvmInternalNameForImpl(typeMapper, parent), element)
                     }
                     else if (parent != null) {
-                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
-                        return PositionedElement(asmType.getInternalName(), element)
+                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                        return PositionedElement(asmType.internalName, element)
                     }
                 }
             }
@@ -381,10 +375,10 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             if (isInLibrary) {
                 val elementAtForLibraryFile =
                         if (element is JetDeclaration) element
-                        else PsiTreeUtil.getParentOfType(element, javaClass<JetDeclaration>())
+                        else PsiTreeUtil.getParentOfType(element, JetDeclaration::class.java)
 
                 assert(elementAtForLibraryFile != null) {
-                    "Couldn't find element at breakpoint for library file " + file.getName() +
+                    "Couldn't find element at breakpoint for library file " + file.name +
                          (if (notPositionedElement == null) "" else ", notPositionedElement = " + notPositionedElement.getElementTextWithContext())
                 }
                 return PositionedElement(findPackagePartInternalNameForLibraryFile(elementAtForLibraryFile!!), elementAtForLibraryFile)
@@ -394,11 +388,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
 
         private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out JetElement>> =
-                arrayOf(javaClass<JetClassOrObject>(),
-                        javaClass<JetFunctionLiteral>(),
-                        javaClass<JetNamedFunction>(),
-                        javaClass<JetProperty>(),
-                        javaClass<JetClassInitializer>())
+                arrayOf(JetClassOrObject::class.java,
+                        JetFunctionLiteral::class.java,
+                        JetNamedFunction::class.java,
+                        JetProperty::class.java,
+                        JetClassInitializer::class.java)
 
         private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): JetElement? {
             if (notPositionedElement?.javaClass in TYPES_TO_CALCULATE_CLASSNAME ) return notPositionedElement as JetElement
@@ -414,29 +408,26 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         private fun isInPropertyAccessor(element: PsiElement?) =
                 element is JetPropertyAccessor ||
-                PsiTreeUtil.getParentOfType(element, javaClass<JetProperty>(), javaClass<JetPropertyAccessor>()) is JetPropertyAccessor
+                PsiTreeUtil.getParentOfType(element, JetProperty::class.java, JetPropertyAccessor::class.java) is JetPropertyAccessor
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                if (element is JetElement) element else PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
+                if (element is JetElement) element else PsiTreeUtil.getParentOfType(element, JetElement::class.java)
 
         private fun getJvmInternalNameForImpl(typeMapper: JetTypeMapper, jetClass: JetClassOrObject): String? {
-            val classDescriptor = typeMapper.getBindingContext().get<PsiElement, ClassDescriptor>(BindingContext.CLASS, jetClass)
-            if (classDescriptor == null) {
-                return null
-            }
+            val classDescriptor = typeMapper.bindingContext.get<PsiElement, ClassDescriptor>(BindingContext.CLASS, jetClass) ?: return null
 
             if (jetClass is JetClass && jetClass.isInterface()) {
-                return typeMapper.mapDefaultImpls(classDescriptor).getInternalName()
+                return typeMapper.mapDefaultImpls(classDescriptor).internalName
             }
 
-            return typeMapper.mapClass(classDescriptor).getInternalName()
+            return typeMapper.mapClass(classDescriptor).internalName
         }
 
         private fun createTypeMapperForLibraryFile(notPositionedElement: PsiElement?, file: JetFile): JetTypeMapper {
             val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
             val analysisResult = element!!.analyzeAndGetResult()
 
-            val state = GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
+            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
             return state.typeMapper
         }
@@ -455,19 +446,19 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         return runReadAction {
             val result = arrayListOf<String>()
-            val isInLibrary = LibraryUtil.findLibraryEntry(jetFile.getVirtualFile(), jetFile.getProject()) != null
+            val isInLibrary = LibraryUtil.findLibraryEntry(jetFile.virtualFile, jetFile.project) != null
             val typeMapper = if (!isInLibrary) prepareTypeMapper(jetFile) else createTypeMapperForLibraryFile(element, jetFile)
             val psiElement = getInternalClassNameForElement(element, typeMapper, jetFile, isInLibrary).element;
 
             if (psiElement is JetNamedFunction &&
-                InlineUtil.isInline(typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
+                InlineUtil.isInline(typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
             ) {
                 ReferencesSearch.search(psiElement).forEach {
                     if (!it.isImportUsage()) {
-                        val psiElement = it.getElement()
-                        if (psiElement is JetElement) {
+                        val usage = it.element
+                        if (usage is JetElement) {
                             //TODO recursive search
-                            val name = classNameForPosition(psiElement)
+                            val name = classNameForPosition(usage)
                             if (name != null) {
                                 result.add(name)
                             }
