@@ -3565,6 +3565,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/functionExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionExpressionWithThisConflict.kt")
+        public void testFunctionExpressionWithThisConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/functionExpressionWithThisConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/lambdaParameter.kt");
@@ -3725,6 +3737,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class ConvertReceiverToParameter extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertReceiverToParameter() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/functionExpression.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("genericReceiver.kt")

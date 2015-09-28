@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
 // Explicit reference to function parameter or outer this
-public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : JetUsageInfo<T>(element) {
+public abstract class JetExplicitReferenceUsage<T : JetElement>(element: T) : JetUsageInfo<T>(element) {
     abstract fun getReplacementText(changeInfo: JetChangeInfo): String
 
     protected open fun processReplacedElement(element: JetElement) {
@@ -55,10 +56,14 @@ public class JetParameterUsage(
         elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
 
-    override fun getReplacementText(changeInfo: JetChangeInfo): String =
-            if (changeInfo.receiverParameterInfo != parameterInfo) {
-                parameterInfo.getInheritedName(containingCallable)
-            } else "this@${changeInfo.getNewName()}"
+    override fun getReplacementText(changeInfo: JetChangeInfo): String {
+        if (changeInfo.receiverParameterInfo != parameterInfo) return parameterInfo.getInheritedName(containingCallable)
+
+        val newName = changeInfo.getNewName()
+        if (KotlinNameSuggester.isIdentifier(newName)) return "this@$newName"
+
+        return "this"
+    }
 }
 
 public class JetNonQualifiedOuterThisUsage(
