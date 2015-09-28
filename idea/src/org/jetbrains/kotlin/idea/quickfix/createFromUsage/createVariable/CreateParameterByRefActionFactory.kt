@@ -71,38 +71,47 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
 
         var valOrVar: JetValVar = JetValVar.None
 
+        fun chooseFunction(): PsiElement? {
+            if (varExpected) return null
+            return element.parents.filter { it is JetNamedFunction || it is JetSecondaryConstructor }.firstOrNull()
+        }
+
         fun chooseContainingClass(it: PsiElement): JetClass? {
             valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
             return it.parents.firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
         }
 
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
-        val container = element.parents
-                                .filter {
-                                    it is JetNamedFunction || it is JetPropertyAccessor || it is JetClassBody || it is JetClassInitializer ||
-                                    it is JetDelegationSpecifier
+        fun chooseContainerPreferringClass(): PsiElement? {
+            return element.parents
+                    .filter {
+                        it is JetNamedFunction || it is JetSecondaryConstructor || it is JetPropertyAccessor ||
+                        it is JetClassBody || it is JetClassInitializer || it is JetDelegationSpecifier
+                    }
+                    .firstOrNull()
+                    ?.let {
+                        when {
+                            (it is JetNamedFunction || it is JetSecondaryConstructor) && varExpected,
+                            it is JetPropertyAccessor -> chooseContainingClass(it)
+                            it is JetClassInitializer -> it.parent?.parent as? JetClass
+                            it is JetDelegationSpecifier -> {
+                                val klass = it.getStrictParentOfType<JetClassOrObject>()
+                                if (klass is JetClass && !klass.isInterface() && klass !is JetEnumEntry) klass else null
+                            }
+                            it is JetClassBody -> {
+                                val klass = it.parent as? JetClass
+                                when {
+                                    klass is JetEnumEntry -> chooseContainingClass(klass)
+                                    klass != null && klass.isInterface() -> null
+                                    else -> klass
                                 }
-                                .firstOrNull()
-                                ?.let {
-                                    when {
-                                        it is JetNamedFunction && varExpected,
-                                        it is JetPropertyAccessor -> chooseContainingClass(it)
-                                        it is JetClassInitializer -> it.parent?.parent as? JetClass
-                                        it is JetDelegationSpecifier -> {
-                                            val klass = it.getStrictParentOfType<JetClass>()
-                                            if (klass != null && !klass.isInterface() && klass !is JetEnumEntry) klass else null
-                                        }
-                                        it is JetClassBody -> {
-                                            val klass = it.parent as? JetClass
-                                            when {
-                                                klass is JetEnumEntry -> chooseContainingClass(klass)
-                                                klass != null && klass.isInterface() -> null
-                                                else -> klass
-                                            }
-                                        }
-                                        else -> it
-                                    }
-                                } ?: return null
+                            }
+                            else -> it
+                        }
+                    }
+        }
+
+        val container = chooseContainerPreferringClass() ?: chooseFunction()
 
         val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, container]?.let {
             if (it is ClassDescriptor) it.unsubstitutedPrimaryConstructor else it

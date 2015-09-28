@@ -2564,6 +2564,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inAnonymousObject.kt")
+                public void testInAnonymousObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAnonymousObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inAnonymousObjectInSecondaryConstructor.kt")
+                public void testInAnonymousObjectInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAnonymousObjectInSecondaryConstructor.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inClassInitializer.kt")
                 public void testInClassInitializer() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inClassInitializer.kt");
@@ -2705,6 +2717,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("inPropertyInitializerNoClass.kt")
                 public void testInPropertyInitializerNoClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inPropertyInitializerNoClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inSecondaryConstructor.kt")
+                public void testInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inSecondaryConstructor.kt");
                     doTest(fileName);
                 }
 
