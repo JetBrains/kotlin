@@ -100,6 +100,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Nullable // null means java/lang/Object
     private JetType superClassType;
     private final Type classAsmType;
+    private final boolean isLocal;
 
     private List<PropertyAndDefaultValue> companionObjectPropertiesToCopy;
 
@@ -111,10 +112,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen<?> parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen,
+            boolean isLocal
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
+        this.isLocal = isLocal;
     }
 
     @Override
@@ -229,6 +232,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateReflectionObjectFieldIfNeeded();
 
         generateEnumEntries();
+    }
+
+    @Override
+    protected void generateBody() {
+        super.generateBody();
+        if (isInterface(descriptor) && !isLocal) {
+            Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
+            ClassBuilder defaultImplsBuilder =
+                    state.getFactory().newVisitor(TraitImpl(myClass, descriptor), defaultImplsType, myClass.getContainingFile());
+
+            CodegenContext parentContext = context.getParentContext();
+            assert parentContext != null : "Parent context of interface declaration should not be null";
+
+            ClassContext defaultImplsContext = parentContext.intoClass(descriptor, OwnerKind.DEFAULT_IMPLS, state);
+            new InterfaceImplBodyCodegen(myClass, defaultImplsContext, defaultImplsBuilder, state, this).generate();
+        }
     }
 
     @Override

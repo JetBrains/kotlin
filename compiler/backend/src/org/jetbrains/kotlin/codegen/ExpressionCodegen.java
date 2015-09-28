@@ -211,8 +211,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION);
 
         MemberCodegen literalCodegen = new ImplementationBodyCodegen(
-                objectDeclaration, objectContext, classBuilder, state, getParentCodegen()
-        );
+                objectDeclaration, objectContext, classBuilder, state, getParentCodegen(),
+                /* isLocal = */ true);
         literalCodegen.generate();
 
         addReifiedParametersFromSignature(literalCodegen, classDescriptor);
@@ -330,7 +330,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassBuilder classBuilder = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this, OwnerKind.IMPLEMENTATION);
-        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
+        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen(), /* isLocal = */ true).generate();
 
         if (declaration instanceof JetClass && ((JetClass) declaration).isInterface()) {
             Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
