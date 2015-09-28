@@ -36,7 +36,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
             // Only predictable variables are under interest here
             val id = value.id
             if (value.kind == DataFlowValue.Kind.PREDICTABLE_VARIABLE && id is LocalVariableDescriptor) {
-                if (assignedNames.contains(id.name)) {
+                if (hasWriters(id)) {
                     valueSetToClear.add(value)
                 }
             }

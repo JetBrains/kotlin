@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -230,6 +231,7 @@ object ReplaceWithAnnotationAnalyzer {
         else {
             resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
         }
+        PreliminaryDeclarationVisitor.createForExpression(expression, traceContext)
         frontendService.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
         return traceContext.bindingContext
     }

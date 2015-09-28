@@ -145,8 +145,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             // We can comment first part of this condition to take them into account, like here: var s: String? = "xyz"
             // In this case s will be not-nullable until it is changed
             if (property.getTypeReference() == null && type != null) {
-                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                        propertyDescriptor, context.trace.getBindingContext(),
+                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
+                        property, propertyDescriptor, context.trace.getBindingContext(),
                         DescriptorUtils.getContainingModuleOrNull(scope.getOwnerDescriptor()));
                 DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context);
                 // We cannot say here anything new about initializerDataFlowValue

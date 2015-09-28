@@ -967,9 +967,69 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/smartcasts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("forEachSafe.kt")
+        public void testForEachSafe() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/forEachSafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forEachUnsafe.kt")
+        public void testForEachUnsafe() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/forEachUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lazyDeclaresAndModifies.kt")
+        public void testLazyDeclaresAndModifies() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/lazyDeclaresAndModifies.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letAlwaysChangesToNotNull.kt")
+        public void testLetAlwaysChangesToNotNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letAlwaysChangesToNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letChangesToNotNull.kt")
+        public void testLetChangesToNotNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letChangesToNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letChangesToNull.kt")
+        public void testLetChangesToNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letChangesToNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letChangesToNullComplex.kt")
+        public void testLetChangesToNullComplex() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letChangesToNullComplex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letMergeNotNull.kt")
+        public void testLetMergeNotNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letMergeNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letStable.kt")
+        public void testLetStable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letStable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("letUsesOwnReceiver.kt")
         public void testLetUsesOwnReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letUsesOwnReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withChangesToNull.kt")
+        public void testWithChangesToNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");
             doTest(fileName);
         }
     }

@@ -1,0 +1,4 @@
+package
+
+public fun foo(): kotlin.Unit
+public fun trans(/*0*/ n: kotlin.Int, /*1*/ f: () -> kotlin.Boolean): kotlin.Int?

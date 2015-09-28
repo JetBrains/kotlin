@@ -16,25 +16,50 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import com.google.common.collect.LinkedHashMultimap
+import com.google.common.collect.SetMultimap
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import java.util.*
+import org.jetbrains.kotlin.psi.*
 
 abstract class AssignedVariablesSearcher: JetTreeVisitorVoid() {
 
-    protected val assignedNames: MutableSet<Name> = LinkedHashSet()
+    private val assignedNames: SetMultimap<Name, JetDeclaration?> = LinkedHashMultimap.create()
+
+    public open fun writers(variableDescriptor: VariableDescriptor) = assignedNames[variableDescriptor.name]
+
+    public fun hasWriters(variableDescriptor: VariableDescriptor) = writers(variableDescriptor).isNotEmpty()
+
+    private var currentDeclaration: JetDeclaration? = null
+
+    override fun visitDeclaration(declaration: JetDeclaration) {
+        val previous = currentDeclaration
+        if (declaration is JetDeclarationWithBody || declaration is JetClassOrObject) {
+            currentDeclaration = declaration
+        }
+        else if (declaration is JetClassInitializer) {
+            // Go to class declaration: init -> body -> class
+            currentDeclaration = declaration.parent.parent as JetDeclaration
+        }
+        super.visitDeclaration(declaration)
+        currentDeclaration = previous
+    }
+
+    override fun visitFunctionLiteralExpression(functionLiteralExpression: JetFunctionLiteralExpression) {
+        val previous = currentDeclaration
+        currentDeclaration = functionLiteralExpression.functionLiteral
+        super.visitFunctionLiteralExpression(functionLiteralExpression)
+        currentDeclaration = previous
+    }
 
     override fun visitBinaryExpression(binaryExpression: JetBinaryExpression) {
         if (binaryExpression.operationToken === JetTokens.EQ) {
             val left = JetPsiUtil.deparenthesize(binaryExpression.left)
             if (left is JetNameReferenceExpression) {
-                assignedNames += left.getReferencedNameAsName()
+                assignedNames.put(left.getReferencedNameAsName(), currentDeclaration)
             }
         }
+        super.visitBinaryExpression(binaryExpression)
     }
-
 }

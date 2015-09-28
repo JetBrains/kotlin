@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 
 import java.util.Map;
 
@@ -63,6 +64,7 @@ public class ScriptBodyResolver {
                 DataFlowInfo.EMPTY,
                 NO_EXPECTED_TYPE
         );
+        PreliminaryDeclarationVisitor.Companion.createForDeclaration(script, trace);
         JetType returnType = expressionTypingServices.getBlockReturnedType(script.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
         if (returnType == null) {
             returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
