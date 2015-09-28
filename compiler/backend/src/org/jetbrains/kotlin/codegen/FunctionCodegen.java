@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeKt;
@@ -57,10 +58,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -355,6 +353,10 @@ public class FunctionCodegen {
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
         Label methodEnd;
+
+        int functionFakeIndex = -1;
+        int lambdaFakeIndex = -1;
+
         if (context.getParentContext() instanceof DelegatingFacadeContext) {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (DelegatingFacadeContext) context.getParentContext());
             methodEnd = new Label();
@@ -362,6 +364,13 @@ public class FunctionCodegen {
         else {
             FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
                                                                                                                   functionDescriptor));
+            if (context.isInlineFunction()) {
+                functionFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
+            }
+
+            if (context.isInliningLambda()) {
+                lambdaFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
+            }
 
             Label methodEntry = new Label();
             mv.visitLabel(methodEntry);
@@ -379,6 +388,27 @@ public class FunctionCodegen {
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
         generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
+
+        if (context.isInlineFunction() && functionFakeIndex != -1) {
+            mv.visitLocalVariable(
+                    JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION + functionDescriptor.getName().asString(),
+                    Type.INT_TYPE.getDescriptor(), null,
+                    methodBegin, methodEnd,
+                    functionFakeIndex);
+        }
+
+        if (context.isInliningLambda() && thisType != null && lambdaFakeIndex != -1) {
+            String name = thisType.getClassName();
+            int indexOfLambdaOrdinal = name.lastIndexOf("$");
+            if (indexOfLambdaOrdinal > 0) {
+                int lambdaOrdinal = Integer.parseInt(name.substring(indexOfLambdaOrdinal + 1));
+                mv.visitLocalVariable(
+                        JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + lambdaOrdinal,
+                        Type.INT_TYPE.getDescriptor(), null,
+                        methodBegin, methodEnd,
+                        lambdaFakeIndex);
+            }
+        }
     }
 
     private static void generateLocalVariableTable(

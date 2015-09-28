@@ -7,5 +7,5 @@ fun foo() : String {
 
 // 6 ASTORE
 // 21 ALOAD
-// 1 MAXLOCALS = 5
+// 1 MAXLOCALS = 7
 // 0 InlineMarker

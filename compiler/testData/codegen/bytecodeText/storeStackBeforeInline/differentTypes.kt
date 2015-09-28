@@ -12,5 +12,5 @@ fun foo() : String {
 // 8 ALOAD
 // 2 LSTORE
 // 6 LLOAD
-// 1 MAXLOCALS = 9
+// 1 MAXLOCALS = 10
 // 0 InlineMarker
