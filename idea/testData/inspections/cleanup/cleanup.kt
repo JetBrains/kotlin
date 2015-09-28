@@ -20,6 +20,7 @@ fun foo() {
     val xx = valX
     varX = 50
     varY = 60
+    1.identityEquals(2)
 }
 
 fun unnecessarySafeCall(x: String) {
