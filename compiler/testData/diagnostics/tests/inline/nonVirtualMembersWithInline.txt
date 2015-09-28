@@ -24,9 +24,6 @@ public abstract class A {
 public interface B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.inline() private final fun good1(): kotlin.Unit
-    @kotlin.inline() public final fun good2(): kotlin.Unit
-    @kotlin.inline() public final fun good3(): kotlin.Unit
-    @kotlin.inline() public final fun good4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     @kotlin.inline() public open fun wrong1(): kotlin.Unit

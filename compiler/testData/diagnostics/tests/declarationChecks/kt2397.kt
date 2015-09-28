@@ -2,14 +2,14 @@
 package a
 
 interface T {
-    <!FINAL_FUNCTION_WITH_NO_BODY!>final<!> fun foo()
-    <!FINAL_PROPERTY_IN_TRAIT!>final<!> val b : Int
+    <!FINAL_FUNCTION_WITH_NO_BODY, DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>final<!> fun foo()
+    <!FINAL_PROPERTY_IN_TRAIT, DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>final<!> val b : Int
 
-    final fun bar() {}
-    final val c : Int
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>final<!> fun bar() {}
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>final<!> val c : Int
        get() = 42
 
-    final val d = <!PROPERTY_INITIALIZER_IN_TRAIT!>1<!>
+    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>final<!> val d = <!PROPERTY_INITIALIZER_IN_TRAIT!>1<!>
 }
 
 class A {
