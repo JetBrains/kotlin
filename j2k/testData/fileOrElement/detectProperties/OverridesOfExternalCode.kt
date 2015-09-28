@@ -5,7 +5,7 @@ import javaApi.JavaClassDerivedFromKotlinClassWithProperties
 internal open class A : KotlinClassWithProperties() {
     override var someVar1: String
         get() = super.someVar1
-        set(s: String) {
+        set(s) {
             super.someVar1 = s
         }
 
@@ -17,7 +17,7 @@ internal open class A : KotlinClassWithProperties() {
 
     override var someVar3: String
         get() = super.someVar3
-        set(s: String) {
+        set(s) {
             super.someVar3 = s
         }
 
@@ -90,7 +90,7 @@ internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
 
     override var someVar2: String
         get() = super.someVar2
-        set(value: String) {
+        set(value) {
         }
 
 }

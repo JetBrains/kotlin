@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
@@ -363,12 +362,17 @@ class Converter private constructor(
                 val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
                 if (setMethod != null) {
                     val method = setMethod.let { convertMethod(it, null, null, null, classKind)!! }
-                    setter = PropertyAccessor(
-                            AccessorKind.SETTER,
-                            method.annotations,
-                            accessorModifiers,
-                            method.parameterList?.check { method.body != null },
-                            method.body)
+                    val convertedParameter = method.parameterList!!.parameters.single() as FunctionParameter
+                    val parameterAnnotations = convertedParameter.annotations
+                    val parameterList = if (method.body != null || !parameterAnnotations.isEmpty) {
+                        val parameter = FunctionParameter(convertedParameter.identifier, null, FunctionParameter.VarValModifier.None, parameterAnnotations, Modifiers.Empty)
+                                .assignPrototypesFrom(convertedParameter, CommentsAndSpacesInheritance.NO_SPACES)
+                        ParameterList(listOf(parameter)).assignNoPrototype()
+                    }
+                    else {
+                        null
+                    }
+                    setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers, parameterList, method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
