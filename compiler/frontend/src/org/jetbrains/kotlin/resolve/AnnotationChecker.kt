@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
@@ -28,14 +29,12 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
-    public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
+    public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
         val actualTargets = getActualTargetList(annotated, descriptor)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
@@ -157,9 +156,10 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return getActualTargetList(annotated, descriptor).defaultTargets
         }
 
-        private fun getActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): TargetList {
+        private fun getActualTargetList(annotated: JetElement, descriptor: DeclarationDescriptor?): TargetList {
             return when (annotated) {
-                is JetClassOrObject -> descriptor?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
+                is JetClassOrObject ->
+                    (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
                 is JetMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
                 is JetProperty -> {
                     if (annotated.isLocal)
@@ -177,7 +177,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 }
                 is JetConstructor<*> -> TargetLists.T_CONSTRUCTOR
                 is JetFunction -> {
-                    if (annotated.isLocal)
+                    if (DescriptorUtils.isFunctionExpression(descriptor))
+                        TargetLists.T_FUNCTION_EXPRESSION
+                    else if (annotated.isLocal)
                         TargetLists.T_LOCAL_FUNCTION
                     else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody)
                         TargetLists.T_MEMBER_FUNCTION
@@ -249,6 +251,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val T_EXPRESSION = targetList(EXPRESSION)
 
             val T_FUNCTION_LITERAL = targetList(FUNCTION_LITERAL, FUNCTION, EXPRESSION)
+
+            val T_FUNCTION_EXPRESSION = targetList(FUNCTION_EXPRESSION, FUNCTION, EXPRESSION)
 
             val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 

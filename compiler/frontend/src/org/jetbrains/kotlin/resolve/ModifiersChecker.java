@@ -182,8 +182,7 @@ public class ModifiersChecker {
         private void checkModifierListCommon(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
             AnnotationUseSiteTargetChecker.INSTANCE$.check(modifierListOwner, descriptor, trace);
             runDeclarationCheckers(modifierListOwner, descriptor);
-            ClassDescriptor classDescriptor = descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
-            annotationChecker.check(modifierListOwner, trace, classDescriptor);
+            annotationChecker.check(modifierListOwner, trace, descriptor);
             ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
         }
 

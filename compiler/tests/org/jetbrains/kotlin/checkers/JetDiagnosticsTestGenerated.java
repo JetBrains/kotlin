@@ -1052,6 +1052,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionExpression.kt")
+                public void testFunctionExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/functionExpression.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("functions.kt")
                 public void testFunctions() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/functions.kt");
