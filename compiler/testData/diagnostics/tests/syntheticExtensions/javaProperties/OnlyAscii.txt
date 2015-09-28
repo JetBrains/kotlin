@@ -1,0 +1,13 @@
+package
+
+public fun foo(/*0*/ javaClass: JavaClass): kotlin.Unit
+
+public open class JavaClass {
+    public constructor JavaClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getКУ(): kotlin.Int
+    public open fun getКакоеТоСвойство(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun setКакоеТоСвойство(/*0*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

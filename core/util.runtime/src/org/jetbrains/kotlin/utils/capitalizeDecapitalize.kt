@@ -21,16 +21,23 @@ package org.jetbrains.kotlin.util.capitalizeDecapitalize
  * "FOOBar" -> "fooBar"
  * "FOO" -> "foo"
  */
-public fun String.decapitalizeSmart(): String {
-    if (isEmpty() || !charAt(0).isUpperCase()) return this
-
-    if (length() == 1 || !charAt(1).isUpperCase()) {
-        return decapitalize()
+public fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
+    fun isUpperCaseCharAt(index: Int): Boolean {
+        val c = charAt(index)
+        return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
     }
 
-    val secondWordStart = (indices.firstOrNull { !charAt(it).isUpperCase() }
-                           ?: return toLowerCase()) - 1
-    return substring(0, secondWordStart).toLowerCase() + substring(secondWordStart)
+    if (isEmpty() || !isUpperCaseCharAt(0)) return this
+
+    if (length() == 1 || !isUpperCaseCharAt(1)) {
+        return if (asciiOnly) decapitalizeAsciiOnly() else decapitalize()
+    }
+
+    fun toLowerCase(string: String) = if (asciiOnly) string.toLowerCaseAsciiOnly() else string.toLowerCase()
+
+    val secondWordStart = (indices.firstOrNull { !isUpperCaseCharAt(it) }
+                           ?: return toLowerCase(this)) - 1
+    return toLowerCase(substring(0, secondWordStart)) + substring(secondWordStart)
 }
 
 /**
@@ -38,10 +45,17 @@ public fun String.decapitalizeSmart(): String {
  * "FooBar" -> "FOOBar"
  * "foo" -> "FOO"
  */
-public fun String.capitalizeFirstWord(): String {
-    val secondWordStart = indices.drop(1).firstOrNull { !charAt(it).isLowerCase() }
-                          ?: return toUpperCase()
-    return substring(0, secondWordStart).toUpperCase() + substring(secondWordStart)
+public fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
+    fun toUpperCase(string: String) = if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
+
+    fun isLowerCaseCharAt(index: Int): Boolean {
+        val c = charAt(index)
+        return if (asciiOnly) c in 'a'..'z' else c.isLowerCase()
+    }
+
+    val secondWordStart = indices.drop(1).firstOrNull { !isLowerCaseCharAt(it) }
+                          ?: return toUpperCase(this)
+    return toUpperCase(substring(0, secondWordStart)) + substring(secondWordStart)
 }
 
 public fun String.capitalizeAsciiOnly(): String {
@@ -52,5 +66,31 @@ public fun String.capitalizeAsciiOnly(): String {
     else
         this
 }
+
+public fun String.decapitalizeAsciiOnly(): String {
+    if (isEmpty()) return this
+    val c = charAt(0)
+    return if (c in 'A'..'Z')
+        c.toLowerCase() + substring(1)
+    else
+        this
+}
+
+public fun String.toLowerCaseAsciiOnly(): String {
+    val builder = StringBuilder(length())
+    for (c in this) {
+        builder.append(if (c in 'A'..'Z') c.toLowerCase() else c)
+    }
+    return builder.toString()
+}
+
+public fun String.toUpperCaseAsciiOnly(): String {
+    val builder = StringBuilder(length())
+    for (c in this) {
+        builder.append(if (c in 'a'..'z') c.toUpperCase() else c)
+    }
+    return builder.toString()
+}
+
 
 

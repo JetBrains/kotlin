@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.Printer
@@ -79,7 +80,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             }
 
             if (!removePrefix) return methodName
-            val name = identifier.removePrefix(prefix).decapitalizeSmart()
+            val name = identifier.removePrefix(prefix).decapitalizeSmart(asciiOnly = true)
             if (!Name.isValidIdentifier(name)) return null
             return Name.identifier(name)
         }
@@ -96,7 +97,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         val identifier = name.identifier
         if (identifier.isEmpty()) return null
         val firstChar = identifier[0]
-        if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
+        if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return null
 
         val memberScope = ownerClass.unsubstitutedMemberScope
         val getMethod = possibleGetMethodNames(name)
@@ -221,8 +222,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             result.add(propertyName)
         }
 
-        val capitalize1 = identifier.capitalize()
-        val capitalize2 = identifier.capitalizeFirstWord()
+        val capitalize1 = identifier.capitalizeAsciiOnly()
+        val capitalize2 = identifier.capitalizeFirstWord(asciiOnly = true)
         result.add(Name.identifier("get" + capitalize1))
         if (capitalize2 != capitalize1) {
             result.add(Name.identifier("get" + capitalize2))
