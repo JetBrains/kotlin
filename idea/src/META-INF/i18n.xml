@@ -1,0 +1,12 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+      <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
+
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
+                       displayName="Invalid property key"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="ERROR"
+      />
+  </extensions>
+</idea-plugin>
