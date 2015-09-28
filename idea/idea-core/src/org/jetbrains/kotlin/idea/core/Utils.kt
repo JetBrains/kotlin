@@ -87,9 +87,8 @@ public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetP
 
 public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
     for (parent in parentsWithSelf) {
-        if (parent is JetExpression) {
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent] ?:
-                        bindingContext[BindingContext.RESOLUTION_SCOPE, parent]?.asLexicalScope() // todo remove this hack
+        if (parent is JetElement) {
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
             if (scope != null) return scope
         }
 
