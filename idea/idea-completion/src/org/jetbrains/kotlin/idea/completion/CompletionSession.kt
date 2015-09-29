@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiCompiledElement
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
@@ -66,11 +66,11 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
 abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
-    protected val position: PsiElement = parameters.getPosition()
+    protected val position = parameters.getPosition()
     private val file = position.getContainingFile() as JetFile
-    protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
-    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.moduleDescriptor
-    protected val project: Project = position.getProject()
+    protected val resolutionFacade = file.getResolutionFacade()
+    protected val moduleDescriptor = resolutionFacade.moduleDescriptor
+    protected val project = position.getProject()
 
     protected val nameExpression: JetSimpleNameExpression?
     protected val expression: JetExpression?
@@ -93,19 +93,19 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
     }
 
-    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
-    protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
+    protected val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+    protected val inDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
     private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
     private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
 
-    protected val prefix: String = CompletionUtil.findIdentifierPrefix(
+    protected val prefix = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
             parameters.getOffset(),
             kotlinIdentifierPartPattern or singleCharPattern('@'),
             kotlinIdentifierStartPattern)
 
-    protected val prefixMatcher: PrefixMatcher = CamelHumpMatcher(prefix)
+    protected val prefixMatcher = CamelHumpMatcher(prefix)
 
     protected val descriptorNameFilter: (Name) -> Boolean = run {
         val nameFilter = prefixMatcher.asNameFilter()
@@ -121,11 +121,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
+    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
 
-    protected val lookupElementFactory: LookupElementFactory = run {
+    protected val lookupElementFactory = run {
         val contextType = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
             LookupElementFactory.ContextType.STRING_TEMPLATE_AFTER_DOLLAR
         else if (receiversData?.callType == CallType.INFIX)
