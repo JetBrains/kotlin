@@ -4,8 +4,6 @@
 package kotlin.io
 
 import java.io.File
-import java.util.Collections
-import java.util.NoSuchElementException
 import kotlin.text.Regex
 
 /**

@@ -1,9 +1,6 @@
 @file:kotlin.jvm.JvmName("MapAccessorsKt")
 package kotlin.properties
 
-import java.io.Serializable
-import java.util.NoSuchElementException
-
 // extensions for Map and MutableMap
 
 /**

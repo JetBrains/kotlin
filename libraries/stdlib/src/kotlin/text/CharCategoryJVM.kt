@@ -1,7 +1,5 @@
 package kotlin
 
-import kotlin.properties.Delegates
-
 /**
  * Represents the character general category in the Unicode specification.
  */

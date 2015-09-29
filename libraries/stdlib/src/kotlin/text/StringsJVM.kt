@@ -4,11 +4,9 @@
 package kotlin
 
 import java.io.StringReader
-import java.util.regex.MatchResult
 import java.util.regex.Pattern
 import java.nio.charset.Charset
 import java.util.*
-import kotlin.text.Regex
 
 
 /**

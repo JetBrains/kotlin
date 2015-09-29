@@ -2,8 +2,7 @@ package test.properties.delegation.lazy
 
 import org.junit.Test as test
 import kotlin.properties.*
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class LazyValTest {
     var result = 0

@@ -3,8 +3,6 @@ package test.collections
 import kotlin.*
 import kotlin.io.*
 import kotlin.test.*
-import java.util.*
-import java.io.*
 import org.junit.Test as test
 
 class OldStdlibTest() {

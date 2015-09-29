@@ -1,7 +1,5 @@
 package kotlin
 
-import kotlin.properties.Delegates
-
 /**
  * Represents the Unicode directionality of a character.
  * Character directionality is used to calculate the
