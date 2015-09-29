@@ -271,6 +271,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Infix.kt")
+        public void testInfix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Infix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InfixModifierApplicability.kt")
+        public void testInfixModifierApplicability() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/InfixModifierApplicability.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IsExpressions.kt");
