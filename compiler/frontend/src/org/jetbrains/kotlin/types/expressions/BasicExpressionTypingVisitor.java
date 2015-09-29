@@ -501,7 +501,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checker.check(resolvedCall, resolutionContext);
         }
 
-        components.symbolUsageValidator.validateCall(descriptor, trace, expression);
+        components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
@@ -943,7 +943,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = false;
             } else {
                 if (setter != null) {
-                    components.symbolUsageValidator.validateCall(setter, trace, reportOn);
+                    components.symbolUsageValidator.validateCall(null, setter, trace, reportOn);
                 }
             }
         }

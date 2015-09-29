@@ -217,7 +217,7 @@ public class DelegatedPropertyResolver {
             JetPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
-                symbolUsageValidator.validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
+                symbolUsageValidator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
             }
         }
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);

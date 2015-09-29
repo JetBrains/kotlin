@@ -21,35 +21,31 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetMultiDeclarationEntry
-import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.get
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.bindingContextUtil.get
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class OperatorValidator : SymbolUsageValidator {
 
-    override fun validateCall(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
         if (functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
 
         val jetElement = element as? JetElement ?: return
-        val call = trace.bindingContext[BindingContext.CALL, jetElement]
+        val call = resolvedCall?.call ?: trace.bindingContext[BindingContext.CALL, jetElement]
 
-        fun isVariableAsFunctionCall(): Boolean {
-            if (call == null) return false
-            val resolvedCall = trace.bindingContext[BindingContext.RESOLVED_CALL, call] ?: return false
-            return resolvedCall is VariableAsFunctionResolvedCall
+        fun isInvokeCall(): Boolean {
+            return call is CallTransformer.CallForImplicitInvoke
         }
 
         fun isMultiDeclaration(): Boolean {
-            return call?.callElement is JetMultiDeclarationEntry
+            return (resolvedCall != null) && (call?.callElement is JetMultiDeclarationEntry)
         }
 
         fun isConventionOperator(): Boolean {
@@ -59,14 +55,14 @@ public class OperatorValidator : SymbolUsageValidator {
 
         fun isArrayAccessExpression() = jetElement is JetArrayAccessExpression
 
-        if (isMultiDeclaration()) {
+        if (isMultiDeclaration() || isInvokeCall()) {
             if (!functionDescriptor.isOperator && call != null) {
                 report(call.callElement, functionDescriptor, trace)
             }
             return
         }
 
-        if (isVariableAsFunctionCall() || isConventionOperator() || isArrayAccessExpression()) {
+        if (isConventionOperator() || isArrayAccessExpression()) {
             if (!functionDescriptor.isOperator) {
                 report(jetElement, functionDescriptor, trace)
             }

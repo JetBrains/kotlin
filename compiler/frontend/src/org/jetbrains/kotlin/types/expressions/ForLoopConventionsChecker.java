@@ -79,7 +79,7 @@ public class ForLoopConventionsChecker {
 
             checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
 
-            symbolUsageValidator.validateCall(iteratorFunction, context.trace, loopRangeExpression);
+            symbolUsageValidator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
 
             JetType iteratorType = iteratorFunction.getReturnType();
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
@@ -140,7 +140,7 @@ public class ForLoopConventionsChecker {
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
-            symbolUsageValidator.validateCall(functionDescriptor, context.trace, loopRangeExpression);
+            symbolUsageValidator.validateCall(resolvedCall, functionDescriptor, context.trace, loopRangeExpression);
 
             checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
 

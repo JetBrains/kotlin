@@ -33,18 +33,19 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private val JAVA_DEPRECATED = FqName(java.lang.Deprecated::class.java.name)
 
-    override fun validateCall(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecated = targetDescriptor.getDeprecatedAnnotation()
         if (deprecated != null) {
             val (annotation, target) = deprecated
             trace.report(createDeprecationDiagnostic(element, target, annotation))
         }
         else if (targetDescriptor is PropertyDescriptor) {
-            propertyGetterWorkaround(targetDescriptor, trace, element)
+            propertyGetterWorkaround(resolvedCall, targetDescriptor, trace, element)
         }
     }
 
@@ -122,8 +123,15 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.on(element, descriptor.original, message)
     }
 
-    private val PROPERTY_SET_OPERATIONS = TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ, JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS)
-    fun propertyGetterWorkaround(propertyDescriptor: PropertyDescriptor, trace: BindingTrace, expression: PsiElement) {
+    private val PROPERTY_SET_OPERATIONS = TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ,
+                                                          JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS)
+
+    fun propertyGetterWorkaround(
+            resolvedCall: ResolvedCall<*>?,
+            propertyDescriptor: PropertyDescriptor,
+            trace: BindingTrace,
+            expression: PsiElement
+    ) {
         // property getters do not come as callable yet, so we analyse surroundings to check for deprecation annotation on getter
         val binaryExpression = PsiTreeUtil.getParentOfType<JetBinaryExpression>(expression, javaClass<JetBinaryExpression>())
         if (binaryExpression != null) {
@@ -159,6 +167,6 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             return // skip Type::property
         }
 
-        propertyDescriptor.getGetter()?.let { validateCall(it, trace, expression) }
+        propertyDescriptor.getGetter()?.let { validateCall(resolvedCall, it, trace, expression) }
     }
 }
