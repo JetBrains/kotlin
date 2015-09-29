@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen.serialization;
 
 import com.intellij.openapi.util.Pair;
 import kotlin.jvm.functions.Function3;
