@@ -43,24 +43,6 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
     private fun isClassOfKind(kind: KotlinClass.Kind) : VirtualFile.() -> Boolean =
             isFileWithHeader { it.classKind == kind }
 
-    protected fun doTestTraitImplClassIsVisibleAsJavaClass() {
-        val project = getProject()
-        doTest("trait impl", isSyntheticClassOfKind(TRAIT_IMPL)) {
-            val psiFile = PsiManager.getInstance(project).findFile(this)!!
-            Assert.assertTrue("Should not be kotlin file",
-                              psiFile !is JetClsFile)
-            Assert.assertTrue("Should be java file, was ${psiFile.javaClass.getSimpleName()}",
-                              psiFile is ClsFileImpl)
-
-            val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()!!
-            Assert.assertTrue("Should be java decompiled file, was ${decompiledPsiFile.javaClass.getSimpleName()}",
-                              decompiledPsiFile is PsiJavaFile)
-            val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
-            Assert.assertTrue("Should have some decompiled text",
-                              classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
-        }
-    }
-
     protected fun doTestNoFilesAreBuiltForSyntheticClass(kind: KotlinSyntheticClass.Kind): Unit =
             doTestNoClassFilesAreBuiltFor(kind.toString(), isSyntheticClassOfKind(kind))
 
