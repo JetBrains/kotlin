@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -38,20 +38,20 @@ import java.net.URLClassLoader
 public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     protected fun doTest(filename: String) {
         val source = File(filename)
-        LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, getTestRootDisposable(), ConfigurationKind.ALL)
+        LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, testRootDisposable, ConfigurationKind.ALL)
 
         val classNameSuffix = InTextDirectivesUtils.findStringWithPrefixes(source.readText(), "// CLASS_NAME_SUFFIX: ")
                               ?: error("CLASS_NAME_SUFFIX directive not found in test data")
 
         val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
-        val classFile = tmpdir.listFiles().singleOrNull { it.getPath().endsWith("$classNameSuffix.class") }
+        val classFile = tmpdir.walkTopDown().singleOrNull { it.path.endsWith("$classNameSuffix.class") }
                         ?: error("Local class with suffix `$classNameSuffix` is not found in: ${tmpdir.listFiles().toList()}")
-        val clazz = classLoader.loadClass(classFile.name.substringBeforeLast(".class"))
+        val clazz = classLoader.loadClass(classFile.relativeTo(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
         assertHasAnnotationData(clazz)
 
         val environment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(),
+                testRootDisposable,
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
@@ -79,7 +79,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     private fun assertHasAnnotationData(clazz: Class<*>) {
         @Suppress("UNCHECKED_CAST")
         val annotation = clazz.getAnnotation(
-                clazz.getClassLoader().loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
+                clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
         )
         assert(annotation != null) { "KotlinClass annotation is not found for class $clazz" }
 

@@ -73,14 +73,19 @@ class DirectoryBasedDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val binaryClass = classFinder.findKotlinClass(classId) ?: return null
-        val data = binaryClass.getClassHeader().annotationData
+        val classHeader = binaryClass.classHeader
+        val data = classHeader.annotationData
         if (data == null) {
-            log.error("Annotation data missing for ${binaryClass.getClassId()}")
+            log.error("Annotation data missing for ${binaryClass.classId}")
+            return null
+        }
+        val strings = classHeader.strings
+        if (strings == null) {
+            log.error("String table not found in class ${binaryClass.classId}")
             return null
         }
 
-        val classData = JvmProtoBufUtil.readClassDataFrom(data)
-        return ClassDataWithSource(classData)
+        return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings))
     }
 }
 

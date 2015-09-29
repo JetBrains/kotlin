@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -87,7 +86,7 @@ fun createMultifileClassStub(
     val multifileClassContainer = ProtoContainer(null, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
-        val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!)
+        val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!, partHeader.strings!!)
         val partContext = components.createContext(partData.nameResolver, packageFqName)
         for (partMember in partData.packageProto.memberList) {
             createCallableStub(fileStub, partMember, partContext, multifileClassContainer)

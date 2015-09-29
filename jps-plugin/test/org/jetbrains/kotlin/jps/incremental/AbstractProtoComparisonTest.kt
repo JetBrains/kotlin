@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
-import kotlin.test.assertEquals
 
 public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
 
@@ -85,8 +84,14 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldProtoBytes = BitEncoding.decodeBytes(oldClassHeader.annotationData!!)
         val newProtoBytes = BitEncoding.decodeBytes(newClassHeader.annotationData!!)
 
-        val oldProto = ProtoMapValue(oldClassHeader.isCompatiblePackageFacadeKind() || oldClassHeader.isCompatibleFileFacadeKind(), oldProtoBytes)
-        val newProto = ProtoMapValue(newClassHeader.isCompatiblePackageFacadeKind() || newClassHeader.isCompatibleFileFacadeKind(), newProtoBytes)
+        val oldProto = ProtoMapValue(
+                oldClassHeader.isCompatiblePackageFacadeKind() || oldClassHeader.isCompatibleFileFacadeKind(),
+                oldProtoBytes, oldClassHeader.strings!!
+        )
+        val newProto = ProtoMapValue(
+                newClassHeader.isCompatiblePackageFacadeKind() || newClassHeader.isCompatibleFileFacadeKind(),
+                newProtoBytes, newClassHeader.strings!!
+        )
 
         val diff = when {
             newClassHeader.isCompatiblePackageFacadeKind(), newClassHeader.isCompatibleClassKind(), newClassHeader.isCompatibleFileFacadeKind() ->

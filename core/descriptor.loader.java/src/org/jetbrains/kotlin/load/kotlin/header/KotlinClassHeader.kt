@@ -25,6 +25,7 @@ public class KotlinClassHeader(
         public val kind: KotlinClassHeader.Kind,
         public val version: BinaryVersion,
         public val annotationData: Array<String>?,
+        public val strings: Array<String>?,
         public val classKind: KotlinClass.Kind?,
         public val syntheticClassKind: KotlinSyntheticClass.Kind?,
         public val filePartClassNames: Array<String>?,

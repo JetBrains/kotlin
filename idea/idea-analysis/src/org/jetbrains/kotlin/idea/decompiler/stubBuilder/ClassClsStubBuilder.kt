@@ -37,9 +37,6 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
-import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
-
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
     ClassClsStubBuilder(parent, classProto, classId, context).build()
@@ -54,13 +51,8 @@ private class ClassClsStubBuilder(
     private val c = outerContext.child(classProto.getTypeParameterList(), classId.getShortClassName())
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val classKind = Flags.CLASS_KIND[classProto.getFlags()]
-    private val supertypeIds = classProto.getSupertypeList().map {
-        type ->
-        val typeConstructorData = type.getTypeConstructorData()
-        assert(typeConstructorData.kind == TypeConstructorKind.CLASS)
-        c.nameResolver.getClassId(typeConstructorData.id)
-    }.let {
-        supertypeIds ->
+    private val supertypeIds = run {
+        val supertypeIds = classProto.supertypeList.map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
         if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } ?: false) {
             listOf()

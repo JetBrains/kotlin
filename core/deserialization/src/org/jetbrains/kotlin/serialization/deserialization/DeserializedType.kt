@@ -30,7 +30,7 @@ class DeserializedType(
         private val typeProto: ProtoBuf.Type,
         private val additionalAnnotations: Annotations = Annotations.EMPTY
 ) : AbstractLazyType(c.storageManager), LazyType {
-    private val typeDeserializer = c.typeDeserializer
+    private val typeDeserializer: TypeDeserializer get() = c.typeDeserializer
 
     override fun computeTypeConstructor() = typeDeserializer.typeConstructor(typeProto)
 
@@ -57,12 +57,5 @@ class DeserializedType(
 
     override fun getCapabilities() = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
 
-    fun getPresentableText(): String {
-        val typeConstructorData = typeProto.getTypeConstructorData()
-        val id = typeConstructorData.id
-        return if (typeConstructorData.kind == TypeConstructorKind.CLASS)
-            c.nameResolver.getClassId(id).asSingleFqName().asString()
-        else
-            "Unknown type parameter $id"
-    }
+    fun getPresentableText(): String = typeDeserializer.presentableTextForErrorType(typeProto)
 }

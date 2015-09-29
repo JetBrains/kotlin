@@ -16,10 +16,13 @@
 
 package kotlin.jvm.internal;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface KotlinMultifileClass {
     @Deprecated
     int abiVersion();
@@ -27,4 +30,6 @@ public @interface KotlinMultifileClass {
     int[] version() default {};
 
     String[] filePartClassNames();
+
+    String[] strings();
 }

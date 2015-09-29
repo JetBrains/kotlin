@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
@@ -96,13 +96,8 @@ public class MultifileClassPartCodegen(
         if (packageProto.memberCount == 0) return
 
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
-        JvmCodegenUtil.writeAbiVersion(av)
+        AsmUtil.writeAnnotationData(av, serializer, packageProto)
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassFqName.shortName().asString())
-        val dataArray = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME)
-        for (string in BitEncoding.encodeBytes(serializer.serialize(packageProto))) {
-            dataArray.visit(null, string)
-        }
-        dataArray.visitEnd()
         av.visitEnd()
     }
 }

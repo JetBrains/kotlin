@@ -37,7 +37,7 @@ public abstract class DeserializedPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    val nameResolver = NameResolver.read(
+    val nameResolver = NameResolverImpl.read(
             loadResource(serializedResourcePaths.getStringTableFilePath(fqName))
             ?: loadResourceSure(serializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
     )

@@ -135,7 +135,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
               BuiltInsSerializedResourcePaths.fallbackPaths.getPackageFilePath(fqName))
 
         val nameStream = ByteArrayOutputStream()
-        serializer.serializeStringTable(nameStream)
+        serializer.stringTable.serializeTo(nameStream)
         write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream,
               BuiltInsSerializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
     }

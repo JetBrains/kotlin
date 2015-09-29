@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
@@ -33,9 +32,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     public val oldClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
     public val newClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
 
-    private val fqNames = Interner<FqName>()
     private val classIds = Interner<ClassId>()
-
 
     open fun checkEquals(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
         if (!checkEqualsPackageMember(old, new)) return false
@@ -232,14 +229,14 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (!checkEquals(old.flexibleUpperBound, new.flexibleUpperBound)) return false
         }
 
-        if (old.hasConstructorClassName() != new.hasConstructorClassName()) return false
-        if (old.hasConstructorClassName()) {
-            if (!checkClassIdEquals(old.constructorClassName, new.constructorClassName)) return false
+        if (old.hasClassName() != new.hasClassName()) return false
+        if (old.hasClassName()) {
+            if (!checkClassIdEquals(old.className, new.className)) return false
         }
 
-        if (old.hasConstructorTypeParameter() != new.hasConstructorTypeParameter()) return false
-        if (old.hasConstructorTypeParameter()) {
-            if (old.constructorTypeParameter != new.constructorTypeParameter) return false
+        if (old.hasTypeParameter() != new.hasTypeParameter()) return false
+        if (old.hasTypeParameter()) {
+            if (old.typeParameter != new.typeParameter) return false
         }
 
         if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
@@ -299,9 +296,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     open fun checkEquals(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
         if (!checkStringEquals(old.name, new.name)) return false
 
-        if (!checkEquals(old.returnType, new.returnType)) return false
-
-        if (!checkEqualsJvmMethodSignatureParameterType(old, new)) return false
+        if (!checkStringEquals(old.desc, new.desc)) return false
 
         return true
     }
@@ -352,29 +347,10 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEquals(old: JvmProtoBuf.JvmType, new: JvmProtoBuf.JvmType): Boolean {
-        if (old.hasPrimitiveType() != new.hasPrimitiveType()) return false
-        if (old.hasPrimitiveType()) {
-            if (old.primitiveType != new.primitiveType) return false
-        }
-
-        if (old.hasClassFqName() != new.hasClassFqName()) return false
-        if (old.hasClassFqName()) {
-            if (!checkClassIdEquals(old.classFqName, new.classFqName)) return false
-        }
-
-        if (old.hasArrayDimension() != new.hasArrayDimension()) return false
-        if (old.hasArrayDimension()) {
-            if (old.arrayDimension != new.arrayDimension) return false
-        }
-
-        return true
-    }
-
     open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
         if (!checkStringEquals(old.name, new.name)) return false
 
-        if (!checkEquals(old.type, new.type)) return false
+        if (!checkStringEquals(old.desc, new.desc)) return false
 
         if (old.hasIsStaticInOuter() != new.hasIsStaticInOuter()) return false
         if (old.hasIsStaticInOuter()) {
@@ -550,16 +526,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEqualsJvmMethodSignatureParameterType(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
-        if (old.parameterTypeCount != new.parameterTypeCount) return false
-
-        for(i in 0..old.parameterTypeCount - 1) {
-            if (!checkEquals(old.getParameterType(i), new.getParameterType(i))) return false
-        }
-
-        return true
-    }
-
     open fun checkEqualsAnnotationArgumentValueArrayElement(old: ProtoBuf.Annotation.Argument.Value, new: ProtoBuf.Annotation.Argument.Value): Boolean {
         if (old.arrayElementCount != new.arrayElementCount) return false
 
@@ -587,7 +553,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     public fun getIndexOfClassId(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {
         map[index]?.let { return it }
 
-        val result = fqNames.intern(nameResolver.getFqName(index))
+        val result = classIds.intern(nameResolver.getClassId(index))
         map[index] = result
         return result
     }
@@ -746,12 +712,12 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + flexibleUpperBound.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasConstructorClassName()) {
-        hashCode = 31 * hashCode + fqNameIndexes(constructorClassName)
+    if (hasClassName()) {
+        hashCode = 31 * hashCode + fqNameIndexes(className)
     }
 
-    if (hasConstructorTypeParameter()) {
-        hashCode = 31 * hashCode + constructorTypeParameter
+    if (hasTypeParameter()) {
+        hashCode = 31 * hashCode + typeParameter
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
@@ -814,11 +780,7 @@ public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: (Int) -> Int, 
 
     hashCode = 31 * hashCode + stringIndexes(name)
 
-    hashCode = 31 * hashCode + returnType.hashCode(stringIndexes, fqNameIndexes)
-
-    for(i in 0..parameterTypeCount - 1) {
-        hashCode = 31 * hashCode + getParameterType(i).hashCode(stringIndexes, fqNameIndexes)
-    }
+    hashCode = 31 * hashCode + stringIndexes(desc)
 
     return hashCode
 }
@@ -869,30 +831,12 @@ public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fq
     return hashCode
 }
 
-public fun JvmProtoBuf.JvmType.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasPrimitiveType()) {
-        hashCode = 31 * hashCode + primitiveType.hashCode()
-    }
-
-    if (hasClassFqName()) {
-        hashCode = 31 * hashCode + fqNameIndexes(classFqName)
-    }
-
-    if (hasArrayDimension()) {
-        hashCode = 31 * hashCode + arrayDimension
-    }
-
-    return hashCode
-}
-
 public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     hashCode = 31 * hashCode + stringIndexes(name)
 
-    hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
+    hashCode = 31 * hashCode + stringIndexes(desc)
 
     if (hasIsStaticInOuter()) {
         hashCode = 31 * hashCode + isStaticInOuter.hashCode()

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.FileMapping;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 

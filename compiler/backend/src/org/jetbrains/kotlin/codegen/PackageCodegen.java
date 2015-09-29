@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -58,7 +60,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -291,12 +292,7 @@ public class PackageCodegen {
         ProtoBuf.Package packageProto = serializer.packageProtoWithoutDescriptors().build();
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
-        JvmCodegenUtil.writeAbiVersion(av);
-        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(serializer.serialize(packageProto))) {
-            array.visit(null, string);
-        }
-        array.visitEnd();
+        AsmUtil.writeAnnotationData(av, serializer, packageProto);
         av.visitEnd();
     }
 

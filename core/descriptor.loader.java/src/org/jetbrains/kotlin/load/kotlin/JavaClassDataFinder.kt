@@ -27,11 +27,12 @@ public class JavaClassDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
-        assert(kotlinJvmBinaryClass.getClassId() == classId) {
-            "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.getClassId()}"
+        assert(kotlinJvmBinaryClass.classId == classId) {
+            "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.classId}"
         }
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, DeserializedDescriptorResolver.KOTLIN_CLASS) ?: return null
-        val classData = JvmProtoBufUtil.readClassDataFrom(data)
+        val strings = kotlinJvmBinaryClass.classHeader.strings ?: error("String table not found in $kotlinJvmBinaryClass")
+        val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
         return ClassDataWithSource(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
     }
 }
