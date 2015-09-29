@@ -183,7 +183,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
         }
         else {
-            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList)))
+            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
         }
     }
 

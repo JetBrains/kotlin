@@ -25,4 +25,4 @@ class MyClass {
 
 fun test() {}
 
-// SMART_STEP_INTO_BY_INDEX: 3
+// SMART_STEP_INTO_BY_INDEX: 4

@@ -10,4 +10,4 @@ fun main(args: Array<String>) {
 fun f1(f: () -> Unit) { f() }
 fun f2() {}
 
-// SMART_STEP_INTO_BY_INDEX: 1
+// SMART_STEP_INTO_BY_INDEX: 2
