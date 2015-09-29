@@ -33,11 +33,4 @@ fun main(args: Array<String>) {
 
     println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
     Preprocessor().processSources(sourcePath, profile)
-
-//    val pool = Executors.newCachedThreadPool()
-//
-//    profiles.forEach { profile -> pool.submit { Preprocessor().processSources(sourcePath, profile) } }
-//
-//    pool.shutdown()
-//    pool.awaitTermination(1, TimeUnit.MINUTES)
 }
