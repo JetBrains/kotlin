@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("FileClasses")
 package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.name.FqName

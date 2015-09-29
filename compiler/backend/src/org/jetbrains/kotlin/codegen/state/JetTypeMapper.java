@@ -28,9 +28,10 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -63,6 +64,8 @@ import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -145,11 +148,6 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public Type mapImplementationOwner(@NotNull DeclarationDescriptor descriptor) {
-        return mapOwner(descriptor, true);
-    }
-
-    @NotNull
     private Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean isImplementation) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
@@ -176,17 +174,17 @@ public class JetTypeMapper {
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
             if (isImplementation || descriptor instanceof PropertyDescriptor || Visibilities.isPrivate(visibility)) {
-                return FileClassesPackage.getFileClassInternalName(fileClassesProvider, file);
+                return FileClasses.getFileClassInternalName(fileClassesProvider, file);
             }
             else {
-                return FileClassesPackage.getFacadeClassInternalName(fileClassesProvider, file);
+                return FileClasses.getFacadeClassInternalName(fileClassesProvider, file);
             }
         }
 
         CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, isImplementation);
+            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember);
             if (facadeFqName != null) return facadeFqName;
         }
 
@@ -194,69 +192,120 @@ public class JetTypeMapper {
         //return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
     }
 
-    @Nullable
-    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
-        // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack
-        // introduced to make stdlib work with package facades built as multifile facades for M13.
-        // We need some safe, concise way to identify multifile facade and multifile part
-        // from a deserialized package member descriptor.
-        // Possible approaches:
-        // - create a special instance of DeserializedPackageFragmentDescriptor for each facade class (multifile or single-file),
-        //   keep related mapping information there;
-        // - provide a proper SourceElement for such descriptors (similar to KotlinJvmBinarySourceElement).
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
-        PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
+    public static class ContainingClassesInfo {
+        private final ClassId facadeClassId;
+        private final ClassId implClassId;
 
-        String facadeShortName = getPackageMemberOwnerShortName(descriptor, isImplementation);
-        if (facadeShortName == null) {
-            return null;
+        public ContainingClassesInfo(ClassId facadeClassId, ClassId implClassId) {
+            this.facadeClassId = facadeClassId;
+            this.implClassId = implClassId;
         }
 
-        FqName facadeFqName = packageFragmentDescriptor.getFqName().child(Name.identifier(facadeShortName));
-        return internalNameByFqNameWithoutInnerClasses(facadeFqName);
+        public ClassId getFacadeClassId() {
+            return facadeClassId;
+        }
+
+        public ClassId getImplClassId() {
+            return implClassId;
+        }
+
+        private static @Nullable ContainingClassesInfo forPackageMemberOrNull(
+                @NotNull FqName packageFqName,
+                @Nullable String facadeClassName,
+                @Nullable String implClassName
+        ) {
+            if (facadeClassName == null || implClassName == null) {
+                return null;
+            }
+            return new ContainingClassesInfo(ClassId.topLevel(packageFqName.child(Name.identifier(facadeClassName))),
+                                             ClassId.topLevel(packageFqName.child(Name.identifier(implClassName))));
+        }
+
+        private static @Nullable ContainingClassesInfo forClassMemberOrNull(@Nullable ClassId classId) {
+            if (classId == null) {
+                return null;
+            }
+            return new ContainingClassesInfo(classId, classId);
+        }
+    }
+
+    public ContainingClassesInfo getContainerClassIdForInlineCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor) {
+        DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
+        ContainingClassesInfo containingClassesInfo;
+        if (parentDeclaration instanceof PackageFragmentDescriptor) {
+            containingClassesInfo = getPackageMemberContainingClassesInfo(deserializedDescriptor);
+        } else {
+            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(
+                    InlineCodegenUtil.getContainerClassId(deserializedDescriptor));
+        }
+        if (containingClassesInfo == null) {
+            throw new IllegalStateException("Couldn't find container for " + deserializedDescriptor.getName());
+        }
+        return containingClassesInfo;
     }
 
     @Nullable
-    private String getPackageMemberOwnerShortName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean isImplementation) {
-        // XXX Dirty hack; see getPackageMemberOwnerInternalName above for more details.
+    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
-            if (isImplementation) {
-                return implClassName.asString();
-            }
+        assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
-            PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
-            JetScope scope = packageFragmentDescriptor.getMemberScope();
-            if (scope instanceof AbstractScopeAdapter) {
-                scope = ((AbstractScopeAdapter) scope).getActualScope();
-            }
-            if (scope instanceof LazyJavaPackageScope) {
-                return ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
-            }
-            else if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
-                return PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()).shortName().asString();
-            }
-            else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
-                assert incrementalCache != null : "IncrementalPackageFragment found outside of incremental compilation context " +
-                                                  "for " + descriptor + " in package " + packageFragmentDescriptor;
+        ContainingClassesInfo containingClasses = getPackageMemberContainingClassesInfo(descriptor);
+        if (containingClasses == null) {
+            return null;
+        }
 
-                String implClassInternalName = internalNameByFqNameWithoutInnerClasses(
-                        packageFragmentDescriptor.getFqName().child(implClassName));
-                String facadeClassInternalName = incrementalCache.getMultifileFacade(implClassInternalName);
-                if (facadeClassInternalName == null) {
-                    return implClassName.asString();
-                }
-                else {
-                    return getSimpleInternalName(facadeClassInternalName);
-                }
+        return JvmClassName.byClassId(containingClasses.getFacadeClassId()).getInternalName();
+    }
+
+    @Nullable
+    private ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
+        // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack.
+        // We need some safe, concise way to identify multifile facade and multifile part
+        // from a deserialized package member descriptor.
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        assert containingDeclaration instanceof PackageFragmentDescriptor
+                : "Package member expected, got " + descriptor + " in " + containingDeclaration;
+        PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
+
+        if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
+            ClassId builtinsFacadeClassId = ClassId.topLevel(PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()));
+            return new ContainingClassesInfo(builtinsFacadeClassId, builtinsFacadeClassId);
+        }
+
+        assert descriptor.getProto().hasExtension(JvmProtoBuf.implClassName)
+                : "No implClassName for " + descriptor;
+        Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
+        String implSimpleName = implClassName.asString();
+
+        String facadeSimpleName;
+
+        JetScope scope = packageFragmentDescriptor.getMemberScope();
+        if (scope instanceof AbstractScopeAdapter) {
+            scope = ((AbstractScopeAdapter) scope).getActualScope();
+        }
+        if (scope instanceof LazyJavaPackageScope) {
+            facadeSimpleName = ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
+        }
+        else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+            assert incrementalCache != null
+                    : "IncrementalPackageFragment found outside of incremental compilation context " +
+                      "for " + descriptor + " in package " + packageFragmentDescriptor;
+
+            String implClassInternalName = internalNameByFqNameWithoutInnerClasses(
+                    packageFragmentDescriptor.getFqName().child(implClassName));
+            String facadeClassInternalName = incrementalCache.getMultifileFacade(implClassInternalName);
+            if (facadeClassInternalName == null) {
+                facadeSimpleName = implClassName.asString();
             }
             else {
-                return implClassName.asString();
+                facadeSimpleName = getSimpleInternalName(facadeClassInternalName);
             }
         }
-        return null;
+        else {
+            throw new AssertionError("Unexpected package member scope for " + descriptor + ": " +
+                                     scope + " :" + scope.getClass().getSimpleName());
+        }
+        return ContainingClassesInfo.forPackageMemberOrNull(packageFragmentDescriptor.getFqName(), facadeSimpleName, implSimpleName);
     }
 
     @NotNull
