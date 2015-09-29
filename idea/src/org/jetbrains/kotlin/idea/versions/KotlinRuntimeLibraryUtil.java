@@ -21,19 +21,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.ScalarIndexExtension;
@@ -104,61 +99,6 @@ public class KotlinRuntimeLibraryUtil {
                 });
     }
 
-
-    public static void addJdkAnnotations(@NotNull Sdk sdk) {
-        addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
-    }
-
-    public static void addAndroidSdkAnnotations(@NotNull Sdk sdk) {
-        addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getAndroidSdkAnnotationsPath());
-    }
-
-    public static void removeJdkAnnotations(@NotNull Sdk sdk) {
-        removeAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
-    }
-
-    private static void addAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath) {
-        modifyAnnotations(sdk, annotationsPath, true);
-    }
-
-    private static void removeAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath) {
-        modifyAnnotations(sdk, annotationsPath, false);
-    }
-
-    private static void modifyAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath, boolean isAdd) {
-        if (annotationsPath.exists()) {
-            VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsPath);
-            if (jdkAnnotationsJar != null) {
-                SdkModificator modificator = sdk.getSdkModificator();
-                VirtualFile jarRootForLocalFile = JarFileSystem.getInstance().getJarRootForLocalFile(jdkAnnotationsJar);
-                if (isAdd) {
-                    modificator.addRoot(jarRootForLocalFile, AnnotationOrderRootType.getInstance());
-                }
-                else {
-                    modificator.removeRoot(jarRootForLocalFile, AnnotationOrderRootType.getInstance());
-                }
-                modificator.commitChanges();
-            }
-        }
-    }
-
-    public static boolean jdkAnnotationsArePresent(@NotNull Sdk sdk) {
-        return areAnnotationsPresent(sdk, PathUtil.JDK_ANNOTATIONS_JAR);
-    }
-
-    public static boolean androidSdkAnnotationsArePresent(@NotNull Sdk sdk) {
-        return areAnnotationsPresent(sdk, PathUtil.ANDROID_SDK_ANNOTATIONS_JAR);
-    }
-
-    private static boolean areAnnotationsPresent(@NotNull Sdk sdk, @NotNull final String jarFileName) {
-        return ContainerUtil.exists(sdk.getRootProvider().getFiles(AnnotationOrderRootType.getInstance()),
-                                    new Condition<VirtualFile>() {
-                                        @Override
-                                        public boolean value(VirtualFile file) {
-                                            return jarFileName.equals(file.getName());
-                                        }
-                                    });
-    }
 
     public static void updateLibraries(
             @NotNull final Project project,
