@@ -37,19 +37,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 
 public class OperatorModifierChecker : DeclarationChecker {
-
-    private companion object {
-        private val GET = Name.identifier("get")
-        private val SET = Name.identifier("set")
-
-        private val COMPONENT_REGEX = "component\\d+".toRegex()
-    }
-
     override fun check(
             declaration: JetDeclaration,
             descriptor: DeclarationDescriptor,

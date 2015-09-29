@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    override fun equals(other: Any?): Boolean = other is A && other.n == n
+    override operator fun equals(other: Any?): Boolean = other is A && other.n == n
 }
 
 fun test() {

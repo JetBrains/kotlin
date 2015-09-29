@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun inc(): A = A(n + 1)
+    operator fun inc(): A = A(n + 1)
 }
 
 fun test() {
