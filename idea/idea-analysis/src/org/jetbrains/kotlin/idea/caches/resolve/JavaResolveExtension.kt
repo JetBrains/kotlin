@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -38,7 +39,7 @@ private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     val method = getOriginalElement() as? PsiMethod ?: return null
-    if (method.containingClass == null) return null
+    if (method.containingClass == null || !Name.isValidIdentifier(method.getName())) return null
     val resolver = method.getJavaDescriptorResolver()
     return when {
         method.isConstructor() -> resolver?.resolveConstructor(JavaConstructorImpl(method))
