@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:JvmName("PreprocessorCLI")
 package org.jetbrains.kotlin.preprocessor
 
 import java.io.File
