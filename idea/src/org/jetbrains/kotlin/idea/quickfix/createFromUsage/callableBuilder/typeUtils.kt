@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -44,21 +44,36 @@ internal fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
-private fun DeclarationDescriptor.render(
-        typeParameterNameMap: Map<TypeParameterDescriptor, String>,
-        fq: Boolean
-): String = when {
-    this is TypeParameterDescriptor -> typeParameterNameMap[this] ?: getName().asString()
-    fq -> DescriptorUtils.getFqName(this).asString()
-    else -> getName().asString()
-}
-
 private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
-    val arguments = getArguments().map { if (it.isStarProjection) "*" else it.getType().render(typeParameterNameMap, fq) }
-    val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
-    val typeArgumentString = if (arguments.isNotEmpty()) arguments.joinToString(", ", "<", ">") else ""
-    val nullifier = if (isMarkedNullable()) "?" else ""
-    return "$typeString$typeArgumentString$nullifier"
+    val substitution = typeParameterNameMap
+            .mapValues {
+                val name = Name.identifier(it.value)
+
+                val typeParameter = it.key
+
+                var wrappingTypeParameter: TypeParameterDescriptor
+                var wrappingTypeConstructor: TypeConstructor
+
+                wrappingTypeParameter = object : TypeParameterDescriptor by typeParameter {
+                    override fun getName() = name
+                    override fun getTypeConstructor() = wrappingTypeConstructor
+                }
+
+                wrappingTypeConstructor = object : TypeConstructor by typeParameter.typeConstructor {
+                    override fun getDeclarationDescriptor() = wrappingTypeParameter
+                }
+
+                val wrappingType = object : JetType by typeParameter.defaultType {
+                    override fun getConstructor() = wrappingTypeConstructor
+                }
+
+                TypeProjectionImpl(wrappingType)
+            }
+            .mapKeys { it.key.typeConstructor }
+
+    val typeToRender = TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT)!!
+    val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
+    return renderer.renderType(typeToRender)
 }
 
 internal fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
