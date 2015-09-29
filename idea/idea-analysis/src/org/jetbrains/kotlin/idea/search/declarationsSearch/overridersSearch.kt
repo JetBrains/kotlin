@@ -16,26 +16,21 @@
 
 package org.jetbrains.kotlin.idea.search.declarationsSearch
 
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.psi.JetDeclaration
-import com.intellij.psi.PsiElement
-import com.intellij.util.Processor
-import com.intellij.util.Query
-import java.util.HashMap
-import org.jetbrains.kotlin.psi.psiUtil.*
-import java.util.Collections
-import com.intellij.psi.PsiClass
-import com.intellij.psi.util.TypeConversionUtil
-import com.intellij.psi.PsiSubstitutor
-import com.intellij.psi.util.MethodSignatureUtil
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.*
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
+import com.intellij.psi.util.MethodSignatureUtil
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
+import com.intellij.util.Processor
+import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isOverridable
+import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
     is PsiMethod -> PsiUtil.canBeOverriden(this)
@@ -44,7 +39,7 @@ fun PsiElement.isOverridableElement(): Boolean = when (this) {
 }
 
 public fun HierarchySearchRequest<*>.searchOverriders(): Query<PsiMethod> {
-    val psiMethods = originalElement.toLightMethods()
+    val psiMethods = runReadAction { originalElement.toLightMethods() }
     if (psiMethods.isEmpty()) return EmptyQuery.getEmptyQuery()
 
     return psiMethods
@@ -92,7 +87,7 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
     }
 
     protected override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =
-            request.originalElement.isOverridableElement()
+            runReadAction { request.originalElement.isOverridableElement() }
 
     override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<PsiMethod>) {
         searchDirectOverriders(request.originalElement).forEach { method -> consumer.process(method) }
