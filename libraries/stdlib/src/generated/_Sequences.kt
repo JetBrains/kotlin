@@ -602,15 +602,6 @@ public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
 }
 
 /**
- * Returns a sequence containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Sequence<T>.withIndices(): Sequence<Pair<Int, T>> {
-    var index = 0
-    return TransformingSequence(this, { index++ to it })
-}
-
-/**
  * Returns a sequence containing only distinct elements from the given sequence.
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  */
@@ -986,14 +977,6 @@ public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String
  * Returns a sequence from the given collection.
  */
 public fun <T> Sequence<T>.asSequence(): Sequence<T> {
-    return this
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Sequence<T>.sequence(): Sequence<T> {
     return this
 }
 

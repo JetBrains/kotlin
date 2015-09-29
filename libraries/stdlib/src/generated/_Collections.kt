@@ -1117,15 +1117,6 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
 }
 
 /**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
-}
-
-/**
  * Returns a list containing only distinct elements from the given collection.
  * The elements in the resulting list are in the same order as they were in the source collection.
  */
@@ -1648,14 +1639,6 @@ public fun <T> Iterable<T>.asSequence(): Sequence<T> {
             return this@asSequence.iterator()
         }
     }
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Iterable<T>.sequence(): Sequence<T> {
-    return asSequence()
 }
 
 /**

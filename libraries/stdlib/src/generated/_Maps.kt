@@ -180,11 +180,3 @@ public fun <K, V> Map<K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     }
 }
 
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <K, V> Map<K, V>.sequence(): Sequence<Map.Entry<K, V>> {
-    return asSequence()
-}
-

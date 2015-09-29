@@ -514,15 +514,6 @@ public fun String.withIndex(): Iterable<IndexedValue<Char>> {
 }
 
 /**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun String.withIndices(): List<Pair<Int, Char>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
-}
-
-/**
  * Returns `true` if all elements match the given [predicate].
  */
 public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
@@ -769,13 +760,5 @@ public fun String.asSequence(): Sequence<Char> {
             return this@asSequence.iterator()
         }
     }
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun String.sequence(): Sequence<Char> {
-    return asSequence()
 }
 
