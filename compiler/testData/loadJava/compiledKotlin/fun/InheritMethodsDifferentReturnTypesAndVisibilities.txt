@@ -6,11 +6,11 @@ public interface Sub : test.Super1, test.Super2 {
 }
 
 public interface Super1 {
-    private abstract fun bar(): kotlin.String
+    private final fun bar(): kotlin.String
     public abstract fun foo(): kotlin.CharSequence
 }
 
 public interface Super2 {
     public abstract fun bar(): kotlin.CharSequence
-    private abstract fun foo(): kotlin.String
+    private final fun foo(): kotlin.String
 }

@@ -9162,6 +9162,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateInInterface.kt")
+            public void testPrivateInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/privateInInterface.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("redundantTargets.kt")
             public void testRedundantTargets() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/redundantTargets.kt");

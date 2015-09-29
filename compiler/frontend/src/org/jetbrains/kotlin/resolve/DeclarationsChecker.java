@@ -428,14 +428,17 @@ public class DeclarationsChecker {
         boolean hasAccessorImplementation = (getter != null && getter.hasBody()) ||
                                             (setter != null && setter.hasBody());
 
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.INTERFACE;
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
+            if (inTrait && property.hasModifier(JetTokens.PRIVATE_KEYWORD) && !property.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+                trace.report(PRIVATE_PROPERTY_IN_TRAIT.on(property));
+            }
             return;
         }
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.INTERFACE;
         JetExpression initializer = property.getInitializer();
         JetPropertyDelegate delegate = property.getDelegate();
         boolean backingFieldRequired =
@@ -501,8 +504,13 @@ public class DeclarationsChecker {
             if (hasBody && hasAbstractModifier) {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
-            if (!hasBody && function.hasModifier(JetTokens.FINAL_KEYWORD) && inTrait) {
-                trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+            if (!hasBody && inTrait) {
+                if (function.hasModifier(JetTokens.FINAL_KEYWORD)) {
+                    trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+                }
+                if (function.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                    trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+                }
             }
             if (!hasBody && !hasAbstractModifier && !inTrait) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
