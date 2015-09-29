@@ -51,9 +51,18 @@ public interface LocalLookup {
                     Type classType
             ) {
                 VariableDescriptor vd = (VariableDescriptor) d;
+                VariableDescriptor originalVariableDescriptor = vd;
 
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
+
+                boolean delegatedVar = false;
+                VariableDescriptor delegateVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_DELEGATE, vd);
+                VariableDescriptor metadataVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_PROPERTY_METADATA, vd);
+                if (delegateVariableDescriptor != null) {
+                    vd = delegateVariableDescriptor;
+                    delegatedVar = true;
+                }
 
                 Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
                 Type localType = state.getTypeMapper().mapType(vd);
@@ -71,6 +80,18 @@ public interface LocalLookup {
                 }
                 else {
                     innerValue = StackValue.field(type, classType, fieldName, false, thiz, vd);
+                    if (delegatedVar) {
+                        StackValue metadataValue = innerValue(metadataVariableDescriptor, localLookup, state, closure, classType);
+                        assert metadataValue != null : originalVariableDescriptor;
+
+                        innerValue = JvmCodegenUtil.delegatedVariableValue(
+                                innerValue,
+                                metadataValue,
+                                (VariableDescriptorWithAccessors) originalVariableDescriptor,
+                                state.getBindingContext(),
+                                state.getTypeMapper()
+                        );
+                    }
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
                 }
 

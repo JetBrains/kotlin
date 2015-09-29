@@ -71,6 +71,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("localDelegatedProperty.kts")
+    public void testLocalDelegatedProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localDelegatedProperty.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("outerCapture.kts")
     public void testOuterCapture() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/outerCapture.kts");

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -760,6 +761,13 @@ public class KotlinTypeMapper {
             return new CallableMethod(owner, owner, defaultImplDesc, method, INVOKESPECIAL, null, null, null);
         }
 
+        if (descriptor instanceof LocalVariableAccessorDescriptor) {
+            ResolvedCall<FunctionDescriptor> delegateAccessorResolvedCall =
+                    bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, (VariableAccessorDescriptor) descriptor);
+            //noinspection ConstantConditions
+            return mapToCallableMethod(delegateAccessorResolvedCall.getResultingDescriptor(), false);
+        }
+
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
         FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
@@ -1484,14 +1492,22 @@ public class KotlinTypeMapper {
         if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
-        else if (descriptor instanceof PropertyDescriptor || descriptor instanceof FunctionDescriptor) {
+
+        if (descriptor instanceof PropertyDescriptor || descriptor instanceof FunctionDescriptor) {
             ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptor).getExtensionReceiverParameter();
             assert receiverParameter != null : "Callable should have a receiver parameter: " + descriptor;
             return StackValue.sharedTypeForType(mapType(receiverParameter.getType()));
         }
-        else if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
+
+        if (descriptor instanceof VariableDescriptorWithAccessors) {
+            VariableDescriptorWithAccessors withAccessors = (VariableDescriptorWithAccessors) descriptor;
+            if (withAccessors.getGetter() != null || withAccessors.getSetter() != null) return null;
+        }
+
+        if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
             return StackValue.sharedTypeForType(mapType(((VariableDescriptor) descriptor).getType()));
         }
+
         return null;
     }
 }
