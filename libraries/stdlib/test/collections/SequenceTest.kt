@@ -39,7 +39,7 @@ public class SequenceTest {
 
         val sequenceWithNulls = sequenceOf("foo", null, "bar")
         val notNull2 = sequenceWithNulls.requireNoNulls() // shouldn't fail yet
-        fails {
+        assertFails {
             // should throw an exception as we have a null
             notNull2.toList()
         }
@@ -213,7 +213,7 @@ public class SequenceTest {
         val list = sequence.toList()
         assertEquals(listOf(2, 1, 0), list)
 
-        fails {
+        assertFails {
             sequence.toList()
         }
     }
@@ -231,7 +231,7 @@ public class SequenceTest {
         val iterator = list.iterator()
         val sequence = iterator.asSequence()
         assertEquals(list, sequence.toList())
-        fails {
+        assertFails {
             sequence.toList()
         }
     }
@@ -244,7 +244,7 @@ public class SequenceTest {
         val oneTime = sequence.constrainOnce()
         oneTime.toList()
         assertTrue("should fail with IllegalStateException") {
-            fails {
+            assertFails {
                 oneTime.toList()
             } is IllegalStateException
         }

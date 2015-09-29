@@ -1,9 +1,6 @@
 package test.text
 
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.fails
+import kotlin.test.*
 import org.junit.Test as test
 
 // could not be local inside isEmptyAndBlank, because non-toplevel declarations is not yet supported for JS
@@ -146,10 +143,10 @@ class StringTest {
         val s = "sample text"
         assertEquals("sa??e text", s.replaceRange(2, 5, "??"))
         assertEquals("sa?? text", s.replaceRange(2..5, "??"))
-        fails {
+        assertFails {
             s.replaceRange(5..2, "??")
         }
-        fails {
+        assertFails {
             s.replaceRange(5, 2, "??")
         }
 
@@ -298,7 +295,7 @@ class StringTest {
         assertEquals("s", "s".padStart(1))
         assertEquals("  ", "".padStart(2))
         assertEquals("--s", "s".padStart(3, '-'))
-        fails {
+        assertFails {
             "s".padStart(-1)
         }
     }
@@ -308,7 +305,7 @@ class StringTest {
         assertEquals("s", "s".padEnd(1))
         assertEquals("  ", "".padEnd(2))
         assertEquals("s--", "s".padEnd(3, '-'))
-        fails {
+        assertFails {
             "s".padEnd(-1)
         }
     }

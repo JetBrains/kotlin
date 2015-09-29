@@ -20,8 +20,8 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
     }
 
     private fun assertFailEquals(expected: () -> Unit, actual: () -> Unit) {
-        val expectedFail = fails(expected)
-        val actualFail = fails(actual)
+        val expectedFail = assertFails(expected)
+        val actualFail = assertFails(actual)
         //assertEquals(expectedFail != null, actualFail != null)
         assertTypeEquals(expectedFail, actualFail)
     }

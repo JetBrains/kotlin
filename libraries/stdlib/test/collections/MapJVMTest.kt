@@ -43,7 +43,7 @@ class MapJVMTest {
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
-        fails {
+        assertFails {
             map.getOrPut("x") { 1 }
         }
         expect(1) {

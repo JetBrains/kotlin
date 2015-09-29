@@ -2,8 +2,8 @@ package iterators
 
 import kotlin.test.assertEquals
 import org.junit.Test as test
-import kotlin.test.fails
 import java.util.ArrayList
+import kotlin.test.assertFails
 
 fun fibonacci(): Sequence<Int> {
     // fibonacci terms
@@ -71,7 +71,7 @@ class IteratorsTest {
 
         val iterWithNulls = arrayListOf("foo", null, "bar").asSequence()
         val notNull2 = iterWithNulls.requireNoNulls()
-        fails {
+        assertFails {
             // should throw an exception as we have a null
             notNull2.toList()
         }

@@ -68,13 +68,13 @@ class StringJVMTest {
         // deprecation replacement equivalence
         assertEquals("\\d".toPattern().split(s).toList(), s.split("\\d".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().toList())
 
-        fails {
+        assertFails {
             s.split(isDigit, -1)
         }
     }
 
     @test fun repeat() {
-        fails{ "foo".repeat(-1) }
+        assertFails { "foo".repeat(-1) }
         assertEquals("", "foo".repeat(0))
         assertEquals("foo", "foo".repeat(1))
         assertEquals("foofoo", "foo".repeat(2))
@@ -269,7 +269,7 @@ class StringJVMTest {
     @test fun drop() {
         val data = "abcd1234"
         assertEquals("d1234", data.drop(3))
-        fails {
+        assertFails {
             data.drop(-2)
         }
         assertEquals("", data.drop(data.length() + 5))
@@ -285,7 +285,7 @@ class StringJVMTest {
     @test fun take() {
         val data = "abcd1234"
         assertEquals("abc", data.take(3))
-        fails {
+        assertFails {
             data.take(-7)
         }
         assertEquals(data, data.take(data.length() + 42))
@@ -351,10 +351,10 @@ class StringJVMTest {
         assertEquals("baD", builder.slice(5 downTo 3))
         assertEquals("aDAB", builder.slice(iter))
 
-        fails {
+        assertFails {
             "abc".slice(listOf(1,4))
         }
-        fails {
+        assertFails {
             builder.slice(listOf(10))
         }
     }

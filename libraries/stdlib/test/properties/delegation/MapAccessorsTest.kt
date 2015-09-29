@@ -25,7 +25,7 @@ class ValByMapExtensionsTest {
         assertEquals("default", e)
         assertEquals(1, i)
         assertEquals(1.0, x)
-        assertTrue(fails { d } is NoSuchElementException)
+        assertTrue(assertFails { d } is NoSuchElementException)
     }
 }
 
@@ -60,7 +60,7 @@ class VarByMapExtensionsTest {
         map["a"] = null
         a // fails { a } // does not fail due to KT-8135
 
-        assertTrue(fails { d } is NoSuchElementException)
+        assertTrue(assertFails { d } is NoSuchElementException)
         map["d"] = null
         assertEquals(null, d)
     }
