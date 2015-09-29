@@ -21,7 +21,7 @@ import kotlin.annotation.AnnotationTarget.*
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-@Deprecated("Use kotlin.jvm.platformName instead", ReplaceWith("kotlin.jvm.platformName"))
+@Deprecated("Use kotlin.jvm.JvmName instead", ReplaceWith("kotlin.jvm.JvmName"))
 public annotation class platformName(public val name: String)
 
 @Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
