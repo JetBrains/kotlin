@@ -336,7 +336,7 @@ public class JetFlowInformationProvider {
                         }
                         if (!(instruction instanceof WriteValueInstruction)) return;
                         WriteValueInstruction writeValueInstruction = (WriteValueInstruction) instruction;
-                        JetElement element = writeValueInstruction.getlValue();
+                        JetElement element = writeValueInstruction.getTEMP_lValue();
                         boolean error = checkBackingField(ctxt, element);
                         if (!(element instanceof JetExpression)) return;
                         if (!error) {

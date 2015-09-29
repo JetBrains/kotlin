@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -386,7 +385,7 @@ public class CallExpressionResolver {
         }
 
         CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
-        if (value != null && value.getIsPure()) {
+        if (value != null && value.getTEMP_isPure()) {
             return dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 

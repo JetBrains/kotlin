@@ -148,7 +148,7 @@ public abstract class Config {
     }
 
     private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        assert metadata.getIsAbiVersionCompatible() :
+        assert metadata.getTEMP_isAbiVersionCompatible() :
                 "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION + ", but metadata.abiVersion = " + metadata.getAbiVersion();
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(

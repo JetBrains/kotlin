@@ -38,7 +38,7 @@ public class KotlinCallerUsage(element: JetNamedDeclaration): JetUsageInfo<JetNa
         val psiFactory = JetPsiFactory(getProject())
         changeInfo.getNonReceiverParameters()
                 .withIndex()
-                .filter { it.value.isNewParameter }
+                .filter { it.value.TEMP_isNewParameter }
                 .forEach {
                     val parameterText = it.value.getDeclarationSignature(it.index, changeInfo.methodDescriptor.originalPrimaryCallable)
                     parameterList
@@ -56,7 +56,7 @@ public class KotlinCallerCallUsage(element: JetCallElement): JetUsageInfo<JetCal
         val psiFactory = JetPsiFactory(getProject())
         val isNamedCall = argumentList.getArguments().any { it.getArgumentName() != null }
         changeInfo.getNonReceiverParameters()
-                .filter { it.isNewParameter }
+                .filter { it.TEMP_isNewParameter }
                 .forEach {
                     val parameterName = it.getName()
                     val argumentExpression = if (element.isInsideOfCallerBody(allUsages)) {

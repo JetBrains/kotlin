@@ -60,7 +60,7 @@ public fun buildDecompiledText(
     val packageFqName = classId.getPackageFqName()
 
     return when {
-        !classHeader.isCompatibleAbiVersion -> {
+        !classHeader.TEMP_isCompatibleAbiVersion -> {
             DecompiledText(
                     INCOMPATIBLE_ABI_VERSION_COMMENT
                             .replace(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
@@ -78,7 +78,7 @@ public fun buildDecompiledText(
             buildDecompiledText(packageFqName, partMembers)
         }
         else ->
-            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
+            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.TEMP_isCompatibleAbiVersion}")
     }
 }
 

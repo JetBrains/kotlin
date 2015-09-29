@@ -156,7 +156,7 @@ public class JetChangeSignatureDialog(
 
     // Forbid receiver propagation
     override fun mayPropagateParameters() =
-            getParameters().any { it.isNewParameter && it != parametersTableModel.getReceiver() }
+            getParameters().any { it.TEMP_isNewParameter && it != parametersTableModel.getReceiver() }
 
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<JetParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
@@ -168,7 +168,7 @@ public class JetChangeSignatureDialog(
             }
 
             private fun isDefaultColumnEnabled() =
-                    item.parameter.isNewParameter && item.parameter != myMethod.receiver
+                    item.parameter.TEMP_isNewParameter && item.parameter != myMethod.receiver
 
             override fun prepareEditor(table: JTable, row: Int) {
                 setLayout(BoxLayout(this, BoxLayout.X_AXIS))
@@ -371,7 +371,7 @@ public class JetChangeSignatureDialog(
     public fun getMethodDescriptor(): JetMethodDescriptor = myMethod
 
     override fun getSelectedIdx(): Int {
-        return myMethod.getParameters().withIndex().firstOrNull { it.value.isNewParameter }?.index
+        return myMethod.getParameters().withIndex().firstOrNull { it.value.TEMP_isNewParameter }?.index
                ?: super.getSelectedIdx()
     }
 

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 public final class JvmAbi {
     /**
@@ -34,14 +34,16 @@ public final class JvmAbi {
      * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
      *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
      */
-    public static final BinaryVersion VERSION = BinaryVersion.create(0, 26, 0);
+    public static final BinaryVersion VERSION = BinaryVersion.create(0, 27, 0);
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
 
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
-    public static final String GETTER_PREFIX = "get";
-    public static final String SETTER_PREFIX = "set";
+
+    private static final String GET_PREFIX = "get";
+    private static final String IS_PREFIX = "is";
+    private static final String SET_PREFIX = "set";
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
     public static final String PROPERTY_METADATA_ARRAY_NAME = "$propertyMetadata";
@@ -65,21 +67,34 @@ public final class JvmAbi {
         return isDelegated ? propertyName.asString() + DELEGATED_PROPERTY_NAME_SUFFIX : propertyName.asString();
     }
 
+    public static boolean isGetterName(@NotNull String name) {
+        return name.startsWith(GET_PREFIX) || name.startsWith(IS_PREFIX);
+    }
+
+    public static boolean isSetterName(@NotNull String name) {
+        return name.startsWith(SET_PREFIX);
+    }
+
     @NotNull
     public static String getterName(@NotNull String propertyName) {
-        return GETTER_PREFIX + capitalizeWithJavaBeanConvention(propertyName);
+        return startsWithIsPrefix(propertyName)
+               ? propertyName
+               : GET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
+
     }
 
     @NotNull
     public static String setterName(@NotNull String propertyName) {
-        return SETTER_PREFIX + capitalizeWithJavaBeanConvention(propertyName);
+        return startsWithIsPrefix(propertyName)
+               ? SET_PREFIX + propertyName.substring(IS_PREFIX.length())
+               : SET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
     }
 
-    /**
-     * @see com.intellij.openapi.util.text.StringUtil#capitalizeWithJavaBeanConvention(String)
-     */
-    @NotNull
-    private static String capitalizeWithJavaBeanConvention(@NotNull String s) {
-        return s.length() > 1 && Character.isUpperCase(s.charAt(1)) ? s : KotlinPackage.capitalize(s);
+    public static boolean startsWithIsPrefix(String name) {
+        if (!name.startsWith(IS_PREFIX)) return false;
+        if (name.length() == IS_PREFIX.length()) return false;
+        char c = name.charAt(IS_PREFIX.length());
+        return !('a' <= c && c <= 'z');
     }
 }
+

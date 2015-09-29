@@ -151,8 +151,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         String newName = changeInfo.getNewName();
         if (isPropertyJavaUsage()) {
             String currentName = ((JetSimpleNameExpression) callee).getReferencedName();
-            if (currentName.startsWith(JvmAbi.GETTER_PREFIX)) newName = JvmAbi.getterName(newName);
-            else if (currentName.startsWith(JvmAbi.SETTER_PREFIX)) newName = JvmAbi.setterName(newName);
+            if (JvmAbi.isGetterName(currentName)) newName = JvmAbi.getterName(newName);
+            else if (JvmAbi.isSetterName(currentName)) newName = JvmAbi.setterName(newName);
         }
 
         callee.replace(JetPsiFactory(getProject()).createSimpleName(newName));

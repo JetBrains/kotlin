@@ -619,7 +619,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetScope callableScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
         JetMethodDescriptor.Kind kind = ChangeSignaturePackage.getKind(changeInfo);
-        if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
+        if (!kind.getTEMP_isConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
                                                                  ? ScopeUtils.getAllAccessibleFunctions(callableScope, newName)
@@ -703,7 +703,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 }
         );
         for (JetParameterInfo parameterInfo : changeInfo.getNonReceiverParameters()) {
-            if (!(parameterInfo.getIsNewParameter())) continue;
+            if (!(parameterInfo.getTEMP_isNewParameter())) continue;
 
             String name = parameterInfo.getName();
             JetParameter parameter = existingParameters.get(name);

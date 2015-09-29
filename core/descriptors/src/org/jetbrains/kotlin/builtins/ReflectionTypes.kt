@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
-import java.util.ArrayList
+import java.util.*
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
@@ -49,7 +49,11 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
 
-    public val kClass: ClassDescriptor by ClassLookup
+//    public val TEMP_kClass: ClassDescriptor by ClassLookup
+    //TODO: temporary
+    public val TEMP_kClass: ClassDescriptor
+        get() = find("KClass")
+
     public val kProperty0: ClassDescriptor by ClassLookup
     public val kProperty1: ClassDescriptor by ClassLookup
     public val kProperty2: ClassDescriptor by ClassLookup
@@ -57,7 +61,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kMutableProperty1: ClassDescriptor by ClassLookup
 
     public fun getKClassType(annotations: Annotations, type: JetType): JetType {
-        val descriptor = kClass
+        val descriptor = TEMP_kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.getDefaultType()
         }

@@ -81,7 +81,7 @@ public open class JetChangeInfo(
         map
     }
 
-    public val isParameterSetOrOrderChanged: Boolean by lazy {
+    private val isParameterSetOrOrderChangedLazy: Boolean by lazy {
         val signatureParameters = getNonReceiverParameters()
         methodDescriptor.receiver != receiverParameterInfo ||
         signatureParameters.size() != methodDescriptor.getParametersCount() ||
@@ -97,7 +97,7 @@ public open class JetChangeInfo(
 
     override fun isParameterNamesChanged(): Boolean = true
 
-    override fun isParameterSetOrOrderChanged(): Boolean = isParameterSetOrOrderChanged
+    override fun isParameterSetOrOrderChanged(): Boolean = isParameterSetOrOrderChangedLazy
 
     public fun getNewParametersCount(): Int = newParameters.size()
 
@@ -189,7 +189,7 @@ public open class JetChangeInfo(
     public fun getNewSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
-        val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
+        val defaultVisibility = if (kind.TEMP_isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
 
         if (kind == Kind.PRIMARY_CONSTRUCTOR) {
             buffer.append(name)
@@ -369,9 +369,9 @@ public open class JetChangeInfo(
                     is JetProperty, is JetParameter -> {
                         val accessorName = originalPsiMethod.getName()
                         when {
-                            accessorName.startsWith(JvmAbi.GETTER_PREFIX) ->
+                            JvmAbi.isGetterName(accessorName) ->
                                 createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, true)
-                            accessorName.startsWith(JvmAbi.SETTER_PREFIX) ->
+                            JvmAbi.isSetterName(accessorName) ->
                                 createJavaChangeInfoForSetter(originalPsiMethod, currentPsiMethod)
                             else -> null
                         }

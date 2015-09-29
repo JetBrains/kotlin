@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public sealed class AccessTarget {
     public data class Declaration(val descriptor: VariableDescriptor): AccessTarget()
@@ -95,7 +91,7 @@ public class WriteValueInstruction(
         lexicalScope: LexicalScope,
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
-        public val lValue: JetElement,
+        public val TEMP_lValue: JetElement,
         public val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
@@ -110,10 +106,10 @@ public class WriteValueInstruction(
     }
 
     override fun toString(): String {
-        val lhs = (lValue as? JetNamedDeclaration)?.getName() ?: render(lValue)
+        val lhs = (TEMP_lValue as? JetNamedDeclaration)?.getName() ?: render(TEMP_lValue)
         return "w($lhs|${inputValues.joinToString(", ")})"
     }
 
     override fun createCopy(): InstructionImpl =
-            WriteValueInstruction(element, lexicalScope, target, receiverValues, lValue, rValue)
+            WriteValueInstruction(element, lexicalScope, target, receiverValues, TEMP_lValue, rValue)
 }

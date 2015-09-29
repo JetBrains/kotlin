@@ -5,4 +5,8 @@ class AAA {
     fun getX(): Int {
         return other.x
     }
+
+    fun issue(): Boolean {
+        return true
+    }
 }

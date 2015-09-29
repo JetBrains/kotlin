@@ -136,8 +136,8 @@ public object LightClassUtil {
     public fun getLightClassAccessorMethods(accessor: JetPropertyAccessor): List<PsiMethod> {
         val property = accessor.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property, true)
-        return wrappers.filter { wrapper -> (accessor.isGetter && !wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) ||
-                                            (accessor.isSetter && wrapper.name.startsWith(JvmAbi.SETTER_PREFIX)) }
+        return wrappers.filter { wrapper -> (accessor.isGetter && !JvmAbi.isSetterName(wrapper.name)) ||
+                                            (accessor.isSetter && JvmAbi.isSetterName(wrapper.name)) }
     }
 
     public fun getLightFieldForCompanionObject(companionObject: JetClassOrObject): PsiField? {
@@ -296,11 +296,11 @@ public object LightClassUtil {
         val additionalAccessors = arrayListOf<PsiMethod>()
 
         val wrappers = getPsiMethodWrappers(jetDeclaration, true).filter {
-            it.name.startsWith(JvmAbi.GETTER_PREFIX) || it.name.startsWith(JvmAbi.SETTER_PREFIX)
+            JvmAbi.isGetterName(it.name) || JvmAbi.isSetterName(it.name)
         }
 
         for (wrapper in wrappers) {
-            if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+            if (JvmAbi.isSetterName(wrapper.getName())) {
                 if (setterWrapper == null || setterWrapper === specialSetter) {
                     setterWrapper = wrapper
                 }

@@ -50,7 +50,7 @@ public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean>
 
     @Override
     public Boolean visitSubroutineExit(@NotNull SubroutineExitInstruction instruction) {
-        return !instruction.getIsError() && instruction.getSubroutine() == subroutine;
+        return !instruction.getTEMP_isError() && instruction.getSubroutine() == subroutine;
     }
 
     @Override

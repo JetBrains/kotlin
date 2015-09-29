@@ -52,7 +52,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
     fun doIsPureTest(path: String) {
         doTest(path) {
             property, context ->
-            evaluateInitializer(context, property)?.isPure.toString()
+            evaluateInitializer(context, property)?.TEMP_isPure.toString()
         }
     }
 

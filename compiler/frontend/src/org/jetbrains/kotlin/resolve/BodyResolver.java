@@ -110,7 +110,7 @@ public class BodyResolver {
         // SCRIPT: resolve script bodies
         scriptBodyResolverResolver.resolveScriptBodies(c);
 
-        if (!c.getTopDownAnalysisMode().getIsLocalDeclarations()) {
+        if (!c.getTopDownAnalysisMode().getTEMP_isLocalDeclarations()) {
             computeDeferredTypes();
         }
     }
@@ -732,7 +732,7 @@ public class BodyResolver {
             LexicalScope scope = c.getDeclaringScope(declaration);
             assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
 
-            if (!c.getTopDownAnalysisMode().getIsLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
+            if (!c.getTopDownAnalysisMode().getTEMP_isLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
                 expressionTypingServices.getStatementFilter() != StatementFilter.NONE) {
                 bodyResolveCache.resolveFunctionBody(declaration).addOwnDataTo(trace, true);
             }

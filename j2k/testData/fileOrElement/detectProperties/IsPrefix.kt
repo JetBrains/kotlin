@@ -6,7 +6,7 @@ internal interface I {
 
     val isSomething2: Boolean?
 
-    fun isSomething3(): Int
+    val isSomething3: Int
 
     var isSomething4: Boolean
 

@@ -29,7 +29,7 @@ public var Element.childrenText: String
         while (i < size) {
             val node = nodeList.item(i)
             if (node != null) {
-                if (node.isText()) {
+                if (node.isText) {
                     buffer.append(node.nodeValue)
                 }
             }
@@ -41,7 +41,7 @@ public var Element.childrenText: String
         val element = this
         // lets remove all the previous text nodes first
         for (node in element.children()) {
-            if (node.isText()) {
+            if (node.isText) {
                 removeChild(node)
             }
         }
@@ -268,10 +268,6 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
         }
     }
 }
-
-/** Returns true if this node is a Text node or a CDATA node */
-@Deprecated("use property isText instead", ReplaceWith("isText"))
-public fun Node.isText() : Boolean = isText
 
 /**
  * it is *true* when [Node.nodeType] is TEXT_NODE or CDATA_SECTION_NODE

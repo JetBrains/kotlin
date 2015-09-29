@@ -443,7 +443,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
     private fun canBeUsedInAnnotation(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.canBeUsedInAnnotations ?: false
 
-    private fun isPureConstant(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.isPure ?: false
+    private fun isPureConstant(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.TEMP_isPure ?: false
 
     private fun evaluateUnaryAndCheck(receiver: OperationArgument, name: String, callExpression: JetExpression): Any? {
         val functions = unaryOperations[UnaryOperationKey(receiver.ctcType, name)]

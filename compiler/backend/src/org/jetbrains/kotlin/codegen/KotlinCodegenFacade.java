@@ -71,12 +71,12 @@ public class KotlinCodegenFacade {
 
             JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
-            if (fileClassInfo.getIsMultifileClass()) {
+            if (fileClassInfo.getTEMP_isMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
             }
 
             if (state.getPackageFacadesAsMultifileClasses()) {
-                if (!fileClassInfo.getIsMultifileClass()) {
+                if (!fileClassInfo.getTEMP_isMultifileClass()) {
                     filesInMultifileClasses.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
                 }
             }

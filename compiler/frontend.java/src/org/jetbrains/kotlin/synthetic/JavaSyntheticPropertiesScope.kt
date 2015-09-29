@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -31,16 +32,14 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 import kotlin.properties.Delegates
 
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
@@ -72,6 +71,8 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             if (methodName.isSpecial()) return null
             val identifier = methodName.getIdentifier()
             if (!identifier.startsWith(prefix)) return null
+            if (identifier.length() == prefix.length()) return null
+            if (identifier[prefix.length()] in 'a'..'z') return null
 
             if (addPrefix != null) {
                 assert(removePrefix)
@@ -79,7 +80,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             }
 
             if (!removePrefix) return methodName
-            val name = identifier.removePrefix(prefix).decapitalizeSmart()
+            val name = identifier.removePrefix(prefix).decapitalizeSmart(asciiOnly = true)
             if (!Name.isValidIdentifier(name)) return null
             return Name.identifier(name)
         }
@@ -96,7 +97,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         val identifier = name.identifier
         if (identifier.isEmpty()) return null
         val firstChar = identifier[0]
-        if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
+        if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return null
 
         val memberScope = ownerClass.unsubstitutedMemberScope
         val getMethod = possibleGetMethodNames(name)
@@ -116,7 +117,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
         val returnType = descriptor.returnType ?: return false
         if (returnType.isUnit()) return false
-        if (descriptor.name.asString().startsWith("is") && !returnType.isBoolean()) return false
 
         return descriptor.valueParameters.isEmpty()
                && descriptor.typeParameters.isEmpty()
@@ -217,12 +217,12 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         val result = ArrayList<Name>(3)
         val identifier = propertyName.identifier
 
-        if (identifier.startsWith("is")) {
+        if (JvmAbi.startsWithIsPrefix(identifier)) {
             result.add(propertyName)
         }
 
-        val capitalize1 = identifier.capitalize()
-        val capitalize2 = identifier.capitalizeFirstWord()
+        val capitalize1 = identifier.capitalizeAsciiOnly()
+        val capitalize2 = identifier.capitalizeFirstWord(asciiOnly = true)
         result.add(Name.identifier("get" + capitalize1))
         if (capitalize2 != capitalize1) {
             result.add(Name.identifier("get" + capitalize2))
