@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.declaration
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getDelegateNameRef
@@ -45,18 +46,19 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
  */
 
 fun translateAccessors(
-        descriptor: PropertyDescriptor,
+        descriptor: VariableDescriptorWithAccessors,
         declaration: KtProperty?,
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
-    if (descriptor.modality == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor)) return
+    if (descriptor is PropertyDescriptor
+        && (descriptor.modality == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor))) return
 
     PropertyTranslator(descriptor, declaration, context).translate(result)
 }
 
 fun translateAccessors(
-        descriptor: PropertyDescriptor,
+        descriptor: VariableDescriptorWithAccessors,
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
@@ -64,7 +66,7 @@ fun translateAccessors(
 }
 
 fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
-        descriptor: PropertyDescriptor,
+        descriptor: VariableDescriptorWithAccessors,
         context: TranslationContext,
         generateGetter: () -> JsPropertyInitializer,
         generateSetter: () -> JsPropertyInitializer
@@ -85,7 +87,7 @@ fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
 }
 
 private class PropertyTranslator(
-        val descriptor: PropertyDescriptor,
+        val descriptor: VariableDescriptorWithAccessors,
         val declaration: KtProperty?,
         context: TranslationContext
 ) : AbstractTranslator(context) {
@@ -119,7 +121,7 @@ private class PropertyTranslator(
         return generateDefaultAccessor(getterDescriptor, generateDefaultGetterFunction(getterDescriptor))
     }
 
-    private fun generateDefaultGetterFunction(getterDescriptor: PropertyGetterDescriptor): JsFunction {
+    private fun generateDefaultGetterFunction(getterDescriptor: VariableAccessorDescriptor): JsFunction {
         val delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor)
 
         if (delegatedCall != null) {
@@ -127,16 +129,17 @@ private class PropertyTranslator(
         }
 
         assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
+        assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
         val scope = context().getScopeForDescriptor(getterDescriptor.containingDeclaration)
-        val result = backingFieldReference(context(), descriptor)
+        val result = backingFieldReference(context(), descriptor as PropertyDescriptor)
         val body = JsBlock(JsReturn(result))
 
         return JsFunction(scope, body, accessorDescription(getterDescriptor))
     }
 
     private fun generateDelegatedGetterFunction(
-            getterDescriptor: PropertyGetterDescriptor,
-            delegatedCall: ResolvedCall<FunctionDescriptor>
+        getterDescriptor: VariableAccessorDescriptor,
+        delegatedCall: ResolvedCall<FunctionDescriptor>
     ): JsFunction {
         val scope = context().getScopeForDescriptor(getterDescriptor.containingDeclaration)
         val function = JsFunction(scope, JsBlock(), accessorDescription(getterDescriptor))
@@ -158,9 +161,9 @@ private class PropertyTranslator(
     }
 
     private fun contextWithPropertyMetadataCreationIntrinsified(
-            context: TranslationContext, delegatedCall: ResolvedCall<FunctionDescriptor>, accessor: PropertyAccessorDescriptor
+            context: TranslationContext, delegatedCall: ResolvedCall<FunctionDescriptor>, accessor: VariableAccessorDescriptor
     ): TranslationContext {
-        val propertyNameLiteral = context.program().getStringLiteral(accessor.correspondingProperty.name.asString())
+        val propertyNameLiteral = context.program().getStringLiteral(accessor.correspondingVariable.name.asString())
         // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
         val fakeArgumentExpression =
                 (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
@@ -175,12 +178,12 @@ private class PropertyTranslator(
         return generateDefaultAccessor(setterDescriptor, generateDefaultSetterFunction(setterDescriptor))
     }
 
-    private fun generateDefaultSetterFunction(setterDescriptor: PropertySetterDescriptor): JsFunction {
+    private fun generateDefaultSetterFunction(setterDescriptor: VariableAccessorDescriptor): JsFunction {
         val containingScope = context().getScopeForDescriptor(setterDescriptor.containingDeclaration)
         val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
 
         assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
-        val correspondingPropertyName = setterDescriptor.correspondingProperty.name.asString()
+        val correspondingPropertyName = setterDescriptor.correspondingVariable.name.asString()
         val valueParameter = function.addParameter(correspondingPropertyName).name
         val withAliased = context().innerContextWithAliased(setterDescriptor.valueParameters[0], valueParameter.makeRef())
         val delegatedCall = context().bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
@@ -199,25 +202,26 @@ private class PropertyTranslator(
         }
         else {
             assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
-            val assignment = assignmentToBackingField(withAliased, descriptor, valueParameter.makeRef())
+            assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
+            val assignment = assignmentToBackingField(withAliased, descriptor as PropertyDescriptor, valueParameter.makeRef())
             function.addStatement(assignment.makeStmt())
         }
 
         return function
     }
 
-    private fun generateDefaultAccessor(accessorDescriptor: PropertyAccessorDescriptor, function: JsFunction): JsPropertyInitializer =
+    private fun generateDefaultAccessor(accessorDescriptor: VariableAccessorDescriptor, function: JsFunction): JsPropertyInitializer =
             translateFunctionAsEcma5PropertyDescriptor(function, accessorDescriptor, context())
 
     private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer =
             Translation.functionTranslator(expression, context()).translateAsEcma5PropertyDescriptor()
 
-    private fun accessorDescription(accessorDescriptor: PropertyAccessorDescriptor): String {
+    private fun accessorDescription(accessorDescriptor: VariableAccessorDescriptor): String {
         val accessorType =
-                when(accessorDescriptor) {
-                    is PropertyGetterDescriptor ->
+                when (accessorDescriptor) {
+                    is PropertyGetterDescriptor, is LocalVariableAccessorDescriptor.Getter ->
                         "getter"
-                    is PropertySetterDescriptor ->
+                    is PropertySetterDescriptor, is LocalVariableAccessorDescriptor.Setter ->
                         "setter"
                     else ->
                         throw IllegalArgumentException("Unknown accessor type ${accessorDescriptor.javaClass}")
