@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.FUN
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.FUN
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAL
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAR
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
@@ -50,7 +51,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 Deserialization.modality(Flags.MODALITY.get(flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(flags)),
-                Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
+                Flags.CALLABLE_KIND.get(flags) == ProtoBuf.CallableKind.VAR,
                 c.nameResolver.getName(proto.getName()),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
@@ -230,7 +231,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             callable: Callable,
             kind: AnnotatedCallableKind,
             index: Int,
-            valueParameter: Callable.ValueParameter
+            valueParameter: ProtoBuf.ValueParameter
     ): Annotations {
         return DeserializedAnnotations(c.storageManager) {
             c.components.annotationAndConstantLoader.loadValueParameterAnnotations(

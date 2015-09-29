@@ -55,7 +55,7 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.Callable.ValueParameter.Builder) {
+    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }

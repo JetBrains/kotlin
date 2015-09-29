@@ -59,11 +59,11 @@ public final class DebugBuiltInsProtoBuf {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance());
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter,
       java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> parameterAnnotation = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
@@ -91,11 +91,11 @@ public final class DebugBuiltInsProtoBuf {
       "ion.Annotation:\210\001\n\022compile_time_value\022,." +
       "org.jetbrains.kotlin.serialization.Calla" +
       "ble\030\227\001 \001(\0132=.org.jetbrains.kotlin.serial" +
-      "ization.Annotation.Argument.Value:\212\001\n\024pa" +
-      "rameter_annotation\022;.org.jetbrains.kotli" +
-      "n.serialization.Callable.ValueParameter\030" +
-      "\226\001 \003(\0132..org.jetbrains.kotlin.serializat" +
-      "ion.AnnotationB\027B\025DebugBuiltInsProtoBuf"
+      "ization.Annotation.Argument.Value:\201\001\n\024pa" +
+      "rameter_annotation\0222.org.jetbrains.kotli" +
+      "n.serialization.ValueParameter\030\226\001 \003(\0132.." +
+      "org.jetbrains.kotlin.serialization.Annot" +
+      "ationB\027B\025DebugBuiltInsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

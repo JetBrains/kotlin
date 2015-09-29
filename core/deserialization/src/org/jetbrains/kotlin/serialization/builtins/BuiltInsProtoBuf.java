@@ -75,14 +75,14 @@ public final class BuiltInsProtoBuf {
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter,
       java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> parameterAnnotation = com.google.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         150,

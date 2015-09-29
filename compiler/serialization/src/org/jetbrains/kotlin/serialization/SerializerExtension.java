@@ -38,10 +38,7 @@ public abstract class SerializerExtension {
     public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
     }
 
-    public void serializeValueParameter(
-            @NotNull ValueParameterDescriptor descriptor,
-            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto
-    ) {
+    public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
     }
 
     public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {

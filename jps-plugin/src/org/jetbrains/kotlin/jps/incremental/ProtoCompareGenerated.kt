@@ -270,7 +270,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEquals(old: ProtoBuf.Callable.ValueParameter, new: ProtoBuf.Callable.ValueParameter): Boolean {
+    open fun checkEquals(old: ProtoBuf.ValueParameter, new: ProtoBuf.ValueParameter): Boolean {
         if (old.hasFlags() != new.hasFlags()) return false
         if (old.hasFlags()) {
             if (old.flags != new.flags) return false
@@ -753,7 +753,7 @@ public fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndex
     return hashCode
 }
 
-public fun ProtoBuf.Callable.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+public fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasFlags()) {

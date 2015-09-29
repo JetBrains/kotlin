@@ -53,7 +53,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
-            proto: ProtoBuf.Callable.ValueParameter
+            proto: ProtoBuf.ValueParameter
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }

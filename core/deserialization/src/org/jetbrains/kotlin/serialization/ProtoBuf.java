@@ -190,6 +190,170 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Visibility)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.serialization.CallableKind}
+   */
+  public enum CallableKind
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>FUN = 0;</code>
+     *
+     * <pre>
+     * 2 bits
+     * </pre>
+     */
+    FUN(0, 0),
+    /**
+     * <code>VAL = 1;</code>
+     */
+    VAL(1, 1),
+    /**
+     * <code>VAR = 2;</code>
+     */
+    VAR(2, 2),
+    /**
+     * <code>CONSTRUCTOR = 3;</code>
+     */
+    CONSTRUCTOR(3, 3),
+    ;
+
+    /**
+     * <code>FUN = 0;</code>
+     *
+     * <pre>
+     * 2 bits
+     * </pre>
+     */
+    public static final int FUN_VALUE = 0;
+    /**
+     * <code>VAL = 1;</code>
+     */
+    public static final int VAL_VALUE = 1;
+    /**
+     * <code>VAR = 2;</code>
+     */
+    public static final int VAR_VALUE = 2;
+    /**
+     * <code>CONSTRUCTOR = 3;</code>
+     */
+    public static final int CONSTRUCTOR_VALUE = 3;
+
+
+    public final int getNumber() { return value; }
+
+    public static CallableKind valueOf(int value) {
+      switch (value) {
+        case 0: return FUN;
+        case 1: return VAL;
+        case 2: return VAR;
+        case 3: return CONSTRUCTOR;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
+        internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<CallableKind>() {
+            public CallableKind findValueByNumber(int number) {
+              return CallableKind.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private CallableKind(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.CallableKind)
+  }
+
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.serialization.MemberKind}
+   */
+  public enum MemberKind
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>DECLARATION = 0;</code>
+     *
+     * <pre>
+     * 2 bits
+     * </pre>
+     */
+    DECLARATION(0, 0),
+    /**
+     * <code>FAKE_OVERRIDE = 1;</code>
+     */
+    FAKE_OVERRIDE(1, 1),
+    /**
+     * <code>DELEGATION = 2;</code>
+     */
+    DELEGATION(2, 2),
+    /**
+     * <code>SYNTHESIZED = 3;</code>
+     */
+    SYNTHESIZED(3, 3),
+    ;
+
+    /**
+     * <code>DECLARATION = 0;</code>
+     *
+     * <pre>
+     * 2 bits
+     * </pre>
+     */
+    public static final int DECLARATION_VALUE = 0;
+    /**
+     * <code>FAKE_OVERRIDE = 1;</code>
+     */
+    public static final int FAKE_OVERRIDE_VALUE = 1;
+    /**
+     * <code>DELEGATION = 2;</code>
+     */
+    public static final int DELEGATION_VALUE = 2;
+    /**
+     * <code>SYNTHESIZED = 3;</code>
+     */
+    public static final int SYNTHESIZED_VALUE = 3;
+
+
+    public final int getNumber() { return value; }
+
+    public static MemberKind valueOf(int value) {
+      switch (value) {
+        case 0: return DECLARATION;
+        case 1: return FAKE_OVERRIDE;
+        case 2: return DELEGATION;
+        case 3: return SYNTHESIZED;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
+        internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<MemberKind>() {
+            public MemberKind findValueByNumber(int number) {
+              return MemberKind.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private MemberKind(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.MemberKind)
+  }
+
   public interface StringTableOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
 
@@ -740,7 +904,7 @@ public final class ProtoBuf {
        * <code>required int32 short_name = 2;</code>
        *
        * <pre>
-       * Id in the StringTable
+       * id in the StringTable
        * </pre>
        */
       boolean hasShortName();
@@ -748,7 +912,7 @@ public final class ProtoBuf {
        * <code>required int32 short_name = 2;</code>
        *
        * <pre>
-       * Id in the StringTable
+       * id in the StringTable
        * </pre>
        */
       int getShortName();
@@ -940,7 +1104,7 @@ public final class ProtoBuf {
        * <code>required int32 short_name = 2;</code>
        *
        * <pre>
-       * Id in the StringTable
+       * id in the StringTable
        * </pre>
        */
       public boolean hasShortName() {
@@ -950,7 +1114,7 @@ public final class ProtoBuf {
        * <code>required int32 short_name = 2;</code>
        *
        * <pre>
-       * Id in the StringTable
+       * id in the StringTable
        * </pre>
        */
       public int getShortName() {
@@ -1239,7 +1403,7 @@ public final class ProtoBuf {
          * <code>required int32 short_name = 2;</code>
          *
          * <pre>
-         * Id in the StringTable
+         * id in the StringTable
          * </pre>
          */
         public boolean hasShortName() {
@@ -1249,7 +1413,7 @@ public final class ProtoBuf {
          * <code>required int32 short_name = 2;</code>
          *
          * <pre>
-         * Id in the StringTable
+         * id in the StringTable
          * </pre>
          */
         public int getShortName() {
@@ -1259,7 +1423,7 @@ public final class ProtoBuf {
          * <code>required int32 short_name = 2;</code>
          *
          * <pre>
-         * Id in the StringTable
+         * id in the StringTable
          * </pre>
          */
         public Builder setShortName(int value) {
@@ -1272,7 +1436,7 @@ public final class ProtoBuf {
          * <code>required int32 short_name = 2;</code>
          *
          * <pre>
-         * Id in the StringTable
+         * id in the StringTable
          * </pre>
          */
         public Builder clearShortName() {
@@ -1710,18 +1874,10 @@ public final class ProtoBuf {
     // required int32 id = 1;
     /**
      * <code>required int32 id = 1;</code>
-     *
-     * <pre>
-     * Class FQ name id
-     * </pre>
      */
     boolean hasId();
     /**
      * <code>required int32 id = 1;</code>
-     *
-     * <pre>
-     * Class FQ name id
-     * </pre>
      */
     int getId();
 
@@ -1831,18 +1987,10 @@ public final class ProtoBuf {
       // required int32 name_id = 1;
       /**
        * <code>required int32 name_id = 1;</code>
-       *
-       * <pre>
-       * id in StringTable
-       * </pre>
        */
       boolean hasNameId();
       /**
        * <code>required int32 name_id = 1;</code>
-       *
-       * <pre>
-       * id in StringTable
-       * </pre>
        */
       int getNameId();
 
@@ -2001,18 +2149,10 @@ public final class ProtoBuf {
         // optional int32 string_value = 5;
         /**
          * <code>optional int32 string_value = 5;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         boolean hasStringValue();
         /**
          * <code>optional int32 string_value = 5;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         int getStringValue();
 
@@ -2021,7 +2161,7 @@ public final class ProtoBuf {
          * <code>optional int32 class_id = 6;</code>
          *
          * <pre>
-         * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+         * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
          * </pre>
          */
         boolean hasClassId();
@@ -2029,7 +2169,7 @@ public final class ProtoBuf {
          * <code>optional int32 class_id = 6;</code>
          *
          * <pre>
-         * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+         * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
          * </pre>
          */
         int getClassId();
@@ -2037,18 +2177,10 @@ public final class ProtoBuf {
         // optional int32 enum_value_id = 7;
         /**
          * <code>optional int32 enum_value_id = 7;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         boolean hasEnumValueId();
         /**
          * <code>optional int32 enum_value_id = 7;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         int getEnumValueId();
 
@@ -2446,20 +2578,12 @@ public final class ProtoBuf {
         private int stringValue_;
         /**
          * <code>optional int32 string_value = 5;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public boolean hasStringValue() {
           return ((bitField0_ & 0x00000010) == 0x00000010);
         }
         /**
          * <code>optional int32 string_value = 5;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public int getStringValue() {
           return stringValue_;
@@ -2472,7 +2596,7 @@ public final class ProtoBuf {
          * <code>optional int32 class_id = 6;</code>
          *
          * <pre>
-         * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+         * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
          * </pre>
          */
         public boolean hasClassId() {
@@ -2482,7 +2606,7 @@ public final class ProtoBuf {
          * <code>optional int32 class_id = 6;</code>
          *
          * <pre>
-         * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+         * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
          * </pre>
          */
         public int getClassId() {
@@ -2494,20 +2618,12 @@ public final class ProtoBuf {
         private int enumValueId_;
         /**
          * <code>optional int32 enum_value_id = 7;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public boolean hasEnumValueId() {
           return ((bitField0_ & 0x00000040) == 0x00000040);
         }
         /**
          * <code>optional int32 enum_value_id = 7;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public int getEnumValueId() {
           return enumValueId_;
@@ -3081,30 +3197,18 @@ public final class ProtoBuf {
           private int stringValue_ ;
           /**
            * <code>optional int32 string_value = 5;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public boolean hasStringValue() {
             return ((bitField0_ & 0x00000010) == 0x00000010);
           }
           /**
            * <code>optional int32 string_value = 5;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public int getStringValue() {
             return stringValue_;
           }
           /**
            * <code>optional int32 string_value = 5;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public Builder setStringValue(int value) {
             bitField0_ |= 0x00000010;
@@ -3114,10 +3218,6 @@ public final class ProtoBuf {
           }
           /**
            * <code>optional int32 string_value = 5;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public Builder clearStringValue() {
             bitField0_ = (bitField0_ & ~0x00000010);
@@ -3132,7 +3232,7 @@ public final class ProtoBuf {
            * <code>optional int32 class_id = 6;</code>
            *
            * <pre>
-           * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+           * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
            * </pre>
            */
           public boolean hasClassId() {
@@ -3142,7 +3242,7 @@ public final class ProtoBuf {
            * <code>optional int32 class_id = 6;</code>
            *
            * <pre>
-           * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+           * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
            * </pre>
            */
           public int getClassId() {
@@ -3152,7 +3252,7 @@ public final class ProtoBuf {
            * <code>optional int32 class_id = 6;</code>
            *
            * <pre>
-           * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+           * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
            * </pre>
            */
           public Builder setClassId(int value) {
@@ -3165,7 +3265,7 @@ public final class ProtoBuf {
            * <code>optional int32 class_id = 6;</code>
            *
            * <pre>
-           * If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+           * If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
            * </pre>
            */
           public Builder clearClassId() {
@@ -3179,30 +3279,18 @@ public final class ProtoBuf {
           private int enumValueId_ ;
           /**
            * <code>optional int32 enum_value_id = 7;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public boolean hasEnumValueId() {
             return ((bitField0_ & 0x00000040) == 0x00000040);
           }
           /**
            * <code>optional int32 enum_value_id = 7;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public int getEnumValueId() {
             return enumValueId_;
           }
           /**
            * <code>optional int32 enum_value_id = 7;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public Builder setEnumValueId(int value) {
             bitField0_ |= 0x00000040;
@@ -3212,10 +3300,6 @@ public final class ProtoBuf {
           }
           /**
            * <code>optional int32 enum_value_id = 7;</code>
-           *
-           * <pre>
-           * id in StringTable
-           * </pre>
            */
           public Builder clearEnumValueId() {
             bitField0_ = (bitField0_ & ~0x00000040);
@@ -3427,20 +3511,12 @@ public final class ProtoBuf {
       private int nameId_;
       /**
        * <code>required int32 name_id = 1;</code>
-       *
-       * <pre>
-       * id in StringTable
-       * </pre>
        */
       public boolean hasNameId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>required int32 name_id = 1;</code>
-       *
-       * <pre>
-       * id in StringTable
-       * </pre>
        */
       public int getNameId() {
         return nameId_;
@@ -3692,30 +3768,18 @@ public final class ProtoBuf {
         private int nameId_ ;
         /**
          * <code>required int32 name_id = 1;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public boolean hasNameId() {
           return ((bitField0_ & 0x00000001) == 0x00000001);
         }
         /**
          * <code>required int32 name_id = 1;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public int getNameId() {
           return nameId_;
         }
         /**
          * <code>required int32 name_id = 1;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public Builder setNameId(int value) {
           bitField0_ |= 0x00000001;
@@ -3725,10 +3789,6 @@ public final class ProtoBuf {
         }
         /**
          * <code>required int32 name_id = 1;</code>
-         *
-         * <pre>
-         * id in StringTable
-         * </pre>
          */
         public Builder clearNameId() {
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -3815,20 +3875,12 @@ public final class ProtoBuf {
     private int id_;
     /**
      * <code>required int32 id = 1;</code>
-     *
-     * <pre>
-     * Class FQ name id
-     * </pre>
      */
     public boolean hasId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
      * <code>required int32 id = 1;</code>
-     *
-     * <pre>
-     * Class FQ name id
-     * </pre>
      */
     public int getId() {
       return id_;
@@ -4104,30 +4156,18 @@ public final class ProtoBuf {
       private int id_ ;
       /**
        * <code>required int32 id = 1;</code>
-       *
-       * <pre>
-       * Class FQ name id
-       * </pre>
        */
       public boolean hasId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>required int32 id = 1;</code>
-       *
-       * <pre>
-       * Class FQ name id
-       * </pre>
        */
       public int getId() {
         return id_;
       }
       /**
        * <code>required int32 id = 1;</code>
-       *
-       * <pre>
-       * Class FQ name id
-       * </pre>
        */
       public Builder setId(int value) {
         bitField0_ |= 0x00000001;
@@ -4137,10 +4177,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>required int32 id = 1;</code>
-       *
-       * <pre>
-       * Class FQ name id
-       * </pre>
        */
       public Builder clearId() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -4319,7 +4355,6 @@ public final class ProtoBuf {
      * <code>optional int32 flexible_type_capabilities_id = 4;</code>
      *
      * <pre>
-     * Id in the StringTable
      * If this field is set, the type is flexible.
      * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
@@ -4329,7 +4364,6 @@ public final class ProtoBuf {
      * <code>optional int32 flexible_type_capabilities_id = 4;</code>
      *
      * <pre>
-     * Id in the StringTable
      * If this field is set, the type is flexible.
      * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
@@ -4339,40 +4373,20 @@ public final class ProtoBuf {
     // optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-     *
-     * <pre>
-     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-     * to represent flexible types is too many wasted bytes.
-     * </pre>
      */
     boolean hasFlexibleUpperBound();
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-     *
-     * <pre>
-     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-     * to represent flexible types is too many wasted bytes.
-     * </pre>
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getFlexibleUpperBound();
 
     // optional int32 class_name = 6;
     /**
      * <code>optional int32 class_name = 6;</code>
-     *
-     * <pre>
-     * fqName id
-     * </pre>
      */
     boolean hasClassName();
     /**
      * <code>optional int32 class_name = 6;</code>
-     *
-     * <pre>
-     * fqName id
-     * </pre>
      */
     int getClassName();
 
@@ -4381,7 +4395,7 @@ public final class ProtoBuf {
      * <code>optional int32 type_parameter = 7;</code>
      *
      * <pre>
-     * type parameter id
+     * id of the type parameter
      * </pre>
      */
     boolean hasTypeParameter();
@@ -4389,7 +4403,7 @@ public final class ProtoBuf {
      * <code>optional int32 type_parameter = 7;</code>
      *
      * <pre>
-     * type parameter id
+     * id of the type parameter
      * </pre>
      */
     int getTypeParameter();
@@ -5150,7 +5164,6 @@ public final class ProtoBuf {
      * <code>optional int32 flexible_type_capabilities_id = 4;</code>
      *
      * <pre>
-     * Id in the StringTable
      * If this field is set, the type is flexible.
      * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
@@ -5162,7 +5175,6 @@ public final class ProtoBuf {
      * <code>optional int32 flexible_type_capabilities_id = 4;</code>
      *
      * <pre>
-     * Id in the StringTable
      * If this field is set, the type is flexible.
      * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
@@ -5176,24 +5188,12 @@ public final class ProtoBuf {
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type flexibleUpperBound_;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-     *
-     * <pre>
-     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-     * to represent flexible types is too many wasted bytes.
-     * </pre>
      */
     public boolean hasFlexibleUpperBound() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-     *
-     * <pre>
-     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-     * to represent flexible types is too many wasted bytes.
-     * </pre>
      */
     public org.jetbrains.kotlin.serialization.ProtoBuf.Type getFlexibleUpperBound() {
       return flexibleUpperBound_;
@@ -5204,20 +5204,12 @@ public final class ProtoBuf {
     private int className_;
     /**
      * <code>optional int32 class_name = 6;</code>
-     *
-     * <pre>
-     * fqName id
-     * </pre>
      */
     public boolean hasClassName() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int32 class_name = 6;</code>
-     *
-     * <pre>
-     * fqName id
-     * </pre>
      */
     public int getClassName() {
       return className_;
@@ -5230,7 +5222,7 @@ public final class ProtoBuf {
      * <code>optional int32 type_parameter = 7;</code>
      *
      * <pre>
-     * type parameter id
+     * id of the type parameter
      * </pre>
      */
     public boolean hasTypeParameter() {
@@ -5240,7 +5232,7 @@ public final class ProtoBuf {
      * <code>optional int32 type_parameter = 7;</code>
      *
      * <pre>
-     * type parameter id
+     * id of the type parameter
      * </pre>
      */
     public int getTypeParameter() {
@@ -5726,7 +5718,6 @@ public final class ProtoBuf {
        * <code>optional int32 flexible_type_capabilities_id = 4;</code>
        *
        * <pre>
-       * Id in the StringTable
        * If this field is set, the type is flexible.
        * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
@@ -5738,7 +5729,6 @@ public final class ProtoBuf {
        * <code>optional int32 flexible_type_capabilities_id = 4;</code>
        *
        * <pre>
-       * Id in the StringTable
        * If this field is set, the type is flexible.
        * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
@@ -5750,7 +5740,6 @@ public final class ProtoBuf {
        * <code>optional int32 flexible_type_capabilities_id = 4;</code>
        *
        * <pre>
-       * Id in the StringTable
        * If this field is set, the type is flexible.
        * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
@@ -5765,7 +5754,6 @@ public final class ProtoBuf {
        * <code>optional int32 flexible_type_capabilities_id = 4;</code>
        *
        * <pre>
-       * Id in the StringTable
        * If this field is set, the type is flexible.
        * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
@@ -5781,36 +5769,18 @@ public final class ProtoBuf {
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public boolean hasFlexibleUpperBound() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public org.jetbrains.kotlin.serialization.ProtoBuf.Type getFlexibleUpperBound() {
         return flexibleUpperBound_;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public Builder setFlexibleUpperBound(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
         if (value == null) {
@@ -5823,12 +5793,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public Builder setFlexibleUpperBound(
           org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
@@ -5839,12 +5803,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public Builder mergeFlexibleUpperBound(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
         if (((bitField0_ & 0x00000008) == 0x00000008) &&
@@ -5860,12 +5818,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
-       *
-       * <pre>
-       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
-       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
-       * to represent flexible types is too many wasted bytes.
-       * </pre>
        */
       public Builder clearFlexibleUpperBound() {
         flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
@@ -5878,30 +5830,18 @@ public final class ProtoBuf {
       private int className_ ;
       /**
        * <code>optional int32 class_name = 6;</code>
-       *
-       * <pre>
-       * fqName id
-       * </pre>
        */
       public boolean hasClassName() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
        * <code>optional int32 class_name = 6;</code>
-       *
-       * <pre>
-       * fqName id
-       * </pre>
        */
       public int getClassName() {
         return className_;
       }
       /**
        * <code>optional int32 class_name = 6;</code>
-       *
-       * <pre>
-       * fqName id
-       * </pre>
        */
       public Builder setClassName(int value) {
         bitField0_ |= 0x00000010;
@@ -5911,10 +5851,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional int32 class_name = 6;</code>
-       *
-       * <pre>
-       * fqName id
-       * </pre>
        */
       public Builder clearClassName() {
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -5929,7 +5865,7 @@ public final class ProtoBuf {
        * <code>optional int32 type_parameter = 7;</code>
        *
        * <pre>
-       * type parameter id
+       * id of the type parameter
        * </pre>
        */
       public boolean hasTypeParameter() {
@@ -5939,7 +5875,7 @@ public final class ProtoBuf {
        * <code>optional int32 type_parameter = 7;</code>
        *
        * <pre>
-       * type parameter id
+       * id of the type parameter
        * </pre>
        */
       public int getTypeParameter() {
@@ -5949,7 +5885,7 @@ public final class ProtoBuf {
        * <code>optional int32 type_parameter = 7;</code>
        *
        * <pre>
-       * type parameter id
+       * id of the type parameter
        * </pre>
        */
       public Builder setTypeParameter(int value) {
@@ -5962,7 +5898,7 @@ public final class ProtoBuf {
        * <code>optional int32 type_parameter = 7;</code>
        *
        * <pre>
-       * type parameter id
+       * id of the type parameter
        * </pre>
        */
       public Builder clearTypeParameter() {
@@ -5999,18 +5935,10 @@ public final class ProtoBuf {
     // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     boolean hasName();
     /**
      * <code>required int32 name = 2;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     int getName();
 
@@ -6240,20 +6168,12 @@ public final class ProtoBuf {
     private int name_;
     /**
      * <code>required int32 name = 2;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
      * <code>required int32 name = 2;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     public int getName() {
       return name_;
@@ -6653,30 +6573,18 @@ public final class ProtoBuf {
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public int getName() {
         return name_;
       }
       /**
        * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000002;
@@ -6686,10 +6594,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -6915,9 +6819,9 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotation
+     *hasAnnotations
      *ClassKind
-     *is_inner
+     *isInner
      * </pre>
      */
     boolean hasFlags();
@@ -6928,9 +6832,9 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotation
+     *hasAnnotations
      *ClassKind
-     *is_inner
+     *isInner
      * </pre>
      */
     int getFlags();
@@ -6948,18 +6852,10 @@ public final class ProtoBuf {
     // optional int32 companion_object_name = 4;
     /**
      * <code>optional int32 companion_object_name = 4;</code>
-     *
-     * <pre>
-     * If this field is present, it contains the name of companion object.
-     * </pre>
      */
     boolean hasCompanionObjectName();
     /**
      * <code>optional int32 companion_object_name = 4;</code>
-     *
-     * <pre>
-     * If this field is present, it contains the name of companion object.
-     * </pre>
      */
     int getCompanionObjectName();
 
@@ -6996,29 +6892,14 @@ public final class ProtoBuf {
     // repeated int32 nested_class_name = 7 [packed = true];
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     java.util.List<java.lang.Integer> getNestedClassNameList();
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     int getNestedClassNameCount();
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     int getNestedClassName(int index);
 
@@ -7834,9 +7715,9 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotation
+     *hasAnnotations
      *ClassKind
-     *is_inner
+     *isInner
      * </pre>
      */
     public boolean hasFlags() {
@@ -7849,9 +7730,9 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotation
+     *hasAnnotations
      *ClassKind
-     *is_inner
+     *isInner
      * </pre>
      */
     public int getFlags() {
@@ -7879,20 +7760,12 @@ public final class ProtoBuf {
     private int companionObjectName_;
     /**
      * <code>optional int32 companion_object_name = 4;</code>
-     *
-     * <pre>
-     * If this field is present, it contains the name of companion object.
-     * </pre>
      */
     public boolean hasCompanionObjectName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>optional int32 companion_object_name = 4;</code>
-     *
-     * <pre>
-     * If this field is present, it contains the name of companion object.
-     * </pre>
      */
     public int getCompanionObjectName() {
       return companionObjectName_;
@@ -7975,11 +7848,6 @@ public final class ProtoBuf {
     private java.util.List<java.lang.Integer> nestedClassName_;
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     public java.util.List<java.lang.Integer>
         getNestedClassNameList() {
@@ -7987,22 +7855,12 @@ public final class ProtoBuf {
     }
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     public int getNestedClassNameCount() {
       return nestedClassName_.size();
     }
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-     *
-     * <pre>
-     * we store only names, because the actual information must reside in the corresponding .class files,
-     * to be obtainable through reflection at runtime
-     * </pre>
      */
     public int getNestedClassName(int index) {
       return nestedClassName_.get(index);
@@ -8633,9 +8491,9 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotation
+       *hasAnnotations
        *ClassKind
-       *is_inner
+       *isInner
        * </pre>
        */
       public boolean hasFlags() {
@@ -8648,9 +8506,9 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotation
+       *hasAnnotations
        *ClassKind
-       *is_inner
+       *isInner
        * </pre>
        */
       public int getFlags() {
@@ -8663,9 +8521,9 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotation
+       *hasAnnotations
        *ClassKind
-       *is_inner
+       *isInner
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -8681,9 +8539,9 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotation
+       *hasAnnotations
        *ClassKind
-       *is_inner
+       *isInner
        * </pre>
        */
       public Builder clearFlags() {
@@ -8730,30 +8588,18 @@ public final class ProtoBuf {
       private int companionObjectName_ ;
       /**
        * <code>optional int32 companion_object_name = 4;</code>
-       *
-       * <pre>
-       * If this field is present, it contains the name of companion object.
-       * </pre>
        */
       public boolean hasCompanionObjectName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
        * <code>optional int32 companion_object_name = 4;</code>
-       *
-       * <pre>
-       * If this field is present, it contains the name of companion object.
-       * </pre>
        */
       public int getCompanionObjectName() {
         return companionObjectName_;
       }
       /**
        * <code>optional int32 companion_object_name = 4;</code>
-       *
-       * <pre>
-       * If this field is present, it contains the name of companion object.
-       * </pre>
        */
       public Builder setCompanionObjectName(int value) {
         bitField0_ |= 0x00000004;
@@ -8763,10 +8609,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional int32 companion_object_name = 4;</code>
-       *
-       * <pre>
-       * If this field is present, it contains the name of companion object.
-       * </pre>
        */
       public Builder clearCompanionObjectName() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -9035,11 +8877,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public java.util.List<java.lang.Integer>
           getNestedClassNameList() {
@@ -9047,33 +8884,18 @@ public final class ProtoBuf {
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public int getNestedClassNameCount() {
         return nestedClassName_.size();
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public int getNestedClassName(int index) {
         return nestedClassName_.get(index);
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public Builder setNestedClassName(
           int index, int value) {
@@ -9084,11 +8906,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public Builder addNestedClassName(int value) {
         ensureNestedClassNameIsMutable();
@@ -9098,11 +8915,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public Builder addAllNestedClassName(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -9113,11 +8925,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
-       *
-       * <pre>
-       * we store only names, because the actual information must reside in the corresponding .class files,
-       * to be obtainable through reflection at runtime
-       * </pre>
        */
       public Builder clearNestedClassName() {
         nestedClassName_ = java.util.Collections.emptyList();
@@ -10037,7 +9844,7 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      *CallableKind
      *MemberKind
      *hasGetter
@@ -10046,6 +9853,7 @@ public final class ProtoBuf {
      *isConst
      *lateinit
      *isOperator
+     *isInfix
      * </pre>
      */
     boolean hasFlags();
@@ -10056,7 +9864,7 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      *CallableKind
      *MemberKind
      *hasGetter
@@ -10065,6 +9873,7 @@ public final class ProtoBuf {
      *isConst
      *lateinit
      *isOperator
+     *isInfix
      * </pre>
      */
     int getFlags();
@@ -10078,7 +9887,7 @@ public final class ProtoBuf {
      *isNotDefault
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      * </pre>
      */
     boolean hasGetterFlags();
@@ -10090,7 +9899,7 @@ public final class ProtoBuf {
      *isNotDefault
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      * </pre>
      */
     int getGetterFlags();
@@ -10133,41 +9942,33 @@ public final class ProtoBuf {
     // required int32 name = 6;
     /**
      * <code>required int32 name = 6;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     boolean hasName();
     /**
      * <code>required int32 name = 6;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     int getName();
 
-    // repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;
+    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> 
+    java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> 
         getValueParameterList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index);
+    org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter getValueParameter(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
@@ -10261,10 +10062,10 @@ public final class ProtoBuf {
             }
             case 58: {
               if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-                valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter>();
+                valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter>();
                 mutable_bitField0_ |= 0x00000040;
               }
-              valueParameter_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.PARSER, extensionRegistry));
+              valueParameter_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.PARSER, extensionRegistry));
               break;
             }
             case 66: {
@@ -10322,948 +10123,6 @@ public final class ProtoBuf {
       return PARSER;
     }
 
-    /**
-     * Protobuf enum {@code org.jetbrains.kotlin.serialization.Callable.MemberKind}
-     */
-    public enum MemberKind
-        implements com.google.protobuf.Internal.EnumLite {
-      /**
-       * <code>DECLARATION = 0;</code>
-       *
-       * <pre>
-       * 2 bits
-       * </pre>
-       */
-      DECLARATION(0, 0),
-      /**
-       * <code>FAKE_OVERRIDE = 1;</code>
-       */
-      FAKE_OVERRIDE(1, 1),
-      /**
-       * <code>DELEGATION = 2;</code>
-       */
-      DELEGATION(2, 2),
-      /**
-       * <code>SYNTHESIZED = 3;</code>
-       */
-      SYNTHESIZED(3, 3),
-      ;
-
-      /**
-       * <code>DECLARATION = 0;</code>
-       *
-       * <pre>
-       * 2 bits
-       * </pre>
-       */
-      public static final int DECLARATION_VALUE = 0;
-      /**
-       * <code>FAKE_OVERRIDE = 1;</code>
-       */
-      public static final int FAKE_OVERRIDE_VALUE = 1;
-      /**
-       * <code>DELEGATION = 2;</code>
-       */
-      public static final int DELEGATION_VALUE = 2;
-      /**
-       * <code>SYNTHESIZED = 3;</code>
-       */
-      public static final int SYNTHESIZED_VALUE = 3;
-
-
-      public final int getNumber() { return value; }
-
-      public static MemberKind valueOf(int value) {
-        switch (value) {
-          case 0: return DECLARATION;
-          case 1: return FAKE_OVERRIDE;
-          case 2: return DELEGATION;
-          case 3: return SYNTHESIZED;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<MemberKind>() {
-              public MemberKind findValueByNumber(int number) {
-                return MemberKind.valueOf(number);
-              }
-            };
-
-      private final int value;
-
-      private MemberKind(int index, int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Callable.MemberKind)
-    }
-
-    /**
-     * Protobuf enum {@code org.jetbrains.kotlin.serialization.Callable.CallableKind}
-     */
-    public enum CallableKind
-        implements com.google.protobuf.Internal.EnumLite {
-      /**
-       * <code>FUN = 0;</code>
-       *
-       * <pre>
-       * 2 bits
-       * </pre>
-       */
-      FUN(0, 0),
-      /**
-       * <code>VAL = 1;</code>
-       */
-      VAL(1, 1),
-      /**
-       * <code>VAR = 2;</code>
-       */
-      VAR(2, 2),
-      /**
-       * <code>CONSTRUCTOR = 3;</code>
-       */
-      CONSTRUCTOR(3, 3),
-      ;
-
-      /**
-       * <code>FUN = 0;</code>
-       *
-       * <pre>
-       * 2 bits
-       * </pre>
-       */
-      public static final int FUN_VALUE = 0;
-      /**
-       * <code>VAL = 1;</code>
-       */
-      public static final int VAL_VALUE = 1;
-      /**
-       * <code>VAR = 2;</code>
-       */
-      public static final int VAR_VALUE = 2;
-      /**
-       * <code>CONSTRUCTOR = 3;</code>
-       */
-      public static final int CONSTRUCTOR_VALUE = 3;
-
-
-      public final int getNumber() { return value; }
-
-      public static CallableKind valueOf(int value) {
-        switch (value) {
-          case 0: return FUN;
-          case 1: return VAL;
-          case 2: return VAR;
-          case 3: return CONSTRUCTOR;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<CallableKind>() {
-              public CallableKind findValueByNumber(int number) {
-                return CallableKind.valueOf(number);
-              }
-            };
-
-      private final int value;
-
-      private CallableKind(int index, int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Callable.CallableKind)
-    }
-
-    public interface ValueParameterOrBuilder extends 
-         com.google.protobuf.GeneratedMessageLite.
-              ExtendableMessageOrBuilder<ValueParameter> {
-
-      // optional int32 flags = 1;
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *declaresDefault
-       *has_annotations
-       * </pre>
-       */
-      boolean hasFlags();
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *declaresDefault
-       *has_annotations
-       * </pre>
-       */
-      int getFlags();
-
-      // required int32 name = 2;
-      /**
-       * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
-       */
-      boolean hasName();
-      /**
-       * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
-       */
-      int getName();
-
-      // required .org.jetbrains.kotlin.serialization.Type type = 3;
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-       */
-      boolean hasType();
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-       */
-      org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
-
-      // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-       */
-      boolean hasVarargElementType();
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-       */
-      org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType();
-    }
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.Callable.ValueParameter}
-     */
-    public static final class ValueParameter extends
-        com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
-          ValueParameter> implements ValueParameterOrBuilder {
-      // Use ValueParameter.newBuilder() to construct.
-      private ValueParameter(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter, ?> builder) {
-        super(builder);
-
-      }
-      private ValueParameter(boolean noInit) {}
-
-      private static final ValueParameter defaultInstance;
-      public static ValueParameter getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public ValueParameter getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-
-      private ValueParameter(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        initFields();
-        int mutable_bitField0_ = 0;
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownField(input,
-                                       extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 8: {
-                bitField0_ |= 0x00000001;
-                flags_ = input.readInt32();
-                break;
-              }
-              case 16: {
-                bitField0_ |= 0x00000002;
-                name_ = input.readInt32();
-                break;
-              }
-              case 26: {
-                org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder subBuilder = null;
-                if (((bitField0_ & 0x00000004) == 0x00000004)) {
-                  subBuilder = type_.toBuilder();
-                }
-                type_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Type.PARSER, extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(type_);
-                  type_ = subBuilder.buildPartial();
-                }
-                bitField0_ |= 0x00000004;
-                break;
-              }
-              case 34: {
-                org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder subBuilder = null;
-                if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                  subBuilder = varargElementType_.toBuilder();
-                }
-                varargElementType_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Type.PARSER, extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(varargElementType_);
-                  varargElementType_ = subBuilder.buildPartial();
-                }
-                bitField0_ |= 0x00000008;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
-        } finally {
-          makeExtensionsImmutable();
-        }
-      }
-      public static com.google.protobuf.Parser<ValueParameter> PARSER =
-          new com.google.protobuf.AbstractParser<ValueParameter>() {
-        public ValueParameter parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new ValueParameter(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<ValueParameter> getParserForType() {
-        return PARSER;
-      }
-
-      private int bitField0_;
-      // optional int32 flags = 1;
-      public static final int FLAGS_FIELD_NUMBER = 1;
-      private int flags_;
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *declaresDefault
-       *has_annotations
-       * </pre>
-       */
-      public boolean hasFlags() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *declaresDefault
-       *has_annotations
-       * </pre>
-       */
-      public int getFlags() {
-        return flags_;
-      }
-
-      // required int32 name = 2;
-      public static final int NAME_FIELD_NUMBER = 2;
-      private int name_;
-      /**
-       * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required int32 name = 2;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
-       */
-      public int getName() {
-        return name_;
-      }
-
-      // required .org.jetbrains.kotlin.serialization.Type type = 3;
-      public static final int TYPE_FIELD_NUMBER = 3;
-      private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-       */
-      public boolean hasType() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-       */
-      public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
-        return type_;
-      }
-
-      // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
-      public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 4;
-      private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-       */
-      public boolean hasVarargElementType() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType() {
-        return varargElementType_;
-      }
-
-      private void initFields() {
-        flags_ = 0;
-        name_ = 0;
-        type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-        varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
-
-        if (!hasName()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (!hasType()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (!getType().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (hasVarargElementType()) {
-          if (!getVarargElementType().isInitialized()) {
-            memoizedIsInitialized = 0;
-            return false;
-          }
-        }
-        if (!extensionsAreInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        com.google.protobuf.GeneratedMessageLite
-          .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter>.ExtensionWriter extensionWriter =
-            newExtensionWriter();
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeInt32(1, flags_);
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          output.writeInt32(2, name_);
-        }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          output.writeMessage(3, type_);
-        }
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          output.writeMessage(4, varargElementType_);
-        }
-        extensionWriter.writeUntil(200, output);
-      }
-
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(1, flags_);
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(2, name_);
-        }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(3, type_);
-        }
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(4, varargElementType_);
-        }
-        size += extensionsSerializedSize();
-        memoizedSerializedSize = size;
-        return size;
-      }
-
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-
-      /**
-       * Protobuf type {@code org.jetbrains.kotlin.serialization.Callable.ValueParameter}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
-            org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameterOrBuilder {
-        // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private void maybeForceBuilderInitialization() {
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-
-        public Builder clear() {
-          super.clear();
-          flags_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000001);
-          name_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000002);
-          type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-          bitField0_ = (bitField0_ & ~0x00000008);
-          return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-
-        public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter getDefaultInstanceForType() {
-          return org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance();
-        }
-
-        public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter build() {
-          org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter buildPartial() {
-          org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter result = new org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-            to_bitField0_ |= 0x00000001;
-          }
-          result.flags_ = flags_;
-          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-            to_bitField0_ |= 0x00000002;
-          }
-          result.name_ = name_;
-          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-            to_bitField0_ |= 0x00000004;
-          }
-          result.type_ = type_;
-          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-            to_bitField0_ |= 0x00000008;
-          }
-          result.varargElementType_ = varargElementType_;
-          result.bitField0_ = to_bitField0_;
-          return result;
-        }
-
-        public Builder mergeFrom(org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter other) {
-          if (other == org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance()) return this;
-          if (other.hasFlags()) {
-            setFlags(other.getFlags());
-          }
-          if (other.hasName()) {
-            setName(other.getName());
-          }
-          if (other.hasType()) {
-            mergeType(other.getType());
-          }
-          if (other.hasVarargElementType()) {
-            mergeVarargElementType(other.getVarargElementType());
-          }
-          this.mergeExtensionFields(other);
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          if (!hasName()) {
-            
-            return false;
-          }
-          if (!hasType()) {
-            
-            return false;
-          }
-          if (!getType().isInitialized()) {
-            
-            return false;
-          }
-          if (hasVarargElementType()) {
-            if (!getVarargElementType().isInitialized()) {
-              
-              return false;
-            }
-          }
-          if (!extensionsAreInitialized()) {
-            
-            return false;
-          }
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter) e.getUnfinishedMessage();
-            throw e;
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        // optional int32 flags = 1;
-        private int flags_ ;
-        /**
-         * <code>optional int32 flags = 1;</code>
-         *
-         * <pre>
-         *
-         *declaresDefault
-         *has_annotations
-         * </pre>
-         */
-        public boolean hasFlags() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        /**
-         * <code>optional int32 flags = 1;</code>
-         *
-         * <pre>
-         *
-         *declaresDefault
-         *has_annotations
-         * </pre>
-         */
-        public int getFlags() {
-          return flags_;
-        }
-        /**
-         * <code>optional int32 flags = 1;</code>
-         *
-         * <pre>
-         *
-         *declaresDefault
-         *has_annotations
-         * </pre>
-         */
-        public Builder setFlags(int value) {
-          bitField0_ |= 0x00000001;
-          flags_ = value;
-          
-          return this;
-        }
-        /**
-         * <code>optional int32 flags = 1;</code>
-         *
-         * <pre>
-         *
-         *declaresDefault
-         *has_annotations
-         * </pre>
-         */
-        public Builder clearFlags() {
-          bitField0_ = (bitField0_ & ~0x00000001);
-          flags_ = 0;
-          
-          return this;
-        }
-
-        // required int32 name = 2;
-        private int name_ ;
-        /**
-         * <code>required int32 name = 2;</code>
-         *
-         * <pre>
-         * Id in the StringTable
-         * </pre>
-         */
-        public boolean hasName() {
-          return ((bitField0_ & 0x00000002) == 0x00000002);
-        }
-        /**
-         * <code>required int32 name = 2;</code>
-         *
-         * <pre>
-         * Id in the StringTable
-         * </pre>
-         */
-        public int getName() {
-          return name_;
-        }
-        /**
-         * <code>required int32 name = 2;</code>
-         *
-         * <pre>
-         * Id in the StringTable
-         * </pre>
-         */
-        public Builder setName(int value) {
-          bitField0_ |= 0x00000002;
-          name_ = value;
-          
-          return this;
-        }
-        /**
-         * <code>required int32 name = 2;</code>
-         *
-         * <pre>
-         * Id in the StringTable
-         * </pre>
-         */
-        public Builder clearName() {
-          bitField0_ = (bitField0_ & ~0x00000002);
-          name_ = 0;
-          
-          return this;
-        }
-
-        // required .org.jetbrains.kotlin.serialization.Type type = 3;
-        private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public boolean hasType() {
-          return ((bitField0_ & 0x00000004) == 0x00000004);
-        }
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
-          return type_;
-        }
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public Builder setType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          type_ = value;
-
-          bitField0_ |= 0x00000004;
-          return this;
-        }
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public Builder setType(
-            org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
-          type_ = builderForValue.build();
-
-          bitField0_ |= 0x00000004;
-          return this;
-        }
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public Builder mergeType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
-          if (((bitField0_ & 0x00000004) == 0x00000004) &&
-              type_ != org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance()) {
-            type_ =
-              org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder(type_).mergeFrom(value).buildPartial();
-          } else {
-            type_ = value;
-          }
-
-          bitField0_ |= 0x00000004;
-          return this;
-        }
-        /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
-         */
-        public Builder clearType() {
-          type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-
-          bitField0_ = (bitField0_ & ~0x00000004);
-          return this;
-        }
-
-        // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
-        private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public boolean hasVarargElementType() {
-          return ((bitField0_ & 0x00000008) == 0x00000008);
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType() {
-          return varargElementType_;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public Builder setVarargElementType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          varargElementType_ = value;
-
-          bitField0_ |= 0x00000008;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public Builder setVarargElementType(
-            org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
-          varargElementType_ = builderForValue.build();
-
-          bitField0_ |= 0x00000008;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public Builder mergeVarargElementType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
-          if (((bitField0_ & 0x00000008) == 0x00000008) &&
-              varargElementType_ != org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance()) {
-            varargElementType_ =
-              org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder(varargElementType_).mergeFrom(value).buildPartial();
-          } else {
-            varargElementType_ = value;
-          }
-
-          bitField0_ |= 0x00000008;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
-         */
-        public Builder clearVarargElementType() {
-          varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
-
-          bitField0_ = (bitField0_ & ~0x00000008);
-          return this;
-        }
-
-        // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Callable.ValueParameter)
-      }
-
-      static {
-        defaultInstance = new ValueParameter(true);
-        defaultInstance.initFields();
-      }
-
-      // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Callable.ValueParameter)
-    }
-
     private int bitField0_;
     // optional int32 flags = 1;
     public static final int FLAGS_FIELD_NUMBER = 1;
@@ -11275,7 +10134,7 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      *CallableKind
      *MemberKind
      *hasGetter
@@ -11284,6 +10143,7 @@ public final class ProtoBuf {
      *isConst
      *lateinit
      *isOperator
+     *isInfix
      * </pre>
      */
     public boolean hasFlags() {
@@ -11296,7 +10156,7 @@ public final class ProtoBuf {
      *
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      *CallableKind
      *MemberKind
      *hasGetter
@@ -11305,6 +10165,7 @@ public final class ProtoBuf {
      *isConst
      *lateinit
      *isOperator
+     *isInfix
      * </pre>
      */
     public int getFlags() {
@@ -11322,7 +10183,7 @@ public final class ProtoBuf {
      *isNotDefault
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      * </pre>
      */
     public boolean hasGetterFlags() {
@@ -11336,7 +10197,7 @@ public final class ProtoBuf {
      *isNotDefault
      *Visibility
      *Modality
-     *has_annotations
+     *hasAnnotations
      * </pre>
      */
     public int getGetterFlags() {
@@ -11416,51 +10277,43 @@ public final class ProtoBuf {
     private int name_;
     /**
      * <code>required int32 name = 6;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
      * <code>required int32 name = 6;</code>
-     *
-     * <pre>
-     * Id in the StringTable
-     * </pre>
      */
     public int getName() {
       return name_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;
+    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
     public static final int VALUE_PARAMETER_FIELD_NUMBER = 7;
-    private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> valueParameter_;
+    private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> getValueParameterList() {
+    public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> getValueParameterList() {
       return valueParameter_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameterOrBuilder> 
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameterOrBuilder> 
         getValueParameterOrBuilderList() {
       return valueParameter_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
@@ -11470,23 +10323,23 @@ public final class ProtoBuf {
       return valueParameter_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index) {
+    public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter getValueParameter(int index) {
       return valueParameter_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
      *
      * <pre>
      * Value parameters for functions and constructors, or setter value parameter for properties
      * </pre>
      */
-    public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameterOrBuilder getValueParameterOrBuilder(
+    public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameterOrBuilder getValueParameterOrBuilder(
         int index) {
       return valueParameter_.get(index);
     }
@@ -11909,7 +10762,7 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        *CallableKind
        *MemberKind
        *hasGetter
@@ -11918,6 +10771,7 @@ public final class ProtoBuf {
        *isConst
        *lateinit
        *isOperator
+       *isInfix
        * </pre>
        */
       public boolean hasFlags() {
@@ -11930,7 +10784,7 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        *CallableKind
        *MemberKind
        *hasGetter
@@ -11939,6 +10793,7 @@ public final class ProtoBuf {
        *isConst
        *lateinit
        *isOperator
+       *isInfix
        * </pre>
        */
       public int getFlags() {
@@ -11951,7 +10806,7 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        *CallableKind
        *MemberKind
        *hasGetter
@@ -11960,6 +10815,7 @@ public final class ProtoBuf {
        *isConst
        *lateinit
        *isOperator
+       *isInfix
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -11975,7 +10831,7 @@ public final class ProtoBuf {
        *
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        *CallableKind
        *MemberKind
        *hasGetter
@@ -11984,6 +10840,7 @@ public final class ProtoBuf {
        *isConst
        *lateinit
        *isOperator
+       *isInfix
        * </pre>
        */
       public Builder clearFlags() {
@@ -12003,7 +10860,7 @@ public final class ProtoBuf {
        *isNotDefault
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        * </pre>
        */
       public boolean hasGetterFlags() {
@@ -12017,7 +10874,7 @@ public final class ProtoBuf {
        *isNotDefault
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        * </pre>
        */
       public int getGetterFlags() {
@@ -12031,7 +10888,7 @@ public final class ProtoBuf {
        *isNotDefault
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        * </pre>
        */
       public Builder setGetterFlags(int value) {
@@ -12048,7 +10905,7 @@ public final class ProtoBuf {
        *isNotDefault
        *Visibility
        *Modality
-       *has_annotations
+       *hasAnnotations
        * </pre>
        */
       public Builder clearGetterFlags() {
@@ -12281,30 +11138,18 @@ public final class ProtoBuf {
       private int name_ ;
       /**
        * <code>required int32 name = 6;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000020) == 0x00000020);
       }
       /**
        * <code>required int32 name = 6;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public int getName() {
         return name_;
       }
       /**
        * <code>required int32 name = 6;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000020;
@@ -12314,10 +11159,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>required int32 name = 6;</code>
-       *
-       * <pre>
-       * Id in the StringTable
-       * </pre>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000020);
@@ -12326,28 +11167,28 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;
-      private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> valueParameter_ =
+      // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
+      private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_ =
         java.util.Collections.emptyList();
       private void ensureValueParameterIsMutable() {
         if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-          valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter>(valueParameter_);
+          valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter>(valueParameter_);
           bitField0_ |= 0x00000040;
          }
       }
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
-      public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> getValueParameterList() {
+      public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> getValueParameterList() {
         return java.util.Collections.unmodifiableList(valueParameter_);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
@@ -12357,24 +11198,24 @@ public final class ProtoBuf {
         return valueParameter_.size();
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
-      public org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index) {
+      public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter getValueParameter(int index) {
         return valueParameter_.get(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder setValueParameter(
-          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter value) {
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -12384,27 +11225,27 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder setValueParameter(
-          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.Builder builderForValue) {
         ensureValueParameterIsMutable();
         valueParameter_.set(index, builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
-      public Builder addValueParameter(org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter value) {
+      public Builder addValueParameter(org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -12414,14 +11255,14 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder addValueParameter(
-          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter value) {
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -12431,49 +11272,49 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder addValueParameter(
-          org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
+          org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.Builder builderForValue) {
         ensureValueParameterIsMutable();
         valueParameter_.add(builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder addValueParameter(
-          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.Builder builderForValue) {
         ensureValueParameterIsMutable();
         valueParameter_.add(index, builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
        * </pre>
        */
       public Builder addAllValueParameter(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter> values) {
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> values) {
         ensureValueParameterIsMutable();
         super.addAll(values, valueParameter_);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
@@ -12486,7 +11327,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable.ValueParameter value_parameter = 7;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
        *
        * <pre>
        * Value parameters for functions and constructors, or setter value parameter for properties
@@ -12569,6 +11410,752 @@ public final class ProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Callable)
+  }
+
+  public interface ValueParameterOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<ValueParameter> {
+
+    // optional int32 flags = 1;
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *
+     *declaresDefault
+     *hasAnnotations
+     * </pre>
+     */
+    boolean hasFlags();
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *
+     *declaresDefault
+     *hasAnnotations
+     * </pre>
+     */
+    int getFlags();
+
+    // required int32 name = 2;
+    /**
+     * <code>required int32 name = 2;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>required int32 name = 2;</code>
+     */
+    int getName();
+
+    // required .org.jetbrains.kotlin.serialization.Type type = 3;
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+     */
+    boolean hasType();
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
+
+    // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+     */
+    boolean hasVarargElementType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.ValueParameter}
+   */
+  public static final class ValueParameter extends
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        ValueParameter> implements ValueParameterOrBuilder {
+    // Use ValueParameter.newBuilder() to construct.
+    private ValueParameter(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter, ?> builder) {
+      super(builder);
+
+    }
+    private ValueParameter(boolean noInit) {}
+
+    private static final ValueParameter defaultInstance;
+    public static ValueParameter getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public ValueParameter getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private ValueParameter(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              name_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = type_.toBuilder();
+              }
+              type_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(type_);
+                type_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = varargElementType_.toBuilder();
+              }
+              varargElementType_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(varargElementType_);
+                varargElementType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static com.google.protobuf.Parser<ValueParameter> PARSER =
+        new com.google.protobuf.AbstractParser<ValueParameter>() {
+      public ValueParameter parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ValueParameter(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ValueParameter> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional int32 flags = 1;
+    public static final int FLAGS_FIELD_NUMBER = 1;
+    private int flags_;
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *
+     *declaresDefault
+     *hasAnnotations
+     * </pre>
+     */
+    public boolean hasFlags() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *
+     *declaresDefault
+     *hasAnnotations
+     * </pre>
+     */
+    public int getFlags() {
+      return flags_;
+    }
+
+    // required int32 name = 2;
+    public static final int NAME_FIELD_NUMBER = 2;
+    private int name_;
+    /**
+     * <code>required int32 name = 2;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required int32 name = 2;</code>
+     */
+    public int getName() {
+      return name_;
+    }
+
+    // required .org.jetbrains.kotlin.serialization.Type type = 3;
+    public static final int TYPE_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+     */
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
+      return type_;
+    }
+
+    // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
+    public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+     */
+    public boolean hasVarargElementType() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType() {
+      return varargElementType_;
+    }
+
+    private void initFields() {
+      flags_ = 0;
+      name_ = 0;
+      type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getType().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (hasVarargElementType()) {
+        if (!getVarargElementType().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, flags_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, name_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, type_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, varargElementType_);
+      }
+      extensionWriter.writeUntil(200, output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, flags_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, name_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, type_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, varargElementType_);
+      }
+      size += extensionsSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.ValueParameter}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameterOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        flags_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter build() {
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter buildPartial() {
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter result = new org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.flags_ = flags_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.name_ = name_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.varargElementType_ = varargElementType_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter other) {
+        if (other == org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance()) return this;
+        if (other.hasFlags()) {
+          setFlags(other.getFlags());
+        }
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        if (other.hasType()) {
+          mergeType(other.getType());
+        }
+        if (other.hasVarargElementType()) {
+          mergeVarargElementType(other.getVarargElementType());
+        }
+        this.mergeExtensionFields(other);
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
+        if (!hasType()) {
+          
+          return false;
+        }
+        if (!getType().isInitialized()) {
+          
+          return false;
+        }
+        if (hasVarargElementType()) {
+          if (!getVarargElementType().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional int32 flags = 1;
+      private int flags_ ;
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *
+       *declaresDefault
+       *hasAnnotations
+       * </pre>
+       */
+      public boolean hasFlags() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *
+       *declaresDefault
+       *hasAnnotations
+       * </pre>
+       */
+      public int getFlags() {
+        return flags_;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *
+       *declaresDefault
+       *hasAnnotations
+       * </pre>
+       */
+      public Builder setFlags(int value) {
+        bitField0_ |= 0x00000001;
+        flags_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *
+       *declaresDefault
+       *hasAnnotations
+       * </pre>
+       */
+      public Builder clearFlags() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        flags_ = 0;
+        
+        return this;
+      }
+
+      // required int32 name = 2;
+      private int name_ ;
+      /**
+       * <code>required int32 name = 2;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required int32 name = 2;</code>
+       */
+      public int getName() {
+        return name_;
+      }
+      /**
+       * <code>required int32 name = 2;</code>
+       */
+      public Builder setName(int value) {
+        bitField0_ |= 0x00000002;
+        name_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required int32 name = 2;</code>
+       */
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        name_ = 0;
+        
+        return this;
+      }
+
+      // required .org.jetbrains.kotlin.serialization.Type type = 3;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
+        return type_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public Builder setType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        type_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public Builder setType(
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
+        type_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public Builder mergeType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            type_ != org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance()) {
+          type_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder(type_).mergeFrom(value).buildPartial();
+        } else {
+          type_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.Type type = 3;</code>
+       */
+      public Builder clearType() {
+        type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public boolean hasVarargElementType() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType() {
+        return varargElementType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public Builder setVarargElementType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        varargElementType_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public Builder setVarargElementType(
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
+        varargElementType_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public Builder mergeVarargElementType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            varargElementType_ != org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance()) {
+          varargElementType_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder(varargElementType_).mergeFrom(value).buildPartial();
+        } else {
+          varargElementType_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
+       */
+      public Builder clearVarargElementType() {
+        varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.ValueParameter)
+    }
+
+    static {
+      defaultInstance = new ValueParameter(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.ValueParameter)
   }
 
 

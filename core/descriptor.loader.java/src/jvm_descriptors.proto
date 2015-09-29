@@ -107,7 +107,7 @@ extend org.jetbrains.kotlin.serialization.Type {
   optional bool is_raw = 101;
 }
 
-extend org.jetbrains.kotlin.serialization.Callable.ValueParameter {
+extend org.jetbrains.kotlin.serialization.ValueParameter {
   // Index of the corresponding parameter of this method in JVM (counting receiver parameters, enum constructor synthetic parameters, etc.)
   optional int32 index = 100;
 }

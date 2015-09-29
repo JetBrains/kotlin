@@ -3785,14 +3785,14 @@ public final class JvmProtoBuf {
         com.google.protobuf.WireFormat.FieldType.BOOL);
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter,
       java.lang.Integer> index = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
         0,
         null,
         null,

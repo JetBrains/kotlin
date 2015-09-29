@@ -138,7 +138,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
-            proto: ProtoBuf.Callable.ValueParameter
+            proto: ProtoBuf.ValueParameter
     ): List<A> {
         val methodSignature = getCallableSignature(callable, nameResolver, kind)
         if (methodSignature != null) {

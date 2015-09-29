@@ -48,7 +48,7 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
-            proto: ProtoBuf.Callable.ValueParameter
+            proto: ProtoBuf.ValueParameter
     ): List<ClassId> =
         proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
 

@@ -39,11 +39,9 @@ public class Flags {
 
     // Callables
 
-    public static final FlagField<ProtoBuf.Callable.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY,
-                                                                                                  ProtoBuf.Callable.CallableKind.values());
+    public static final FlagField<ProtoBuf.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY, ProtoBuf.CallableKind.values());
 
-    public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
-                                                                                              ProtoBuf.Callable.MemberKind.values());
+    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND, ProtoBuf.MemberKind.values());
     public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
@@ -117,7 +115,7 @@ public class Flags {
             @NotNull Visibility visibility,
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
-            @NotNull ProtoBuf.Callable.CallableKind callableKind,
+            @NotNull ProtoBuf.CallableKind callableKind,
             boolean hasGetter,
             boolean hasSetter,
             boolean hasConstant,
@@ -193,16 +191,16 @@ public class Flags {
     }
 
     @NotNull
-    private static ProtoBuf.Callable.MemberKind memberKind(@NotNull CallableMemberDescriptor.Kind kind) {
+    private static ProtoBuf.MemberKind memberKind(@NotNull CallableMemberDescriptor.Kind kind) {
         switch (kind) {
             case DECLARATION:
-                return ProtoBuf.Callable.MemberKind.DECLARATION;
+                return ProtoBuf.MemberKind.DECLARATION;
             case FAKE_OVERRIDE:
-                return ProtoBuf.Callable.MemberKind.FAKE_OVERRIDE;
+                return ProtoBuf.MemberKind.FAKE_OVERRIDE;
             case DELEGATION:
-                return ProtoBuf.Callable.MemberKind.DELEGATION;
+                return ProtoBuf.MemberKind.DELEGATION;
             case SYNTHESIZED:
-                return ProtoBuf.Callable.MemberKind.SYNTHESIZED;
+                return ProtoBuf.MemberKind.SYNTHESIZED;
         }
         throw new IllegalArgumentException("Unknown member kind: " + kind);
     }

@@ -273,20 +273,20 @@ public class DescriptorSerializer {
     }
 
     @NotNull
-    private static ProtoBuf.Callable.CallableKind callableKind(@NotNull CallableMemberDescriptor descriptor) {
+    private static ProtoBuf.CallableKind callableKind(@NotNull CallableMemberDescriptor descriptor) {
         if (descriptor instanceof PropertyDescriptor) {
-            return ((PropertyDescriptor) descriptor).isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
+            return ((PropertyDescriptor) descriptor).isVar() ? ProtoBuf.CallableKind.VAR : ProtoBuf.CallableKind.VAL;
         }
         if (descriptor instanceof ConstructorDescriptor) {
-            return ProtoBuf.Callable.CallableKind.CONSTRUCTOR;
+            return ProtoBuf.CallableKind.CONSTRUCTOR;
         }
         assert descriptor instanceof FunctionDescriptor : "Unknown descriptor class: " + descriptor.getClass();
-        return ProtoBuf.Callable.CallableKind.FUN;
+        return ProtoBuf.CallableKind.FUN;
     }
 
     @NotNull
-    private ProtoBuf.Callable.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
-        ProtoBuf.Callable.ValueParameter.Builder builder = ProtoBuf.Callable.ValueParameter.newBuilder();
+    private ProtoBuf.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
+        ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
 
         int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue());
         if (flags != 0) {

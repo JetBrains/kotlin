@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance

@@ -4578,11 +4578,11 @@ public final class DebugJvmProtoBuf {
         null);
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter,
       java.lang.Integer> index = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
@@ -4672,12 +4672,12 @@ public final class DebugJvmProtoBuf {
       "rains.kotlin.serialization.Type\030d \003(\0132.." +
       "org.jetbrains.kotlin.serialization.Annot" +
       "ation:8\n\006is_raw\022(.org.jetbrains.kotlin.s",
-      "erialization.Type\030e \001(\010:J\n\005index\022;.org.j" +
-      "etbrains.kotlin.serialization.Callable.V" +
-      "alueParameter\030d \001(\005:s\n\020class_annotation\022" +
-      ").org.jetbrains.kotlin.serialization.Cla" +
-      "ss\030d \003(\0132..org.jetbrains.kotlin.serializ" +
-      "ation.AnnotationB\022B\020DebugJvmProtoBuf"
+      "erialization.Type\030e \001(\010:A\n\005index\0222.org.j" +
+      "etbrains.kotlin.serialization.ValueParam" +
+      "eter\030d \001(\005:s\n\020class_annotation\022).org.jet" +
+      "brains.kotlin.serialization.Class\030d \003(\0132" +
+      "..org.jetbrains.kotlin.serialization.Ann" +
+      "otationB\022B\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

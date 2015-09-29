@@ -70,10 +70,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializeValueParameter(
-            @NotNull ValueParameterDescriptor descriptor,
-            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto
-    ) {
+    public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
             proto.setExtension(JvmProtoBuf.index, index);

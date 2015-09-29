@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -64,7 +64,7 @@ private class CallableClsStubBuilder(
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val isTopLevel: Boolean get() = protoContainer.packageFqName != null
     private val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
-    private val isConstructor = callableKind == ProtoBuf.Callable.CallableKind.CONSTRUCTOR
+    private val isConstructor = callableKind == CallableKind.CONSTRUCTOR
     private val isPrimaryConstructor = isConstructor && parent is KotlinClassStubImpl
     private val callableStub = doCreateCallableStub()
 
@@ -118,7 +118,7 @@ private class CallableClsStubBuilder(
         val callableName = c.nameResolver.getName(callableProto.getName())
 
         return when (callableKind) {
-            ProtoBuf.Callable.CallableKind.FUN -> {
+            CallableKind.FUN -> {
                 KotlinFunctionStubImpl(
                         parent,
                         callableName.ref(),
@@ -130,7 +130,7 @@ private class CallableClsStubBuilder(
                         hasTypeParameterListBeforeFunctionName = callableProto.getTypeParameterList().isNotEmpty()
                 )
             }
-            ProtoBuf.Callable.CallableKind.VAL, ProtoBuf.Callable.CallableKind.VAR -> {
+            CallableKind.VAL, CallableKind.VAR -> {
                 KotlinPropertyStubImpl(
                         parent,
                         callableName.ref(),
@@ -144,7 +144,7 @@ private class CallableClsStubBuilder(
                         fqName = c.containerFqName.child(callableName)
                 )
             }
-            ProtoBuf.Callable.CallableKind.CONSTRUCTOR -> {
+            CallableKind.CONSTRUCTOR -> {
                 if (isPrimaryConstructor)
                     KotlinPlaceHolderStubImpl(parent, JetStubElementTypes.PRIMARY_CONSTRUCTOR)
                 else
