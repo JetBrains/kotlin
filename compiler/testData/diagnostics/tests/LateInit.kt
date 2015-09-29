@@ -55,3 +55,11 @@ public abstract class AbstractClass {
 public class AbstractClassImpl : AbstractClass() {
     override lateinit var str: String
 }
+
+public class B {
+    lateinit var a: String
+
+    init {
+        a.length()
+    }
+}
