@@ -404,27 +404,6 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 }
 
 /**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use asIterable().sorted() instead.", ReplaceWith("asIterable().sorted()"))
-public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use asIterable().sortedBy(order) instead.", ReplaceWith("asIterable().sortedBy(order)"))
-public fun <T, V : Comparable<V>> Sequence<T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {

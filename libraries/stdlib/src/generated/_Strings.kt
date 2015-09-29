@@ -342,14 +342,6 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun String.reverse(): String {
-    return reversed()
-}
-
-/**
  * Returns a string with characters in reversed order.
  */
 public fun String.reversed(): String {

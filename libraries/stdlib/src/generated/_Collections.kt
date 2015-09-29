@@ -713,71 +713,11 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 /**
  * Returns a list with elements in reversed order.
  */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun <T> Iterable<T>.reverse(): List<T> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
 public fun <T> Iterable<T>.reversed(): List<T> {
     if (this is Collection && isEmpty()) return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("This method may change its behavior soon. Use sorted() instead.", ReplaceWith("sorted()"))
-public fun <T : Comparable<T>> Iterable<T>.sort(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a list of all elements, sorted by the specified [comparator].
- */
-@Deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
-public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, in descending order.
- */
-@Deprecated("This method may change its behavior soon. Use sortedDescending() instead.", ReplaceWith("sortedDescending()"))
-public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator { x, y -> y.compareTo(x) })
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, in descending order by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareByDescending(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
 }
 
 /**
@@ -816,27 +756,6 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun <T : Comparable<T>> Iterable<T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
 
