@@ -212,16 +212,6 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
 }
 
 /**
- * Exception thrown by the default implementation of property delegates which store values in a map
- * when the map does not contain the corresponding key.
- */
-@Deprecated("Do not throw or catch this exception, use NoSuchElementException instead.")
-public class KeyMissingException
-    @Deprecated("Throw NoSuchElementException instead.", ReplaceWith("NoSuchElementException(message)"))
-    constructor(message: String): NoSuchElementException(message)
-
-
-/**
  * Implements the core logic for a property delegate that stores property values in a map.
  * @param T the type of the object that owns the delegated property.
  * @param K the type of key in the map.
@@ -246,7 +236,7 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
      * @param property the property for which the value was requested.
      */
     protected open fun default(ref: T, property: PropertyMetadata): V {
-        throw KeyMissingException("The value for property ${property.name} is missing in $ref.")
+        throw NoSuchElementException("The value for property ${property.name} is missing in $ref.")
     }
 
     public override fun get(thisRef: T, property: PropertyMetadata) : V {
@@ -272,7 +262,7 @@ public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T
 }
 
 private val propertyNameSelector: (PropertyMetadata) -> String = {it.name}
-private val throwKeyNotFound: (Any?, Any?) -> Nothing = {thisRef, key -> throw KeyMissingException("The value for key $key is missing from $thisRef.")}
+private val throwKeyNotFound: (Any?, Any?) -> Nothing = {thisRef, key -> throw NoSuchElementException("The value for key $key is missing from $thisRef.") }
 
 /**
  * Implements a read-only property delegate that stores the property values in a given map instance and uses the given
