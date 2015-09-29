@@ -256,7 +256,7 @@ public class KotlinRuntimeLibraryUtil {
             File libraryJarPath = new File(localPath);
 
             if (FileUtil.filesEqual(updatedFile, libraryJarPath)) {
-                throw new IllegalArgumentException("Shouldn't be called for updating same file: " + updatedFile);
+                return;
             }
 
             FileUtil.copy(updatedFile, libraryJarPath);
