@@ -79,7 +79,6 @@
 
         <module>tools/runtime</module>
         <module>stdlib</module>
-        <module>stdlib/validator</module>
         <module>tools/kotlin-reflect</module>
 
         <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-->
