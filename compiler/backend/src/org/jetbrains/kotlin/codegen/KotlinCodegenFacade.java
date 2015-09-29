@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Sets;
-import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -70,12 +69,12 @@ public class KotlinCodegenFacade {
 
             JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
-            if (fileClassInfo.getTEMP_isMultifileClass()) {
+            if (fileClassInfo.getWithJvmMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
             }
 
             if (state.getPackageFacadesAsMultifileClasses()) {
-                if (!fileClassInfo.getTEMP_isMultifileClass()) {
+                if (!fileClassInfo.getWithJvmMultifileClass()) {
                     filesInMultifileClasses.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
                 }
             }

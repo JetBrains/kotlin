@@ -35,28 +35,25 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
-import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -78,7 +75,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.method;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -114,7 +110,7 @@ public class PackageCodegen {
                 JetFile sourceFile = getRepresentativePackageFile(files);
 
                 ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(
-                        PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
+                        JvmDeclarationOriginKt.PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
                         packageClassType, PackagePartClassUtils.getFilesWithCallables(files)
                 );
                 v.defineClass(sourceFile, V1_6,
@@ -177,18 +173,20 @@ public class PackageCodegen {
 
     private void generateDelegationsToPreviouslyCompiled(@NotNull @Mutable Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         for (final DeserializedCallableMemberDescriptor member : previouslyCompiledCallables) {
-            final FqName delegateToFqName = JvmFileClassUtil.getPartFqNameForDeserializedCallable(member);
-
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
                 public void run() {
-                    FieldOwnerContext context = getPackageFacadeContextForPreviouslyCompiled(delegateToFqName);
+                    JetTypeMapper.ContainingClassesInfo containingClasses = state.getTypeMapper().getContainingClassesForDeserializedCallable(member);
+
+                    Type facadeType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(containingClasses.getFacadeClassId().asSingleFqName());
+                    Type partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(containingClasses.getImplClassId().asSingleFqName());
+                    FieldOwnerContext context = state.getRootContext().intoPackageFacade(partType, compiledPackageFragment, facadeType);
 
                     MemberCodegen<?> memberCodegen = createCodegenForPartOfPackageFacade(context);
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
-                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), function,
+                        memberCodegen.functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(function), function,
                                                                      new FunctionGenerationStrategy() {
                                                                          @Override
                                                                          public void generateBody(
@@ -218,31 +216,6 @@ public class PackageCodegen {
                 }
             });
         }
-    }
-
-    @NotNull
-    private FieldOwnerContext getPackageFacadeContextForPreviouslyCompiled(@NotNull FqName delegateToFqName) {
-        Type delegateToType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(delegateToFqName);
-        String partInternalName = JvmClassName.byFqNameWithoutInnerClasses(delegateToFqName).getInternalName();
-        TargetId targetId = state.getTargetId();
-        assert targetId != null
-                : "targetId is required for incremental compilation of " + packageClassType;
-        IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
-        assert incrementalCompilationComponents != null
-                : "incrementalCompilationComponents is required for incremental compilation of " + packageClassType;
-        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
-        String facadeInternalName = incrementalCache.getMultifileFacade(partInternalName);
-
-        Type publicFacadeType;
-        if (facadeInternalName != null) {
-            FqName facadeFqName = JvmClassName.byInternalName(facadeInternalName).getFqNameForClassNameWithoutDollars();
-            publicFacadeType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName);
-        }
-        else {
-            publicFacadeType = delegateToType;
-        }
-
-        return state.getRootContext().intoPackageFacade(delegateToType, compiledPackageFragment, publicFacadeType);
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
@@ -337,7 +310,7 @@ public class PackageCodegen {
     ) {
         JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
-        if (fileClassInfo.getIsMultifileClass()) {
+        if (fileClassInfo.getWithJvmMultifileClass()) {
             FqName partClassFqName = fileClassInfo.getFileClassFqName();
             Type delegateToType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partClassFqName);
             Type publicFacadeType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFacadeClassFqName());
@@ -375,7 +348,7 @@ public class PackageCodegen {
         String name = fileClassType.getInternalName();
         packageParts.getParts().add(name.substring(name.lastIndexOf('/') + 1));
 
-        ClassBuilder builder = state.getFactory().newVisitor(PackagePart(file, packageFragment), fileClassType, file);
+        ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 
         new PackagePartCodegen(builder, file, fileClassType, packagePartContext, state).generate();
 
@@ -456,7 +429,7 @@ public class PackageCodegen {
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = FileClassesPackage.getFileClassType(state.getFileClassesProvider(), file);
+        Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
         CodegenContext context = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }

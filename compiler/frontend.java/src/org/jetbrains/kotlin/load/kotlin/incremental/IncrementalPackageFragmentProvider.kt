@@ -152,7 +152,7 @@ public class IncrementalPackageFragmentProvider(
                 if (partsData.isEmpty())
                     JetScope.Empty
                 else {
-                    val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it)) }
+                    val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
                     ChainedScope(this,
                                  "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
                                  *scopes.toTypedArray<JetScope>())

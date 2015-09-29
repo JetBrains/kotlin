@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.TargetId;
-import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -193,7 +192,7 @@ public class InlineCodegen extends CallGenerator {
 
         SMAPAndMethodNode nodeAndSMAP;
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
-            JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainerClassIdForInlineCallable(
+            JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containingClasses.getImplClassId(), state);

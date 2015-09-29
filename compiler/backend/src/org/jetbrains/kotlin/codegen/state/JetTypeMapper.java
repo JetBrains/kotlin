@@ -229,7 +229,7 @@ public class JetTypeMapper {
         }
     }
 
-    public ContainingClassesInfo getContainerClassIdForInlineCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor) {
+    public ContainingClassesInfo getContainingClassesForDeserializedCallable(DeserializedCallableMemberDescriptor deserializedDescriptor) {
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
         ContainingClassesInfo containingClassesInfo;
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
