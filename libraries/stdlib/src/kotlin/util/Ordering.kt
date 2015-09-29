@@ -18,7 +18,6 @@
 package kotlin
 
 import java.util.Comparator
-import kotlin.platform.platformName
 
 /**
  * Compares two values using the specified sequence of functions to calculate the result of the comparison.
@@ -48,7 +47,7 @@ public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comp
  * compare as equal, the result of that comparison is returned.
  */
 // TODO: Remove platformName after M13
-@platformName("compareValuesByNullable")
+@kotlin.jvm.JvmName("compareValuesByNullable")
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
     require(selectors.size() > 0)
     for (fn in selectors) {

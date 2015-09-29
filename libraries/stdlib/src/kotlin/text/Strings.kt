@@ -5,7 +5,6 @@
 package kotlin
 
 import java.util.NoSuchElementException
-import kotlin.platform.platformName
 import kotlin.text.MatchResult
 import kotlin.text.Regex
 
@@ -154,7 +153,7 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 
 /** Returns `true` if the string is not `null` and not empty */
 @Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
-@platformName("isNotEmptyNullable")
+@kotlin.jvm.JvmName("isNotEmptyNullable")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**

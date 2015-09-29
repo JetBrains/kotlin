@@ -4,7 +4,6 @@
 package kotlin
 
 import java.util.*
-import kotlin.platform.platformName
 
 /**
  * Returns the value for the given key, or the implicit default value for this map.
@@ -40,7 +39,7 @@ public fun <K, V> Map<K, V>.withDefault(default: (key: K) -> V): Map<K, V> =
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
-@platformName("withDefaultMutable")
+@kotlin.jvm.JvmName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(default: (key: K) -> V): MutableMap<K, V> =
         when (this) {
             is MutableMapWithDefault -> this.map.withDefault(default)
