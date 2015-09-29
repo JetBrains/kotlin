@@ -82,15 +82,6 @@ public class AnonymousObjectTransformer {
         typeRemapper = new TypeRemapper(inliningContext.typeMapping);
     }
 
-    private void buildInvokeParamsFor(@NotNull ParametersBuilder builder, @NotNull MethodNode node) {
-        builder.addThis(oldObjectType, false);
-
-        Type[] types = Type.getArgumentTypes(node.desc);
-        for (Type type : types) {
-            builder.addNextParameter(type, false, null);
-        }
-    }
-
     @NotNull
     public InlineResult doTransform(@NotNull AnonymousObjectGeneration anonymousObjectGen, @NotNull FieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
@@ -346,8 +337,7 @@ public class AnonymousObjectTransformer {
             @NotNull ParametersBuilder capturedBuilder,
             @NotNull MethodNode sourceNode
     ) {
-        ParametersBuilder builder = ParametersBuilder.newBuilder();
-        buildInvokeParamsFor(builder, sourceNode);
+        ParametersBuilder builder = ParametersBuilder.initializeBuilderFrom(oldObjectType, sourceNode.desc);
         for (CapturedParamInfo param : capturedBuilder.listCaptured()) {
             builder.addCapturedParamCopy(param);
         }

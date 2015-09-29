@@ -82,7 +82,7 @@ class ParameterInfo {
         return lambda;
     }
 
-    public void setLambda(LambdaInfo lambda) {
+    public void setLambda(@Nullable LambdaInfo lambda) {
         this.lambda = lambda;
     }
 

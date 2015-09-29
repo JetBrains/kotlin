@@ -141,4 +141,20 @@ public class  ParametersBuilder {
     public int getNextValueParameterIndex() {
         return nextIndex;
     }
+
+    public static ParametersBuilder initializeBuilderFrom(@NotNull Type objectType, @NotNull String descriptor) {
+        return initializeBuilderFrom(objectType, descriptor, null);
+    }
+
+    public static ParametersBuilder initializeBuilderFrom(@NotNull Type objectType, @NotNull String descriptor, @Nullable LambdaInfo inlineLambda) {
+        ParametersBuilder builder = newBuilder();
+        //skipped this for inlined lambda cause it will be removed
+        builder.addThis(objectType, inlineLambda != null).setLambda(inlineLambda);
+
+        Type[] types = Type.getArgumentTypes(descriptor);
+        for (Type type : types) {
+            builder.addNextParameter(type, false, null);
+        }
+        return builder;
+    }
 }
