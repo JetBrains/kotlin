@@ -21,6 +21,8 @@ fun ranges(): List<GenericFunction> {
     }
 
     templates add f("step(step: SUM)") {
+        infix(true)
+
         only(RangesOfPrimitives, ProgressionsOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step." }
@@ -48,6 +50,8 @@ fun ranges(): List<GenericFunction> {
     }
 
     fun downTo(fromType: PrimitiveType, toType: PrimitiveType) = f("downTo(to: $toType)") {
+        infix(true)
+
         sourceFile(SourceFile.Ranges)
         only(Primitives)
         only(fromType)
@@ -81,6 +85,8 @@ fun ranges(): List<GenericFunction> {
     templates addAll primitivePermutations.map { downTo(it.first, it.second) }
 
     fun until(fromType: PrimitiveType, toType: PrimitiveType) = f("until(to: $toType)") {
+        infix(true)
+
         sourceFile(SourceFile.Ranges)
         only(Primitives)
         only(fromType)
