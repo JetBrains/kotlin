@@ -527,7 +527,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> UNDESCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> UNDERSCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
 
