@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
@@ -38,11 +37,9 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -99,20 +96,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
-    private val kotlinIdentifierStartPattern: ElementPattern<Char>
-    private val kotlinIdentifierPartPattern: ElementPattern<Char>
-
-    init {
-        val includeDollar = position.prevLeaf()?.getNode()?.getElementType() != JetTokens.SHORT_TEMPLATE_ENTRY_START
-        if (includeDollar) {
-            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart()
-            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart()
-        }
-        else {
-            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
-            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
-        }
-    }
+    private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
+    private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
 
     protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
@@ -175,7 +160,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             } ?: emptyList()
         }
 
-        LookupElementFactory(resolutionFacade, receiverTypes, contextType, inDescriptor, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
+        LookupElementFactory(resolutionFacade, receiverTypes, contextType, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
