@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -74,6 +76,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -1612,7 +1615,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     private Type getVariableType(@NotNull VariableDescriptor variableDescriptor) {
         Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-        return sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
+        return sharedVarType != null ? sharedVarType : getVariableTypeNoSharing(variableDescriptor);
+    }
+
+    @NotNull
+    private Type getVariableTypeNoSharing(@NotNull VariableDescriptor variableDescriptor) {
+        KotlinType varType = isDelegatedLocalVariable(variableDescriptor)
+                             ? JvmCodegenUtil.getPropertyDelegateType((VariableDescriptorWithAccessors) variableDescriptor, bindingContext)
+                             : variableDescriptor.getType();
+        //noinspection ConstantConditions
+        return asmType(varType);
+    }
+
+    private static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof LocalVariableDescriptor && ((VariableDescriptorWithAccessors) descriptor).getGetter() != null;
     }
 
     private static boolean isSharedVarType(@NotNull Type type) {
@@ -1646,6 +1662,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Type type = getVariableType(variableDescriptor);
         int index = myFrameMap.enter(variableDescriptor, type);
+
+        if (isDelegatedLocalVariable(variableDescriptor)) {
+            VariableDescriptor metadataVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor);
+            myFrameMap.enter(metadataVariableDescriptor, AsmTypes.K_PROPERTY0_TYPE);
+        }
 
         if (isSharedVarType(type)) {
             markLineNumber(statement, false);
@@ -1693,6 +1714,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         leaveTasks.add(new Function<StackValue, Void>() {
             @Override
             public Void fun(StackValue answer) {
+                if (isDelegatedLocalVariable(variableDescriptor)) {
+                    VariableDescriptor metadataVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor);
+                    myFrameMap.leave(metadataVariableDescriptor);
+                }
+
                 int index = myFrameMap.leave(variableDescriptor);
 
                 if (isSharedVarType(type)) {
@@ -2112,18 +2138,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return StackValue.shared(parameterOffsetInConstructor, parentResult.type);
         }
 
-        return StackValue.local(parameterOffsetInConstructor, parentResult.type);
+        return adjustVariableValue(StackValue.local(parameterOffsetInConstructor, parentResult.type), descriptor);
     }
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
         if (descriptor instanceof VariableDescriptor) {
+            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+
             Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-            KotlinType outType = ((VariableDescriptor) descriptor).getType();
+            Type varType = getVariableTypeNoSharing(variableDescriptor);
             if (sharedVarType != null) {
-                return StackValue.shared(index, asmType(outType));
+                return StackValue.shared(index, varType);
             }
             else {
-                return StackValue.local(index, asmType(outType));
+                return adjustVariableValue(StackValue.local(index, varType), variableDescriptor);
             }
         }
         else {
@@ -2138,19 +2166,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     public int lookupLocalIndex(DeclarationDescriptor descriptor) {
         return myFrameMap.getIndex(descriptor);
-    }
-
-    @Nullable
-    private static KotlinType getPropertyDelegateType(@NotNull PropertyDescriptor descriptor, @NotNull BindingContext bindingContext) {
-        PropertyGetterDescriptor getter = descriptor.getGetter();
-        if (getter != null) {
-            Call call = bindingContext.get(DELEGATED_PROPERTY_CALL, getter);
-            if (call != null) {
-                assert call.getExplicitReceiver() != null : "No explicit receiver for call:" + call;
-                return ((ReceiverValue) call.getExplicitReceiver()).getType();
-            }
-        }
-        return null;
     }
 
     @NotNull
@@ -2204,7 +2219,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean isSuper = superCallTarget != null;
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
 
-        KotlinType delegateType = getPropertyDelegateType(propertyDescriptor, bindingContext);
+        KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType(propertyDescriptor, bindingContext);
         boolean isDelegatedProperty = delegateType != null;
 
         CallableMethod callableGetter = null;
@@ -2828,7 +2843,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
-            return generatePropertyReference(expression, variableDescriptor, resolvedCall);
+            return generatePropertyReference(expression, variableDescriptor,
+                                             (VariableDescriptor) resolvedCall.getResultingDescriptor(),
+                                             resolvedCall.getDispatchReceiver());
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
@@ -2838,7 +2855,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private StackValue generatePropertyReference(
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
-            @NotNull ResolvedCall<?> resolvedCall
+            @NotNull VariableDescriptor target,
+            @Nullable ReceiverValue dispatchReceiver
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 
@@ -2850,7 +2868,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, resolvedCall
+                element, classBuilder, target, dispatchReceiver
         );
         codegen.generate();
 
@@ -3371,10 +3389,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Override
     public StackValue visitProperty(@NotNull KtProperty property, StackValue receiver) {
         KtExpression initializer = property.getInitializer();
-        if (initializer == null) {
-            return StackValue.none();
+        KtExpression delegateExpression = property.getDelegateExpression();
+
+        if (initializer != null) {
+            assert delegateExpression == null : PsiUtilsKt.getElementTextWithContext(property);
+            initializeLocalVariable(property, gen(initializer));
         }
-        initializeLocalVariable(property, gen(initializer));
+        else if (delegateExpression != null) {
+            initializeLocalVariable(property, gen(delegateExpression));
+        }
+
         return StackValue.none();
     }
 
@@ -3412,11 +3436,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.none();
     }
 
+    @Nullable
+    private StackValue getVariableMetadataValue(VariableDescriptor variableDescriptor) {
+        VariableDescriptor metadataVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor);
+        return metadataVariableDescriptor != null ? findLocalOrCapturedValue(metadataVariableDescriptor) : null;
+    }
+
+    @NotNull
+    private StackValue adjustVariableValue(@NotNull StackValue varValue, DeclarationDescriptor descriptor) {
+        if (!isDelegatedLocalVariable(descriptor)) return varValue;
+
+        VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
+        StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
+        assert metadataValue != null : variableDescriptor;
+        return JvmCodegenUtil.delegatedVariableValue(varValue, metadataValue, variableDescriptor, bindingContext, typeMapper);
+    }
+
     private void initializeLocalVariable(
             @NotNull KtVariableDeclaration variableDeclaration,
             @NotNull StackValue initializer
     ) {
-        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, variableDeclaration);
+        LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) bindingContext.get(VARIABLE, variableDeclaration);
 
         if (KtPsiUtil.isScriptDeclaration(variableDeclaration)) {
             return;
@@ -3430,7 +3470,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         assert variableDescriptor != null;
 
-        Type varType = asmType(variableDescriptor.getType());
+        Type varType = getVariableTypeNoSharing(variableDescriptor);
 
         StackValue storeTo = sharedVarType == null ? StackValue.local(index, varType) : StackValue.shared(index, varType);
 
@@ -3440,6 +3480,37 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         markLineNumber(variableDeclaration, false);
 
         storeTo.storeSelector(initializer.type, v);
+
+        StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
+        if (metadataValue != null) {
+            initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
+            invokePropertyDelegatedOnLocalVar(variableDescriptor, storeTo, metadataValue);
+        }
+    }
+
+    private void invokePropertyDelegatedOnLocalVar(
+            @NotNull LocalVariableDescriptor variableDescriptor,
+            @NotNull StackValue delegateValue,
+            @NotNull StackValue metadataValue
+    ) {
+        ResolvedCall<FunctionDescriptor> pdResolvedCall =
+                bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, variableDescriptor);
+        if (pdResolvedCall == null) return;
+
+        tempVariables.put(pdResolvedCall.getCall().getValueArguments().get(0).asElement(), metadataValue);
+        invokeFunction(pdResolvedCall, delegateValue).put(Type.VOID_TYPE, v);
+    }
+
+    private void initializePropertyMetadata(
+            @NotNull KtProperty variable,
+            @NotNull LocalVariableDescriptor variableDescriptor,
+            @NotNull StackValue metadataVar
+    ) {
+        //noinspection ConstantConditions
+        StackValue value =
+                generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null);
+        value.put(K_PROPERTY0_TYPE, v);
+        metadataVar.storeSelector(K_PROPERTY0_TYPE, v);
     }
 
     @NotNull

@@ -21,17 +21,18 @@ import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -44,13 +45,13 @@ class PropertyReferenceCodegen(
         context: ClassContext,
         expression: KtElement,
         classBuilder: ClassBuilder,
-        resolvedCall: ResolvedCall<*>
+        private val target: VariableDescriptor,
+        dispatchReceiver: ReceiverValue?
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val classDescriptor = context.contextDescriptor
     private val asmType = typeMapper.mapClass(classDescriptor)
 
-    private val target = resolvedCall.resultingDescriptor as VariableDescriptor
-    private val dispatchReceiverType = resolvedCall.dispatchReceiver?.type
+    private val dispatchReceiverType = dispatchReceiver?.type
     private val extensionReceiverType = target.extensionReceiverParameter?.type
 
     private val receiverCount =
@@ -85,8 +86,10 @@ class PropertyReferenceCodegen(
             invokespecial(superAsmType.internalName, "<init>", "()V", false)
         }
 
-        generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+        if (target !is LocalVariableDescriptor) {
+            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+            }
         }
 
         generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
@@ -94,7 +97,7 @@ class PropertyReferenceCodegen(
         }
 
         generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
-            aconst(getPropertyReferenceSignature(target as PropertyDescriptor, state))
+            aconst(getPropertyReferenceSignature(target as VariableDescriptorWithAccessors, state))
         }
 
         generateAccessors()
@@ -125,7 +128,10 @@ class PropertyReferenceCodegen(
                     StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
                 }
 
-                val value = fakeCodegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
+                val value = if (target is LocalVariableDescriptor) {
+                    fakeCodegen.findLocalOrCapturedValue(target)!!
+                }
+                else fakeCodegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
 
                 accessorBody(value)
             }
@@ -168,9 +174,9 @@ class PropertyReferenceCodegen(
 
     companion object {
         @JvmStatic
-        fun getPropertyReferenceSignature(property: PropertyDescriptor, state: GenerationState): String {
+        fun getPropertyReferenceSignature(property: VariableDescriptorWithAccessors, state: GenerationState): String {
             val getter =
-                    property.getter ?: DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY).apply {
+                    property.getter ?: DescriptorFactory.createDefaultGetter(property as PropertyDescriptor, Annotations.EMPTY).apply {
                         initialize(property.type)
                     }
 
