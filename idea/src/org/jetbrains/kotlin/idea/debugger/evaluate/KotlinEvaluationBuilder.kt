@@ -192,7 +192,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                     .filter { it.relativePath != "$packageInternalName.class" }
                                     .sortBy { it.relativePath.length() }
 
-            val funName = extractedFunction.name
+            val funName = runReadAction { extractedFunction.name }
             if (funName == null) {
                 throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
             }

@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.ContextUtil
-import com.intellij.debugger.engine.SourcePositionProvider
-import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
+import com.intellij.debugger.impl.DescriptorTestCase
 import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.ui.impl.FrameVariablesTree
 import com.intellij.debugger.ui.impl.watch.*
 import com.intellij.debugger.ui.tree.FieldDescriptor
 import com.intellij.debugger.ui.tree.LocalVariableDescriptor
@@ -36,8 +34,15 @@ import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
+import com.intellij.xdebugger.impl.XDebugSessionImpl
+import com.intellij.xdebugger.impl.breakpoints.XExpressionImpl
+import com.intellij.xdebugger.impl.frame.XDebugViewSessionListener
+import com.intellij.xdebugger.impl.frame.XVariablesView
+import com.intellij.xdebugger.impl.frame.XWatchesViewImpl
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
+import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
+import com.intellij.xdebugger.impl.ui.tree.nodes.*
 import com.sun.jdi.ObjectReference
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.Level
@@ -53,8 +58,8 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.io.File
-import java.util.Collections
-import kotlin.test.fail
+import java.util.*
+import javax.swing.tree.TreeNode
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -115,6 +120,9 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
         doStepping(path)
 
+        val variablesView = createVariablesView()
+        val watchesView = createWatchesView()
+
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
             try {
@@ -131,8 +139,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 }
             }
             finally {
-                if (shouldPrintFrame) {
-                    printFrame()
+               if (shouldPrintFrame) {
+                    printFrame(variablesView, watchesView)
                     println(fileText, ProcessOutputTypes.SYSTEM)
                 }
                 else {
@@ -174,25 +182,44 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         finish()
     }
 
-    private fun SuspendContextImpl.printFrame() {
-        val tree = FrameVariablesTree(getProject()!!)
-        Disposer.register(getTestRootDisposable()!!, tree);
+    private fun createWatchesView(): XWatchesViewImpl {
+        val session = myDebuggerSession.xDebugSession  as XDebugSessionImpl
+        val watchesView = XWatchesViewImpl(session)
+        Disposer.register(testRootDisposable, watchesView)
+        session.addSessionListener(XDebugViewSessionListener(watchesView), testRootDisposable)
+        return watchesView
+    }
 
-        invokeRatherLater(this) {
-            tree.rebuild(debuggerContext)
-            expandAll(tree, Runnable {
-                try {
-                    val printer = Printer()
-                    printer.printTree(tree)
-                    for (extra in getExtraVars()) {
-                        printer.printDescriptor(tree.getNodeFactory().getWatchItemDescriptor(null, extra, null), 2)
+    private fun createVariablesView(): XVariablesView {
+        val session = myDebuggerSession.xDebugSession as XDebugSessionImpl
+        val variablesView = XVariablesView(session)
+        Disposer.register(testRootDisposable, variablesView)
+        session.addSessionListener(XDebugViewSessionListener(variablesView), testRootDisposable)
+        return variablesView
+    }
+
+    private fun SuspendContextImpl.printFrame(variablesView: XVariablesView, watchesView: XWatchesViewImpl) {
+        val tree = variablesView.tree!!
+        expandAll(
+                tree,
+                Runnable {
+                    try {
+                        Printer().printTree(tree)
+
+                        for (extra in getExtraVars()) {
+                            watchesView.addWatchExpression(XExpressionImpl.fromText(extra.text), -1, false);
+                        }
+                        Printer().printTree(watchesView.tree)
                     }
-                }
-                finally {
-                    resume(this@printFrame)
-                }
-            })
-        }
+                    finally {
+                        resume(this)
+                    }
+                },
+                hashSetOf(),
+                // TODO why this is needed? Otherwise some tests are never ended
+                DescriptorTestCase.NodeFilter { it !is XValueNodeImpl || it.name != "cause" },
+                this
+        )
     }
 
     fun getExtraVars(): Set<TextWithImports> {
@@ -200,15 +227,24 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private inner class Printer() {
-        fun printTree(tree: DebuggerTree) {
-            val root = tree.getMutableModel()!!.getRoot() as DebuggerTreeNodeImpl
+        fun printTree(tree: XDebuggerTree) {
+            val root = tree.treeModel.root as TreeNode
             printNode(root, 0)
         }
 
-        private fun printNode(node: DebuggerTreeNodeImpl, indent: Int) {
-            val descriptor: NodeDescriptorImpl = node.getDescriptor()!!
+       private fun printNode(node: TreeNode, indent: Int) {
+            val descriptor = when {
+                node is DebuggerTreeNodeImpl -> node.descriptor
+                node is XValueNodeImpl -> (node.valueContainer as? JavaValue)?.descriptor ?: MessageDescriptor(node.text.toString())
+                node is XStackFrameNode -> (node.valueContainer as? JavaStackFrame)?.descriptor
+                node is XValueGroupNodeImpl -> (node.valueContainer as? JavaStaticGroup)?.descriptor
+                node is WatchesRootNode -> null
+                node is WatchMessageNode -> WatchItemDescriptor(project, TextWithImportsImpl(CodeFragmentKind.EXPRESSION, node.expression.expression))
+                node is MessageTreeNode -> MessageDescriptor(node.text.toString())
+                else -> MessageDescriptor(node.toString())
+            }
 
-            if (printDescriptor(descriptor, indent)) return
+            if (descriptor != null && printDescriptor(descriptor, indent)) return
 
             printChildren(node, indent + 2)
         }
@@ -216,7 +252,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
             if (descriptor is DefaultNodeDescriptor) return true
 
-            val label = descriptor.getLabel()!!
+            var label = descriptor.label
+            // TODO: update presentation before calc label
+            if (label == NodeDescriptorImpl.UNKNOWN_VALUE_MESSAGE && descriptor is StaticDescriptor) {
+                label = "static = " + NodeRendererSettings.getInstance().classRenderer.renderTypeName(descriptor.type.name())
+            }
             if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return true
 
             val curIndent = " ".repeat(indent)
@@ -235,10 +275,10 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             return false
         }
 
-        private fun printChildren(node: DebuggerTreeNodeImpl, indent: Int) {
-            val e = node.rawChildren()!!
+        private fun printChildren(node: TreeNode, indent: Int) {
+            val e = node.children()
             while (e.hasMoreElements()) {
-                printNode(e.nextElement() as DebuggerTreeNodeImpl, indent)
+                printNode(e.nextElement() as TreeNode, indent)
             }
         }
 

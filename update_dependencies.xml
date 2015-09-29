@@ -1,9 +1,9 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <property name="ideaVersion" value="141.2735.5"/>
 
-    <property name="kotlin.bootstrap.branch" value="M14"/>
-    <property name="kotlin.bootstrap.branch.locator" value=",branch:M14"/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.branch" value=""/>
+    <property name="kotlin.bootstrap.branch.locator" value=""/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
