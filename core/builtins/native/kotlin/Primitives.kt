@@ -430,17 +430,17 @@ public class Int private () : Number, Comparable<Int> {
     public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
-    public fun shl(bits: Int): Int
+    public infix fun shl(bits: Int): Int
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
-    public fun shr(bits: Int): Int
+    public infix fun shr(bits: Int): Int
     /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
-    public fun ushr(bits: Int): Int
+    public infix fun ushr(bits: Int): Int
     /** Performs a bitwise AND operation between the two values. */
-    public fun and(other: Int): Int
+    public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
-    public fun or(other: Int): Int
+    public infix fun or(other: Int): Int
     /** Performs a bitwise XOR operation between the two values. */
-    public fun xor(other: Int): Int
+    public infix fun xor(other: Int): Int
     /** Inverts the bits in this value/ */
     public fun inv(): Int
 
@@ -585,17 +585,17 @@ public class Long private () : Number, Comparable<Long> {
     public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
-    public fun shl(bits: Int): Long
+    public infix fun shl(bits: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
-    public fun shr(bits: Int): Long
+    public infix fun shr(bits: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
-    public fun ushr(bits: Int): Long
+    public infix fun ushr(bits: Int): Long
     /** Performs a bitwise AND operation between the two values. */
-    public fun and(other: Long): Long
+    public infix fun and(other: Long): Long
     /** Performs a bitwise OR operation between the two values. */
-    public fun or(other: Long): Long
+    public infix fun or(other: Long): Long
     /** Performs a bitwise XOR operation between the two values. */
-    public fun xor(other: Long): Long
+    public infix fun xor(other: Long): Long
     /** Inverts the bits in this value/ */
     public fun inv(): Long
 

@@ -141,11 +141,11 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateBitwiseOperators(className: String) {
         for ((name, doc) in shiftOperators) {
             out.println("    /** $doc */")
-            out.println("    public fun $name(bits: Int): $className")
+            out.println("    public infix fun $name(bits: Int): $className")
         }
         for ((name, doc) in bitwiseOperators) {
             out.println("    /** $doc */")
-            out.println("    public fun $name(other: $className): $className")
+            out.println("    public infix fun $name(other: $className): $className")
         }
         out.println("    /** Inverts the bits in this value/ */")
         out.println("    public fun inv(): $className")
