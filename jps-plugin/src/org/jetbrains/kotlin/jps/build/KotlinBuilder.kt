@@ -91,9 +91,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     override fun getCompilableFileExtensions() = arrayListOf("kt")
 
     override fun buildStarted(context: CompileContext) {
+        LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
+
         val historyLabel = context.getBuilderParameter("history label")
         if (historyLabel != null) {
-            LOG.debug("Label in local history: $historyLabel")
+            LOG.info("Label in local history: $historyLabel")
         }
     }
 
