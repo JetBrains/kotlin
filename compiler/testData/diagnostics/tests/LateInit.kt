@@ -21,10 +21,10 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER_PRI
 
     <!INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE!>lateinit<!> var e1: V
     <!INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE!>lateinit<!> var e2: String?
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e3: Int
+    <!INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE!>lateinit<!> var e3: Int
     <!INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE!>lateinit<!> var e4: Int?
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e5 = "A"
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e6 = 3
+    <!INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE!>lateinit<!> var e6 = 3
 
     <!INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE!>lateinit<!> val e7 by CustomDelegate()
 

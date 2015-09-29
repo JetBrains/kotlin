@@ -432,6 +432,11 @@ public class DeclarationsChecker {
             return;
         }
 
+        if (returnTypeIsPrimitive) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE.on(modifier));
+            return;
+        }
+
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY.on(modifier));
             return;
@@ -463,7 +468,7 @@ public class DeclarationsChecker {
         }
 
         if (!hasBackingField || hasDelegateOrInitializer || customGetterOrSetter
-                || returnTypeIsPrimitive || propertyDescriptor.getExtensionReceiverParameter() != null) {
+                || propertyDescriptor.getExtensionReceiverParameter() != null) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier));
         }
     }

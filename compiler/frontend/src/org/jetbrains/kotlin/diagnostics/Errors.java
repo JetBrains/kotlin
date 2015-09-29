@@ -352,6 +352,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 
