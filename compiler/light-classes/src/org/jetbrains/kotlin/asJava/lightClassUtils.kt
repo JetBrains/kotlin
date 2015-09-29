@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
@@ -98,3 +101,10 @@ public val PsiElement.unwrapped: PsiElement?
 
 public val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()
+
+
+val JetClassOrObject.hasInterfaceDefaultImpls: Boolean
+    get() = this is JetClass && isInterface()
+
+private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
+fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)

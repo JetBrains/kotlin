@@ -31,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.NamePackage;
@@ -127,7 +128,10 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     }
 
     // Finds explicitly declared classes and objects, not package classes
+    // Also DefaultImpls classes of interfaces
     private void findClassesAndObjects(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
+        findInterfaceDefaultImpls(qualifiedName, scope, answer);
+
         Collection<JetClassOrObject> classOrObjectDeclarations =
                 lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName, scope);
 
@@ -136,6 +140,22 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
                 PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
+                }
+            }
+        }
+    }
+
+    private void findInterfaceDefaultImpls(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
+        if (!qualifiedName.shortName().asString().equals(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)) return;
+
+        for (JetClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+            if (LightClassUtilsKt.getHasInterfaceDefaultImpls(classOrObject)) {
+                PsiClass interfaceClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
+                if (interfaceClass != null) {
+                    PsiClass implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false);
+                    if (implsClass != null) {
+                        answer.add(implsClass);
+                    }
                 }
             }
         }
