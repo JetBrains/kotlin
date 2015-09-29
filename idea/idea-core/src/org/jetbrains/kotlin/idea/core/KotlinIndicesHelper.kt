@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.get
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -46,7 +44,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.kotlin.resolve.bindingContextUtil.get
 import java.util.*
 
 public class KotlinIndicesHelper(
@@ -137,12 +134,15 @@ public class KotlinIndicesHelper(
     private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType>> {
         val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(expression)
         if (receiverData != null) {
-            val (receiverExpression, callType) = receiverData
+            val (receiverElement, callType) = receiverData
 
-            val expressionType = bindingContext.getType(receiverExpression)
+            if (callType == CallType.CALLABLE_REFERENCE) return emptyList() //TODO?
+            receiverElement as JetExpression
+
+            val expressionType = bindingContext.getType(receiverElement)
             if (expressionType == null || expressionType.isError()) return emptyList()
 
-            val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+            val receiverValue = ExpressionReceiver(receiverElement, expressionType)
 
             return listOf(receiverValue to callType)
         }

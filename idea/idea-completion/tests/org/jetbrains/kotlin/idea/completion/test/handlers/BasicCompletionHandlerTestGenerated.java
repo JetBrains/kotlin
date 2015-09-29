@@ -155,6 +155,39 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ClassConstructor.kt")
+        public void testClassConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/ClassConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyQualifier.kt")
+        public void testEmptyQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/EmptyQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonEmptyQualifier.kt")
+        public void testNonEmptyQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/NonEmptyQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Property.kt")
+        public void testProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/Property.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/exclChar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

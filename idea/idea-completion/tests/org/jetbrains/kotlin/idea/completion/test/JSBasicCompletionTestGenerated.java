@@ -1066,6 +1066,57 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/callableReference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReference extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInCallableReference() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("EmptyQualifier.kt")
+            public void testEmptyQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/EmptyQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("EmptyQualifierInExtensionFun.kt")
+            public void testEmptyQualifierInExtensionFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/EmptyQualifierInExtensionFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("HigherOrderFunction.kt")
+            public void testHigherOrderFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/HigherOrderFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonEmptyQualifier.kt")
+            public void testNonEmptyQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/NonEmptyQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastThis.kt")
+            public void testSmartCastThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SmartCastThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensions.kt")
+            public void testSyntheticExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SyntheticExtensions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensions2.kt")
+            public void testSyntheticExtensions2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SyntheticExtensions2.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/extensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

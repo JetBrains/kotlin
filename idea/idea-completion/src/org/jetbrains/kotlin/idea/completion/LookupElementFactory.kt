@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.name.FqName
@@ -44,7 +45,8 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>,
-        private val contextType: LookupElementFactory.ContextType,
+        private val callType: CallType,
+        private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
         contextVariablesProvider: () -> Collection<VariableDescriptor>
 ) {
@@ -54,23 +56,17 @@ class LookupElementFactory(
         contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
     }
 
-    public enum class ContextType {
-        NORMAL,
-        STRING_TEMPLATE_AFTER_DOLLAR,
-        INFIX_CALL
-    }
-
     public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
+        if (isInStringTemplateAfterDollar && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (contextType != ContextType.INFIX_CALL && descriptor is FunctionDescriptor) {
+        if (descriptor is FunctionDescriptor && (callType == CallType.NORMAL || callType == CallType.SAFE)) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
         }
 
@@ -136,11 +132,11 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler(callType, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
+        if (isInStringTemplateAfterDollar) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
 
@@ -153,7 +149,7 @@ class LookupElementFactory(
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
         lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
 
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
+        if (isInStringTemplateAfterDollar) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
 
@@ -179,7 +175,7 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler(inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+            KotlinFunctionInsertHandler(callType, inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
         }
     }
 

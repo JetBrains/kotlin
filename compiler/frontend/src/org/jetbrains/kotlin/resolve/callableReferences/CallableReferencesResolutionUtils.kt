@@ -59,7 +59,7 @@ public fun resolveCallableReferenceReceiverType(
         context: ResolutionContext<*>,
         typeResolver: TypeResolver
 ): JetType? =
-        callableReferenceExpression.getTypeReference()?.let {
+        callableReferenceExpression.typeReference?.let {
             typeResolver.resolveType(context.scope, it, context.trace, false)
         }
 

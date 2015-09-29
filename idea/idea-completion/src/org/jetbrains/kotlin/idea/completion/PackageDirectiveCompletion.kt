@@ -23,6 +23,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -53,7 +54,7 @@ object PackageDirectiveCompletion {
             val bindingContext = resolutionFacade.analyze(expression)
 
             val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, { true }).getPackageReferenceVariants(expression, prefixMatcher.asNameFilter())
-            val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(expectedInfosCalculator = { emptyList() }))
+            val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(callType = CallType.NORMAL/*TODO*/, expectedInfosCalculator = { emptyList() }))
             for (variant in variants) {
                 val lookupElement = lookupElementFactory.createLookupElement(variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {

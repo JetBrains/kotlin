@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.makeNotNullable
@@ -203,9 +204,9 @@ class TypeInstantiationItems(
             }
 
             val baseInsertHandler = when (visibleConstructors.size()) {
-                0 -> KotlinFunctionInsertHandler(inputTypeArguments = false, inputValueArguments = false)
+                0 -> KotlinFunctionInsertHandler(CallType.NORMAL, inputTypeArguments = false, inputValueArguments = false)
                 1 -> lookupElementFactory.insertHandlerProvider.insertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
-                else -> KotlinFunctionInsertHandler(inputTypeArguments = false, inputValueArguments = true)
+                else -> KotlinFunctionInsertHandler(CallType.NORMAL, inputTypeArguments = false, inputValueArguments = true)
             }
 
             insertHandler = object : InsertHandler<LookupElement> {

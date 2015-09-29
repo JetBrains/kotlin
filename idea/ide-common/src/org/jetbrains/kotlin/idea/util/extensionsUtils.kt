@@ -18,9 +18,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,7 +45,15 @@ public enum class CallType {
     UNARY {
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
-    };
+    },
+
+    CALLABLE_REFERENCE {
+        // currently callable references to locals and parameters are not supported
+        override fun canCall(descriptor: DeclarationDescriptor)
+                = descriptor is FunctionDescriptor || descriptor is PropertyDescriptor
+    }
+
+    ;
 
     public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }

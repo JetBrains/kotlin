@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -90,9 +91,9 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     // special completion for outside parenthesis lambda argument
     private fun addFunctionLiteralArgumentCompletions() {
         if (nameExpression != null) {
-            val (receiverExpression, callType) = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression) ?: return
+            val (receiverElement, callType) = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression) ?: return
             if (callType == CallType.INFIX) {
-                val call = receiverExpression.getCall(bindingContext)
+                val call = (receiverElement as JetExpression).getCall(bindingContext)
                 if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
                     val dummyArgument = object : FunctionLiteralArgument {
                         override fun getFunctionLiteral() = throw UnsupportedOperationException()

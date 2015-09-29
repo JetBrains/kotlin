@@ -17,11 +17,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
@@ -38,12 +34,15 @@ import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
@@ -58,18 +57,9 @@ public class ReferenceVariantsHelper(
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
     public data class ExplicitReceiverData(
-            val expression: JetExpression,
+            val element: JetElement?,
             val callType: CallType
     )
-
-    public data class ReceiversData(
-            public val receivers: Collection<ReceiverValue>,
-            public val callType: CallType
-    ) {
-        companion object {
-            val Empty = ReceiversData(listOf(), CallType.NORMAL)
-        }
-    }
 
     @JvmOverloads
     public fun getReferenceVariants(
@@ -111,41 +101,48 @@ public class ReferenceVariantsHelper(
         if (expression.isImportDirectiveExpression()) {
             return getVariantsForImportOrPackageDirective(explicitReceiverData, kindFilter, nameFilter)
         }
+
         if (expression.isPackageDirectiveExpression()) {
             val packageKindFilter = kindFilter restrictedToKinds DescriptorKindFilter.PACKAGES_MASK
             return getVariantsForImportOrPackageDirective(explicitReceiverData, packageKindFilter, nameFilter)
         }
-        if (expression.getParent() is JetUserType) {
+
+        if (expression.parent is JetUserType) {
             return getVariantsForUserType(explicitReceiverData, expression, kindFilter, nameFilter)
         }
 
-        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+        val resolutionScope = resolutionScope(expression) ?: return emptyList()
+        val dataFlowInfo = dataFlowInfo(expression)
         val containingDeclaration = resolutionScope.getContainingDeclaration()
-
-        val descriptors = LinkedHashSet<DeclarationDescriptor>()
-
-        val dataFlowInfo = context.getDataFlowInfo(expression)
 
         val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
         val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
             smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
         }.toSet()
 
-        if (explicitReceiverData != null) {
-            val (receiverExpression, callType) = explicitReceiverData
+        val descriptors = LinkedHashSet<DeclarationDescriptor>()
 
-            val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
+        if (explicitReceiverData != null) {
+            val (receiverElement, callType) = explicitReceiverData
+
+            if (callType == CallType.CALLABLE_REFERENCE) {
+                return getVariantsForCallableReference(receiverElement as JetTypeReference?, resolutionScope, implicitReceiverTypes, kindFilter, nameFilter)
+            }
+
+            receiverElement as JetExpression
+
+            val qualifier = context[BindingContext.QUALIFIER, receiverElement]
             if (qualifier != null) {
                 // It's impossible to add extension function for package or class (if it's companion object, expression type is not null)
                 qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
             }
 
             val expressionType = if (useRuntimeReceiverType)
-                                        getQualifierRuntimeType(receiverExpression)
+                                        getQualifierRuntimeType(receiverElement)
                                     else
-                                        context.getType(receiverExpression)
+                                        context.getType(receiverElement)
             if (expressionType != null && !expressionType.isError()) {
-                val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+                val receiverValue = ExpressionReceiver(receiverElement, expressionType)
                 val explicitReceiverTypes = smartCastManager
                         .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
 
@@ -155,12 +152,8 @@ public class ReferenceVariantsHelper(
         else {
             descriptors.processAll(implicitReceiverTypes, implicitReceiverTypes, resolutionScope, CallType.NORMAL, kindFilter, nameFilter)
 
-            // process non-instance members.
-            for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
-                if (!descriptor.isExtension) {
-                    descriptors.add(descriptor)
-                }
-            }
+            // add non-instance members
+            descriptors.addAll(resolutionScope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
         }
 
         return descriptors
@@ -174,7 +167,8 @@ public class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         val accurateKindFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK)
         if (explicitReceiverData != null) {
-            val qualifier = context[BindingContext.QUALIFIER, explicitReceiverData.expression] ?: return emptyList()
+            val receiverExpression = explicitReceiverData.element as? JetExpression ?: return emptyList()
+            val qualifier = context[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
             return qualifier.scope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
         }
         else {
@@ -185,13 +179,42 @@ public class ReferenceVariantsHelper(
         }
     }
 
+    private fun getVariantsForCallableReference(
+            qualifierTypeRef: JetTypeReference?,
+            resolutionScope: JetScope,
+            implicitReceiverTypes: Collection<JetType>,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
+        val accurateKindFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CALLABLES.kindMask)
+        val descriptors = LinkedHashSet<DeclarationDescriptor>()
+        if (qualifierTypeRef != null) {
+            val type = context[BindingContext.TYPE, qualifierTypeRef] ?: return emptyList()
+
+            descriptors.addNonExtensionMembers(listOf(type), CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter, constructorsForInnerClassesOnly = false)
+
+            descriptors.addScopeAndSyntheticExtensions(resolutionScope, listOf(type), CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter)
+        }
+        else {
+            // process non-instance members and class constructors
+            descriptors.addNonExtensionCallablesAndConstructors(resolutionScope, CallType.CALLABLE_REFERENCE, kindFilter, nameFilter, constructorsForInnerClassesOnly = false)
+
+            descriptors.addNonExtensionMembers(implicitReceiverTypes, CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter, constructorsForInnerClassesOnly = true)
+
+            //TODO: should we show synthetic extensions? get/set's?
+            descriptors.addScopeAndSyntheticExtensions(resolutionScope, implicitReceiverTypes, CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter)
+        }
+        return descriptors
+    }
+
     private fun getVariantsForImportOrPackageDirective(
             explicitReceiverData: ExplicitReceiverData?,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         if (explicitReceiverData != null) {
-            val qualifier = context[BindingContext.QUALIFIER, explicitReceiverData.expression] ?: return emptyList()
+            val receiverExpression = explicitReceiverData.element as? JetExpression ?: return emptyList()
+            val qualifier = context[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
             return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
@@ -208,7 +231,7 @@ public class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ) {
-        addNonExtensionMembers(receiverTypes, callType, kindFilter, nameFilter)
+        addNonExtensionMembers(receiverTypes, callType, kindFilter, nameFilter, constructorsForInnerClassesOnly = true)
         addMemberExtensions(implicitReceiverTypes, receiverTypes, callType, kindFilter, nameFilter)
         addScopeAndSyntheticExtensions(resolutionScope, receiverTypes, callType, kindFilter, nameFilter)
     }
@@ -232,20 +255,36 @@ public class ReferenceVariantsHelper(
             receiverTypes: Collection<JetType>,
             callType: CallType,
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
+            constructorsForInnerClassesOnly: Boolean
     ) {
-        val memberFilter = kindFilter exclude DescriptorKindExclude.Extensions
         for (receiverType in receiverTypes) {
-            val members = receiverType.memberScope.getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
-            for (member in members) {
-                if (member is ClassDescriptor) {
-                    if (member.isInner) {
-                        member.constructors.filterTo(this) { callType.canCall(it) && memberFilter.accepts(it) }
-                    }
-                }
-                else if (callType.canCall(member) && memberFilter.accepts(member)) {
-                    this.add(member)
-                }
+            addNonExtensionCallablesAndConstructors(receiverType.memberScope, callType, kindFilter, nameFilter, constructorsForInnerClassesOnly)
+        }
+    }
+
+    private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
+            scope: JetScope,
+            callType: CallType,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            constructorsForInnerClassesOnly: Boolean
+    ) {
+        var filterToUse = kindFilter.restrictedToKinds(DescriptorKindFilter.CALLABLES.kindMask).exclude(DescriptorKindExclude.Extensions)
+
+        // should process classes if we need constructors
+        if (filterToUse.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            filterToUse = filterToUse.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
+        }
+
+        for (descriptor in scope.getDescriptorsFiltered(filterToUse, nameFilter)) {
+            if (descriptor is ClassDescriptor) {
+                if (constructorsForInnerClassesOnly && !descriptor.isInner) continue
+                if (descriptor.modality == Modality.ABSTRACT || descriptor.modality == Modality.SEALED) continue
+                descriptor.constructors.filterTo(this) { callType.canCall(it) && kindFilter.accepts(it) }
+            }
+            else if (callType.canCall(descriptor) && kindFilter.accepts(descriptor)) {
+                this.add(descriptor)
             }
         }
     }
@@ -258,7 +297,6 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ) {
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
-
 
         fun process(extension: CallableDescriptor) {
             if (nameFilter(extension.name) && kindFilter.accepts(extension)) {
@@ -286,19 +324,6 @@ public class ReferenceVariantsHelper(
         }
     }
 
-    public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression): ReceiversData {
-        val receiverData = getExplicitReceiverData(expression)
-        if (receiverData != null) {
-            val receiverExpression = receiverData.expression
-            val expressionType = context.getType(receiverExpression) ?: return ReceiversData.Empty
-            return ReceiversData(listOf(ExpressionReceiver(receiverExpression, expressionType)), receiverData.callType)
-        }
-        else {
-            val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return ReceiversData.Empty
-            return ReceiversData(resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() }, CallType.NORMAL)
-        }
-    }
-
     private fun getQualifierRuntimeType(receiver: JetExpression): JetType? {
         val type = context.getType(receiver)
         if (type != null && TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
@@ -316,10 +341,25 @@ public class ReferenceVariantsHelper(
         return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 
+    //TODO: drop these methods
+    public fun resolutionScope(expression: JetSimpleNameExpression): JetScope? {
+        val parent = expression.parent
+        return context[BindingContext.RESOLUTION_SCOPE, if (parent is JetCallableReferenceExpression) parent else expression]
+    }
+
+    public fun dataFlowInfo(expression: JetSimpleNameExpression): DataFlowInfo {
+        val parent = expression.parent
+        return context.getDataFlowInfo(if (parent is JetCallableReferenceExpression) parent else expression)
+    }
+
     companion object {
         public fun getExplicitReceiverData(expression: JetSimpleNameExpression): ExplicitReceiverData? {
+            val parent = expression.parent
+            if (parent is JetCallableReferenceExpression) {
+                return ExplicitReceiverData(parent.typeReference, CallType.CALLABLE_REFERENCE)
+            }
+
             val receiverExpression = expression.getReceiverExpression() ?: return null
-            val parent = expression.getParent()
             val callType = when (parent) {
                 is JetBinaryExpression -> CallType.INFIX
 

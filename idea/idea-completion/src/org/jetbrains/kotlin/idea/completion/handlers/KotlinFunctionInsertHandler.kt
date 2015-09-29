@@ -26,10 +26,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.types.JetType
 class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
 class KotlinFunctionInsertHandler(
+        val callType: CallType,
         val inputTypeArguments: Boolean,
         val inputValueArguments: Boolean,
         val argumentText: String = "",
@@ -61,9 +61,10 @@ class KotlinFunctionInsertHandler(
         val element = context.getFile().findElementAt(startOffset) ?: return
 
         when {
-            element.getStrictParentOfType<JetImportDirective>() != null -> return
+            //TODO: replace with CallType
+            element.getStrictParentOfType<JetImportDirective>() != null || callType == CallType.CALLABLE_REFERENCE -> return
 
-            isInfixCall(element) -> {
+            callType == CallType.INFIX -> {
                 if (context.getCompletionChar() == ' ') {
                     context.setAddCompletionChar(false)
                 }
@@ -75,12 +76,6 @@ class KotlinFunctionInsertHandler(
 
             else -> addArguments(context, element)
         }
-    }
-
-    private fun isInfixCall(context: PsiElement): Boolean {
-        val parent = context.getParent()
-        val grandParent = parent?.getParent()
-        return parent is JetSimpleNameExpression && grandParent is JetBinaryExpression && parent == grandParent.getOperationReference()
     }
 
     private fun addArguments(context : InsertionContext, offsetElement : PsiElement) {

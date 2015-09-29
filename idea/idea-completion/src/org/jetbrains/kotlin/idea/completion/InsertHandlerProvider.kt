@@ -21,11 +21,15 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
-class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedInfo>) {
+class InsertHandlerProvider(
+        private val callType: CallType,
+        expectedInfosCalculator: () -> Collection<ExpectedInfo>
+) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
     public fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
@@ -34,7 +38,7 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
                 val needTypeArguments = needTypeArguments(descriptor)
                 val parameters = descriptor.valueParameters
                 when (parameters.size()) {
-                    0 -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false)
+                    0 -> KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = false)
 
                     1 -> {
                         val parameterType = parameters.single().getType()
@@ -42,13 +46,13 @@ class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedIn
                             val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                             if (parameterCount <= 1) {
                                 // otherwise additional item with lambda template is to be added
-                                return KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                return KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
                             }
                         }
-                        KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
+                        KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = true)
                     }
 
-                    else -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
+                    else -> KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = true)
                 }
             }
 

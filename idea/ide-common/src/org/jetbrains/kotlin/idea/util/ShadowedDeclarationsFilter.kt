@@ -47,8 +47,9 @@ public class ShadowedDeclarationsFilter(
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
     private val explicitReceiverValue = explicitReceiverData?.let {
-        val type = bindingContext.getType(it.expression) ?: return@let null
-        ExpressionReceiver(it.expression, type)
+        val expression = it.element as? JetExpression ?: return@let null
+        val type = bindingContext.getType(expression) ?: return@let null
+        ExpressionReceiver(expression, type)
     } ?: ReceiverValue.NO_RECEIVER
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
