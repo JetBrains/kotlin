@@ -153,6 +153,17 @@ public abstract class StackValue {
     }
 
     @NotNull
+    public static Delegate delegate(
+            Type type,
+            @NotNull StackValue delegateValue,
+            @NotNull StackValue metadataValue,
+            @NotNull CallableMethod getter,
+            @Nullable CallableMethod setter
+    ) {
+        return new Delegate(type, delegateValue, metadataValue, getter, setter);
+    }
+
+    @NotNull
     public static StackValue shared(int index, @NotNull Type type) {
         return new Shared(index, type);
     }
@@ -245,17 +256,8 @@ public abstract class StackValue {
     @NotNull
     public static StackValue changeReceiverForFieldAndSharedVar(@NotNull StackValueWithSimpleReceiver stackValue, @Nullable StackValue newReceiver) {
         //TODO static check
-        if (newReceiver != null) {
-            if (!stackValue.isStaticPut) {
-                if (stackValue instanceof Field) {
-                    return field((Field) stackValue, newReceiver);
-                }
-                else if (stackValue instanceof FieldForSharedVar) {
-                    return fieldForSharedVar((FieldForSharedVar) stackValue, newReceiver);
-                }
-            }
-        }
-        return stackValue;
+        if (newReceiver == null || stackValue.isStaticPut) return stackValue;
+        return stackValue.changeReceiver(newReceiver);
     }
 
     @NotNull
@@ -654,6 +656,56 @@ public abstract class StackValue {
         public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.store(index, this.type);
+        }
+    }
+
+    public static class Delegate extends StackValueWithSimpleReceiver {
+        @NotNull private final StackValue delegateValue;
+        @NotNull private final StackValue metadataValue;
+        @NotNull private final CallableMethod getter;
+        @Nullable private final CallableMethod setter;
+
+        private Delegate(
+                Type type,
+                @NotNull StackValue delegateValue,
+                @NotNull StackValue metadataValue,
+                @NotNull CallableMethod getter,
+                @Nullable CallableMethod setter
+        ) {
+            super(type, false, false, new Receiver(OBJECT_TYPE, delegateValue, constant(null, OBJECT_TYPE), metadataValue), false);
+            this.delegateValue = delegateValue;
+            this.metadataValue = metadataValue;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        @NotNull
+        public StackValue getMetadataValue() {
+            return metadataValue;
+        }
+
+        @Override
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+            getter.genInvokeInstruction(v);
+            coerce(getter.getReturnType(), type, v);
+        }
+
+        @Override
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+            assert setter != null : "";
+            coerceFrom(topOfStackType, v);
+            setter.genInvokeInstruction(v);
+        }
+
+        @Override
+        protected StackValueWithSimpleReceiver changeReceiver(@NotNull StackValue newReceiver) {
+            StackValue newDelegateValue = delegateValue instanceof StackValueWithSimpleReceiver
+                                          ? ((StackValueWithSimpleReceiver) delegateValue).changeReceiver(newReceiver)
+                                          : delegateValue;
+            StackValue newMetadataValue = metadataValue instanceof StackValueWithSimpleReceiver
+                                          ? ((StackValueWithSimpleReceiver) metadataValue).changeReceiver(newReceiver)
+                                          : metadataValue;
+            return delegate(type, newDelegateValue, newMetadataValue, getter, setter);
         }
     }
 
@@ -1079,6 +1131,11 @@ public abstract class StackValue {
             coerceFrom(topOfStackType, v);
             v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
+
+        @Override
+        protected StackValueWithSimpleReceiver changeReceiver(@NotNull StackValue newReceiver) {
+            return field(this, newReceiver);
+        }
     }
 
     static class Property extends StackValueWithSimpleReceiver {
@@ -1296,6 +1353,11 @@ public abstract class StackValue {
         public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "element", refType(type).getDescriptor());
+        }
+
+        @Override
+        protected StackValueWithSimpleReceiver changeReceiver(@NotNull StackValue newReceiver) {
+            return fieldForSharedVar(this, newReceiver);
         }
     }
 
@@ -1557,6 +1619,10 @@ public abstract class StackValue {
             }
             rightSide.put(rightSide.type, v);
             storeSelector(rightSide.type, v);
+        }
+
+        protected StackValueWithSimpleReceiver changeReceiver(@NotNull StackValue newReceiver) {
+            return this;
         }
     }
 

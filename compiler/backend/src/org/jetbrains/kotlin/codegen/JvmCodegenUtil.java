@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
+import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
@@ -40,14 +41,17 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.io.File;
 
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.LOCAL_VARIABLE_DELEGATE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
 
 public class JvmCodegenUtil {
 
@@ -222,5 +226,41 @@ public class JvmCodegenUtil {
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
         if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
         return descriptor.isConst();
+    }
+
+    @Nullable
+    public static KotlinType getPropertyDelegateType(
+            @NotNull VariableDescriptorWithAccessors descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        VariableAccessorDescriptor getter = descriptor.getGetter();
+        if (getter != null) {
+            Call call = bindingContext.get(DELEGATED_PROPERTY_CALL, getter);
+            if (call != null) {
+                assert call.getExplicitReceiver() != null : "No explicit receiver for call:" + call;
+                return ((ReceiverValue) call.getExplicitReceiver()).getType();
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    public static StackValue.Delegate delegatedVariableValue(
+            @NotNull StackValue delegateValue,
+            @NotNull StackValue metadataValue,
+            VariableDescriptorWithAccessors variableDescriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
+        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE, variableDescriptor);
+        assert delegateVariableDescriptor != null : variableDescriptor;
+
+        VariableAccessorDescriptor getterDescriptor = variableDescriptor.getGetter();
+        VariableAccessorDescriptor setterDescriptor = variableDescriptor.getSetter();
+
+        //noinspection ConstantConditions
+        CallableMethod getterMethod = typeMapper.mapToCallableMethod(getterDescriptor, false);
+        CallableMethod setterMethod = setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, false) : null;
+        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, getterMethod, setterMethod);
     }
 }
