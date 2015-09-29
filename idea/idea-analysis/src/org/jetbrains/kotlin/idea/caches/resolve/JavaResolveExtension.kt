@@ -38,6 +38,7 @@ private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     val method = getOriginalElement() as? PsiMethod ?: return null
+    if (method.containingClass == null) return null
     val resolver = method.getJavaDescriptorResolver()
     return when {
         method.isConstructor() -> resolver?.resolveConstructor(JavaConstructorImpl(method))
