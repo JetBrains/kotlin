@@ -171,6 +171,7 @@ public class SingleAbstractMethodUtils {
                 returnType,
                 Modality.FINAL,
                 samInterface.getVisibility(),
+                false,
                 false
         );
 
@@ -208,6 +209,7 @@ public class SingleAbstractMethodUtils {
                         returnType,
                         Modality.FINAL,
                         original.getVisibility(),
+                        false,
                         false
                 );
             }

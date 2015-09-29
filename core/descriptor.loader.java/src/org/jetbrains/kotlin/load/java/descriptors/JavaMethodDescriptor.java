@@ -122,7 +122,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         // 1. creates full copy of descriptor
         // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
         JavaMethodDescriptor enhancedMethod = (JavaMethodDescriptor) doSubstitute(
-                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), false, getOriginal(),
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), false, false, getOriginal(),
                 /* copyOverrides = */ true, getKind(),
                 enhancedValueParameters, enhancedReceiverType, enhancedReturnType
         );

@@ -198,7 +198,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             descriptorForBridges
                     .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
                                 erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
-                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false);
+                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false, false);
 
             descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);

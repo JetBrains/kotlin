@@ -99,7 +99,7 @@ private class CallableClsStubBuilder(
         val constModifiers = if (callableKind == CallableKind.VAL) listOf(CONST) else listOf()
 
         val additionalModifiers = when (callableKind) {
-            CallableKind.FUN -> arrayOf(OPERATOR)
+            CallableKind.FUN -> arrayOf(OPERATOR, INFIX)
             CallableKind.VAL, CallableKind.VAR -> arrayOf(LATEINIT)
             else -> emptyArray<FlagsToModifiers>()
         }

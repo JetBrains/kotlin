@@ -130,6 +130,7 @@ object DynamicCallableDescriptors {
                 DynamicType,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
+                false,
                 false
         )
         return functionDescriptor

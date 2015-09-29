@@ -104,6 +104,7 @@ public class FunctionDescriptorUtil {
                                       KotlinBuiltIns.getReturnTypeFromFunctionType(functionType),
                                       modality,
                                       visibility,
+                                      false,
                                       false);
     }
 
@@ -157,7 +158,8 @@ public class FunctionDescriptorUtil {
                 function.getReturnType(),
                 function.getModality(),
                 function.getVisibility(),
-                function.isOperator());
+                function.isOperator(),
+                function.isInfix());
         return descriptor;
     }
 }

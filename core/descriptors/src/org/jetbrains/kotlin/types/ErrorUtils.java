@@ -424,6 +424,7 @@ public class ErrorUtils {
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
                 Visibilities.INTERNAL,
+                false,
                 false
         );
         return function;

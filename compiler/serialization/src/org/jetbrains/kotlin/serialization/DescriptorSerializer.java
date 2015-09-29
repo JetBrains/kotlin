@@ -173,9 +173,12 @@ public class DescriptorSerializer {
         boolean lateInit = false;
         boolean isConst = false;
         boolean isOperator = false;
+        boolean isInfix = false;
 
         if (descriptor instanceof FunctionDescriptor) {
-            isOperator = ((FunctionDescriptor) descriptor).isOperator();
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            isOperator = functionDescriptor.isOperator();
+            isInfix = functionDescriptor.isInfix();
         }
 
         if (descriptor instanceof PropertyDescriptor) {
@@ -233,7 +236,8 @@ public class DescriptorSerializer {
                 hasConstant,
                 lateInit,
                 isConst,
-                isOperator
+                isOperator,
+                isInfix
         ));
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {

@@ -2157,6 +2157,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("InfixKeyword.kt")
+            public void testInfixKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InfixKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
             public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
