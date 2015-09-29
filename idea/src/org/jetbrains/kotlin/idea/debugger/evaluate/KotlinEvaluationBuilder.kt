@@ -139,14 +139,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
             }
             val result = runEval4j(context, compiledData)
 
-            val virtualMachine = context.debugProcess.virtualMachineProxy.virtualMachine
-
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(virtualMachine)
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
             }
 
-            return result.toJdiValue(virtualMachine)
+            return result.toJdiValue(context)
         }
         catch(e: EvaluateException) {
             throw e
@@ -277,7 +275,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
             return argumentValue
         }
 
-        private fun InterpreterResult.toJdiValue(vm: VirtualMachine): com.sun.jdi.Value? {
+        private fun InterpreterResult.toJdiValue(context: EvaluationContextImpl): com.sun.jdi.Value? {
             val jdiValue = when (this) {
                 is ValueReturned -> result
                 is ExceptionThrown -> {
@@ -291,7 +289,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
                 is AbnormalTermination -> exception(message)
                 else -> throw IllegalStateException("Unknown result value produced by eval4j")
             }
-            return jdiValue.asJdiValue(vm, jdiValue.asmType)
+
+            val vm = context.debugProcess.virtualMachineProxy.virtualMachine
+            val sharedVar = FrameVisitor(context).getValueIfSharedVar(jdiValue, jdiValue.asmType, false)
+            return sharedVar?.asJdiValue(vm, sharedVar.asmType) ?: jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
         private fun ExtractionResult.getParametersForDebugger(fragment: KtCodeFragment): ParametersDescriptor {

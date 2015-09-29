@@ -179,7 +179,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
         return this.asmType.getSort() == Type.OBJECT && this.asmType.getInternalName().startsWith(AsmTypes.REF_TYPE_PREFIX)
     }
 
-    private fun getValueIfSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
+    fun getValueIfSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
         if (!value.isSharedVar()) return null
 
         val sharedVarValue = getField(value, "element", expectedType, checkType)
