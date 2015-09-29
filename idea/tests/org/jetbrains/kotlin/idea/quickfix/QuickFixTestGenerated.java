@@ -1790,6 +1790,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionalTypeInReceiver.kt")
+                public void testFunctionalTypeInReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/functionalTypeInReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inLambda.kt")
                 public void testInLambda() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inLambda.kt");

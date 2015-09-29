@@ -35,6 +35,7 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
 import org.jetbrains.kotlin.descriptors.*
@@ -435,7 +436,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                         else null
 
-                val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
+                val ownerTypeString = if (isExtension) {
+                    val renderedType = receiverTypeCandidate!!.renderedType!!
+                    val isFunctionType = receiverTypeCandidate.theType.constructor.declarationDescriptor is FunctionClassDescriptor
+                    if (isFunctionType) "($renderedType)." else "$renderedType."
+                } else ""
 
                 val classKind = (callableInfo as? PrimaryConstructorInfo)?.classInfo?.kind
 
