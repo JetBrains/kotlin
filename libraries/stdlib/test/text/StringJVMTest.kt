@@ -103,7 +103,7 @@ class StringJVMTest {
         assertTrue {
             data.all { it.isJavaLetter() }
         }
-        assertNot {
+        assertFalse {
             data.all { it.isUpperCase() }
         }
     }
@@ -113,7 +113,7 @@ class StringJVMTest {
         assertTrue {
             data.any() { it.isDigit() }
         }
-        assertNot {
+        assertFalse {
             data.any() { it.isUpperCase() }
         }
     }
@@ -362,7 +362,7 @@ class StringJVMTest {
 
     @test fun orderIgnoringCase() {
         val list = listOf("Beast", "Ast", "asterisk")
-        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sort())
-        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortBy(String.CASE_INSENSITIVE_ORDER))
+        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sorted())
+        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
     }
 }

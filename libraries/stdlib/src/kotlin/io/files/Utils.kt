@@ -49,7 +49,7 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
  * Returns this if this file is a directory, or the parent if it is a file inside a directory.
  */
 public val File.directory: File
-    get() = if (isDirectory()) this else parent!!
+    get() = if (isDirectory()) this else parentFile!!
 
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
