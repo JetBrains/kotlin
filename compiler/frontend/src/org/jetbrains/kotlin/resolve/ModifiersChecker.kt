@@ -53,7 +53,8 @@ public object ModifierCheckerCore {
             OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
             SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS),
-            INNER_KEYWORD     to EnumSet.of(INNER_CLASS),
+            // We should have also CLASS_ONLY here because INNER_CLASS is not always perfectly identified
+            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
             PRIVATE_KEYWORD   to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
                                             MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),

@@ -1,7 +1,7 @@
 <!WRONG_MODIFIER_TARGET!>inner<!> fun foo() {}
 <!WRONG_MODIFIER_TARGET!>inner<!> val prop = 42
 
-<!WRONG_MODIFIER_TARGET!>inner<!> class A
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class A
 <!WRONG_MODIFIER_TARGET!>inner<!> interface B
 <!WRONG_MODIFIER_TARGET!>inner<!> object C
 
@@ -23,16 +23,16 @@ enum class H {
 }
 
 interface K {
-    <!WRONG_MODIFIER_TARGET!>inner<!> class L
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class L
 }
 
 object N {
-    <!WRONG_MODIFIER_TARGET!>inner<!> class O
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class O
 }
 
 class P {
     companion object {
-        <!WRONG_MODIFIER_TARGET!>inner<!> class Q
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class Q
     }
 }
 
