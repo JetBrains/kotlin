@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -56,9 +58,15 @@ public final class TranslationUtils {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {
-            JsStringLiteral getOrSet = context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set");
+            JsStringLiteral getOrSet = context.program().getStringLiteral(getAccessorFunctionName(descriptor));
             return new JsPropertyInitializer(getOrSet, function);
         }
+    }
+
+    @NotNull
+    public static String getAccessorFunctionName(@NotNull FunctionDescriptor descriptor) {
+        boolean isGetter = descriptor instanceof PropertyGetterDescriptor || descriptor instanceof LocalVariableAccessorDescriptor.Getter;
+        return isGetter ? "get" : "set";
     }
 
     @NotNull
