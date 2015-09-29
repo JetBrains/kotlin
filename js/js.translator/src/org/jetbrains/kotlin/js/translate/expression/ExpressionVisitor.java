@@ -20,14 +20,21 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
+import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
 import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
@@ -216,9 +223,23 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull KtProperty expression, @NotNull TranslationContext context) {
         VariableDescriptor descriptor = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, expression);
+
         JsExpression initializer = translateInitializerForProperty(expression, context);
         if (initializer != null && JsAstUtils.isEmptyExpression(initializer)) {
             return context.getEmptyExpression();
+        }
+
+        KtExpression delegateExpression = expression.getDelegateExpression();
+        if (delegateExpression != null) {
+            SmartList<JsPropertyInitializer> propertyInitializers = new SmartList<JsPropertyInitializer>();
+            PropertyTranslatorKt.translateAccessors((VariableDescriptorWithAccessors) descriptor, propertyInitializers, context);
+            assert propertyInitializers.size() == 1 : descriptor;
+            initializer = propertyInitializers.get(0).getValueExpr();
+            JsPropertyInitializer delegateInitializer = new JsPropertyInitializer(
+                    context.program().getStringLiteral(Namer.getDelegateName(descriptor.getName().asString())),
+                    Translation.translateAsExpression(delegateExpression, context)
+            );
+            ((JsObjectLiteral) initializer).getPropertyInitializers().add(delegateInitializer);
         }
 
         JsName name = context.getNameForDescriptor(descriptor);

@@ -21,7 +21,9 @@ import com.google.dart.compiler.backend.js.ast.JsInvocation
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import java.util.*
 
@@ -52,6 +54,17 @@ object DefaultVariableAccessCase : VariableAccessCase() {
                 } else {
                     functionRef
                 }
+
+        val localVariableDescriptor = resolvedCall.resultingDescriptor as? LocalVariableDescriptor
+        val accessorDescriptor = if (isGetAccess()) localVariableDescriptor?.getter else localVariableDescriptor?.setter
+        if (accessorDescriptor != null) {
+            val funRef = JsNameRef(TranslationUtils.getAccessorFunctionName(accessorDescriptor), ref)
+            return if (isGetAccess()) {
+                JsInvocation(funRef)
+            } else {
+                JsInvocation(funRef, value!!)
+            }
+        }
 
         return constructAccessExpression(ref)
     }
