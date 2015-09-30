@@ -559,7 +559,7 @@ public class MethodInliner {
 
     private LambdaInfo getLambdaIfExists(int varIndex) {
         if (varIndex < parameters.totalSize()) {
-            return parameters.get(varIndex).getLambda();
+            return parameters.getByByteCodeIndex(varIndex).getLambda();
         }
         return null;
     }

@@ -29,9 +29,32 @@ public class Parameters implements Iterable<ParameterInfo> {
     private final List<ParameterInfo> real;
     private final List<CapturedParamInfo> captured;
 
+    private final Integer [] declIndexesToActual;
+    private final ParameterInfo [] actualDeclShifts;
+
     public Parameters(List<ParameterInfo> real, List<CapturedParamInfo> captured) {
         this.real = real;
         this.captured = captured;
+
+        declIndexesToActual = new Integer [totalSize()];
+
+        int index = 0;
+        for (ParameterInfo param : this) {
+            if (param != ParameterInfo.STUB && param != CapturedParamInfo.STUB) {
+                declIndexesToActual[param.declarationIndex] = index;
+            }
+            index++;
+        }
+
+        actualDeclShifts = new ParameterInfo [totalSize()];
+        int realSize = 0;
+        for (int i = 0; i < declIndexesToActual.length; i++) {
+            Integer declIndexToActual = declIndexesToActual[i];
+            if (declIndexToActual != null) {
+                actualDeclShifts[realSize] = getByDeclarationIndex(i);
+                realSize += get(declIndexToActual).getType().getSize();
+            }
+        }
     }
 
     public List<ParameterInfo> getReal() {
@@ -44,6 +67,17 @@ public class Parameters implements Iterable<ParameterInfo> {
 
     public int totalSize() {
         return real.size() + captured.size();
+    }
+
+    public ParameterInfo getByDeclarationIndex(int index) {
+        if (index < real.size()) {
+            return real.get(declIndexesToActual[index]);
+        }
+        return captured.get(index - real.size());
+    }
+
+    public ParameterInfo getByByteCodeIndex(int index) {
+        return actualDeclShifts[index];
     }
 
     public ParameterInfo get(int index) {

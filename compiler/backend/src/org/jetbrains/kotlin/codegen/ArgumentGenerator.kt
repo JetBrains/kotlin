@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.mapToIndex
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-private class ArgumentAndIndex(val arg: ResolvedValueArgument, val declIndex: Int, var type: Type? = null, var reoder: Boolean = false, var tempValue: StackValue? = null)
+class ArgumentAndIndex(val arg: ResolvedValueArgument, val declIndex: Int, var type: Type? = null, var reorder: Boolean = false, var tempValue: StackValue? = null)
 
 abstract class ArgumentGenerator {
     /**
@@ -78,26 +78,12 @@ abstract class ArgumentGenerator {
 
             if (actualIndex != declIndex || orderChanged) {
                 orderChanged = true
-                argumentWithDeclIndex.reoder = true
+                argumentWithDeclIndex.reorder = true
             }
         }
 
-        val mark = codegen.myFrameMap.mark()
-        actualArgsWithDeclIndex.reversed().forEach {
-            if (it.reoder) {
-                val type = it.type!!
-                it.tempValue = StackValue.local(codegen.frameMap.enterTemp(type), type)
-                it.tempValue?.store(StackValue.onStack(type), codegen.v)
-            }
-        }
+        reorderArgumentsIfNeeded(actualArgsWithDeclIndex)
 
-        actualArgsWithDeclIndex.sortedBy { it.declIndex }.forEach {
-            it.tempValue?.let {
-                it.put(it.type, codegen.v)
-            }
-        }
-
-        mark.dropTo()
         return masks
     }
 
@@ -115,5 +101,9 @@ abstract class ArgumentGenerator {
 
     protected open fun generateOther(i: Int, argument: ResolvedValueArgument): Type {
         throw UnsupportedOperationException("Unsupported value argument #$i: $argument")
+    }
+
+    protected open fun reorderArgumentsIfNeeded(args: ArrayList<ArgumentAndIndex>) {
+        throw UnsupportedOperationException("Unsupported operation")
     }
 }

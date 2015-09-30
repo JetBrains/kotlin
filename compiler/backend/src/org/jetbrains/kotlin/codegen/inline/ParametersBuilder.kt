@@ -22,43 +22,54 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.util.ArrayList
 import java.util.Collections
 
-class ParametersBuilder {
+class ParametersBuilder private constructor(){
 
-    private val params = ArrayList<ParameterInfo>()
-    private val capturedParams = ArrayList<CapturedParamInfo>()
+    private val valueAndHiddenParams = arrayListOf<ParameterInfo>()
+    private val capturedParams = arrayListOf<CapturedParamInfo>()
+    private var valueParamStart = 0
 
     var nextValueParameterIndex = 0
         private set
+
     private var nextCaptured = 0
 
     fun addThis(type: Type, skipped: Boolean): ParameterInfo {
-        val info = ParameterInfo(type, skipped, nextValueParameterIndex, -1)
+        val info = ParameterInfo(type, skipped, nextValueParameterIndex, -1, valueAndHiddenParams.size())
         addParameter(info)
         return info
     }
 
     fun addNextParameter(type: Type, skipped: Boolean, remapValue: StackValue?): ParameterInfo {
-        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue))
+        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue, valueAndHiddenParams.size()))
+    }
+
+    fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
+        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue,
+                                          if (parameterIndex == -1) valueAndHiddenParams.size() else { parameterIndex + valueParamStart }))
     }
 
     fun addCapturedParam(
             original: CapturedParamInfo,
             newFieldName: String): CapturedParamInfo {
-        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextCaptured, original.getIndex())
+        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextCapturedIndex(), original.getIndex())
         info.setLambda(original.getLambda())
         return addCapturedParameter(info)
+    }
+
+    private fun nextCapturedIndex(): Int {
+        return nextCaptured
     }
 
     fun addCapturedParam(
             desc: CapturedParamDesc,
             newFieldName: String): CapturedParamInfo {
-        val info = CapturedParamInfo(desc, newFieldName, false, nextCaptured, null)
+        val info = CapturedParamInfo(desc, newFieldName, false, nextCapturedIndex(), null)
         return addCapturedParameter(info)
     }
 
     fun addCapturedParamCopy(
             copyFrom: CapturedParamInfo): CapturedParamInfo {
-        val info = copyFrom.newIndex(nextCaptured)
+        val info = copyFrom.newIndex(nextCapturedIndex())
         return addCapturedParameter(info)
     }
 
@@ -68,7 +79,7 @@ class ParametersBuilder {
             type: Type,
             skipped: Boolean,
             original: ParameterInfo?): CapturedParamInfo {
-        val info = CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCaptured,
+        val info = CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCapturedIndex(),
                                      if (original != null) original.getIndex() else -1)
         if (original != null) {
             info.setLambda(original.getLambda())
@@ -77,7 +88,7 @@ class ParametersBuilder {
     }
 
     private fun addParameter(info: ParameterInfo): ParameterInfo {
-        params.add(info)
+        valueAndHiddenParams.add(info)
         nextValueParameterIndex += info.getType().size
         return info
     }
@@ -89,7 +100,11 @@ class ParametersBuilder {
     }
 
     fun listNotCaptured(): List<ParameterInfo> {
-        return Collections.unmodifiableList(params)
+        return Collections.unmodifiableList(valueAndHiddenParams)
+    }
+
+    fun markValueParametesStart(){
+        this.valueParamStart = valueAndHiddenParams.size()
     }
 
     fun listCaptured(): List<CapturedParamInfo> {
@@ -97,9 +112,7 @@ class ParametersBuilder {
     }
 
     fun listAllParams(): List<ParameterInfo> {
-        val list = ArrayList(params)
-        list.addAll(capturedParams)
-        return list
+        return valueAndHiddenParams + capturedParams
     }
 
     private fun buildWithStubs(): List<ParameterInfo> {
@@ -114,16 +127,24 @@ class ParametersBuilder {
         return Parameters(buildWithStubs(), buildCapturedWithStubs())
     }
 
+//    public fun getValueParameter(index: Int): ParameterInfo {
+//        return valueAndHiddenParams[index + valueParamStart]
+//    }
+
     companion object {
 
-        @JvmStatic fun newBuilder(): ParametersBuilder {
+        @JvmStatic
+        fun newBuilder(): ParametersBuilder {
             return ParametersBuilder()
         }
 
-        @JvmOverloads @JvmStatic fun initializeBuilderFrom(objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null): ParametersBuilder {
+        @JvmOverloads @JvmStatic
+        fun initializeBuilderFrom(objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null, addThis: Boolean = true): ParametersBuilder {
             val builder = newBuilder()
-            //skipped this for inlined lambda cause it will be removed
-            builder.addThis(objectType, inlineLambda != null).setLambda(inlineLambda)
+            if (addThis) {
+                //skipped this for inlined lambda cause it will be removed
+                builder.addThis(objectType, inlineLambda != null).setLambda(inlineLambda)
+            }
 
             val types = Type.getArgumentTypes(descriptor)
             for (type in types) {

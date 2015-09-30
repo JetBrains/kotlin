@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack;
@@ -72,7 +73,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         assert valueArgument != null;
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
-        callGenerator.genValueAndPut(parameter, argumentExpression, type);
+        callGenerator.genValueAndPut(parameter, argumentExpression, type, i);
         return type;
     }
 
@@ -82,7 +83,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
-        callGenerator.afterParameterPut(type, null, parameter);
+        callGenerator.afterParameterPut(type, null, parameter, i);
         return type;
     }
 
@@ -92,7 +93,12 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
-        callGenerator.afterParameterPut(type, null, parameter);
+        callGenerator.afterParameterPut(type, null, parameter, i);
         return type;
+    }
+
+    @Override
+    protected void reorderArgumentsIfNeeded(@NotNull ArrayList<ArgumentAndIndex> actualArgsWithDeclIndex) {
+        callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex);
     }
 }

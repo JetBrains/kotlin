@@ -1669,6 +1669,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             offset += type.getSize();
             return type;
         }
+
+        @Override
+        protected void reorderArgumentsIfNeeded(@NotNull ArrayList<ArgumentAndIndex> args) {
+
+        }
     }
 
     private void generateEnumEntries() {
