@@ -203,19 +203,19 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (!checkEquals(old.returnType, new.returnType)) return false
 
-        if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
-        if (old.hasExtension(JvmProtoBuf.methodSignature)) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.methodSignature), new.getExtension(JvmProtoBuf.methodSignature))) return false
+        if (old.hasExtension(JvmProtoBuf.oldMethodSignature) != new.hasExtension(JvmProtoBuf.oldMethodSignature)) return false
+        if (old.hasExtension(JvmProtoBuf.oldMethodSignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.oldMethodSignature), new.getExtension(JvmProtoBuf.oldMethodSignature))) return false
         }
 
-        if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
-        if (old.hasExtension(JvmProtoBuf.propertySignature)) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
+        if (old.hasExtension(JvmProtoBuf.oldPropertySignature) != new.hasExtension(JvmProtoBuf.oldPropertySignature)) return false
+        if (old.hasExtension(JvmProtoBuf.oldPropertySignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.oldPropertySignature), new.getExtension(JvmProtoBuf.oldPropertySignature))) return false
         }
 
-        if (old.hasExtension(JvmProtoBuf.implClassName) != new.hasExtension(JvmProtoBuf.implClassName)) return false
-        if (old.hasExtension(JvmProtoBuf.implClassName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.implClassName), new.getExtension(JvmProtoBuf.implClassName))) return false
+        if (old.hasExtension(JvmProtoBuf.oldImplClassName) != new.hasExtension(JvmProtoBuf.oldImplClassName)) return false
+        if (old.hasExtension(JvmProtoBuf.oldImplClassName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.oldImplClassName), new.getExtension(JvmProtoBuf.oldImplClassName))) return false
         }
 
         return true
@@ -228,6 +228,11 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         }
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
+
+        if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
+        if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
+        }
 
         return true
     }
@@ -250,6 +255,16 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         }
 
         if (!checkEqualsFunctionValueParameter(old, new)) return false
+
+        if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
+        if (old.hasExtension(JvmProtoBuf.methodSignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.methodSignature), new.getExtension(JvmProtoBuf.methodSignature))) return false
+        }
+
+        if (old.hasExtension(JvmProtoBuf.methodImplClassName) != new.hasExtension(JvmProtoBuf.methodImplClassName)) return false
+        if (old.hasExtension(JvmProtoBuf.methodImplClassName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.methodImplClassName), new.getExtension(JvmProtoBuf.methodImplClassName))) return false
+        }
 
         return true
     }
@@ -284,6 +299,16 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.hasSetterFlags() != new.hasSetterFlags()) return false
         if (old.hasSetterFlags()) {
             if (old.setterFlags != new.setterFlags) return false
+        }
+
+        if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
+        if (old.hasExtension(JvmProtoBuf.propertySignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
+        }
+
+        if (old.hasExtension(JvmProtoBuf.propertyImplClassName) != new.hasExtension(JvmProtoBuf.propertyImplClassName)) return false
+        if (old.hasExtension(JvmProtoBuf.propertyImplClassName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.propertyImplClassName), new.getExtension(JvmProtoBuf.propertyImplClassName))) return false
         }
 
         return true
@@ -878,16 +903,16 @@ public fun ProtoBuf.Callable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes
 
     hashCode = 31 * hashCode + returnType.hashCode(stringIndexes, fqNameIndexes)
 
-    if (hasExtension(JvmProtoBuf.methodSignature)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.methodSignature).hashCode(stringIndexes, fqNameIndexes)
+    if (hasExtension(JvmProtoBuf.oldMethodSignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.oldMethodSignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasExtension(JvmProtoBuf.propertySignature)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
+    if (hasExtension(JvmProtoBuf.oldPropertySignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.oldPropertySignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasExtension(JvmProtoBuf.implClassName)) {
-        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.implClassName))
+    if (hasExtension(JvmProtoBuf.oldImplClassName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.oldImplClassName))
     }
 
     return hashCode
@@ -902,6 +927,10 @@ public fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameInde
 
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.constructorSignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -928,6 +957,14 @@ public fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes
 
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.methodSignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.methodSignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.methodImplClassName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.methodImplClassName))
     }
 
     return hashCode
@@ -962,6 +999,14 @@ public fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes
 
     if (hasSetterFlags()) {
         hashCode = 31 * hashCode + setterFlags
+    }
+
+    if (hasExtension(JvmProtoBuf.propertySignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.propertyImplClassName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.propertyImplClassName))
     }
 
     return hashCode
