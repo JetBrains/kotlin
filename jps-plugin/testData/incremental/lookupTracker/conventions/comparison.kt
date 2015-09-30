@@ -6,10 +6,10 @@ package foo.bar
     na /*c:foo.bar.A(equals)*/== a
     na /*c:foo.bar.A(equals)*/== null
 
-    a /*c:foo.bar.A(compareTo)*/> b
-    a /*c:foo.bar.A(compareTo)*/< b
-    a /*c:foo.bar.A(compareTo)*/>= b
-    a /*c:foo.bar.A(compareTo)*/<= b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/> b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/< b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/>= b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/<= b
 
     a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/> c
     a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/< c
