@@ -2,7 +2,7 @@
 
 package aaa
 
-fun <T> T.foo(t: T) = t
+infix fun <T> T.foo(t: T) = t
 
 fun <T> id(t: T) = t
 

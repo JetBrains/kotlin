@@ -5,6 +5,7 @@ infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 infix fun String.o1(o: String) = o
 infix fun String.o2(o: String, o2: String? = null) = o
+infix fun String.o3(o: String = "", o2: String? = null) = o
 
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun w1() {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun w2(s: String) {}

@@ -8,6 +8,12 @@ class Example {
 infix fun Example.toExt(other: Example) = Pair(this, other)
 fun Example.toExtNonInfix(other: Example) = Pair(this, other)
 
+infix fun Example.toExtWithExtraParams(other: Example, blah: Int = 0) = Pair(this, other)
+fun Example.toExtNonInfixWithExtraParams(other: Example, blah: Int = 0) = Pair(this, other)
+
+infix fun Example.toExtDefaultValues(other: Example? = null, blah: Int = 0) = Pair(this, other)
+fun Example.toExtNonInfixDefaultValues(other: Example? = null, blah: Int = 0) = Pair(this, other)
+
 fun Example.withLambda(f: () -> Unit) = Pair(this, f)
 
 fun test() {
@@ -21,6 +27,12 @@ fun test() {
     a toExt b
     a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfix<!> b
     a.toExtNonInfix(b)
+
+    a toExtWithExtraParams b
+    a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfixWithExtraParams<!> b
+
+    a toExtDefaultValues b
+    a <!INFIX_MODIFIER_REQUIRED!>toExtNonInfixDefaultValues<!> b
 
     a <!INFIX_MODIFIER_REQUIRED!>withLambda<!> { }
 }

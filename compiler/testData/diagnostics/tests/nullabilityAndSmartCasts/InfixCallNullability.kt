@@ -1,16 +1,15 @@
 class A() {
-  operator fun plus(<!UNUSED_PARAMETER!>i<!> : Int) {}
+  operator infix fun plus(<!UNUSED_PARAMETER!>i<!> : Int) {}
   operator fun minus() {}
-  operator fun contains(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = true
+  operator infix fun contains(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = true
 }
 
-operator fun A.div(<!UNUSED_PARAMETER!>i<!> : Int) {}
-operator fun A?.times(<!UNUSED_PARAMETER!>i<!> : Int) {}
+operator infix fun A.div(<!UNUSED_PARAMETER!>i<!> : Int) {}
+operator infix fun A?.times(<!UNUSED_PARAMETER!>i<!> : Int) {}
 
 fun test(x : Int?, a : A?) {
     x<!UNSAFE_CALL!>.<!>plus(1)
     x?.plus(1)
-    x <!UNSAFE_INFIX_CALL!>plus<!> 1
     x <!UNSAFE_INFIX_CALL!>+<!> 1
     <!UNSAFE_CALL!>-<!>x
     x<!UNSAFE_CALL!>.<!>minus()

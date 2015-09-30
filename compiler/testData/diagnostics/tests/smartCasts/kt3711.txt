@@ -1,7 +1,7 @@
 package
 
 public fun f(/*0*/ a: kotlin.String?): kotlin.Unit
-public fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
+public infix fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
 
 @kotlin.data() public final class StringPair {
     public constructor StringPair(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)

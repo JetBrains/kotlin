@@ -13,7 +13,7 @@ package h {
     public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
     public operator fun </*0*/ T> h.Z.compareTo(/*0*/ a: h.A<T>): kotlin.Int
     public fun h.Z.equals(/*0*/ any: kotlin.Any): kotlin.Int
-    public fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>
+    public infix fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>
     public operator fun </*0*/ T> h.Z.plus(/*0*/ a: h.A<T>): h.A<T>
 
     public interface A</*0*/ T> {

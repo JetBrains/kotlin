@@ -2,7 +2,7 @@ public open class A() {
     public open val foo: Int? = 1
 }
 
-fun Int.bar(i: Int) = i
+infix fun Int.bar(i: Int) = i
 
 fun test() {
     val p = A()

@@ -1,7 +1,7 @@
 package o
 
 class A {
-    fun foo(b: B) = b
+    infix fun foo(b: B) = b
 }
 
 class B {

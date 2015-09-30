@@ -3,24 +3,24 @@
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {
     s(11)
     s.invoke(11)
-    s invoke 11
+    s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
 
     11.ext(11)
-    11 ext 11
+    11 <!INFIX_MODIFIER_REQUIRED!>ext<!> 11
 }
 
 inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {
     s(11)
     s.invoke(11)
-    s invoke 11
+    s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
 
     11.ext(11)
-    11 ext 11
+    11 <!INFIX_MODIFIER_REQUIRED!>ext<!> 11
 }
 
 inline fun Function1<Int, Unit>.inlineExt() {
     invoke(11)
     this.invoke(11)
-    this invoke 11
+    this <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     this(11)
 }
