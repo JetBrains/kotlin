@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufClassKind
+import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization
@@ -52,17 +55,16 @@ private abstract class DifferenceCalculator() {
 
     protected fun membersOrNone(names: Collection<String>): DifferenceKind = if (names.isEmpty()) DifferenceKind.NONE else DifferenceKind.MEMBERS(names)
 
-    protected fun calcDifferenceForMembers(
-            oldList: List<ProtoBuf.Callable>,
-            newList: List<ProtoBuf.Callable>
-    ): Collection<String> {
+    protected fun calcDifferenceForMembers(oldList: List<MessageLite>, newList: List<MessageLite>): Collection<String> {
         val result = hashSetOf<String>()
 
-        val oldMap = oldList.groupBy { it.hashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) } )}
-        val newMap = newList.groupBy { it.hashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) } )}
+        fun List<MessageLite>.names(nameResolver: NameResolver): List<String> =
+                map { it.name(nameResolver) }
 
-        fun List<ProtoBuf.Callable>.names(nameResolver: NameResolver): List<String> =
-                map { nameResolver.getString(it.name) }
+        val oldMap =
+                oldList.groupBy { it.getHashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) }) }
+        val newMap =
+                newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
 
         val hashes = oldMap.keySet() + newMap.keySet()
         for (hash in hashes) {
@@ -81,8 +83,8 @@ private abstract class DifferenceCalculator() {
     }
 
     private fun calcDifferenceForEqualHashes(
-            oldList: List<ProtoBuf.Callable>,
-            newList: List<ProtoBuf.Callable>
+            oldList: List<MessageLite>,
+            newList: List<MessageLite>
     ): Collection<String> {
         val result = hashSetOf<String>()
         val newSet = HashSet(newList)
@@ -93,12 +95,12 @@ private abstract class DifferenceCalculator() {
                 newSet.remove(newMember)
             }
             else {
-                result.add(compareObject.oldNameResolver.getString(oldMember.name))
+                result.add(oldMember.name(compareObject.oldNameResolver))
             }
         }
 
         newSet.forEach { newMember ->
-            result.add(compareObject.newNameResolver.getString(newMember.name))
+            result.add(newMember.name(compareObject.newNameResolver))
         }
 
         return result
@@ -113,8 +115,45 @@ private abstract class DifferenceCalculator() {
         return HashSetUtil.symmetricDifference(oldNames, newNames)
     }
 
-    protected val ProtoBuf.Callable.isPrivate: Boolean
-        get() = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
+    protected val MessageLite.isPrivate: Boolean
+        get() = Visibilities.isPrivate(Deserialization.visibility(
+                when (this) {
+                    is ProtoBuf.Callable -> Flags.VISIBILITY.get(flags)
+                    is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
+                    is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
+                    is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
+                    else -> error("Unknown message: $this")
+                }))
+
+    private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+        return when (this) {
+            is ProtoBuf.Callable -> hashCode(stringIndexes, fqNameIndexes)
+            is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes)
+            is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes)
+            is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes)
+            else -> error("Unknown message: $this")
+        }
+    }
+
+    private fun MessageLite.name(nameResolver: NameResolver): String {
+        return when (this) {
+            is ProtoBuf.Callable -> nameResolver.getString(name)
+            is ProtoBuf.Constructor -> "<init>"
+            is ProtoBuf.Function -> nameResolver.getString(name)
+            is ProtoBuf.Property -> nameResolver.getString(name)
+            else -> error("Unknown message: $this")
+        }
+    }
+
+    private fun ProtoCompareGenerated.checkEquals(old: MessageLite, new: MessageLite): Boolean {
+        return when {
+            old is ProtoBuf.Callable && new is ProtoBuf.Callable -> checkEquals(old, new)
+            old is ProtoBuf.Constructor && new is ProtoBuf.Constructor -> checkEquals(old, new)
+            old is ProtoBuf.Function && new is ProtoBuf.Function -> checkEquals(old, new)
+            old is ProtoBuf.Property && new is ProtoBuf.Property -> checkEquals(old, new)
+            else -> error("Unknown message: $this")
+        }
+    }
 }
 
 private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
@@ -122,11 +161,11 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         private val CONSTRUCTOR = "<init>"
 
         private val CLASS_SIGNATURE_ENUMS = EnumSet.of(
-                ProtoCompareGenerated.ProtoBufClassKind.FLAGS,
-                ProtoCompareGenerated.ProtoBufClassKind.FQ_NAME,
-                ProtoCompareGenerated.ProtoBufClassKind.TYPE_PARAMETER_LIST,
-                ProtoCompareGenerated.ProtoBufClassKind.SUPERTYPE_LIST,
-                ProtoCompareGenerated.ProtoBufClassKind.CLASS_ANNOTATION_LIST
+                ProtoBufClassKind.FLAGS,
+                ProtoBufClassKind.FQ_NAME,
+                ProtoBufClassKind.TYPE_PARAMETER_LIST,
+                ProtoBufClassKind.SUPERTYPE_LIST,
+                ProtoBufClassKind.CLASS_ANNOTATION_LIST
         )
     }
 
@@ -155,34 +194,43 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         fun Int.oldToNames() = names.add(oldNameResolver.getString(this))
         fun Int.newToNames() = names.add(newNameResolver.getString(this))
 
+        fun calcDifferenceForNonPrivateMembers(members: (ProtoBuf.Class) -> List<MessageLite>): Collection<String> {
+            val oldMembers = members(oldProto).filterNot { it.isPrivate }
+            val newMembers = members(newProto).filterNot { it.isPrivate }
+            return calcDifferenceForMembers(oldMembers, newMembers)
+        }
+
         for (kind in diff) {
             when (kind!!) {
-                ProtoCompareGenerated.ProtoBufClassKind.COMPANION_OBJECT_NAME -> {
+                ProtoBufClassKind.COMPANION_OBJECT_NAME -> {
                     if (oldProto.hasCompanionObjectName()) oldProto.companionObjectName.oldToNames()
                     if (newProto.hasCompanionObjectName()) newProto.companionObjectName.newToNames()
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.NESTED_CLASS_NAME_LIST ->
+                ProtoBufClassKind.NESTED_CLASS_NAME_LIST ->
                     names.addAll(calcDifferenceForNames(oldProto.nestedClassNameList, newProto.nestedClassNameList))
-                ProtoCompareGenerated.ProtoBufClassKind.MEMBER_LIST -> {
-                    val oldMembers = oldProto.memberList.filter { !it.isPrivate }
-                    val newMembers = newProto.memberList.filter { !it.isPrivate }
-                    names.addAll(calcDifferenceForMembers(oldMembers, newMembers))
-                }
-                ProtoCompareGenerated.ProtoBufClassKind.ENUM_ENTRY_LIST ->
+                ProtoBufClassKind.CONSTRUCTOR_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getConstructorList))
+                ProtoBufClassKind.FUNCTION_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
+                ProtoBufClassKind.PROPERTY_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
+                ProtoBufClassKind.MEMBER_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getMemberList))
+                ProtoBufClassKind.ENUM_ENTRY_LIST ->
                     names.addAll(calcDifferenceForNames(oldProto.enumEntryList, newProto.enumEntryList))
-                ProtoCompareGenerated.ProtoBufClassKind.PRIMARY_CONSTRUCTOR ->
+                ProtoBufClassKind.PRIMARY_CONSTRUCTOR ->
                     if (areNonPrivatePrimaryConstructorsDifferent()) {
                         names.add(CONSTRUCTOR)
                     }
-                ProtoCompareGenerated.ProtoBufClassKind.SECONDARY_CONSTRUCTOR_LIST ->
+                ProtoBufClassKind.SECONDARY_CONSTRUCTOR_LIST ->
                     if (areNonPrivateSecondaryConstructorsDifferent()) {
                         names.add(CONSTRUCTOR)
                     }
-                ProtoCompareGenerated.ProtoBufClassKind.FLAGS,
-                ProtoCompareGenerated.ProtoBufClassKind.FQ_NAME,
-                ProtoCompareGenerated.ProtoBufClassKind.TYPE_PARAMETER_LIST,
-                ProtoCompareGenerated.ProtoBufClassKind.SUPERTYPE_LIST,
-                ProtoCompareGenerated.ProtoBufClassKind.CLASS_ANNOTATION_LIST ->
+                ProtoBufClassKind.FLAGS,
+                ProtoBufClassKind.FQ_NAME,
+                ProtoBufClassKind.TYPE_PARAMETER_LIST,
+                ProtoBufClassKind.SUPERTYPE_LIST,
+                ProtoBufClassKind.CLASS_ANNOTATION_LIST ->
                     throw IllegalArgumentException("Unexpected kind: $kind")
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
@@ -237,14 +285,27 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
     private fun getChangedMembersNames(): Set<String> {
         val names = hashSetOf<String>()
 
+        fun calcDifferenceForNonPrivateMembers(members: (ProtoBuf.Package) -> List<MessageLite>): Collection<String> {
+            val oldMembers = members(oldProto).filterNot { it.isPrivate }
+            val newMembers = members(newProto).filterNot { it.isPrivate }
+            return calcDifferenceForMembers(oldMembers, newMembers)
+        }
+
         for (kind in diff) {
             when (kind!!) {
-                ProtoCompareGenerated.ProtoBufPackageKind.MEMBER_LIST ->
-                    names.addAll(calcDifferenceForMembers(oldProto.memberList.filter { !it.isPrivate }, newProto.memberList.filter { !it.isPrivate }))
+                ProtoBufPackageKind.CONSTRUCTOR_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getConstructorList))
+                ProtoBufPackageKind.FUNCTION_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
+                ProtoBufPackageKind.PROPERTY_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
+                ProtoBufPackageKind.MEMBER_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getMemberList))
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
             }
         }
+
         return names
     }
 }

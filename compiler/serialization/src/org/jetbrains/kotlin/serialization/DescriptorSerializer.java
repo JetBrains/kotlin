@@ -129,6 +129,10 @@ public class DescriptorSerializer {
             }
         }
 
+        for (ConstructorDescriptor descriptor : classDescriptor.getConstructors()) {
+            builder.addConstructor(constructorProto(descriptor));
+        }
+
         for (ConstructorDescriptor constructorDescriptor : getSecondaryConstructors(classDescriptor)) {
             builder.addSecondaryConstructor(callableProto(constructorDescriptor));
         }
@@ -138,6 +142,13 @@ public class DescriptorSerializer {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
                 builder.addMember(callableProto(member));
+
+                if (descriptor instanceof PropertyDescriptor) {
+                    builder.addProperty(propertyProto((PropertyDescriptor) descriptor));
+                }
+                else if (descriptor instanceof FunctionDescriptor) {
+                    builder.addFunction(functionProto((FunctionDescriptor) descriptor));
+                }
             }
         }
 
@@ -157,6 +168,143 @@ public class DescriptorSerializer {
         }
 
         extension.serializeClass(classDescriptor, builder);
+
+        return builder;
+    }
+
+    @NotNull
+    public ProtoBuf.Property.Builder propertyProto(@NotNull PropertyDescriptor descriptor) {
+        ProtoBuf.Property.Builder builder = ProtoBuf.Property.newBuilder();
+
+        DescriptorSerializer local = createChildSerializer();
+
+        boolean hasGetter = false;
+        boolean hasSetter = false;
+        boolean lateInit = descriptor.isLateInit();
+        boolean isConst = descriptor.isConst();
+
+        ConstantValue<?> compileTimeConstant = descriptor.getCompileTimeInitializer();
+        boolean hasConstant = !(compileTimeConstant == null || compileTimeConstant instanceof NullValue);
+
+        boolean hasAnnotations = !descriptor.getAnnotations().getAllAnnotations().isEmpty();
+
+        int propertyFlags = Flags.getAccessorFlags(
+                hasAnnotations,
+                descriptor.getVisibility(),
+                descriptor.getModality(),
+                false
+        );
+
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        if (getter != null) {
+            hasGetter = true;
+            int accessorFlags = getAccessorFlags(getter);
+            if (accessorFlags != propertyFlags) {
+                builder.setGetterFlags(accessorFlags);
+            }
+        }
+
+        PropertySetterDescriptor setter = descriptor.getSetter();
+        if (setter != null) {
+            hasSetter = true;
+            int accessorFlags = getAccessorFlags(setter);
+            if (accessorFlags != propertyFlags) {
+                builder.setSetterFlags(accessorFlags);
+            }
+
+            if (!setter.isDefault()) {
+                for (ValueParameterDescriptor valueParameterDescriptor : setter.getValueParameters()) {
+                    builder.setSetterValueParameter(local.valueParameter(valueParameterDescriptor));
+                }
+            }
+        }
+
+        builder.setFlags(Flags.getPropertyFlags(
+                hasAnnotations,
+                descriptor.getVisibility(),
+                descriptor.getModality(),
+                descriptor.getKind(),
+                descriptor.isVar(),
+                hasGetter,
+                hasSetter,
+                hasConstant,
+                isConst,
+                lateInit
+        ));
+
+        builder.setName(getSimpleNameIndex(descriptor.getName()));
+
+        builder.setReturnType(local.type(descriptor.getType()));
+
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
+        }
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        if (receiverParameter != null) {
+            builder.setReceiverType(local.type(receiverParameter.getType()));
+        }
+
+        extension.serializeProperty(descriptor, builder);
+
+        return builder;
+    }
+
+    @NotNull
+    public ProtoBuf.Function.Builder functionProto(@NotNull FunctionDescriptor descriptor) {
+        ProtoBuf.Function.Builder builder = ProtoBuf.Function.newBuilder();
+
+        DescriptorSerializer local = createChildSerializer();
+
+        builder.setFlags(Flags.getFunctionFlags(
+                hasAnnotations(descriptor),
+                descriptor.getVisibility(),
+                descriptor.getModality(),
+                descriptor.getKind(),
+                descriptor.isOperator(),
+                descriptor.isInfix()
+        ));
+
+        builder.setName(getSimpleNameIndex(descriptor.getName()));
+
+        //noinspection ConstantConditions
+        builder.setReturnType(local.type(descriptor.getReturnType()));
+
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
+        }
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        if (receiverParameter != null) {
+            builder.setReceiverType(local.type(receiverParameter.getType()));
+        }
+
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
+            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+        }
+
+        extension.serializeFunction(descriptor, builder);
+
+        return builder;
+    }
+
+    @NotNull
+    public ProtoBuf.Constructor.Builder constructorProto(@NotNull ConstructorDescriptor descriptor) {
+        ProtoBuf.Constructor.Builder builder = ProtoBuf.Constructor.newBuilder();
+
+        DescriptorSerializer local = createChildSerializer();
+
+        builder.setFlags(Flags.getConstructorFlags(
+                hasAnnotations(descriptor),
+                descriptor.getVisibility(),
+                !descriptor.isPrimary()
+        ));
+
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
+            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+        }
+
+        extension.serializeConstructor(descriptor, builder);
 
         return builder;
     }

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collection;
@@ -33,6 +30,15 @@ public abstract class SerializerExtension {
     }
 
     public void serializePackage(@NotNull Collection<PackageFragmentDescriptor> packageFragments, @NotNull ProtoBuf.Package.Builder proto) {
+    }
+
+    public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {
+    }
+
+    public void serializeFunction(@NotNull FunctionDescriptor descriptor, @NotNull ProtoBuf.Function.Builder proto) {
+    }
+
+    public void serializeProperty(@NotNull PropertyDescriptor descriptor, @NotNull ProtoBuf.Property.Builder proto) {
     }
 
     public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
