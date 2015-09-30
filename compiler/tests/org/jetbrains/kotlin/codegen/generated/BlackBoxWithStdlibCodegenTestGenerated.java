@@ -954,6 +954,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/kt8011.kt");
             doTestWithStdlib(fileName);
         }
+
+        @TestMetadata("mutabilityMarkerInterfaces.kt")
+        public void testMutabilityMarkerInterfaces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/mutabilityMarkerInterfaces.kt");
+            doTestWithStdlib(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/controlStructures")

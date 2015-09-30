@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -296,6 +298,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    private static Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
+    static {
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterator", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterable", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Collection", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.List", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.ListIterator", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Set", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Map", "kotlin/jvm/internal/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Map.Entry", "kotlin/jvm/internal/KMappedMarker");
+
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterator", "kotlin/jvm/internal/KMutableIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterable", "kotlin/jvm/internal/KMutableIterable");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableCollection", "kotlin/jvm/internal/KMutableCollection");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableList", "kotlin/jvm/internal/KMutableList");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableListIterator", "kotlin/jvm/internal/KMutableListIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableSet", "kotlin/jvm/internal/KMutableSet");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap", "kotlin/jvm/internal/KMutableMap");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap.MutableEntry", "kotlin/jvm/internal/KMutableMap$Entry");
+    }
+
     @NotNull
     private JvmClassSignature signature() {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
@@ -313,15 +336,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sw.writeSuperclassEnd();
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
+        Set<String> kotlinMarkerInterfaces = new LinkedHashSet<String>();
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
                 sw.writeInterface();
-                Type jvmName = typeMapper.mapSupertype(supertype, sw);
+                Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();
-                superInterfaces.add(jvmName.getInternalName());
+                String jvmInterfaceInternalName = jvmInterfaceType.getInternalName();
+                superInterfaces.add(jvmInterfaceInternalName);
+
+                String kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).asString();
+                String kotlinMarkerInterfaceInternalName = KOTLIN_MARKER_INTERFACES.get(kotlinInterfaceName);
+                if (kotlinMarkerInterfaceInternalName != null) {
+                    kotlinMarkerInterfaces.add(kotlinMarkerInterfaceInternalName);
+                }
             }
         }
+        
+        for (String kotlinMarkerInterface : kotlinMarkerInterfaces) {
+            sw.writeInterface();
+            sw.writeAsmType(Type.getObjectType(kotlinMarkerInterface));
+            sw.writeInterfaceEnd();
+        }
+
+        superInterfaces.addAll(kotlinMarkerInterfaces);
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
                                      new ArrayList<String>(superInterfaces), sw.makeJavaGenericSignature());
