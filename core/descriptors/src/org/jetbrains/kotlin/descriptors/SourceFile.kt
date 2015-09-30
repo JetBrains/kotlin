@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.reflect
+package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.SourceFile
-
-public class ReflectAnnotationSource(public val annotation: Annotation) : SourceElement {
-    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+public interface SourceFile {
+    companion object {
+        val NO_SOURCE_FILE = object : SourceFile {}
+    }
 }

@@ -589,6 +589,19 @@ public class DescriptorUtils {
         return getJvmNameAnnotation(annotated.getAnnotations());
     }
 
+    @NotNull
+    public static SourceFile getContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PropertySetterDescriptor) {
+            descriptor = ((PropertySetterDescriptor) descriptor).getCorrespondingProperty();
+        }
+
+        if (descriptor instanceof DeclarationDescriptorWithSource) {
+            return ((DeclarationDescriptorWithSource) descriptor).getSource().getContainingFile();
+        }
+
+        return SourceFile.NO_SOURCE_FILE;
+    }
+
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {
         FqName fqName = packageView.getFqName();
         if (!fqName.isRoot()) {
