@@ -435,7 +435,7 @@ public class DeclarationsChecker {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             if (inTrait && property.hasModifier(JetTokens.PRIVATE_KEYWORD) && !property.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-                trace.report(PRIVATE_PROPERTY_IN_TRAIT.on(property));
+                trace.report(PRIVATE_PROPERTY_IN_INTERFACE.on(property));
             }
             return;
         }
@@ -465,7 +465,7 @@ public class DeclarationsChecker {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             if (inTrait && property.hasModifier(JetTokens.FINAL_KEYWORD) && backingFieldRequired) {
-                trace.report(FINAL_PROPERTY_IN_TRAIT.on(property));
+                trace.report(FINAL_PROPERTY_IN_INTERFACE.on(property));
             }
             return;
         }
