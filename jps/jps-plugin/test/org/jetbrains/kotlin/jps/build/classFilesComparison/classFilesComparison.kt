@@ -53,7 +53,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
         val listFiles = dir.listFiles()
         assertNotNull(listFiles)
 
-        val children = listFiles!!.toList().sortBy { it.getName() }.sortBy { it.isDirectory() }
+        val children = listFiles!!.toList().sortedBy { it.getName() }.sortedBy { it.isDirectory() }
         for (child in children) {
             if (child.isDirectory()) {
                 p.println(child.name)
@@ -101,7 +101,7 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
     val commonPaths = Sets.intersection(pathsInExpected, pathsInActual)
     val changedPaths = commonPaths
             .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
-            .sort()
+            .sorted()
 
     val expectedString = getDirectoryString(expected, changedPaths)
     val actualString = getDirectoryString(actual, changedPaths)
