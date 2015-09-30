@@ -135,7 +135,32 @@ public class IncrementalPackageFragmentProvider(
             }
         }
 
+        public fun getPackageFragmentForMultifileClass(multifileClassFqName: FqName): IncrementalMultifileClassPackageFragment? {
+            val facadeInternalName = JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName).internalName
+            val partsNames = incrementalCache.getStableMultifileFacadeParts(facadeInternalName) ?: return null
+            return IncrementalMultifileClassPackageFragment(multifileClassFqName, partsNames)
+        }
+
         override fun getMemberScope(): JetScope = memberScope()
+
+        public inner class IncrementalMultifileClassPackageFragment(
+                val multifileClassFqName: FqName,
+                val partsNames: Collection<String>
+        ) : PackageFragmentDescriptorImpl(moduleDescriptor, multifileClassFqName.parent()) {
+            val memberScope = storageManager.createLazyValue {
+                val partsData = partsNames.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
+                if (partsData.isEmpty())
+                    JetScope.Empty
+                else {
+                    val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
+                    ChainedScope(this,
+                                 "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
+                                 *scopes.toTypedArray<JetScope>())
+                }
+            }
+
+            override fun getMemberScope(): JetScope = memberScope()
+        }
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
                 this@IncrementalPackageFragment, packageData.packageProto, packageData.nameResolver, deserializationComponents,

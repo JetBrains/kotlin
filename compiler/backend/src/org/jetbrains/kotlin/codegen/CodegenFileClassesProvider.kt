@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetFile
 public class CodegenFileClassesProvider(private val packageFacadesAsMultifileClasses: Boolean) : JvmFileClassesProvider {
     override public fun getFileClassInfo(file: JetFile): JvmFileClassInfo {
         val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
-        if (packageFacadesAsMultifileClasses && !fileClassInfo.TEMP_isMultifileClass) {
+        if (packageFacadesAsMultifileClasses && !fileClassInfo.withJvmMultifileClass) {
             return JvmFileClassUtil.getMultifilePackageFacadePartInfo(file)
         }
         else {

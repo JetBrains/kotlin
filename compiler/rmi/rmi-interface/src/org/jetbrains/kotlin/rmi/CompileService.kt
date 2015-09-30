@@ -35,6 +35,12 @@ public interface CompileService : Remote {
         public fun getObsoletePackageParts(): Collection<String>
 
         @Throws(RemoteException::class)
+        public fun getObsoleteMultifileClassFacades(): Collection<String>
+
+        @Throws(RemoteException::class)
+        public fun getMultifileFacade(partInternalName: String): String?
+
+        @Throws(RemoteException::class)
         public fun getPackagePartData(fqName: String): JvmPackagePartProto?
 
         @Throws(RemoteException::class)
@@ -48,6 +54,9 @@ public interface CompileService : Remote {
 
         @Throws(RemoteException::class)
         public fun close()
+
+        @Throws(RemoteException::class)
+        public fun getMultifileFacadeParts(internalName: String): Collection<String>?
     }
 
     public interface RemoteLookupTracker : Remote {

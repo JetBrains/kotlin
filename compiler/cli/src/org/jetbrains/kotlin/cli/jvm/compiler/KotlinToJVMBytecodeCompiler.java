@@ -60,6 +60,8 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.serialization.PackageData;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
@@ -368,17 +370,25 @@ public class KotlinToJVMBytecodeCompiler {
         IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
 
         Collection<FqName> packagesWithObsoleteParts;
+        List<FqName> obsoleteMultifileClasses;
         TargetId targetId = null;
 
         if (module == null || incrementalCompilationComponents == null) {
             packagesWithObsoleteParts = Collections.emptySet();
+            obsoleteMultifileClasses = Collections.emptyList();
         }
         else {
             targetId = ModulesPackage.TargetId(module);
             IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
+
             packagesWithObsoleteParts = new HashSet<FqName>();
             for (String internalName : incrementalCache.getObsoletePackageParts()) {
                 packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
+            }
+
+            obsoleteMultifileClasses = new ArrayList<FqName>();
+            for (String obsoleteFacadeInternalName : incrementalCache.getObsoleteMultifileClasses()) {
+                obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).getFqNameForClassNameWithoutDollars());
             }
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
@@ -396,6 +406,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,
+                obsoleteMultifileClasses,
                 targetId,
                 moduleName,
                 outputDirectory,

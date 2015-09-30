@@ -113,6 +113,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("MultifileClassInlineFunctionAccessingProperty.A.kt")
+    public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/MultifileClassInlineFunctionAccessingProperty.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedClass.A.kt")
     public void testNestedClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedClass.A.kt");

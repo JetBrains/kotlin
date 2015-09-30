@@ -154,25 +154,6 @@ public class InlineCodegenUtil {
         return file;
     }
 
-    public static ClassId getContainerClassIdForInlineCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor) {
-        DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
-        ClassId containerClassId;
-        if (parentDeclaration instanceof PackageFragmentDescriptor) {
-            ProtoBuf.Callable proto = deserializedDescriptor.getProto();
-            if (!proto.hasExtension(JvmProtoBuf.implClassName)) {
-                throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
-            }
-            Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JvmProtoBuf.implClassName));
-            containerClassId = new ClassId(((PackageFragmentDescriptor) parentDeclaration).getFqName(), name);
-        } else {
-            containerClassId = getContainerClassId(deserializedDescriptor);
-        }
-        if (containerClassId == null) {
-            throw new IllegalStateException("Couldn't find container FQName for " + deserializedDescriptor.getName());
-        }
-        return containerClassId;
-    }
-
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();

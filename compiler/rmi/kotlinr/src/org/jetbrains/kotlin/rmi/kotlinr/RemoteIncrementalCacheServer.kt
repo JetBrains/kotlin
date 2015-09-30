@@ -31,6 +31,12 @@ public class RemoteIncrementalCacheServer(val cache: IncrementalCache, port: Int
 
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
+    override fun getObsoleteMultifileClassFacades(): Collection<String> = cache.getObsoleteMultifileClasses()
+
+    override fun getMultifileFacadeParts(internalName: String): Collection<String>? = cache.getStableMultifileFacadeParts(internalName)
+
+    override fun getMultifileFacade(partInternalName: String): String? = cache.getMultifileFacade(partInternalName)
+
     override fun getPackagePartData(fqName: String): JvmPackagePartProto? = cache.getPackagePartData(fqName)
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
