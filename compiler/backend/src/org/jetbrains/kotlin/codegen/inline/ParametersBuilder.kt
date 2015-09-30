@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Type
+import java.lang.Deprecated
 
 import java.util.ArrayList
 import java.util.Collections
@@ -111,25 +112,14 @@ class ParametersBuilder private constructor(){
         return Collections.unmodifiableList(capturedParams)
     }
 
+    /*TODO use Parameters instead*/
     fun listAllParams(): List<ParameterInfo> {
         return valueAndHiddenParams + capturedParams
     }
 
-    private fun buildWithStubs(): List<ParameterInfo> {
-        return Parameters.addStubs(listNotCaptured())
-    }
-
-    private fun buildCapturedWithStubs(): List<CapturedParamInfo> {
-        return Parameters.shiftAndAddStubs(listCaptured(), nextValueParameterIndex)
-    }
-
     fun buildParameters(): Parameters {
-        return Parameters(buildWithStubs(), buildCapturedWithStubs())
+        return Parameters(listNotCaptured(), Parameters.shift(listCaptured(), nextValueParameterIndex))
     }
-
-//    public fun getValueParameter(index: Int): ParameterInfo {
-//        return valueAndHiddenParams[index + valueParamStart]
-//    }
 
     companion object {
 

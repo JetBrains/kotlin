@@ -251,7 +251,7 @@ public class AnonymousObjectTransformer {
         List<Type> descTypes = new ArrayList<Type>();
 
         Parameters constructorParams = constructorInlineBuilder.buildParameters();
-        int [] capturedIndexes = new int [constructorParams.totalSize()];
+        int [] capturedIndexes = new int [constructorParams.getReal().size() + constructorParams.getCaptured().size()];
         int index = 0;
         int size = 0;
 

@@ -14,115 +14,81 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import com.google.common.collect.Iterables;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.google.common.collect.Iterables
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.ArrayList
 
 //All parameters with gaps
-public class Parameters implements Iterable<ParameterInfo> {
-    private final List<ParameterInfo> real;
-    private final List<CapturedParamInfo> captured;
+class Parameters(val real: List<ParameterInfo>, val captured: List<CapturedParamInfo>) : Iterable<ParameterInfo> {
 
-    private final Integer [] declIndexesToActual;
-    private final ParameterInfo [] actualDeclShifts;
+    private val declIndexesToActual: Array<Int?>
+    private val actualDeclShifts: Array<ParameterInfo?>
 
-    public Parameters(List<ParameterInfo> real, List<CapturedParamInfo> captured) {
-        this.real = real;
-        this.captured = captured;
+    public val realArgsSizeOnStack = real.fold(0, { a, v -> a + v.type.size})
+    public val capturedArgsSizeOnStack = captured.fold(0, { a, v -> a + v.type.size})
 
-        declIndexesToActual = new Integer [totalSize()];
+    public val argsSizeOnStack = realArgsSizeOnStack + capturedArgsSizeOnStack
 
-        int index = 0;
-        for (ParameterInfo param : this) {
-            if (param != ParameterInfo.STUB && param != CapturedParamInfo.STUB) {
-                declIndexesToActual[param.declarationIndex] = index;
-            }
-            index++;
+    init {
+        declIndexesToActual = arrayOfNulls<Int>(argsSizeOnStack)
+        withIndex().forEach { it ->
+            declIndexesToActual[it.value.declarationIndex] = it.index
         }
 
-        actualDeclShifts = new ParameterInfo [totalSize()];
-        int realSize = 0;
-        for (int i = 0; i < declIndexesToActual.length; i++) {
-            Integer declIndexToActual = declIndexesToActual[i];
+        actualDeclShifts = arrayOfNulls<ParameterInfo>(argsSizeOnStack)
+        var realSize = 0
+        for (i in declIndexesToActual.indices) {
+            val declIndexToActual = declIndexesToActual[i]
             if (declIndexToActual != null) {
-                actualDeclShifts[realSize] = getByDeclarationIndex(i);
-                realSize += get(declIndexToActual).getType().getSize();
+                val byDeclarationIndex = getByDeclarationIndex(i)
+                actualDeclShifts[realSize] = byDeclarationIndex
+                realSize += byDeclarationIndex.type.size
             }
         }
     }
 
-    public List<ParameterInfo> getReal() {
-        return real;
+    fun getByDeclarationIndex(index: Int): ParameterInfo {
+        if (index < realArgsSizeOnStack) {
+            return real.get(declIndexesToActual[index]!!)
+        }
+        return captured.get(declIndexesToActual[index]!! - real.size())
     }
 
-    public List<CapturedParamInfo> getCaptured() {
-        return captured;
+    fun getByByteCodeIndex(index: Int): ParameterInfo {
+        return actualDeclShifts[index]!!
     }
 
-    public int totalSize() {
-        return real.size() + captured.size();
-    }
-
-    public ParameterInfo getByDeclarationIndex(int index) {
+    fun get(index: Int): ParameterInfo {
         if (index < real.size()) {
-            return real.get(declIndexesToActual[index]);
+            return real.get(index)
         }
-        return captured.get(index - real.size());
+        return captured.get(index - real.size())
     }
 
-    public ParameterInfo getByByteCodeIndex(int index) {
-        return actualDeclShifts[index];
+    override fun iterator(): Iterator<ParameterInfo> {
+        return Iterables.concat(real, captured).iterator()
     }
 
-    public ParameterInfo get(int index) {
-        if (index < real.size()) {
-            return real.get(index);
-        }
-        return captured.get(index - real.size());
-    }
-
-    @NotNull
-    @Override
-    public Iterator<ParameterInfo> iterator() {
-        return Iterables.concat(real, captured).iterator();
-    }
-
-    public static List<CapturedParamInfo> shiftAndAddStubs(List<CapturedParamInfo> capturedParams, int realSize) {
-        List<CapturedParamInfo> result = new ArrayList<CapturedParamInfo>();
-        for (CapturedParamInfo capturedParamInfo : capturedParams) {
-            CapturedParamInfo newInfo = capturedParamInfo.newIndex(result.size() + realSize);
-            result.add(newInfo);
-            if (capturedParamInfo.getType().getSize() == 2) {
-                result.add(CapturedParamInfo.STUB);
+    val capturedTypes: ArrayList<Type>
+        get() {
+            val result = ArrayList<Type>()
+            for (info in captured) {
+                result.add(info.getType())
             }
+            return result
         }
-        return result;
-    }
 
-    public static List<ParameterInfo> addStubs(List<ParameterInfo> params) {
-        List<ParameterInfo> result = new ArrayList<ParameterInfo>();
-        for (ParameterInfo newInfo : params) {
-            result.add(newInfo);
-            if (newInfo.getType().getSize() == 2) {
-                result.add(ParameterInfo.STUB);
+    companion object {
+        fun shift(capturedParams: List<CapturedParamInfo>, realSize: Int): List<CapturedParamInfo> {
+            val result = ArrayList<CapturedParamInfo>()
+            for (capturedParamInfo in capturedParams) {
+                val newInfo = capturedParamInfo.newIndex(result.size() + realSize)
+                result.add(newInfo)
             }
+            return result
         }
-        return result;
-    }
-
-    public ArrayList<Type> getCapturedTypes() {
-        ArrayList<Type> result = new ArrayList<Type>();
-        for (CapturedParamInfo info : captured) {
-            if(info != CapturedParamInfo.STUB) {
-                result.add(info.getType());
-            }
-        }
-        return result;
     }
 }

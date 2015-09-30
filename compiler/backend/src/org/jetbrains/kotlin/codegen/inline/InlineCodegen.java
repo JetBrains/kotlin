@@ -289,7 +289,7 @@ public class InlineCodegen extends CallGenerator {
         };
 
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
-        generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
+        generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index);
         removeFinallyMarkers(adapter);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));

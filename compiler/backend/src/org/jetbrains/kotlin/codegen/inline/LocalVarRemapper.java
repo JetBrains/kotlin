@@ -38,18 +38,16 @@ public class LocalVarRemapper {
 
     public LocalVarRemapper(Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
-        this.allParamsSize = params.totalSize();
+        this.allParamsSize = params.getArgsSizeOnStack();
         this.params = params;
 
-        remapValues = new StackValue [params.totalSize()];
-        Integer [] declIndexesToActual = new Integer [params.totalSize()];
-        Integer [] actualDeclShifts = new Integer [params.totalSize()];
+        remapValues = new StackValue [params.getArgsSizeOnStack()];
+        Integer [] declIndexesToActual = new Integer [params.getArgsSizeOnStack()];
+        Integer [] actualDeclShifts = new Integer [params.getArgsSizeOnStack()];
 
         int index = 0;
         for (ParameterInfo param : params) {
-            if (param != ParameterInfo.STUB && param != CapturedParamInfo.STUB) {
-                declIndexesToActual[param.declarationIndex] = index;
-            }
+            declIndexesToActual[param.declarationIndex] = index;
             index++;
         }
 
@@ -64,14 +62,12 @@ public class LocalVarRemapper {
 
         realSize = 0;
         for (ParameterInfo info : params) {
-            if (info != ParameterInfo.STUB && info != CapturedParamInfo.STUB) {
-                if (!info.isSkippedOrRemapped()) {
-                    remapValues[actualDeclShifts[info.declarationIndex]] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
-                    realSize += info.getType().getSize();
-                }
-                else {
-                    remapValues[actualDeclShifts[info.declarationIndex]] = info.isRemapped() ? info.getRemapValue() : null;
-                }
+            if (!info.isSkippedOrRemapped()) {
+                remapValues[actualDeclShifts[info.declarationIndex]] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
+                realSize += info.getType().getSize();
+            }
+            else {
+                remapValues[actualDeclShifts[info.declarationIndex]] = info.isRemapped() ? info.getRemapValue() : null;
             }
         }
 
@@ -93,7 +89,7 @@ public class LocalVarRemapper {
                 remappedIndex = ((StackValue.Local)remapped).index;
             }
         } else {
-            remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
+            remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index; //captured params not used directly in this inlined method, they used in closure
         }
 
         return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);

@@ -133,7 +133,7 @@ public class MethodInliner {
         resultNode.visitLabel(end);
 
         if (inliningContext.isRoot()) {
-            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
+            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks, ((StackValue.Local)remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index);
         }
 
         processReturns(resultNode, labelOwner, remapReturn, end);
@@ -155,7 +155,7 @@ public class MethodInliner {
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
                                                                                    new TypeRemapper(currentTypeMapping));
 
-        InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize(), sourceMapper) {
+        InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.getArgsSizeOnStack(), sourceMapper) {
 
             private AnonymousObjectGeneration anonymousObjectGen;
             private void handleAnonymousObjectGeneration() {
@@ -307,8 +307,8 @@ public class MethodInliner {
 
     @NotNull
     public MethodNode prepareNode(@NotNull MethodNode node, int finallyDeepShift) {
-        final int capturedParamsSize = parameters.getCaptured().size();
-        final int realParametersSize = parameters.getReal().size();
+        final int capturedParamsSize = parameters.getCapturedArgsSizeOnStack();
+        final int realParametersSize = parameters.getRealArgsSizeOnStack();
         Type[] types = Type.getArgumentTypes(node.desc);
         Type returnType = Type.getReturnType(node.desc);
 
@@ -558,7 +558,7 @@ public class MethodInliner {
     }
 
     private LambdaInfo getLambdaIfExists(int varIndex) {
-        if (varIndex < parameters.totalSize()) {
+        if (varIndex < parameters.getArgsSizeOnStack()) {
             return parameters.getByByteCodeIndex(varIndex).getLambda();
         }
         return null;
