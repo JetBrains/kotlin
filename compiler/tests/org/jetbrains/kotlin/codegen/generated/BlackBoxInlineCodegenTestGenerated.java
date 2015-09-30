@@ -124,15 +124,45 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
-        @TestMetadata("justLambda.1.kt")
-        public void testJustLambda() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/justLambda.1.kt");
+        @TestMetadata("captured.1.kt")
+        public void testCaptured() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/captured.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("extension.1.kt")
+        public void testExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extension.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("extensionInClass.1.kt")
+        public void testExtensionInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extensionInClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("lambdaMigration.1.kt")
+        public void testLambdaMigration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigration.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("lambdaMigrationInClass.1.kt")
+        public void testLambdaMigrationInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigrationInClass.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
 
         @TestMetadata("simple.1.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simple.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleInClass.1.kt")
+        public void testSimpleInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simpleInClass.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
     }
