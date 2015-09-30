@@ -47,6 +47,10 @@ public object ModifierCheckerCore {
         COMPATIBLE_FOR_CLASSES_ONLY
     }
 
+    private val defaultVisibilityTargets = EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+                                                      MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
+                                                      MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR)
+
     private val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
             ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
@@ -56,13 +60,11 @@ public object ModifierCheckerCore {
             // We should have also CLASS_ONLY here because INNER_CLASS is not always perfectly identified
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
-            PRIVATE_KEYWORD   to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            PUBLIC_KEYWORD    to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            INTERNAL_KEYWORD  to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS, MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR),
+            PRIVATE_KEYWORD   to defaultVisibilityTargets,
+            PUBLIC_KEYWORD    to defaultVisibilityTargets,
+            INTERNAL_KEYWORD  to defaultVisibilityTargets,
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+                                            MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR),
             IN_KEYWORD        to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             OUT_KEYWORD       to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
