@@ -59,7 +59,10 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -2758,7 +2761,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetType type = bindingContext.getType(expression);
         assert type != null;
 
-        assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
+        assert state.getReflectionTypes().getKClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
         return generateClassLiteralReference(typeMapper, KotlinPackage.single(type.getArguments()).getType());

@@ -376,7 +376,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
         }
 
-        if (parameterInfo.getIsTypeChanged() && parameter.getTypeReference() != null) {
+        if (parameterInfo.isTypeChanged() && parameter.getTypeReference() != null) {
             String renderedType = parameterInfo.renderType(parameterIndex, this);
             parameter.setTypeReference(psiFactory.createType(renderedType));
         }

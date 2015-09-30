@@ -168,8 +168,10 @@ public class LibrarySourcesConfig extends Config {
                 }
 
                 for (KotlinJavascriptMetadata metadata : metadataList) {
-                    if (!metadata.getIsAbiVersionCompatible()) {
-                        report.invoke("File '" + path + "' was compiled with an incompatible version of Kotlin. Its ABI version is " + metadata.getAbiVersion() + ", expected ABI version is " + KotlinJavascriptMetadataUtils.ABI_VERSION);
+                    if (!metadata.isAbiVersionCompatible()) {
+                        report.invoke("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
+                                      "Its ABI version is " + metadata.getAbiVersion() +
+                                      ", expected ABI version is " + KotlinJavascriptMetadataUtils.ABI_VERSION);
                         return true;
                     }
                 }
