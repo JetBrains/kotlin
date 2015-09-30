@@ -108,6 +108,7 @@ public class ReferenceVariantsHelper(
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.UNARY -> receiverExpression = null // can it happen at all?
+            else -> throw RuntimeException() //TODO: see KT-9394
         }
 
         val resolutionScope = resolutionScope(expression) ?: return emptyList()

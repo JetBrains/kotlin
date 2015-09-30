@@ -341,6 +341,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             is CallTypeAndReceiver.IMPORT_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.PACKAGE_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.TYPE -> receiverExpression = callTypeAndReceiver.receiver
+            else -> throw RuntimeException() //TODO: see KT-9394
         }
 
         val receiverValues = if (receiverExpression != null) {
