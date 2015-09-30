@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, private val elementName: String) : JetIntentionAction<JetModifierListOwner>(element), CleanupFix {
     override fun getText() = "Make $elementName internal"
@@ -36,7 +40,13 @@ public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, p
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val descriptor = Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE.cast(diagnostic).a
+            @Suppress("UNCHECKED_CAST")
+            val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>
+            val descriptor = factory.cast(diagnostic).c
+            if (!DescriptorUtils.isTopLevelDeclaration(descriptor) ||
+                descriptor !is DeclarationDescriptorWithVisibility ||
+                descriptor.visibility != Visibilities.PRIVATE) return null
+
             val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetModifierListOwner ?: return null
             return ChangePrivateTopLevelToInternalFix(declaration, descriptor.name.asString())
         }
