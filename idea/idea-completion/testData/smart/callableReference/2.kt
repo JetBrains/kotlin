@@ -1,4 +1,4 @@
-fun foo(p: () -> Unit){}
+fun foo(p: (Int) -> Unit){}
 
 fun bar() {
     foo(<caret>)
@@ -7,4 +7,4 @@ fun bar() {
 fun f(){}
 fun f(i: Int){}
 
-// ABSENT: ::f
+// EXIST: ::f
