@@ -36,11 +36,11 @@ public class TraitDefaultMethodCallChecker : CallChecker {
         val targetDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
         val containerDescriptor = targetDescriptor.getContainingDeclaration()
 
-        if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isTrait(containerDescriptor)) {
+        if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isInterface(containerDescriptor)) {
             //is java interface default method called from trait
             val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, javaClass<ClassifierDescriptor>())
 
-            if (classifier != null && DescriptorUtils.isTrait(classifier)) {
+            if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(
                         ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(
                                 PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), javaClass<JetExpression>())

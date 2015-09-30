@@ -550,9 +550,9 @@ public class DeclarationsChecker {
             }
         }
         else {
-            assert DescriptorUtils.isTrait(declaration) : "Enum entry should be declared in enum class: " +
-                                                          classDescriptor + " " +
-                                                          classDescriptor.getKind();
+            assert DescriptorUtils.isInterface(declaration) : "Enum entry should be declared in enum class: " +
+                                                              classDescriptor + " " +
+                                                              classDescriptor.getKind();
         }
     }
 

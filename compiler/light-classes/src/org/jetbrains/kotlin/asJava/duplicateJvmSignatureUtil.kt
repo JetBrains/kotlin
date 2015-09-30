@@ -134,7 +134,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
 private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDeclarationsData): Boolean {
     return when (other.classOrigin.originKind) {
         PACKAGE_PART -> this.classOrigin.originKind == PACKAGE_FACADE
-        TRAIT_IMPL -> this.classOrigin.originKind != TRAIT_IMPL
+        INTERFACE_DEFAULT_IMPL -> this.classOrigin.originKind != INTERFACE_DEFAULT_IMPL
         MULTIFILE_CLASS_PART -> this.classOrigin.originKind == MULTIFILE_CLASS
         else -> false
     }

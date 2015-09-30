@@ -50,7 +50,7 @@ import javax.swing.Icon
 
 public open class KotlinLightClassForExplicitDeclaration(
         manager: PsiManager,
-        private val classFqName: FqName, // FqName of (possibly inner) class
+        protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: JetClassOrObject)
 : KotlinWrappingLightClass(manager), JetJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out JetClassOrObject>> {
     private var delegate: PsiClass? = null
@@ -268,7 +268,7 @@ public open class KotlinLightClassForExplicitDeclaration(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private fun computeModifiers(): Array<String> {
+    protected open fun computeModifiers(): Array<String> {
         val psiModifiers = hashSetOf<String>()
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
@@ -377,7 +377,7 @@ public open class KotlinLightClassForExplicitDeclaration(
         return getDelegate().innerClasses
             .map {
                 val declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(it) as JetClassOrObject?
-                if (declaration != null) create(myManager, declaration) else null
+                if (declaration != null) create(myManager, declaration, it) else null
             }
             .filterNotNull()
     }
@@ -397,7 +397,12 @@ public open class KotlinLightClassForExplicitDeclaration(
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        public fun create(manager: PsiManager, classOrObject: JetClassOrObject): KotlinLightClassForExplicitDeclaration? {
+        @JvmOverloads
+        public fun create(
+                manager: PsiManager,
+                classOrObject: JetClassOrObject,
+                psiClass: PsiClass? = null
+        ): KotlinLightClassForExplicitDeclaration? {
             if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
                 return null
             }
@@ -407,6 +412,14 @@ public open class KotlinLightClassForExplicitDeclaration(
             if (classOrObject is JetObjectDeclaration && classOrObject.isObjectLiteral()) {
                 return KotlinLightClassForAnonymousDeclaration(manager, fqName, classOrObject)
             }
+
+            if (classOrObject.hasInterfaceDefaultImpls) {
+                val implsFqName = fqName.defaultImplsChild()
+                if (implsFqName.asString() == psiClass?.qualifiedName) {
+                    return KotlinLightClassForInterfaceDefaultImpls(manager, implsFqName, classOrObject)
+                }
+            }
+
             return KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject)
         }
 

@@ -23,19 +23,23 @@ import org.jetbrains.kotlin.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.LOCAL_TRAIT_IMPL
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.TRAIT_IMPL
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToTraitImpl
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_FINAL
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Opcodes.V1_6
+import java.util.*
 
-public class TraitImplBodyCodegen(
+public class InterfaceImplBodyCodegen(
         aClass: JetClassOrObject,
         context: ClassContext,
         v: ClassBuilder,
@@ -45,11 +49,21 @@ public class TraitImplBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-                myClass, V1_6, ACC_PUBLIC or ACC_FINAL,
-                typeMapper.mapTraitImpl(descriptor).getInternalName(),
+                myClass, V1_6, ACC_PUBLIC or ACC_FINAL or ACC_STATIC,
+                typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.getContainingFile().getName(), null)
+    }
+
+    override fun classForInnerClassRecord(): ClassDescriptor? {
+        if (DescriptorUtils.isLocal(descriptor)) return null
+        val classDescriptorImpl = ClassDescriptorImpl(
+                descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
+                Modality.FINAL, Collections.emptyList(), SourceElement.NO_SOURCE)
+
+        classDescriptorImpl.initialize(JetScope.Empty, emptySet(), null)
+        return classDescriptorImpl
     }
 
     override fun generateSyntheticParts() {

@@ -71,6 +71,30 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceDefaultImpl.java")
+    public void testInterfaceDefaultImpl() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImpl.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InterfaceDefaultImplImportedMembers.java")
+    public void testInterfaceDefaultImplImportedMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImplImportedMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InterfaceDefaultImplMembers.java")
+    public void testInterfaceDefaultImplMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImplMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InterfaceDefaultImplStaticImportedMembers.java")
+    public void testInterfaceDefaultImplStaticImportedMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImplStaticImportedMembers.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultiFileFacade.java")
     public void testMultiFileFacade() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacade.java");

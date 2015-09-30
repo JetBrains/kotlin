@@ -51,7 +51,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
 
     @Override
     protected void generateBody() {
-        if (kind != OwnerKind.TRAIT_IMPL) {
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
@@ -66,7 +66,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             }
         }
 
-        if (!DescriptorUtils.isTrait(descriptor)) {
+        if (!DescriptorUtils.isInterface(descriptor)) {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (memberDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor member = (FunctionDescriptor) memberDescriptor;

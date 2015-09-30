@@ -426,7 +426,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             }
 
             if (jetClass is JetClass && jetClass.isInterface()) {
-                return typeMapper.mapTraitImpl(classDescriptor).getInternalName()
+                return typeMapper.mapDefaultImpls(classDescriptor).getInternalName()
             }
 
             return typeMapper.mapClass(classDescriptor).getInternalName()

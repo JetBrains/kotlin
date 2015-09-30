@@ -211,8 +211,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION);
 
         MemberCodegen literalCodegen = new ImplementationBodyCodegen(
-                objectDeclaration, objectContext, classBuilder, state, getParentCodegen()
-        );
+                objectDeclaration, objectContext, classBuilder, state, getParentCodegen(),
+                /* isLocal = */ true);
         literalCodegen.generate();
 
         addReifiedParametersFromSignature(literalCodegen, classDescriptor);
@@ -251,7 +251,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull ClassDescriptor provided,
             @NotNull ClassDescriptor required
     ) {
-        if (!isInterface(provided) && isInterface(required)) {
+        if (!isJvmInterface(provided) && isJvmInterface(required)) {
             return StackValue.coercion(inner, asmType(required.getDefaultType()));
         }
 
@@ -330,13 +330,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassBuilder classBuilder = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this, OwnerKind.IMPLEMENTATION);
-        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
+        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen(), /* isLocal = */ true).generate();
 
         if (declaration instanceof JetClass && ((JetClass) declaration).isInterface()) {
-            Type traitImplType = state.getTypeMapper().mapTraitImpl(descriptor);
+            Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder traitImplBuilder = state.getFactory().newVisitor(TraitImpl(declaration, descriptor), traitImplType, declaration.getContainingFile());
-            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.TRAIT_IMPL);
-            new TraitImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
+            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
+            new InterfaceImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
         }
 
         return StackValue.none();
@@ -2012,7 +2012,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             boolean directToField =
                     (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER || isSyntheticField)
-                    && contextKind() != OwnerKind.TRAIT_IMPL;
+                    && contextKind() != OwnerKind.DEFAULT_IMPLS;
             JetSuperExpression superExpression =
                     resolvedCall == null ? null : CallResolverUtilPackage.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
@@ -2200,7 +2200,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (!skipPropertyAccessors) {
             if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
-                if (isSuper && !isInterface(containingDeclaration)) {
+                if (isSuper && !isJvmInterface(containingDeclaration)) {
                     ClassDescriptor owner = getSuperCallLabelTarget(context, superExpression);
                     CodegenContext c = context.findParentContextWithDescriptor(owner);
                     assert c != null : "Couldn't find a context for a super-call: " + propertyDescriptor;
@@ -2371,7 +2371,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetSuperExpression superCallExpression = CallResolverUtilPackage.getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
-        if (superCall && !isInterface(fd.getContainingDeclaration())) {
+        if (superCall && !isJvmInterface(fd.getContainingDeclaration())) {
             ClassDescriptor owner = getSuperCallLabelTarget(context, superCallExpression);
             CodegenContext c = context.findParentContextWithDescriptor(owner);
             assert c != null : "Couldn't find a context for a super-call: " + fd;

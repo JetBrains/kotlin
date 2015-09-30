@@ -109,7 +109,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             JetType superClassType = null;
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 ClassifierDescriptor classifier = supertype.getConstructor().getDeclarationDescriptor();
-                if (DescriptorUtils.isTrait(classifier)) {
+                if (DescriptorUtils.isInterface(classifier)) {
                     superInterfaceTypes.add(supertype);
                 }
                 else {

@@ -1,5 +1,5 @@
 interface A {
     fun foo() {
-        ""   // A\$\$TImpl
+        ""   // A\$DefaultImpls
     }
 }

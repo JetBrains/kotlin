@@ -47,8 +47,6 @@ public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest()
         ClassFileViewProvider.isInnerClass(this)
     }
 
-    fun testTraitImplClassIsVisibleAsJavaClass() = doTestTraitImplClassIsVisibleAsJavaClass()
-
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, /* withSources = */ false)
     }

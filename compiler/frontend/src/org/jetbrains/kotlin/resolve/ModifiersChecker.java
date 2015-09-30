@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -78,7 +77,7 @@ public class ModifiersChecker {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return InnerModifierCheckResult.ILLEGAL_POSITION;
 
-        if (DescriptorUtils.isTrait(containingDeclaration)) {
+        if (DescriptorUtils.isInterface(containingDeclaration)) {
             return InnerModifierCheckResult.IN_TRAIT;
         }
         else if (DescriptorUtils.isObject(containingDeclaration)) {

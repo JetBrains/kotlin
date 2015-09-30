@@ -118,7 +118,7 @@ public object InlineTestUtil {
                                 val fromCall = MethodInfo(className, this.name, this.desc)
 
                                 //skip delegation to trait impl from child class
-                                if (methodCall.owner.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) && fromCall.owner != methodCall.owner) {
+                                if (methodCall.owner.endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX) && fromCall.owner != methodCall.owner) {
                                     return
                                 }
                                 notInlined.add(NotInlinedCall(fromCall, methodCall))

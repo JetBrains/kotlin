@@ -329,7 +329,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
     }
 
-    public static boolean isTrait(@Nullable DeclarationDescriptor descriptor) {
+    public static boolean isInterface(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.INTERFACE);
     }
 
@@ -538,7 +538,7 @@ public class DescriptorUtils {
     }
 
     public static boolean canHaveDeclaredConstructors(@NotNull ClassDescriptor classDescriptor) {
-        return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
+        return !isSingletonOrAnonymousObject(classDescriptor) && !isInterface(classDescriptor);
     }
 
     public static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {

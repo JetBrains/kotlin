@@ -473,8 +473,8 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public Type mapTraitImpl(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
+    public Type mapDefaultImpls(@NotNull ClassDescriptor descriptor) {
+        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.DEFAULT_IMPLS_SUFFIX);
     }
 
     @NotNull
@@ -614,14 +614,14 @@ public class JetTypeMapper {
             ClassDescriptor currentOwner = (ClassDescriptor) functionParent;
             ClassDescriptor declarationOwner = (ClassDescriptor) declarationFunctionDescriptor.getContainingDeclaration();
 
-            boolean originalIsInterface = isInterface(declarationOwner);
-            boolean currentIsInterface = isInterface(currentOwner);
+            boolean originalIsInterface = isJvmInterface(declarationOwner);
+            boolean currentIsInterface = isJvmInterface(currentOwner);
 
             boolean isInterface = currentIsInterface && originalIsInterface;
 
             ClassDescriptor ownerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
             ownerForDefaultParam = mapClass(ownerForDefault);
-            ownerForDefaultImpl = isInterface(ownerForDefault) ? mapTraitImpl(ownerForDefault) : ownerForDefaultParam;
+            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : ownerForDefaultParam;
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE)) {
                 thisClass = mapClass(currentOwner);
@@ -632,8 +632,8 @@ public class JetTypeMapper {
                 }
                 else {
                     invokeOpcode = INVOKESTATIC;
-                    signature = mapSignature(descriptor.getOriginal(), OwnerKind.TRAIT_IMPL);
-                    owner = mapTraitImpl(currentOwner);
+                    signature = mapSignature(descriptor.getOriginal(), OwnerKind.DEFAULT_IMPLS);
+                    owner = mapDefaultImpls(currentOwner);
                 }
             }
             else {
@@ -900,7 +900,7 @@ public class JetTypeMapper {
             @NotNull BothSignatureWriter sw
     ) {
         ClassDescriptor thisType;
-        if (kind == OwnerKind.TRAIT_IMPL) {
+        if (kind == OwnerKind.DEFAULT_IMPLS) {
             thisType = getTraitImplThisParameterClass((ClassDescriptor) descriptor.getContainingDeclaration());
         }
         else if (isAccessor(descriptor) && descriptor.getDispatchReceiverParameter() != null) {
@@ -941,7 +941,7 @@ public class JetTypeMapper {
 
             for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
-                    if (!isInterface(jetType)) {
+                    if (!isJvmInterface(jetType)) {
                         mapType(jetType, sw, JetTypeMapperMode.TYPE_PARAMETER);
                         break classBound;
                     }
@@ -958,7 +958,7 @@ public class JetTypeMapper {
         for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
             ClassifierDescriptor classifier = jetType.getConstructor().getDeclarationDescriptor();
             if (classifier instanceof ClassDescriptor) {
-                if (isInterface(jetType)) {
+                if (isJvmInterface(jetType)) {
                     sw.writeInterfaceBound();
                     mapType(jetType, sw, JetTypeMapperMode.TYPE_PARAMETER);
                     sw.writeInterfaceBoundEnd();
