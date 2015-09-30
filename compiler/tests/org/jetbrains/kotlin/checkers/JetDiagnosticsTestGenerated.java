@@ -13263,6 +13263,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NotFinal.kt")
+            public void testNotFinal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NotFinal.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OperationWhen.kt")
             public void testOperationWhen() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/OperationWhen.kt");

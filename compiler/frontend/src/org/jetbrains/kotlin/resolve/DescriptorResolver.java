@@ -574,6 +574,10 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         if (!TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, upperBoundType)) {
+            ClassifierDescriptor descriptor = upperBoundType.getConstructor().getDeclarationDescriptor();
+            if (descriptor instanceof ClassDescriptor) {
+                if (((ClassDescriptor) descriptor).getModality() == Modality.SEALED) return;
+            }
             trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
         }
         if (TypesPackage.isDynamic(upperBoundType)) {
