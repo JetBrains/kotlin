@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
+import kotlin.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -97,7 +98,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected String loadFileByFullPath(@NotNull String fullPath) {
         try {
             File file = new File(fullPath);
-            String content = FileUtil.loadFile(file, true);
+            String content = FileUtil.loadFile(file, Charsets.UTF_8.name(), true);
             myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {
