@@ -93,7 +93,7 @@ public class MoveDeclarationToSeparateFileIntention :
                 moveTarget = moveTarget,
                 searchInCommentsAndStrings = false,
                 searchInNonCode = false,
-                updateInternalReferences = false,
+                updateInternalReferences = true,
                 moveCallback = MoveCallback {
                     val newFile = directory.findFile(targetFileName) as JetFile
                     val newDeclaration = newFile.declarations.first()

@@ -1,5 +1,9 @@
 package p
 
-class A {
+import q.bar
 
+class A {
+    init {
+        bar()
+    }
 }
