@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 class InsertHandlerProvider(
-        private val callType: CallType,
+        private val callType: CallType<*>,
         expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }

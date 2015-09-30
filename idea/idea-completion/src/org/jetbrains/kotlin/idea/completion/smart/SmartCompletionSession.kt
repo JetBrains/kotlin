@@ -22,12 +22,10 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -91,30 +89,28 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     // special completion for outside parenthesis lambda argument
     private fun addFunctionLiteralArgumentCompletions() {
         if (nameExpression != null) {
-            val (callType, receiverElement) = CallTypeAndReceiver.detect(nameExpression)
-            if (callType == CallType.INFIX) {
-                val call = (receiverElement as JetExpression).getCall(bindingContext)
-                if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
-                    val dummyArgument = object : FunctionLiteralArgument {
-                        override fun getFunctionLiteral() = throw UnsupportedOperationException()
-                        override fun getArgumentExpression() = throw UnsupportedOperationException()
-                        override fun getArgumentName(): ValueArgumentName? = null
-                        override fun isNamed() = false
-                        override fun asElement() = throw UnsupportedOperationException()
-                        override fun getSpreadElement(): LeafPsiElement? = null
-                        override fun isExternal() = false
-                    }
-                    val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
-                    val dummyCall = object : DelegatingCall(call) {
-                        override fun getValueArguments() = dummyArguments
-                        override fun getFunctionLiteralArguments() = listOf(dummyArgument)
-                        override fun getValueArgumentList() = throw UnsupportedOperationException()
-                    }
-
-                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
-                            .calculateForArgument(dummyCall, dummyArgument)
-                    collector.addElements(LambdaItems.collect(expectedInfos))
+            val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression) as? CallTypeAndReceiver.INFIX ?: return
+            val call = callTypeAndReceiver.receiver.getCall(bindingContext)
+            if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
+                val dummyArgument = object : FunctionLiteralArgument {
+                    override fun getFunctionLiteral() = throw UnsupportedOperationException()
+                    override fun getArgumentExpression() = throw UnsupportedOperationException()
+                    override fun getArgumentName(): ValueArgumentName? = null
+                    override fun isNamed() = false
+                    override fun asElement() = throw UnsupportedOperationException()
+                    override fun getSpreadElement(): LeafPsiElement? = null
+                    override fun isExternal() = false
                 }
+                val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
+                val dummyCall = object : DelegatingCall(call) {
+                    override fun getValueArguments() = dummyArguments
+                    override fun getFunctionLiteralArguments() = listOf(dummyArgument)
+                    override fun getValueArgumentList() = throw UnsupportedOperationException()
+                }
+
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
+                        .calculateForArgument(dummyCall, dummyArgument)
+                collector.addElements(LambdaItems.collect(expectedInfos))
             }
         }
     }

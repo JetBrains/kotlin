@@ -18,7 +18,8 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,7 +38,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
-        callType: CallType,
+        callType: CallType<*>,
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
@@ -55,12 +56,12 @@ public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
     val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
-    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, scope.getContainingDeclaration())
+    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.getContainingDeclaration())
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,
-        callType: CallType,
+        callType: CallType<*>,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
@@ -73,7 +74,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiverTypes: Collection<JetType>,
-        callType: CallType
+        callType: CallType<*>
 ): Collection<CallableDescriptor> {
     if (!callType.canCall(this)) return listOf()
 

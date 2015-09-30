@@ -40,7 +40,7 @@ public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: JetExpression,
-        callTypeAndReceiver: CallTypeAndReceiver
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>
 ) {
     private val psiFactory = JetPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)

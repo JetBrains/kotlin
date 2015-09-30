@@ -303,7 +303,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         val contextVariablesProvider = {
             nameExpression?.let {
-                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver(CallType.NORMAL, null))
+                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
                         .map { it as VariableDescriptor }
             } ?: emptyList()
         }
@@ -314,23 +314,38 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                                     insertHandlerProvider, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallType, Collection<JetType>> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallType<*>, Collection<JetType>> {
         if (nameExpression == null) {
-            return CallType.NORMAL to emptyList()
+            return CallType.DEFAULT to emptyList()
         }
 
-        val (callType, receiverElement) = CallTypeAndReceiver.detect(nameExpression)
+        val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
 
-        if (callType == CallType.CALLABLE_REFERENCE && receiverElement != null) {
-            val type = bindingContext[BindingContext.TYPE, receiverElement as JetTypeReference]
-            return callType to type.singletonOrEmptyList()
+        val receiverExpression: JetExpression?
+        when (callTypeAndReceiver) {
+            is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
+                if (callTypeAndReceiver.receiver != null) {
+                    val type = bindingContext[BindingContext.TYPE, callTypeAndReceiver.receiver]
+                    return callTypeAndReceiver.callType to type.singletonOrEmptyList()
+                }
+                else {
+                    receiverExpression = null
+                }
+            }
+
+            is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
+            is CallTypeAndReceiver.DOT -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.UNARY -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.IMPORT_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.PACKAGE_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.TYPE -> receiverExpression = callTypeAndReceiver.receiver
         }
 
-        receiverElement as JetExpression?
-
-        val receiverValues = if (receiverElement != null) {
-            val expressionType = bindingContext.getType(receiverElement)
-            expressionType?.let { listOf(ExpressionReceiver(receiverElement, expressionType)) } ?: emptyList()
+        val receiverValues = if (receiverExpression != null) {
+            val expressionType = bindingContext.getType(receiverExpression)
+            expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: emptyList()
         }
         else {
             val resolutionScope = referenceVariantsHelper.resolutionScope(nameExpression)
@@ -350,10 +365,10 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             }
         }
 
-        if (callType == CallType.SAFE) {
+        if (callTypeAndReceiver is CallTypeAndReceiver.SAFE) {
             receiverTypes = receiverTypes.map { it.makeNotNullable() }
         }
 
-        return callType to receiverTypes
+        return callTypeAndReceiver.callType to receiverTypes
     }
 }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.JetType
 class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
 class KotlinFunctionInsertHandler(
-        val callType: CallType,
+        val callType: CallType<*>,
         val inputTypeArguments: Boolean,
         val inputValueArguments: Boolean,
         val argumentText: String = "",

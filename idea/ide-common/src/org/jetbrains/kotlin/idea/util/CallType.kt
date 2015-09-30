@@ -26,85 +26,99 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 
-public enum class CallType {
-    NORMAL,
-    SAFE,
+public sealed class CallType<TReceiver : JetElement?> {
+    object DEFAULT : CallType<Nothing?>()
 
-    INFIX {
+    object DOT : CallType<JetExpression>()
+
+    object SAFE : CallType<JetExpression>()
+
+    object INFIX : CallType<JetExpression>() {
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
-    },
+    }
 
-    UNARY {
+    object UNARY : CallType<JetExpression>() {
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
-    },
+    }
 
-    CALLABLE_REFERENCE {
+    object CALLABLE_REFERENCE : CallType<JetTypeReference?>() {
         // currently callable references to locals and parameters are not supported
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is FunctionDescriptor || descriptor is PropertyDescriptor
-    },
+    }
 
     //TODO: canCall
-    IMPORT_DIRECTIVE,
+    object IMPORT_DIRECTIVE : CallType<JetExpression?>()
 
-    PACKAGE_DIRECTIVE
+    object PACKAGE_DIRECTIVE : CallType<JetExpression?>()
 
-    ;
+    object TYPE : CallType<JetExpression?>()
 
     public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }
 
-public data class CallTypeAndReceiver(
-        val callType: CallType,
-        val receiver: JetElement?
+public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : CallType<TReceiver>>(
+        val callType: TCallType,
+        val receiver: TReceiver
 ) {
+    object DEFAULT : CallTypeAndReceiver<Nothing?, CallType.DEFAULT>(CallType.DEFAULT, null)
+    class DOT(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.DOT>(CallType.DOT, receiver)
+    class SAFE(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.SAFE>(CallType.SAFE, receiver)
+    class INFIX(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.INFIX>(CallType.INFIX, receiver)
+    class UNARY(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.UNARY>(CallType.UNARY, receiver)
+    class CALLABLE_REFERENCE(receiver: JetTypeReference?) : CallTypeAndReceiver<JetTypeReference?, CallType.CALLABLE_REFERENCE>(CallType.CALLABLE_REFERENCE, receiver)
+    class IMPORT_DIRECTIVE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.IMPORT_DIRECTIVE>(CallType.IMPORT_DIRECTIVE, receiver)
+    class PACKAGE_DIRECTIVE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.PACKAGE_DIRECTIVE>(CallType.PACKAGE_DIRECTIVE, receiver)
+    class TYPE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.TYPE>(CallType.TYPE, receiver)
+
     companion object {
-        public fun detect(expression: JetSimpleNameExpression): CallTypeAndReceiver {
+        public fun detect(expression: JetSimpleNameExpression): CallTypeAndReceiver<*, *> {
             val parent = expression.parent
             if (parent is JetCallableReferenceExpression) {
-                return CallTypeAndReceiver(CallType.CALLABLE_REFERENCE, parent.typeReference)
+                return CallTypeAndReceiver.CALLABLE_REFERENCE(parent.typeReference)
             }
 
             val receiverExpression = expression.getReceiverExpression()
 
             if (expression.isImportDirectiveExpression()) {
-                return CallTypeAndReceiver(CallType.IMPORT_DIRECTIVE, receiverExpression)
+                return CallTypeAndReceiver.IMPORT_DIRECTIVE(receiverExpression)
             }
 
             if (expression.isPackageDirectiveExpression()) {
-                return CallTypeAndReceiver(CallType.PACKAGE_DIRECTIVE, receiverExpression)
+                return CallTypeAndReceiver.PACKAGE_DIRECTIVE(receiverExpression)
+            }
+
+            if (parent is JetUserType) {
+                return CallTypeAndReceiver.TYPE(receiverExpression)
             }
 
             if (receiverExpression == null) {
-                return CallTypeAndReceiver(CallType.NORMAL, null)
+                return CallTypeAndReceiver.DEFAULT
             }
 
-            val callType = when (parent) {
-                is JetBinaryExpression -> CallType.INFIX
+            return when (parent) {
+                is JetBinaryExpression -> CallTypeAndReceiver.INFIX(receiverExpression)
 
                 is JetCallExpression -> {
-                    if ((parent.getParent() as JetQualifiedExpression).getOperationSign() == JetTokens.SAFE_ACCESS)
-                        CallType.SAFE
+                    if ((parent.parent as JetQualifiedExpression).operationSign == JetTokens.SAFE_ACCESS)
+                        CallTypeAndReceiver.SAFE(receiverExpression)
                     else
-                        CallType.NORMAL
+                        CallTypeAndReceiver.DOT(receiverExpression)
                 }
 
                 is JetQualifiedExpression -> {
-                    if (parent.getOperationSign() == JetTokens.SAFE_ACCESS)
-                        CallType.SAFE
+                    if (parent.operationSign == JetTokens.SAFE_ACCESS)
+                        CallTypeAndReceiver.SAFE(receiverExpression)
                     else
-                        CallType.NORMAL
+                        CallTypeAndReceiver.DOT(receiverExpression)
                 }
 
-                is JetUnaryExpression -> CallType.UNARY
-
-                is JetUserType -> CallType.NORMAL
+                is JetUnaryExpression -> CallTypeAndReceiver.UNARY(receiverExpression)
 
                 else -> error("Unknown parent for expression with receiver: $parent")
             }
-            return CallTypeAndReceiver(callType, receiverExpression)
         }
     }
 }

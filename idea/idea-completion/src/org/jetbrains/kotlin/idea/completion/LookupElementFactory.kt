@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>,
-        private val callType: CallType,
+        private val callType: CallType<*>,
         private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
         contextVariablesProvider: () -> Collection<VariableDescriptor>
@@ -66,7 +66,7 @@ class LookupElementFactory(
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (descriptor is FunctionDescriptor && (callType == CallType.NORMAL || callType == CallType.SAFE)) {
+        if (descriptor is FunctionDescriptor && (callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE)) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
         }
 

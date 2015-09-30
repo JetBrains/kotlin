@@ -131,8 +131,9 @@ public class KotlinIndicesHelper(
         constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
-    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType>> {
-        val (callType, receiverElement) = CallTypeAndReceiver.detect(expression)
+    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType<*>>> {
+        val callTypeAndReceiver = CallTypeAndReceiver.detect(expression)
+        val receiverElement = callTypeAndReceiver.receiver
         if (receiverElement != null) {
             if (receiverElement !is JetExpression) return emptyList() //TODO?
 
@@ -141,11 +142,11 @@ public class KotlinIndicesHelper(
 
             val receiverValue = ExpressionReceiver(receiverElement, expressionType)
 
-            return listOf(receiverValue to callType)
+            return listOf(receiverValue to callTypeAndReceiver.callType)
         }
         else {
             val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
-            return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to callType }
+            return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to callTypeAndReceiver.callType }
         }
     }
 
@@ -154,7 +155,7 @@ public class KotlinIndicesHelper(
      */
     private fun findSuitableExtensions(
             declarations: Sequence<JetCallableDeclaration>,
-            receiverValues: Collection<Pair<ReceiverValue, CallType>>,
+            receiverValues: Collection<Pair<ReceiverValue, CallType<*>>>,
             dataFlowInfo: DataFlowInfo,
             bindingContext: BindingContext
     ): Collection<CallableDescriptor> {

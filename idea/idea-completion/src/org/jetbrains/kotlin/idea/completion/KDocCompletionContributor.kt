@@ -100,7 +100,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
                 val extensionReceiver = descriptor.getExtensionReceiverParameter()
                 if (extensionReceiver != null) {
                     val substituted = descriptor.substituteExtensionIfCallable(implicitReceivers, bindingContext, DataFlowInfo.EMPTY,
-                                                                               CallType.NORMAL, moduleDescriptor)
+                                                                               CallType.DEFAULT, moduleDescriptor)
                     return !substituted.isEmpty()
                 }
             }
