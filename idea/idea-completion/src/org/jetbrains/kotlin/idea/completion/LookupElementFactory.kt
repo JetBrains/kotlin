@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
-        private val receiverTypes: Collection<JetType>,
+        private val receiverTypes: Collection<JetType>?,
         private val callType: CallType<*>,
         private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
@@ -235,6 +235,7 @@ class LookupElementFactory(
     }
 
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
+        if (receiverTypes == null) return null
         if (descriptor !is CallableDescriptor) return null
 
         val overridden = descriptor.overriddenDescriptors

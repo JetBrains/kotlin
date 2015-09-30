@@ -314,9 +314,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                                     insertHandlerProvider, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallType<*>, Collection<JetType>> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallType<*>, Collection<JetType>?> {
         if (nameExpression == null) {
-            return CallType.DEFAULT to emptyList()
+            return CallType.DEFAULT to null
         }
 
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
@@ -338,9 +338,13 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.UNARY -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.IMPORT_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.PACKAGE_DIRECTIVE -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.TYPE -> receiverExpression = callTypeAndReceiver.receiver
+
+            is CallTypeAndReceiver.IMPORT_DIRECTIVE,
+            is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
+            is CallTypeAndReceiver.TYPE ->
+                // we don't need to highlight immediate members in these cases
+                return callTypeAndReceiver.callType to null
+
             else -> throw RuntimeException() //TODO: see KT-9394
         }
 

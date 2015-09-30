@@ -131,6 +131,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("InImport")
+    public void testInImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/InImport/");
+        doTest(fileName);
+    }
+
     @TestMetadata("InImportedFunctionLiteralParameter")
     public void testInImportedFunctionLiteralParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/InImportedFunctionLiteralParameter/");
