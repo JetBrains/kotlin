@@ -553,7 +553,7 @@
             <proguard configuration="${basedir}/compiler/compiler.pro"/>
         </sequential>
 
-        <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
+        <jar jarfile="${output}/kotlin-compiler-for-maven.jar" duplicate="preserve">
             <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
             <zipfileset src="${bootstrap.runtime}" includes="**" />
