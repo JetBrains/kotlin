@@ -16,47 +16,62 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-public sealed class CallType<TReceiver : JetElement?> {
-    object DEFAULT : CallType<Nothing?>()
+public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: DescriptorKindFilter) {
+    object DEFAULT : CallType<Nothing?>(DescriptorKindFilter.ALL)
 
-    object DOT : CallType<JetExpression>()
+    object DOT : CallType<JetExpression>(DescriptorKindFilter.ALL)
 
-    object SAFE : CallType<JetExpression>()
+    object SAFE : CallType<JetExpression>(DescriptorKindFilter.ALL)
 
-    object INFIX : CallType<JetExpression>() {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
+    object INFIX : CallType<JetExpression>(DescriptorKindFilter.FUNCTIONS exclude NonInfixExclude)
+
+    object UNARY : CallType<JetExpression>(DescriptorKindFilter.FUNCTIONS exclude NonUnaryExclude)
+
+    object CALLABLE_REFERENCE : CallType<JetTypeReference?>(DescriptorKindFilter.CALLABLES exclude LocalsAndSyntheticExclude/* currently not supported for locals and synthetic */)
+
+    object IMPORT_DIRECTIVE : CallType<JetExpression?>(DescriptorKindFilter.ALL)
+
+    object PACKAGE_DIRECTIVE : CallType<JetExpression?>(DescriptorKindFilter.PACKAGES)
+
+    object TYPE : CallType<JetExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
+
+    private object NonInfixExclude : DescriptorKindExclude {
+        //TODO: check 'infix' modifier
+        override fun excludes(descriptor: DeclarationDescriptor) =
+                !(descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.size() == 1)
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = 0
     }
 
-    object UNARY : CallType<JetExpression>() {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
+    private object NonUnaryExclude : DescriptorKindExclude {
+        //TODO: check 'operator' modifier
+        override fun excludes(descriptor: DeclarationDescriptor) =
+                !(descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty())
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = 0
     }
 
-    object CALLABLE_REFERENCE : CallType<JetTypeReference?>() {
-        // currently callable references to locals and parameters are not supported
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is FunctionDescriptor || descriptor is PropertyDescriptor
+    private object LocalsAndSyntheticExclude : DescriptorKindExclude {
+        override fun excludes(descriptor: DeclarationDescriptor)
+                = descriptor !is CallableMemberDescriptor || descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = 0
     }
 
-    //TODO: canCall
-    object IMPORT_DIRECTIVE : CallType<JetExpression?>()
-
-    object PACKAGE_DIRECTIVE : CallType<JetExpression?>()
-
-    object TYPE : CallType<JetExpression?>()
-
-    public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }
 
 public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : CallType<TReceiver>>(

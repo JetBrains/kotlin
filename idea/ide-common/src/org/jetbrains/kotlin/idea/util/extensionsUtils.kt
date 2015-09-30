@@ -76,7 +76,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         receiverTypes: Collection<JetType>,
         callType: CallType<*>
 ): Collection<CallableDescriptor> {
-    if (!callType.canCall(this)) return listOf()
+    if (!callType.descriptorKindFilter.accepts(this)) return listOf()
 
     var types = receiverTypes.asSequence()
     if (callType == CallType.SAFE) {

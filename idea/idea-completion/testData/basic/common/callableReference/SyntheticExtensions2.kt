@@ -4,6 +4,7 @@ class MyFile : File("") {
     val v = ::<caret>
 }
 
-// EXIST_JAVA_ONLY: { itemText: "freeSpace", tailText: " (from getFreeSpace())", attributes: "" }
-// EXIST_JAVA_ONLY: { itemText: "isFile", tailText: " (from isFile())", attributes: "" }
-// ABSENT: { itemText: "isFile", tailText: "()" }
+// EXIST_JAVA_ONLY: { itemText: "getFreeSpace", tailText: "()", attributes: "" }
+// ABSENT: freeSpace
+// EXIST_JAVA_ONLY: { itemText: "isFile", tailText: "()", attributes: "" }
+// ABSENT: { itemText: "isFile", tailText: " (from isFile())" }

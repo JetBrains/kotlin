@@ -86,6 +86,11 @@ public class ReferenceVariantsHelper(
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             useRuntimeReceiverType: Boolean
     ): Collection<DeclarationDescriptor> {
+        val callType = callTypeAndReceiver.callType
+
+        @Suppress("NAME_SHADOWING")
+        val kindFilter = kindFilter.intersect(callType.descriptorKindFilter)
+
         val receiverExpression: JetExpression?
         when (callTypeAndReceiver) {
             is CallTypeAndReceiver.IMPORT_DIRECTIVE -> {
@@ -93,8 +98,7 @@ public class ReferenceVariantsHelper(
             }
 
             is CallTypeAndReceiver.PACKAGE_DIRECTIVE -> {
-                val packageKindFilter = kindFilter restrictedToKinds DescriptorKindFilter.PACKAGES_MASK
-                return getVariantsForImportOrPackageDirective(callTypeAndReceiver.receiver, packageKindFilter, nameFilter)
+                return getVariantsForImportOrPackageDirective(callTypeAndReceiver.receiver, kindFilter, nameFilter)
             }
 
             is CallTypeAndReceiver.TYPE -> {
@@ -124,15 +128,12 @@ public class ReferenceVariantsHelper(
             return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, implicitReceiverTypes, kindFilter, nameFilter)
         }
 
-        val callType = callTypeAndReceiver.callType
-
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
 
         if (receiverExpression != null) {
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
-                // It's impossible to add extension function for package or class (if it's companion object, expression type is not null)
-                qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
+                descriptors.addAll(qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
             }
 
             val expressionType = if (useRuntimeReceiverType)
@@ -163,16 +164,15 @@ public class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        val accurateKindFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK)
         if (receiverExpression != null) {
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
-            return qualifier.scope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
+            return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
             val lexicalScope = expression.getParentOfType<JetTypeReference>(strict = true)?.let {
                 context[BindingContext.LEXICAL_SCOPE, it]
             } ?: return emptyList()
-            return lexicalScope.getDescriptorsFiltered(accurateKindFilter, nameFilter)
+            return lexicalScope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
     }
 
@@ -183,23 +183,21 @@ public class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        val accurateKindFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CALLABLES.kindMask)
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
         if (qualifierTypeRef != null) {
             val type = context[BindingContext.TYPE, qualifierTypeRef] ?: return emptyList()
 
-            descriptors.addNonExtensionMembers(listOf(type), CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter, constructorsForInnerClassesOnly = false)
+            descriptors.addNonExtensionMembers(listOf(type), kindFilter, nameFilter, constructorsForInnerClassesOnly = false)
 
-            descriptors.addScopeAndSyntheticExtensions(resolutionScope, listOf(type), CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter)
+            descriptors.addScopeAndSyntheticExtensions(resolutionScope, listOf(type), CallType.CALLABLE_REFERENCE, kindFilter, nameFilter)
         }
         else {
             // process non-instance members and class constructors
-            descriptors.addNonExtensionCallablesAndConstructors(resolutionScope, CallType.CALLABLE_REFERENCE, kindFilter, nameFilter, constructorsForInnerClassesOnly = false)
+            descriptors.addNonExtensionCallablesAndConstructors(resolutionScope, kindFilter, nameFilter, constructorsForInnerClassesOnly = false)
 
-            descriptors.addNonExtensionMembers(implicitReceiverTypes, CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter, constructorsForInnerClassesOnly = true)
+            descriptors.addNonExtensionMembers(implicitReceiverTypes, kindFilter, nameFilter, constructorsForInnerClassesOnly = true)
 
-            //TODO: should we show synthetic extensions? get/set's?
-            descriptors.addScopeAndSyntheticExtensions(resolutionScope, implicitReceiverTypes, CallType.CALLABLE_REFERENCE, accurateKindFilter, nameFilter)
+            descriptors.addScopeAndSyntheticExtensions(resolutionScope, implicitReceiverTypes, CallType.CALLABLE_REFERENCE, kindFilter, nameFilter)
         }
         return descriptors
     }
@@ -227,7 +225,7 @@ public class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ) {
-        addNonExtensionMembers(receiverTypes, callType, kindFilter, nameFilter, constructorsForInnerClassesOnly = true)
+        addNonExtensionMembers(receiverTypes, kindFilter, nameFilter, constructorsForInnerClassesOnly = true)
         addMemberExtensions(implicitReceiverTypes, receiverTypes, callType, kindFilter, nameFilter)
         addScopeAndSyntheticExtensions(resolutionScope, receiverTypes, callType, kindFilter, nameFilter)
     }
@@ -249,24 +247,22 @@ public class ReferenceVariantsHelper(
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionMembers(
             receiverTypes: Collection<JetType>,
-            callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorsForInnerClassesOnly: Boolean
     ) {
         for (receiverType in receiverTypes) {
-            addNonExtensionCallablesAndConstructors(receiverType.memberScope, callType, kindFilter, nameFilter, constructorsForInnerClassesOnly)
+            addNonExtensionCallablesAndConstructors(receiverType.memberScope, kindFilter, nameFilter, constructorsForInnerClassesOnly)
         }
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
             scope: JetScope,
-            callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorsForInnerClassesOnly: Boolean
     ) {
-        var filterToUse = kindFilter.restrictedToKinds(DescriptorKindFilter.CALLABLES.kindMask).exclude(DescriptorKindExclude.Extensions)
+        var filterToUse = DescriptorKindFilter(kindFilter.kindMask and DescriptorKindFilter.CALLABLES.kindMask).exclude(DescriptorKindExclude.Extensions)
 
         // should process classes if we need constructors
         if (filterToUse.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
@@ -277,9 +273,9 @@ public class ReferenceVariantsHelper(
             if (descriptor is ClassDescriptor) {
                 if (constructorsForInnerClassesOnly && !descriptor.isInner) continue
                 if (descriptor.modality == Modality.ABSTRACT || descriptor.modality == Modality.SEALED) continue
-                descriptor.constructors.filterTo(this) { callType.canCall(it) && kindFilter.accepts(it) }
+                descriptor.constructors.filterTo(this) { kindFilter.accepts(it) }
             }
-            else if (callType.canCall(descriptor) && kindFilter.accepts(descriptor)) {
+            else if (kindFilter.accepts(descriptor)) {
                 this.add(descriptor)
             }
         }
