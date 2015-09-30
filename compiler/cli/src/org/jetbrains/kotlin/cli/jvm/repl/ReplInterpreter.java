@@ -363,7 +363,7 @@ public class ReplInterpreter {
 
     private void setReplScriptExecuting(boolean isExecuting) {
         if (replReader != null) {
-            replReader.setTEMP_isReplScriptExecuting(isExecuting);
+            replReader.setIsReplScriptExecuting(isExecuting);
         }
     }
 

@@ -82,7 +82,7 @@ public class ManglingUtils {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return descriptor.getVisibility().getTEMP_isPublicAPI();
+            return descriptor.getVisibility().getIsPublicAPI();
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -98,7 +98,7 @@ public class ManglingUtils {
             }
 
             // Don't use stable mangling when it inside a non-public API declaration.
-            if (!classDescriptor.getVisibility().getTEMP_isPublicAPI()) {
+            if (!classDescriptor.getVisibility().getIsPublicAPI()) {
                 return false;
             }
 

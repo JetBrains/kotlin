@@ -32,15 +32,13 @@ import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.LinkedHashSet
+import java.util.*
 
 public class JetChangeSignatureProcessor(project: Project,
                                          changeInfo: JetChangeInfo,
                                          private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
-        val subject = if (getChangeInfo().kind.TEMP_isConstructor) "constructor" else "function"
+        val subject = if (getChangeInfo().kind.isConstructor) "constructor" else "function"
         return JetUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject))
     }
 

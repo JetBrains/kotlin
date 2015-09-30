@@ -23,7 +23,7 @@ import java.util.*
 public class SubroutineExitInstruction(
         public val subroutine: JetElement,
         lexicalScope: LexicalScope,
-        public val TEMP_isError: Boolean
+        public val isError: Boolean
 ) : InstructionImpl(lexicalScope) {
     private var _sink: SubroutineSinkInstruction? = null
 
@@ -44,8 +44,8 @@ public class SubroutineExitInstruction(
         return visitor.visitSubroutineExit(this)
     }
 
-    override fun toString(): String = if (TEMP_isError) "<ERROR>" else "<END>"
+    override fun toString(): String = if (isError) "<ERROR>" else "<END>"
 
     override fun createCopy(): InstructionImpl =
-            SubroutineExitInstruction(subroutine, lexicalScope, TEMP_isError)
+            SubroutineExitInstruction(subroutine, lexicalScope, isError)
 }

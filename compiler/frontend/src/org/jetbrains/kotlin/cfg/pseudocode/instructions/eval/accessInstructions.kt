@@ -91,7 +91,7 @@ public class WriteValueInstruction(
         lexicalScope: LexicalScope,
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
-        public val TEMP_lValue: JetElement,
+        public val lValue: JetElement,
         public val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
@@ -106,10 +106,10 @@ public class WriteValueInstruction(
     }
 
     override fun toString(): String {
-        val lhs = (TEMP_lValue as? JetNamedDeclaration)?.getName() ?: render(TEMP_lValue)
+        val lhs = (lValue as? JetNamedDeclaration)?.getName() ?: render(lValue)
         return "w($lhs|${inputValues.joinToString(", ")})"
     }
 
     override fun createCopy(): InstructionImpl =
-            WriteValueInstruction(element, lexicalScope, target, receiverValues, TEMP_lValue, rValue)
+            WriteValueInstruction(element, lexicalScope, target, receiverValues, lValue, rValue)
 }

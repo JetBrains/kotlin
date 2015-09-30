@@ -130,7 +130,7 @@ public class JetParameterInfo(
 
     override fun getOldIndex(): Int = originalIndex
 
-    public val TEMP_isNewParameter: Boolean
+    public val isNewParameter: Boolean
         get() = originalIndex == -1
 
     override fun getDefaultValue(): String? = null
@@ -143,7 +143,7 @@ public class JetParameterInfo(
 
     override fun getTypeText(): String = currentTypeText
 
-    public val TEMP_isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
+    public val isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
 
     override fun isUseAnySingleVariable(): Boolean = false
 

@@ -21,7 +21,7 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-val AbstractInsnNode.TEMP_isMeaningful: Boolean get() =
+val AbstractInsnNode.isMeaningful: Boolean get() =
     when (this.getType()) {
         AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
         else -> true
@@ -46,21 +46,21 @@ public class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?)
 fun MethodNode.prepareForEmitting() {
     tryCatchBlocks = tryCatchBlocks.filter { tcb ->
         InsnSequence(tcb.start, tcb.end).any { insn ->
-            insn.TEMP_isMeaningful
+            insn.isMeaningful
         }
     }
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
         InsnSequence(lv.start, lv.end).any { insn ->
-            insn.TEMP_isMeaningful
+            insn.isMeaningful
         }
     }
 
     // We should remove linenumbers after last meaningful instruction
     // because they point to index of non-existing instruction and it leads to VerifyError
     var current = instructions.getLast()
-    while (!current.TEMP_isMeaningful) {
+    while (!current.isMeaningful) {
         val prev = current.getPrevious()
 
         if (current.getType() == AbstractInsnNode.LINE) {

@@ -49,11 +49,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
 
-//    public val TEMP_kClass: ClassDescriptor by ClassLookup
-    //TODO: temporary
-    public val TEMP_kClass: ClassDescriptor
-        get() = find("KClass")
-
+    public val kClass: ClassDescriptor by ClassLookup
     public val kProperty0: ClassDescriptor by ClassLookup
     public val kProperty1: ClassDescriptor by ClassLookup
     public val kProperty2: ClassDescriptor by ClassLookup
@@ -61,7 +57,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kMutableProperty1: ClassDescriptor by ClassLookup
 
     public fun getKClassType(annotations: Annotations, type: JetType): JetType {
-        val descriptor = TEMP_kClass
+        val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.getDefaultType()
         }

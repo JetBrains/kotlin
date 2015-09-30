@@ -522,7 +522,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     @Nullable
     private static AbstractInsnNode getNextMeaningful(@NotNull AbstractInsnNode node) {
         AbstractInsnNode result = node.getNext();
-        while (result != null && !CommonPackage.getTEMP_isMeaningful(result)) {
+        while (result != null && !CommonPackage.getIsMeaningful(result)) {
             result = result.getNext();
         }
         return result;
