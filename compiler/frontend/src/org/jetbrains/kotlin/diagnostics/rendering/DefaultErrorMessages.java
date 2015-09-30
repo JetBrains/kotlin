@@ -109,8 +109,8 @@ public class DefaultErrorMessages {
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
-        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
-        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
+        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
+        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
@@ -261,7 +261,7 @@ public class DefaultErrorMessages {
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
-        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
+        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", NAME);
         MAP.put(VARIABLE_EXPECTED, "Variable expected");
 
@@ -658,7 +658,6 @@ public class DefaultErrorMessages {
         MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);
         MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");
-        MAP.put(ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, RENDER_FILE);
 
         MAP.setImmutable();
 

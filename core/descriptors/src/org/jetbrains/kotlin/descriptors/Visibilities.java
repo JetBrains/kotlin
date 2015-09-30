@@ -36,6 +36,13 @@ public class Visibilities {
 
         @Override
         public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            if (DescriptorUtils.isTopLevelDeclaration(what)) {
+                SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
+                if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
+                    return fromContainingFile.equals(DescriptorUtils.getContainingSourceFile(what));
+                }
+            }
+
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
