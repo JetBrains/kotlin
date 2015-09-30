@@ -85,28 +85,24 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return result
     }
 
-    override fun loadCallableAnnotations(
-            container: ProtoContainer,
-            proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
-            kind: AnnotatedCallableKind
-    ): List<T> {
+    override fun loadCallableAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, kind: AnnotatedCallableKind): List<T> {
+        val nameResolver = container.nameResolver
         if (kind == AnnotatedCallableKind.PROPERTY) {
             val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
             val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
 
             val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, nameResolver, sig)
+                findClassAndLoadMemberAnnotations(container, proto, sig)
             } ?: listOf()
 
             val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, nameResolver, sig, isStaticFieldInOuter(proto))
+                findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
             } ?: listOf()
 
             return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
         }
         val signature = getCallableSignature(proto, nameResolver, kind) ?: return listOf()
-        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, nameResolver, signature))
+        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
     }
 
     protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>
@@ -116,15 +112,14 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     private fun findClassAndLoadMemberAnnotations(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             signature: MemberSignature,
             isStaticFieldInOuter: Boolean = false
     ): List<A> {
         val kotlinClass = findClassWithAnnotationsAndInitializers(
-                container, nameResolver, getImplClassName(proto, nameResolver), isStaticFieldInOuter
+                container, getImplClassName(proto, container.nameResolver), isStaticFieldInOuter
         )
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.getFqName(nameResolver)}", null)
+            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.getFqName()}", null)
             return listOf()
         }
 
@@ -134,16 +129,15 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
             callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<A> {
-        val methodSignature = getCallableSignature(callable, nameResolver, kind)
+        val methodSignature = getCallableSignature(callable, container.nameResolver, kind)
         if (methodSignature != null) {
             val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
-            return findClassAndLoadMemberAnnotations(container, callable, nameResolver, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, callable, paramSignature)
         }
 
         return listOf()
@@ -152,14 +146,13 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
             callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             kind: AnnotatedCallableKind
     ): List<A> {
         if (!callable.hasReceiverType()) return emptyList()
-        val methodSignature = getCallableSignature(callable, nameResolver, kind)
+        val methodSignature = getCallableSignature(callable, container.nameResolver, kind)
         if (methodSignature != null) {
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
-            return findClassAndLoadMemberAnnotations(container, callable, nameResolver, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, callable, paramSignature)
         }
 
         return emptyList()
@@ -169,19 +162,15 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return type.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
-    override fun loadPropertyConstant(
-            container: ProtoContainer,
-            proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
-            expectedType: JetType
-    ): C? {
+    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Callable, expectedType: JetType): C? {
+        val nameResolver = container.nameResolver
         val signature = getCallableSignature(proto, nameResolver, AnnotatedCallableKind.PROPERTY) ?: return null
 
         val kotlinClass = findClassWithAnnotationsAndInitializers(
-                container, nameResolver, getImplClassName(proto, nameResolver), isStaticFieldInOuter(proto)
+                container, getImplClassName(proto, nameResolver), isStaticFieldInOuter(proto)
         )
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.getFqName(nameResolver)}", null)
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.getFqName()}", null)
             return null
         }
 
@@ -189,10 +178,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private fun findClassWithAnnotationsAndInitializers(
-            container: ProtoContainer,
-            nameResolver: NameResolver,
-            implClassName: Name?,
-            isStaticFieldInOuter: Boolean
+            container: ProtoContainer, implClassName: Name?, isStaticFieldInOuter: Boolean
     ): KotlinJvmBinaryClass? {
         val (classProto, packageFqName) = container
         return when {
@@ -200,7 +186,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 implClassName?.let { kotlinClassFinder.findKotlinClass(ClassId(packageFqName, it)) }
             }
             classProto != null -> {
-                val classId = nameResolver.getClassId(classProto.fqName)
+                val classId = container.nameResolver.getClassId(classProto.fqName)
 
                 if (implClassName != null) {
                     // TODO: store accurate name for nested traits

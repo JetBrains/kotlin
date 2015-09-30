@@ -34,7 +34,6 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     List<T> loadCallableAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     );
 
@@ -42,7 +41,6 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     List<A> loadValueParameterAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable callable,
-            @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
             int parameterIndex,
             @NotNull ProtoBuf.ValueParameter proto
@@ -52,7 +50,6 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     List<A> loadExtensionReceiverParameterAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable callable,
-            @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     );
 
@@ -66,7 +63,6 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     C loadPropertyConstant(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
             @NotNull JetType expectedType
     );
 }

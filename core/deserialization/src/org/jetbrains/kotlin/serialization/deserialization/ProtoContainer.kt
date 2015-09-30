@@ -28,9 +28,6 @@ public data class ProtoContainer(
         assert((classProto != null) xor (packageFqName != null))
     }
 
-    fun getFqName(nameResolver: NameResolver): FqName {
-        if (packageFqName != null) return packageFqName
-
-        return nameResolver.getClassId(classProto!!.getFqName()).asSingleFqName()
-    }
+    fun getFqName(): FqName =
+            packageFqName ?: nameResolver.getClassId(classProto!!.getFqName()).asSingleFqName()
 }

@@ -40,29 +40,26 @@ class KotlinJavascriptAnnotationAndConstantLoader(
     override fun loadCallableAnnotations(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
         val annotations = proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty()
-        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, nameResolver), null) }
+        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
             callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
+        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
             callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> = emptyList()
 
@@ -74,10 +71,9 @@ class KotlinJavascriptAnnotationAndConstantLoader(
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             expectedType: JetType
     ): ConstantValue<*>? {
         val value = proto.getExtension(JsProtoBuf.compileTimeValue)
-        return deserializer.resolveValue(expectedType, value, nameResolver)
+        return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

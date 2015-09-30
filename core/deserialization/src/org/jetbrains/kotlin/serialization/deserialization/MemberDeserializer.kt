@@ -129,7 +129,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             property.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
                         val container = c.containingDeclaration.asProtoContainer()!!
-                        c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
+                        c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, property.returnType)
                     }
             )
         }
@@ -184,9 +184,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
         return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
             c.containingDeclaration.asProtoContainer()?.let {
-                c.components.annotationAndConstantLoader.loadCallableAnnotations(
-                        it, proto, c.nameResolver, kind
-                )
+                c.components.annotationAndConstantLoader.loadCallableAnnotations(it, proto, kind)
             }.orEmpty()
         }
     }
@@ -200,7 +198,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             if (proto.hasReceiverType()) {
                 c.containingDeclaration.asProtoContainer()?.let {
                     c.components.annotationAndConstantLoader
-                            .loadExtensionReceiverParameterAnnotations(it, proto, c.nameResolver, receiverTargetedKind)
+                            .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
                             .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
                 }.orEmpty()
             }
@@ -234,9 +232,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             valueParameter: ProtoBuf.ValueParameter
     ): Annotations {
         return DeserializedAnnotations(c.storageManager) {
-            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(
-                    container, callable, c.nameResolver, kind, index, valueParameter
-            )
+            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, kind, index, valueParameter)
         }
     }
 

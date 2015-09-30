@@ -157,7 +157,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val isVararg = valueParameterProto.hasVarargElementType()
             val modifierList = if (isVararg) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                    container, callableProto, c.nameResolver, callableProto.annotatedCallableKind, index, valueParameterProto
+                    container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
             )
             if (parameterAnnotations.isNotEmpty()) {
                 createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierList(parameterStub))
