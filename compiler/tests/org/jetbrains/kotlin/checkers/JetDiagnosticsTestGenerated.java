@@ -9156,9 +9156,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NoLocalVisibility.kt")
+            public void testNoLocalVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("primaryConstructorMissingKeyword.kt")
             public void testPrimaryConstructorMissingKeyword() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingKeyword.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateInInterface.kt")
+            public void testPrivateInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/privateInInterface.kt");
                 doTest(fileName);
             }
 

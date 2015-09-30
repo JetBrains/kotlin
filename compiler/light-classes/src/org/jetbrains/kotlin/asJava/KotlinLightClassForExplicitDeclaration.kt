@@ -292,7 +292,7 @@ public open class KotlinLightClassForExplicitDeclaration(
 
 
         // FINAL
-        if (isAbstract()) {
+        if (isAbstract() || isSealed()) {
             psiModifiers.add(PsiModifier.ABSTRACT)
         }
         else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject is JetClass && classOrObject.isEnum()))) {
@@ -307,6 +307,8 @@ public open class KotlinLightClassForExplicitDeclaration(
     }
 
     private fun isAbstract(): Boolean = classOrObject.hasModifier(ABSTRACT_KEYWORD) || isInterface
+
+    private fun isSealed(): Boolean = classOrObject.hasModifier(SEALED_KEYWORD)
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = getModifierList().hasModifierProperty(name)
 

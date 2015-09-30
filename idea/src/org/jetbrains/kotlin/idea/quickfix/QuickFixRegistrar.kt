@@ -77,7 +77,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
         ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
 
-        FINAL_PROPERTY_IN_TRAIT.registerFactory(removeFinalModifierFactory)
+        FINAL_PROPERTY_IN_INTERFACE.registerFactory(removeFinalModifierFactory)
         FINAL_FUNCTION_WITH_NO_BODY.registerFactory(removeFinalModifierFactory)
 
         val addFunctionBodyFactory = AddFunctionBodyFix.createFactory()

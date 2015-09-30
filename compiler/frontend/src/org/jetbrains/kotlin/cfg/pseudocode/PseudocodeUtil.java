@@ -89,7 +89,7 @@ public class PseudocodeUtil {
             element = ((ReadValueInstruction) instruction).getElement();
         }
         else if (instruction instanceof WriteValueInstruction) {
-            element = ((WriteValueInstruction) instruction).getTEMP_lValue();
+            element = ((WriteValueInstruction) instruction).getlValue();
         }
         else if (instruction instanceof VariableDeclarationInstruction) {
             element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();

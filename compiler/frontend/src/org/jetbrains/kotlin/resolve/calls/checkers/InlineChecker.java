@@ -43,7 +43,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NON_LOCAL_RETURN_NOT_ALLOWED;
 import static org.jetbrains.kotlin.diagnostics.Errors.USAGE_IS_NOT_INLINABLE;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getTEMP_isEffectivelyPublicApi;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getIsEffectivelyPublicApi;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalReturns;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage;
 
@@ -55,7 +55,7 @@ class InlineChecker implements CallChecker {
     public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
-        this.isEffectivelyPublicApiFunction = getTEMP_isEffectivelyPublicApi(descriptor);
+        this.isEffectivelyPublicApiFunction = getIsEffectivelyPublicApi(descriptor);
 
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
@@ -236,7 +236,7 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull JetElement expression, @NotNull BasicCallResolutionContext context){
-        boolean declarationDescriptorIsPublicApi = getTEMP_isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
+        boolean declarationDescriptorIsPublicApi = getIsEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
         if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
             context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
         }

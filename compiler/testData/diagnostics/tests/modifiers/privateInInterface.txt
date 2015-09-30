@@ -1,0 +1,14 @@
+package
+
+public interface My {
+    private abstract val x: kotlin.Int
+    private abstract val xx: kotlin.Int
+    private final val xxx: kotlin.Int
+    public final val y: kotlin.Int
+    public final val yy: kotlin.Int
+    private final fun bar(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private abstract fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

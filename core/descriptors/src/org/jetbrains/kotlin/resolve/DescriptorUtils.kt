@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.DFS
@@ -90,12 +89,12 @@ public val ClassDescriptor.classObjectType: JetType?
         return correspondingDescriptor?.getDefaultType()
     }
 
-public val DeclarationDescriptorWithVisibility.TEMP_isEffectivelyPublicApi: Boolean
+public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
     get() {
         var parent: DeclarationDescriptorWithVisibility? = this
 
         while (parent != null) {
-            if (!parent.getVisibility().TEMP_isPublicAPI) return false
+            if (!parent.getVisibility().isPublicAPI) return false
 
             parent = DescriptorUtils.getParentOfType(parent, javaClass<DeclarationDescriptorWithVisibility>())
         }
