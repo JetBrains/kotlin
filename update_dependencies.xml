@@ -3,8 +3,8 @@
 
     <property name="kotlin.bootstrap.branch" value="M14"/>
     <property name="kotlin.bootstrap.branch.locator" value=",branch:M14"/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
-    <property name="kotlin.bootstrap.locator.force" value="false"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="true"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 

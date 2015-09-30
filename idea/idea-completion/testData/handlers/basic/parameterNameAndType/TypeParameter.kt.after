@@ -1,3 +1,4 @@
-fun<T> foo(t: T<caret>)
+fun<T> foo(thread: Thread)
 
-// ELEMENT: t
+// TODO_ELEMENT: t
+// ELEMENT: thread
