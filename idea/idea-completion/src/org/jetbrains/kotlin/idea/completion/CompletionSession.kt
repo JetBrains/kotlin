@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
+import org.jetbrains.kotlin.idea.codeInsight.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
@@ -284,8 +285,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        val explicitReceiverData = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression!!)
-        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, explicitReceiverData).filterNonImported(this, referenceVariants)
+        val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression!!)
+        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, callTypeAndReceiver)
+                .filterNonImported(this, referenceVariants)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
@@ -301,7 +303,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         val contextVariablesProvider = {
             nameExpression?.let {
-                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, explicitReceiverData = null)
+                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver(CallType.NORMAL, null))
                         .map { it as VariableDescriptor }
             } ?: emptyList()
         }
@@ -317,11 +319,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             return CallType.NORMAL to emptyList()
         }
 
-        val explicitReceiverData = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression)
-        val receiverElement = explicitReceiverData?.element
-        val callType = explicitReceiverData?.callType ?: CallType.NORMAL
+        val (callType, receiverElement) = CallTypeAndReceiver.detect(nameExpression)
 
-        if (explicitReceiverData != null && callType == CallType.CALLABLE_REFERENCE && receiverElement != null) {
+        if (callType == CallType.CALLABLE_REFERENCE && receiverElement != null) {
             val type = bindingContext[BindingContext.TYPE, receiverElement as JetTypeReference]
             return callType to type.singletonOrEmptyList()
         }

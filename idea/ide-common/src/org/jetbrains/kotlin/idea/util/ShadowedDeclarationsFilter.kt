@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.codeInsight.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -41,15 +41,14 @@ public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: JetExpression,
-        explicitReceiverData: ReferenceVariantsHelper.ExplicitReceiverData?
+        callTypeAndReceiver: CallTypeAndReceiver
 ) {
     private val psiFactory = JetPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
-    private val explicitReceiverValue = explicitReceiverData?.let {
-        val expression = it.element as? JetExpression ?: return@let null
-        val type = bindingContext.getType(expression) ?: return@let null
-        ExpressionReceiver(expression, type)
+    private val explicitReceiverValue = (callTypeAndReceiver.receiver as? JetExpression)?.let {
+        val type = bindingContext.getType(it) ?: return@let null
+        ExpressionReceiver(it, type)
     } ?: ReceiverValue.NO_RECEIVER
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {

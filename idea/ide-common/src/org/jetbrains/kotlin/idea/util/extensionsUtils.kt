@@ -51,7 +51,12 @@ public enum class CallType {
         // currently callable references to locals and parameters are not supported
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is FunctionDescriptor || descriptor is PropertyDescriptor
-    }
+    },
+
+    //TODO: canCall
+    IMPORT_DIRECTIVE,
+
+    PACKAGE_DIRECTIVE
 
     ;
 

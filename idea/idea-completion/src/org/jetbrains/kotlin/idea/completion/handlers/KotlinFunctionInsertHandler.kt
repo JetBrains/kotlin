@@ -28,10 +28,8 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.JetType
 
 class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
@@ -60,11 +58,10 @@ class KotlinFunctionInsertHandler(
         val startOffset = context.getStartOffset()
         val element = context.getFile().findElementAt(startOffset) ?: return
 
-        when {
-            //TODO: replace with CallType
-            element.getStrictParentOfType<JetImportDirective>() != null || callType == CallType.CALLABLE_REFERENCE -> return
+        when (callType) {
+            CallType.PACKAGE_DIRECTIVE, CallType.IMPORT_DIRECTIVE, CallType.CALLABLE_REFERENCE -> return
 
-            callType == CallType.INFIX -> {
+            CallType.INFIX -> {
                 if (context.getCompletionChar() == ' ') {
                     context.setAddCompletionChar(false)
                 }

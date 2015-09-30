@@ -22,7 +22,7 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.codeInsight.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -132,12 +132,9 @@ public class KotlinIndicesHelper(
     }
 
     private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType>> {
-        val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(expression)
-        if (receiverData != null) {
-            val (receiverElement, callType) = receiverData
-
-            if (callType == CallType.CALLABLE_REFERENCE) return emptyList() //TODO?
-            receiverElement as JetExpression
+        val (callType, receiverElement) = CallTypeAndReceiver.detect(expression)
+        if (receiverElement != null) {
+            if (receiverElement !is JetExpression) return emptyList() //TODO?
 
             val expressionType = bindingContext.getType(receiverElement)
             if (expressionType == null || expressionType.isError()) return emptyList()
@@ -148,7 +145,7 @@ public class KotlinIndicesHelper(
         }
         else {
             val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
-            return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to CallType.NORMAL }
+            return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to callType }
         }
     }
 
