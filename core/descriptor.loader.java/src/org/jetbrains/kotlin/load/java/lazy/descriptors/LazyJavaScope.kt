@@ -81,7 +81,8 @@ public abstract class LazyJavaScope(
         val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
         for (method in memberIndex().findMethodsByName(name)) {
-            val descriptor = resolveMethodToFunctionDescriptor(method, true)
+            val descriptor = resolveMethodToFunctionDescriptor(method)
+            c.components.javaResolverCache.recordMethod(method, descriptor)
             result.add(descriptor)
             if (method.isStatic) {
                 result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
@@ -104,7 +105,7 @@ public abstract class LazyJavaScope(
             returnType: JetType,
             valueParameters: ResolvedValueParameters): MethodSignatureData
 
-    fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
+    fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
                 containingDeclaration, annotations, method.getName(), c.components.sourceElementFactory.source(method)
@@ -132,10 +133,6 @@ public abstract class LazyJavaScope(
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
-
-        if (record) {
-            c.components.javaResolverCache.recordMethod(method, functionDescriptorImpl)
-        }
 
         if (signatureErrors.isNotEmpty()) {
             c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
