@@ -91,7 +91,7 @@ public class LazyJavaClassMemberScope(
             computeAnnotationProperties(name, result)
         }
 
-        val propertiesFromSupertypes = getPropertiesFromSupertypes(name, getContainingDeclaration())
+        val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
 
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
                                                                    c.components.errorReporter))
@@ -118,8 +118,8 @@ public class LazyJavaClassMemberScope(
         result.add(propertyDescriptor)
     }
 
-    private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
-        return descriptor.typeConstructor.supertypes.flatMap {
+    private fun getPropertiesFromSupertypes(name: Name): Set<PropertyDescriptor> {
+        return getContainingDeclaration().typeConstructor.supertypes.flatMap {
             it.memberScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p as PropertyDescriptor }
         }.toSet()
     }
