@@ -88,14 +88,13 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/conditional-preprocessor/src/"/>
-        <include name="compiler/rmi/rmi-server/src"/>
-        <include name="compiler/rmi/rmi-interface/src"/>
         <include name="compiler/container/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
         <include name="compiler/light-classes/src"/>
         <include name="compiler/plugin-api/src"/>
-        <include name="plugins/annotation-collector/src"/>
+        <include name="compiler/rmi/rmi-server/src"/>
+        <include name="compiler/rmi/rmi-interface/src"/>
         <include name="compiler/serialization/src"/>
         <include name="compiler/util/src"/>
         <include name="js/js.dart-ast/src"/>
@@ -104,6 +103,7 @@
         <include name="js/js.inliner/src"/>
         <include name="js/js.parser/src"/>
         <include name="js/js.serializer/src"/>
+        <include name="plugins/annotation-collector/src"/>
     </dirset>
 
     <property name="idea.out" value="${basedir}/out/production"/>
@@ -119,6 +119,7 @@
         <include name="backend-common/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
+        <include name="conditional-preprocessor/**"/>
         <include name="rmi-server/**"/>
         <include name="rmi-interface/**"/>
         <include name="util/**"/>
