@@ -94,12 +94,12 @@ public class KotlinIndicesHelper(
     }
 
     public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<CallableDescriptor> {
-        val receiverValues = receiverValues(expression, bindingContext)
+        val (callType, receiverValues) = receiverValues(expression, bindingContext)
         if (receiverValues.isEmpty()) return emptyList()
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
-        val receiverTypeNames = possibleReceiverTypeNames(receiverValues.map { it.first }, dataFlowInfo, bindingContext)
+        val receiverTypeNames = possibleReceiverTypeNames(receiverValues, dataFlowInfo, bindingContext)
 
         val index = JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE
 
@@ -111,7 +111,7 @@ public class KotlinIndicesHelper(
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
-        return findSuitableExtensions(declarations, receiverValues, dataFlowInfo, bindingContext)
+        return findSuitableExtensions(declarations, callType to receiverValues, dataFlowInfo, bindingContext)
     }
 
     private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
@@ -131,22 +131,28 @@ public class KotlinIndicesHelper(
         constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
-    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType<*>>> {
+    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Pair<CallType<*>, Collection<ReceiverValue>> {
         val callTypeAndReceiver = CallTypeAndReceiver.detect(expression)
-        val receiverElement = callTypeAndReceiver.receiver
+        val receiverValues = receiverValues(expression, callTypeAndReceiver.receiver, bindingContext)
+        return callTypeAndReceiver.callType to receiverValues
+    }
+
+    private fun <TReceiver : JetElement?> receiverValues(
+            expression: JetSimpleNameExpression,
+            receiverElement: TReceiver,
+            bindingContext: BindingContext
+    ): Collection<ReceiverValue> {
         if (receiverElement != null) {
             if (receiverElement !is JetExpression) return emptyList() //TODO?
 
             val expressionType = bindingContext.getType(receiverElement)
-            if (expressionType == null || expressionType.isError()) return emptyList()
+            if (expressionType == null || expressionType.isError) return emptyList()
 
-            val receiverValue = ExpressionReceiver(receiverElement, expressionType)
-
-            return listOf(receiverValue to callTypeAndReceiver.callType)
+            return listOf(ExpressionReceiver(receiverElement, expressionType))
         }
         else {
             val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
-            return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to callTypeAndReceiver.callType }
+            return resolutionScope.getImplicitReceiversWithInstance().map { it.value }
         }
     }
 
@@ -155,7 +161,7 @@ public class KotlinIndicesHelper(
      */
     private fun findSuitableExtensions(
             declarations: Sequence<JetCallableDeclaration>,
-            receiverValues: Collection<Pair<ReceiverValue, CallType<*>>>,
+            receiverValues: Pair<CallType<*>, Collection<ReceiverValue>>,
             dataFlowInfo: DataFlowInfo,
             bindingContext: BindingContext
     ): Collection<CallableDescriptor> {
@@ -163,8 +169,8 @@ public class KotlinIndicesHelper(
 
         fun processDescriptor(descriptor: CallableDescriptor) {
             if (descriptorFilter(descriptor)) {
-                for ((receiverValue, callType) in receiverValues) {
-                    result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo, moduleDescriptor))
+                for (receiverValue in receiverValues.second) {
+                    result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, receiverValues.first, bindingContext, dataFlowInfo, moduleDescriptor))
                 }
             }
         }
