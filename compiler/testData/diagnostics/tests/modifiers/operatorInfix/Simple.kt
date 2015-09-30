@@ -8,6 +8,8 @@ open class Example {
     fun component2() = 0
 
     fun inc() = Example()
+
+    fun plus(o: Example) = 0
 }
 
 class Example2 : Example()
@@ -20,8 +22,11 @@ operator fun Example.component2() = ""
 
 operator fun Example.inc() = Example2()
 
+infix fun Example.plus(o: Example) = ""
+
 fun a() {
     var a = Example()
+    val b = Example()
 
     consumeString(a())
     consumeString(a[1])
@@ -31,6 +36,8 @@ fun a() {
     consumeString(y)
 
     consumeExample2(++a)
+
+    consumeString(a plus b)
 }
 
 fun consumeInt(i: Int) {}

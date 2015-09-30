@@ -3,26 +3,34 @@
 class Example
 
 fun Example.plus(other: Example) = 0
-operator fun Example.minus(other: Example) = 0
+operator infix fun Example.minus(other: Example) = 0
 
-operator fun Example.times(other: Example) = 0
+operator infix fun Example.times(other: Example) = 0
 fun Example.div(other: Example) = 0
 
 fun a() {
     with (Example()) {
-        operator fun Example.plus(other: Example) = ""
+        operator infix fun Example.plus(other: Example) = ""
         fun Example.minus(other: Example) = ""
 
-        operator fun Example.times(other: Example) = ""
+        operator infix fun Example.times(other: Example) = ""
         fun Example.div(other: Example) = ""
 
         with (Example()) {
             val a = Example()
             val b = Example()
+
             consumeString(a + b)
             consumeInt(a - b)
+
+            consumeString(a plus b)
+            consumeInt(a minus b)
+
             a <!OVERLOAD_RESOLUTION_AMBIGUITY!>*<!> b
             a <!OVERLOAD_RESOLUTION_AMBIGUITY!>/<!> b
+
+            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>times<!> b
+            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>div<!> b
         }
     }
 }
