@@ -51,7 +51,7 @@ fun createPackageFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    val container = ProtoContainer(null, packageFqName)
+    val container = ProtoContainer(null, packageFqName, c.nameResolver)
     for (callableProto in packageProto.getMemberList()) {
         createCallableStub(fileStub, callableProto, c, container)
     }
@@ -66,7 +66,7 @@ fun createFileFacadeStub(
     val packageFqName = facadeFqName.parent()
     val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    val container = ProtoContainer(null, facadeFqName.parent())
+    val container = ProtoContainer(null, facadeFqName.parent(), c.nameResolver)
     for (callableProto in packageProto.getMemberList()) {
         createCallableStub(fileStub, callableProto, c, container)
     }
@@ -83,13 +83,12 @@ fun createMultifileClassStub(
     val partNames = multifileClass.classHeader.filePartClassNames?.asList()
     val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    val multifileClassContainer = ProtoContainer(null, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
         val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!, partHeader.strings!!)
         val partContext = components.createContext(partData.nameResolver, packageFqName)
         for (partMember in partData.packageProto.memberList) {
-            createCallableStub(fileStub, partMember, partContext, multifileClassContainer)
+            createCallableStub(fileStub, partMember, partContext, ProtoContainer(null, packageFqName, partContext.nameResolver))
         }
     }
     return fileStub

@@ -135,7 +135,7 @@ private class ClassClsStubBuilder(
         assert(classProto.getPrimaryConstructor().hasData(),
                "Primary constructor in class is always non-default, so data should not be empty")
 
-        createCallableStub(classOrObjectStub, primaryConstructorProto.getData(), c, ProtoContainer(classProto, null))
+        createCallableStub(classOrObjectStub, primaryConstructorProto.getData(), c, ProtoContainer(classProto, null, c.nameResolver))
     }
 
     private fun createDelegationSpecifierList() {
@@ -188,7 +188,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
-        val container = ProtoContainer(classProto, null)
+        val container = ProtoContainer(classProto, null, c.nameResolver)
         val allMembers = classProto.getSecondaryConstructorList() + classProto.getMemberList()
         for (callableProto in allMembers) {
             createCallableStub(classBody, callableProto, c, container)
