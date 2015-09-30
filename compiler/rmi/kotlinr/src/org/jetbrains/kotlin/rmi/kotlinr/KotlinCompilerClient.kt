@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
+import net.rubygrapefruit.platform.ProcessLauncher
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
@@ -317,31 +318,41 @@ public object KotlinCompilerClient {
         }
         // TODO add os detection to specify option more precisely
         val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon in OS X
-        val args = listOf(javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
+        val args = listOf(
+                   javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
                    daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
                    COMPILER_DAEMON_CLASS_FQN +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
         reportingTargets.report(DaemonReportCategory.DEBUG, "starting the daemon as: " + args.joinToString(" "))
-        val processBuilder = ProcessBuilder(args).redirectErrorStream(true)
+        val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectErrorStream(true)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
-        val daemon = processBuilder.start()
+        val daemonLauncher = net.rubygrapefruit.platform.Native.get(ProcessLauncher::class.java)
+        val daemon = daemonLauncher.start(processBuilder)
 
         var isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
         val stdoutThread =
                 thread {
-                    daemon.inputStream
-                            .reader()
-                            .forEachLine {
-                                if (daemonOptions.runFilesPath.isNotEmpty() && it.contains(daemonOptions.runFilesPath)) {
-                                    isEchoRead.release()
-                                    return@forEachLine
+                    try {
+                        daemon.inputStream
+                                .reader()
+                                .forEachLine {
+                                    if (daemonOptions.runFilesPath.isNotEmpty() && it.contains(daemonOptions.runFilesPath)) {
+                                        isEchoRead.release()
+                                        return@forEachLine
+                                    }
+                                    reportingTargets.report(DaemonReportCategory.DEBUG, it, "daemon")
                                 }
-                                reportingTargets.report(DaemonReportCategory.DEBUG, it, "daemon")
-                            }
+                    }
+                    finally {
+                        daemon.inputStream.close()
+                        daemon.outputStream.close()
+                        daemon.errorStream.close()
+                    }
                 }
         try {
             // trying to wait for process

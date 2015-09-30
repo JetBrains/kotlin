@@ -22,6 +22,7 @@
       <element id="module-output" name="kotlinr" />
       <element id="module-output" name="rmi-interface" />
       <element id="module-output" name="deserialization" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/native-platform-uberjar.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
