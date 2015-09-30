@@ -595,6 +595,24 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("EmptyQualifier1.kt")
+        public void testEmptyQualifier1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyQualifier2.kt")
+        public void testEmptyQualifier2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyQualifier3.kt")
+        public void testEmptyQualifier3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoQualifier1.kt")
         public void testNoQualifier1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier1.kt");
@@ -640,6 +658,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("NoQualifier9.kt")
         public void testNoQualifier9() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier9.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonEmptyQualifier1.kt")
+        public void testNonEmptyQualifier1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonEmptyQualifier2.kt")
+        public void testNonEmptyQualifier2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier2.kt");
             doTest(fileName);
         }
     }

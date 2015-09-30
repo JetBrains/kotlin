@@ -102,7 +102,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private val smartCompletion = expression?.let {
         SmartCompletion(
                 it, resolutionFacade, bindingContext, isVisibleFilter, prefixMatcher,
-                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true
+                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver, forBasicCompletion = true
         )
     }
 
@@ -353,7 +353,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (smartCompletion != null) {
-            sorter = sorter.weighBefore(KindWeigher.toString(), SmartCompletionInBasicWeigher(smartCompletion), SmartCompletionPriorityWeigher)
+            val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver.callType, resolutionFacade)
+            sorter = sorter.weighBefore(KindWeigher.toString(), smartCompletionInBasicWeigher, SmartCompletionPriorityWeigher)
         }
 
         return sorter

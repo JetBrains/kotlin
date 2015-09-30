@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -204,8 +201,8 @@ private fun bindPropertyReference(expression: JetCallableReferenceExpression, re
 
 private fun createReflectionTypeForCallableDescriptor(
         descriptor: CallableDescriptor,
-        context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes,
+        trace: BindingTrace?,
         reportOn: JetExpression?
 ): JetType? {
     val extensionReceiver = descriptor.getExtensionReceiverParameter()
@@ -213,7 +210,7 @@ private fun createReflectionTypeForCallableDescriptor(
 
     if (extensionReceiver != null && dispatchReceiver != null && descriptor is CallableMemberDescriptor) {
         if (reportOn != null) {
-            context.trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reportOn, descriptor))
+            trace?.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reportOn, descriptor))
         }
         return null
     }
@@ -227,7 +224,7 @@ private fun createReflectionTypeForCallableDescriptor(
             createReflectionTypeForProperty(descriptor, receiverType, reflectionTypes)
         is VariableDescriptor -> {
             if (reportOn != null) {
-                context.trace.report(UNSUPPORTED.on(reportOn, "References to variables aren't supported yet"))
+                trace?.report(UNSUPPORTED.on(reportOn, "References to variables aren't supported yet"))
             }
             null
         }
@@ -238,10 +235,9 @@ private fun createReflectionTypeForCallableDescriptor(
 
 public fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
-        context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes
 ): JetType? =
-        createReflectionTypeForCallableDescriptor(descriptor, context, reflectionTypes, null)
+        createReflectionTypeForCallableDescriptor(descriptor, reflectionTypes, null, null)
 
 public fun createReflectionTypeForResolvedCallableReference(
         reference: JetCallableReferenceExpression,
@@ -249,7 +245,7 @@ public fun createReflectionTypeForResolvedCallableReference(
         context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes
 ): JetType? {
-    val type = createReflectionTypeForCallableDescriptor(descriptor, context, reflectionTypes, reference.getCallableReference())
+    val type = createReflectionTypeForCallableDescriptor(descriptor, reflectionTypes, context.trace, reference.getCallableReference())
                ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {
@@ -276,7 +272,7 @@ public fun getResolvedCallableReferenceShapeType(
                 null
             overloadResolutionResults.isSingleResult() ->
                 OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
-                    createReflectionTypeForCallableDescriptor(call.getResultingDescriptor(), context, reflectionTypes, reference)
+                    createReflectionTypeForCallableDescriptor(call.getResultingDescriptor(), reflectionTypes, context.trace, reference)
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
                 functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)

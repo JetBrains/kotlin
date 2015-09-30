@@ -23,13 +23,16 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -306,7 +309,17 @@ fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPri
     return this
 }
 
-fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: SmartCastCalculator): Collection<FuzzyType> {
+fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
+        smartCastCalculator: SmartCastCalculator,
+        callType: CallType<*>,
+        resolutionFacade: ResolutionFacade
+): Collection<FuzzyType> {
+    if (callType == CallType.CALLABLE_REFERENCE) {
+        if (this !is CallableDescriptor) return emptyList()
+        val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return emptyList()
+        return listOf(FuzzyType(type, emptyList()/* references to generic functions not supported yet */))
+    }
+
     if (this is CallableDescriptor) {
         var returnType = fuzzyReturnType() ?: return emptyList()
         // skip declarations of type Nothing or of generic parameter type which has no real bounds

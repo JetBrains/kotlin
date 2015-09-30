@@ -41,7 +41,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         expression?.let {
             SmartCompletion(it, resolutionFacade,
                             bindingContext, isVisibleFilter, prefixMatcher, originalSearchScope,
-                            toFromOriginalFileMapper, lookupElementFactory)
+                            toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver)
         }
     }
 

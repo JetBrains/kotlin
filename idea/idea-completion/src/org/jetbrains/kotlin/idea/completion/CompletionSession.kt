@@ -126,7 +126,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
 
-    protected val lookupElementFactory = createLookupElementFactory()
+    protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
+    protected val lookupElementFactory: LookupElementFactory
+
+    init {
+        val (callTypeAndReceiver, receiverTypes) = detectCallTypeAndReceiverTypes()
+        this.callTypeAndReceiver = callTypeAndReceiver
+        this.lookupElementFactory = createLookupElementFactory(callTypeAndReceiver.callType, receiverTypes)
+    }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
@@ -298,9 +305,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 )
     }
 
-    private fun createLookupElementFactory(): LookupElementFactory {
-        val (callType, receiverTypes) = detectCallTypeAndReceiverTypes()
-
+    private fun createLookupElementFactory(callType: CallType<*>, receiverTypes: Collection<JetType>?): LookupElementFactory {
         val contextVariablesProvider = {
             nameExpression?.let {
                 referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
@@ -314,9 +319,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                                     insertHandlerProvider, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallType<*>, Collection<JetType>?> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<JetType>?> {
         if (nameExpression == null) {
-            return CallType.DEFAULT to null
+            return CallTypeAndReceiver.DEFAULT to null
         }
 
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
@@ -326,7 +331,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
                 if (callTypeAndReceiver.receiver != null) {
                     val type = bindingContext[BindingContext.TYPE, callTypeAndReceiver.receiver]
-                    return callTypeAndReceiver.callType to type.singletonOrEmptyList()
+                    return callTypeAndReceiver to type.singletonOrEmptyList()
                 }
                 else {
                     receiverExpression = null
@@ -343,7 +348,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
             is CallTypeAndReceiver.TYPE ->
                 // we don't need to highlight immediate members in these cases
-                return callTypeAndReceiver.callType to null
+                return callTypeAndReceiver to null
 
             else -> throw RuntimeException() //TODO: see KT-9394
         }
@@ -374,6 +379,6 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             receiverTypes = receiverTypes.map { it.makeNotNullable() }
         }
 
-        return callTypeAndReceiver.callType to receiverTypes
+        return callTypeAndReceiver to receiverTypes
     }
 }

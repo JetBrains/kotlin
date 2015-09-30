@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -57,10 +57,22 @@ class SmartCompletion(
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         private val lookupElementFactory: LookupElementFactory,
+        private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         private val forBasicCompletion: Boolean = false
 ) {
-    private val receiver = (expression as? JetSimpleNameExpression)?.getReceiverExpression()
-    private val expressionWithType = receiver?.parent as? JetExpression ?: expression
+    private val expressionWithType = when (callTypeAndReceiver) {
+        is CallTypeAndReceiver.DEFAULT ->
+            expression
+
+        is CallTypeAndReceiver.DOT,
+        is CallTypeAndReceiver.SAFE,
+        is CallTypeAndReceiver.INFIX,
+        is CallTypeAndReceiver.CALLABLE_REFERENCE ->
+            expression.parent as JetExpression
+
+        else -> // actually no smart completion for such places
+            expression
+    }
 
     public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
@@ -141,14 +153,14 @@ class SmartCompletion(
         if (descriptor in descriptorsToSkip) return emptyList()
 
         val result = SmartList<LookupElement>()
-        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver.callType, resolutionFacade)
         val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
-        result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
+        result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
             lookupElementFactory.createLookupElementsInSmartCompletion(descriptor, bindingContext, true)
         }
 
-        if (receiver == null) {
+        if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
             toFunctionReferenceLookupElement(descriptor, expectedInfos.filterFunctionExpected())?.let { result.add(it) }
         }
 
@@ -165,7 +177,7 @@ class SmartCompletion(
         val items = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
 
-        if (expectedInfos.isNotEmpty() && receiver == null) {
+        if (expectedInfos.isNotEmpty() && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
             TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
                     .addTo(items, inheritanceSearchers, expectedInfos)
 

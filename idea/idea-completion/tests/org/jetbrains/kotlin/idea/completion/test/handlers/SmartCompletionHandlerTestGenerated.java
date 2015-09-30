@@ -113,6 +113,30 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("CallableReference1.kt")
+    public void testCallableReference1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/CallableReference1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CallableReference2.kt")
+    public void testCallableReference2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/CallableReference2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CallableReference3.kt")
+    public void testCallableReference3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/CallableReference3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CallableReference4.kt")
+    public void testCallableReference4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/CallableReference4.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassInClassObject.kt")
     public void testClassInClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ClassInClassObject.kt");
@@ -356,18 +380,6 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("FunctionLiteralParamAlreadyExist.kt")
     public void testFunctionLiteralParamAlreadyExist() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/FunctionLiteralParamAlreadyExist.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("FunctionReference1.kt")
-    public void testFunctionReference1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/FunctionReference1.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("FunctionReference2.kt")
-    public void testFunctionReference2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/FunctionReference2.kt");
         doTest(fileName);
     }
 
