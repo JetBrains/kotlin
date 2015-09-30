@@ -48,6 +48,7 @@ public class AccessorForConstructorDescriptor(
                 calleeDescriptor.returnType,
                 Modality.FINAL,
                 Visibilities.INTERNAL,
+                false,
                 false
         )
     }

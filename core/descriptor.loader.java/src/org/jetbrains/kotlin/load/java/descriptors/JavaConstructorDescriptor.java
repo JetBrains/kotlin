@@ -110,6 +110,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                 enhancedReturnType,
                 getModality(),
                 getVisibility(),
+                false,
                 false
         );
 

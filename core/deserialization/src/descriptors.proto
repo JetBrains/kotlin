@@ -238,6 +238,7 @@ message Callable {
      isConst
      lateinit
      isOperator
+     isInfix
    */
   optional int32 flags = 1;
 

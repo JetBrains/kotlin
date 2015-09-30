@@ -151,7 +151,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 local.typeDeserializer.type(proto.returnType),
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags)),
-                Flags.IS_OPERATOR.get(proto.flags)
+                Flags.IS_OPERATOR.get(proto.flags),
+                Flags.IS_INFIX.get(proto.flags)
         )
         return function
     }

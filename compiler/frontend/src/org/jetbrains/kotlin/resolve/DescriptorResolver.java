@@ -242,7 +242,8 @@ public class DescriptorResolver {
                 returnType,
                 Modality.FINAL,
                 property.getVisibility(),
-                true
+                true,
+                false
         );
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
@@ -291,6 +292,7 @@ public class DescriptorResolver {
                 returnType,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
+                false,
                 false
         );
 

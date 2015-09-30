@@ -81,7 +81,8 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
             original.getReturnType(),
             original.getModality(),
             original.getVisibility(),
-            original.isOperator
+            original.isOperator,
+            original.isInfix
     )
 
     return result

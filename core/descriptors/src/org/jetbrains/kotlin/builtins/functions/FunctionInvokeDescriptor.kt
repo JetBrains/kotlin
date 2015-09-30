@@ -61,7 +61,8 @@ public class FunctionInvokeDescriptor private constructor(
                     typeParameters.last().getDefaultType(),
                     Modality.ABSTRACT,
                     Visibilities.PUBLIC,
-                    true
+                    true,
+                    false
             )
             return result
         }

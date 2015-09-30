@@ -4048,6 +4048,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("InfixKeyword.kt")
+            public void testInfixKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InfixKeyword.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
             public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");

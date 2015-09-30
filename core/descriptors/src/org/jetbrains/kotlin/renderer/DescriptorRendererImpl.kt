@@ -461,9 +461,12 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderOperator(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
+    private fun renderAdditionalModifiers(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
         if (functionDescriptor.isOperator && functionDescriptor.overriddenDescriptors.none { it.isOperator }) {
             builder.append("operator ")
+        }
+        if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
+            builder.append("infix ")
         }
     }
 
@@ -554,7 +557,7 @@ internal class DescriptorRendererImpl(
             renderAnnotations(function, builder)
             renderVisibility(function.getVisibility(), builder)
             renderModalityForCallable(function, builder)
-            renderOperator(function, builder)
+            renderAdditionalModifiers(function, builder)
             renderOverride(function, builder)
             renderMemberKind(function, builder)
 
