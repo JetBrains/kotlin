@@ -33,36 +33,6 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-public enum class CallType {
-    NORMAL,
-    SAFE,
-
-    INFIX {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
-    },
-
-    UNARY {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
-    },
-
-    CALLABLE_REFERENCE {
-        // currently callable references to locals and parameters are not supported
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is FunctionDescriptor || descriptor is PropertyDescriptor
-    },
-
-    //TODO: canCall
-    IMPORT_DIRECTIVE,
-
-    PACKAGE_DIRECTIVE
-
-    ;
-
-    public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
-}
-
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,

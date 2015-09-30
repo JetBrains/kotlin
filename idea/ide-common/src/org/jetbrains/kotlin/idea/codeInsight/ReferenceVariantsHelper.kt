@@ -20,18 +20,11 @@ package org.jetbrains.kotlin.idea.codeInsight
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
-import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
-import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
-import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -50,59 +43,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
-
-public data class CallTypeAndReceiver(
-        val callType: CallType,
-        val receiver: JetElement?
-) {
-    companion object {
-        public fun detect(expression: JetSimpleNameExpression): CallTypeAndReceiver {
-            val parent = expression.parent
-            if (parent is JetCallableReferenceExpression) {
-                return CallTypeAndReceiver(CallType.CALLABLE_REFERENCE, parent.typeReference)
-            }
-
-            val receiverExpression = expression.getReceiverExpression()
-
-            if (expression.isImportDirectiveExpression()) {
-                return CallTypeAndReceiver(CallType.IMPORT_DIRECTIVE, receiverExpression)
-            }
-
-            if (expression.isPackageDirectiveExpression()) {
-                return CallTypeAndReceiver(CallType.PACKAGE_DIRECTIVE, receiverExpression)
-            }
-
-            if (receiverExpression == null) {
-                return CallTypeAndReceiver(CallType.NORMAL, null)
-            }
-
-            val callType = when (parent) {
-                is JetBinaryExpression -> CallType.INFIX
-
-                is JetCallExpression -> {
-                    if ((parent.getParent() as JetQualifiedExpression).getOperationSign() == JetTokens.SAFE_ACCESS)
-                        CallType.SAFE
-                    else
-                        CallType.NORMAL
-                }
-
-                is JetQualifiedExpression -> {
-                    if (parent.getOperationSign() == JetTokens.SAFE_ACCESS)
-                        CallType.SAFE
-                    else
-                        CallType.NORMAL
-                }
-
-                is JetUnaryExpression -> CallType.UNARY
-
-                is JetUserType -> CallType.NORMAL
-
-                else -> error("Unknown parent for expression with receiver: $parent")
-            }
-            return CallTypeAndReceiver(callType, receiverExpression)
-        }
-    }
-}
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
