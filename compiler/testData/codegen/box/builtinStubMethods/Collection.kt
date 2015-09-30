@@ -17,13 +17,14 @@ fun expectUoe(block: () -> Any) {
 }
 
 fun box(): String {
-    val collection = MyCollection<String>() as MutableCollection<String>
+    val myCollection = MyCollection<String>()
+    val collection = myCollection as java.util.Collection<String>
 
     expectUoe { collection.add("") }
     expectUoe { collection.remove("") }
-    expectUoe { collection.addAll(collection) }
-    expectUoe { collection.removeAll(collection) }
-    expectUoe { collection.retainAll(collection) }
+    expectUoe { collection.addAll(myCollection) }
+    expectUoe { collection.removeAll(myCollection) }
+    expectUoe { collection.retainAll(myCollection) }
     expectUoe { collection.clear() }
 
     return "OK"

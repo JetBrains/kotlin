@@ -5,7 +5,7 @@ class MyIterator<E : Number> : Iterator<E> {
 
 fun box(): String {
     try {
-        (MyIterator<Int>() as MutableIterator<Number>).remove()
+        (MyIterator<Int>() as java.util.Iterator<Number>).remove()
         return "Fail"
     } catch (e: UnsupportedOperationException) {
         return "OK"

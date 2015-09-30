@@ -19,8 +19,7 @@ package kotlin.jvm.internal;
 import kotlin.KotlinNullPointerException;
 import kotlin.UninitializedPropertyAccessException;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -33,6 +32,10 @@ public class Intrinsics {
 
     public static void throwNpe() {
         throw sanitizeStackTrace(new KotlinNullPointerException());
+    }
+
+    public static void throwCce(String message) {
+        throw sanitizeStackTrace(new ClassCastException(message));
     }
 
     public static void throwUninitializedPropertyAccessException(String propertyName) {
@@ -136,5 +139,269 @@ public class Intrinsics {
         List<StackTraceElement> list = Arrays.asList(stackTrace).subList(lastIntrinsic + 1, size);
         throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
         return throwable;
+    }
+
+    public static boolean isMutableIterator(Object obj) {
+        return (obj instanceof Iterator) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterator));
+    }
+
+    public static Iterator asMutableIterator(Object obj) {
+        Iterator result = null;
+        try {
+            result = (Iterator) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not an Iterator");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterator)) {
+            throwCce("argument is not a MutableIterator");
+        }
+        return result;
+    }
+
+    public static Iterator safeAsMutableIterator(Object obj) {
+        Iterator result;
+        try {
+            result = (Iterator) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterator)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableListIterator(Object obj) {
+        return (obj instanceof ListIterator) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableListIterator));
+    }
+
+    public static ListIterator asMutableListIterator(Object obj) {
+        ListIterator result = null;
+        try {
+            result = (ListIterator) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a ListIterator");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
+            throwCce("argument is not a MutableListIterator");
+        }
+        return result;
+    }
+
+    public static ListIterator safeAsMutableListIterator(Object obj) {
+        ListIterator result;
+        try {
+            result = (ListIterator) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableIterable(Object obj) {
+        return (obj instanceof Iterable) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterable));
+    }
+
+    public static Iterable asMutableIterable(Object obj) {
+        Iterable result = null;
+        try {
+            result = (Iterable) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not an Iterable");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterable)) {
+            throwCce("argument is not a MutableIterable");
+        }
+        return result;
+    }
+
+    public static Iterable safeAsMutableIterable(Object obj) {
+        Iterable result;
+        try {
+            result = (Iterable) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterable)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableCollection(Object obj) {
+        return (obj instanceof Collection) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableCollection));
+    }
+
+    public static Collection asMutableCollection(Object obj) {
+        Collection result = null;
+        try {
+            result = (Collection) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a Collection");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
+            throwCce("argument is not a MutableCollection");
+        }
+        return result;
+    }
+
+    public static Collection safeAsMutableCollection(Object obj) {
+        Collection result;
+        try {
+            result = (Collection) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableList(Object obj) {
+        return (obj instanceof List) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableList));
+    }
+
+    public static List asMutableList(Object obj) {
+        List result = null;
+        try {
+            result = (List) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a List");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableList)) {
+            throwCce("argument is not a MutableList");
+        }
+        return result;
+    }
+
+    public static List safeAsMutableList(Object obj) {
+        List result;
+        try {
+            result = (List) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableList)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableSet(Object obj) {
+        return (obj instanceof Set) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableSet));
+    }
+
+    public static Set asMutableSet(Object obj) {
+        Set result = null;
+        try {
+            result = (Set) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a Set");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
+            throwCce("argument is not a MutableSet");
+        }
+        return result;
+    }
+
+    public static Set safeAsMutableSet(Object obj) {
+        Set result;
+        try {
+            result = (Set) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableMap(Object obj) {
+        return (obj instanceof Map) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap));
+    }
+
+    public static Map asMutableMap(Object obj) {
+        Map result = null;
+        try {
+            result = (Map) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a Map");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap)) {
+            throwCce("argument is not a MutableMap");
+        }
+        return result;
+    }
+
+    public static Map safeAsMutableMap(Object obj) {
+        Map result = null;
+        try {
+            result = (Map) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap)) {
+            return null;
+        }
+        return result;
+    }
+
+    public static boolean isMutableMapEntry(Object obj) {
+        return (obj instanceof Map.Entry) &&
+               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap.Entry));
+    }
+
+    public static Map.Entry asMutableMapEntry(Object obj) {
+        Map.Entry result = null;
+        try {
+            result = (Map.Entry) obj;
+        }
+        catch (ClassCastException e) {
+            throwCce("argument is not a Map.Entry");
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap.Entry)) {
+            throwCce("argument is not a MutableMap.MutableEntry");
+        }
+        return result;
+    }
+
+    public static Map.Entry safeAsMutableMapEntry(Object obj) {
+        Map.Entry result = null;
+        try {
+            result = (Map.Entry) obj;
+        }
+        catch (ClassCastException e) {
+            return null;
+        }
+        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap.Entry)) {
+            return null;
+        }
+        return result;
     }
 }

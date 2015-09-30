@@ -7,7 +7,7 @@ class MyMapEntry<K, V>: Map.Entry<K, V> {
 
 fun box(): String {
     try {
-        (MyMapEntry<String, Int>() as MutableMap.MutableEntry<String, Int>).setValue(1)
+        (MyMapEntry<String, Int>() as java.util.Map.Entry<String, Int>).setValue(1)
         throw AssertionError()
     } catch (e: UnsupportedOperationException) {
         return "OK"

@@ -21,7 +21,7 @@ fun box(): String {
         val a = C()
         if (!a.add("")) return "Fail 1"
         if (!(a as Addable).add("")) return "Fail 2"
-        if (!(a as MutableList<String>).add("")) return "Fail 3"
+        if (!(a as java.util.List<String>).add("")) return "Fail 3"
         return "OK"
     } catch (e: UnsupportedOperationException) {
         return "Fail: no stub method should be generated"

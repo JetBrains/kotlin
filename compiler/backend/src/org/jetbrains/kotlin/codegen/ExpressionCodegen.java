@@ -36,9 +36,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
+import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -3751,7 +3749,7 @@ The "returned" value of try expression with no finally is either the last expres
                     v.mark(ok);
                 }
 
-                generateCheckCastInstruction(rightType);
+                generateCheckCastInstruction(rightType, opToken == JetTokens.AS_SAFE);
                 return Unit.INSTANCE$;
             }
         });
@@ -3826,14 +3824,16 @@ The "returned" value of try expression with no finally is either the last expres
     private void generateInstanceOfInstruction(@NotNull JetType jetType) {
         Type type = boxType(asmType(jetType));
         putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.INSTANCEOF_MARKER_METHOD_NAME);
-        v.instanceOf(type);
+        InstanceOf.instanceOf(v, jetType, type);
     }
 
     @NotNull
-    private StackValue generateCheckCastInstruction(@NotNull JetType jetType) {
+    private StackValue generateCheckCastInstruction(@NotNull JetType jetType, boolean safeAs) {
         Type type = boxType(asmType(jetType));
-        putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
-        v.checkcast(type);
+        putReifierMarkerIfTypeIsReifiedParameter(jetType,
+                                                 safeAs ? ReifiedTypeInliner.SAFE_CHECKCAST_MARKER_METHOD_NAME
+                                                        : ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
+        CheckCast.checkcast(v, jetType, type, safeAs);
         return StackValue.onStack(type);
     }
 
