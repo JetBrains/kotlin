@@ -7,9 +7,14 @@ public final class JvmProtoBuf {
   private JvmProtoBuf() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.implClassName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldMethodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldPropertySignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
@@ -3708,14 +3713,89 @@ public final class JvmProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature)
   }
 
+  public static final int CONSTRUCTOR_SIGNATURE_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Constructor,
+      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> constructorSignature = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Constructor.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
+        null,
+        100,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Function,
+      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> methodSignature = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
+        null,
+        100,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
+  public static final int METHOD_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Function,
+      java.lang.Integer> methodImplClassName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
+  public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Property,
+      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> propertySignature = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
+        null,
+        100,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
+  public static final int PROPERTY_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Property,
+      java.lang.Integer> propertyImplClassName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
+  public static final int OLD_METHOD_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> methodSignature = com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> oldMethodSignature = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
@@ -3723,14 +3803,14 @@ public final class JvmProtoBuf {
         null,
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
+  public static final int OLD_PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> propertySignature = com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> oldPropertySignature = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
@@ -3738,14 +3818,14 @@ public final class JvmProtoBuf {
         null,
         101,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int IMPL_CLASS_NAME_FIELD_NUMBER = 102;
+  public static final int OLD_IMPL_CLASS_NAME_FIELD_NUMBER = 102;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      java.lang.Integer> implClassName = com.google.protobuf.GeneratedMessageLite
+      java.lang.Integer> oldImplClassName = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         0,

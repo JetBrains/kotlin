@@ -7,9 +7,14 @@ public final class DebugJvmProtoBuf {
   private DebugJvmProtoBuf() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.implClassName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertyImplClassName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.oldMethodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.oldPropertySignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.oldImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.index);
@@ -4521,36 +4526,91 @@ public final class DebugJvmProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature)
   }
 
-  public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
+  public static final int CONSTRUCTOR_SIGNATURE_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor,
+      org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature> constructorSignature = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
+  public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Function,
       org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature> methodSignature = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
-  public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
+  public static final int METHOD_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Function,
+      java.lang.Integer> methodImplClassName = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
+  public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Property,
       org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature> propertySignature = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
-  public static final int IMPL_CLASS_NAME_FIELD_NUMBER = 102;
+  public static final int PROPERTY_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Property,
+      java.lang.Integer> propertyImplClassName = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
+  public static final int OLD_METHOD_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
-      java.lang.Integer> implClassName = com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature> oldMethodSignature = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
+  public static final int OLD_PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature> oldPropertySignature = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
+  public static final int OLD_IMPL_CLASS_NAME_FIELD_NUMBER = 102;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      java.lang.Integer> oldImplClassName = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
@@ -4659,25 +4719,40 @@ public final class DebugJvmProtoBuf {
       "r\030\003 \001(\0132:.org.jetbrains.kotlin.serializa" +
       "tion.jvm.JvmMethodSignature\022J\n\006setter\030\004 " +
       "\001(\0132:.org.jetbrains.kotlin.serialization" +
-      ".jvm.JvmMethodSignature:\202\001\n\020method_signa" +
+      ".jvm.JvmMethodSignature:\212\001\n\025constructor_" +
+      "signature\022/.org.jetbrains.kotlin.seriali" +
+      "zation.Constructor\030d \001(\0132:.org.jetbrains",
+      ".kotlin.serialization.jvm.JvmMethodSigna" +
+      "ture:\202\001\n\020method_signature\022,.org.jetbrain" +
+      "s.kotlin.serialization.Function\030d \001(\0132:." +
+      "org.jetbrains.kotlin.serialization.jvm.J" +
+      "vmMethodSignature:R\n\026method_impl_class_n" +
+      "ame\022,.org.jetbrains.kotlin.serialization" +
+      ".Function\030e \001(\005B\004\230\265\030\001:\206\001\n\022property_signa" +
       "ture\022,.org.jetbrains.kotlin.serializatio" +
-      "n.Callable\030d \001(\0132:.org.jetbrains.kotlin.",
-      "serialization.jvm.JvmMethodSignature:\206\001\n" +
-      "\022property_signature\022,.org.jetbrains.kotl" +
-      "in.serialization.Callable\030e \001(\0132<.org.je" +
-      "tbrains.kotlin.serialization.jvm.JvmProp" +
-      "ertySignature:K\n\017impl_class_name\022,.org.j" +
-      "etbrains.kotlin.serialization.Callable\030f" +
-      " \001(\005B\004\210\265\030\001:q\n\017type_annotation\022(.org.jetb" +
-      "rains.kotlin.serialization.Type\030d \003(\0132.." +
-      "org.jetbrains.kotlin.serialization.Annot" +
-      "ation:8\n\006is_raw\022(.org.jetbrains.kotlin.s",
-      "erialization.Type\030e \001(\010:A\n\005index\0222.org.j" +
-      "etbrains.kotlin.serialization.ValueParam" +
-      "eter\030d \001(\005:s\n\020class_annotation\022).org.jet" +
-      "brains.kotlin.serialization.Class\030d \003(\0132" +
-      "..org.jetbrains.kotlin.serialization.Ann" +
-      "otationB\022B\020DebugJvmProtoBuf"
+      "n.Property\030d \001(\0132<.org.jetbrains.kotlin." +
+      "serialization.jvm.JvmPropertySignature:T",
+      "\n\030property_impl_class_name\022,.org.jetbrai" +
+      "ns.kotlin.serialization.Property\030e \001(\005B\004" +
+      "\230\265\030\001:\206\001\n\024old_method_signature\022,.org.jetb" +
+      "rains.kotlin.serialization.Callable\030d \001(" +
+      "\0132:.org.jetbrains.kotlin.serialization.j" +
+      "vm.JvmMethodSignature:\212\001\n\026old_property_s" +
+      "ignature\022,.org.jetbrains.kotlin.serializ" +
+      "ation.Callable\030e \001(\0132<.org.jetbrains.kot" +
+      "lin.serialization.jvm.JvmPropertySignatu" +
+      "re:O\n\023old_impl_class_name\022,.org.jetbrain",
+      "s.kotlin.serialization.Callable\030f \001(\005B\004\210" +
+      "\265\030\001:q\n\017type_annotation\022(.org.jetbrains.k" +
+      "otlin.serialization.Type\030d \003(\0132..org.jet" +
+      "brains.kotlin.serialization.Annotation:8" +
+      "\n\006is_raw\022(.org.jetbrains.kotlin.serializ" +
+      "ation.Type\030e \001(\010:A\n\005index\0222.org.jetbrain" +
+      "s.kotlin.serialization.ValueParameter\030d " +
+      "\001(\005:s\n\020class_annotation\022).org.jetbrains." +
+      "kotlin.serialization.Class\030d \003(\0132..org.j" +
+      "etbrains.kotlin.serialization.Annotation",
+      "B\022B\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4714,15 +4789,22 @@ public final class DebugJvmProtoBuf {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor,
               new java.lang.String[] { "Field", "SyntheticMethod", "Getter", "Setter", });
-          methodSignature.internalInit(descriptor.getExtensions().get(0));
-          propertySignature.internalInit(descriptor.getExtensions().get(1));
-          implClassName.internalInit(descriptor.getExtensions().get(2));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(3));
-          isRaw.internalInit(descriptor.getExtensions().get(4));
-          index.internalInit(descriptor.getExtensions().get(5));
-          classAnnotation.internalInit(descriptor.getExtensions().get(6));
+          constructorSignature.internalInit(descriptor.getExtensions().get(0));
+          methodSignature.internalInit(descriptor.getExtensions().get(1));
+          methodImplClassName.internalInit(descriptor.getExtensions().get(2));
+          propertySignature.internalInit(descriptor.getExtensions().get(3));
+          propertyImplClassName.internalInit(descriptor.getExtensions().get(4));
+          oldMethodSignature.internalInit(descriptor.getExtensions().get(5));
+          oldPropertySignature.internalInit(descriptor.getExtensions().get(6));
+          oldImplClassName.internalInit(descriptor.getExtensions().get(7));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(8));
+          isRaw.internalInit(descriptor.getExtensions().get(9));
+          index.internalInit(descriptor.getExtensions().get(10));
+          classAnnotation.internalInit(descriptor.getExtensions().get(11));
           com.google.protobuf.ExtensionRegistry registry =
             com.google.protobuf.ExtensionRegistry.newInstance();
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);

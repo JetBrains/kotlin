@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization;
 
+import com.google.protobuf.MessageLite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
+// The MessageLite instance everywhere should be Constructor, Function or Property
+// TODO: simplify this interface
 public interface AnnotationAndConstantLoader<A, C, T> {
     @NotNull
     List<A> loadClassAnnotations(
@@ -33,14 +36,14 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     @NotNull
     List<T> loadCallableAnnotations(
             @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable proto,
+            @NotNull MessageLite message,
             @NotNull AnnotatedCallableKind kind
     );
 
     @NotNull
     List<A> loadValueParameterAnnotations(
             @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable callable,
+            @NotNull MessageLite message,
             @NotNull AnnotatedCallableKind kind,
             int parameterIndex,
             @NotNull ProtoBuf.ValueParameter proto
@@ -49,7 +52,7 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     @NotNull
     List<A> loadExtensionReceiverParameterAnnotations(
             @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable callable,
+            @NotNull MessageLite message,
             @NotNull AnnotatedCallableKind kind
     );
 

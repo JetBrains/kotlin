@@ -89,29 +89,45 @@ message JvmPropertySignature {
   optional JvmMethodSignature setter = 4;
 }
 
-extend org.jetbrains.kotlin.serialization.Callable {
-  optional JvmMethodSignature method_signature = 100;
+extend Constructor {
+  optional JvmMethodSignature constructor_signature = 100;
+}
 
-  optional JvmPropertySignature property_signature = 101;
+extend Function {
+  optional JvmMethodSignature method_signature = 100;
 
   // Package-less name of the class with the callable's body and annotations, if it differs from the class it's serialized into.
   // E.g. for a class "A/B/C$D" this would be "C$D".
   // This is needed to find the class to load annotations from in the following cases:
   // 1) annotations on top-level members are written to compiled package part classes
   // 2) annotations on properties in traits are written to TImpl classes
-  optional int32 impl_class_name = 102 [(name_id_in_table) = true];
+  optional int32 method_impl_class_name = 101 [(string_id_in_table) = true];
 }
 
-extend org.jetbrains.kotlin.serialization.Type {
+extend Property {
+  optional JvmPropertySignature property_signature = 100;
+
+  // see Function#method_impl_class_name
+  optional int32 property_impl_class_name = 101 [(string_id_in_table) = true];
+}
+
+// TODO: drop
+extend Callable {
+  optional JvmMethodSignature old_method_signature = 100;
+  optional JvmPropertySignature old_property_signature = 101;
+  optional int32 old_impl_class_name = 102 [(name_id_in_table) = true];
+}
+
+extend Type {
   repeated Annotation type_annotation = 100;
   optional bool is_raw = 101;
 }
 
-extend org.jetbrains.kotlin.serialization.ValueParameter {
+extend ValueParameter {
   // Index of the corresponding parameter of this method in JVM (counting receiver parameters, enum constructor synthetic parameters, etc.)
   optional int32 index = 100;
 }
 
-extend org.jetbrains.kotlin.serialization.Class {
+extend Class {
   repeated Annotation class_annotation = 100;
 }

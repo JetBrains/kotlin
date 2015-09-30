@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
@@ -23,10 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.implClassName
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
@@ -85,24 +83,48 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return result
     }
 
-    override fun loadCallableAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, kind: AnnotatedCallableKind): List<T> {
-        val nameResolver = container.nameResolver
-        if (kind == AnnotatedCallableKind.PROPERTY) {
-            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
-            val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
+    override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<T> {
+        return when (proto) {
+            is ProtoBuf.Constructor, is ProtoBuf.Function -> {
+                val signature = getCallableSignature(proto, container.nameResolver, kind) ?: return emptyList()
+                transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
+            }
+            is ProtoBuf.Property -> {
+                val nameResolver = container.nameResolver
+                val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
+                val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
 
-            val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, sig)
-            } ?: listOf()
+                val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
+                    findClassAndLoadMemberAnnotations(container, proto, sig)
+                } ?: listOf()
 
-            val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
-            } ?: listOf()
+                val fieldAnnotations = fieldSignature?.let { sig ->
+                    findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
+                } ?: listOf()
 
-            return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
+                loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
+            }
+            is ProtoBuf.Callable -> {
+                val nameResolver = container.nameResolver
+                if (kind == AnnotatedCallableKind.PROPERTY) {
+                    val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
+                    val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
+
+                    val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
+                        findClassAndLoadMemberAnnotations(container, proto, sig)
+                    } ?: listOf()
+
+                    val fieldAnnotations = fieldSignature?.let { sig ->
+                        findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
+                    } ?: listOf()
+
+                    return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
+                }
+                val signature = getCallableSignature(proto, nameResolver, kind) ?: return emptyList()
+                transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
+            }
+            else -> emptyList()
         }
-        val signature = getCallableSignature(proto, nameResolver, kind) ?: return listOf()
-        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
     }
 
     protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>
@@ -111,7 +133,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     private fun findClassAndLoadMemberAnnotations(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: MessageLite,
             signature: MemberSignature,
             isStaticFieldInOuter: Boolean = false
     ): List<A> {
@@ -128,16 +150,16 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<A> {
-        val methodSignature = getCallableSignature(callable, container.nameResolver, kind)
+        val methodSignature = getCallableSignature(message, container.nameResolver, kind)
         if (methodSignature != null) {
             val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
-            return findClassAndLoadMemberAnnotations(container, callable, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, message, paramSignature)
         }
 
         return listOf()
@@ -145,14 +167,13 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<A> {
-        if (!callable.hasReceiverType()) return emptyList()
-        val methodSignature = getCallableSignature(callable, container.nameResolver, kind)
+        val methodSignature = getCallableSignature(message, container.nameResolver, kind)
         if (methodSignature != null) {
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
-            return findClassAndLoadMemberAnnotations(container, callable, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, message, paramSignature)
         }
 
         return emptyList()
@@ -204,14 +225,25 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         }
     }
 
-    private fun getImplClassName(proto: ProtoBuf.Callable, nameResolver: NameResolver): Name? {
-        return if (proto.hasExtension(implClassName)) nameResolver.getName(proto.getExtension(implClassName)) else null
-    }
+    private fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
+            when {
+                proto is ProtoBuf.Function && proto.hasExtension(methodImplClassName) ->
+                    nameResolver.getName(proto.getExtension(methodImplClassName))
+                proto is ProtoBuf.Property && proto.hasExtension(propertyImplClassName) ->
+                    nameResolver.getName(proto.getExtension(propertyImplClassName))
+                proto is ProtoBuf.Callable && proto.hasExtension(oldImplClassName) ->
+                    nameResolver.getName(proto.getExtension(oldImplClassName))
+                else -> null
+            }
 
-    private fun isStaticFieldInOuter(proto: ProtoBuf.Callable): Boolean {
-        return proto.hasExtension(propertySignature) &&
-               proto.getExtension(propertySignature).let { it.hasField() && it.field.isStaticInOuter }
-    }
+    private fun isStaticFieldInOuter(proto: MessageLite): Boolean =
+            when {
+                proto is ProtoBuf.Property && proto.hasExtension(propertySignature) ->
+                    proto.getExtension(propertySignature).let { it.hasField() && it.field.isStaticInOuter }
+                proto is ProtoBuf.Callable && proto.hasExtension(oldPropertySignature) ->
+                    proto.getExtension(oldPropertySignature).let { it.hasField() && it.field.isStaticInOuter }
+                else -> false
+            }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()
@@ -268,14 +300,17 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private fun getPropertySignature(
-            proto: ProtoBuf.Callable,
+            proto: MessageLite,
             nameResolver: NameResolver,
             field: Boolean = false,
             synthetic: Boolean = false
     ): MemberSignature? {
-        if (!proto.hasExtension(propertySignature)) return null
-
-        val signature = proto.getExtension(propertySignature)
+        val signature =
+                if (proto is ProtoBuf.Property && proto.hasExtension(propertySignature))
+                    proto.getExtension(propertySignature)
+                else if (proto is ProtoBuf.Callable && proto.hasExtension(oldPropertySignature))
+                    proto.getExtension(oldPropertySignature)
+                else return null
 
         if (field && signature.hasField()) {
             return MemberSignature.fromFieldNameAndDesc(
@@ -290,24 +325,40 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return null
     }
 
-    private fun getCallableSignature(
-            proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
-            kind: AnnotatedCallableKind
-    ): MemberSignature? {
-        when (kind) {
-            AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension(methodSignature)) {
-                return MemberSignature.fromMethod(nameResolver, proto.getExtension(methodSignature))
+    private fun getCallableSignature(proto: MessageLite, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
+        return when {
+            proto is ProtoBuf.Function && proto.hasExtension(methodSignature) -> {
+                MemberSignature.fromMethod(nameResolver, proto.getExtension(methodSignature))
             }
-            AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension(propertySignature)) {
-                return MemberSignature.fromMethod(nameResolver, proto.getExtension(propertySignature).getter)
+            proto is ProtoBuf.Property && proto.hasExtension(propertySignature) -> {
+                val signature = proto.getExtension(propertySignature)
+                when (kind) {
+                    AnnotatedCallableKind.PROPERTY_GETTER -> MemberSignature.fromMethod(nameResolver, signature.getter)
+                    AnnotatedCallableKind.PROPERTY_SETTER -> MemberSignature.fromMethod(nameResolver, signature.setter)
+                    AnnotatedCallableKind.PROPERTY -> getPropertySignature(proto, nameResolver, true, true)
+                    else -> null
+                }
             }
-            AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension(propertySignature)) {
-                return MemberSignature.fromMethod(nameResolver, proto.getExtension(propertySignature).setter)
+            proto is ProtoBuf.Callable -> {
+                when (kind) {
+                    AnnotatedCallableKind.FUNCTION ->
+                        if (proto.hasExtension(oldMethodSignature))
+                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldMethodSignature))
+                        else null
+                    AnnotatedCallableKind.PROPERTY_GETTER ->
+                        if (proto.hasExtension(oldPropertySignature))
+                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldPropertySignature).getter)
+                        else null
+                    AnnotatedCallableKind.PROPERTY_SETTER ->
+                        if (proto.hasExtension(oldPropertySignature))
+                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldPropertySignature).setter)
+                        else null
+                    AnnotatedCallableKind.PROPERTY ->
+                        getPropertySignature(proto, nameResolver, true, true)
+                }
             }
-            AnnotatedCallableKind.PROPERTY -> return getPropertySignature(proto, nameResolver, true, true)
+            else -> null
         }
-        return null
     }
 
     private class Storage<A, C>(

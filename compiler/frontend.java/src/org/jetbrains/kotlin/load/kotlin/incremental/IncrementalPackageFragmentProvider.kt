@@ -168,7 +168,7 @@ public class IncrementalPackageFragmentProvider(
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 fun getPackagePart(callable: ProtoBuf.Callable) =
-                        callable.getExtension(JvmProtoBuf.implClassName)?.let { packageData.nameResolver.getName(it) }
+                        callable.getExtension(JvmProtoBuf.oldImplClassName)?.let { packageData.nameResolver.getName(it) }
 
                 fun shouldSkipPackagePart(name: Name) =
                         JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).getInternalName() in obsoletePackageParts

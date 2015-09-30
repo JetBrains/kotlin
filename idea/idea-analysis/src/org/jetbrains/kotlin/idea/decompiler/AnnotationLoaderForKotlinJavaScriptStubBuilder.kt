@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -35,16 +36,19 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
-    ): List<ClassIdWithTarget> =
-            proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map {
-                ClassIdWithTarget(container.nameResolver.getClassId(it.id), null)
-            }
+    ): List<ClassIdWithTarget> {
+        proto as ProtoBuf.Callable // TODO
+
+        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map {
+            ClassIdWithTarget(container.nameResolver.getClassId(it.id), null)
+        }
+    }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
@@ -55,7 +59,7 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<ClassId> = emptyList()
 

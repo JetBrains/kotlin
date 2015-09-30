@@ -294,9 +294,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     // Returns the JVM class which contains this callable. This class may be different from the one represented by descriptors
     // in case of top level functions (their bodies are in package parts), methods with implementations in interfaces, etc.
     private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Callable): Class<*>? {
-        if (!proto.hasExtension(JvmProtoBuf.implClassName)) return null
+        if (!proto.hasExtension(JvmProtoBuf.oldImplClassName)) return null
 
-        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
+        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.oldImplClassName))
         // TODO: store fq name of impl class name in jvm_descriptors.proto
         val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
         return jClass.safeClassLoader.loadClass(classId.asSingleFqName().asString())

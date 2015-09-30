@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -39,16 +40,18 @@ class KotlinJavascriptAnnotationAndConstantLoader(
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
+        proto as ProtoBuf.Callable // TODO
+
         val annotations = proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty()
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
@@ -59,7 +62,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
+            message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> = emptyList()
 
