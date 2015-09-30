@@ -37,8 +37,8 @@ class C {
     }
 }
 
-/* TODO // EXIST: class */
-/* TODO // EXIST: class.java */
+// EXIST: { lookupString: "class", itemText: "class", attributes: "bold" }
+// EXIST_JAVA_ONLY: { lookupString: "class.java", itemText: "class", tailText: ".java", attributes: "bold" }
 // EXIST: { itemText: "memberFunInA", attributes: "bold" }
 // EXIST: { itemText: "memberValInA", attributes: "bold" }
 // EXIST: { itemText: "InnerInA", attributes: "bold" }

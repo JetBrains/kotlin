@@ -46,3 +46,5 @@ abstract class AbstractClass
 // EXIST: { itemText: "InnerClass", attributes: "bold" }
 // ABSENT: WithPrivateConstructor
 // ABSENT: AbstractClass
+// ABSENT: class
+// ABSENT: class.java
