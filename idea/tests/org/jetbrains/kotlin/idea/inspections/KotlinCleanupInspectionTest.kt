@@ -43,10 +43,9 @@ class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
         globalContext.codeCleanup(project, analysisScope, profile, "Cleanup", null, true)
 
         myFixture.checkResultByFile(result)
-        myFixture.checkResultByFile("topLevels.kt", "topLevels.kt.after", true)
     }
 
     public fun testCleanup() {
-        doTest("cleanup.kt.after", "cleanup.kt", "topLevels.kt","JavaAnn.java", "deprecatedSymbols.kt")
+        doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java", "deprecatedSymbols.kt")
     }
 }
