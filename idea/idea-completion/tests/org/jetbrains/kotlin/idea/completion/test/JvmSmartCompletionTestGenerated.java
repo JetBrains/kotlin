@@ -585,62 +585,62 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractJvmSmartCompletionTest {
-        @TestMetadata("1.kt")
-        public void test1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("10.kt")
-        public void test10() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/10.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("12.kt")
-        public void test12() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("2.kt")
-        public void test2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("3.kt")
-        public void test3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("4.kt")
-        public void test4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("7.kt")
-        public void test7() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/7.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("9.kt")
-        public void test9() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/9.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("AfterQualifier.kt")
-        public void testAfterQualifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/AfterQualifier.kt");
+        @TestMetadata("AfterDot.kt")
+        public void testAfterDot() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/AfterDot.kt");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInCallableReference() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("NoQualifier1.kt")
+        public void testNoQualifier1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier10.kt")
+        public void testNoQualifier10() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier12.kt")
+        public void testNoQualifier12() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier12.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier2.kt")
+        public void testNoQualifier2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier3.kt")
+        public void testNoQualifier3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier4.kt")
+        public void testNoQualifier4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier7.kt")
+        public void testNoQualifier7() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier7.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoQualifier9.kt")
+        public void testNoQualifier9() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier9.kt");
+            doTest(fileName);
         }
     }
 
