@@ -564,7 +564,7 @@ class KotlinPullUpHelper(
         }
 
         for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entrySet()) {
-            val properties = propertyToInitializerInfo.keySet().toArrayList().sortBy(
+            val properties = propertyToInitializerInfo.keySet().sortedWith(
                     object : Comparator<JetProperty> {
                         override fun compare(property1: JetProperty, property2: JetProperty): Int {
                             val info1 = propertyToInitializerInfo[property1]!!

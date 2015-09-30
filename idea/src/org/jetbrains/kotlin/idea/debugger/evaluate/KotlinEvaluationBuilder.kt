@@ -189,8 +189,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
-                                    .filter { it.relativePath != "$packageInternalName.class" }
-                                    .sortBy { it.relativePath.length() }
+                    .filter { it.relativePath != "$packageInternalName.class" }
+                    .sortedBy { it.relativePath.length() }
 
             val funName = runReadAction { extractedFunction.name }
             if (funName == null) {

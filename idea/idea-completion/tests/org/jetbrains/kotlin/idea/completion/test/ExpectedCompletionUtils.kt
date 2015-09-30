@@ -273,7 +273,7 @@ public object ExpectedCompletionUtils {
             val map = HashMap<String, String?>()
             map.put(CompletionProposal.LOOKUP_STRING, item.lookupString)
 
-            map.put(CompletionProposal.ALL_LOOKUP_STRINGS, item.allLookupStrings.sort().joinToString())
+            map.put(CompletionProposal.ALL_LOOKUP_STRINGS, item.allLookupStrings.sorted().joinToString())
 
             if (presentation.itemText != null) {
                 map.put(CompletionProposal.PRESENTATION_ITEM_TEXT, presentation.itemText)

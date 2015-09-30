@@ -383,15 +383,15 @@ internal class DescriptorRendererImpl(
         } ?: emptyList()
         val defaultList = parameterDescriptorsWithDefaultValue.filter { !allValueArguments.containsKey(it) }.map {
             "${it.getName().asString()} = ..."
-        }.sort()
+        }.sorted()
         val argumentList = allValueArguments.entrySet()
                 .map { entry ->
                     val name = entry.key.getName().asString()
                     val value = if (!parameterDescriptorsWithDefaultValue.contains(entry.key)) renderConstant(entry.value) else "..."
                     "$name = $value"
                 }
-                .sort()
-        return (defaultList + argumentList).sort()
+                .sorted()
+        return (defaultList + argumentList).sorted()
     }
 
     private fun renderConstant(value: ConstantValue<*>): String {

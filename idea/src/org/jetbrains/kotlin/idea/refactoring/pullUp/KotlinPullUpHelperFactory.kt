@@ -40,7 +40,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
         val membersToMove = membersToMove
                 .map { it.namedUnwrappedElement as? JetNamedDeclaration }
                 .filterNotNull()
-                .sortBy { it.startOffset }
+                .sortedBy { it.startOffset }
         return KotlinPullUpData(sourceClass, targetClass, membersToMove)
     }
 

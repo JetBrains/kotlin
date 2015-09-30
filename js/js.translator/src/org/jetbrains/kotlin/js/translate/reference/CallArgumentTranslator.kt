@@ -344,7 +344,7 @@ private fun Map<TypeParameterDescriptor, JetType>.addReifiedTypeArgsTo(
     val reifiedTypeArguments = SmartList<JsExpression>()
     val patternTranslator = PatternTranslator.newInstance(context)
 
-    for (param in keySet().sortBy { it.getIndex() }) {
+    for (param in keySet().sortedBy { it.getIndex() }) {
         if (!param.isReified()) continue
 
         val argumentType = get(param)

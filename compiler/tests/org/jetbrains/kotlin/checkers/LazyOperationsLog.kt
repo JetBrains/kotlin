@@ -68,7 +68,7 @@ class LazyOperationsLog(
         return groupedByOwner.map {
             val (owner, records) = it
             renderOwner(owner, records)
-        }.sortBy(stringSanitizer).join("\n").renumberObjects()
+        }.sortedBy(stringSanitizer).join("\n").renumberObjects()
     }
 
     /**
@@ -97,7 +97,7 @@ class LazyOperationsLog(
         with (Printer(sb)) {
             println(render(owner), " {")
             indent {
-                records.map { renderRecord(it) }.sortBy(stringSanitizer).forEach {
+                records.map { renderRecord(it) }.sortedBy(stringSanitizer).forEach {
                     println(it)
                 }
             }

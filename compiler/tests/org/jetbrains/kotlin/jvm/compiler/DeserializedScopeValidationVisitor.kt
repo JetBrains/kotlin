@@ -58,6 +58,6 @@ private fun checkSorted(descriptors: Collection<DeclarationDescriptor>, declarat
     UsefulTestCase.assertOrderedEquals(
             "Members of $declaration should be sorted by serialization.",
             descriptors,
-            descriptors.sortBy(MemberComparator.INSTANCE)
+            descriptors.sortedWith(MemberComparator.INSTANCE)
     )
 }

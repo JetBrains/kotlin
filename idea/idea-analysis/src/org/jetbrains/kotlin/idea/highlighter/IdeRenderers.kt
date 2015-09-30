@@ -32,7 +32,7 @@ public object IdeRenderers {
         calls: Collection<ResolvedCall<*>> ->
             calls
                 .map { it.getResultingDescriptor() }
-                .sortBy(MemberComparator.INSTANCE)
+                .sortedWith(MemberComparator.INSTANCE)
                 .joinToString("") { "<li>" + DescriptorRenderer.HTML.render(it) + "</li>" }
     }
 
@@ -45,7 +45,7 @@ public object IdeRenderers {
             // TODO: compareBy(comparator, selector) in stdlib
             val comparator = comparator<ResolvedCall<*>> { c1, c2 -> MemberComparator.INSTANCE.compare(c1.getResultingDescriptor(), c2.getResultingDescriptor()) }
             calls
-                .sortBy(comparator)
+                .sortedWith(comparator)
                 .joinToString("") { "<li>" + renderResolvedCall(it) + "</li>" }
     }
 
@@ -80,7 +80,7 @@ public object IdeRenderers {
         val conflicts = data.signatureOrigins
             .map { it.descriptor }
             .filterNotNull()
-            .sortBy(MemberComparator.INSTANCE)
+            .sortedWith(MemberComparator.INSTANCE)
             .joinToString("") { "<li>" + HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
 
         "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"

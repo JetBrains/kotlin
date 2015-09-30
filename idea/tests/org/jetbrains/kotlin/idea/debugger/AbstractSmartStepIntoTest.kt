@@ -65,8 +65,8 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         val sb = StringBuilder()
 
         val maxExtStrSize = (expected.maxBy { it.length() }?.length() ?: 0) + 5
-        val longerList = (if (expected.size() < actual.size()) actual else expected).sort()
-        val shorterList = (if (expected.size() < actual.size()) expected else actual).sort()
+        val longerList = (if (expected.size() < actual.size()) actual else expected).sorted()
+        val shorterList = (if (expected.size() < actual.size()) expected else actual).sorted()
         for ((i, element) in longerList.withIndex()) {
             sb.append(element)
             sb.append(" ".repeat(maxExtStrSize - element.length()))

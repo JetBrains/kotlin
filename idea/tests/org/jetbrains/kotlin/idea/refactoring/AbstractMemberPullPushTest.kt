@@ -86,7 +86,7 @@ public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTes
         }
         catch(e: Exception) {
             val message = when (e) {
-                is BaseRefactoringProcessor.ConflictsInTestsException -> e.messages.sort().joinToString("\n")
+                is BaseRefactoringProcessor.ConflictsInTestsException -> e.messages.sorted().joinToString("\n")
                 is CommonRefactoringUtil.RefactoringErrorHintException -> e.getMessage()!!
                 else -> throw e
             }

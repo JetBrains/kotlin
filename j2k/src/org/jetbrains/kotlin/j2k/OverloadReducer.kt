@@ -143,7 +143,7 @@ class OverloadReducer(
     private fun dropOverloadsForDefaultValues(equivalenceMap: Map<PsiMethod, EquivalentOverloadInfo>) {
         val dropCandidates = equivalenceMap
                 .map { it.key }
-                .sortBy { -it.getParameterList().getParametersCount() } // we will try to drop them starting from ones with more parameters
+                .sortedBy { -it.getParameterList().getParametersCount() } // we will try to drop them starting from ones with more parameters
 
         DropCandidatesLoop@
         for (method in dropCandidates) {

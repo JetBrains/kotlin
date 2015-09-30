@@ -106,9 +106,9 @@ public object Renderers {
 
     public val AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-            calls
+        calls
                 .map { it.getResultingDescriptor() }
-                .sortBy(MemberComparator.INSTANCE)
+                .sortedWith(MemberComparator.INSTANCE)
                 .joinToString(separator = "\n", prefix = "\n") { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
     }
 

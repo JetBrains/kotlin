@@ -67,7 +67,7 @@ public abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
         val layoutNameToXmls = allLayoutPsiFiles
                 .groupBy { it.name.substringBeforeLast('.') }
-                .mapValues { it.getValue().sortBy { it.parent!!.name.length() } }
+                .mapValues { it.getValue().sortedBy { it.parent!!.name.length() } }
 
         return layoutNameToXmls
     }

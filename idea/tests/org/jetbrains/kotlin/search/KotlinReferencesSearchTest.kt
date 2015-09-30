@@ -51,6 +51,6 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     private inline fun doTest<reified T: PsiElement>(): List<PsiReference> {
         myFixture.configureByFile(getFileName())
         val func = myFixture.getElementAtCaret().getParentOfType<T>(false)!!
-        return ReferencesSearch.search(func).findAll().sortBy { it.getElement().getTextRange().getStartOffset() }
+        return ReferencesSearch.search(func).findAll().sortedBy { it.getElement().getTextRange().getStartOffset() }
     }
 }

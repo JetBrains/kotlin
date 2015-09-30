@@ -243,7 +243,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
     val default: FileMapping
         get() = fileMappings.first()
 
-    val intervals = fileMappings.flatMap { it.lineMappings }.sortBy(RangeMapping.Comparator)
+    val intervals = fileMappings.flatMap { it.lineMappings }.sortedWith(RangeMapping.Comparator)
 
     val sourceInfo: SourceInfo
     init {

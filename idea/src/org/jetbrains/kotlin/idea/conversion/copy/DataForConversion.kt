@@ -55,7 +55,7 @@ data class DataForConversion private constructor(
         }
 
         private fun clipTextIfNeeded(file: PsiJavaFile, fileText: String, startOffsets: IntArray, endOffsets: IntArray): String? {
-            val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortBy { it.start }
+            val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortedBy { it.start }
 
             fun canDropRange(range: TextRange) = ranges.all { range !in it }
 
