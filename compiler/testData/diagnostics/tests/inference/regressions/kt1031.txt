@@ -3,5 +3,5 @@ package
 package i {
     public fun a(): kotlin.Unit
     public fun </*0*/ TItem, /*1*/ TResult> select(/*0*/ yielder: () -> kotlin.Iterable<TItem>, /*1*/ selector: (TItem) -> TResult): () -> kotlin.Iterable<TResult>
-    public fun </*0*/ TItem> kotlin.Iterable<TItem>.where(/*0*/ predicate: (TItem) -> kotlin.Boolean): () -> kotlin.Iterable<TItem>
+    public infix fun </*0*/ TItem> kotlin.Iterable<TItem>.where(/*0*/ predicate: (TItem) -> kotlin.Boolean): () -> kotlin.Iterable<TItem>
 }

@@ -6,7 +6,7 @@ fun f(): Unit {
   var x: Int? = <warning>1</warning>
   x = 1
   x + 1
-  x plus 1
+  x.plus(1)
   x < 1
   x += 1
 

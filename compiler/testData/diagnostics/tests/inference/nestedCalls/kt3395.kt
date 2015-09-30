@@ -10,7 +10,7 @@ public fun query<T>(<!UNUSED_PARAMETER!>t<!>: T, <!UNUSED_PARAMETER!>args<!>: Ma
 fun test(pair: Pair<String, Int>) {
     val id = "Hello" // variable is marked as unused
 
-    println("Some" + query(0, mapOf(id  to 1)))
+    println("Some" + query(0, mapOf(id to 1)))
 
     println("Some" + query(0, mapOf(pair)))
 }
@@ -19,7 +19,7 @@ fun test(pair: Pair<String, Int>) {
 //from standard library
 fun mapOf<K, V>(vararg <!UNUSED_PARAMETER!>values<!>: Pair<K, V>): Map<K, V> { throw Exception() }
 
-fun <A,B> A.to(<!UNUSED_PARAMETER!>that<!>: B): Pair<A, B> { throw Exception() }
+infix fun <A,B> A.to(<!UNUSED_PARAMETER!>that<!>: B): Pair<A, B> { throw Exception() }
 
 fun println(<!UNUSED_PARAMETER!>message<!> : Any?) { throw Exception() }
 

@@ -10,7 +10,7 @@ fun <T> id(t: T): T = t
 
 //binary expressions
 //identifier
-fun <T> Z.foo(a: A<T>): A<T> = a
+infix fun <T> Z.foo(a: A<T>): A<T> = a
 
 fun test(z: Z) {
     z <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>()

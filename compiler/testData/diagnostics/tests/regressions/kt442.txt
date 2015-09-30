@@ -7,4 +7,4 @@ public fun </*0*/ T> generic_invoker(/*0*/ gen: (kotlin.String) -> T): T
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 public fun testFunny(): kotlin.Unit
 public fun testFunny2(): kotlin.Unit
-public fun </*0*/ T> T.with(/*0*/ f: T.() -> kotlin.Unit): kotlin.Unit
+public infix fun </*0*/ T> T.with(/*0*/ f: T.() -> kotlin.Unit): kotlin.Unit
