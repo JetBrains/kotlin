@@ -33,7 +33,7 @@ public class RedundantGotoMethodTransformer : MethodTransformer() {
         val insnsToRemove = arrayListOf<AbstractInsnNode>()
 
         val currentLabels = hashSetOf<LabelNode>()
-        for (insn in insns.reverse()) {
+        for (insn in insns.reversed()) {
             if (insn.isMeaningful) {
                 if (insn.getOpcode() == Opcodes.GOTO && (insn as JumpInsnNode).label in currentLabels) {
                     insnsToRemove.add(insn)

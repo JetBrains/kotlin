@@ -51,7 +51,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
             else -> throw IllegalArgumentException()
         }
 
-        val operands = splitBooleanSequence(baseExpression)!!.reverse()
+        val operands = splitBooleanSequence(baseExpression)!!.asReversed()
 
         val newExpression = JetPsiFactory(element).buildExpression {
             for ((i, operand) in operands.withIndex()) {

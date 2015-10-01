@@ -340,7 +340,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
             for (leaf in lineBreakElement.prevLeafs) {
                 var psiElement = findRestored(leaf)
                 if (psiElement != null) {
-                    psiElement = skipTokensForward(psiElement, tokensToMatch.reverse())
+                    psiElement = skipTokensForward(psiElement, tokensToMatch.asReversed())
                     psiElement?.restoreLineBreakAfter()
                     break
                 }
@@ -425,7 +425,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         }
 
         var psiElement = anchor.element
-        for (token in tokensBetween.reverse()) {
+        for (token in tokensBetween.asReversed()) {
             val next = psiElement.next() ?: break
             if (next.tokenType != token.tokenType) break
             psiElement = next

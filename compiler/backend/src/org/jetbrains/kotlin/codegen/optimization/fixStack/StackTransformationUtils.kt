@@ -111,7 +111,7 @@ fun generateLoadInstructions(methodNode: MethodNode, location: AbstractInsnNode,
 
 fun generateStoreInstructions(methodNode: MethodNode, location: AbstractInsnNode, savedStackDescriptor: SavedStackDescriptor) {
     var localVarIndex = savedStackDescriptor.firstUnusedLocalVarIndex
-    for (value in savedStackDescriptor.savedValues.reverse()) {
+    for (value in savedStackDescriptor.savedValues.asReversed()) {
         localVarIndex -= value.getSize()
         methodNode.instructions.insertBefore(location,
                                              VarInsnNode(value.getType().getOpcode(Opcodes.ISTORE), localVarIndex))

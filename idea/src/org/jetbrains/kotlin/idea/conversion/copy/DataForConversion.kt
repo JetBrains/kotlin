@@ -109,7 +109,7 @@ data class DataForConversion private constructor(
             }.toString()
 
             fun IntArray.update() {
-                for (range in rangesToDrop.reverse()) {
+                for (range in rangesToDrop.asReversed()) {
                     for (i in indices) {
                         val offset = this[i]
                         if (offset >= range.end) {

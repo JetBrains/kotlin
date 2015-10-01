@@ -68,7 +68,7 @@ public inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
         }
 
         else -> {
-            return reverse().firstIsInstanceOrNull<T>()
+            return reversed().firstIsInstanceOrNull<T>()
         }
     }
 }

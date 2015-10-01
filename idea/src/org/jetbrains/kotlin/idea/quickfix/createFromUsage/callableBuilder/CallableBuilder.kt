@@ -163,7 +163,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             scope: JetScope): List<TypeCandidate> {
         if (!typeInfo.substitutionsAllowed) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
-            val types = typeInfo.getPossibleTypes(this).reverse()
+            val types = typeInfo.getPossibleTypes(this).asReversed()
 
             // We have to use semantic equality here
             data class EqWrapper(val _type: JetType) {
@@ -187,7 +187,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 newTypes.add(EqWrapper(currentFileModule.builtIns.anyType))
             }
 
-            newTypes.map { TypeCandidate(it._type, scope) }.reverse()
+            newTypes.map { TypeCandidate(it._type, scope) }.reversed()
         }
     }
 

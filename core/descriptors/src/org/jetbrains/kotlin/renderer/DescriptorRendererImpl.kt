@@ -135,7 +135,7 @@ internal class DescriptorRendererImpl(
                 }
                 while (current is ClassDescriptor)
 
-                return renderFqName(qualifiedNameElements.reverse())
+                return renderFqName(qualifiedNameElements.asReversed())
             }
 
             NameShortness.FULLY_QUALIFIED -> return renderFqName(DescriptorUtils.getFqName(klass))

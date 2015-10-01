@@ -215,7 +215,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             before.remove(before.lastIndex)
         }
 
-        val elements = before.reverse() + atStart
+        val elements = before.reversed() + atStart
         commentsAndSpacesUsed.addAll(elements)
         return Prefix(elements, lineBreaks)
     }
@@ -238,7 +238,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             }
         }
 
-        val result = atEnd.reverse() + after
+        val result = atEnd.reversed() + after
         commentsAndSpacesUsed.addAll(result)
         return result
     }
@@ -317,7 +317,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
     }
 
     private companion object {
-        fun<T> List<T>.plus(other: List<T>): List<T> {
+        operator fun<T> List<T>.plus(other: List<T>): List<T> {
             when {
                 isEmpty() -> return other
 
@@ -332,11 +332,11 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             }
         }
 
-        fun<T> List<T>.reverse(): List<T> {
+        fun<T> List<T>.reversed(): List<T> {
             return if (size() <= 1)
                 this
             else
-                (this as Iterable<T>).reverse()
+                this.asReversed()
         }
 
         fun PsiElement.isCommentOrSpace() = this is PsiComment || this is PsiWhiteSpace

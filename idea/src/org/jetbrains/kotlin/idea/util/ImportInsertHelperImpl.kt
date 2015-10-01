@@ -380,8 +380,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 }
                 else {
                     val insertAfter = imports
-                            .reverse()
-                            .firstOrNull {
+                            .lastOrNull {
                                 val directivePath = it.getImportPath()
                                 directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
                             }

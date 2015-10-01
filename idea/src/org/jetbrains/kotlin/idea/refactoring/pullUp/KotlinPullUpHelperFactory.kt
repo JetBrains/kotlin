@@ -79,7 +79,7 @@ public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         val elementFactory = PsiElementFactory.SERVICE.getInstance(project)
 
         val dummyTargetClass = createJavaClass(targetClass, null, forcePlainClass = true)
-        val outerClasses = targetClass.parents.filterIsInstance<JetClassOrObject>().toList().reverse()
+        val outerClasses = targetClass.parents.filterIsInstance<JetClassOrObject>().toList().asReversed()
 
         if (outerClasses.isEmpty()) return dummyFile.add(dummyTargetClass) as PsiClass
 
