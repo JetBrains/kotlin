@@ -74,7 +74,7 @@ public class DeclarationResolver(
             for (descriptor in descriptors) {
                 if (descriptor is ClassDescriptor) {
                     for (descriptor2 in descriptors) {
-                        if (descriptor identityEquals descriptor2) {
+                        if (descriptor === descriptor2) {
                             continue
                         }
 

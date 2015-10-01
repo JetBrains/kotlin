@@ -59,7 +59,7 @@ public abstract class DeclarationLookupObjectImpl(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this identityEquals other) return true
+        if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
         val lookupObject = other as DeclarationLookupObjectImpl
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
