@@ -549,7 +549,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val result = HashSet<String>()
         for (file in files) {
             val relativePath = FileUtil.getRelativePath(baseDir, file)
-            assert(relativePath != null, "relativePath should not be null")
+            assert(relativePath != null) { "relativePath should not be null" }
             result.add(toSystemIndependentName(relativePath!!))
         }
         return result
@@ -581,7 +581,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         assertCanceled(buildResult)
         buildResult.assertSuccessful()
-        assert(interval < 8000, "expected time for canceled compilation < 8000 ms, but $interval")
+        assert(interval < 8000) { "expected time for canceled compilation < 8000 ms, but $interval" }
 
         val module = myProject.getModules().get(0)
         assertFilesNotExistInOutput(module, "foo/Foo.class")
