@@ -8,14 +8,6 @@ import java.util.NoSuchElementException
 import kotlin.text.MatchResult
 import kotlin.text.Regex
 
-/** Returns the string with leading and trailing text matching the given string removed */
-@Deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
-public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
-
-/** Returns the string with the prefix and postfix text trimmed */
-@Deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
-public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
-
 /**
  * Returns the string with leading and trailing characters matching the [predicate] trimmed.
  */
@@ -82,12 +74,6 @@ public fun String.trimStart(vararg chars: Char): String = trimStart { it in char
  */
 public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
-@Deprecated("Use removePrefix() instead", ReplaceWith("removePrefix(prefix)"))
-public fun String.trimLeading(prefix: String): String = removePrefix(prefix)
-
-@Deprecated("Use removeSuffix() instead", ReplaceWith("removeSuffix(postfix)"))
-public fun String.trimTrailing(postfix: String): String = removeSuffix(postfix)
-
 /**
  * Returns a string with leading and trailing whitespace trimmed.
  */
@@ -98,16 +84,10 @@ public fun String.trim(): String = trim { it.isWhitespace() }
  */
 public fun String.trimStart(): String = trimStart { it.isWhitespace() }
 
-@Deprecated("Use trimStart instead.", ReplaceWith("trimStart()"))
-public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
-
 /**
  * Returns a string with trailing whitespace removed.
  */
 public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
-
-@Deprecated("Use trimEnd instead.", ReplaceWith("trimEnd()"))
-public fun String.trimTrailing(): String = trimEnd { it.isWhitespace() }
 
 /**
  * Left pad a String with a specified character or space.
@@ -921,10 +901,6 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
  * that is equal to a delimiter in this instance at that position.
  */
 public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
-
-@Deprecated("Use split(delimiters) instead.", ReplaceWith("split(*delimiters, ignoreCase = ignoreCase, limit = limit)"))
-public fun String.splitBy(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
 /**

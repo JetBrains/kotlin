@@ -101,7 +101,7 @@ class StringJVMTest {
     @test fun all() {
         val data = "AbCd"
         assertTrue {
-            data.all { it.isJavaLetter() }
+            data.all { it.isJavaIdentifierPart() }
         }
         assertFalse {
             data.all { it.isUpperCase() }
@@ -134,7 +134,7 @@ class StringJVMTest {
     @test fun findNot() {
         val data = "1a2b3c"
         assertEquals('a', data.filterNot { it.isDigit() }.firstOrNull())
-        assertNull(data.filterNot { it.isJavaLetterOrDigit() }.firstOrNull())
+        assertNull(data.filterNot { it.isJavaIdentifierPart() }.firstOrNull())
     }
 
     @test fun partition() {
@@ -261,7 +261,7 @@ class StringJVMTest {
 
     @test fun dropWhile() {
         val data = "ab1cd2"
-        assertEquals("1cd2", data.dropWhile { it.isJavaLetter() })
+        assertEquals("1cd2", data.dropWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.dropWhile { true })
         assertEquals("ab1cd2", data.dropWhile { false })
     }
@@ -277,7 +277,7 @@ class StringJVMTest {
 
     @test fun takeWhile() {
         val data = "ab1cd2"
-        assertEquals("ab", data.takeWhile { it.isJavaLetter() })
+        assertEquals("ab", data.takeWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.takeWhile { false })
         assertEquals("ab1cd2", data.takeWhile { true })
     }

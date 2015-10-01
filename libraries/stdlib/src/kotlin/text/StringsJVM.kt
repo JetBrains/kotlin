@@ -29,13 +29,6 @@ internal fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as 
  */
 internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
-
-/**
- * Compares this string to another string, ignoring case considerations.
- */
-@Deprecated("Use equals(anotherString, ignoreCase = true) instead", ReplaceWith("equals(anotherString, ignoreCase = true)"))
-public fun String.equalsIgnoreCase(anotherString: String): Boolean = equals(anotherString, ignoreCase = true)
-
 /**
  * Returns `true` if this string is equal to [anotherString], optionally ignoring character case.
  *
@@ -82,16 +75,6 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
 }
-
-@Deprecated("Use String.replaceFirst instead.", ReplaceWith("replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)"))
-public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String = replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)
-
-/**
- * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
- * with the given [replacement].
- */
-@Deprecated("Use String.replace(Regex, String) instead. You can convert regex parameter with .toRegex() extension function.", ReplaceWith("replace(regex.toRegex(), replacement)"))
-public fun String.replaceAll(regex: String, replacement: String): String = (this as java.lang.String).replaceAll(regex, replacement)
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
@@ -271,12 +254,6 @@ public fun String.codePointBefore(index: Int): Int = (this as java.lang.String).
 public fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as java.lang.String).codePointCount(beginIndex, endIndex)
 
 /**
- * Compares two strings lexicographically, ignoring case differences.
- */
-@Deprecated("Use compareTo with true passed to ignoreCase parameter.", ReplaceWith("compareTo(str, ignoreCase = true)"))
-public fun String.compareToIgnoreCase(str: String): Int = (this as java.lang.String).compareToIgnoreCase(str)
-
-/**
  * Compares two strings lexicographically, optionally ignoring case differences.
  */
 public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
@@ -322,26 +299,9 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
 /**
- * Returns `true` if this string matches the given regular expression.
- */
-@Deprecated("Use String.matches(Regex) instead. You can convert regex parameter with .toRegex() extension function.", ReplaceWith("matches(regex.toRegex())"))
-public fun String.matches(regex: String): Boolean = (this as java.lang.String).matches(regex)
-
-/**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
  */
 public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
-
-/**
- * Returns `true` if the specified range in this string is equal to the specified range in another string.
- * @param ignoreCase if `true`, character case is ignored when comparing.
- * @param toffset the start offset in this string of the substring to compare.
- * @param other the string against a substring of which the comparison is performed.
- * @param ooffset the start offset in the other string of the substring to compare.
- * @param len the length of the substring to compare.
- */
-@Deprecated("Use regionMatches overload with ignoreCase as optional last parameter.", ReplaceWith("regionMatches(toffset, other, ooffset, len, ignoreCase)"))
-public fun String.regionMatches(ignoreCase: Boolean, toffset: Int, other: String, ooffset: Int, len: Int): Boolean = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len)
 
 /**
  * Returns `true` if the specified range in this string is equal to the specified range in another string.
@@ -424,15 +384,6 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
  */
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
-@Deprecated("Use toByteArray() instead to emphasize copy behaviour", ReplaceWith("toByteArray()"))
-public fun String.getBytes(): ByteArray = (this as java.lang.String).getBytes()
-
-@Deprecated("Use toByteArray(charset) instead to emphasize copy behaviour", ReplaceWith("toByteArray(charset)"))
-public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
-
-@Deprecated("Use toByteArray(charset) instead to emphasize copy behaviour", ReplaceWith("toByteArray(charset)"))
-public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
-
 /**
  * Returns a subsequence of this sequence specified by given [range].
  */
@@ -448,13 +399,6 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
 public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
-
-/**
- * Creates a new [StringReader] for reading the contents of this string.
- */
-@Deprecated("Use reader() method instead in kotlin.io package", ReplaceWith("this.reader()", "kotlin.io.reader"))
-public val String.reader: StringReader
-    get() = StringReader(this)
 
 /**
  * Returns a copy of this string having its first letter uppercased, or the original string,
@@ -517,31 +461,6 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
     return result
 }
 
-/**
- * Replaces every [regexp] occurence in the text with the value returned by the given function [body] that
- * takes a [MatchResult].
- */
-@Deprecated("Use String.replace(Regex, (MatchResult)->String) instead.  You can convert regex parameter with .toRegex() extension function.")
-public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String): String {
-    val sb = StringBuilder(this.length())
-    val p = regexp.toPattern()
-    val m = p.matcher(this)
-
-    var lastIdx = 0
-    while (m.find()) {
-        sb.append(this, lastIdx, m.start())
-        sb.append(body(m.toMatchResult()))
-        lastIdx = m.end()
-    }
-
-    if (lastIdx == 0) {
-        return this;
-    }
-
-    sb.append(this, lastIdx, this.length())
-
-    return sb.toString()
-}
 
 /**
  * A Comparator that orders strings ignoring character case.

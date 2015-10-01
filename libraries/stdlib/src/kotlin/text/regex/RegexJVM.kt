@@ -206,16 +206,6 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
 
 }
 
-/**
- * Converts this [Pattern] to an instance of [Regex].
- *
- * Provides the way to use Regex API on the instances of [Pattern].
- */
-@Deprecated("Use extension toRegex instead in kotlin package.")
-@HiddenDeclaration
-public fun Pattern.toRegex(): Regex = Regex(this)
-
-
 // implementation
 
 private fun Matcher.findNext(from: Int, input: CharSequence): MatchResult? {
