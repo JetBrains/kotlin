@@ -198,7 +198,8 @@ public class IncrementalCacheImpl(
                 inlineFunctionsMap.process(kotlinClass)
             }
             header.isCompatibleMultifileClassKind() -> {
-                val partNames = getFullNamesOfMultifileClassParts(kotlinClass)
+                val partNames = kotlinClass.classHeader.filePartClassNames?.toList()
+                                ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
                 multifileClassFacadeMap.add(className, partNames)
 
                 // TODO NO_CHANGES? (delegates only, see package facade)
@@ -208,8 +209,7 @@ public class IncrementalCacheImpl(
             header.isCompatibleMultifileClassPartKind() -> {
                 assert(sourceFiles.size() == 1) { "Multifile class part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
-                val facadeClassName = getInternalNameOfTopLevelClassInTheSamePackage(kotlinClass, header.multifileClassName!!)
-                multifileClassPartMap.add(className.internalName, facadeClassName)
+                multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
@@ -696,21 +696,6 @@ private fun ByteArray.md5(): Long {
             or ((d[6].toLong() and 0xFFL) shl 48)
             or ((d[7].toLong() and 0xFFL) shl 56)
            )
-}
-
-private fun getInternalNameOfTopLevelClassInTheSamePackage(kotlinClass: KotlinJvmBinaryClass, simpleName: String): String {
-    val classFqName = kotlinClass.classId.packageFqName.child(Name.identifier(simpleName))
-    return JvmClassName.byFqNameWithoutInnerClasses(classFqName).internalName
-}
-
-private fun getFullNamesOfMultifileClassParts(kotlinClass: LocalFileKotlinClass): List<String> {
-    val classHeader = kotlinClass.classHeader
-    val partClassNames = classHeader.filePartClassNames ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
-    val fullNames = arrayListOf<String>()
-    for (shortName in partClassNames) {
-        fullNames.add(getInternalNameOfTopLevelClassInTheSamePackage(kotlinClass, shortName))
-    }
-    return fullNames
 }
 
 private abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
