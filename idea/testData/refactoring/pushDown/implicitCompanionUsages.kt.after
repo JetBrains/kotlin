@@ -9,5 +9,5 @@ class X {
 
 class B : X.A {
     // INFO: {"checked": "true"}
-    fun foo(): Int = X.A.bar() + X.A.bar() + X.A.bar()
+    fun foo(): Int = bar() + bar() + bar()
 }

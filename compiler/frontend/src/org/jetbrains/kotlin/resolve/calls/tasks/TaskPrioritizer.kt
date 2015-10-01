@@ -314,6 +314,14 @@ public class TaskPrioritizer(
             addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, isExplicit = false)
         }
 
+        // static members hack
+        c.callableDescriptorCollectors.forEach {
+            c.result.addCandidates {
+                val descriptors = it.getStaticInheritanceByName(c.scope, c.name, lookupLocation)
+                convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
+            }
+        }
+
         //nonlocals
         c.callableDescriptorCollectors.forEach {
             c.result.addCandidates {
