@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import kotlin.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -117,7 +118,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     @NotNull
     protected List<OccurrenceInfo> readExpectedOccurrences(@NotNull String filename) throws Exception {
         List<OccurrenceInfo> result = new ArrayList<OccurrenceInfo>();
-        String[] lines = FileUtil.loadFile(new File(filename), true).split("\n");
+        String[] lines = FileUtil.loadFile(new File(filename), Charsets.UTF_8.name(), true).split("\n");
 
         for (String line : lines) {
             Matcher matcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line);
