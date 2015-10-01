@@ -29,7 +29,6 @@ import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
-import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.*
@@ -77,7 +76,7 @@ object KeywordCompletion {
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler
                                            else
-                                               KotlinFunctionInsertHandler(CallType.DEFAULT, inputTypeArguments = false, inputValueArguments = false))
+                                               KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false))
                 consumer(element)
             }
         }

@@ -12,6 +12,8 @@ class C {
 
     val memberVal = 1
 
+    fun funWithFunctionParameter(p: () -> Unit) {}
+
     class NestedClass
     inner class InnerClass
 
@@ -48,3 +50,4 @@ abstract class AbstractClass
 // ABSENT: AbstractClass
 // ABSENT: class
 // ABSENT: class.java
+// EXIST: { itemText: "funWithFunctionParameter", tailText: "(p: () -> Unit)", attributes: "bold" }

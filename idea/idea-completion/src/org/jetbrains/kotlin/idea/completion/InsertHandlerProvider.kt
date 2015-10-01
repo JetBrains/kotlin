@@ -39,25 +39,34 @@ class InsertHandlerProvider(
 
         return when (descriptor) {
             is FunctionDescriptor -> {
-                val needTypeArguments = needTypeArguments(descriptor)
-                val parameters = descriptor.valueParameters
-                when (parameters.size()) {
-                    0 -> KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = false)
+                when (callType) {
+                    is CallType.DEFAULT, is CallType.DOT, is CallType.SAFE -> {
+                        val needTypeArguments = needTypeArguments(descriptor)
+                        val parameters = descriptor.valueParameters
+                        when (parameters.size()) {
+                            0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
 
-                    1 -> {
-                        val parameterType = parameters.single().getType()
-                        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                            val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                            if (parameterCount <= 1) {
-                                // otherwise additional item with lambda template is to be added
-                                return KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                            1 -> {
+                                val parameterType = parameters.single().getType()
+                                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                    if (parameterCount <= 1) {
+                                        // otherwise additional item with lambda template is to be added
+                                        return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                    }
+                                }
+                                KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                             }
+
+                            else -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                         }
-                        KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = true)
                     }
 
-                    else -> KotlinFunctionInsertHandler(callType, needTypeArguments, inputValueArguments = true)
+                    is CallType.INFIX -> KotlinFunctionInsertHandler.Infix
+
+                    else -> KotlinFunctionInsertHandler.OnlyName
                 }
+
             }
 
             is PropertyDescriptor -> KotlinPropertyInsertHandler

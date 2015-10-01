@@ -151,7 +151,7 @@ class BasicLookupElementFactory(
                 val returnType = descriptor.getReturnType()
                 element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
 
-                val insertsLambda = (insertHandler as KotlinFunctionInsertHandler).lambdaInfo != null
+                val insertsLambda = (insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null
                 if (insertsLambda) {
                     element = element.appendTailText(" {...} ", false)
                 }
@@ -211,7 +211,7 @@ class BasicLookupElementFactory(
             element = element.withStrikeoutness(true)
         }
 
-        if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
+        if ((insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null) {
             element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
         }
 
