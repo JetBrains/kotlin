@@ -324,16 +324,13 @@ class SmartCompletion(
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false, parametersAndTypeGrayed = true)
-            val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
-                override fun getLookupString() = text
-                override fun getAllLookupStrings() = setOf(text)
+                override fun getLookupString() = "::" + delegate.lookupString
+                override fun getAllLookupStrings() = setOf(lookupString)
 
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
-                    presentation.setItemText(text)
-                    presentation.clearTail()
-                    presentation.setTypeText(null)
+                    presentation.itemText = "::" + presentation.itemText
                 }
 
                 override fun handleInsert(context: InsertionContext) {
