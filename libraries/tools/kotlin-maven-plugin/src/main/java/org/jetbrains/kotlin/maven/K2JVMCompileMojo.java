@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.maven;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.sampullara.cli.Args;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -134,7 +134,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     }
 
     protected List<String> filterClassPath(List<String> classpath) {
-        return KotlinPackage.filter(classpath, new Function1<String, Boolean>() {
+        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
             @Override
             public Boolean invoke(String s) {
                 return new File(s).exists() || new File(project.getBasedir(), s).exists();
