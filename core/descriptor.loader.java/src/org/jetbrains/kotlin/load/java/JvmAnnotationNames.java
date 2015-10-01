@@ -34,6 +34,7 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_MULTIFILE_CLASS = new FqName("kotlin.jvm.internal.KotlinMultifileClass");
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
+    public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
 
     public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
@@ -139,6 +140,7 @@ public final class JvmAnnotationNames {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
         SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
+        SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS));
 
         for (FqName fqName : Arrays.asList(JETBRAINS_NOT_NULL_ANNOTATION, JETBRAINS_NULLABLE_ANNOTATION)) {
             NULLABILITY_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));

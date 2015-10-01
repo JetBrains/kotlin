@@ -68,6 +68,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinClass.Kind classKind = null;
     private KotlinSyntheticClass.Kind syntheticClassKind = null;
+    private boolean isInterfaceDefaultImpls = false;
 
     @Nullable
     public KotlinClassHeader createHeader() {
@@ -81,17 +82,17 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new KotlinClassHeader(headerKind, version, null, strings, classKind, syntheticClassKind, null, null);
+            annotationData = null;
         }
-
-        if (shouldHaveData() && annotationData == null) {
+        else if (shouldHaveData() && annotationData == null) {
             // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
             // We tell the outside world that there's really no annotation at all
             return null;
         }
 
         return new KotlinClassHeader(
-                headerKind, version, annotationData, strings, classKind, syntheticClassKind, filePartClassNames, multifileClassName
+                headerKind, version, annotationData, strings, classKind, syntheticClassKind, filePartClassNames, multifileClassName,
+                isInterfaceDefaultImpls
         );
     }
 
@@ -105,6 +106,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Nullable
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
+        if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(classId.asSingleFqName())) {
+            isInterfaceDefaultImpls = true;
+            return null;
+        }
+
         if (headerKind != null) {
             // Ignore all Kotlin annotations except the first found
             return null;

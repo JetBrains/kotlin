@@ -29,7 +29,8 @@ public class KotlinClassHeader(
         public val classKind: KotlinClass.Kind?,
         public val syntheticClassKind: KotlinSyntheticClass.Kind?,
         public val filePartClassNames: Array<String>?,
-        public val multifileClassName: String?
+        public val multifileClassName: String?,
+        public val isInterfaceDefaultImpls: Boolean
 ) {
     public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
 

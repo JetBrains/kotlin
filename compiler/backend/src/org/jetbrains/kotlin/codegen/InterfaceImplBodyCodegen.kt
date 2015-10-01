@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.bridges.findImplementationFromInterface
 import org.jetbrains.kotlin.backend.common.bridges.firstSuperMethodFromKotlin
-import org.jetbrains.kotlin.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.LOCAL_TRAIT_IMPL
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_INTERFACE_DEFAULT_IMPLS
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.TRAIT_IMPL
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +35,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToTraitImpl
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_FINAL
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.Opcodes.V1_6
 import java.util.*
 
@@ -144,9 +146,9 @@ public class InterfaceImplBodyCodegen(
     }
 
     override fun generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(
-                v,
-                if (DescriptorUtils.isTopLevelOrInnerClass(descriptor)) TRAIT_IMPL else LOCAL_TRAIT_IMPL
-        )
+        val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true)
+        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray())
+        av.visitEnd()
+        AsmUtil.writeKotlinSyntheticClassAnnotation(v, TRAIT_IMPL)
     }
 }
