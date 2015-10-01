@@ -385,7 +385,7 @@ public class CallExpressionResolver {
         }
 
         CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
-        if (value != null && value.getIsPure()) {
+        if (value != null && value.isPure()) {
             return dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 

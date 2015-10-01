@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.util.SmartList;
@@ -42,7 +41,7 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDe
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setParameters;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getIsEffectivelyPublicApi;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.isEffectivelyPublicApi;
 
 public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
@@ -100,7 +99,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         JsName functionName = context().getNameForDescriptor(descriptor);
         generateFunctionObject();
 
-        if (shouldBeInlined(descriptor) && getIsEffectivelyPublicApi(descriptor)) {
+        if (shouldBeInlined(descriptor) && isEffectivelyPublicApi(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(functionObject, descriptor);
             return new JsPropertyInitializer(functionName.makeRef(), metadata.getFunctionWithMetadata());
         }
