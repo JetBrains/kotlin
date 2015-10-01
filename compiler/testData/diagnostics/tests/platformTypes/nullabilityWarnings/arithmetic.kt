@@ -40,15 +40,16 @@ fun test() {
     platformN <!UNSAFE_INFIX_CALL!>+<!> 1
     platformJ + 1
 
-    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
+    1 plus platformNN
     1 <!NONE_APPLICABLE!>plus<!> platformN
-    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformJ
+    1 plus platformJ
 
-    platformNN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
-    platformN <!UNSAFE_INFIX_CALL, INFIX_MODIFIER_REQUIRED!>plus<!> 1
-    platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
+    platformNN plus 1
+    platformN <!UNSAFE_INFIX_CALL!>plus<!> 1
+    platformJ plus 1
 
     platformNN += 1
     platformN <!UNSAFE_INFIX_CALL!>+=<!> 1
     platformJ += 1
 }
+

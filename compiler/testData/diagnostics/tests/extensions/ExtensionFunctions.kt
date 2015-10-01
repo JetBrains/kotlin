@@ -16,7 +16,7 @@ fun <T: Any, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
 
 class A
 
-infix operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
+operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
 
   1.foo()
   true.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>

@@ -10,4 +10,4 @@ class Test {
 }
 
 class Pair<out A, out B>(val first: A, val second: B)
-infix fun <A, B> A.to(that: B) = Pair(this, that)
+fun <A, B> A.to(that: B) = Pair(this, that)

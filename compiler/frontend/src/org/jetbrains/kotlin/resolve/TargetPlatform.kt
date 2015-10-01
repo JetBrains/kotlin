@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
-import org.jetbrains.kotlin.resolve.validation.*
+import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
+import org.jetbrains.kotlin.resolve.validation.OperatorValidator
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -47,16 +49,10 @@ abstract class TargetPlatform(
     }
 }
 
-private val DEFAULT_DECLARATION_CHECKERS = listOf(
-        DataClassAnnotationChecker(),
-        ConstModifierChecker,
-        UnderscoreChecker,
-        OperatorModifierChecker(),
-        InfixModifierChecker())
-
+private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker(), ConstModifierChecker, UnderscoreChecker, OperatorModifierChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
-private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), OperatorValidator(), InfixValidator())
+private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), OperatorValidator())
 
 
 open class PlatformConfigurator(

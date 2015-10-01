@@ -68,7 +68,7 @@ public abstract class BaseDiagnosticsTest extends
                                                           "\nfun <T> checkSubtype(t: T) = t" +
                                                           "\nclass Inv<T>" +
                                                           "\nfun <E> Inv<E>._() {}" +
-                                                          "\ninfix fun <T> T.checkType(f: Inv<T>.() -> Unit) {}";
+                                                          "\nfun <T> T.checkType(f: Inv<T>.() -> Unit) {}";
     public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
 
     public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";
