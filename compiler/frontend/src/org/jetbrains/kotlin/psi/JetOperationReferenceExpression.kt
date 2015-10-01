@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.parsing.JetExpressionParsing
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -31,5 +32,7 @@ public class JetOperationReferenceExpression(node: ASTNode) : JetSimpleNameExpre
         val operator = (firstChild as? TreeElement)?.elementType as? JetToken ?: return null
         return OperatorConventions.getNameForOperationSymbol(operator)
     }
+
+    fun isPredefinedOperator() = (firstChild as? TreeElement)?.elementType is JetSingleValueToken
 
 }

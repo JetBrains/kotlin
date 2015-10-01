@@ -20,4 +20,4 @@ val x = B()["a", "v"]["a" to "b"] {} ["q" to "p"] // does not parses around {}
 
 //from library
 data class Pair<out A, out B> (val first: A, val second: B)
-fun <A,B> A.to(that: B) = Pair(this, that)
+infix fun <A,B> A.to(that: B) = Pair(this, that)

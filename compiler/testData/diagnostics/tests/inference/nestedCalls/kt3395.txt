@@ -7,7 +7,7 @@ package b {
     public fun </*0*/ T> query(/*0*/ t: T, /*1*/ args: kotlin.Map<kotlin.String, kotlin.Any>): kotlin.List<T>
     public fun test(/*0*/ pair: b.Pair<kotlin.String, kotlin.Int>): kotlin.Unit
     public fun test(/*0*/ t: kotlin.String): kotlin.Unit
-    public fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): b.Pair<A, B>
+    public infix fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): b.Pair<A, B>
 
     public final class Pair</*0*/ out A, /*1*/ out B> {
         public constructor Pair</*0*/ out A, /*1*/ out B>()

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
+import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -138,13 +139,21 @@ public class TaskPrioritizer(
     ) {
         val explicitReceiverTypeIsDynamic = explicitReceiver.value.type.isDynamic()
 
-        // Members and extensions with 'operator' modifier have higher priority
-        if (isConventionCall(c.context.call)) {
-            val filter = { d: CallableDescriptor -> (d is FunctionDescriptor && d.isOperator) || ErrorUtils.isError(d) }
+        fun addMembersAndExtensionsWithFilter(filter: (CallableDescriptor) -> Boolean) {
+            if (explicitReceiver.types.any { it.isError }) return
+
             addMembers(explicitReceiver, c, staticMembers = false, isExplicit = isExplicit, filter = filter)
             if (!explicitReceiverTypeIsDynamic) {
                 addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit, filter)
             }
+        }
+
+        // Members and extensions with 'operator' and 'infix' modifiers have higher priority
+        if (isConventionCall(c.context.call)) {
+            addMembersAndExtensionsWithFilter { d: CallableDescriptor -> d is FunctionDescriptor && d.isOperator }
+        }
+        if (InfixValidator.isInfixCall(c.context.call.calleeExpression)) {
+            addMembersAndExtensionsWithFilter { d: CallableDescriptor -> d is FunctionDescriptor && d.isInfix }
         }
 
         addMembers(explicitReceiver, c, staticMembers = false, isExplicit = isExplicit)

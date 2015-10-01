@@ -131,7 +131,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
             val editorFactory = EditorFactory.getInstance()
 
             val editors = editorFactory.getEditors(document)
-            return if (editors.isEmpty()) editorFactory.createEditor(document) else editors[0]
+            return if (editors.isEmpty()) null else editors[0]
         }
     }
 }

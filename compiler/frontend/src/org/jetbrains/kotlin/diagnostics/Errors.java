@@ -531,8 +531,10 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> UNDERSCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_INFIX_MODIFIER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetOperationReferenceExpression, FunctionDescriptor, String> INFIX_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
 
     // Labels
 
