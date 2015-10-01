@@ -25,10 +25,10 @@ fun foo() {
 
 
 // ---------------------
-// copy from kotlin util (but with `infix` modifier on `map`)
+// copy from kotlin util
 
 fun <T> array(vararg t : T) : Array<T> = t as Array<T>
 
-infix fun <T, R> Array<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T, R> Array<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-infix fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

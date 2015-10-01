@@ -316,7 +316,7 @@ public operator fun CharRange.contains(item: Short): Nothing {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Byte): IntProgression {
+public fun Int.downTo(to: Byte): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
@@ -324,7 +324,7 @@ public infix fun Int.downTo(to: Byte): IntProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Byte): LongProgression {
+public fun Long.downTo(to: Byte): LongProgression {
     return LongProgression(this, to.toLong(), -1L)
 }
 
@@ -332,7 +332,7 @@ public infix fun Long.downTo(to: Byte): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Byte): ByteProgression {
+public fun Byte.downTo(to: Byte): ByteProgression {
     return ByteProgression(this, to, -1)
 }
 
@@ -340,7 +340,7 @@ public infix fun Byte.downTo(to: Byte): ByteProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Byte): ShortProgression {
+public fun Short.downTo(to: Byte): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
 
@@ -348,7 +348,7 @@ public infix fun Short.downTo(to: Byte): ShortProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Byte): DoubleProgression {
+public fun Double.downTo(to: Byte): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
@@ -356,7 +356,7 @@ public infix fun Double.downTo(to: Byte): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Byte): FloatProgression {
+public fun Float.downTo(to: Byte): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.0F)
 }
 
@@ -364,7 +364,7 @@ public infix fun Float.downTo(to: Byte): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Char.downTo(to: Char): CharProgression {
+public fun Char.downTo(to: Char): CharProgression {
     return CharProgression(this, to, -1)
 }
 
@@ -372,7 +372,7 @@ public infix fun Char.downTo(to: Char): CharProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Double): DoubleProgression {
+public fun Int.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
@@ -380,7 +380,7 @@ public infix fun Int.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Double): DoubleProgression {
+public fun Long.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
@@ -388,7 +388,7 @@ public infix fun Long.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Double): DoubleProgression {
+public fun Byte.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
@@ -396,7 +396,7 @@ public infix fun Byte.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Double): DoubleProgression {
+public fun Short.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
@@ -404,7 +404,7 @@ public infix fun Short.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Double): DoubleProgression {
+public fun Double.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this, to, -1.0)
 }
 
@@ -412,7 +412,7 @@ public infix fun Double.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Double): DoubleProgression {
+public fun Float.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
@@ -420,7 +420,7 @@ public infix fun Float.downTo(to: Double): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Float): FloatProgression {
+public fun Int.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.0F)
 }
 
@@ -428,7 +428,7 @@ public infix fun Int.downTo(to: Float): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Float): FloatProgression {
+public fun Long.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.0F)
 }
 
@@ -436,7 +436,7 @@ public infix fun Long.downTo(to: Float): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Float): FloatProgression {
+public fun Byte.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.0F)
 }
 
@@ -444,7 +444,7 @@ public infix fun Byte.downTo(to: Float): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Float): FloatProgression {
+public fun Short.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.0F)
 }
 
@@ -452,7 +452,7 @@ public infix fun Short.downTo(to: Float): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Float): DoubleProgression {
+public fun Double.downTo(to: Float): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
@@ -460,7 +460,7 @@ public infix fun Double.downTo(to: Float): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Float): FloatProgression {
+public fun Float.downTo(to: Float): FloatProgression {
     return FloatProgression(this, to, -1.0F)
 }
 
@@ -468,7 +468,7 @@ public infix fun Float.downTo(to: Float): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Int): IntProgression {
+public fun Int.downTo(to: Int): IntProgression {
     return IntProgression(this, to, -1)
 }
 
@@ -476,7 +476,7 @@ public infix fun Int.downTo(to: Int): IntProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Int): LongProgression {
+public fun Long.downTo(to: Int): LongProgression {
     return LongProgression(this, to.toLong(), -1L)
 }
 
@@ -484,7 +484,7 @@ public infix fun Long.downTo(to: Int): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Int): IntProgression {
+public fun Byte.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
@@ -492,7 +492,7 @@ public infix fun Byte.downTo(to: Int): IntProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Int): IntProgression {
+public fun Short.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
@@ -500,7 +500,7 @@ public infix fun Short.downTo(to: Int): IntProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Int): DoubleProgression {
+public fun Double.downTo(to: Int): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
@@ -508,7 +508,7 @@ public infix fun Double.downTo(to: Int): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Int): FloatProgression {
+public fun Float.downTo(to: Int): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.0F)
 }
 
@@ -516,7 +516,7 @@ public infix fun Float.downTo(to: Int): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Long): LongProgression {
+public fun Int.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1L)
 }
 
@@ -524,7 +524,7 @@ public infix fun Int.downTo(to: Long): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Long): LongProgression {
+public fun Long.downTo(to: Long): LongProgression {
     return LongProgression(this, to, -1L)
 }
 
@@ -532,7 +532,7 @@ public infix fun Long.downTo(to: Long): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Long): LongProgression {
+public fun Byte.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1L)
 }
 
@@ -540,7 +540,7 @@ public infix fun Byte.downTo(to: Long): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Long): LongProgression {
+public fun Short.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1L)
 }
 
@@ -548,7 +548,7 @@ public infix fun Short.downTo(to: Long): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Long): DoubleProgression {
+public fun Double.downTo(to: Long): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
@@ -556,7 +556,7 @@ public infix fun Double.downTo(to: Long): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Long): FloatProgression {
+public fun Float.downTo(to: Long): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.0F)
 }
 
@@ -564,7 +564,7 @@ public infix fun Float.downTo(to: Long): FloatProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Short): IntProgression {
+public fun Int.downTo(to: Short): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
@@ -572,7 +572,7 @@ public infix fun Int.downTo(to: Short): IntProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Long.downTo(to: Short): LongProgression {
+public fun Long.downTo(to: Short): LongProgression {
     return LongProgression(this, to.toLong(), -1L)
 }
 
@@ -580,7 +580,7 @@ public infix fun Long.downTo(to: Short): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Short): ShortProgression {
+public fun Byte.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
 
@@ -588,7 +588,7 @@ public infix fun Byte.downTo(to: Short): ShortProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Short): ShortProgression {
+public fun Short.downTo(to: Short): ShortProgression {
     return ShortProgression(this, to, -1)
 }
 
@@ -596,7 +596,7 @@ public infix fun Short.downTo(to: Short): ShortProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Double.downTo(to: Short): DoubleProgression {
+public fun Double.downTo(to: Short): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
@@ -604,7 +604,7 @@ public infix fun Double.downTo(to: Short): DoubleProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Float.downTo(to: Short): FloatProgression {
+public fun Float.downTo(to: Short): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.0F)
 }
 
@@ -709,7 +709,7 @@ public fun ShortRange.reversed(): ShortProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun ByteProgression.step(step: Int): ByteProgression {
+public fun ByteProgression.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
     return ByteProgression(start, end, if (increment > 0) step else -step)
 }
@@ -717,7 +717,7 @@ public infix fun ByteProgression.step(step: Int): ByteProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun CharProgression.step(step: Int): CharProgression {
+public fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
     return CharProgression(start, end, if (increment > 0) step else -step)
 }
@@ -725,7 +725,7 @@ public infix fun CharProgression.step(step: Int): CharProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun DoubleProgression.step(step: Double): DoubleProgression {
+public fun DoubleProgression.step(step: Double): DoubleProgression {
     checkStepIsPositive(step > 0, step)
     return DoubleProgression(start, end, if (increment > 0) step else -step)
 }
@@ -733,7 +733,7 @@ public infix fun DoubleProgression.step(step: Double): DoubleProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun FloatProgression.step(step: Float): FloatProgression {
+public fun FloatProgression.step(step: Float): FloatProgression {
     checkStepIsPositive(step > 0, step)
     return FloatProgression(start, end, if (increment > 0) step else -step)
 }
@@ -741,7 +741,7 @@ public infix fun FloatProgression.step(step: Float): FloatProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun IntProgression.step(step: Int): IntProgression {
+public fun IntProgression.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
     return IntProgression(start, end, if (increment > 0) step else -step)
 }
@@ -749,7 +749,7 @@ public infix fun IntProgression.step(step: Int): IntProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun LongProgression.step(step: Long): LongProgression {
+public fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
     return LongProgression(start, end, if (increment > 0) step else -step)
 }
@@ -757,7 +757,7 @@ public infix fun LongProgression.step(step: Long): LongProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public infix fun ShortProgression.step(step: Int): ShortProgression {
+public fun ShortProgression.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
     return ShortProgression(start, end, if (increment > 0) step else -step)
 }
@@ -765,7 +765,7 @@ public infix fun ShortProgression.step(step: Int): ShortProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun ByteRange.step(step: Int): ByteProgression {
+public fun ByteRange.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
     return ByteProgression(start, end, step)
 }
@@ -773,7 +773,7 @@ public infix fun ByteRange.step(step: Int): ByteProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun CharRange.step(step: Int): CharProgression {
+public fun CharRange.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
     return CharProgression(start, end, step)
 }
@@ -781,7 +781,7 @@ public infix fun CharRange.step(step: Int): CharProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun DoubleRange.step(step: Double): DoubleProgression {
+public fun DoubleRange.step(step: Double): DoubleProgression {
     if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
     checkStepIsPositive(step > 0, step)
     return DoubleProgression(start, end, step)
@@ -790,7 +790,7 @@ public infix fun DoubleRange.step(step: Double): DoubleProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun FloatRange.step(step: Float): FloatProgression {
+public fun FloatRange.step(step: Float): FloatProgression {
     if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
     checkStepIsPositive(step > 0, step)
     return FloatProgression(start, end, step)
@@ -799,7 +799,7 @@ public infix fun FloatRange.step(step: Float): FloatProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun IntRange.step(step: Int): IntProgression {
+public fun IntRange.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
     return IntProgression(start, end, step)
 }
@@ -807,7 +807,7 @@ public infix fun IntRange.step(step: Int): IntProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun LongRange.step(step: Long): LongProgression {
+public fun LongRange.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
     return LongProgression(start, end, step)
 }
@@ -815,7 +815,7 @@ public infix fun LongRange.step(step: Long): LongProgression {
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun ShortRange.step(step: Int): ShortProgression {
+public fun ShortRange.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
     return ShortProgression(start, end, step)
 }
@@ -823,14 +823,14 @@ public infix fun ShortRange.step(step: Int): ShortProgression {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Int.until(to: Byte): IntRange {
+public fun Int.until(to: Byte): IntRange {
     return this .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Long.until(to: Byte): LongRange {
+public fun Long.until(to: Byte): LongRange {
     return this .. (to.toLong() - 1).toLong()
 }
 
@@ -838,7 +838,7 @@ public infix fun Long.until(to: Byte): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Byte.MIN_VALUE].
  */
-public infix fun Byte.until(to: Byte): ByteRange {
+public fun Byte.until(to: Byte): ByteRange {
     val to_  = (to - 1).toByte()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this .. to_
@@ -847,7 +847,7 @@ public infix fun Byte.until(to: Byte): ByteRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Short.until(to: Byte): ShortRange {
+public fun Short.until(to: Byte): ShortRange {
     return this .. (to.toShort() - 1).toShort()
 }
 
@@ -855,7 +855,7 @@ public infix fun Short.until(to: Byte): ShortRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Char.MIN_VALUE].
  */
-public infix fun Char.until(to: Char): CharRange {
+public fun Char.until(to: Char): CharRange {
     val to_  = (to.toInt() - 1).toChar()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this .. to_
@@ -865,7 +865,7 @@ public infix fun Char.until(to: Char): CharRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
-public infix fun Int.until(to: Int): IntRange {
+public fun Int.until(to: Int): IntRange {
     val to_  = (to.toLong() - 1).toInt()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this .. to_
@@ -874,7 +874,7 @@ public infix fun Int.until(to: Int): IntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Long.until(to: Int): LongRange {
+public fun Long.until(to: Int): LongRange {
     return this .. (to.toLong() - 1).toLong()
 }
 
@@ -882,7 +882,7 @@ public infix fun Long.until(to: Int): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
-public infix fun Byte.until(to: Int): IntRange {
+public fun Byte.until(to: Int): IntRange {
     val to_  = (to.toLong() - 1).toInt()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toInt() .. to_
@@ -892,7 +892,7 @@ public infix fun Byte.until(to: Int): IntRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
-public infix fun Short.until(to: Int): IntRange {
+public fun Short.until(to: Int): IntRange {
     val to_  = (to.toLong() - 1).toInt()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toInt() .. to_
@@ -902,7 +902,7 @@ public infix fun Short.until(to: Int): IntRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
-public infix fun Int.until(to: Long): LongRange {
+public fun Int.until(to: Long): LongRange {
     val to_  = (to - 1).toLong()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toLong() .. to_
@@ -912,7 +912,7 @@ public infix fun Int.until(to: Long): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
-public infix fun Long.until(to: Long): LongRange {
+public fun Long.until(to: Long): LongRange {
     val to_  = (to - 1).toLong()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this .. to_
@@ -922,7 +922,7 @@ public infix fun Long.until(to: Long): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
-public infix fun Byte.until(to: Long): LongRange {
+public fun Byte.until(to: Long): LongRange {
     val to_  = (to - 1).toLong()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toLong() .. to_
@@ -932,7 +932,7 @@ public infix fun Byte.until(to: Long): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
-public infix fun Short.until(to: Long): LongRange {
+public fun Short.until(to: Long): LongRange {
     val to_  = (to - 1).toLong()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toLong() .. to_
@@ -941,14 +941,14 @@ public infix fun Short.until(to: Long): LongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Int.until(to: Short): IntRange {
+public fun Int.until(to: Short): IntRange {
     return this .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Long.until(to: Short): LongRange {
+public fun Long.until(to: Short): LongRange {
     return this .. (to.toLong() - 1).toLong()
 }
 
@@ -956,7 +956,7 @@ public infix fun Long.until(to: Short): LongRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Byte.until(to: Short): ShortRange {
+public fun Byte.until(to: Short): ShortRange {
     val to_  = (to - 1).toShort()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this.toShort() .. to_
@@ -966,7 +966,7 @@ public infix fun Byte.until(to: Short): ShortRange {
  * Returns a range from this value up to but excluding the specified [to] value.
  * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Short.until(to: Short): ShortRange {
+public fun Short.until(to: Short): ShortRange {
     val to_  = (to - 1).toShort()
     if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
     return this .. to_

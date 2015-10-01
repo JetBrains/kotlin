@@ -271,18 +271,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("Infix.kt")
-        public void testInfix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Infix.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("InfixModifierApplicability.kt")
-        public void testInfixModifierApplicability() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/InfixModifierApplicability.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IsExpressions.kt");
@@ -9243,29 +9231,29 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix")
+            @TestMetadata("compiler/testData/diagnostics/tests/modifiers/operator")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class OperatorInfix extends AbstractJetDiagnosticsTest {
-                public void testAllFilesPresentInOperatorInfix() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operatorInfix"), Pattern.compile("^(.+)\\.kt$"), true);
+            public static class Operator extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInOperator() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operator"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("LocalFunctions.kt")
                 public void testLocalFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/LocalFunctions.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/LocalFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("MemberFunctions.kt")
                 public void testMemberFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/MemberFunctions.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/MemberFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("Simple.kt")
                 public void testSimple() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/Simple.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/Simple.kt");
                     doTest(fileName);
                 }
             }
