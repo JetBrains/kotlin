@@ -81,13 +81,6 @@ public val Collection<*>.indices: IntRange
     get() = 0..size() - 1
 
 /**
- * Returns an [IntRange] that starts with zero and ends at the value of this number but does not include it.
- */
-@Deprecated("Use 0..n-1 range instead.", ReplaceWith("0..this - 1"))
-public val Int.indices: IntRange
-    get() = 0..this - 1
-
-/**
  * Returns the index of the last item in the list or -1 if the list is empty.
  *
  * @sample test.collections.ListSpecificTest.lastIndex
