@@ -65,7 +65,7 @@ internal class ProjectResolutionFacade(
             }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
-        assert(elements.isNotEmpty(), "elements collection should not be empty")
+        assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
             analysisResults.getValue()!!
         }

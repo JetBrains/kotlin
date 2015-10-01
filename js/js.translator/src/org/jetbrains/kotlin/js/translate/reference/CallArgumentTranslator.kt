@@ -143,8 +143,8 @@ public class CallArgumentTranslator private constructor(
         }
 
         if (isNativeFunctionCall && hasSpreadOperator) {
-            assert(argsBeforeVararg != null, "argsBeforeVararg should not be null")
-            assert(concatArguments != null, "concatArguments should not be null")
+            assert(argsBeforeVararg != null) { "argsBeforeVararg should not be null" }
+            assert(concatArguments != null) { "concatArguments should not be null" }
 
             concatArguments!!.addAll(result)
 
@@ -269,7 +269,7 @@ public class CallArgumentTranslator private constructor(
         }
 
         private fun concatArgumentsIfNeeded(concatArguments: List<JsExpression>): JsExpression {
-            assert(concatArguments.size() > 0, "concatArguments.size should not be 0")
+            assert(concatArguments.size() > 0) { "concatArguments.size should not be 0" }
 
             if (concatArguments.size() > 1) {
                 return JsInvocation(JsNameRef("concat", concatArguments.get(0)), concatArguments.subList(1, concatArguments.size()))
@@ -281,7 +281,7 @@ public class CallArgumentTranslator private constructor(
         }
 
         private fun prepareConcatArguments(arguments: List<ValueArgument>, list: List<JsExpression>): MutableList<JsExpression> {
-            assert(arguments.size() != 0, "arguments.size should not be 0")
+            assert(arguments.size() != 0) { "arguments.size should not be 0" }
             assert(arguments.size() == list.size()) { "arguments.size: " + arguments.size() + " != list.size: " + list.size() }
 
             val concatArguments = SmartList<JsExpression>()

@@ -58,10 +58,8 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
 
         assertNotNull(psiClass, "Can't find class for $fqName")
         psiClass!!
-        assert(psiClass is KotlinLightClassForExplicitDeclaration || psiClass is KotlinLightClassForFacade,
-               "Should be an explicit light class, but was $fqName ${psiClass.javaClass}")
-        assert(psiClass !is KotlinLightClassForDecompiledDeclaration,
-               "Should not be decompiled light class: $fqName ${psiClass.javaClass}")
+        assert(psiClass is KotlinLightClassForExplicitDeclaration || psiClass is KotlinLightClassForFacade) { "Should be an explicit light class, but was $fqName ${psiClass.javaClass}" }
+        assert(psiClass !is KotlinLightClassForDecompiledDeclaration) { "Should not be decompiled light class: $fqName ${psiClass.javaClass}" }
     }
 
     private fun getProjectDescriptor(dir: String) =

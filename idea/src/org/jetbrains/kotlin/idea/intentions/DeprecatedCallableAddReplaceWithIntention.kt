@@ -58,7 +58,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
     override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
         val replaceWith = element.suggestReplaceWith()!!
 
-        assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression, "Formatted expression text should not contain \\n or \\r")
+        assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression) { "Formatted expression text should not contain \\n or \\r" }
 
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith()!!
         val psiFactory = JetPsiFactory(element)

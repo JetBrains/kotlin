@@ -65,7 +65,7 @@ internal class FixStackContext(val methodNode: MethodNode) {
                     inlineMarkersStack.push(insnNode)
                 }
                 InlineCodegenUtil.isAfterInlineMarker(insnNode) -> {
-                    assert(inlineMarkersStack.isNotEmpty(), "Mismatching after inline method marker at ${indexOf(insnNode)}")
+                    assert(inlineMarkersStack.isNotEmpty()) { "Mismatching after inline method marker at ${indexOf(insnNode)}" }
                     openingInlineMethodMarker[insnNode] = inlineMarkersStack.pop()
                 }
             }
@@ -78,23 +78,23 @@ internal class FixStackContext(val methodNode: MethodNode) {
 
     private fun visitFixStackBeforeJump(insnNode: AbstractInsnNode) {
         val next = insnNode.getNext()
-        assert(next.getOpcode() == Opcodes.GOTO, "${indexOf(insnNode)}: should be followed by GOTO")
+        assert(next.getOpcode() == Opcodes.GOTO) { "${indexOf(insnNode)}: should be followed by GOTO" }
         breakContinueGotoNodes.add(next as JumpInsnNode)
     }
 
     private fun visitFakeAlwaysTrueIfeq(insnNode: AbstractInsnNode) {
-        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ, "${indexOf(insnNode)}: should be followed by IFEQ")
+        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
         fakeAlwaysTrueIfeqMarkers.add(insnNode)
     }
 
     private fun visitFakeAlwaysFalseIfeq(insnNode: AbstractInsnNode) {
-        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ, "${indexOf(insnNode)}: should be followed by IFEQ")
+        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
         fakeAlwaysFalseIfeqMarkers.add(insnNode)
     }
 
     private fun visitSaveStackBeforeTry(insnNode: AbstractInsnNode) {
         val tryStartLabel = insnNode.getNext()
-        assert(tryStartLabel is LabelNode, "${indexOf(insnNode)}: save should be followed by a label")
+        assert(tryStartLabel is LabelNode) { "${indexOf(insnNode)}: save should be followed by a label" }
         saveStackNodesForTryStartLabel[tryStartLabel as LabelNode] = insnNode
     }
 

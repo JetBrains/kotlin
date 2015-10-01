@@ -308,7 +308,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
-        assert(directives.size() == expected.size(), "Sizes of test directives are different")
+        assert(directives.size() == expected.size()) { "Sizes of test directives are different" }
         return directives.zip(expected)
     }
 

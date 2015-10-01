@@ -141,7 +141,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             return true
         }
 
-        assert(!closestModifiableDescriptors.isEmpty(), "Should contain original declaration or some of its super declarations")
+        assert(!closestModifiableDescriptors.isEmpty()) { "Should contain original declaration or some of its super declarations" }
         val deepestSuperDeclarations =
                 (callableDescriptor as? CallableMemberDescriptor)?.let { OverrideResolver.getDeepestSuperDeclarations(it) }
                 ?: Collections.singletonList(callableDescriptor)

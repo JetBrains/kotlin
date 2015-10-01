@@ -204,7 +204,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     fun build() {
         try {
-            assert (config.currentEditor != null, "Can't run build() without editor")
+            assert(config.currentEditor != null) { "Can't run build() without editor" }
             if (finished) throw IllegalStateException("Current builder has already finished")
             buildNext(config.callableInfos.iterator())
         }

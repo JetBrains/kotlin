@@ -63,7 +63,7 @@ private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest
 }
 
 public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
-    assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
+    assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed()) { "Write access needed" }
     val project = getProject()
     val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
     project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))

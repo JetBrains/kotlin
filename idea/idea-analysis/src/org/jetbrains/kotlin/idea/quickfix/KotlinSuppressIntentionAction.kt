@@ -91,7 +91,7 @@ public class KotlinSuppressIntentionAction(
 
     private fun suppressAtExpression(caretBox: CaretBox<JetExpression>, id: String) {
         val suppressAt = caretBox.expression
-        assert(suppressAt !is JetDeclaration, "Declarations should have been checked for above")
+        assert(suppressAt !is JetDeclaration) { "Declarations should have been checked for above" }
 
         val parentheses = JetPsiPrecedences.getPrecedence(suppressAt) > JetPsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
         val placeholderText = "PLACEHOLDER_ID"

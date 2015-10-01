@@ -93,7 +93,7 @@ public object JarUserDataManager {
     private fun storeUserData(counter: JarBooleanPropertyCounter, localJarFile: VirtualFile,
                               hasFileWithProperty: Boolean?, timestamp: Long? = null) {
         assert(localJarFile.isInLocalFileSystem)
-        assert((timestamp == null) == (hasFileWithProperty == null), "Using empty timestamp is only allowed for storing not counted value")
+        assert((timestamp == null) == (hasFileWithProperty == null)) { "Using empty timestamp is only allowed for storing not counted value" }
 
         localJarFile.putUserData(counter.key,
                                  PropertyData(hasFileWithProperty, timestamp ?: localJarFile.timeStamp))

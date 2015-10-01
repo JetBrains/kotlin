@@ -53,7 +53,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
     override fun getContextForPackage(files: Collection<JetFile>): LightClassConstructionContext {
-        assert(!files.isEmpty(), "No files in package")
+        assert(!files.isEmpty()) { "No files in package" }
 
         return getContextForFiles(files)
     }
@@ -90,7 +90,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun getContextForFacade(files: Collection<JetFile>): LightClassConstructionContext {
-        assert(!files.isEmpty(), "No files in facade")
+        assert(!files.isEmpty()) { "No files in facade" }
 
         return getContextForFiles(files)
     }

@@ -137,7 +137,7 @@ public class DelegationTranslator(
             val jsFunction = JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()),
                                         "setter for " + setterDescriptor.getName().asString())
 
-            assert(setterDescriptor.getValueParameters().size() == 1, "Setter must have 1 parameter")
+            assert(setterDescriptor.getValueParameters().size() == 1) { "Setter must have 1 parameter" }
             val defaultParameter = JsParameter(jsFunction.getScope().declareTemporary())
             val defaultParameterRef = defaultParameter.getName().makeRef()
 

@@ -83,7 +83,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             return this
         }
 
-        assert(text.indexOf('\r') < 0, "No '\\r' allowed")
+        assert(text.indexOf('\r') < 0) { "No '\\r' allowed" }
 
         if (endOfLineCommentAtEnd) {
             if (text[0] != '\n') builder.append('\n')

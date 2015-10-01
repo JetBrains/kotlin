@@ -73,7 +73,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
         val result = super.additionalJsFiles(ecmaVersion)
         val dirName = getTestName(true)
-        assert(dependencies != null, "dependencies should not be null")
+        assert(dependencies != null) { "dependencies should not be null" }
 
         for (moduleName in dependencies!!.keySet()) {
             if (moduleName != MAIN_MODULE_NAME) {
@@ -86,7 +86,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
         val dependenciesTxt = upsearchFile(testDataDir, "dependencies.txt")
-        assert(dependenciesTxt.isFile(), "moduleDependencies should not be null")
+        assert(dependenciesTxt.isFile()) { "moduleDependencies should not be null" }
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {

@@ -132,8 +132,7 @@ private class ClassClsStubBuilder(
         if (!isClass() || !classProto.hasPrimaryConstructor()) return
         val primaryConstructorProto = classProto.getPrimaryConstructor()
 
-        assert(classProto.getPrimaryConstructor().hasData(),
-               "Primary constructor in class is always non-default, so data should not be empty")
+        assert(classProto.getPrimaryConstructor().hasData()) { "Primary constructor in class is always non-default, so data should not be empty" }
 
         createCallableStub(classOrObjectStub, primaryConstructorProto.getData(), c, ProtoContainer(classProto, null, c.nameResolver))
     }

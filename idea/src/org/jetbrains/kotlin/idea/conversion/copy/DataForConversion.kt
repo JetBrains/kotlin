@@ -33,7 +33,7 @@ data class DataForConversion private constructor(
         fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
             val startOffsets = copiedCode.startOffsets.clone()
             val endOffsets = copiedCode.endOffsets.clone()
-            assert(startOffsets.size() == endOffsets.size(), "Must have the same size")
+            assert(startOffsets.size() == endOffsets.size()) { "Must have the same size" }
 
             var fileText = copiedCode.fileText
             var file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, fileText) as PsiJavaFile
