@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.rmi.DummyProfiler
 import org.jetbrains.kotlin.rmi.Profiler
+import org.jetbrains.kotlin.rmi.RemoteLookupTracker
 
 
-class RemoteLookupTrackerClient(val proxy: CompileService.RemoteLookupTracker, val profiler: Profiler = DummyProfiler()) : LookupTracker {
+class RemoteLookupTrackerClient(val proxy: RemoteLookupTracker, val profiler: Profiler = DummyProfiler()) : LookupTracker {
 
     private val isDoNothing = profiler.withMeasure(this) { proxy.isDoNothing() }
 

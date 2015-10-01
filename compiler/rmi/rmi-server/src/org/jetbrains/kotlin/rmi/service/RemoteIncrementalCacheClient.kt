@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
-import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.rmi.DummyProfiler
 import org.jetbrains.kotlin.rmi.Profiler
+import org.jetbrains.kotlin.rmi.RemoteIncrementalCache
 
-public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache, val profiler: Profiler = DummyProfiler()): IncrementalCache {
+public class RemoteIncrementalCacheClient(val cache: RemoteIncrementalCache, val profiler: Profiler = DummyProfiler()): IncrementalCache {
 
     override fun getObsoletePackageParts(): Collection<String> = profiler.withMeasure(this) { cache.getObsoletePackageParts() }
 

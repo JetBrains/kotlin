@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.rmi
 
-import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
-import org.jetbrains.kotlin.modules.TargetId
-import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -29,67 +25,6 @@ public interface CompileService : Remote {
         PLAIN,
         XML
     }
-
-    public interface RemoteIncrementalCache : Remote {
-        @Throws(RemoteException::class)
-        public fun getObsoletePackageParts(): Collection<String>
-
-        @Throws(RemoteException::class)
-        public fun getObsoleteMultifileClassFacades(): Collection<String>
-
-        @Throws(RemoteException::class)
-        public fun getMultifileFacade(partInternalName: String): String?
-
-        @Throws(RemoteException::class)
-        public fun getPackagePartData(fqName: String): JvmPackagePartProto?
-
-        @Throws(RemoteException::class)
-        public fun getModuleMappingData(): ByteArray?
-
-        @Throws(RemoteException::class)
-        public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
-
-        @Throws(RemoteException::class)
-        fun getClassFilePath(internalClassName: String): String
-
-        @Throws(RemoteException::class)
-        public fun close()
-
-        @Throws(RemoteException::class)
-        public fun getMultifileFacadeParts(internalName: String): Collection<String>?
-    }
-
-    public interface RemoteLookupTracker : Remote {
-        @Throws(RemoteException::class)
-        fun record(
-                lookupContainingFile: String,
-                lookupLine: Int?,
-                lookupColumn: Int?,
-                scopeFqName: String,
-                scopeKind: ScopeKind,
-                name: String
-        )
-        @Throws(RemoteException::class)
-        fun isDoNothing(): Boolean
-    }
-
-    public interface RemoteIncrementalCompilationComponents : Remote {
-        @Throws(RemoteException::class)
-        public fun getIncrementalCache(target: TargetId): RemoteIncrementalCache
-
-        @Throws(RemoteException::class)
-        public fun getLookupTracker(): RemoteLookupTracker
-    }
-
-    public interface RemoteCompilationCanceledStatus : Remote {
-        @Throws(RemoteException::class)
-        fun checkCanceled(): Unit
-    }
-
-    public data class RemoteCompilationServices(
-            public val incrementalCompilationComponents: RemoteIncrementalCompilationComponents? = null,
-            public val compilationCanceledStatus: RemoteCompilationCanceledStatus? = null
-    ) : Serializable
 
     @Throws(RemoteException::class)
     public fun getCompilerId(): CompilerId
