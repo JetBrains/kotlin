@@ -155,9 +155,9 @@ class SmartCompletion(
 
         val result = SmartList<LookupElement>()
         val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade)
-        val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
+        val infoMatcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
 
-        result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
+        result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
             lookupElementFactory.createLookupElementsInSmartCompletion(descriptor, bindingContext, true)
         }
 
@@ -180,8 +180,8 @@ class SmartCompletion(
 
         if (!forBasicCompletion) { // basic completion adds keyword values on its own
             val keywordValueConsumer = object : KeywordValues.Consumer {
-                override fun consume(lookupString: String, expectedInfoClassifier: (ExpectedInfo) -> ExpectedInfoClassification, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
-                    items.addLookupElements(null, expectedInfos, expectedInfoClassifier) {
+                override fun consume(lookupString: String, expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
+                    items.addLookupElements(null, expectedInfos, expectedInfoMatcher) {
                         val lookupElement = factory()
                         lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
                         listOf(lookupElement)
@@ -266,8 +266,8 @@ class SmartCompletion(
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix(), resolutionFacade)
             for (item in items) {
                 val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
-                val classifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
-                addLookupElements(null, expectedInfos, classifier) {
+                val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
+                addLookupElements(null, expectedInfos, matcher) {
                     item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()
                 }
             }

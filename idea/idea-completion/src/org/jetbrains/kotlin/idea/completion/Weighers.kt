@@ -233,18 +233,18 @@ class SmartCompletionInBasicWeigher(
 
         if (fuzzyTypes.isEmpty()) return NO_MATCH_WEIGHT
 
-        val classified: Collection<Pair<ExpectedInfo, ExpectedInfoClassification>> = expectedInfos.map { it to fuzzyTypes.classifyExpectedInfo(it) }
-        if (classified.all { it.second == ExpectedInfoClassification.noMatch }) return NO_MATCH_WEIGHT
+        val matched: Collection<Pair<ExpectedInfo, ExpectedInfoMatch>> = expectedInfos.map { it to fuzzyTypes.matchExpectedInfo(it) }
+        if (matched.all { it.second == ExpectedInfoMatch.noMatch }) return NO_MATCH_WEIGHT
 
         val nameSimilarity = if (name != null) {
-            val matchingInfos = classified.filter { it.second != ExpectedInfoClassification.noMatch }.map { it.first }
+            val matchingInfos = matched.filter { it.second != ExpectedInfoMatch.noMatch }.map { it.first }
             calcNameSimilarity(name.asString(), matchingInfos)
         }
         else {
             0
         }
 
-        return if (classified.any { it.second.isMatch() })
+        return if (matched.any { it.second.isMatch() })
             fullMatchWeight(nameSimilarity)
         else
             ifNotNullMatchWeight(nameSimilarity)

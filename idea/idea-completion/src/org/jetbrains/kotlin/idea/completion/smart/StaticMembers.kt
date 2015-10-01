@@ -69,19 +69,19 @@ class StaticMembers(
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(scope.getContainingDeclaration(), bindingContext, context)) return
 
-            val classifier: (ExpectedInfo) -> ExpectedInfoClassification
+            val matcher: (ExpectedInfo) -> ExpectedInfoMatch
             if (descriptor is CallableDescriptor) {
                 val returnType = descriptor.fuzzyReturnType() ?: return
-                classifier = { expectedInfo -> returnType.classifyExpectedInfo(expectedInfo) }
+                matcher = { expectedInfo -> returnType.classifyExpectedInfo(expectedInfo) }
             }
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
-                classifier = { ExpectedInfoClassification.match(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
+                matcher = { ExpectedInfoMatch.match(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
             else {
                 return
             }
 
-            collection.addLookupElements(descriptor, expectedInfos, classifier) {
+            collection.addLookupElements(descriptor, expectedInfos, matcher) {
                 descriptor -> createLookupElements(descriptor, classDescriptor)
             }
         }

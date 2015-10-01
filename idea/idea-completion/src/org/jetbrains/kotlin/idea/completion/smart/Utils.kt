@@ -119,7 +119,7 @@ fun LookupElement.addTailAndNameSimilarity(
     return lookupElement
 }
 
-class ExpectedInfoClassification
+class ExpectedInfoMatch
 private constructor(
         val substitutor: TypeSubstitutor?,
         val makeNotNullable: Boolean
@@ -127,35 +127,35 @@ private constructor(
     fun isMatch() = substitutor != null && !makeNotNullable
 
     companion object {
-        val noMatch = ExpectedInfoClassification(null, false)
-        fun match(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)
-        fun ifNotNullMatch(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, true)
+        val noMatch = ExpectedInfoMatch(null, false)
+        fun match(substitutor: TypeSubstitutor) = ExpectedInfoMatch(substitutor, false)
+        fun ifNotNullMatch(substitutor: TypeSubstitutor) = ExpectedInfoMatch(substitutor, true)
     }
 }
 
-fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
+fun Collection<FuzzyType>.matchExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoMatch {
     val sequence = asSequence()
     val substitutor = sequence.map { expectedInfo.matchingSubstitutor(it) }.firstOrNull()
     if (substitutor != null) {
-        return ExpectedInfoClassification.match(substitutor)
+        return ExpectedInfoMatch.match(substitutor)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
         val substitutor2 = sequence.map { expectedInfo.matchingSubstitutor(it.makeNotNullable()) }.firstOrNull()
         if (substitutor2 != null) {
-            return ExpectedInfoClassification.ifNotNullMatch(substitutor2)
+            return ExpectedInfoMatch.ifNotNullMatch(substitutor2)
         }
     }
 
-    return ExpectedInfoClassification.noMatch
+    return ExpectedInfoMatch.noMatch
 }
 
-fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).classifyExpectedInfo(expectedInfo)
+fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
 
 fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
         descriptor: TDescriptor,
         expectedInfos: Collection<ExpectedInfo>,
-        infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+        infoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
         noNameSimilarityForReturnItself: Boolean = false,
         lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
 ) {
@@ -170,7 +170,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
     val matchedInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     val makeNullableInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     for (info in expectedInfos) {
-        val classification = infoClassifier(info)
+        val classification = infoMatcher(info)
         if (classification.substitutor != null) {
             @Suppress("UNCHECKED_CAST")
             val substitutedDescriptor = descriptor.substituteFixed(classification.substitutor)

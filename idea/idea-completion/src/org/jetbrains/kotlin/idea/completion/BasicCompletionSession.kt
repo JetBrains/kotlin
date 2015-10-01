@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoClassification
+import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
@@ -278,13 +278,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         val keywordsToSkip = HashSet<String>()
 
         val keywordValueConsumer = object : KeywordValues.Consumer {
-            override fun consume(lookupString: String, expectedInfoClassifier: (ExpectedInfo) -> ExpectedInfoClassification, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
+            override fun consume(lookupString: String, expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
                 keywordsToSkip.add(lookupString)
                 val lookupElement = factory()
                 val matched = expectedInfos.any {
-                    val classification = expectedInfoClassifier(it)
-                    assert(!classification.makeNotNullable) { "Nullable keyword values not supported" }
-                    classification.isMatch()
+                    val match = expectedInfoMatcher(it)
+                    assert(!match.makeNotNullable) { "Nullable keyword values not supported" }
+                    match.isMatch()
                 }
                 if (matched) {
                     lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, matched)

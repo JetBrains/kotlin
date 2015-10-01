@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoClassification
+import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
-import org.jetbrains.kotlin.idea.completion.smart.classifyExpectedInfo
+import org.jetbrains.kotlin.idea.completion.smart.matchExpectedInfo
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -40,7 +40,7 @@ object KeywordValues {
     interface Consumer {
         fun consume(
                 lookupString: String,
-                expectedInfoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+                expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
                 priority: SmartCompletionItemPriority,
                 factory: () -> LookupElement)
     }
@@ -54,29 +54,29 @@ object KeywordValues {
             isJvmModule: Boolean
     ) {
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            val booleanInfoClassifier = classifier@ { info: ExpectedInfo ->
+            val booleanInfoMatcher = matcher@ { info: ExpectedInfo ->
                 // no sense in true or false as when entry
-                if (info.additionalData is WhenEntryAdditionalData) return@classifier ExpectedInfoClassification.noMatch
+                if (info.additionalData is WhenEntryAdditionalData) return@matcher ExpectedInfoMatch.noMatch
 
                 if (info.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false)
-                    ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
+                    ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)
                 else
-                    ExpectedInfoClassification.noMatch
+                    ExpectedInfoMatch.noMatch
             }
-            consumer.consume("true",  booleanInfoClassifier, SmartCompletionItemPriority.TRUE) {
+            consumer.consume("true",  booleanInfoMatcher, SmartCompletionItemPriority.TRUE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "true").bold()
             }
-            consumer.consume("false",  booleanInfoClassifier, SmartCompletionItemPriority.FALSE) {
+            consumer.consume("false",  booleanInfoMatcher, SmartCompletionItemPriority.FALSE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "false").bold()
             }
 
-            val nullClassifier = { info: ExpectedInfo ->
+            val nullMatcher = { info: ExpectedInfo ->
                 if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
-                    ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
+                    ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)
                 else
-                    ExpectedInfoClassification.noMatch
+                    ExpectedInfoMatch.noMatch
             }
-            consumer.consume("null", nullClassifier, SmartCompletionItemPriority.NULL) {
+            consumer.consume("null", nullMatcher, SmartCompletionItemPriority.NULL) {
                 LookupElementBuilder.create(KeywordLookupObject(), "null").bold()
             }
         }
@@ -87,8 +87,8 @@ object KeywordValues {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
                 val classLiteralType = JetTypeImpl.create(Annotations.EMPTY, kClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
                 val kClassTypes = listOf(FuzzyType(classLiteralType, emptyList()))
-                val kClassClassifier = { info: ExpectedInfo -> kClassTypes.classifyExpectedInfo(info) }
-                consumer.consume("class", kClassClassifier, SmartCompletionItemPriority.CLASS_LITERAL) {
+                val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
+                consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
                     LookupElementBuilder.create(KeywordLookupObject(), "class").bold()
                 }
 
@@ -99,8 +99,8 @@ object KeywordValues {
                     if (javaLangClassDescriptor != null) {
                         val javaLangClassType = JetTypeImpl.create(Annotations.EMPTY, javaLangClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
                         val javaClassTypes = listOf(FuzzyType(javaLangClassType, emptyList()))
-                        val javaClassClassifier = { info: ExpectedInfo -> javaClassTypes.classifyExpectedInfo(info) }
-                        consumer.consume("class", javaClassClassifier, SmartCompletionItemPriority.CLASS_LITERAL) {
+                        val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
+                        consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
                             LookupElementBuilder.create(KeywordLookupObject(), "class.java")
                                     .withPresentableText("class")
                                     .withTailText(".java")
