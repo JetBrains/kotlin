@@ -116,8 +116,8 @@ public class ReferenceVariantsHelper(
             else -> throw RuntimeException() //TODO: see KT-9394
         }
 
-        val resolutionScope = resolutionScope(expression) ?: return emptyList()
-        val dataFlowInfo = dataFlowInfo(expression)
+        val resolutionScope = resolutionScope(expression, context) ?: return emptyList()
+        val dataFlowInfo = dataFlowInfo(expression, context)
         val containingDeclaration = resolutionScope.getContainingDeclaration()
 
         val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
@@ -334,14 +334,16 @@ public class ReferenceVariantsHelper(
         return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 
-    //TODO: drop these methods
-    public fun resolutionScope(expression: JetSimpleNameExpression): JetScope? {
-        val parent = expression.parent
-        return context[BindingContext.RESOLUTION_SCOPE, if (parent is JetCallableReferenceExpression) parent else expression]
-    }
+    companion object {
+        //TODO: drop these methods
+        public fun resolutionScope(expression: JetExpression, bindingContext: BindingContext): JetScope? {
+            val parent = expression.parent
+            return bindingContext[BindingContext.RESOLUTION_SCOPE, if (parent is JetCallableReferenceExpression) parent else expression]
+        }
 
-    public fun dataFlowInfo(expression: JetSimpleNameExpression): DataFlowInfo {
-        val parent = expression.parent
-        return context.getDataFlowInfo(if (parent is JetCallableReferenceExpression) parent else expression)
+        public fun dataFlowInfo(expression: JetExpression, bindingContext: BindingContext): DataFlowInfo {
+            val parent = expression.parent
+            return bindingContext.getDataFlowInfo(if (parent is JetCallableReferenceExpression) parent else expression)
+        }
     }
 }

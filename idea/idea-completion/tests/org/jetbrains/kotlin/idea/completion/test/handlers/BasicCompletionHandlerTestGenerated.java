@@ -181,6 +181,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("NotImportedTopLevel.kt")
+        public void testNotImportedTopLevel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/NotImportedTopLevel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/Property.kt");

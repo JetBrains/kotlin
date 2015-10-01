@@ -35,6 +35,18 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("CallableReferenceNotImported")
+    public void testCallableReferenceNotImported() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/CallableReferenceNotImported/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CallableReferenceNotImportedExtension")
+    public void testCallableReferenceNotImportedExtension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/CallableReferenceNotImportedExtension/");
+        doTest(fileName);
+    }
+
     @TestMetadata("CallablesInExcludedPackage")
     public void testCallablesInExcludedPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/CallablesInExcludedPackage/");

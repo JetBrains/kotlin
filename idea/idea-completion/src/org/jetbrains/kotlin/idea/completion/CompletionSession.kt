@@ -35,25 +35,20 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -327,58 +322,12 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
 
-        val receiverExpression: JetExpression?
-        when (callTypeAndReceiver) {
-            is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-                if (callTypeAndReceiver.receiver != null) {
-                    val type = bindingContext[BindingContext.TYPE, callTypeAndReceiver.receiver]
-                    return callTypeAndReceiver to type.singletonOrEmptyList()
-                }
-                else {
-                    receiverExpression = null
-                }
-            }
-
-            is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
-            is CallTypeAndReceiver.DOT -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.UNARY -> receiverExpression = callTypeAndReceiver.receiver
-
-            is CallTypeAndReceiver.IMPORT_DIRECTIVE,
-            is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
-            is CallTypeAndReceiver.TYPE,
-            is CallTypeAndReceiver.UNKNOWN ->
-                // we don't need to highlight immediate members in these cases
-                return callTypeAndReceiver to null
-
-            else -> throw RuntimeException() //TODO: see KT-9394
-        }
-
-        val receiverValues = if (receiverExpression != null) {
-            val expressionType = bindingContext.getType(receiverExpression)
-            expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: emptyList()
-        }
-        else {
-            val resolutionScope = referenceVariantsHelper.resolutionScope(nameExpression)
-            resolutionScope?.getImplicitReceiversWithInstance()?.map { it.value } ?: emptyList()
-        }
-
-        val dataFlowInfo = referenceVariantsHelper.dataFlowInfo(nameExpression)
-
-        var receiverTypes = receiverValues.flatMap { receiverValue ->
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
-            if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
-                resolutionFacade.frontendService<SmartCastManager>()
-                        .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
-            }
-            else {
-                listOf(receiverValue.type)
-            }
-        }
+        var receiverTypes = callTypeAndReceiver.receiverTypes(
+                bindingContext, nameExpression, moduleDescriptor,
+                predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE) {
-            receiverTypes = receiverTypes.map { it.makeNotNullable() }
+            receiverTypes = receiverTypes!!.map { it.makeNotNullable() }
         }
 
         return callTypeAndReceiver to receiverTypes

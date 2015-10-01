@@ -18,14 +18,22 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: DescriptorKindFilter) {
     object UNKNOWN : CallType<Nothing?>(DescriptorKindFilter.ALL)
@@ -137,6 +145,61 @@ public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : Cal
 
                 else -> error("Unknown parent for expression with receiver: $parent")
             }
+        }
+    }
+}
+
+public fun CallTypeAndReceiver<*, *>.receiverTypes(
+        bindingContext: BindingContext,
+        position: JetExpression,
+        moduleDescriptor: ModuleDescriptor,
+        predictableSmartCastsOnly: Boolean
+): Collection<JetType>? {
+    val receiverExpression: JetExpression?
+    when (this) {
+        is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
+            if (receiver != null) {
+                val type = bindingContext[BindingContext.TYPE, receiver]
+                return type.singletonOrEmptyList()
+            }
+            else {
+                receiverExpression = null
+            }
+        }
+
+        is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
+        is CallTypeAndReceiver.DOT -> receiverExpression = receiver
+        is CallTypeAndReceiver.SAFE -> receiverExpression = receiver
+        is CallTypeAndReceiver.INFIX -> receiverExpression = receiver
+        is CallTypeAndReceiver.UNARY -> receiverExpression = receiver
+
+        is CallTypeAndReceiver.IMPORT_DIRECTIVE,
+        is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
+        is CallTypeAndReceiver.TYPE,
+        is CallTypeAndReceiver.UNKNOWN ->
+            return null
+
+        else -> throw RuntimeException() //TODO: see KT-9394
+    }
+
+    val receiverValues = if (receiverExpression != null) {
+        val expressionType = bindingContext.getType(receiverExpression)
+        expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: return emptyList()
+    }
+    else {
+        val resolutionScope = ReferenceVariantsHelper.resolutionScope(position, bindingContext) ?: return emptyList()
+        resolutionScope.getImplicitReceiversWithInstance().map { it.value }
+    }
+
+    val dataFlowInfo = ReferenceVariantsHelper.dataFlowInfo(position, bindingContext)
+
+    return receiverValues.flatMap { receiverValue ->
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
+        if (dataFlowValue.isPredictable || !predictableSmartCastsOnly) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
+            SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
+        }
+        else {
+            listOf(receiverValue.type)
         }
     }
 }

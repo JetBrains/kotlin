@@ -24,23 +24,19 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.get
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
@@ -94,12 +90,12 @@ public class KotlinIndicesHelper(
     }
 
     public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<CallableDescriptor> {
-        val (callType, receiverValues) = receiverValues(expression, bindingContext)
-        if (receiverValues.isEmpty()) return emptyList()
+        val callTypeAndReceiver = CallTypeAndReceiver.detect(expression)
+        val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, expression, moduleDescriptor, predictableSmartCastsOnly = false)
+        if (receiverTypes == null || receiverTypes.isEmpty()) return emptyList()
 
-        val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
-
-        val receiverTypeNames = possibleReceiverTypeNames(receiverValues, dataFlowInfo, bindingContext)
+        val receiverTypeNames = HashSet<String>()
+        receiverTypes.forEach { receiverTypeNames.addTypeNames(it) }
 
         val index = JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE
 
@@ -111,18 +107,7 @@ public class KotlinIndicesHelper(
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
-        return findSuitableExtensions(declarations, callType to receiverValues, dataFlowInfo, bindingContext)
-    }
-
-    private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
-        val result = HashSet<String>()
-        for (receiverValue in receiverValues) {
-            val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
-            for (type in smartCastManager.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
-                result.addTypeNames(type)
-            }
-        }
-        return result
+        return findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
     }
 
     private fun MutableCollection<String>.addTypeNames(type: JetType) {
@@ -131,47 +116,19 @@ public class KotlinIndicesHelper(
         constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
-    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Pair<CallType<*>, Collection<ReceiverValue>> {
-        val callTypeAndReceiver = CallTypeAndReceiver.detect(expression)
-        val receiverValues = receiverValues(expression, callTypeAndReceiver.receiver, bindingContext)
-        return callTypeAndReceiver.callType to receiverValues
-    }
-
-    private fun <TReceiver : JetElement?> receiverValues(
-            expression: JetSimpleNameExpression,
-            receiverElement: TReceiver,
-            bindingContext: BindingContext
-    ): Collection<ReceiverValue> {
-        if (receiverElement != null) {
-            if (receiverElement !is JetExpression) return emptyList() //TODO?
-
-            val expressionType = bindingContext.getType(receiverElement)
-            if (expressionType == null || expressionType.isError) return emptyList()
-
-            return listOf(ExpressionReceiver(receiverElement, expressionType))
-        }
-        else {
-            val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
-            return resolutionScope.getImplicitReceiversWithInstance().map { it.value }
-        }
-    }
-
     /**
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      */
     private fun findSuitableExtensions(
             declarations: Sequence<JetCallableDeclaration>,
-            receiverValues: Pair<CallType<*>, Collection<ReceiverValue>>,
-            dataFlowInfo: DataFlowInfo,
-            bindingContext: BindingContext
+            receiverTypes: Collection<JetType>,
+            callType: CallType<*>
     ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()
 
         fun processDescriptor(descriptor: CallableDescriptor) {
             if (descriptorFilter(descriptor)) {
-                for (receiverValue in receiverValues.second) {
-                    result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, receiverValues.first, bindingContext, dataFlowInfo, moduleDescriptor))
-                }
+                result.addAll(descriptor.substituteExtensionIfCallable(receiverTypes, callType))
             }
         }
 
