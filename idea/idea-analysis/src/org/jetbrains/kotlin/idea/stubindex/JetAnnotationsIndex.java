@@ -42,8 +42,9 @@ public class JetAnnotationsIndex extends StringStubIndexExtension<JetAnnotationE
         return KEY;
     }
 
+    @NotNull
     @Override
-    public Collection<JetAnnotationEntry> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetAnnotationEntry> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 
