@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
@@ -36,7 +35,7 @@ public class MultifileClassPartCodegen(
         v: ClassBuilder,
         file: JetFile,
         private val filePartType: Type,
-        private val multifileClassFqName: FqName,
+        private val multifileClassType: Type,
         partContext: FieldOwnerContext<*>,
         state: GenerationState
 ) : MemberCodegen<JetFile>(state, null, partContext, file, v) {
@@ -97,7 +96,7 @@ public class MultifileClassPartCodegen(
 
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
         AsmUtil.writeAnnotationData(av, serializer, packageProto)
-        av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassFqName.shortName().asString())
+        av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
         av.visitEnd()
     }
 }

@@ -89,9 +89,6 @@ public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmB
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
     val partNames = multifileClass.classHeader.filePartClassNames ?: return emptyList()
     return partNames.map {
-        partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it)))
+        partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))))
     }.filterNotNull()
 }
-
-public fun readMultifileClassPartHeaders(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinClassHeader> =
-        findMultifileClassParts(file, multifileClass).map { it.classHeader }
