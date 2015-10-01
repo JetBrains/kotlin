@@ -7,12 +7,12 @@ val String.extensionVal: Int
 val globalVal = 1
 var globalVar = 1
 
+fun funWithFunctionParameter(p: () -> Unit) {}
+
 class C {
     fun memberFun(){}
 
     val memberVal = 1
-
-    fun funWithFunctionParameter(p: () -> Unit) {}
 
     class NestedClass
     inner class InnerClass
@@ -38,16 +38,16 @@ abstract class AbstractClass
 // EXIST: { itemText: "globalVar", attributes: "" }
 // ABSENT: extensionFun
 // ABSENT: extensionVal
-// EXIST: { itemText: "memberFun", attributes: "bold" }
-// EXIST: { itemText: "memberVal", attributes: "bold" }
+// ABSENT: memberFun
+// ABSENT: memberVal
 // EXIST: { itemText: "localFun", attributes: "" }
-// ABSENT: { itemText: "local", attributes: "" }
-// EXIST: { itemText: "companionObjectFun", attributes: "bold" }
+// ABSENT: local
+// ABSENT: companionObjectFun
 // EXIST: { itemText: "C", attributes: "" }
 // EXIST: { itemText: "NestedClass", attributes: "" }
-// EXIST: { itemText: "InnerClass", attributes: "bold" }
+// ABSENT: InnerClass
 // ABSENT: WithPrivateConstructor
 // ABSENT: AbstractClass
 // ABSENT: class
 // ABSENT: class.java
-// EXIST: { itemText: "funWithFunctionParameter", tailText: "(p: () -> Unit)", attributes: "bold" }
+// EXIST: { itemText: "funWithFunctionParameter", tailText: "(p: () -> Unit) (<root>)", attributes: "" }

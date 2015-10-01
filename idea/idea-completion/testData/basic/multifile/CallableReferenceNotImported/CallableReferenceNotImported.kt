@@ -3,7 +3,6 @@ fun String.foo() {
 }
 
 // INVOCATION_COUNT: 2
-// EXIST: extFun
 // EXIST: topLevelFun
 // EXIST: topLevelVal
-// ABSENT: wrongExtFun
+// ABSENT: extFun

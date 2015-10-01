@@ -1098,21 +1098,9 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
-            @TestMetadata("SmartCastThis.kt")
-            public void testSmartCastThis() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SmartCastThis.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("SyntheticExtensions.kt")
             public void testSyntheticExtensions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SyntheticExtensions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensions2.kt")
-            public void testSyntheticExtensions2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SyntheticExtensions2.kt");
                 doTest(fileName);
             }
         }

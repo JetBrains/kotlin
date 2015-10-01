@@ -15,9 +15,9 @@ fun C.foo() {
     val v = ::<caret>
 }
 
-// EXIST: { itemText: "memberFun", attributes: "bold" }
-// EXIST: { itemText: "memberVal", attributes: "bold" }
-// EXIST: { itemText: "hashCode", attributes: "" }
+// ABSENT: memberFun
+// ABSENT: memberVal
+// ABSENT: hashCode
 // ABSENT: companionObjectFun
 // ABSENT: NestedClass
-// EXIST: { itemText: "InnerClass", attributes: "bold" }
+// ABSENT: InnerClass

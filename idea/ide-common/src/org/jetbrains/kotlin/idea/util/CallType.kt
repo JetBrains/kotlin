@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -158,13 +158,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
     val receiverExpression: JetExpression?
     when (this) {
         is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-            if (receiver != null) {
-                val type = bindingContext[BindingContext.TYPE, receiver]
-                return type.singletonOrEmptyList()
-            }
-            else {
-                receiverExpression = null
-            }
+            return receiver?.let { bindingContext[BindingContext.TYPE, it] }.singletonOrEmptyList()
         }
 
         is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
@@ -187,11 +181,11 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: return emptyList()
     }
     else {
-        val resolutionScope = ReferenceVariantsHelper.resolutionScope(position, bindingContext) ?: return emptyList()
+        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return emptyList()
         resolutionScope.getImplicitReceiversWithInstance().map { it.value }
     }
 
-    val dataFlowInfo = ReferenceVariantsHelper.dataFlowInfo(position, bindingContext)
+    val dataFlowInfo = bindingContext.getDataFlowInfo(position)
 
     return receiverValues.flatMap { receiverValue ->
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
