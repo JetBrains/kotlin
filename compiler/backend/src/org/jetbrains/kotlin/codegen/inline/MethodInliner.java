@@ -428,7 +428,7 @@ public class MethodInliner {
                     String desc = methodInsnNode.desc;
                     String name = methodInsnNode.name;
                     //TODO check closure
-                    int paramLength = Type.getArgumentTypes(desc).length + 1;//non static
+                    int paramLength = Type.getArgumentsAndReturnSizes(desc) >> 2;//non static
                     if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                         SourceValue sourceValue = frame.getStack(frame.getStackSize() - paramLength);
 

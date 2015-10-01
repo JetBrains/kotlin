@@ -130,6 +130,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("capturedInExtension.1.kt")
+        public void testCapturedInExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/capturedInExtension.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("extension.1.kt")
         public void testExtension() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extension.1.kt");
