@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -76,9 +75,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
 
-        builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
 
         ModuleDescriptorImpl module = JetTestUtils.createEmptyModule();
+        builtIns = module.getBuiltIns();
         ContainerForTests container = DiPackage.createContainerForTests(getProject(), module);
         module.setDependencies(Collections.singletonList(module));
         module.initialize(PackageFragmentProvider.Empty.INSTANCE$);

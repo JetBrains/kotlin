@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -87,7 +86,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, JsPlatform.builtIns.builtInsModule)
+        module.setDependencies(module, module.builtIns.builtInsModule)
 
         return module
     }

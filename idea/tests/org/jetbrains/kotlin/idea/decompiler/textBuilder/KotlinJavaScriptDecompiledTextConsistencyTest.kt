@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -35,8 +33,6 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.sure
-import java.util.*
-import kotlin.properties.Delegates
 
 public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getPackages(): List<FqName> = listOf(
@@ -65,7 +61,7 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, JsPlatform.builtIns.builtInsModule)
+        module.setDependencies(module, module.builtIns.builtInsModule)
 
         return module
     }

@@ -16,21 +16,23 @@
 
 package org.jetbrains.kotlin.resolve.constraintSystem
 
-import org.jetbrains.kotlin.test.JetTestUtils
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import java.util.regex.Pattern
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.JetTypeImpl
+import java.util.regex.Pattern
 
 public class ConstraintSystemTestData(
         context: BindingContext,
@@ -63,7 +65,7 @@ public class ConstraintSystemTestData(
         if (matcher.find()) {
             val number = matcher.group(1)!!
             return JetTypeImpl.create(
-                    Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), JvmPlatform.builtIns), false, listOf(),
+                    Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
                     JetScope.Empty
             )
         }

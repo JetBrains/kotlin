@@ -91,7 +91,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
             dependencies.add(moduleDescriptor);
         }
 
-        dependencies.add(JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());
+        dependencies.add(getPlatform().getBuiltIns().getBuiltInsModule());
         module.setDependencies(dependencies);
 
         return module;
