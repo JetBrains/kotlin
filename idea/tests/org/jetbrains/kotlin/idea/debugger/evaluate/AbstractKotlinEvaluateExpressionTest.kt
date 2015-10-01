@@ -328,7 +328,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
             val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
             for (labelAsText in labelsAsText) {
-                val labelParts = labelAsText.splitBy("=")
+                val labelParts = labelAsText.split("=")
                 assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
                 val localVariableName = labelParts[0].trim()
                 val labelName = labelParts[1].trim()

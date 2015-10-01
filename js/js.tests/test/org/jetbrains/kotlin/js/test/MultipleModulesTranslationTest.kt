@@ -90,10 +90,10 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
-            val split = line.splitBy("->")
+            val split = line.split("->")
             val module = split[0]
             val dependencies = if (split.size() > 1) split[1] else ""
-            val dependencyList = dependencies.splitBy(",").filterNot { it.isEmpty() }
+            val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
 
             result[module] = dependencyList
         }
