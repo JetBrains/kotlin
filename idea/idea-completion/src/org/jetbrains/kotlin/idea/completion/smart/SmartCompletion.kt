@@ -323,7 +323,7 @@ class SmartCompletion(
             val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(functionType) != null }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false, parametersAndTypeGrayed = true)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text

@@ -59,14 +59,16 @@ class LookupElementFactory(
     public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
-        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
+        val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE
+
+        var lookupElement = createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX)
         if (isInStringTemplateAfterDollar && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (descriptor is FunctionDescriptor && (callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE)) {
+        if (descriptor is FunctionDescriptor && isNormalCall) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
         }
 
@@ -183,9 +185,10 @@ class LookupElementFactory(
             descriptor: DeclarationDescriptor,
             useReceiverTypes: Boolean,
             qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true
+            includeClassTypeArguments: Boolean = true,
+            parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
-        var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments)
+        var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
 
         if (useReceiverTypes) {
             val weight = callableWeight(descriptor)

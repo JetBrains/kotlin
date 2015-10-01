@@ -87,7 +87,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
                 .filter { it.getName().asString() !in documentedParameters }
 
         descriptors.forEach {
-            collector.addElement(lookupElementFactory.createLookupElement(it, useReceiverTypes = false))
+            collector.addElement(lookupElementFactory.createLookupElement(it, useReceiverTypes = false, parametersAndTypeGrayed = true))
         }
     }
 
@@ -108,7 +108,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
         }
 
         scope.getDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
-            val element = lookupElementFactory.createLookupElement(it, useReceiverTypes = false)
+            val element = lookupElementFactory.createLookupElement(it, useReceiverTypes = false, parametersAndTypeGrayed = true)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
                     // insert only plain name here, no qualifier/parentheses/etc.

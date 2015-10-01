@@ -43,14 +43,15 @@ class BasicLookupElementFactory(
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,
             qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true
+            includeClassTypeArguments: Boolean = true,
+            parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, _descriptor)
-        return createLookupElement(_descriptor, declaration, qualifyNestedClasses, includeClassTypeArguments)
+        return createLookupElement(_descriptor, declaration, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
@@ -107,7 +108,8 @@ class BasicLookupElementFactory(
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?,
             qualifyNestedClasses: Boolean,
-            includeClassTypeArguments: Boolean
+            includeClassTypeArguments: Boolean,
+            parametersAndTypeGrayed: Boolean
     ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
@@ -149,18 +151,18 @@ class BasicLookupElementFactory(
         when (descriptor) {
             is FunctionDescriptor -> {
                 val returnType = descriptor.getReturnType()
-                element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
+                element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "", parametersAndTypeGrayed)
 
                 val insertsLambda = (insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null
                 if (insertsLambda) {
-                    element = element.appendTailText(" {...} ", false)
+                    element = element.appendTailText(" {...} ", parametersAndTypeGrayed)
                 }
 
-                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), insertsLambda)
+                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), parametersAndTypeGrayed || insertsLambda)
             }
 
             is VariableDescriptor -> {
-                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()))
+                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()), parametersAndTypeGrayed)
             }
 
             is ClassDescriptor -> {
@@ -189,7 +191,7 @@ class BasicLookupElementFactory(
             }
 
             else -> {
-                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor))
+                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor), parametersAndTypeGrayed)
             }
         }
 
