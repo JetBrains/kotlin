@@ -145,6 +145,8 @@ sealed class ArgumentPositionData(val function: FunctionDescriptor) : ExpectedIn
 
 class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData
 
+object WhenEntryAdditionalData : ExpectedInfo.AdditionalData
+
 class ExpectedInfos(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
@@ -489,10 +491,10 @@ class ExpectedInfos(
         val subject = whenExpression.getSubjectExpression()
         if (subject != null) {
             val subjectType = bindingContext.getType(subject) ?: return null
-            return listOf(ExpectedInfo(subjectType, null, null))
+            return listOf(ExpectedInfo(subjectType, null, null, additionalData = WhenEntryAdditionalData))
         }
         else {
-            return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null))
+            return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null, additionalData = WhenEntryAdditionalData))
         }
     }
 

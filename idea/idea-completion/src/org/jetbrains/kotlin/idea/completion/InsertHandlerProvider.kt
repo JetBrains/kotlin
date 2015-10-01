@@ -27,12 +27,16 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 class InsertHandlerProvider(
-        private val callType: CallType<*>,
+        private val callType: CallType<*>?,
         expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
     public fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
+        if (callType == null) {
+            error("Cannot create InsertHandler when no CallType known")
+        }
+
         return when (descriptor) {
             is FunctionDescriptor -> {
                 val needTypeArguments = needTypeArguments(descriptor)

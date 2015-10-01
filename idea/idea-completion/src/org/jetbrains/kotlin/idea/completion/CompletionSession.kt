@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
@@ -74,6 +75,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val resolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
     protected val project = position.getProject()
+    protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as JetFile)
 
     protected val nameExpression: JetSimpleNameExpression?
     protected val expression: JetExpression?
@@ -292,8 +294,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression!!)
-        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, callTypeAndReceiver)
+        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
                 .filterNonImported(this, referenceVariants)
     }
 
@@ -305,7 +306,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 )
     }
 
-    private fun createLookupElementFactory(callType: CallType<*>, receiverTypes: Collection<JetType>?): LookupElementFactory {
+    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<JetType>?): LookupElementFactory {
         val contextVariablesProvider = {
             nameExpression?.let {
                 referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
@@ -321,7 +322,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<JetType>?> {
         if (nameExpression == null) {
-            return CallTypeAndReceiver.DEFAULT to null
+            return CallTypeAndReceiver.UNKNOWN to null
         }
 
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
@@ -346,7 +347,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
             is CallTypeAndReceiver.IMPORT_DIRECTIVE,
             is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
-            is CallTypeAndReceiver.TYPE ->
+            is CallTypeAndReceiver.TYPE,
+            is CallTypeAndReceiver.UNKNOWN ->
                 // we don't need to highlight immediate members in these cases
                 return callTypeAndReceiver to null
 

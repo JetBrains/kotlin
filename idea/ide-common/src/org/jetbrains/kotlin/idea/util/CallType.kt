@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: DescriptorKindFilter) {
+    object UNKNOWN : CallType<Nothing?>(DescriptorKindFilter.ALL)
+
     object DEFAULT : CallType<Nothing?>(DescriptorKindFilter.ALL)
 
     object DOT : CallType<JetExpression>(DescriptorKindFilter.ALL)
@@ -78,6 +80,7 @@ public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : Cal
         val callType: TCallType,
         val receiver: TReceiver
 ) {
+    object UNKNOWN : CallTypeAndReceiver<Nothing?, CallType.UNKNOWN>(CallType.UNKNOWN, null)
     object DEFAULT : CallTypeAndReceiver<Nothing?, CallType.DEFAULT>(CallType.DEFAULT, null)
     class DOT(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.DOT>(CallType.DOT, receiver)
     class SAFE(receiver: JetExpression) : CallTypeAndReceiver<JetExpression, CallType.SAFE>(CallType.SAFE, receiver)

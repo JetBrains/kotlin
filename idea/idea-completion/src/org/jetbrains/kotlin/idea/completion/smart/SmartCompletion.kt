@@ -19,15 +19,13 @@ package org.jetbrains.kotlin.idea.completion.smart
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.OffsetKey
 import com.intellij.codeInsight.completion.PrefixMatcher
-import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -52,12 +50,14 @@ class SmartCompletion(
         private val expression: JetExpression,
         private val resolutionFacade: ResolutionFacade,
         private val bindingContext: BindingContext,
+        private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         private val prefixMatcher: PrefixMatcher,
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         private val lookupElementFactory: LookupElementFactory,
         private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        private val isJvmModule: Boolean,
         private val forBasicCompletion: Boolean = false
 ) {
     private val expressionWithType = when (callTypeAndReceiver) {
@@ -150,10 +150,11 @@ class SmartCompletion(
     }
 
     private fun filterDescriptor(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+        val callType = callTypeAndReceiver.callType
         if (descriptor in descriptorsToSkip) return emptyList()
 
         val result = SmartList<LookupElement>()
-        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver.callType, resolutionFacade)
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade)
         val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
         result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
@@ -177,23 +178,53 @@ class SmartCompletion(
         val items = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
 
-        if (expectedInfos.isNotEmpty() && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
-                    .addTo(items, inheritanceSearchers, expectedInfos)
-
-            if (expression is JetSimpleNameExpression) {
-                StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, descriptorsToSkip)
+        if (!forBasicCompletion) { // basic completion adds keyword values on its own
+            val keywordValueConsumer = object : KeywordValues.Consumer {
+                override fun consume(lookupString: String, expectedInfoClassifier: (ExpectedInfo) -> ExpectedInfoClassification, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
+                    items.addLookupElements(null, expectedInfos, expectedInfoClassifier) {
+                        val lookupElement = factory()
+                        lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
+                        listOf(lookupElement)
+                    }
+                }
             }
+            KeywordValues.process(keywordValueConsumer, callTypeAndReceiver, bindingContext, resolutionFacade, moduleDescriptor, isJvmModule)
+        }
 
-            if (!forBasicCompletion) {
+        if (expectedInfos.isNotEmpty()) {
+            if (!forBasicCompletion && (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT || callTypeAndReceiver is CallTypeAndReceiver.UNKNOWN /* after this@ */)) {
                 items.addThisItems(expression, expectedInfos, smartCastCalculator)
-
-                LambdaItems.addToCollection(items, expectedInfos)
-
-                KeywordValues.addToCollection(items, expectedInfos, expression)
             }
 
-            MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(items, expectedInfos, expression)
+            if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
+                        .addTo(items, inheritanceSearchers, expectedInfos)
+
+                if (expression is JetSimpleNameExpression) {
+                    StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, descriptorsToSkip)
+                }
+
+                if (!forBasicCompletion) {
+                    LambdaItems.addToCollection(items, expectedInfos)
+
+                    val whenCondition = expressionWithType.parent as? JetWhenConditionWithExpression
+                    if (whenCondition != null) {
+                        val entry = whenCondition.parent as JetWhenEntry
+                        val whenExpression = entry.parent as JetWhenExpression
+                        val entries = whenExpression.entries
+                        if (whenExpression.elseExpression == null && entry == entries.last() && entries.size() != 1) {
+                            val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
+                            items.add(object: LookupElementDecorator<LookupElement>(lookupElement) {
+                                override fun handleInsert(context: InsertionContext) {
+                                    WithTailInsertHandler("->", spaceBefore = true, spaceAfter = true).handleInsert(context, delegate)
+                                }
+                            })
+                        }
+                    }
+                }
+
+                MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(items, expectedInfos, expression)
+            }
         }
 
         val inheritanceSearcher = if (inheritanceSearchers.isNotEmpty())

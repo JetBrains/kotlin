@@ -595,6 +595,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ClassLiteral.kt")
+        public void testClassLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ClassLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassLiteralDotJava.kt")
+        public void testClassLiteralDotJava() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ClassLiteralDotJava.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EmptyQualifier1.kt")
         public void testEmptyQualifier1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier1.kt");

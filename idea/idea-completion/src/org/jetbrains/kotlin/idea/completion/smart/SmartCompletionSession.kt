@@ -39,9 +39,9 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
-            SmartCompletion(it, resolutionFacade,
-                            bindingContext, isVisibleFilter, prefixMatcher, originalSearchScope,
-                            toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver)
+            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
+                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory,
+                            callTypeAndReceiver, isJvmModule)
         }
     }
 

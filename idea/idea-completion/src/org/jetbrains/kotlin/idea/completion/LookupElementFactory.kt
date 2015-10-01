@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>?,
-        private val callType: CallType<*>,
+        private val callType: CallType<*>?,
         private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
         contextVariablesProvider: () -> Collection<VariableDescriptor>
@@ -132,7 +132,7 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(callType, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler(callType!!, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
@@ -175,7 +175,7 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler(callType, inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+            KotlinFunctionInsertHandler(callType!!, inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
         }
     }
 

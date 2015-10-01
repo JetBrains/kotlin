@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoClassification
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
@@ -103,8 +105,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, isVisibleFilter, prefixMatcher,
-                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver, forBasicCompletion = true
+                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
+                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver,
+                isJvmModule, forBasicCompletion = true
         )
     }
 
@@ -272,9 +275,31 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun completeKeywords() {
+        val keywordsToSkip = HashSet<String>()
+
+        val keywordValueConsumer = object : KeywordValues.Consumer {
+            override fun consume(lookupString: String, expectedInfoClassifier: (ExpectedInfo) -> ExpectedInfoClassification, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
+                keywordsToSkip.add(lookupString)
+                val lookupElement = factory()
+                val matched = expectedInfos.any {
+                    val classification = expectedInfoClassifier(it)
+                    assert(!classification.makeNotNullable) { "Nullable keyword values not supported" }
+                    classification.isMatch()
+                }
+                if (matched) {
+                    lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, matched)
+                    lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
+                }
+                collector.addElement(lookupElement)
+            }
+        }
+        KeywordValues.process(keywordValueConsumer, callTypeAndReceiver, bindingContext, resolutionFacade, moduleDescriptor, isJvmModule)
+
         val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
         KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
-            val keyword = lookupElement.getLookupString()
+            val keyword = lookupElement.lookupString
+            if (keyword in keywordsToSkip) return@complete
+
             when (keyword) {
             // if "this" is parsed correctly in the current context - insert it and all this@xxx items
                 "this" -> {
@@ -307,20 +332,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 }
 
                 "class" -> {
-                    if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE) {
-                        if (callTypeAndReceiver.receiver != null) {
-                            collector.addElement(lookupElement)
-
-                            if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as JetFile)) {
-                                val element = LookupElementBuilder.create(KeywordLookupObject(), "class.java")
-                                        .withPresentableText("class")
-                                        .withTailText(".java")
-                                        .bold()
-                                collector.addElement(element)
-                            }
-                        }
-                    }
-                    else {
+                    if (callTypeAndReceiver !is CallTypeAndReceiver.CALLABLE_REFERENCE) { // otherwise it should be handled by KeywordValues
                         collector.addElement(lookupElement)
                     }
                 }
