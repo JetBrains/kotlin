@@ -37,7 +37,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val layoutPaths = getResPaths(path)
         val supportV4 = testDirectory.name.startsWith("support")
         val parser = CliSyntheticFileGeneratorForConversionTest(
-                jetCoreEnvironment.project, File(testDirectory.parent, "AndroidManifest.xml").path, layoutPaths, supportV4)
+                jetCoreEnvironment.project, File(testDirectory.parentFile, "AndroidManifest.xml").path, layoutPaths, supportV4)
 
         val actual = parser.gen().toMap { it.name }
 

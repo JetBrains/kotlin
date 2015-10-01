@@ -106,7 +106,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         var file = File(dir, name)
 
         while (dir != null && dir.isDirectory() && !file.isFile()) {
-            dir = dir.parent
+            dir = dir.parentFile
             file = File(dir, name)
         }
 
