@@ -19,26 +19,9 @@ package kotlin
 
 import java.util.Comparator
 
-/**
- * Compares two values using the specified sequence of functions to calculate the result of the comparison.
- * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
- * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
- * compare as equal, the result of that comparison is returned.
- */
-@Deprecated("Use selector functions accepting nullable T as a receiver.")
-public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
-    require(functions.size() > 0)
-    if (a === b) return 0
-    if (a == null) return -1
-    if (b == null) return 1
-    for (fn in functions) {
-        val v1 = fn(a)
-        val v2 = fn(b)
-        val diff = compareValues(v1, v2)
-        if (diff != 0) return diff
-    }
-    return 0
-}
+@HiddenDeclaration
+@Deprecated("Use compareValuesBy", ReplaceWith("compareValuesBy(a, b, *selectors)"))
+public fun <T> compareValuesByNullable(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int = compareValuesBy(a, b, *selectors)
 
 /**
  * Compares two values using the specified functions [selectors] to calculate the result of the comparison.
@@ -46,8 +29,6 @@ public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comp
  * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
  * compare as equal, the result of that comparison is returned.
  */
-// TODO: Remove platformName after M13
-@kotlin.jvm.JvmName("compareValuesByNullable")
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
     require(selectors.size() > 0)
     for (fn in selectors) {
@@ -110,11 +91,7 @@ public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T>
     }
 }
 
-/**
- * Creates a comparator using the sequence of functions to calculate a result of comparison.
- */
-@Deprecated("Use compareBy() instead", ReplaceWith("compareBy(*functions)"))
-public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T> = compareBy(*functions)
+
 
 /**
  * Creates a comparator using the function to transform value to a [Comparable] instance for comparison.
