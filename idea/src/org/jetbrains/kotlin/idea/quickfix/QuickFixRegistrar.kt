@@ -332,6 +332,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(OperatorModifierFixFactory)
 
-        UNDESCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
+        UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
     }
 }
