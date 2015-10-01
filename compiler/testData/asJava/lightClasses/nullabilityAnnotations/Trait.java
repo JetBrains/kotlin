@@ -35,7 +35,7 @@ public interface Trait {
 
     void setNotNullVar(@org.jetbrains.annotations.NotNull java.lang.String p);
 
-    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27, kind = kotlin.jvm.internal.KotlinSyntheticClass.Kind.TRAIT_IMPL)
+    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27)
     static final class DefaultImpls {
     }
 }

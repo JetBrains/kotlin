@@ -22,7 +22,6 @@ import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -71,15 +70,10 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader ?: return false
 
-    if (header.syntheticClassKind == KotlinSyntheticClass.Kind.PACKAGE_PART) {
-        // Old package parts should not be decompiled and shown anywhere
-        val version = header.version
-        return version.major < 0 || (version.major == 0 && version.minor < 24)
-    }
-
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
            (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind != null && header.classKind != KotlinClass.Kind.CLASS) ||
-           (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+           header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ||
+           header.syntheticClassKind == "PACKAGE_PART"
 }
 
 public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =

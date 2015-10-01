@@ -185,9 +185,7 @@ public object InlineTestUtil {
     }
 
     private fun isClassOrPackagePartKind(header: KotlinClassHeader): Boolean {
-        return header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS
-               || header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART
-               || header.isInterfaceDefaultImpls
+        return header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS || header.isInterfaceDefaultImpls
     }
 
     private fun getClassHeader(file: OutputFile): KotlinClassHeader {

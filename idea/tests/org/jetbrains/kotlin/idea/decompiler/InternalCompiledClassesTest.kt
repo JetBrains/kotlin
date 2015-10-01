@@ -22,22 +22,11 @@ import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
 
 public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/internalClasses"
 
-    fun testNoPackagePartClassesAreBuilt() = doTestNoFilesAreBuiltForSyntheticClass(PACKAGE_PART)
-
-    fun testSamWrapperIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(SAM_WRAPPER)
-
-    fun testSamLambdaIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(SAM_LAMBDA)
-
-    fun testCallableReferenceWrapperIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(CALLABLE_REFERENCE_WRAPPER)
-
-    fun testLocalFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(LOCAL_FUNCTION)
-
-    fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
+    fun testSyntheticClassesAreInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClasses()
 
     fun testLocalClassIsInvisible() = doTestNoPsiFilesAreBuiltForLocalClass(LOCAL_CLASS)
 

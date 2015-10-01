@@ -27,7 +27,7 @@ public class KotlinClassHeader(
         public val annotationData: Array<String>?,
         public val strings: Array<String>?,
         public val classKind: KotlinClass.Kind?,
-        public val syntheticClassKind: KotlinSyntheticClass.Kind?,
+        public val syntheticClassKind: String?,
         public val filePartClassNames: Array<String>?,
         public val multifileClassName: String?,
         public val isInterfaceDefaultImpls: Boolean
@@ -55,4 +55,3 @@ public fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompat
 public fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
 public fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
 public fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
-public fun KotlinClassHeader.isCompatibleSyntheticClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS

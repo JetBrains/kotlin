@@ -10,7 +10,7 @@ public interface Generic <N, NN> {
     @org.jetbrains.annotations.Nullable
     NN b1(@org.jetbrains.annotations.Nullable NN nn);
 
-    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27, kind = kotlin.jvm.internal.KotlinSyntheticClass.Kind.TRAIT_IMPL)
+    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27)
     static final class DefaultImpls {
     }
 }

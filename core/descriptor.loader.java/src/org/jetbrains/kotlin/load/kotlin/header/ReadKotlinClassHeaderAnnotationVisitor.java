@@ -67,7 +67,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinClass.Kind classKind = null;
-    private KotlinSyntheticClass.Kind syntheticClassKind = null;
+    private String syntheticClassKind = null;
     private boolean isInterfaceDefaultImpls = false;
 
     @Nullable
@@ -312,7 +312,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
             if (KotlinSyntheticClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
-                syntheticClassKind = valueOfOrNull(KotlinSyntheticClass.Kind.class, enumEntryName.asString());
+                syntheticClassKind = enumEntryName.asString();
             }
         }
     }

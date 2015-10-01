@@ -90,22 +90,6 @@ public final class JvmAnnotationNames {
         public static final ClassId KIND_CLASS_ID =
                 ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
-
-        /**
-         * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}. Both places should be updated simultaneously.
-         */
-        public enum Kind {
-            PACKAGE_PART,
-            TRAIT_IMPL,
-            LOCAL_TRAIT_IMPL,
-            SAM_WRAPPER,
-            SAM_LAMBDA,
-            CALLABLE_REFERENCE_WRAPPER,
-            LOCAL_FUNCTION,
-            ANONYMOUS_FUNCTION,
-            WHEN_ON_ENUM_MAPPINGS,
-            ;
-        }
     }
 
     @Deprecated

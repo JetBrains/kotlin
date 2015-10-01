@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -220,13 +220,6 @@ public class IncrementalCacheImpl(
                 protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
                 inlineFunctionsMap.process(kotlinClass)
-            header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
-                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
-                packagePartMap.addPackagePart(className)
-
-                constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass)
-            }
             else -> ChangesInfo.NO_CHANGES
         }
 
