@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal;
+package kotlin.jvm.internal.markers;
 
-public interface KMappedMarker {
+public interface KMutableIterator extends KMappedMarker {
 }

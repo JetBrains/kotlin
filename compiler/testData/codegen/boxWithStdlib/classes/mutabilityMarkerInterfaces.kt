@@ -31,27 +31,27 @@ fun expectInterfaces(jClass: Class<*>, expectedInterfaceNames: Set<String>) {
 }
 
 fun box(): String {
-    expectInterfaces(Itr::class.java, setOf("java.util.Iterator", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MItr::class.java, setOf("java.util.Iterator", "kotlin.jvm.internal.KMutableIterator"))
-    expectInterfaces(LItr::class.java, setOf("java.util.ListIterator", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MLItr::class.java, setOf("java.util.ListIterator", "kotlin.jvm.internal.KMutableListIterator"))
-    expectInterfaces(It::class.java, setOf("java.lang.Iterable", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MIt::class.java, setOf("java.lang.Iterable", "kotlin.jvm.internal.KMutableIterable"))
-    expectInterfaces(C::class.java, setOf("java.util.Collection", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MC::class.java, setOf("java.util.Collection", "kotlin.jvm.internal.KMutableCollection"))
-    expectInterfaces(L::class.java, setOf("java.util.List", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(ML::class.java, setOf("java.util.List", "kotlin.jvm.internal.KMutableList"))
-    expectInterfaces(S::class.java, setOf("java.util.Set", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MS::class.java, setOf("java.util.Set", "kotlin.jvm.internal.KMutableSet"))
-    expectInterfaces(M::class.java, setOf("java.util.Map", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MM::class.java, setOf("java.util.Map", "kotlin.jvm.internal.KMutableMap"))
-    expectInterfaces(ME::class.java, setOf("java.util.Map\$Entry", "kotlin.jvm.internal.KMappedMarker"))
-    expectInterfaces(MME::class.java, setOf("java.util.Map\$Entry", "kotlin.jvm.internal.KMutableMap\$Entry"))
+    expectInterfaces(Itr::class.java, setOf("java.util.Iterator", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MItr::class.java, setOf("java.util.Iterator", "kotlin.jvm.internal.markers.KMutableIterator"))
+    expectInterfaces(LItr::class.java, setOf("java.util.ListIterator", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MLItr::class.java, setOf("java.util.ListIterator", "kotlin.jvm.internal.markers.KMutableListIterator"))
+    expectInterfaces(It::class.java, setOf("java.lang.Iterable", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MIt::class.java, setOf("java.lang.Iterable", "kotlin.jvm.internal.markers.KMutableIterable"))
+    expectInterfaces(C::class.java, setOf("java.util.Collection", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MC::class.java, setOf("java.util.Collection", "kotlin.jvm.internal.markers.KMutableCollection"))
+    expectInterfaces(L::class.java, setOf("java.util.List", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(ML::class.java, setOf("java.util.List", "kotlin.jvm.internal.markers.KMutableList"))
+    expectInterfaces(S::class.java, setOf("java.util.Set", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MS::class.java, setOf("java.util.Set", "kotlin.jvm.internal.markers.KMutableSet"))
+    expectInterfaces(M::class.java, setOf("java.util.Map", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MM::class.java, setOf("java.util.Map", "kotlin.jvm.internal.markers.KMutableMap"))
+    expectInterfaces(ME::class.java, setOf("java.util.Map\$Entry", "kotlin.jvm.internal.markers.KMappedMarker"))
+    expectInterfaces(MME::class.java, setOf("java.util.Map\$Entry", "kotlin.jvm.internal.markers.KMutableMap\$Entry"))
     expectInterfaces(L2::class.java, setOf<String>())
     expectInterfaces(ML2::class.java, setOf<String>())
     expectInterfaces(Weird::class.java,
-                     setOf("java.util.Iterator", "kotlin.jvm.internal.KMappedMarker",
-                           "java.util.List", "kotlin.jvm.internal.KMutableList"))
+                     setOf("java.util.Iterator", "kotlin.jvm.internal.markers.KMappedMarker",
+                           "java.util.List", "kotlin.jvm.internal.markers.KMutableList"))
 
     return "OK"
 }

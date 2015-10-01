@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 
 object CheckCast {
-    private val INTRINSICS_CLASS = "kotlin/jvm/internal/Intrinsics"
+    private val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
 
     private val CHECKCAST_METHOD_NAME = hashMapOf(
             "kotlin.MutableIterator" to "asMutableIterator",
@@ -82,6 +82,6 @@ object CheckCast {
     }
 
     private fun getCheckcastIntrinsicMethodSignature(asmType: Type): String =
-            "(Ljava/lang/Object;)${asmType.descriptor}"
+            Type.getMethodDescriptor(asmType, Type.getObjectType("java/lang/Object"));
 
 }

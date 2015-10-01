@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal;
+package kotlin.jvm.internal.markers;
 
-public interface KMutableMap extends KMappedMarker {
-    interface Entry extends KMappedMarker {
-    }
+public interface KMutableList extends KMutableCollection {
 }

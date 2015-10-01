@@ -27,9 +27,10 @@ import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 
 object InstanceOf {
-    private val INTRINSICS_CLASS = "kotlin/jvm/internal/Intrinsics"
+    private val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
 
-    private val INSTANCEOF_METHOD_SIGNATURE = "(Ljava/lang/Object;)Z"
+    private val INSTANCEOF_METHOD_SIGNATURE =
+            Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
 
     private val INSTANCEOF_METHOD_NAME = hashMapOf(
             "kotlin.MutableIterator" to "isMutableIterator",
