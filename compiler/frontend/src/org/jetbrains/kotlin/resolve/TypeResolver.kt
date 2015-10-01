@@ -116,11 +116,40 @@ public class TypeResolver(
 
         if (!type.isBare) {
             for (argument in type.actualType.arguments) {
-                ForceResolveUtil.forceResolveAllContents(argument.type)
+                forceResolveTypeContents(argument.type)
             }
         }
 
         return type
+    }
+
+    /**
+     *  This function is light version of ForceResolveUtil.forceResolveAllContents
+     *  We can't use ForceResolveUtil.forceResolveAllContents here because it runs ForceResolveUtil.forceResolveAllContents(getConstructor()),
+     *  which is unsafe for some cyclic cases. For Example:
+     *  class A: List<A.B> {
+     *    class B
+     *  }
+     *  Here when we resolve class B, we should resolve supertype for A and we shouldn't start resolve for class B,
+     *  otherwise it would be a cycle.
+     *  Now there is no cycle here because member scope for A is very clever and can get lazy descriptor for class B without resolving it.
+     *
+     *  todo: find another way after release
+     */
+    private fun forceResolveTypeContents(type: JetType) {
+        type.annotations // force read type annotations
+        if (type.isFlexible()) {
+            forceResolveTypeContents(type.flexibility().lowerBound)
+            forceResolveTypeContents(type.flexibility().upperBound)
+        }
+        else {
+            type.constructor // force read type constructor
+            for (projection in type.arguments) {
+                if (!projection.isStarProjection) {
+                    forceResolveTypeContents(projection.type)
+                }
+            }
+        }
     }
 
     private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, typeElement: JetTypeElement?): PossiblyBareType {
@@ -343,7 +372,7 @@ public class TypeResolver(
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
                 typeArgument.typeReference?.let {
-                    ForceResolveUtil.forceResolveAllContents(resolveType(scope, it, trace, true))
+                    forceResolveTypeContents(resolveType(scope, it, trace, true))
                 }
             }
         }
