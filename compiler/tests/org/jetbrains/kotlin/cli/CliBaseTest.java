@@ -22,7 +22,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Charsets;
-import kotlin.io.IoPackage;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -104,7 +104,7 @@ public class CliBaseTest {
             @NotNull final String testDataDir,
             @NotNull final String tempDir
     ) throws IOException {
-        List<String> lines = IoPackage.readLines(new File(argsFilePath), Charsets.UTF_8);
+        List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
 
         return ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override
