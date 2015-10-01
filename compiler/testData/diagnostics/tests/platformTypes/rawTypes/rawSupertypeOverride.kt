@@ -3,7 +3,7 @@
 
 import java.util.*;
 
-class A<T extends CharSequence> {
+public class A<T extends CharSequence> {
     A<List<T>> foo(T x, Map<String, List<T>> y, HashMap<T, T> z) {}
 
     void bar(List<Double[]>[][] d) {}
@@ -11,7 +11,7 @@ class A<T extends CharSequence> {
 
 // FILE: RawADerived.java
 
-class RawADerived extends A {
+public class RawADerived extends A {
 }
 
 // FILE: main.kt

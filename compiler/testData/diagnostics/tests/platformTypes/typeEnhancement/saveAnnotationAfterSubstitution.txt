@@ -1,32 +1,32 @@
 package
 
-public/*package*/ /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (T!, T!) -> kotlin.Unit): A<T>
-public/*package*/ /*synthesized*/ fun B1(/*0*/ function: (kotlin.String!, kotlin.String?) -> kotlin.Unit): B1
-public/*package*/ /*synthesized*/ fun B2(/*0*/ function: (kotlin.String!, kotlin.String!) -> kotlin.Unit): B2
-public/*package*/ /*synthesized*/ fun B3(/*0*/ function: (kotlin.String!, kotlin.String!) -> kotlin.Unit): B3
+public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (T!, T!) -> kotlin.Unit): A<T>
+public /*synthesized*/ fun B1(/*0*/ function: (kotlin.String!, kotlin.String?) -> kotlin.Unit): B1
+public /*synthesized*/ fun B2(/*0*/ function: (kotlin.String!, kotlin.String!) -> kotlin.Unit): B2
+public /*synthesized*/ fun B3(/*0*/ function: (kotlin.String!, kotlin.String!) -> kotlin.Unit): B3
 
-public/*package*/ interface A</*0*/ T : kotlin.Any!> {
+public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: T, /*1*/ @org.jetbrains.annotations.Nullable() y: T?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ interface B1 : A<kotlin.String!> {
+public interface B1 : A<kotlin.String!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: kotlin.String, /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.String?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ interface B2 : A<kotlin.String!> {
+public interface B2 : A<kotlin.String!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: kotlin.String, /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.String?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ interface B3 : A<kotlin.String!> {
+public interface B3 : A<kotlin.String!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun foo(/*0*/ @org.jetbrains.annotations.Nullable() x: kotlin.String?, /*1*/ @org.jetbrains.annotations.NotNull() y: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

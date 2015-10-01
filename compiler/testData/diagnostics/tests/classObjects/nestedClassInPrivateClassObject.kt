@@ -10,6 +10,6 @@ class A {
     }
 }
 
-fun f1() = A.Companion.B.<!INVISIBLE_MEMBER!>C<!>
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>f1<!>() = A.Companion.B.<!INVISIBLE_MEMBER!>C<!>
 
 fun f2() = A.Companion.B.C.<!INVISIBLE_MEMBER!>foo<!>()

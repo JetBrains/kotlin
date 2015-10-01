@@ -1,5 +1,5 @@
 // FILE: Super.java
-class Super {
+public class Super {
     void foo(Runnable r) {
     }
 }

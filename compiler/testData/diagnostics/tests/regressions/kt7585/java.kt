@@ -1,10 +1,10 @@
 // FILE: A.java
 
-class A {}
+public class A {}
 
 // FILE: Wrapper.java
 
-abstract class Wrapper<T extends A> {
+public abstract class Wrapper<T extends A> {
     protected T t;
 
     Wrapper(T t) { this.t = t; }

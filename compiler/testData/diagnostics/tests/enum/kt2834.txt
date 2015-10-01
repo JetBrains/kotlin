@@ -1,6 +1,6 @@
 package
 
-public fun MethodKind.hasThis(): kotlin.Boolean
+private fun MethodKind.hasThis(): kotlin.Boolean
 
 private final enum class MethodKind : kotlin.Enum<MethodKind> {
     enum entry INSTANCE

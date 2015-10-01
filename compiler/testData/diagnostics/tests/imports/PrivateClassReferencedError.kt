@@ -11,4 +11,4 @@ package a
 
 import pack1.SomeClass.*
 
-class X : <!INVISIBLE_REFERENCE, INVISIBLE_MEMBER, FINAL_SUPERTYPE!>N<!>()
+private class X : <!INVISIBLE_REFERENCE, INVISIBLE_MEMBER, FINAL_SUPERTYPE!>N<!>()

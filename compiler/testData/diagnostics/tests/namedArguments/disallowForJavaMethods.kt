@@ -1,6 +1,6 @@
 // FILE: JavaSuperClass.java
 
-class JavaSuperClass {
+public class JavaSuperClass {
     public void foo(int javaName) {}
 
     public void multipleParameters(int first, long second, String third) {}

@@ -3,4 +3,4 @@ private enum class MethodKind {
     STATIC
 }
 
-fun MethodKind.hasThis() = this == MethodKind.INSTANCE
+private fun MethodKind.hasThis() = this == MethodKind.INSTANCE

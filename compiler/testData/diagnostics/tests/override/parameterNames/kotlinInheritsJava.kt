@@ -1,6 +1,6 @@
 // FILE: JavaInterface.java
 
-interface JavaInterface {
+public interface JavaInterface {
     void foo(int javaName);
 }
 
