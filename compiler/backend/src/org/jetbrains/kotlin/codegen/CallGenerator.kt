@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.ArrayList
-
 abstract class CallGenerator {
 
     internal class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator() {
@@ -41,8 +39,8 @@ abstract class CallGenerator {
         }
 
         override fun genCallWithoutAssertions(
-                method: CallableMethod, codegen: ExpressionCodegen) {
-            method.genInvokeInstruction(codegen.v)
+                callableMethod: CallableMethod, codegen: ExpressionCodegen) {
+            callableMethod.genInvokeInstruction(codegen.v)
         }
 
         override fun afterParameterPut(
@@ -61,7 +59,7 @@ abstract class CallGenerator {
                 valueParameterDescriptor: ValueParameterDescriptor,
                 argumentExpression: JetExpression,
                 parameterType: Type,
-                index: Int) {
+                parameterIndex: Int) {
             val value = codegen.gen(argumentExpression)
             value.put(parameterType, codegen.v)
         }
@@ -76,22 +74,23 @@ abstract class CallGenerator {
             value.put(value.type, codegen.v)
         }
 
-        override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: ArrayList<ArgumentAndIndex>) {
+        override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) {
             val mark = codegen.myFrameMap.mark()
-            actualArgsWithDeclIndex.reversed().forEach {
-                if (it.reorder) {
-                    val type = it.type!!
-                    it.tempValue = StackValue.local(codegen.frameMap.enterTemp(type), type)
-                    it.tempValue?.store(StackValue.onStack(type), codegen.v)
-                }
+            val reordered = actualArgsWithDeclIndex.withIndex().dropWhile {
+                it.value.declIndex == it.index
             }
 
-            actualArgsWithDeclIndex.sortedBy { it.declIndex }.forEach {
-                it.tempValue?.let {
-                    it.put(it.type, codegen.v)
-                }
+            reordered.reversed().map {
+                val argumentAndDeclIndex = it.value
+                val type = valueParameterTypes.get(argumentAndDeclIndex.declIndex)
+                val stackValue = StackValue.local(codegen.frameMap.enterTemp(type), type)
+                stackValue.store(StackValue.onStack(type), codegen.v)
+                Pair(argumentAndDeclIndex.declIndex, stackValue)
+            }.sortedBy {
+                it.first
+            }.forEach {
+                it.second.put(valueParameterTypes.get(it.first), codegen.v)
             }
-
             mark.dropTo()
         }
     }
@@ -134,5 +133,5 @@ abstract class CallGenerator {
 
     abstract fun putHiddenParams()
 
-    abstract fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: ArrayList<ArgumentAndIndex>)
+    abstract fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
 }

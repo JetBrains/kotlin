@@ -312,7 +312,7 @@ public class MethodInliner {
         Type[] types = Type.getArgumentTypes(node.desc);
         Type returnType = Type.getReturnType(node.desc);
 
-        ArrayList<Type> capturedTypes = parameters.getCapturedTypes();
+        List<Type> capturedTypes = parameters.getCapturedTypes();
         Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
 
         node.instructions.resetLabels();
@@ -559,7 +559,7 @@ public class MethodInliner {
 
     private LambdaInfo getLambdaIfExists(int varIndex) {
         if (varIndex < parameters.getArgsSizeOnStack()) {
-            return parameters.getByByteCodeIndex(varIndex).getLambda();
+            return parameters.getParameterByDeclarationSlot(varIndex).getLambda();
         }
         return null;
     }

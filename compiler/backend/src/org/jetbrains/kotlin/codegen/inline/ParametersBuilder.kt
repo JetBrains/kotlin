@@ -100,10 +100,6 @@ class ParametersBuilder private constructor(){
         return info
     }
 
-    fun listNotCaptured(): List<ParameterInfo> {
-        return Collections.unmodifiableList(valueAndHiddenParams)
-    }
-
     fun markValueParametesStart(){
         this.valueParamStart = valueAndHiddenParams.size()
     }
@@ -118,7 +114,7 @@ class ParametersBuilder private constructor(){
     }
 
     fun buildParameters(): Parameters {
-        return Parameters(listNotCaptured(), Parameters.shift(listCaptured(), nextValueParameterIndex))
+        return Parameters(Collections.unmodifiableList(valueAndHiddenParams), Parameters.shift(listCaptured(), nextValueParameterIndex))
     }
 
     companion object {

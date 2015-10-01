@@ -520,8 +520,8 @@ public class InlineCodegen extends CallGenerator {
         }
 
         invocationParamBuilder.markValueParametesStart();
-        List<ParameterInfo> infos = invocationParamBuilder.listNotCaptured();
-        recordParameterValueInLocalVal(infos.toArray(new ParameterInfo[infos.size()]));
+        List<ParameterInfo> hiddenParameters = invocationParamBuilder.buildParameters().getReal();
+        recordParameterValueInLocalVal(hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
     }
 
     public void leaveTemps() {
@@ -772,7 +772,9 @@ public class InlineCodegen extends CallGenerator {
     }
 
     @Override
-    public void reorderArgumentsIfNeeded(@NotNull ArrayList<ArgumentAndIndex> actualArgsWithDeclIndex) {
+    public void reorderArgumentsIfNeeded(
+            @NotNull List<? extends ArgumentAndDeclIndex> actualArgsWithDeclIndex, @NotNull List<? extends Type> valueParameterTypes
+    ) {
 
     }
 }

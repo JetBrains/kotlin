@@ -29,7 +29,6 @@ import static org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 
 public class LocalVarRemapper {
 
-    private final int allParamsSize;
     private final Parameters params;
     private final int actualParamsSize;
 
@@ -38,36 +37,19 @@ public class LocalVarRemapper {
 
     public LocalVarRemapper(Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
-        this.allParamsSize = params.getArgsSizeOnStack();
         this.params = params;
 
         remapValues = new StackValue [params.getArgsSizeOnStack()];
-        Integer [] declIndexesToActual = new Integer [params.getArgsSizeOnStack()];
-        Integer [] actualDeclShifts = new Integer [params.getArgsSizeOnStack()];
-
-        int index = 0;
-        for (ParameterInfo param : params) {
-            declIndexesToActual[param.declarationIndex] = index;
-            index++;
-        }
 
         int realSize = 0;
-        for (int i = 0; i < declIndexesToActual.length; i++) {
-            Integer declIndexToActual = declIndexesToActual[i];
-            if (declIndexToActual != null) {
-                actualDeclShifts[i] = realSize;
-                realSize += params.get(declIndexToActual).getType().getSize();
-            }
-        }
-
-        realSize = 0;
         for (ParameterInfo info : params) {
+            Integer shift = params.getDeclarationSlot(info);
             if (!info.isSkippedOrRemapped()) {
-                remapValues[actualDeclShifts[info.declarationIndex]] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
+                remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
                 realSize += info.getType().getSize();
             }
             else {
-                remapValues[actualDeclShifts[info.declarationIndex]] = info.isRemapped() ? info.getRemapValue() : null;
+                remapValues[shift] = info.isRemapped() ? info.getRemapValue() : null;
             }
         }
 
@@ -77,8 +59,8 @@ public class LocalVarRemapper {
     public RemapInfo doRemap(int index) {
         int remappedIndex;
 
-        if (index < allParamsSize) {
-            ParameterInfo info = params.getByByteCodeIndex(index);
+        if (index < params.getArgsSizeOnStack()) {
+            ParameterInfo info = params.getParameterByDeclarationSlot(index);
             StackValue remapped = remapValues[index];
             if (info.isSkipped || remapped == null) {
                 return new RemapInfo(info);

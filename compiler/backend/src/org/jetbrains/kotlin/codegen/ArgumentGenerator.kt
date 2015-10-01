@@ -16,25 +16,24 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.utils.mapToIndex
-import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
-class ArgumentAndIndex(val arg: ResolvedValueArgument, val declIndex: Int, var type: Type? = null, var reorder: Boolean = false, var tempValue: StackValue? = null)
+class ArgumentAndDeclIndex(val arg: ResolvedValueArgument, val declIndex: Int)
 
 abstract class ArgumentGenerator {
     /**
      * @return a `List` of bit masks of default arguments that should be passed as last arguments to $default method, if there were
-     * * any default arguments, or an empty `List` if there were none
-     * *
+     * any default arguments, or an empty `List` if there were none
+     *
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
-     * @param valueArgumentsByIndex
-     * *
-     * @param actualArgs
      */
-    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>, codegen: ExpressionCodegen): DefaultCallMask {
+    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallMask {
         //HACK: see tempVariable in ExpressionCodegen
+        assert (valueArgumentsByIndex.size() == actualArgs.size())
         val actualArguments = if (actualArgs.isNotEmpty()) actualArgs else valueArgumentsByIndex
 
         assert(valueArgumentsByIndex.size() == actualArguments.size()) {
@@ -43,24 +42,23 @@ abstract class ArgumentGenerator {
 
         val arg2Index = valueArgumentsByIndex.mapToIndex()
 
-        val actualArgsWithDeclIndex: ArrayList<ArgumentAndIndex> = ArrayList(actualArguments.filter { it !is DefaultValueArgument }.map {
-            ArgumentAndIndex(it, arg2Index[it]!!)
-        })
+        val actualArgsWithDeclIndex = actualArguments.filter { it !is DefaultValueArgument }.map {
+            ArgumentAndDeclIndex(it, arg2Index[it]!!)
+        }.toArrayList()
 
         valueArgumentsByIndex.withIndex().forEach {
             if (it.value is DefaultValueArgument) {
-                actualArgsWithDeclIndex.add(it.index, ArgumentAndIndex(it.value, it.index))
+                actualArgsWithDeclIndex.add(it.index, ArgumentAndDeclIndex(it.value, it.index))
             }
         }
 
         val masks = DefaultCallMask(valueArgumentsByIndex.size())
-        var orderChanged = false
 
-        for ((actualIndex, argumentWithDeclIndex) in actualArgsWithDeclIndex.withIndex()) {
+        for (argumentWithDeclIndex in actualArgsWithDeclIndex) {
             val argument = argumentWithDeclIndex.arg
             val declIndex = argumentWithDeclIndex.declIndex
 
-            argumentWithDeclIndex.type = when (argument) {
+            when (argument) {
                 is ExpressionValueArgument -> {
                     generateExpression(declIndex, argument)
                 }
@@ -75,11 +73,6 @@ abstract class ArgumentGenerator {
                     generateOther(declIndex, argument)
                 }
             }
-
-            if (actualIndex != declIndex || orderChanged) {
-                orderChanged = true
-                argumentWithDeclIndex.reorder = true
-            }
         }
 
         reorderArgumentsIfNeeded(actualArgsWithDeclIndex)
@@ -87,23 +80,23 @@ abstract class ArgumentGenerator {
         return masks
     }
 
-    protected open fun generateExpression(i: Int, argument: ExpressionValueArgument): Type {
+    protected open fun generateExpression(i: Int, argument: ExpressionValueArgument) {
         throw UnsupportedOperationException("Unsupported expression value argument #$i: $argument")
     }
 
-    protected open fun generateDefault(i: Int, argument: DefaultValueArgument): Type {
+    protected open fun generateDefault(i: Int, argument: DefaultValueArgument) {
         throw UnsupportedOperationException("Unsupported default value argument #$i: $argument")
     }
 
-    protected open fun generateVararg(i: Int, argument: VarargValueArgument): Type {
+    protected open fun generateVararg(i: Int, argument: VarargValueArgument) {
         throw UnsupportedOperationException("Unsupported vararg value argument #$i: $argument")
     }
 
-    protected open fun generateOther(i: Int, argument: ResolvedValueArgument): Type {
+    protected open fun generateOther(i: Int, argument: ResolvedValueArgument) {
         throw UnsupportedOperationException("Unsupported value argument #$i: $argument")
     }
 
-    protected open fun reorderArgumentsIfNeeded(args: ArrayList<ArgumentAndIndex>) {
+    protected open fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {
         throw UnsupportedOperationException("Unsupported operation")
     }
 }

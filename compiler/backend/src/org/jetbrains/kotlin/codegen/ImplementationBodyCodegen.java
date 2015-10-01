@@ -1643,35 +1643,30 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             this.offset = firstValueParamOffset;
         }
 
-        @NotNull
         @Override
-        public Type generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-            return generateSuperCallArgument(i);
+        public void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
+            generateSuperCallArgument(i);
         }
 
-        @NotNull
         @Override
-        public Type generateDefault(int i, @NotNull DefaultValueArgument argument) {
+        public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
             Type type = parameters.get(i).getAsmType();
             pushDefaultValueOnStack(type, iv);
-            return type;
         }
 
-        @NotNull
         @Override
-        public Type generateVararg(int i, @NotNull VarargValueArgument argument) {
-            return generateSuperCallArgument(i);
+        public void generateVararg(int i, @NotNull VarargValueArgument argument) {
+            generateSuperCallArgument(i);
         }
 
-        private Type generateSuperCallArgument(int i) {
+        private void generateSuperCallArgument(int i) {
             Type type = parameters.get(i).getAsmType();
             iv.load(offset, type);
             offset += type.getSize();
-            return type;
         }
 
         @Override
-        protected void reorderArgumentsIfNeeded(@NotNull ArrayList<ArgumentAndIndex> args) {
+        protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> args) {
 
         }
     }

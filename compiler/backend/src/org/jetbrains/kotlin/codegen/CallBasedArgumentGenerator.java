@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack;
@@ -54,19 +53,17 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
     @Override
     public DefaultCallMask generate(
             @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
-            @NotNull List<? extends ResolvedValueArgument> valueArgs,
-            @NotNull ExpressionCodegen codegen
+            @NotNull List<? extends ResolvedValueArgument> valueArgs
     ) {
         boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
         this.codegen.setShouldMarkLineNumbers(false);
-        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs, codegen);
+        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs);
         this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
         return masks;
     }
 
-    @NotNull
     @Override
-    protected Type generateExpression(int i, @NotNull ExpressionValueArgument argument) {
+    protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         ValueArgument valueArgument = argument.getValueArgument();
@@ -74,31 +71,26 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
         callGenerator.genValueAndPut(parameter, argumentExpression, type, i);
-        return type;
     }
 
-    @NotNull
     @Override
-    protected Type generateDefault(int i, @NotNull DefaultValueArgument argument) {
+    protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
         callGenerator.afterParameterPut(type, null, parameter, i);
-        return type;
     }
 
-    @NotNull
     @Override
-    protected Type generateVararg(int i, @NotNull VarargValueArgument argument) {
+    protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
         callGenerator.afterParameterPut(type, null, parameter, i);
-        return type;
     }
 
     @Override
-    protected void reorderArgumentsIfNeeded(@NotNull ArrayList<ArgumentAndIndex> actualArgsWithDeclIndex) {
-        callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex);
+    protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> actualArgsWithDeclIndex) {
+        callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex, valueParameterTypes);
     }
 }
