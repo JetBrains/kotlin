@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -256,17 +255,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateKotlinAnnotation() {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        KotlinClass.Kind kind;
-        if (isAnonymousObject(descriptor)) {
-            kind = KotlinClass.Kind.ANONYMOUS_OBJECT;
-        }
-        else if (isTopLevelOrInnerClass(descriptor)) {
-            // Default value is Kind.CLASS
-            kind = null;
-        }
-        else {
-            // LOCAL_CLASS is also written to inner classes of local classes
-            kind = KotlinClass.Kind.LOCAL_CLASS;
+        if (!isTopLevelOrInnerClass(descriptor)) {
+            AnnotationVisitor av = v.getVisitor().visitAnnotation(
+                    asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true
+            );
+            av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
+            av.visitEnd();
         }
 
         DescriptorSerializer serializer =
@@ -276,13 +270,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         writeAnnotationData(av, serializer, classProto);
-        if (kind != null) {
-            av.visitEnum(
-                    JvmAnnotationNames.KIND_FIELD_NAME,
-                    Type.getObjectType(KotlinClass.KIND_INTERNAL_NAME).getDescriptor(),
-                    kind.toString()
-            );
-        }
         av.visitEnd();
     }
 

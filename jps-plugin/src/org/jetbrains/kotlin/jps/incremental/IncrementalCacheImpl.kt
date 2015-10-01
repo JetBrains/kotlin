@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.jps.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
@@ -216,10 +215,11 @@ public class IncrementalCacheImpl(
                 constantsMap.process(kotlinClass) +
                 inlineFunctionsMap.process(kotlinClass)
             }
-            header.isCompatibleClassKind() && JvmAnnotationNames.KotlinClass.Kind.CLASS == header.classKind ->
+            header.isCompatibleClassKind() && !header.isLocalClass -> {
                 protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
                 inlineFunctionsMap.process(kotlinClass)
+            }
             else -> ChangesInfo.NO_CHANGES
         }
 

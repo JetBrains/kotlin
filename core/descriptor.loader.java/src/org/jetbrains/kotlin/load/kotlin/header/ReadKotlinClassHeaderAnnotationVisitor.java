@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
@@ -39,7 +40,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private static final Map<JvmClassName, KotlinClassHeader.Kind> OLD_DEPRECATED_ANNOTATIONS_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
 
     static {
-        HEADER_KINDS.put(KotlinClass.CLASS_NAME, CLASS);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_FILE_FACADE), FILE_FACADE);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS), MULTIFILE_CLASS);
@@ -66,19 +67,14 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] annotationData = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
-    private KotlinClass.Kind classKind = null;
     private String syntheticClassKind = null;
     private boolean isInterfaceDefaultImpls = false;
+    private boolean isLocalClass = false;
 
     @Nullable
     public KotlinClassHeader createHeader() {
         if (headerKind == null) {
             return null;
-        }
-
-        if (headerKind == CLASS && classKind == null) {
-            // Default class kind is Kind.CLASS
-            classKind = KotlinClass.Kind.CLASS;
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
@@ -91,8 +87,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         return new KotlinClassHeader(
-                headerKind, version, annotationData, strings, classKind, syntheticClassKind, filePartClassNames, multifileClassName,
-                isInterfaceDefaultImpls
+                headerKind, version, annotationData, strings, syntheticClassKind, filePartClassNames, multifileClassName,
+                isInterfaceDefaultImpls, isLocalClass
         );
     }
 
@@ -106,8 +102,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Nullable
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
-        if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(classId.asSingleFqName())) {
+        FqName fqName = classId.asSingleFqName();
+        if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(fqName)) {
             isInterfaceDefaultImpls = true;
+            return null;
+        }
+        else if (KOTLIN_LOCAL_CLASS.equals(fqName)) {
+            isLocalClass = true;
             return null;
         }
 
@@ -269,14 +270,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     private class ClassHeaderReader extends HeaderAnnotationArgumentVisitor {
         public ClassHeaderReader() {
-            super(KotlinClass.CLASS_NAME);
-        }
-
-        @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if (KotlinClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
-                classKind = valueOfOrNull(KotlinClass.Kind.class, enumEntryName.asString());
-            }
+            super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS));
         }
     }
 
@@ -314,18 +308,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             if (KotlinSyntheticClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
                 syntheticClassKind = enumEntryName.asString();
             }
-        }
-    }
-
-    // This function is needed here because Enum.valueOf() throws exception if there's no such value,
-    // but we don't want to fail if we're loading the header with an _incompatible_ ABI version
-    @Nullable
-    private static <E extends Enum<E>> E valueOfOrNull(@NotNull Class<E> enumClass, @NotNull String entry) {
-        try {
-            return Enum.valueOf(enumClass, entry);
-        }
-        catch (IllegalArgumentException e) {
-            return null;
         }
     }
 }

@@ -20,17 +20,13 @@ import com.intellij.psi.ClassFileViewProvider
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS
 
 public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/internalClasses"
 
     fun testSyntheticClassesAreInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClasses()
 
-    fun testLocalClassIsInvisible() = doTestNoPsiFilesAreBuiltForLocalClass(LOCAL_CLASS)
-
-    fun testAnonymousObjectIsInvisible() = doTestNoPsiFilesAreBuiltForLocalClass(ANONYMOUS_OBJECT)
+    fun testLocalClassesAreInvisible() = doTestNoPsiFilesAreBuiltForLocalClass()
 
     fun testInnerClassIsInvisible() = doTestNoPsiFilesAreBuiltFor("inner or nested class") {
         ClassFileViewProvider.isInnerClass(this)

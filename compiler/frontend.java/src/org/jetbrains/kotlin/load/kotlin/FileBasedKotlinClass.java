@@ -270,9 +270,6 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         if (name.equals(JvmAnnotationNames.KotlinSyntheticClass.KIND_INTERNAL_NAME)) {
             return JvmAnnotationNames.KotlinSyntheticClass.KIND_CLASS_ID;
         }
-        else if (name.equals(JvmAnnotationNames.KotlinClass.KIND_INTERNAL_NAME)) {
-            return JvmAnnotationNames.KotlinClass.KIND_CLASS_ID;
-        }
 
         List<String> classes = new ArrayList<String>(1);
         boolean local = false;

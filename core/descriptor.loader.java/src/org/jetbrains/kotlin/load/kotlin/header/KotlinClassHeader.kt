@@ -17,24 +17,22 @@
 package org.jetbrains.kotlin.load.kotlin.header
 
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
-public class KotlinClassHeader(
-        public val kind: KotlinClassHeader.Kind,
-        public val version: BinaryVersion,
-        public val annotationData: Array<String>?,
-        public val strings: Array<String>?,
-        public val classKind: KotlinClass.Kind?,
-        public val syntheticClassKind: String?,
-        public val filePartClassNames: Array<String>?,
-        public val multifileClassName: String?,
-        public val isInterfaceDefaultImpls: Boolean
+class KotlinClassHeader(
+        val kind: KotlinClassHeader.Kind,
+        val version: BinaryVersion,
+        val annotationData: Array<String>?,
+        val strings: Array<String>?,
+        val syntheticClassKind: String?,
+        val filePartClassNames: Array<String>?,
+        val multifileClassName: String?,
+        val isInterfaceDefaultImpls: Boolean,
+        val isLocalClass: Boolean
 ) {
-    public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
+    val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
 
-    public enum class Kind {
+    enum class Kind {
         CLASS,
         PACKAGE_FACADE,
         FILE_FACADE,
@@ -45,13 +43,13 @@ public class KotlinClassHeader(
 
     override fun toString() =
             "$kind " +
-            (if (classKind != null) "$classKind " else "") +
+            (if (isLocalClass) "(local) " else "") +
             (if (syntheticClassKind != null) "$syntheticClassKind " else "") +
             "version=$version"
 }
 
-public fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
-public fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
-public fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
-public fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
-public fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
+fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
+fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
+fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
+fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART

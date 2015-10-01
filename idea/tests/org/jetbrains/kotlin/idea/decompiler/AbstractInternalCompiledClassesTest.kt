@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.junit.Assert
@@ -34,11 +33,8 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =
             isFileWithHeader { it.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
 
-    private fun isClassOfKind(kind: KotlinClass.Kind): VirtualFile.() -> Boolean =
-            isFileWithHeader { it.classKind == kind }
-
-    protected fun doTestNoPsiFilesAreBuiltForLocalClass(kind: KotlinClass.Kind): Unit =
-            doTestNoPsiFilesAreBuiltFor(kind.name(), isClassOfKind(kind))
+    protected fun doTestNoPsiFilesAreBuiltForLocalClass(): Unit =
+            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { it.isLocalClass })
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClasses(): Unit =
             doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())
