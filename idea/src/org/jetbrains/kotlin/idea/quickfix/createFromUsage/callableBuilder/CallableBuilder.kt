@@ -927,46 +927,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupEditor(declaration: JetNamedDeclaration) {
-            val caretModel = containingFileEditor.getCaretModel()
-            val selectionModel = containingFileEditor.getSelectionModel()
-
-            if (declaration is JetSecondaryConstructor) {
-                caretModel.moveToOffset(declaration.getConstructorKeyword().endOffset)
+            if (declaration is JetProperty && !declaration.hasInitializer() && containingElement is JetBlockExpression) {
+                val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
+                val defaultValue = defaultValueType?.let { CodeInsightUtils.defaultInitializer(it) } ?: "null"
+                val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
+                val range = initializer.getTextRange()
+                containingFileEditor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+                return
             }
-            else {
-                caretModel.moveToOffset(declaration.getNameIdentifier()!!.endOffset)
-            }
-
-            fun positionBetween(left: PsiElement, right: PsiElement) {
-                val from = left.siblings(withItself = false, forward = true).firstOrNull { it !is PsiWhiteSpace } ?: return
-                val to = right.siblings(withItself = false, forward = false).firstOrNull { it !is PsiWhiteSpace } ?: return
-                val startOffset = from.startOffset
-                val endOffset = to.endOffset
-                caretModel.moveToOffset(endOffset)
-                selectionModel.setSelection(startOffset, endOffset)
-            }
-
-            when (declaration) {
-                is JetNamedFunction, is JetSecondaryConstructor -> {
-                    ((declaration as JetFunction).getBodyExpression() as? JetBlockExpression)?.let {
-                        positionBetween(it.getLBrace()!!, it.getRBrace()!!)
-                    }
-                }
-                is JetClassOrObject -> {
-                    caretModel.moveToOffset(declaration.startOffset)
-                }
-                is JetProperty -> {
-                    if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
-                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
-                        val defaultValue = defaultValueType?.let {CodeInsightUtils.defaultInitializer(it) } ?: "null"
-                        val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
-                        val range = initializer.getTextRange()
-                        selectionModel.setSelection(range.getStartOffset(), range.getEndOffset())
-                    }
-                    caretModel.moveToOffset(declaration.endOffset)
-                }
-            }
-            containingFileEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)
+            setupEditorSelection(containingFileEditor, declaration)
         }
 
         // build templates
