@@ -139,8 +139,8 @@ public object KotlinCompilerClient {
     }
 
 
-    fun makeRemoteServices(services: CompilationServices): CompileService.RemoteCompilationServices =
-        CompileService.RemoteCompilationServices(
+    fun makeRemoteServices(services: CompilationServices): RemoteCompilationServices =
+        RemoteCompilationServices(
                 incrementalCompilationComponents = if (services.incrementalCompilationComponents == null) null else RemoteIncrementalCompilationComponentsServer(services.incrementalCompilationComponents),
                 compilationCanceledStatus = if (services.compilationCanceledStatus == null) null else RemoteCompilationCanceledStatusServer(services.compilationCanceledStatus)
         )

@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.rmi.DummyProfiler
 import org.jetbrains.kotlin.rmi.Profiler
+import org.jetbrains.kotlin.rmi.RemoteIncrementalCompilationComponents
 
 
-class RemoteIncrementalCompilationComponentsClient(val proxy: CompileService.RemoteIncrementalCompilationComponents, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
+class RemoteIncrementalCompilationComponentsClient(val proxy: RemoteIncrementalCompilationComponents, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
 
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(profiler.withMeasure(this) { proxy.getIncrementalCache(target) }, profiler)
 
