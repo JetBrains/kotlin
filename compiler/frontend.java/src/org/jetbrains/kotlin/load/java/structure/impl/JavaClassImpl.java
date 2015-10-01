@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,7 +98,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @Override
     @NotNull
     public Collection<JavaMethod> getMethods() {
-        return methods(KotlinPackage.filter(getPsi().getMethods(), new Function1<PsiMethod, Boolean>() {
+        return methods(ArraysKt.filter(getPsi().getMethods(), new Function1<PsiMethod, Boolean>() {
             @Override
             public Boolean invoke(PsiMethod method) {
                 return !method.isConstructor();
@@ -110,7 +110,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @NotNull
     public Collection<JavaField> getFields() {
         // ex. Android plugin generates LightFields for resources started from '.' (.DS_Store file etc)
-        return fields(KotlinPackage.filter(getPsi().getFields(), new Function1<PsiField, Boolean>() {
+        return fields(ArraysKt.filter(getPsi().getFields(), new Function1<PsiField, Boolean>() {
             @Override
             public Boolean invoke(PsiField field) {
                 String name = field.getName();
@@ -122,7 +122,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @Override
     @NotNull
     public Collection<JavaConstructor> getConstructors() {
-        return constructors(KotlinPackage.filter(getPsi().getConstructors(), new Function1<PsiMethod, Boolean>() {
+        return constructors(ArraysKt.filter(getPsi().getConstructors(), new Function1<PsiMethod, Boolean>() {
             @Override
             public Boolean invoke(PsiMethod method) {
                 // See for example org.jetbrains.plugins.scala.lang.psi.light.ScFunctionWrapper,

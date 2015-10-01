@@ -28,7 +28,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -145,7 +145,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     @NotNull
     @Override
     public List<PsiMethod> getOwnMethods() {
-        return KotlinPackage.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
+        return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
             public PsiMethod invoke(PsiMethod method) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);

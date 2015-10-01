@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -93,7 +93,7 @@ public final class JvmAnnotationNames {
 
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
     // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
-    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = KotlinPackage.setOf(
+    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = SetsKt.setOf(
             JETBRAINS_READONLY_ANNOTATION,
             JETBRAINS_MUTABLE_ANNOTATION,
             JETBRAINS_NOT_NULL_ANNOTATION,

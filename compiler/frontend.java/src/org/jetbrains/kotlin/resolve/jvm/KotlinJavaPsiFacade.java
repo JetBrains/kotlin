@@ -36,7 +36,8 @@ import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -153,7 +154,7 @@ public class KotlinJavaPsiFacade {
         List<KotlinPsiElementFinderWrapper> elementFinders = new ArrayList<KotlinPsiElementFinderWrapper>();
         elementFinders.add(new KotlinPsiElementFinderImpl(getProject()));
 
-        List<PsiElementFinder> nonKotlinFinders = KotlinPackage.filter(
+        List<PsiElementFinder> nonKotlinFinders = ArraysKt.filter(
                 getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
                     @Override
                     public Boolean invoke(PsiElementFinder finder) {
@@ -161,7 +162,7 @@ public class KotlinJavaPsiFacade {
                     }
                 });
 
-        elementFinders.addAll(KotlinPackage.map(nonKotlinFinders, new Function1<PsiElementFinder, KotlinPsiElementFinderWrapper>() {
+        elementFinders.addAll(CollectionsKt.map(nonKotlinFinders, new Function1<PsiElementFinder, KotlinPsiElementFinderWrapper>() {
             @Override
             public KotlinPsiElementFinderWrapper invoke(PsiElementFinder finder) {
                 return wrap(finder);

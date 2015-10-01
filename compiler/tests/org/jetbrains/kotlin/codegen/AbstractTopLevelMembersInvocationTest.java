@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -69,7 +69,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                                                           KotlinPackage.plus(classPath, JetTestUtils.getAnnotationsJar()), classPath),
+                                                           CollectionsKt.plus(classPath, JetTestUtils.getAnnotationsJar()), classPath),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         loadFiles(ArrayUtil.toStringArray(sourceFiles));

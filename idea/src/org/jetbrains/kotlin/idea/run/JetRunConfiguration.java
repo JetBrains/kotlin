@@ -43,7 +43,8 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -306,8 +307,8 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     @NotNull
     private static Collection<JetNamedFunction> getMainFunCandidates(@NotNull PsiClass psiClass) {
-        return KotlinPackage.filterNotNull(
-                KotlinPackage.map(
+        return CollectionsKt.filterNotNull(
+                ArraysKt.map(
                         psiClass.getAllMethods(),
                         new Function1<PsiMethod, JetNamedFunction>() {
                             @Override

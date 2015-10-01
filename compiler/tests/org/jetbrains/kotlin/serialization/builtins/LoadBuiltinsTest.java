@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.builtins;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static kotlin.KotlinPackage.single;
 import static org.jetbrains.kotlin.builtins.BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES;
@@ -122,7 +122,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        return single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
+        return CollectionsKt.single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
     }
 
     @NotNull

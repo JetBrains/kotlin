@@ -21,7 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -173,7 +173,7 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
 
-        return KotlinPackage.toList(annotationRootFiles);
+        return CollectionsKt.toList(annotationRootFiles);
     }
 
     @NotNull

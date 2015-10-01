@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,7 +159,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @NotNull
     public Collection<ClassDescriptorWithResolutionScopes> getAllClasses() {
         // SCRIPT: all classes are declared classes + script classes
-        Collection<ClassDescriptorWithResolutionScopes> scriptClasses = KotlinPackage.map(
+        Collection<ClassDescriptorWithResolutionScopes> scriptClasses = CollectionsKt.map(
                 getScripts().values(),
                 new Function1<ScriptDescriptor, ClassDescriptorWithResolutionScopes>() {
                     @Override
@@ -168,6 +168,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
                     }
                 }
         );
-        return KotlinPackage.plus(getDeclaredClasses().values(), scriptClasses);
+        return CollectionsKt.plus(getDeclaredClasses().values(), scriptClasses);
     }
 }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -199,7 +199,7 @@ public class Visibilities {
     };
 
     public static final Set<Visibility> INVISIBLE_FROM_OTHER_MODULES =
-            Collections.unmodifiableSet(KotlinPackage.setOf(PRIVATE, PRIVATE_TO_THIS, INTERNAL, LOCAL));
+            Collections.unmodifiableSet(SetsKt.setOf(PRIVATE, PRIVATE_TO_THIS, INTERNAL, LOCAL));
 
     private Visibilities() {
     }

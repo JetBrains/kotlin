@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.io.InputStream;
 import java.util.*;
 
-import static kotlin.KotlinPackage.*;
+import static kotlin.CollectionsKt.*;
+import static kotlin.SetsKt.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
@@ -305,7 +306,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public Set<DeclarationDescriptor> getIntegralRanges() {
-        return KotlinPackage.<DeclarationDescriptor>setOf(
+        return SetsKt.<DeclarationDescriptor>setOf(
                 getBuiltInClassByName("ByteRange"),
                 getBuiltInClassByName("ShortRange"),
                 getBuiltInClassByName("CharRange"),
@@ -1081,7 +1082,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"),
+        return first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"),
                                                                                               NoLookupLocation.FROM_BUILTINS));
     }
 }

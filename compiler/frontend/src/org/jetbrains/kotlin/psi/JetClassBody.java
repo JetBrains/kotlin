@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,7 +98,7 @@ public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetCl
      */
     @NotNull
     public List<JetAnnotationEntry> getDanglingAnnotations() {
-        return KotlinPackage.flatMap(
+        return CollectionsKt.flatMap(
                 getStubOrPsiChildrenAsList(MODIFIER_LIST),
                 new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
                     @Override

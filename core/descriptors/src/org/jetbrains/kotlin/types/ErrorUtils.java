@@ -44,8 +44,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static kotlin.KotlinPackage.emptyList;
-import static kotlin.KotlinPackage.joinToString;
+import static kotlin.CollectionsKt.emptyList;
+import static kotlin.CollectionsKt.joinToString;
 
 public class ErrorUtils {
 

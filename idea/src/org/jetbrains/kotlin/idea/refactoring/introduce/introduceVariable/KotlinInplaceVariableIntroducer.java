@@ -35,7 +35,8 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.PositionTracker;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -390,8 +391,8 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
 
     @Override
     protected Collection<PsiReference> collectRefs(SearchScope referencesSearchScope) {
-        return KotlinPackage.map(
-                KotlinPackage.filterIsInstance(getOccurrences(), JetSimpleNameExpression.class),
+        return CollectionsKt.map(
+                ArraysKt.filterIsInstance(getOccurrences(), JetSimpleNameExpression.class),
                 new Function1<JetSimpleNameExpression, PsiReference>() {
                     @Override
                     public PsiReference invoke(JetSimpleNameExpression expression) {

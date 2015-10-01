@@ -24,7 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -1489,7 +1489,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
                 assert constructors.size() == 1 : "Unexpected number of constructors for class: " + classDescriptor + " " + constructors;
-                ConstructorDescriptor constructorDescriptor = KotlinPackage.single(constructors);
+                ConstructorDescriptor constructorDescriptor = CollectionsKt.single(constructors);
 
                 JvmMethodSignature constructor = typeMapper.mapSignature(SamCodegenUtil.resolveSamAdapter(constructorDescriptor));
                 v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
@@ -2750,7 +2750,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert state.getReflectionTypes().getKClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
-        return generateClassLiteralReference(typeMapper, KotlinPackage.single(type.getArguments()).getType());
+        return generateClassLiteralReference(typeMapper, CollectionsKt.single(type.getArguments()).getType());
     }
 
     @Override

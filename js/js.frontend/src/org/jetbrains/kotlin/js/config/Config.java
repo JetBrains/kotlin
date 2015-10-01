@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.config;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +165,7 @@ public abstract class Config {
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
-        module.setDependencies(KotlinPackage.plus(modules, JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule()));
+        module.setDependencies(CollectionsKt.plus(modules, JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule()));
     }
 
     @NotNull

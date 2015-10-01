@@ -22,7 +22,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usageView.UsageInfo;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -331,7 +331,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         if (oldCount > commonCount) {
             parameterList.deleteChildRange(oldParameters.get(commonCount - 1).getNextSibling(),
-                                           KotlinPackage.last(oldParameters));
+                                           CollectionsKt.last(oldParameters));
         }
         else if (newCount > commonCount) {
             parameterList.addRangeAfter(newParameters.get(commonCount - 1).getNextSibling(),

@@ -21,7 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
-import static kotlin.KotlinPackage.firstOrNull;
+import static kotlin.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
@@ -280,7 +280,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
         //noinspection unchecked
-        return (Collection) KotlinPackage.filter(
+        return (Collection) CollectionsKt.filter(
                 unsubstitutedMemberScope.getAllDescriptors(),
                 new Function1<DeclarationDescriptor, Boolean>() {
                     @Override
@@ -325,8 +325,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public List<ClassDescriptor> getDescriptorsForExtraCompanionObjects() {
         final JetObjectDeclaration allowedCompanionObject = getCompanionObjectIfAllowed();
 
-        return KotlinPackage.map(
-                KotlinPackage.filter(
+        return CollectionsKt.map(
+                CollectionsKt.filter(
                         declarationProvider.getOwnerInfo().getCompanionObjects(),
                         new Function1<JetObjectDeclaration, Boolean>() {
                             @Override
@@ -492,7 +492,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         @NotNull
         public Collection<JetType> getAllSupertypes() {
-            return KotlinPackage.plus(trueSupertypes, cyclicSupertypes);
+            return CollectionsKt.plus(trueSupertypes, cyclicSupertypes);
         }
     }
 

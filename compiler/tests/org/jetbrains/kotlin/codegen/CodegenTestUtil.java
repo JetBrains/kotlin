@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import kotlin.KotlinPackage;
+import kotlin.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -128,7 +128,7 @@ public class CodegenTestUtil {
             classpath.addAll(additionalClasspath);
 
             List<String> options = new ArrayList<String>(Arrays.asList(
-                    "-classpath", KotlinPackage.join(classpath, File.pathSeparator, "", "", -1, ""),
+                    "-classpath", StringsKt.join(classpath, File.pathSeparator, "", "", -1, ""),
                     "-d", javaClassesTempDirectory.getPath()
             ));
             options.addAll(additionalOptions);
