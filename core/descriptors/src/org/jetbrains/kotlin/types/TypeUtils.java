@@ -482,15 +482,20 @@ public class TypeUtils {
 
     @Nullable
     private static JetType getDefaultPrimitiveNumberType(@NotNull Collection<JetType> supertypes) {
-        JetType doubleType = KotlinBuiltIns.getInstance().getDoubleType();
+        if (supertypes.isEmpty()) {
+            return null;
+        }
+
+        KotlinBuiltIns builtIns = supertypes.iterator().next().getConstructor().getBuiltIns();
+        JetType doubleType = builtIns.getDoubleType();
         if (supertypes.contains(doubleType)) {
             return doubleType;
         }
-        JetType intType = KotlinBuiltIns.getInstance().getIntType();
+        JetType intType = builtIns.getIntType();
         if (supertypes.contains(intType)) {
             return intType;
         }
-        JetType longType = KotlinBuiltIns.getInstance().getLongType();
+        JetType longType = builtIns.getLongType();
         if (supertypes.contains(longType)) {
             return longType;
         }

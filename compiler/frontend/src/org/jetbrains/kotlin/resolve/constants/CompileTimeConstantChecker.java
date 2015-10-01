@@ -43,9 +43,13 @@ public class CompileTimeConstantChecker {
     private final BindingTrace trace;
     private final boolean checkOnlyErrorsThatDependOnExpectedType;
 
-    public CompileTimeConstantChecker(@NotNull BindingTrace trace, boolean checkOnlyErrorsThatDependOnExpectedType) {
+    public CompileTimeConstantChecker(
+            @NotNull BindingTrace trace,
+            @NotNull KotlinBuiltIns builtIns,
+            boolean checkOnlyErrorsThatDependOnExpectedType
+    ) {
         this.checkOnlyErrorsThatDependOnExpectedType = checkOnlyErrorsThatDependOnExpectedType;
-        this.builtIns = KotlinBuiltIns.getInstance();
+        this.builtIns = builtIns;
         this.trace = trace;
     }
 

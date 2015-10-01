@@ -340,7 +340,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, indicesHelper, prefixMatcher, kindFilter)
+        AllClassesCompletion(parameters, indicesHelper, prefixMatcher, resolutionFacade, kindFilter)
                 .collect(
                         { descriptor -> collector.addDescriptorElements(descriptor, notImported = true) },
                         { javaClass -> collector.addElement(lookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }

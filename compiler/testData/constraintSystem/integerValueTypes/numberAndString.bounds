@@ -18,4 +18,4 @@ status:
 -isSuccessful: true
 
 result:
-T=Comparable<out Any?>
+T=Any

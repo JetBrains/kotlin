@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun compareTo(other: A): Int = n.compareTo(other.n)
+    operator fun compareTo(other: A): Int = n.compareTo(other.n)
 }
 
 fun test() {

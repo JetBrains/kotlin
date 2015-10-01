@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
+import kotlin.text.Regex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetSingleValueToken;
@@ -37,6 +38,7 @@ public class OperatorConventions {
     public static final Name SET = Name.identifier("set");
     public static final Name NEXT = Name.identifier("next");
     public static final Name HAS_NEXT = Name.identifier("hasNext");
+    public static final Regex COMPONENT_REGEX = new Regex("component\\d+");
 
     private OperatorConventions() {}
 
@@ -110,6 +112,13 @@ public class OperatorConventions {
              .put(JetTokens.OROR, Name.identifier("or"))
              .build();
 
+    public static final ImmutableSet<Name> CONVENTION_NAMES = ImmutableSet.<Name>builder()
+            .add(GET, SET, INVOKE, CONTAINS, ITERATOR, NEXT, HAS_NEXT, EQUALS, COMPARE_TO)
+            .addAll(UNARY_OPERATION_NAMES.values())
+            .addAll(BINARY_OPERATION_NAMES.values())
+            .addAll(ASSIGNMENT_OPERATIONS.values())
+            .build();
+
     @Nullable
     public static Name getNameForOperationSymbol(@NotNull JetToken token) {
         Name name = UNARY_OPERATION_NAMES.get(token);
@@ -122,5 +131,9 @@ public class OperatorConventions {
         if (EQUALS_OPERATIONS.contains(token)) return EQUALS;
         if (IN_OPERATIONS.contains(token)) return CONTAINS;
         return null;
+    }
+
+    public static boolean isConventionName(@NotNull Name name) {
+        return CONVENTION_NAMES.contains(name) || COMPONENT_REGEX.matches(name.asString());
     }
 }

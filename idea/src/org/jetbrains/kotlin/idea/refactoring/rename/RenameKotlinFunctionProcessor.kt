@@ -20,11 +20,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor
 
@@ -55,6 +59,12 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         if (psiMethod?.getContainingClass() != null) {
             javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
         }
+    }
+
+    override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>?, listener: RefactoringElementListener?) {
+        super.renameElement(element, newName, usages, listener)
+
+        (element?.unwrapped as? JetNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {

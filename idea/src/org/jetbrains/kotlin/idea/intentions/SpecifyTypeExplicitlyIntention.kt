@@ -105,7 +105,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
             val project = declaration.getProject()
             val expression = createTypeExpressionForTemplate(exprType)
 
-            declaration.setType(KotlinBuiltIns.getInstance().getAnyType())
+            declaration.setType(KotlinBuiltIns.FQ_NAMES.any.asString())
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())

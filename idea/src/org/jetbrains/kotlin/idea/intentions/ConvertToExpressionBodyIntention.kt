@@ -66,7 +66,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                declaration.setType(KotlinBuiltIns.getInstance().getUnitType())
+                declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
             }
         }
 

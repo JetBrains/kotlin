@@ -1,0 +1,8 @@
+// "Create parameter 'name'" "true"
+fun f(name: String) {
+    object : A(name) {
+
+    }
+}
+
+open class A(s: String)

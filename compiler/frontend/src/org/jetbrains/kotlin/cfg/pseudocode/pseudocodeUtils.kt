@@ -69,10 +69,12 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
+public fun getExpectedTypePredicate(
+        value: PseudoValue,
+        bindingContext: BindingContext,
+        builtIns: KotlinBuiltIns
+): TypePredicate {
     val pseudocode = value.createdAt?.owner ?: return AllTypes
-    val builtIns = KotlinBuiltIns.getInstance()
-
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())

@@ -16,24 +16,35 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-public abstract class TargetPlatform(
-        public val platformName: String
+abstract class TargetPlatform(
+        val platformName: String
 ) {
     override fun toString(): String {
         return platformName
     }
 
-    public abstract val platformConfigurator: PlatformConfigurator
+    abstract val platformConfigurator: PlatformConfigurator
+    abstract val builtIns: KotlinBuiltIns
+    abstract val defaultModuleParameters: ModuleParameters
 
-    public object Default : TargetPlatform("Default") {
+    object Default : TargetPlatform("Default") {
+        override val builtIns: KotlinBuiltIns
+            get() = DefaultBuiltIns.Instance
+        override val defaultModuleParameters = ModuleParameters.Empty
         override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf())
     }
 }
@@ -44,7 +55,7 @@ private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), OperatorValidator())
 
 
-public open class PlatformConfigurator(
+open class PlatformConfigurator(
         private val dynamicTypesSettings: DynamicTypesSettings,
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
@@ -69,3 +80,9 @@ public open class PlatformConfigurator(
         }
     }
 }
+
+fun TargetPlatform.createModule(
+        name: Name,
+        storageManager: StorageManager
+) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns)
+

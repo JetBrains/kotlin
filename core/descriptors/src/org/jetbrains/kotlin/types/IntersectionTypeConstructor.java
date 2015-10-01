@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
@@ -61,6 +62,12 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
     @Override
     public ClassifierDescriptor getDeclarationDescriptor() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public KotlinBuiltIns getBuiltIns() {
+        return intersectedTypes.iterator().next().getConstructor().getBuiltIns();
     }
 
     @Override

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfN
 import java.util.ArrayList
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public class CapturedTypeApproximationTest() : JetLiteFixture() {
 
@@ -65,8 +66,9 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
         }
 
         fun createTestSubstitutions(typeParameters: List<TypeParameterDescriptor>) = run {
-            val intType = KotlinBuiltIns.getInstance().getIntType()
-            val stringType = KotlinBuiltIns.getInstance().getStringType()
+            val builtIns = JvmPlatform.builtIns
+            val intType = builtIns.intType
+            val stringType = builtIns.stringType
             val t = typeParameters[0]
             val r = typeParameters[1]
             if (oneTypeVariable)

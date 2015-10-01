@@ -1,7 +1,7 @@
 class A(val n: Int, val s: String, val o: Any) {
-    fun component1(): Int = n
-    fun component2(): String = s
-    fun component3(): Any = o
+    operator fun component1(): Int = n
+    operator fun component2(): String = s
+    operator fun component3(): Any = o
 }
 
 fun test() {

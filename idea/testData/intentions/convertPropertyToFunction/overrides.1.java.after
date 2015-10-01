@@ -6,14 +6,14 @@ class JA extends A {
     }
 
     @Override
-    boolean foo() {
+    boolean getFoo() {
         return true;
     }
 }
 
 class JTest {
     void test() {
-        boolean x = new A(1).foo();
-        boolean y = new JA().foo();
+        boolean x = new A(1).getFoo();
+        boolean y = new JA().getFoo();
     }
 }

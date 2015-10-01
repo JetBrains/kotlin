@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.types.JetType;
@@ -49,6 +51,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.UPPER_BOUND;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
     private final JetNamedFunction altFunDeclaration;
@@ -219,7 +222,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
                 alternativeVarargElementType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParamVarargElementType,
                                                                                    originalToAltTypeParameters, MEMBER_SIGNATURE_CONTRAVARIANT);
-                alternativeType = KotlinBuiltIns.getInstance().getArrayType(Variance.OUT_VARIANCE, alternativeVarargElementType);
+                alternativeType = getBuiltIns(originalParameterDescriptor).getArrayType(Variance.OUT_VARIANCE, alternativeVarargElementType);
             }
 
             Name altName = annotationValueParameter.getNameAsName();

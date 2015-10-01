@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -268,7 +268,8 @@ public fun getResolvedCallableReferenceShapeType(
         context: ResolutionContext<*>,
         expectedTypeUnknown: Boolean,
         reflectionTypes: ReflectionTypes,
-        builtIns: KotlinBuiltIns
+        builtIns: KotlinBuiltIns,
+        functionPlaceholders: FunctionPlaceholders
 ): JetType? =
         when {
             overloadResolutionResults == null ->
@@ -278,7 +279,7 @@ public fun getResolvedCallableReferenceShapeType(
                     createReflectionTypeForCallableDescriptor(call.getResultingDescriptor(), context, reflectionTypes, reference)
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
-                ErrorUtils.createFunctionPlaceholderType(emptyList(), false)
+                functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)
             else ->
                 builtIns.getFunctionType(Annotations.EMPTY, null, emptyList(), TypeUtils.DONT_CARE)
         }

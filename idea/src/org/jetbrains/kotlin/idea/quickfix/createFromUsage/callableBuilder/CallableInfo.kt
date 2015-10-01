@@ -50,22 +50,22 @@ abstract class TypeInfo(val variance: Variance) {
                         context = builder.currentFileContext,
                         module = builder.currentFileModule,
                         pseudocode = builder.pseudocode
-                ).flatMap { it.getPossibleSupertypes(variance) }
+                ).flatMap { it.getPossibleSupertypes(variance, builder) }
     }
 
     class ByTypeReference(val typeReference: JetTypeReference, variance: Variance): TypeInfo(variance) {
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
-                builder.currentFileContext[BindingContext.TYPE, typeReference].getPossibleSupertypes(variance)
+                builder.currentFileContext[BindingContext.TYPE, typeReference].getPossibleSupertypes(variance, builder)
     }
 
     class ByType(val theType: JetType, variance: Variance): TypeInfo(variance) {
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
-                theType.getPossibleSupertypes(variance)
+                theType.getPossibleSupertypes(variance, builder)
     }
 
     class ByReceiverType(variance: Variance): TypeInfo(variance) {
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
-                (builder.placement as CallablePlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance)
+                (builder.placement as CallablePlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance, builder)
     }
 
     abstract class DelegatingTypeInfo(val delegate: TypeInfo): TypeInfo(delegate.variance) {
@@ -87,8 +87,10 @@ abstract class TypeInfo(val variance: Variance) {
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
     abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
 
-    protected fun JetType?.getPossibleSupertypes(variance: Variance): List<JetType> {
-        if (this == null || ErrorUtils.containsErrorType(this)) return Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType())
+    protected fun JetType?.getPossibleSupertypes(variance: Variance, callableBuilder: CallableBuilder): List<JetType> {
+        if (this == null || ErrorUtils.containsErrorType(this)) {
+            return Collections.singletonList(callableBuilder.currentFileModule.builtIns.anyType)
+        }
         val single = Collections.singletonList(this)
         return when (variance) {
             Variance.IN_VARIANCE -> single + supertypes()

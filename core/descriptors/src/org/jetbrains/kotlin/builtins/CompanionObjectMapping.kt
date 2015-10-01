@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.Collections
+import java.util.*
 
-public object CompanionObjectMapping {
+public class CompanionObjectMapping(private val builtIns: KotlinBuiltIns) {
     private val classes = linkedSetOf<ClassDescriptor>()
 
     init {
-        val builtIns = KotlinBuiltIns.getInstance()
         for (type in PrimitiveType.NUMBER_TYPES) {
             classes.add(builtIns.getPrimitiveClassDescriptor(type))
         }
@@ -32,11 +31,9 @@ public object CompanionObjectMapping {
         classes.add(builtIns.getEnum())
     }
 
-    @JvmStatic
     public fun allClassesWithIntrinsicCompanions(): Set<ClassDescriptor> =
             Collections.unmodifiableSet(classes)
 
-    @JvmStatic
     public fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
         return DescriptorUtils.isCompanionObject(classDescriptor) &&
                classDescriptor.getContainingDeclaration() in classes

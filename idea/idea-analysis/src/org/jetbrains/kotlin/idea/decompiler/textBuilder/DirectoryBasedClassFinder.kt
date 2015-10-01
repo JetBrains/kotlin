@@ -102,8 +102,8 @@ class DirectoryBasedKotlinJavaScriptDataFinder(
     }
 }
 
-object ResolveEverythingToKotlinAnyLocalClassResolver : LocalClassResolver {
-    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = KotlinBuiltIns.getInstance().getAny()
+class ResolveEverythingToKotlinAnyLocalClassResolver(private val builtIns: KotlinBuiltIns) : LocalClassResolver {
+    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = builtIns.any
 }
 
 private val JavaClass.classId: ClassId

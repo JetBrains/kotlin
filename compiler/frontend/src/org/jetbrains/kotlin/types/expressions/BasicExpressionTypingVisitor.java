@@ -120,9 +120,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
-            CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
+            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context.trace, components.builtIns, false);
             ConstantValue constantValue = compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
-            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
+            boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
                 return TypeInfoFactoryPackage.createTypeInfo(getDefaultType(elementType), context);
@@ -843,7 +843,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             DataFlowValue value = createDataFlowValue(baseExpression, baseType, context);
-            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.NULL));
+            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns)));
         }
         JetType resultingType = TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
@@ -1186,7 +1186,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
                 || !rightDataFlowInfo.getNullability(leftValue).canBeNull()) {
-                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.NULL);
+                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.nullValue(components.builtIns));
             }
         }
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();
@@ -1278,7 +1278,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType rightType = facade.getTypeInfo(right, context).getType();
 
             if (rightType != null) {
-                if (components.typeIntersector.isIntersectionEmpty(leftType, rightType)) {
+                if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(

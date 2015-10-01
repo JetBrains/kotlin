@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun set(i: Int, a: A) {}
+    operator fun set(i: Int, a: A) {}
 }
 
 fun test() {

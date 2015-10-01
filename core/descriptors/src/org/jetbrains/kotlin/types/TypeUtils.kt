@@ -43,6 +43,9 @@ public fun JetType.nullability(): TypeNullability {
     }
 }
 
+val JetType.builtIns: KotlinBuiltIns
+    get() = constructor.builtIns
+
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 

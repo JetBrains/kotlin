@@ -3217,6 +3217,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("javaUsagesGet.kt")
+        public void testJavaUsagesGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/javaUsagesGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUsagesIs.kt")
+        public void testJavaUsagesIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/javaUsagesIs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/localFun.kt");
@@ -3232,6 +3244,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("otherRefs.kt")
         public void testOtherRefs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefsGet.kt")
+        public void testOtherRefsGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefsGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefsIs.kt")
+        public void testOtherRefsIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefsIs.kt");
             doTest(fileName);
         }
 
@@ -3541,6 +3565,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/functionExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionExpressionWithThisConflict.kt")
+        public void testFunctionExpressionWithThisConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/functionExpressionWithThisConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/lambdaParameter.kt");
@@ -3701,6 +3737,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class ConvertReceiverToParameter extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertReceiverToParameter() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/functionExpression.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("genericReceiver.kt")

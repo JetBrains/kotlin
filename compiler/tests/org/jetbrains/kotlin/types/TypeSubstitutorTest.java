@@ -23,7 +23,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
@@ -100,7 +99,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),
-                                KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+                                module.getBuiltIns().getBuiltInsPackageScope());
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {

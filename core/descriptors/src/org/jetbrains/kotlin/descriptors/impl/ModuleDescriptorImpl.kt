@@ -40,12 +40,6 @@ public class ModuleDescriptorImpl(
         }
     }
 
-    public constructor(
-            moduleName: Name,
-            storageManager: StorageManager,
-            moduleParameters: ModuleParameters
-    ) : this(moduleName, storageManager, moduleParameters, KotlinBuiltIns.getInstance())
-
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 

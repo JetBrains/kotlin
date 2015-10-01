@@ -82,7 +82,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
 
         val valueArguments = callExpr.valueArguments
         val defaultParamName = if (inAnnotationEntry && valueArguments.size() == 1) "value" else null
-        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val anyType = moduleDescriptor.builtIns.nullableAnyType
         val parameterInfos = valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

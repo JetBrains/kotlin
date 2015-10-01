@@ -39,12 +39,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.frontend.di.DiPackage;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
@@ -60,10 +59,9 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -241,15 +239,17 @@ public class JetSourceNavigationHelper {
             @NotNull Project project
     ) {
 
+        TargetPlatform platform = TargetPlatform.Default.INSTANCE$;
         MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
                 project, Name.special("<library module>"),
                 ModuleParameters(
-                        TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS,
+                        JvmPlatform.defaultModuleParameters.getDefaultImports(),
                         PlatformToKotlinClassMap.EMPTY
-                )
+                ),
+                DefaultBuiltIns.getInstance()
         );
 
-        newModuleContext.setDependencies(newModuleContext.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
+        newModuleContext.setDependencies(newModuleContext.getModule(), platform.getBuiltIns().getBuiltInsModule());
 
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
                 newModuleContext.getStorageManager(),
@@ -260,7 +260,7 @@ public class JetSourceNavigationHelper {
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
-                TargetPlatform.Default.INSTANCE$
+                platform
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
@@ -366,16 +366,15 @@ public class JetSourceNavigationHelper {
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
         if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
-            Name className = classOrObject.getNameAsName();
-            assert className != null : "Class from BuiltIns should have a name";
-            ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
-
-            ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classDescriptor));
-            if (javaClassId != null) {
-                return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
-                        javaClassId.asSingleFqName().asString(),
-                        GlobalSearchScope.allScope(classOrObject.getProject())
-                );
+            FqName fqName = classOrObject.getFqName();
+            if (fqName != null) {
+                ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe());
+                if (javaClassId != null) {
+                    return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
+                            javaClassId.asSingleFqName().asString(),
+                            GlobalSearchScope.allScope(classOrObject.getProject())
+                    );
+                }
             }
         }
         return LightClassUtil.INSTANCE$.getPsiClass(classOrObject);

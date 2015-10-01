@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -62,7 +59,6 @@ public class CandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val genericCandidateResolver: GenericCandidateResolver,
         private val reflectionTypes: ReflectionTypes,
-        private val modifiersChecker: ModifiersChecker,
         private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
         private val smartCastManager: SmartCastManager
 ){
@@ -339,7 +335,7 @@ public class CandidateResolver(
 
                 var matchStatus = ArgumentMatchStatus.SUCCESS
                 var resultingType: JetType? = type
-                if (type == null || (type.isError() && !ErrorUtils.isFunctionPlaceholder(type))) {
+                if (type == null || (type.isError() && !type.isFunctionPlaceholder)) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
                 }
                 else if (!noExpectedType(expectedType)) {

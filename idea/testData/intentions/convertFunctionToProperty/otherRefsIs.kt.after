@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+package p
+
+import p.isFoo
+
+class A(val n: Int)
+
+val A.isFoo: Boolean
+    get() = n > 1
+
+fun test() {
+    val t = A::isFoo
+}

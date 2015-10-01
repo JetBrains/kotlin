@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
@@ -48,4 +49,7 @@ public interface TypeConstructor extends Annotated {
 
     @Nullable
     ClassifierDescriptor getDeclarationDescriptor();
+
+    @NotNull
+    KotlinBuiltIns getBuiltIns();
 }

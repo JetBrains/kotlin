@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
 object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUsageFactory<JetExpression>() {
@@ -43,8 +44,6 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =
                 accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
 
-        val builtIns = KotlinBuiltIns.getInstance()
-
         val property = element.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
         val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor
                                  ?: return emptyList()
@@ -53,6 +52,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         val propertyType = propertyDescriptor.type
 
         val accessorReceiverType = TypeInfo(element, Variance.IN_VARIANCE)
+        val builtIns = propertyDescriptor.builtIns
         val thisRefParam = ParameterInfo(TypeInfo(propertyReceiver?.type ?: builtIns.nullableNothingType, Variance.IN_VARIANCE))
         val metadataParam = ParameterInfo(TypeInfo(builtIns.propertyMetadata.defaultType, Variance.IN_VARIANCE))
 

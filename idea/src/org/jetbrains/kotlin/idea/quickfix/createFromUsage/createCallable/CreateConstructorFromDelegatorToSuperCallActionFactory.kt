@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
 object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMemberFromUsageFactory<JetDelegatorToSuperCall>() {
@@ -50,7 +51,7 @@ object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMe
         val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
         if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
 
-        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val anyType = superClassDescriptor.builtIns.nullableAnyType
         val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

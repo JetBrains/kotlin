@@ -161,7 +161,7 @@ public class TypeSubstitutor {
                         throw new SubstitutionException("Out-projection in in-position");
                     case IN_IN_OUT_POSITION:
                         // todo use the right type parameter variance and upper bound
-                        return new TypeProjectionImpl(Variance.OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType());
+                        return new TypeProjectionImpl(Variance.OUT_VARIANCE, type.getConstructor().getBuiltIns().getNullableAnyType());
                 }
             }
             JetType substitutedType;

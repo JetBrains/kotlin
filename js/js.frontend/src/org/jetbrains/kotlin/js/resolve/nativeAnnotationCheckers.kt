@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -72,10 +73,11 @@ private abstract class AbstractNativeIndexerChecker(
 
     override fun additionalCheck(declaration: JetNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         val parameters = descriptor.getValueParameters()
+        val builtIns = descriptor.builtIns
         if (parameters.size() > 0) {
             val firstParamClassDescriptor = DescriptorUtils.getClassDescriptorForType(parameters.get(0).getType())
-            if (firstParamClassDescriptor != KotlinBuiltIns.getInstance().getString() &&
-                !DescriptorUtils.isSubclass(firstParamClassDescriptor, KotlinBuiltIns.getInstance().getNumber())
+            if (firstParamClassDescriptor != builtIns.string &&
+                !DescriptorUtils.isSubclass(firstParamClassDescriptor, builtIns.number)
             ) {
                 diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.getValueParameters().firstOrNull(), indexerKind))
             }

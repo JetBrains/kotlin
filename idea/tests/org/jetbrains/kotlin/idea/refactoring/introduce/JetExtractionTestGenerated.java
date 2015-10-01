@@ -2340,6 +2340,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("typeParameterRef.kt")
+            public void testTypeParameterRef() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterRef.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("typeParameterRefCanOmit.kt")
+            public void testTypeParameterRefCanOmit() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterRefCanOmit.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("typeParameterResolvableInTargetScope.kt")
             public void testTypeParameterResolvableInTargetScope() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParameterResolvableInTargetScope.kt");
@@ -2737,6 +2749,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("lambdaArgument.kt")
+        public void testLambdaArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/lambdaArgument.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/localVar.kt");
@@ -2876,6 +2894,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     public static class IntroduceLambdaParameter extends AbstractJetExtractionTest {
         public void testAllFilesPresentInIntroduceLambdaParameter() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceLambdaParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lambdaArgument.kt")
+        public void testLambdaArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/lambdaArgument.kt");
+            doIntroduceLambdaParameterTest(fileName);
         }
 
         @TestMetadata("lambdaParamInPrimaryConstructor.kt")

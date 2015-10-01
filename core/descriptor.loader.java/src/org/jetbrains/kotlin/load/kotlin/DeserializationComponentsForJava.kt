@@ -39,9 +39,9 @@ public class DeserializationComponentsForJava(
     init {
         val localClassResolver = LocalClassResolverImpl()
         components = DeserializationComponents(
-                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                localClassResolver, errorReporter, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY,
-                JavaTypeCapabilitiesLoader
+                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,
+                errorReporter, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, JavaTypeCapabilitiesLoader,
+                additionalSupertypes = BuiltInClassesAreSerializableOnJvm(moduleDescriptor)
         )
         localClassResolver.setDeserializationComponents(components)
     }

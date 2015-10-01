@@ -43,10 +43,11 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
         val iterableExpr = element.loopRange ?: return null
         val variableExpr: JetExpression = ((element.loopParameter ?: element.multiParameter) ?: return null) as JetExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
-        val returnJetType = KotlinBuiltIns.getInstance().iterator.defaultType
 
-        val analysisResult = file.analyzeFullyAndGetResult()
-        val returnJetTypeParameterTypes = variableExpr.guessTypes(analysisResult.bindingContext, analysisResult.moduleDescriptor)
+        val (bindingContext, moduleDescriptor) = file.analyzeFullyAndGetResult()
+
+        val returnJetType = moduleDescriptor.builtIns.iterator.defaultType
+        val returnJetTypeParameterTypes = variableExpr.guessTypes(bindingContext, moduleDescriptor)
         if (returnJetTypeParameterTypes.size() != 1) return null
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])

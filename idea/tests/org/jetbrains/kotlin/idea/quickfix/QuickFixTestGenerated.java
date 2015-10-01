@@ -1784,6 +1784,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionalType.kt")
+                public void testFunctionalType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/functionalType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionalTypeInReceiver.kt")
+                public void testFunctionalTypeInReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/functionalTypeInReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inLambda.kt")
                 public void testInLambda() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inLambda.kt");
@@ -2465,6 +2477,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonIdentifier.kt")
+                public void testNonIdentifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/nonIdentifier.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("nullableType.kt")
                 public void testNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/nullableType.kt");
@@ -2555,6 +2573,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("inAccessorWithExpressionBodyInClass.kt")
                 public void testInAccessorWithExpressionBodyInClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAccessorWithExpressionBodyInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inAnonymousObject.kt")
+                public void testInAnonymousObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAnonymousObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inAnonymousObjectInSecondaryConstructor.kt")
+                public void testInAnonymousObjectInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAnonymousObjectInSecondaryConstructor.kt");
                     doTest(fileName);
                 }
 
@@ -2702,6 +2732,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inSecondaryConstructor.kt")
+                public void testInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inSecondaryConstructor.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("namedArgInConstructorCall.kt")
                 public void testNamedArgInConstructorCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/namedArgInConstructorCall.kt");
@@ -2711,6 +2747,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("namedArgInFunctionCall.kt")
                 public void testNamedArgInFunctionCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/namedArgInFunctionCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonIdentifier.kt")
+                public void testNonIdentifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/nonIdentifier.kt");
                     doTest(fileName);
                 }
 

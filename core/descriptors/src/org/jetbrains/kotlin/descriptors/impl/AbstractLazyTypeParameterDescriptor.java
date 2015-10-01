@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -80,6 +82,12 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @Override
             public Annotations getAnnotations() {
                 return AbstractLazyTypeParameterDescriptor.this.getAnnotations();
+            }
+
+            @NotNull
+            @Override
+            public KotlinBuiltIns getBuiltIns() {
+                return DescriptorUtilsKt.getBuiltIns(AbstractLazyTypeParameterDescriptor.this);
             }
 
             @Override

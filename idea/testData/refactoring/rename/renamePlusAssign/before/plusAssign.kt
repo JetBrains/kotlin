@@ -1,5 +1,5 @@
 class A(var n: Int) {
-    fun plusAssign(m: Int) {
+    operator fun plusAssign(m: Int) {
         n += m
     }
 }

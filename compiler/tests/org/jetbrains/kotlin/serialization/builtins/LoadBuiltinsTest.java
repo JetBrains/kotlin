@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -50,7 +52,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static kotlin.KotlinPackage.single;
-import static org.jetbrains.kotlin.builtins.BuiltinsPackage.createBuiltInPackageFragmentProvider;
+import static org.jetbrains.kotlin.builtins.BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES;
 
@@ -102,12 +104,13 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     private static PackageFragmentDescriptor createBuiltInsPackageFragment() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, DefaultBuiltIns.getInstance()
         );
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                AdditionalSupertypes.None.INSTANCE$,
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

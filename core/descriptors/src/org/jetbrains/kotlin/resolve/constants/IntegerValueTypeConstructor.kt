@@ -17,14 +17,11 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
-
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 public class IntegerValueTypeConstructor(
         private val value: Long,
@@ -61,6 +58,10 @@ public class IntegerValueTypeConstructor(
     override fun getAnnotations() = Annotations.EMPTY
 
     public fun getValue(): Long = value
+
+    override fun getBuiltIns(): KotlinBuiltIns {
+        return builtIns
+    }
 
     override fun toString() = "IntegerValueType(" + value + ")"
 }

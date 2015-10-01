@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
@@ -77,7 +76,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             ContainerForTests containerForTests = DiPackage.createContainerForTests(getProject(), root);
             descriptorResolver = containerForTests.getDescriptorResolver();
             functionDescriptorResolver = containerForTests.getFunctionDescriptorResolver();
-            scope = createScope(KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+            scope = createScope(root.getBuiltIns().getBuiltInsPackageScope());
         }
 
         public void tearDown() throws Exception {

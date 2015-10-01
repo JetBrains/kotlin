@@ -38,8 +38,8 @@ fun test1() {
 
     val i = both(1, "")
     val j = both(id(1), id(""))
-    checkSubtype<Comparable<*>>(i)
-    checkSubtype<Comparable<*>>(j)
+    checkSubtype<Any>(i)
+    checkSubtype<Any>(j)
 }
 
 fun list<T>(value: T) : ArrayList<T> {

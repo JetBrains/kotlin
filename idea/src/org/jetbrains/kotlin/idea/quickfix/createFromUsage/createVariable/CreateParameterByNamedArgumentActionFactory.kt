@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<JetValueArgument>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetValueArgument? {
@@ -47,7 +48,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
         val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(callElement.project, functionDescriptor) ?: return null
         if (!((callable is JetFunction || callable is JetClass) && callable.canRefactor())) return null
 
-        val anyType = KotlinBuiltIns.getInstance().anyType
+        val anyType = functionDescriptor.builtIns.anyType
         val paramType = argumentExpression?.guessTypes(context, result.moduleDescriptor)?.let {
             when (it.size()) {
                 0 -> anyType

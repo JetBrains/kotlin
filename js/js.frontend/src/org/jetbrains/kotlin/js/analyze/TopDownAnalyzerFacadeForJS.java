@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.analyze;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.frontend.js.di.DiPackage;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -40,27 +40,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class TopDownAnalyzerFacadeForJS {
-    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
-            new ImportPath("java.lang.*"),
-            new ImportPath("kotlin.*"),
-            new ImportPath("kotlin.annotation.*"),
-            new ImportPath("kotlin.js.*")
-    );
-
-    public static ModuleParameters JS_MODULE_PARAMETERS = new ModuleParameters() {
-        @NotNull
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return DEFAULT_IMPORTS;
-        }
-
-        @NotNull
-        @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
-        }
-    };
-
     private TopDownAnalyzerFacadeForJS() {
     }
 
@@ -72,7 +51,7 @@ public final class TopDownAnalyzerFacadeForJS {
         BindingTrace trace = new BindingTraceContext();
 
         MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
-                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JS_MODULE_PARAMETERS
+                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE$
         );
         newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
         return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config);
@@ -83,7 +62,7 @@ public final class TopDownAnalyzerFacadeForJS {
         List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
         allDependencies.add(module);
         allDependencies.addAll(config.getModuleDescriptors());
-        allDependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        allDependencies.add(JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());
         return allDependencies;
     }
 

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
@@ -144,7 +145,7 @@ public abstract class ExpectedResolveData {
     }
 
     public final void checkResult(BindingContext bindingContext) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
 
         Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

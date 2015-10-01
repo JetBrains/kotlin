@@ -493,6 +493,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Serializable.kt")
+        public void testSerializable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Serializable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShiftFunctionTypes.kt")
         public void testShiftFunctionTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ShiftFunctionTypes.kt");
@@ -8895,6 +8901,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("samInConstructorWithGenerics.kt")
             public void testSamInConstructorWithGenerics() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/samInConstructorWithGenerics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("serializable.kt")
+            public void testSerializable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/serializable.kt");
                 doTest(fileName);
             }
 

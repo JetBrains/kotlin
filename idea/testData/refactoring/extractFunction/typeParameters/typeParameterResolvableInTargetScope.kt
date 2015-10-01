@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// PARAM_TYPES: kotlin.String, Comparable<String>, CharSequence, kotlin.Any
+// PARAM_TYPES: kotlin.String, Comparable<String>, CharSequence, java.io.Serializable, kotlin.Any
 // PARAM_DESCRIPTOR: value-parameter val l: kotlin.String defined in Foo.test
 
 import java.util.*

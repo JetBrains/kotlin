@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun get(i: Int): A = A(i)
+    operator fun get(i: Int): A = A(i)
 }
 
 fun test() {

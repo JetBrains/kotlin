@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -112,6 +113,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<AnalyzerScriptParameter> numIntParam() {
-        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), KotlinBuiltIns.getInstance().getIntType()));
+        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
     }
 }

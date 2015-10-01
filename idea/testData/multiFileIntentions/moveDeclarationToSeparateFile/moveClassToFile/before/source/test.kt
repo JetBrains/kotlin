@@ -1,7 +1,11 @@
 package p
 
-class <caret>A {
+import q.bar
 
+class <caret>A {
+    init {
+        bar()
+    }
 }
 
 fun foo() {

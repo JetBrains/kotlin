@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetArrayAccessExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetArrayAccessExpression? {
@@ -44,7 +43,7 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<Jet
         val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
-        val builtIns = KotlinBuiltIns.getInstance()
+        val builtIns = element.platform.builtIns
 
         val parameters = element.indexExpressions.mapTo(ArrayList<ParameterInfo>()) {
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))

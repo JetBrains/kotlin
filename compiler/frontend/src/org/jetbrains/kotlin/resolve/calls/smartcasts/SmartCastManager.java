@@ -22,17 +22,13 @@ import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeIntersector;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -46,9 +42,6 @@ import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
 public class SmartCastManager {
-
-    public SmartCastManager() {
-    }
 
     @NotNull
     public List<JetType> getSmartCastVariants(
@@ -146,7 +139,7 @@ public class SmartCastManager {
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, subTypes);
+        JetType intersection = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }

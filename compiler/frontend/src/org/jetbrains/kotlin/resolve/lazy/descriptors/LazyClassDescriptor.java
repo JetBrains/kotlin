@@ -664,6 +664,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         @Override
+        @NotNull
         public ClassifierDescriptor getDeclarationDescriptor() {
             return LazyClassDescriptor.this;
         }

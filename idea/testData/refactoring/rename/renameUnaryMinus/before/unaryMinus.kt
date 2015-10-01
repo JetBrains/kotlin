@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun minus(): A = this
+    operator fun minus(): A = this
 }
 
 fun test() {

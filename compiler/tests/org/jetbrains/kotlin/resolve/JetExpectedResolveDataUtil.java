@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
@@ -52,7 +53,7 @@ public class JetExpectedResolveDataUtil {
     }
 
     public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project, KotlinCoreEnvironment environment) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
         nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));

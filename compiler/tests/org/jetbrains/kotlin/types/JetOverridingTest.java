@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -165,7 +164,7 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory(getProject()).createFunction(funDecl);
-        LexicalScope scope = UtilsPackage.asLexicalScope(KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
+        LexicalScope scope = UtilsPackage.asLexicalScope(root.getBuiltIns().getBuiltInsPackageScope());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function,
                                                                     JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }

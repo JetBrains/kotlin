@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.Variance;
@@ -131,7 +132,7 @@ public class CodegenTestFiles {
                 Object value;
 
                 JetType jetType;
-                KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+                KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
                 if (type.equals("kotlin.String")) {
                     value = valueString;
                     jetType = builtIns.getStringType();

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.Collections
 
@@ -134,10 +135,11 @@ interface OutputValue {
     class Jump(
             val elementsToReplace: List<JetExpression>,
             val elementToInsertAfterCall: JetElement?,
-            val conditional: Boolean
+            val conditional: Boolean,
+            private val builtIns: KotlinBuiltIns
     ): OutputValue {
         override val originalExpressions: List<JetExpression> get() = elementsToReplace
-        override val valueType: JetType = with(KotlinBuiltIns.getInstance()) { if (conditional) getBooleanType() else getUnitType() }
+        override val valueType: JetType = with(builtIns) { if (conditional) booleanType else unitType }
     }
 
     class ParameterUpdate(
@@ -210,7 +212,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
                     1 -> return outputValues.first().valueType
                     2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"), NoLookupLocation.FROM_IDE)!!
                     3 -> module.resolveTopLevelClass(FqName("kotlin.Triple"), NoLookupLocation.FROM_IDE)!!
-                    else -> return DEFAULT_RETURN_TYPE
+                    else -> return module.builtIns.defaultReturnType
                 }
                 return TypeUtils.substituteParameters(boxingClass, outputValueTypes)
             }
@@ -250,9 +252,10 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
     class AsList(outputValues: List<OutputValue>): OutputValueBoxer(outputValues) {
         override val returnType: JetType by lazy {
-            if (outputValues.isEmpty()) DEFAULT_RETURN_TYPE
-            else TypeUtils.substituteParameters(
-                    KotlinBuiltIns.getInstance().getList(),
+            assert(outputValues.isNotEmpty())
+            val builtIns = outputValues.first().valueType.builtIns
+            TypeUtils.substituteParameters(
+                    builtIns.list,
                     Collections.singletonList(CommonSupertypes.commonSupertype(outputValues.map { it.valueType }))
             )
         }
