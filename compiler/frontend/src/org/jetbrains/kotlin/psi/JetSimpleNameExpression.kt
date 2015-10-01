@@ -57,7 +57,7 @@ abstract class JetSimpleNameExpressionImpl(node: ASTNode) : JetExpressionImpl(no
 
         fun getReferencedNameAsNameImpl(expresssion: JetSimpleNameExpression): Name {
             val name = expresssion.getReferencedName()
-            return Name.identifierNoValidate(name)
+            return Name.identifier(name)
         }
 
         fun getReferencedNameImpl(expression: JetSimpleNameExpression): String {

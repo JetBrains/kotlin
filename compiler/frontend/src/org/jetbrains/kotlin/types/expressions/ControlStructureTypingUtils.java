@@ -100,7 +100,7 @@ public class ControlStructureTypingUtils {
     ) {
         assert argumentNames.size() == isArgumentNullable.size();
 
-        Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
+        Name specialFunctionName = Name.identifier("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
                 moduleDescriptor, Annotations.Companion.getEMPTY(), specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
@@ -108,7 +108,7 @@ public class ControlStructureTypingUtils {
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
                 function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
-                Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
+                Name.identifier("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
         JetType type = typeParameter.getDefaultType();
         JetType nullableType = TypeUtils.makeNullable(type);
