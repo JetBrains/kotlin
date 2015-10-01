@@ -80,6 +80,7 @@
         <module>tools/runtime</module>
         <module>stdlib</module>
         <module>tools/kotlin-reflect</module>
+        <module>tools/kotlin-osgi-bundle</module>
 
         <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-->
         <!--because it is used in tests but cannot be added as test-dependency-->
