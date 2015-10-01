@@ -10,7 +10,7 @@ public fun publicInM1Test() {
 }
 
 fun access() {
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1': it is 'private' in 'shared'">privateInM1</error>()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1': it is 'private' in file">privateInM1</error>()
     internalInM1()
     publicInM1()
 

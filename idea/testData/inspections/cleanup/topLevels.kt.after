@@ -1,8 +1,0 @@
-internal fun ff() {}
-
-internal val valX = 10
-
-internal var varX = 20
-
-var varY = 30
-  internal set(value: Int) {}

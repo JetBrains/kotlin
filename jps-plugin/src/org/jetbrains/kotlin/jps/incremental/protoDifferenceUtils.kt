@@ -112,6 +112,9 @@ private abstract class DifferenceCalculator() {
         val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
         return HashSetUtil.symmetricDifference(oldNames, newNames)
     }
+
+    protected val ProtoBuf.Callable.isPrivate: Boolean
+        get() = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
 }
 
 private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
@@ -211,9 +214,6 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
 
             return if (primaryConstructor?.data?.isPrivate ?: false) null else primaryConstructor
         }
-
-    private val ProtoBuf.Callable.isPrivate: Boolean
-        get() = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
 }
 
 private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
@@ -240,7 +240,7 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
         for (kind in diff) {
             when (kind!!) {
                 ProtoCompareGenerated.ProtoBufPackageKind.MEMBER_LIST ->
-                    names.addAll(calcDifferenceForMembers(oldProto.memberList, newProto.memberList))
+                    names.addAll(calcDifferenceForMembers(oldProto.memberList.filter { !it.isPrivate }, newProto.memberList.filter { !it.isPrivate }))
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
             }

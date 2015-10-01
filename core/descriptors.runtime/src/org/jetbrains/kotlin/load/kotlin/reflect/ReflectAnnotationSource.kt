@@ -17,5 +17,8 @@
 package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceFile
 
-public class ReflectAnnotationSource(public val annotation: Annotation) : SourceElement
+public class ReflectAnnotationSource(public val annotation: Annotation) : SourceElement {
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+}

@@ -432,7 +432,7 @@ public class JetFlowInformationProvider {
             if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
                     && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
                 report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),
-                                                  variableDescriptor.getContainingDeclaration()), ctxt);
+                                                  setterDescriptor), ctxt);
                 return true;
             }
         }

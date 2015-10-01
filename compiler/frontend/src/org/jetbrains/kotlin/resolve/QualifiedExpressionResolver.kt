@@ -348,7 +348,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, inImport) }
             if (visibleDescriptors.isEmpty()) {
                 val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
-                trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor.containingDeclaration!!))
+                trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
             }
             else if (visibleDescriptors.size() > 1) {
                 trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, visibleDescriptors)
@@ -382,7 +382,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
 
         if (descriptor is DeclarationDescriptorWithVisibility && !isVisible(descriptor, shouldBeVisibleFrom, inImport)) {
-            trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor.containingDeclaration!!))
+            trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
         }
 
         if (isQualifier) {

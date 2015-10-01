@@ -25,18 +25,18 @@ package a
 
 fun test() {
     val y = makeA()
-    y.<!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>bar<!>()
-    <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>foo<!>()
+    y.<!INVISIBLE_MEMBER(A; private; file)!>bar<!>()
+    <!INVISIBLE_MEMBER(foo; private; file)!>foo<!>()
 
-    val u : <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>A<!> = <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>A<!>()
+    val u : <!INVISIBLE_REFERENCE(A; private; file)!>A<!> = <!INVISIBLE_MEMBER(A; private; file)!>A<!>()
 
-    val z = <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>x<!>
-    <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>x<!> = 30
+    val z = <!INVISIBLE_MEMBER(x; private; file)!>x<!>
+    <!INVISIBLE_MEMBER(x; private; file)!>x<!> = 30
 
-    val po = <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>PO<!>
+    val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
 }
 
-class B : <!ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE, ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE!>A<!>() {}
+class B : <!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>() {}
 
 class Q {
     class W {

@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -32,8 +30,8 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
     public fun doTest(testDataPath: String) {
         val testDir = JetTestUtils.tmpDir("testDirectory")
 
-        val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old.kt")
-        val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new.kt")
+        val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
+        val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new")
 
         val oldClassMap = oldClassFiles.toMap { it.name }
         val newClassMap = newClassFiles.toMap { it.name }
@@ -63,12 +61,14 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         JetTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString());
     }
 
-    private fun compileFileAndGetClasses(testPath: String, testDir: File, fileName: String): List<File> {
-
+    private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {
+        val files = File(testPath).listFiles { it.name.startsWith(prefix) }!!
         val sourcesDirectory = testDir.createSubDirectory("sources")
-        val classesDirectory = testDir.createSubDirectory("$fileName.src")
+        val classesDirectory = testDir.createSubDirectory("$prefix.src")
 
-        FileUtil.copy(File(testPath, fileName), File(sourcesDirectory, "main.kt"))
+        files.forEach { file ->
+            FileUtil.copy(file, File(sourcesDirectory, file.name.replaceFirst(prefix, "main")))
+        }
         MockLibraryUtil.compileKotlin(sourcesDirectory.path, classesDirectory)
 
         return File(classesDirectory, "test").listFiles() { it.name.endsWith(".class") }?.sortedBy { it.name }!!
@@ -81,20 +81,28 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldClassHeader = oldLocalFileKotlinClass.classHeader
         val newClassHeader = newLocalFileKotlinClass.classHeader
 
+        if (oldClassHeader.annotationData == null || newClassHeader.annotationData == null) {
+            println("skip ${oldLocalFileKotlinClass.classId}")
+            return
+        }
+
         val oldProtoBytes = BitEncoding.decodeBytes(oldClassHeader.annotationData!!)
         val newProtoBytes = BitEncoding.decodeBytes(newClassHeader.annotationData!!)
 
         val oldProto = ProtoMapValue(
-                oldClassHeader.isCompatiblePackageFacadeKind() || oldClassHeader.isCompatibleFileFacadeKind(),
+                oldClassHeader.isCompatiblePackageFacadeKind() || oldClassHeader.isCompatibleFileFacadeKind() || oldClassHeader.isCompatibleMultifileClassPartKind(),
                 oldProtoBytes, oldClassHeader.strings!!
         )
         val newProto = ProtoMapValue(
-                newClassHeader.isCompatiblePackageFacadeKind() || newClassHeader.isCompatibleFileFacadeKind(),
+                newClassHeader.isCompatiblePackageFacadeKind() || newClassHeader.isCompatibleFileFacadeKind() || newClassHeader.isCompatibleMultifileClassPartKind(),
                 newProtoBytes, newClassHeader.strings!!
         )
 
         val diff = when {
-            newClassHeader.isCompatiblePackageFacadeKind(), newClassHeader.isCompatibleClassKind(), newClassHeader.isCompatibleFileFacadeKind() ->
+            newClassHeader.isCompatiblePackageFacadeKind(),
+            newClassHeader.isCompatibleClassKind(),
+            newClassHeader.isCompatibleFileFacadeKind(),
+            newClassHeader.isCompatibleMultifileClassPartKind() ->
                 difference(oldProto, newProto)
             else ->  {
                 println("ignore ${oldLocalFileKotlinClass.classId}")
