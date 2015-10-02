@@ -33,6 +33,8 @@ class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBr
 
     companion object {
         val Empty = Block(listOf(), LBrace(), RBrace())
+        fun of(statement: Statement) = of(listOf(statement))
+        fun of(statements: List<Statement>) = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), notEmpty = true)
     }
 }
 
