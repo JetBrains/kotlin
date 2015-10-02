@@ -289,8 +289,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
-                .filterNonImported(this, referenceVariants)
+        val filter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
+        return if (filter != null) filter.filterNonImported(this, referenceVariants) else this
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {

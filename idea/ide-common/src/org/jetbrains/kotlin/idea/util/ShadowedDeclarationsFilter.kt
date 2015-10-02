@@ -36,19 +36,37 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.*
 
-public class ShadowedDeclarationsFilter(
+public class ShadowedDeclarationsFilter private constructor(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: JetExpression,
-        callTypeAndReceiver: CallTypeAndReceiver<*, *>
+        private val explicitReceiverValue: ReceiverValue
 ) {
+    companion object {
+        fun create(
+                bindingContext: BindingContext,
+                resolutionFacade: ResolutionFacade,
+                context: JetExpression,
+                callTypeAndReceiver: CallTypeAndReceiver<*, *>
+        ): ShadowedDeclarationsFilter? {
+            val receiverExpression = when (callTypeAndReceiver) {
+                is CallTypeAndReceiver.DEFAULT -> null
+                is CallTypeAndReceiver.DOT -> callTypeAndReceiver.receiver
+                is CallTypeAndReceiver.SAFE -> callTypeAndReceiver.receiver
+                is CallTypeAndReceiver.INFIX -> callTypeAndReceiver.receiver
+                else -> return null // TODO: support shadowed declarations filtering for callable references
+            }
+
+            val explicitReceiverValue = receiverExpression?.let {
+                val type = bindingContext.getType(it) ?: return null
+                ExpressionReceiver(it, type)
+            } ?: ReceiverValue.NO_RECEIVER
+            return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, context, explicitReceiverValue)
+        }
+    }
+
     private val psiFactory = JetPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
-
-    private val explicitReceiverValue = (callTypeAndReceiver.receiver as? JetExpression)?.let {
-        val type = bindingContext.getType(it) ?: return@let null
-        ExpressionReceiver(it, type)
-    } ?: ReceiverValue.NO_RECEIVER
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
         return declarations

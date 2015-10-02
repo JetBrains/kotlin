@@ -64,7 +64,10 @@ public class ReferenceVariantsHelper(
                 = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, nameFilter, callTypeAndReceiver, useRuntimeReceiverType)
                 .filter { !it.isAnnotatedAsHidden() && visibilityFilter(it) }
 
-        variants = ShadowedDeclarationsFilter(context, resolutionFacade, expression, callTypeAndReceiver).filter(variants)
+        ShadowedDeclarationsFilter.create(context, resolutionFacade, expression, callTypeAndReceiver)?.let {
+            variants = it.filter(variants)
+        }
+
 
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
