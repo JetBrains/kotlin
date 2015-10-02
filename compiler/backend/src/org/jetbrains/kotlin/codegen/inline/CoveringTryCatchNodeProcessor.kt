@@ -121,6 +121,13 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return currentIntervals.map { split(it, by, keepStart) }
     }
 
+    fun splitAndRemoveIntervalsFromCurrents(by : Interval) {
+        val copies = ArrayList(currentIntervals)
+        copies.forEach {
+            splitAndRemoveInterval(it, by, true)
+        }
+    }
+
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
         getInterval(curIns, directOrder).forEach {
             val added = currentIntervals.add(it)
@@ -193,16 +200,16 @@ public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, Splitt
     override val endLabel: LabelNode
         get() = node.end
 
-    override fun split(split: Interval, keepStart: Boolean): SplitPair<LocalVarNodeWrapper> {
+    override fun split(splitBy: Interval, keepStart: Boolean): SplitPair<LocalVarNodeWrapper> {
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
-            node.end = split.startLabel
-            Pair(split.endLabel, oldEnd)
+            node.end = splitBy.startLabel
+            Pair(splitBy.endLabel, oldEnd)
         }
         else {
             val oldStart = startLabel
-            node.start = split.endLabel
-            Pair(oldStart, split.startLabel)
+            node.start = splitBy.endLabel
+            Pair(oldStart, splitBy.startLabel)
         }
 
         return SplitPair(this, LocalVarNodeWrapper(
