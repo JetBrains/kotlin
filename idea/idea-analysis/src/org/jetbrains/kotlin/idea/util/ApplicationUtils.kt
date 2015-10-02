@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.idea.util.application
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
 
 public fun runReadAction<T>(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
@@ -32,13 +33,20 @@ public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
 }
 
-public fun Project.executeCommand(name: String, groupId: Any? = null, command: () -> Unit) {
-    CommandProcessor.getInstance().executeCommand(this, command, name, groupId)
+public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
+    return executeCommand<T>(name, groupId) { runWriteAction(command) }
 }
 
-public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
+public fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
     var result: T = null as T
-    CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, groupId)
+    CommandProcessor.getInstance().executeCommand(this, { result = command() }, name, groupId)
+    @Suppress("USELESS_CAST")
+    return result as T
+}
+
+public fun <T> Project.runWithAlternativeResolveEnabled(action: () -> T): T {
+    var result: T = null as T
+    DumbService.getInstance(this).withAlternativeResolveEnabled { result = action() }
     @Suppress("USELESS_CAST")
     return result as T
 }

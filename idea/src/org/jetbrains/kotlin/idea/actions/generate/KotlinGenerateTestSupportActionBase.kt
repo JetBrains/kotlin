@@ -21,14 +21,12 @@ import com.intellij.codeInsight.generation.actions.GenerateActionPopupTemplateIn
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.ui.Messages
@@ -42,7 +40,6 @@ import com.intellij.testIntegration.TestFramework
 import com.intellij.testIntegration.TestIntegrationUtils.MethodKind
 import com.intellij.ui.components.JBList
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -52,6 +49,7 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSup
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
 import org.jetbrains.kotlin.idea.quickfix.generateMember
+import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -67,13 +65,6 @@ abstract class KotlinGenerateTestSupportActionBase(
         private fun findTargetClass(editor: Editor, file: PsiFile): JetClassOrObject? {
             val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return null
             return elementAtCaret.parentsWithSelf.filterIsInstance<JetClassOrObject>().firstOrNull { !it.isLocal() }
-        }
-
-        private fun findSuitableFrameworks(klass: JetClassOrObject): List<TestFramework> {
-            val lightClass = klass.toLightClass() ?: return emptyList()
-            val frameworks = Extensions.getExtensions(TestFramework.EXTENSION_NAME).filter { it.language == JavaLanguage.INSTANCE }
-            return frameworks.firstOrNull { it.isTestClass(lightClass) }?.let { listOf(it) }
-                   ?: frameworks.filterTo(SmartList<TestFramework>()) { it.isPotentialTestClass(lightClass) }
         }
 
         private fun chooseAndPerform(editor: Editor, frameworks: List<TestFramework>, consumer: (TestFramework) -> Unit) {
