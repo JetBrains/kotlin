@@ -2,5 +2,5 @@
 fun main() {
     val x = 1..4
 
-    x.reverse().forEach<caret> { it }
+    x.reversed().forEach<caret> { it }
 }
