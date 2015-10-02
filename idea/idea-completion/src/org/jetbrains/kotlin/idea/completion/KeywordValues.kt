@@ -55,8 +55,13 @@ object KeywordValues {
     ) {
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
             val booleanInfoMatcher = matcher@ { info: ExpectedInfo ->
-                // no sense in true or false as when entry for when with no subject
-                if (info.additionalData is WhenEntryAdditionalData && !info.additionalData.whenWithSubject) {
+                // no sense in true or false as if-condition or when entry for when with no subject
+                val skipTrueFalse = when (info.additionalData) {
+                    is IfConditionAdditionalData -> true
+                    is WhenEntryAdditionalData -> !info.additionalData.whenWithSubject
+                    else -> false
+                }
+                if (skipTrueFalse) {
                     return@matcher ExpectedInfoMatch.noMatch
                 }
 

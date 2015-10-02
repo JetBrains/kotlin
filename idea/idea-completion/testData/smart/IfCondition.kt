@@ -4,3 +4,5 @@ fun bar(b: Boolean, c: Char){
 
 // EXIST: b
 // ABSENT: c
+// ABSENT: true
+// ABSENT: false
