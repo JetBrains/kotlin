@@ -124,6 +124,8 @@ class OverridesCompletion(
                 }
             }
 
+            lookupElement.assignPriority(ItemPriority.OVERRIDE)
+
             collector.addElement(lookupElement)
         }
     }
