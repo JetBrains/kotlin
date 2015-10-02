@@ -46,7 +46,7 @@ class BuiltInsAnnotationAndConstantLoader(
     ): List<AnnotationWithTarget> {
         proto as ProtoBuf.Callable // TODO
 
-        val annotations = proto.getExtension(BuiltInsProtoBuf.callableAnnotation).orEmpty()
+        val annotations = proto.getExtension(BuiltInsProtoBuf.oldCallableAnnotation).orEmpty()
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
@@ -77,7 +77,7 @@ class BuiltInsAnnotationAndConstantLoader(
             proto: ProtoBuf.Callable,
             expectedType: JetType
     ): ConstantValue<*>? {
-        val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
+        val value = proto.getExtension(BuiltInsProtoBuf.oldCompileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

@@ -45,11 +45,34 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
 
     override fun serializeCallable(callable: CallableMemberDescriptor, proto: ProtoBuf.Callable.Builder) {
         for (annotation in callable.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            proto.addExtension(BuiltInsProtoBuf.oldCallableAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
         val propertyDescriptor = callable as? PropertyDescriptor ?: return
         val compileTimeConstant = propertyDescriptor.compileTimeInitializer
         if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
+            val valueProto = annotationSerializer.valueProto(compileTimeConstant)
+            proto.setExtension(BuiltInsProtoBuf.oldCompileTimeValue, valueProto.build())
+        }
+    }
+
+    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(BuiltInsProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
+
+    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(BuiltInsProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
+
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(BuiltInsProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+        val compileTimeConstant = descriptor.compileTimeInitializer ?: return
+        if (compileTimeConstant !is NullValue) {
             val valueProto = annotationSerializer.valueProto(compileTimeConstant)
             proto.setExtension(BuiltInsProtoBuf.compileTimeValue, valueProto.build())
         }
