@@ -32,17 +32,13 @@ abstract class ArgumentGenerator {
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
      */
     open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallMask {
-        //HACK: see tempVariable in ExpressionCodegen
-        assert (valueArgumentsByIndex.size() == actualArgs.size())
-        val actualArguments = if (actualArgs.isNotEmpty()) actualArgs else valueArgumentsByIndex
-
-        assert(valueArgumentsByIndex.size() == actualArguments.size()) {
-            "Value arguments collection should have same size, but ${valueArgumentsByIndex.size()} != ${actualArguments.size()}"
+        assert(valueArgumentsByIndex.size() == actualArgs.size()) {
+            "Value arguments collection should have same size, but ${valueArgumentsByIndex.size()} != ${actualArgs.size()}"
         }
 
         val arg2Index = valueArgumentsByIndex.mapToIndex()
 
-        val actualArgsWithDeclIndex = actualArguments.filter { it !is DefaultValueArgument }.map {
+        val actualArgsWithDeclIndex = actualArgs.filter { it !is DefaultValueArgument }.map {
             ArgumentAndDeclIndex(it, arg2Index[it]!!)
         }.toArrayList()
 
