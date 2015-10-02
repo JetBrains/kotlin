@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     fun `do`() { `do`() }
 
-    testRenamed("do", { ::`do` })
+    testRenamed("do", { `do`() })
 
     return "OK"
 }

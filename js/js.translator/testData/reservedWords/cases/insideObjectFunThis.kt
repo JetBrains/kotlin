@@ -6,7 +6,7 @@ object TestObject {
     fun `this`() { `this`() }
 
     fun test() {
-        testNotRenamed("this", { ::`this` })
+        testNotRenamed("this", { `this`() })
     }
 }
 

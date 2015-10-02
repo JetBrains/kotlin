@@ -5,7 +5,7 @@ package foo
 fun `false`() { `false`() }
 
 fun box(): String {
-    testNotRenamed("false", { ::`false` })
+    testNotRenamed("false", { `false`() })
 
     return "OK"
 }

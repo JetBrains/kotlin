@@ -7,7 +7,7 @@ enum class Foo {
     fun implements() { implements() }
 
     fun test() {
-        testNotRenamed("implements", { ::implements })
+        testNotRenamed("implements", { implements() })
     }
 }
 

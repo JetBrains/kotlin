@@ -7,7 +7,7 @@ enum class Foo {
     fun function() { function() }
 
     fun test() {
-        testNotRenamed("function", { ::function })
+        testNotRenamed("function", { function() })
     }
 }
 

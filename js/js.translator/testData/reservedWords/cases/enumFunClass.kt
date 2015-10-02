@@ -7,7 +7,7 @@ enum class Foo {
     fun `class`() { `class`() }
 
     fun test() {
-        testNotRenamed("class", { ::`class` })
+        testNotRenamed("class", { `class`() })
     }
 }
 

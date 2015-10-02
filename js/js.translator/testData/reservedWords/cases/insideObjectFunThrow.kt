@@ -6,7 +6,7 @@ object TestObject {
     fun `throw`() { `throw`() }
 
     fun test() {
-        testNotRenamed("throw", { ::`throw` })
+        testNotRenamed("throw", { `throw`() })
     }
 }
 

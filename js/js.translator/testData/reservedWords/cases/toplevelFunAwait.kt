@@ -5,7 +5,7 @@ package foo
 fun await() { await() }
 
 fun box(): String {
-    testNotRenamed("await", { ::await })
+    testNotRenamed("await", { await() })
 
     return "OK"
 }

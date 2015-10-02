@@ -6,7 +6,7 @@ object TestObject {
     fun private() { private() }
 
     fun test() {
-        testNotRenamed("private", { ::private })
+        testNotRenamed("private", { private() })
     }
 }
 

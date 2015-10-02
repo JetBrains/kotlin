@@ -5,7 +5,7 @@ package foo
 fun `else`() { `else`() }
 
 fun box(): String {
-    testNotRenamed("else", { ::`else` })
+    testNotRenamed("else", { `else`() })
 
     return "OK"
 }
