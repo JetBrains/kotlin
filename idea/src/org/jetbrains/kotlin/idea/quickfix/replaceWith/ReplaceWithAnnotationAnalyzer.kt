@@ -85,7 +85,7 @@ object ReplaceWithAnnotationAnalyzer {
         var expression = try {
             psiFactory.createExpression(annotation.pattern)
         }
-        catch(e: Exception) {
+        catch(t: Throwable) {
             return null
         }
 

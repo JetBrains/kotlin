@@ -3130,6 +3130,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mailformedExpression.kt")
+        public void testMailformedExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/mailformedExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("memberFunction.kt")
         public void testMemberFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunction.kt");
