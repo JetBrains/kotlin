@@ -55,8 +55,10 @@ object KeywordValues {
     ) {
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
             val booleanInfoMatcher = matcher@ { info: ExpectedInfo ->
-                // no sense in true or false as when entry
-                if (info.additionalData is WhenEntryAdditionalData) return@matcher ExpectedInfoMatch.noMatch
+                // no sense in true or false as when entry for when with no subject
+                if (info.additionalData is WhenEntryAdditionalData && !info.additionalData.whenWithSubject) {
+                    return@matcher ExpectedInfoMatch.noMatch
+                }
 
                 if (info.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false)
                     ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)

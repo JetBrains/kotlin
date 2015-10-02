@@ -1602,5 +1602,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/WhenWithNoSubject2.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("WhenWithSubjectTrueFalse.kt")
+        public void testWhenWithSubjectTrueFalse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/WhenWithSubjectTrueFalse.kt");
+            doTest(fileName);
+        }
     }
 }
