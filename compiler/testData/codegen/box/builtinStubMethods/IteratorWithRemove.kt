@@ -6,6 +6,6 @@ class MyIterator<T>(val v: T): Iterator<T> {
 }
 
 fun box(): String {
-    (MyIterator<String>("") as MutableIterator<String>).remove()
+    (MyIterator<String>("") as java.util.Iterator<String>).remove()
     return "OK"
 }

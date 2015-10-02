@@ -18,9 +18,9 @@ package kotlin.jvm.internal;
 
 import kotlin.KotlinNullPointerException;
 import kotlin.UninitializedPropertyAccessException;
+import kotlin.jvm.internal.markers.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -123,12 +123,16 @@ public class Intrinsics {
     }
 
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
+        return sanitizeStackTrace(throwable, Intrinsics.class.getName());
+    }
+
+    static <T extends Throwable> T sanitizeStackTrace(T throwable, String classNameToDrop) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         int size = stackTrace.length;
 
         int lastIntrinsic = -1;
         for (int i = 0; i < size; i++) {
-            if (Intrinsics.class.getName().equals(stackTrace[i].getClassName())) {
+            if (classNameToDrop.equals(stackTrace[i].getClassName())) {
                 lastIntrinsic = i;
             }
         }

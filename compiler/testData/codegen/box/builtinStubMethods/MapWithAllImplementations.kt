@@ -15,11 +15,12 @@ class MyMap<K, V>: Map<K, V> {
 }
 
 fun box(): String {
-    val map = MyMap<String, Int>() as MutableMap<String, Int>
+    val myMap = MyMap<String, Int>()
+    val map = myMap as java.util.Map<String, Int>
 
     map.put("", 1)
     map.remove("")
-    map.putAll(map)
+    map.putAll(myMap)
     map.clear()
 
     return "OK"

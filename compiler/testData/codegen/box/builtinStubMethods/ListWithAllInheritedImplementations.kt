@@ -28,7 +28,7 @@ class MyList<T>(v: T): Super<T>(v), List<T> {
 }
 
 fun box(): String {
-    val list = MyList<String>("") as MutableList<String>
+    val list = MyList<String>("") as java.util.List<String>
 
     list.add("")
     list.remove("")

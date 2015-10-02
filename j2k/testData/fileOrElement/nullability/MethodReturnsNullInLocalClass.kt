@@ -1,6 +1,6 @@
 internal class C {
     fun foo(): String {
-        internal class Local {
+        class Local {
             fun foo(): String? {
                 return null
             }

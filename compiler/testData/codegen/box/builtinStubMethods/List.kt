@@ -23,7 +23,7 @@ fun expectUoe(block: () -> Any) {
 }
 
 fun box(): String {
-    val list = MyList<String>() as MutableList<String>
+    val list = MyList<String>() as java.util.List<String>
 
     expectUoe { list.add("") }
     expectUoe { list.remove("") }

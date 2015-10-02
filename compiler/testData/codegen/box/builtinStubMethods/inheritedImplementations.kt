@@ -13,7 +13,7 @@ class S : Set<String>, SetStringImpl() {
 }
 
 fun box(): String {
-    val s = S() as MutableSet<String>
+    val s = S() as java.util.Set<String>
     s.add("")
     s.remove("")
     s.clear()

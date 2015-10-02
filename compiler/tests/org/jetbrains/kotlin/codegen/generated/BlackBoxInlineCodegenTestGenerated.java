@@ -658,6 +658,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/finallyInFinally.1.kt");
                     doTestMultiFileWithInlineCheck(fileName);
                 }
+
+                @TestMetadata("wrongVarInterval.1.kt")
+                public void testWrongVarInterval() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/wrongVarInterval.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")

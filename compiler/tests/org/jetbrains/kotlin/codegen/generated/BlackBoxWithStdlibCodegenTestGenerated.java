@@ -922,9 +922,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("asWithMutable.kt")
+        public void testAsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/asWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("isWithMutable.kt")
+        public void testIsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/isWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedAsWithMutable.kt")
+        public void testReifiedAsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedAsWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedIsWithMutable.kt")
+        public void testReifiedIsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedIsWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedSafeAsWithMutable.kt")
+        public void testReifiedSafeAsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedSafeAsWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeAsWithMutable.kt")
+        public void testSafeAsWithMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/safeAsWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("unitAsInt.kt")
         public void testUnitAsInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/unitAsInt.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("weirdMutableCasts.kt")
+        public void testWeirdMutableCasts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/weirdMutableCasts.kt");
             doTestWithStdlib(fileName);
         }
     }
@@ -952,6 +994,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt8011.kt")
         public void testKt8011() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/kt8011.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("mutabilityMarkerInterfaces.kt")
+        public void testMutabilityMarkerInterfaces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/mutabilityMarkerInterfaces.kt");
             doTestWithStdlib(fileName);
         }
     }

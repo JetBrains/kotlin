@@ -11,7 +11,7 @@ class B(var result: String) : A() {
 }
 
 fun box(): String {
-    val a = B("Fail") as MutableIterator<String>
+    val a = B("Fail") as java.util.Iterator<String>
     a.next()
     a.hasNext()
     a.remove()
