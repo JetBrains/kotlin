@@ -49,6 +49,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("JvmSynthetic.kt")
+        public void testJvmSynthetic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");

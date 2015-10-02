@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -291,6 +292,10 @@ public class PropertyCodegen {
 
         if (!propertyDescriptor.isLateInit() && (!propertyDescriptor.isVar() || isDelegate)) {
             modifiers |= ACC_FINAL;
+        }
+
+        if (AnnotationUtilKt.hasJvmSyntheticAnnotation(propertyDescriptor)) {
+            modifiers |= ACC_SYNTHETIC;
         }
 
         Type type = typeMapper.mapType(jetType);

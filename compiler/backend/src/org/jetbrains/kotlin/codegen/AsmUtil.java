@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -212,7 +213,9 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor) || functionDescriptor.getVisibility() == Visibilities.INTERNAL) {
+        if (JetTypeMapper.isAccessor(functionDescriptor)
+            || functionDescriptor.getVisibility() == Visibilities.INTERNAL
+            || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
 
