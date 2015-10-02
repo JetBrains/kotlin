@@ -82,6 +82,8 @@ public abstract class LazyJavaScope(
 
         for (method in memberIndex().findMethodsByName(name)) {
             val descriptor = resolveMethodToFunctionDescriptor(method)
+            if (!descriptor.isVisibleAsFunction()) continue
+
             c.components.javaResolverCache.recordMethod(method, descriptor)
             result.add(descriptor)
             if (method.isStatic) {
@@ -93,6 +95,8 @@ public abstract class LazyJavaScope(
 
         enhanceSignatures(result).toReadOnlyList()
     }
+
+    open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
 
     protected data class MethodSignatureData(
             val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature,
@@ -267,7 +271,7 @@ public abstract class LazyJavaScope(
         val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
-        return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
+        return JavaPropertyDescriptor(containingDeclaration, annotations, Modality.FINAL, visibility, isVar, propertyName,
                                       c.components.sourceElementFactory.source(field), /* original = */ null, /*isConst= */ field.isFinalStatic)
     }
 

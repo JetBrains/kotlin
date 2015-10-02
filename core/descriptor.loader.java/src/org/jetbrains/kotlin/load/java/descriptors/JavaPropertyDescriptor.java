@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -31,6 +32,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     public JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
+            @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
             @NotNull Name name,
@@ -38,7 +40,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @Nullable PropertyDescriptor original,
             boolean isStaticFinal
     ) {
-        super(containingDeclaration, original, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source,
+        super(containingDeclaration, original, annotations, modality, visibility, isVar, name, Kind.DECLARATION, source,
               /* lateInit = */ false, /* isConst = */ false);
 
         this.isStaticFinal = isStaticFinal;
@@ -59,6 +61,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(
                 getContainingDeclaration(),
                 getAnnotations(),
+                getModality(),
                 getVisibility(),
                 isVar(),
                 getName(),
@@ -66,13 +69,27 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 getOriginal(),
                 isStaticFinal
         );
-        assert getGetter() == null : "Field must not have a getter: " + this;
+
+        PropertyGetterDescriptorImpl newGetter = null;
+        PropertyGetterDescriptorImpl getter = getGetter();
+        if (getter != null) {
+            newGetter = new PropertyGetterDescriptorImpl(
+                    enhanced, getter.getAnnotations(), getter.getModality(), getter.getVisibility(),
+                    getter.hasBody(), getter.isDefault(), getKind(), getter, SourceElement.NO_SOURCE);
+            newGetter.initialize(enhancedReturnType);
+        }
+
         assert getSetter() == null : "Field must not have a setter: " + this;
-        enhanced.initialize(null, null);
+        enhanced.initialize(newGetter, null);
         enhanced.setSetterProjectedOut(isSetterProjectedOut());
         if (compileTimeInitializer != null) {
             enhanced.setCompileTimeInitializer(compileTimeInitializer);
         }
+
+        for (PropertyDescriptor descriptor : getOverriddenDescriptors()) {
+            enhanced.addOverriddenDescriptor(descriptor);
+        }
+
         enhanced.setType(
                 enhancedReturnType,
                 getTypeParameters(), // TODO
