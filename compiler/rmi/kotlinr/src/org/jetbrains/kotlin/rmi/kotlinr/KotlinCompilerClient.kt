@@ -151,7 +151,7 @@ public object KotlinCompilerClient {
             public var stop: Boolean = false
     ) : OptionsGroup {
         override val mappers: List<PropMapper<*, *, *>>
-            get() = listOf(BoolPropMapper(this, ::stop))
+            get() = listOf(BoolPropMapper(this, ClientOptions::stop))
     }
 
 
