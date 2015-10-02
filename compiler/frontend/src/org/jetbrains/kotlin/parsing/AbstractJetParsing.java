@@ -83,6 +83,10 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
             return true;
         }
 
+        if (expectation == JetTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
+            advance();
+        }
+
         errorWithRecovery(message, recoverySet);
 
         return false;

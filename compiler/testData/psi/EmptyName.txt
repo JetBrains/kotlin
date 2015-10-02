@@ -1,0 +1,169 @@
+JetFile: EmptyName.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(BAD_CHARACTER)('`')
+    PsiErrorElement:Expecting property name or receiver type
+      PsiElement(BAD_CHARACTER)('`')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(BAD_CHARACTER)('`')
+    PsiErrorElement:Expecting function name or receiver type
+      PsiElement(BAD_CHARACTER)('`')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(BAD_CHARACTER)('`')
+    PsiErrorElement:Name expected
+      PsiElement(BAD_CHARACTER)('`')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(BAD_CHARACTER)('`')
+        PsiErrorElement:Type parameter name expected
+          PsiElement(BAD_CHARACTER)('`')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Data')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('g')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(BAD_CHARACTER)('`')
+          PsiErrorElement:Expecting a variable name
+            PsiElement(BAD_CHARACTER)('`')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('10')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n        ')
+            MULTI_VARIABLE_DECLARATION
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              MULTI_VARIABLE_DECLARATION_ENTRY
+                PsiElement(BAD_CHARACTER)('`')
+                PsiErrorElement:Expecting a name
+                  PsiElement(BAD_CHARACTER)('`')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              MULTI_VARIABLE_DECLARATION_ENTRY
+                PsiElement(IDENTIFIER)('y')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Data')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_ARGUMENT
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('2')
+                  PsiElement(RPAR)(')')
+            PsiWhiteSpace('\n    ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
