@@ -700,7 +700,7 @@ public class InlineCodegen extends CallGenerator {
                 SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, extension.finallyIntervalEnd);
                 processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, true);
 
-                processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, true);
+                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
 
                 mark.dropTo();
             }
