@@ -48,7 +48,7 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
 
     object UNARY : CallType<JetExpression>(DescriptorKindFilter.FUNCTIONS exclude NonUnaryExclude)
 
-    object CALLABLE_REFERENCE : CallType<JetTypeReference?>(DescriptorKindFilter.CALLABLES exclude LocalsAndSyntheticExclude/* currently not supported for locals and synthetic */)
+    object CALLABLE_REFERENCE : CallType<JetTypeReference?>(DescriptorKindFilter.CALLABLES exclude CallableReferenceExclude)
 
     object IMPORT_DIRECTIVE : CallType<JetExpression?>(DescriptorKindFilter.ALL)
 
@@ -74,9 +74,9 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
             get() = 0
     }
 
-    private object LocalsAndSyntheticExclude : DescriptorKindExclude {
-        override fun excludes(descriptor: DeclarationDescriptor)
-                = descriptor !is CallableMemberDescriptor || descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+    private object CallableReferenceExclude : DescriptorKindExclude {
+        override fun excludes(descriptor: DeclarationDescriptor) /* currently not supported for locals, synthetic and genetic */
+                = descriptor !is CallableMemberDescriptor || descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED || descriptor.typeParameters.isNotEmpty()
 
         override val fullyExcludedDescriptorKinds: Int
             get() = 0
