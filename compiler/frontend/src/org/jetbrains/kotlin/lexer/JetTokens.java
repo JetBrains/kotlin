@@ -116,6 +116,7 @@ public interface JetTokens {
     JetSingleValueToken COLONCOLON  = new JetSingleValueToken("COLONCOLON", "::");
     JetSingleValueToken COLON       = new JetSingleValueToken("COLON", ":");
     JetSingleValueToken SEMICOLON   = new JetSingleValueToken("SEMICOLON", ";");
+    JetSingleValueToken DOUBLE_SEMICOLON   = new JetSingleValueToken("DOUBLE_SEMICOLON", ";;");
     JetSingleValueToken RANGE       = new JetSingleValueToken("RANGE", "..");
     JetSingleValueToken EQ          = new JetSingleValueToken("EQ", "=");
     JetSingleValueToken MULTEQ      = new JetSingleValueToken("MULTEQ", "*=");
