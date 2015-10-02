@@ -25,8 +25,10 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
+import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -121,42 +123,49 @@ public class ConfigLibraryUtil {
     }
 
 
-    public static void removeLibrary(@NotNull final Module module, @NotNull final String libraryName) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                ModifiableRootModel model = rootManager.getModifiableModel();
+    public static boolean removeLibrary(@NotNull final Module module, @NotNull final String libraryName) {
+        return ApplicationUtilsKt.runWriteAction(
+                new Function0<Boolean>() {
+                    @Override
+                    public Boolean invoke() {
+                        boolean removed = false;
 
-                for (OrderEntry orderEntry : model.getOrderEntries()) {
-                    if (orderEntry instanceof LibraryOrderEntry) {
-                        LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
+                        ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+                        ModifiableRootModel model = rootManager.getModifiableModel();
 
-                        Library library = libraryOrderEntry.getLibrary();
-                        if (library != null) {
-                            String name = library.getName();
-                            if (name != null && name.equals(libraryName)) {
+                        for (OrderEntry orderEntry : model.getOrderEntries()) {
+                            if (orderEntry instanceof LibraryOrderEntry) {
+                                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
 
-                                // Dispose attached roots
-                                Library.ModifiableModel modifiableModel = library.getModifiableModel();
-                                for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
-                                    modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
+                                Library library = libraryOrderEntry.getLibrary();
+                                if (library != null) {
+                                    String name = library.getName();
+                                    if (name != null && name.equals(libraryName)) {
+
+                                        // Dispose attached roots
+                                        Library.ModifiableModel modifiableModel = library.getModifiableModel();
+                                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
+                                            modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
+                                        }
+                                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.SOURCES)) {
+                                            modifiableModel.removeRoot(rootUrl, OrderRootType.SOURCES);
+                                        }
+                                        modifiableModel.commit();
+
+                                        model.getModuleLibraryTable().removeLibrary(library);
+
+                                        removed = true;
+                                        break;
+                                    }
                                 }
-                                for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.SOURCES)) {
-                                    modifiableModel.removeRoot(rootUrl, OrderRootType.SOURCES);
-                                }
-                                modifiableModel.commit();
-
-                                model.getModuleLibraryTable().removeLibrary(library);
-
-                                break;
                             }
                         }
+
+                        model.commit();
+
+                        return removed;
                     }
                 }
-
-                model.commit();
-            }
-        });
+        );
     }
 }

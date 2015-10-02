@@ -24,6 +24,7 @@ import com.intellij.codeInspection.SuppressableProblemGroup;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.lang.annotation.ProblemGroup;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
@@ -95,8 +96,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "CallToPrintStackTrace"})
             @Override
             public void run() {
+                String fileText = "";
                 try {
-                    String contents = StringUtil.convertLineSeparators(FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET));
+                    fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
 
@@ -110,9 +113,19 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 catch (Throwable e) {
                     e.printStackTrace();
                     fail(testName);
+                } finally {
+                    unconfigureLibrariesAsSpecified(fileText);
                 }
             }
         }, "", "");
+    }
+
+    private static void unconfigureLibrariesAsSpecified(String fileText) {
+        Module module = getModule();
+        for (String libraryName : InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")) {
+            if (ConfigLibraryUtil.removeLibrary(module, libraryName)) continue;
+            fail("Library '" + libraryName + "' wasn't found");
+        }
     }
 
     private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath) throws Exception {
