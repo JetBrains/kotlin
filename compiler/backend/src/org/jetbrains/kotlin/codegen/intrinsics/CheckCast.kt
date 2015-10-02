@@ -40,17 +40,6 @@ object CheckCast {
             "kotlin.MutableMap.MutableEntry" to "asMutableMapEntry"
     )
 
-    private val SAFE_CHECKCAST_METHOD_NAME = hashMapOf(
-            "kotlin.MutableIterator" to "safeAsMutableIterator",
-            "kotlin.MutableIterable" to "safeAsMutableIterable",
-            "kotlin.MutableCollection" to "safeAsMutableCollection",
-            "kotlin.MutableList" to "safeAsMutableList",
-            "kotlin.MutableListIterator" to "safeAsMutableListIterator",
-            "kotlin.MutableSet" to "safeAsMutableSet",
-            "kotlin.MutableMap" to "safeAsMutableMap",
-            "kotlin.MutableMap.MutableEntry" to "safeAsMutableMapEntry"
-    )
-
     public @JvmStatic fun checkcast(v: InstructionAdapter, jetType: JetType, boxedAsmType: Type, safe: Boolean) {
         val intrinsicMethodName = getCheckcastIntrinsicMethodName(jetType, safe)
         if (intrinsicMethodName == null) {
@@ -76,9 +65,10 @@ object CheckCast {
     }
 
     private fun getCheckcastIntrinsicMethodName(jetType: JetType, safe: Boolean): String? {
+        if (safe) return null
         val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
         val classFqName = DescriptorUtils.getFqName(classDescriptor).asString()
-        return if (safe) SAFE_CHECKCAST_METHOD_NAME[classFqName] else CHECKCAST_METHOD_NAME[classFqName]
+        return CHECKCAST_METHOD_NAME[classFqName]
     }
 
     private fun getCheckcastIntrinsicMethodSignature(asmType: Type): String =

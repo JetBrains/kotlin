@@ -51,20 +51,6 @@ public class TypeIntrinsics {
         return result;
     }
 
-    public static Iterator safeAsMutableIterator(Object obj) {
-        Iterator result;
-        try {
-            result = (Iterator) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterator)) {
-            return null;
-        }
-        return result;
-    }
-
     public static boolean isMutableListIterator(Object obj) {
         return (obj instanceof ListIterator) &&
                (!(obj instanceof KMappedMarker) || (obj instanceof KMutableListIterator));
@@ -80,20 +66,6 @@ public class TypeIntrinsics {
         }
         if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
             throwCce(obj, "kotlin.MutableListIterator");
-        }
-        return result;
-    }
-
-    public static ListIterator safeAsMutableListIterator(Object obj) {
-        ListIterator result;
-        try {
-            result = (ListIterator) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
-            return null;
         }
         return result;
     }
@@ -117,20 +89,6 @@ public class TypeIntrinsics {
         return result;
     }
 
-    public static Iterable safeAsMutableIterable(Object obj) {
-        Iterable result;
-        try {
-            result = (Iterable) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterable)) {
-            return null;
-        }
-        return result;
-    }
-
     public static boolean isMutableCollection(Object obj) {
         return (obj instanceof Collection) &&
                (!(obj instanceof KMappedMarker) || (obj instanceof KMutableCollection));
@@ -146,20 +104,6 @@ public class TypeIntrinsics {
         }
         if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
             throwCce(obj, "kotlin.MutableCollection");
-        }
-        return result;
-    }
-
-    public static Collection safeAsMutableCollection(Object obj) {
-        Collection result;
-        try {
-            result = (Collection) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
-            return null;
         }
         return result;
     }
@@ -183,20 +127,6 @@ public class TypeIntrinsics {
         return result;
     }
 
-    public static List safeAsMutableList(Object obj) {
-        List result;
-        try {
-            result = (List) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableList)) {
-            return null;
-        }
-        return result;
-    }
-
     public static boolean isMutableSet(Object obj) {
         return (obj instanceof Set) &&
                (!(obj instanceof KMappedMarker) || (obj instanceof KMutableSet));
@@ -212,20 +142,6 @@ public class TypeIntrinsics {
         }
         if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
             throwCce(obj, "kotlin.MutableSet");
-        }
-        return result;
-    }
-
-    public static Set safeAsMutableSet(Object obj) {
-        Set result;
-        try {
-            result = (Set) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
-            return null;
         }
         return result;
     }
@@ -249,20 +165,6 @@ public class TypeIntrinsics {
         return result;
     }
 
-    public static Map safeAsMutableMap(Object obj) {
-        Map result;
-        try {
-            result = (Map) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap)) {
-            return null;
-        }
-        return result;
-    }
-
     public static boolean isMutableMapEntry(Object obj) {
         return (obj instanceof Map.Entry) &&
                (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap.Entry));
@@ -281,19 +183,4 @@ public class TypeIntrinsics {
         }
         return result;
     }
-
-    public static Map.Entry safeAsMutableMapEntry(Object obj) {
-        Map.Entry result;
-        try {
-            result = (Map.Entry) obj;
-        }
-        catch (ClassCastException e) {
-            return null;
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap.Entry)) {
-            return null;
-        }
-        return result;
-    }
-
 }

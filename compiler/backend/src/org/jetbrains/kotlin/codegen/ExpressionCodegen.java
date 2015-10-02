@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.intrinsics.CheckCast;
+import org.jetbrains.kotlin.codegen.intrinsics.InstanceOf;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
