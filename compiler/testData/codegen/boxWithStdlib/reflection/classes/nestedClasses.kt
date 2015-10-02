@@ -11,7 +11,7 @@ class A {
     private class PrivateNested
 }
 
-fun nestedNames(c: KClass<*>) = c.nestedClasses.map { it.simpleName ?: throw AssertionError("Unnamed class: ${it.java}") }.toSortedList()
+fun nestedNames(c: KClass<*>) = c.nestedClasses.map { it.simpleName ?: throw AssertionError("Unnamed class: ${it.java}") }.sorted()
 
 fun box(): String {
     // Kotlin class without nested classes
