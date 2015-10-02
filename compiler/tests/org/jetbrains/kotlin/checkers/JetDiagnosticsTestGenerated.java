@@ -8694,6 +8694,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldOverridesField.kt")
+            public void testFieldOverridesField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fieldOverridesNothing.kt")
+            public void testFieldOverridesNothing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesNothing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("GenericsInSupertypes.kt")
             public void testGenericsInSupertypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
@@ -8853,6 +8865,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("packageVisibility.kt")
             public void testPackageVisibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/packageVisibility.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateFieldOverridesNothing.kt")
+            public void testPrivateFieldOverridesNothing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/privateFieldOverridesNothing.kt");
                 doTest(fileName);
             }
 
