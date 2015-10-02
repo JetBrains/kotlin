@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
@@ -164,7 +165,7 @@ class SmartCompletion(
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            toCallableReferenceLookupElement(descriptor)?.let { result.add(it) }
+            result.addCallableReferenceLookupElements(descriptor)
         }
 
         return result
@@ -315,8 +316,8 @@ class SmartCompletion(
         return null
     }
 
-    private fun toCallableReferenceLookupElement(descriptor: DeclarationDescriptor): LookupElement? {
-        if (callableTypeExpectedInfo.isEmpty()) return null
+    private fun MutableCollection<LookupElement>.addCallableReferenceLookupElements(descriptor: DeclarationDescriptor) {
+        if (callableTypeExpectedInfo.isEmpty()) return
 
         fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {
             val callableReferenceType = descriptor.callableReferenceType(resolutionFacade) ?: return null
@@ -345,24 +346,21 @@ class SmartCompletion(
 
         when (descriptor) {
             is CallableDescriptor -> {
-                if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
-                    return null // members and extensions are not supported after "::" currently
+                // members and extensions are not supported after "::" currently
+                if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) {
+                    addIfNotNull(toLookupElement(descriptor))
                 }
-                return toLookupElement(descriptor)
             }
 
             is ClassDescriptor -> {
                 if (descriptor.modality != Modality.ABSTRACT && !descriptor.isInner) {
-                    val constructors = descriptor.getConstructors().filter(visibilityFilter)
-                    if (constructors.size() == 1) {
-                        //TODO: this code is to be changed if overloads to start work after ::
-                        return toLookupElement(constructors.single())
-                    }
+                    descriptor.constructors
+                            .filter(visibilityFilter)
+                            .map { toLookupElement(it) }
+                            .filterNotNullTo(this)
                 }
             }
         }
-
-        return null
     }
 
     private fun buildForAsTypePosition(): Collection<LookupElement>? {

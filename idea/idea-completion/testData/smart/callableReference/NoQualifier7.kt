@@ -6,4 +6,4 @@ fun bar(){
     foo(<caret>)
 }
 
-// ABSENT: ::Date
+// EXIST: ::Date
