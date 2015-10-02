@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
@@ -121,8 +120,11 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
             val file = element.getContainingFile() as? JetFile ?: return emptyList()
 
-            val callType = CallTypeAndReceiver.detect(element).callType
-            if (callType is CallType.UNKNOWN) return emptyList()
+            val callTypeAndReceiver = CallTypeAndReceiver.detect(element)
+            if (callTypeAndReceiver is CallTypeAndReceiver.UNKNOWN) return emptyList()
+
+            fun filterByCallType(descriptor: DeclarationDescriptor)
+                    = callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor)
 
             var referenceName = element.getReferencedName()
             if (element.getIdentifier() == null) {
@@ -144,8 +146,6 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             val containingDescriptor = resolutionScope.ownerDescriptor
 
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-                if (!callType.descriptorKindFilter.accepts(descriptor)) return false
-
                 if (descriptor is DeclarationDescriptorWithVisibility) {
                     return descriptor.isVisible(containingDescriptor, bindingContext, element)
                 }
@@ -159,15 +159,17 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
             if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
                 if (ProjectStructureUtil.isJsKotlinModule(file)) {
-                    result.addAll(indicesHelper.getKotlinClasses({ it == referenceName }, { true }))
+                    indicesHelper.getKotlinClasses({ it == referenceName }, { true }).filterTo(result, ::filterByCallType)
+
                 }
                 else {
-                    result.addAll(indicesHelper.getJvmClassesByName(referenceName))
+                    indicesHelper.getJvmClassesByName(referenceName).filterTo(result, ::filterByCallType)
                 }
-                result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
+
+                indicesHelper.getTopLevelCallablesByName(referenceName).filterTo(result, ::filterByCallType)
             }
 
-            result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
+            result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, callTypeAndReceiver, element, bindingContext))
 
             return if (result.size() > 1)
                 reduceCandidatesBasedOnDependencyRuleViolation(result, file)
