@@ -129,7 +129,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck,
                                                                scopeForFirstPart = null, inImport = true) ?: return null
         if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
-            trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
+            trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
         }
         return AllUnderImportsScope(packageOrClassDescriptor)
 }
@@ -185,6 +185,15 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 val staticClassScope = packageOrClassDescriptor.staticScope
                 descriptors.addAll(staticClassScope.getFunctions(lastName, location))
                 descriptors.addAll(staticClassScope.getProperties(lastName, location))
+
+                if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
+                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getFunctions(lastName, location).map {
+                        FunctionImportedFromObject(it)
+                    })
+                    val properties = packageOrClassDescriptor.unsubstitutedMemberScope.getProperties(lastName, location)
+                            .filterIsInstance<PropertyDescriptor>().map { PropertyImportedFromObject(it) }
+                    descriptors.addAll(properties)
+                }
             }
 
             else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
@@ -214,12 +223,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 descriptors.addAll(memberScope.getFunctions(lastName, lastPart.location))
                 descriptors.addAll(memberScope.getProperties(lastName, lastPart.location))
                 if (descriptors.isNotEmpty()) {
-                    if (packageOrClassDescriptor.kind.isSingleton) {
-                        trace.report(Errors.CANNOT_IMPORT_MEMBERS_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor))
-                    }
-                    else {
-                        trace.report(Errors.CANNOT_BE_IMPORTED.on(lastPart.expression, lastName))
-                    }
+                    trace.report(Errors.CANNOT_BE_IMPORTED.on(lastPart.expression, lastName))
                 }
             }
 

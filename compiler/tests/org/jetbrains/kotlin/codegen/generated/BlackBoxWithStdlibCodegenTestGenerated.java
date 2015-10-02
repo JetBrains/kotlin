@@ -2473,6 +2473,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("importStaticMemberFromObject.kt")
+        public void testImportStaticMemberFromObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/importStaticMemberFromObject.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/inline.kt");

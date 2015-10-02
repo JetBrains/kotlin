@@ -100,7 +100,7 @@ public interface Errors {
 
     // Imports
 
-    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_IMPORT_MEMBERS_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, Name> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSimpleNameExpression> PACKAGE_CANNOT_BE_IMPORTED = DiagnosticFactory0.create(ERROR);
 
