@@ -1,4 +1,4 @@
-// "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
 // ERROR: Unresolved reference: SomeTest
 // ACTION: Edit intention settings
 // ACTION: Replace safe access expression with 'if' expression
