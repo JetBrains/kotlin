@@ -35,7 +35,15 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 : CompletionSession(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    override val descriptorKindFilter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+    override val descriptorKindFilter: DescriptorKindFilter
+        get() {
+            var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+            if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
+                // if function type is expected we need classes to obtain their constructors
+                filter = filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
+            }
+            return filter
+        }
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {

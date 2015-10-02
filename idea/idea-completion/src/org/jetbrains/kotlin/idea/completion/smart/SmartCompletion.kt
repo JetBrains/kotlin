@@ -164,7 +164,7 @@ class SmartCompletion(
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            toCallableReferenceLookupElement(descriptor, callableTypeExpectedInfo)?.let { result.add(it) }
+            toCallableReferenceLookupElement(descriptor)?.let { result.add(it) }
         }
 
         return result
@@ -315,14 +315,13 @@ class SmartCompletion(
         return null
     }
 
-    private fun toCallableReferenceLookupElement(descriptor: DeclarationDescriptor,
-                                                 functionExpectedInfos: Collection<ExpectedInfo>): LookupElement? {
-        if (functionExpectedInfos.isEmpty()) return null
+    private fun toCallableReferenceLookupElement(descriptor: DeclarationDescriptor): LookupElement? {
+        if (callableTypeExpectedInfo.isEmpty()) return null
 
         fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {
             val callableReferenceType = descriptor.callableReferenceType(resolutionFacade) ?: return null
 
-            val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(callableReferenceType) != null }
+            val matchedExpectedInfos = callableTypeExpectedInfo.filter { it.matchingSubstitutor(callableReferenceType) != null }
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false, parametersAndTypeGrayed = true)
@@ -344,14 +343,22 @@ class SmartCompletion(
                     .addTailAndNameSimilarity(matchedExpectedInfos)
         }
 
-        if (descriptor is CallableDescriptor) {
-            return toLookupElement(descriptor)
-        }
-        else if (descriptor is ClassDescriptor && descriptor.modality != Modality.ABSTRACT) {
-            val constructors = descriptor.getConstructors().filter(visibilityFilter)
-            if (constructors.size() == 1) {
-                //TODO: this code is to be changed if overloads to start work after ::
-                return toLookupElement(constructors.single())
+        when (descriptor) {
+            is CallableDescriptor -> {
+                if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
+                    return null // members and extensions are not supported after "::" currently
+                }
+                return toLookupElement(descriptor)
+            }
+
+            is ClassDescriptor -> {
+                if (descriptor.modality != Modality.ABSTRACT && !descriptor.isInner) {
+                    val constructors = descriptor.getConstructors().filter(visibilityFilter)
+                    if (constructors.size() == 1) {
+                        //TODO: this code is to be changed if overloads to start work after ::
+                        return toLookupElement(constructors.single())
+                    }
+                }
             }
         }
 
