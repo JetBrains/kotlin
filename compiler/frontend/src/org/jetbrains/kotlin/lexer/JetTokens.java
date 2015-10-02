@@ -137,7 +137,7 @@ public interface JetTokens {
     JetKeywordToken PROPERTY_KEYWORD     = JetKeywordToken.softKeyword("property");
     JetKeywordToken RECEIVER_KEYWORD     = JetKeywordToken.softKeyword("receiver");
     JetKeywordToken PARAM_KEYWORD     = JetKeywordToken.softKeyword("param");
-    JetKeywordToken SPARAM_KEYWORD     = JetKeywordToken.softKeyword("sparam");
+    JetKeywordToken SETPARAM_KEYWORD  = JetKeywordToken.softKeyword("setparam");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
     JetKeywordToken BY_KEYWORD        = JetKeywordToken.softKeyword("by");
@@ -196,7 +196,7 @@ public interface JetTokens {
                                              OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
-                                             FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD,
+                                             FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD,
                                              LATE_INIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD

@@ -5,32 +5,32 @@ class CustomDelegate {
     fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}
 }
 
-<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@sparam:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@sparam:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Ann<!>
     constructor()
 
-    <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@sparam:Ann<!>
+    <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@setparam:Ann<!>
     protected val simpleProperty: String = "text"
 
-    @sparam:Ann
+    @setparam:Ann
     protected var mutableProperty: String = "text"
 
-    @sparam:[Ann]
+    @setparam:[Ann]
     protected var mutablePropertyWithAnnotationList: String = "text"
 
-    @sparam:Ann
+    @setparam:Ann
     protected var delegatedProperty: String by CustomDelegate()
 
-    @sparam:Ann
+    @setparam:Ann
     var propertyWithCustomSetter: Int
         get() = 5
         set(v) {}
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY!>@sparam:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY!>@setparam:Ann<!>
     fun anotherFun() {
-        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@sparam:Ann<!>
+        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@setparam:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 
