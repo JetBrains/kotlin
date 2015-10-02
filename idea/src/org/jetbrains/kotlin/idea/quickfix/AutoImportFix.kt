@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -85,7 +86,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
     override fun getFamilyName() = JetBundle.message("import.fix")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
-            = (super<JetHintAction>.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
+            = (super.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
@@ -135,10 +136,14 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             val diagnostics = bindingContext.getDiagnostics().forElement(element)
             if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
 
-        val resolutionScope = element.getResolutionScope(bindingContext, file.getResolutionFacade())
-        val containingDescriptor = resolutionScope.ownerDescriptor
+            val resolutionScope = element.getResolutionScope(bindingContext, file.getResolutionFacade())
+            val containingDescriptor = resolutionScope.ownerDescriptor
+
+            val callType = CallTypeAndReceiver.detect(element).callType
 
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
+                if (!callType.descriptorKindFilter.accepts(descriptor)) return false
+
                 if (descriptor is DeclarationDescriptorWithVisibility) {
                     return descriptor.isVisible(containingDescriptor, bindingContext, element)
                 }

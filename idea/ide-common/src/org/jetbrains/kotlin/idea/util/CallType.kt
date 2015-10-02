@@ -44,6 +44,7 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
 
     object SAFE : CallType<JetExpression>(DescriptorKindFilter.ALL)
 
+    // TODO: split into INFIX and OPERATOR (+ support other convention calls like [] etc)
     object INFIX : CallType<JetExpression>(DescriptorKindFilter.FUNCTIONS exclude NonInfixExclude)
 
     object UNARY : CallType<JetExpression>(DescriptorKindFilter.FUNCTIONS exclude NonUnaryExclude)

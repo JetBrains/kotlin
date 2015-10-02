@@ -1,0 +1,13 @@
+// "Import" "true"
+// ERROR: Unresolved reference: infix
+package x
+
+object infix {
+    fun invoke() {
+
+    }
+}
+
+fun x() {
+    "" <caret>infix ""
+}
