@@ -673,6 +673,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NoQualifierPropertyExpected.kt")
+        public void testNoQualifierPropertyExpected() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifierPropertyExpected.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NonEmptyQualifier1.kt")
         public void testNonEmptyQualifier1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier1.kt");

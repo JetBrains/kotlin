@@ -321,3 +321,6 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
 fun Collection<ExpectedInfo>.filterFunctionExpected()
         = filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
 
+fun Collection<ExpectedInfo>.filterCallableExpected()
+        = filter { it.fuzzyType != null && ReflectionTypes.isCallableType(it.fuzzyType!!.type) }
+

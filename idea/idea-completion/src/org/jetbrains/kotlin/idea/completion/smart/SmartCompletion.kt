@@ -76,6 +76,8 @@ class SmartCompletion(
 
     public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
+    private val callableTypeExpectedInfo = expectedInfos.filterCallableExpected()
+
     public val smartCastCalculator: SmartCastCalculator by lazy(LazyThreadSafetyMode.NONE) {
         SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression)
     }
@@ -162,7 +164,7 @@ class SmartCompletion(
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            toFunctionReferenceLookupElement(descriptor, expectedInfos.filterFunctionExpected())?.let { result.add(it) }
+            toCallableReferenceLookupElement(descriptor, callableTypeExpectedInfo)?.let { result.add(it) }
         }
 
         return result
@@ -313,11 +315,11 @@ class SmartCompletion(
         return null
     }
 
-    private fun toFunctionReferenceLookupElement(descriptor: DeclarationDescriptor,
+    private fun toCallableReferenceLookupElement(descriptor: DeclarationDescriptor,
                                                  functionExpectedInfos: Collection<ExpectedInfo>): LookupElement? {
         if (functionExpectedInfos.isEmpty()) return null
 
-        fun toLookupElement(descriptor: FunctionDescriptor): LookupElement? {
+        fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {
             val callableReferenceType = descriptor.callableReferenceType(resolutionFacade) ?: return null
 
             val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(callableReferenceType) != null }
@@ -342,10 +344,10 @@ class SmartCompletion(
                     .addTailAndNameSimilarity(matchedExpectedInfos)
         }
 
-        if (descriptor is SimpleFunctionDescriptor) {
+        if (descriptor is CallableDescriptor) {
             return toLookupElement(descriptor)
         }
-        else if (descriptor is ClassDescriptor && descriptor.getModality() != Modality.ABSTRACT) {
+        else if (descriptor is ClassDescriptor && descriptor.modality != Modality.ABSTRACT) {
             val constructors = descriptor.getConstructors().filter(visibilityFilter)
             if (constructors.size() == 1) {
                 //TODO: this code is to be changed if overloads to start work after ::
