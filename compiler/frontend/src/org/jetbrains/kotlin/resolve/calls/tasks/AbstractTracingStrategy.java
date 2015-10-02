@@ -189,7 +189,13 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
         ASTNode callOperationNode = call.getCallOperationNode();
         assert callOperationNode != null;
-        trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
+        ReceiverValue explicitReceiver = call.getExplicitReceiver();
+        if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof JetSuperExpression) {
+            trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
+        }
+        else {
+            trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
+        }
     }
 
     @Override

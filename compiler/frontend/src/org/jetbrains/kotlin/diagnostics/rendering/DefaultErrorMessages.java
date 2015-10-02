@@ -466,6 +466,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
+        MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL, "Non-null assertion (!!) is called on function literal");
         MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new Renderer<JetTypeConstraint>() {
