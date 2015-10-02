@@ -16,7 +16,6 @@ public interface TraitClassObjectField {
         private Companion() { /* compiled code */ }
     }
 
-    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27)
     static final class DefaultImpls {
     }
 }

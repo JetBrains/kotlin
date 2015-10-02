@@ -69,10 +69,6 @@ public class MultifileClassPartCodegen(
     }
 
     override fun generateKotlinAnnotation() {
-        if (state.classBuilderMode != ClassBuilderMode.FULL) {
-            return
-        }
-
         val members = ArrayList<DeclarationDescriptor>()
         for (declaration in element.declarations) {
             when (declaration) {

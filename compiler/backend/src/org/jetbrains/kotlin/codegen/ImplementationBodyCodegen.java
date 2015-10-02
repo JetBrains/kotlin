@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -253,8 +251,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
         if (!isTopLevelOrInnerClass(descriptor)) {
             AnnotationVisitor av = v.getVisitor().visitAnnotation(
                     asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true
