@@ -24,6 +24,16 @@ import org.jetbrains.kotlin.lexer.JetTokens
 public abstract class JetDoubleColonExpression(node: ASTNode) : JetExpressionImpl(node) {
     public fun getTypeReference(): JetTypeReference? = findChildByType(JetNodeTypes.TYPE_REFERENCE)
 
+    public fun setTypeReference(typeReference: JetTypeReference) {
+        val oldTypeReference = getTypeReference()
+        if (oldTypeReference != null) {
+            oldTypeReference.replace(typeReference)
+        }
+        else {
+            addBefore(typeReference, getDoubleColonTokenReference())
+        }
+    }
+
     public fun getDoubleColonTokenReference(): PsiElement = findChildByType(JetTokens.COLONCOLON)!!
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {

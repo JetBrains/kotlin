@@ -333,5 +333,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         OPERATOR_MODIFIER_REQUIRED.registerFactory(OperatorModifierFixFactory)
 
         UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
+
+        CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.registerFactory(AddTypeToLHSOfCallableReferenceFix)
     }
 }
