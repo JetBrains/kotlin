@@ -33,12 +33,11 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class ArtificialElementInsertHandler(
@@ -238,30 +237,10 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
     }
 }
 
-fun functionType(function: FunctionDescriptor): JetType? {
-    val extensionReceiverType = function.getExtensionReceiverParameter()?.getType()
-    val memberReceiverType = if (function is ConstructorDescriptor) {
-        val classDescriptor = function.getContainingDeclaration()
-        if (classDescriptor.isInner()) {
-            (classDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-        }
-        else {
-            null
-        }
-    }
-    else {
-        (function.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-    }
-    //TODO: this is to be changed when references to member extensions supported
-    val receiverType = if (extensionReceiverType != null && memberReceiverType != null)
-        null
-    else
-        extensionReceiverType ?: memberReceiverType
-    return function.builtIns.getFunctionType(
-            function.getAnnotations(), receiverType,
-            function.getValueParameters().map { it.getType() },
-            function.getReturnType() ?: return null
-    )
+fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
+    val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return null
+    //TODO: no generic
+    return FuzzyType(type, emptyList()/* references to generic functions not supported yet */)
 }
 
 fun LookupElementFactory.createLookupElementsInSmartCompletion(
@@ -316,9 +295,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
         resolutionFacade: ResolutionFacade
 ): Collection<FuzzyType> {
     if (callType == CallType.CALLABLE_REFERENCE) {
-        if (this !is CallableDescriptor) return emptyList()
-        val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return emptyList()
-        return listOf(FuzzyType(type, emptyList()/* references to generic functions not supported yet */))
+        return (this as? CallableDescriptor)?.callableReferenceType(resolutionFacade).singletonOrEmptyList()
     }
 
     if (this is CallableDescriptor) {

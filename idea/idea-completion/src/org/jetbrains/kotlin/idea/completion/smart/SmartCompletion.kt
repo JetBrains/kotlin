@@ -318,9 +318,9 @@ class SmartCompletion(
         if (functionExpectedInfos.isEmpty()) return null
 
         fun toLookupElement(descriptor: FunctionDescriptor): LookupElement? {
-            val functionType = functionType(descriptor) ?: return null
+            val callableReferenceType = descriptor.callableReferenceType(resolutionFacade) ?: return null
 
-            val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(functionType) != null }
+            val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(callableReferenceType) != null }
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false, parametersAndTypeGrayed = true)
