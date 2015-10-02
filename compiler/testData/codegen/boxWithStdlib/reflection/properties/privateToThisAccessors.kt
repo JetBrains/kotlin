@@ -1,3 +1,4 @@
+import kotlin.reflect.*
 import kotlin.reflect.jvm.*
 
 class K<in T : String> {
@@ -6,10 +7,10 @@ class K<in T : String> {
         set(value) {}
 
     fun run(): String {
-        val p = ::t
+        val p = K::class.memberProperties.single() as KMutableProperty1<K<String>, String>
         p.isAccessible = true
-        p.set(this, "" as T)
-        return p.get(this)
+        p.set(this as K<String>, "")
+        return p.get(this) as String
     }
 }
 

@@ -7,10 +7,9 @@ class A {
 }
     
 fun A.main() {
-    val x = ::Inner
+    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>Inner<!>
     val y = A::Inner
 
-    checkSubtype<KFunction1<A, A.Inner>>(x)
     checkSubtype<KFunction1<A, A.Inner>>(y)
 }
 

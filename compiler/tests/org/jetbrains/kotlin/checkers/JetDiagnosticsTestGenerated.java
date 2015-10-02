@@ -1539,6 +1539,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("emptyLhs.kt")
+            public void testEmptyLhs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/emptyLhs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
@@ -1628,24 +1634,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("empty.kt")
                 public void testEmpty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/empty.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("extensionFromClass.kt")
-                public void testExtensionFromClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromClass.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("extensionFromExtension.kt")
-                public void testExtensionFromExtension() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromExtension.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("extensionFromExtensionInClass.kt")
-                public void testExtensionFromExtensionInClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromExtensionInClass.kt");
                     doTest(fileName);
                 }
 
@@ -1769,24 +1757,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("memberFromClass.kt")
-                public void testMemberFromClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromClass.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("memberFromExtension.kt")
-                public void testMemberFromExtension() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromExtension.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("memberFromExtensionInClass.kt")
-                public void testMemberFromExtensionInClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromExtensionInClass.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("memberFromTopLevel.kt")
                 public void testMemberFromTopLevel() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromTopLevel.kt");
@@ -1892,12 +1862,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("extensionFromClass.kt")
-                public void testExtensionFromClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/extensionFromClass.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("extensionFromTopLevel.kt")
                 public void testExtensionFromTopLevel() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/extensionFromTopLevel.kt");
@@ -1943,12 +1907,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("localVariable.kt")
                 public void testLocalVariable() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/localVariable.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("memberFromExtension.kt")
-                public void testMemberFromExtension() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/memberFromExtension.kt");
                     doTest(fileName);
                 }
 

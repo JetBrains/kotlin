@@ -4,8 +4,8 @@ class A {
     inner class C
 
     fun foo() {
-        <selection>::B</selection>
-        ::C
+        <selection>A::B</selection>
+        A::C
         A::B
         A::C
     }
