@@ -554,10 +554,20 @@
         </sequential>
 
         <jar jarfile="${output}/kotlin-compiler-for-maven.jar" duplicate="preserve">
+            <patternset id="lib.metainf.patternset">
+                <include name="**"/>
+                <exclude name="META-INF/build.txt"/>
+                <exclude name="META-INF/MANIFEST.MF"/>
+            </patternset>
+
             <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
-            <zipfileset src="${bootstrap.runtime}" includes="**" />
-            <zipfileset src="${bootstrap.reflect}" includes="**" />
+            <zipfileset src="${bootstrap.runtime}">
+                <patternset refid="lib.metainf.patternset"/>
+            </zipfileset>
+            <zipfileset src="${bootstrap.reflect}">
+                <patternset refid="lib.metainf.patternset"/>
+            </zipfileset>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
