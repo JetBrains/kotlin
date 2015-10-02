@@ -178,7 +178,7 @@ public class DataFlowAnalyzer {
 
         if (expression instanceof JetConstantExpression) {
             ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
-            boolean error = new CompileTimeConstantChecker(c.trace, true)
+            boolean error = new CompileTimeConstantChecker(c.trace, builtIns, true)
                     .checkConstantExpressionType(constantValue, (JetConstantExpression) expression, c.expectedType);
             if (hasError != null) hasError.set(error);
             return expressionType;

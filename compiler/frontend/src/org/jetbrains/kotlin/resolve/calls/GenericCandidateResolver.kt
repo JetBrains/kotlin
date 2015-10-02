@@ -49,8 +49,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 
 class GenericCandidateResolver(
-        private val argumentTypeResolver: ArgumentTypeResolver,
-        private val typeIntersector: TypeIntersector
+        private val argumentTypeResolver: ArgumentTypeResolver
 ) {
 
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
@@ -189,7 +188,7 @@ class GenericCandidateResolver(
         val possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
-        return typeIntersector.intersect(JetTypeChecker.DEFAULT, possibleTypes)
+        return TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, possibleTypes)
     }
 
     public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(

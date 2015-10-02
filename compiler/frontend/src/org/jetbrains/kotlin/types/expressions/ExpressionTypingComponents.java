@@ -55,7 +55,6 @@ public class ExpressionTypingComponents {
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
     /*package*/ Iterable<CallChecker> callCheckers;
-    /*package*/ TypeIntersector typeIntersector;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -170,10 +169,5 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCallCheckers(@NotNull Iterable<CallChecker> callCheckers) {
         this.callCheckers = callCheckers;
-    }
-
-    @Inject
-    public void setTypeIntersector(@NotNull TypeIntersector typeIntersector) {
-        this.typeIntersector = typeIntersector;
     }
 }

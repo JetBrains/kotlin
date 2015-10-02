@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveFilesOrDirectoriesDialogWithKotlinOptions
 import org.jetbrains.kotlin.idea.references.JetReference
@@ -90,7 +91,6 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(getProject(), descriptor) ?: return null
-        if (isAncestor(declaration, false)) return null
 
         val isCallable = descriptor is CallableDescriptor
         val isExtension = isCallable && (descriptor as CallableDescriptor).getExtensionReceiverParameter() != null
@@ -113,11 +113,25 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
             DescriptorUtils.getFqName(it).toSafe()
         }
 
+        val oldPackageName = packageNameInfo.oldPackageName
+        val newPackageName = packageNameInfo.newPackageName
         return when {
             isExtension,
-            packageName == packageNameInfo.oldPackageName,
-            packageName?.asString() == packageNameInfo.newPackageName.asString(),
+            packageName == oldPackageName,
+            packageName?.asString() == newPackageName.asString(),
             isImported(descriptor) -> {
+                if (isAncestor(declaration, false)) {
+                    if (descriptor.importableFqName == null) return null
+                    if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
+                    if (packageName == null || !newPackageName.isSafe) return null
+                    fqName.asString().let {
+                        val prefix = packageName.asString()
+                        val prefixOffset = it.indexOf(prefix)
+                        val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length() - 1, newPackageName.asString()))
+                        return MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
+                    }
+                }
+
                 createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
             }
 
@@ -148,6 +162,11 @@ class MoveRenameUsageInfoForExtension(
         val addImportToOriginalFile: Boolean
 ): MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
 
+class MoveRenameSelfUsageInfo(ref: JetSimpleNameReference, refTarget: PsiElement, val newFqName: FqName):
+        MoveRenameUsageInfo(ref.element, ref, ref.rangeInElement.startOffset, ref.rangeInElement.endOffset, refTarget, false) {
+    override fun getReference() = super.getReference() as? JetSimpleNameReference
+}
+
 fun createMoveUsageInfoIfPossible(
         reference: PsiReference,
         referencedElement: PsiElement,
@@ -160,14 +179,18 @@ fun createMoveUsageInfoIfPossible(
     val startOffset = range.getStartOffset()
     val endOffset = range.getEndOffset()
 
-    if (reference is JetReference
-        && (referencedElement.namedUnwrappedElement as? JetDeclaration)?.isExtensionDeclaration() ?: false
-        && element.getNonStrictParentOfType<JetImportDirective>() == null) {
+    if (isUnqualifiedExtensionReference(reference, referencedElement)) {
         return MoveRenameUsageInfoForExtension(
                 element, reference, startOffset, endOffset, referencedElement, element.getContainingFile()!!, addImportToOriginalFile
         )
     }
     return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
+}
+
+private fun isUnqualifiedExtensionReference(reference: PsiReference, referencedElement: PsiElement): Boolean {
+    return reference is JetReference
+           && (referencedElement.namedUnwrappedElement as? JetDeclaration)?.isExtensionDeclaration() ?: false
+           && reference.element.getNonStrictParentOfType<JetImportDirective>() == null
 }
 
 public fun guessNewFileName(declarationsToMove: Collection<JetNamedDeclaration>): String? {
@@ -244,6 +267,10 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
         when (usage) {
             is NonCodeUsageInfo -> {
                 nonCodeUsages.add(usage)
+            }
+
+            is MoveRenameSelfUsageInfo -> {
+                usage.reference?.bindToFqName(usage.newFqName, shorteningMode)
             }
 
             is MoveRenameUsageInfoForExtension -> {

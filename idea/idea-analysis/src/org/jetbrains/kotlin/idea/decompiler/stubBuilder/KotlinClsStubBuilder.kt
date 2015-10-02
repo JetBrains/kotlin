@@ -70,20 +70,25 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
             LOG.error("Corrupted kotlin header for file ${file.getName()}")
             return null
         }
+        val strings = header.strings
+        if (strings == null) {
+            LOG.error("String table not found in file ${file.getName()}")
+            return null
+        }
         return when {
             header.isCompatiblePackageFacadeKind() -> {
-                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName)
                 createPackageFacadeStub(packageProto, packageFqName, context)
             }
             header.isCompatibleClassKind() -> {
                 if (header.classKind != JvmAnnotationNames.KotlinClass.Kind.CLASS) return null
-                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData)
+                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName)
                 createTopLevelClassStub(classId, classProto, context)
             }
             header.isCompatibleFileFacadeKind() -> {
-                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName)
                 createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
             }

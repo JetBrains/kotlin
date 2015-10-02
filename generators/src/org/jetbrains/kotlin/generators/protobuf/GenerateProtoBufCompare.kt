@@ -53,7 +53,6 @@ class GenerateProtoBufCompare {
     private val RESULT_NAME = "result"
     private val STRING_INDEXES_NANE = "StringIndexes"
     private val CLASS_ID_INDEXES_NANE = "ClassIdIndexes"
-    private val FQ_NAME_INDEXES_NANE = "FqNameIndexes"
     private val OLD_PREFIX = "old"
     private val NEW_PREFIX = "new"
     private val CHECK_EQAULS_NAME = "checkEquals"
@@ -75,7 +74,6 @@ class GenerateProtoBufCompare {
         p.println()
 
         p.println("import org.jetbrains.kotlin.name.ClassId")
-        p.println("import org.jetbrains.kotlin.name.FqName")
         p.println("import org.jetbrains.kotlin.serialization.ProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.deserialization.NameResolver")
         p.println("import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf")
@@ -95,9 +93,7 @@ class GenerateProtoBufCompare {
         p.println("public val $NEW_PREFIX${CLASS_ID_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
 
         p.println()
-        p.println("private val fqNames = Interner<FqName>()")
         p.println("private val classIds = Interner<ClassId>()")
-        p.println()
 
         val fileDescriptor = DebugProtoBuf.getDescriptor()
 
@@ -150,9 +146,7 @@ class GenerateProtoBufCompare {
         p.println("public fun getIndexOfClassId(index: Int, map: MutableMap<Int, Int>, nameResolver: NameResolver): Int {")
         p.println("    map[index]?.let { return it }")
         p.println()
-        // TODO fqNames -> classIds
-        p.println("    val result = fqNames.intern(nameResolver.getFqName(index))")
-        //p.println("    val result = classIds.intern(nameResolver.getClassId(index))")
+        p.println("    val result = classIds.intern(nameResolver.getClassId(index))")
         p.println("    map[index] = result")
         p.println("    return result")
         p.println("}")

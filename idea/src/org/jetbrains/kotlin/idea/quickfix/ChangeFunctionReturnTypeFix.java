@@ -26,6 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
@@ -50,7 +51,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
+import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {
     private final JetType type;
@@ -162,10 +165,11 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
+                FunctionDescriptor hasNextDescriptor = resolvedCall.getCandidateDescriptor();
                 JetFunction hasNextFunction = (JetFunction) DescriptorToSourceUtils
-                        .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
+                        .descriptorToDeclaration(hasNextDescriptor);
                 if (hasNextFunction != null) {
-                    return new ChangeFunctionReturnTypeFix(hasNextFunction, KotlinBuiltIns.getInstance().getBooleanType());
+                    return new ChangeFunctionReturnTypeFix(hasNextFunction, getBuiltIns(hasNextDescriptor).getBooleanType());
                 }
                 else return null;
             }
@@ -183,9 +187,10 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
-                PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
+                CallableDescriptor compareToDescriptor = resolvedCall.getCandidateDescriptor();
+                PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor);
                 if (!(compareTo instanceof JetFunction)) return null;
-                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
+                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, getBuiltIns(compareToDescriptor).getIntType());
             }
         };
     }
@@ -239,7 +244,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
-                return function == null ? null : new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
+                return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getUnitType());
             }
         };
     }

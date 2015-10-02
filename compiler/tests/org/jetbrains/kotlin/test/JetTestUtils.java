@@ -65,7 +65,9 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -941,8 +943,13 @@ public class JetTestUtils {
 
     @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
+        return createEmptyModule(name, JvmPlatform.INSTANCE$);
+    }
+
+    @NotNull
+    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull TargetPlatform platform) {
         return new ModuleDescriptorImpl(
-                Name.special(name), LockBasedStorageManager.NO_LOCKS, ModuleParameters.Empty.INSTANCE$
+                Name.special(name), LockBasedStorageManager.NO_LOCKS, platform.getDefaultModuleParameters(), platform.getBuiltIns()
         );
     }
 

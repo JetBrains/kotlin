@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DynamicTypesSettings {
     open val dynamicTypesAllowed: Boolean
@@ -30,15 +31,13 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 interface Dynamicity : TypeCapability
 
-// Object is created only for convenience here. Dynamic types may occur in the form of DelegatingFlexibleTypes,
-// which are produced by substitutions
-object DynamicType : DelegatingFlexibleType(
-        KotlinBuiltIns.getInstance().getNothingType(),
-        KotlinBuiltIns.getInstance().getNullableAnyType(),
-        DynamicTypeCapabilities
-)
-
 fun JetType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
+
+fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleType(
+        builtIns.nothingType,
+        builtIns.nullableAnyType,
+        DynamicTypeCapabilities
+) {}
 
 public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
@@ -66,7 +65,7 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
 
         override fun makeNullableAsSpecified(nullable: Boolean): JetType {
             // Nullability has no effect on dynamics
-            return DynamicType
+            return createDynamicType(delegateType.builtIns)
         }
 
         override fun computeIsNullable() = false

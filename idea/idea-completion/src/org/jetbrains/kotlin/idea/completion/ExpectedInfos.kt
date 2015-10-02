@@ -421,7 +421,7 @@ class ExpectedInfos(
     private fun calculateForIf(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val ifExpression = (expressionWithType.getParent() as? JetContainerNode)?.getParent() as? JetIfExpression ?: return null
         return when (expressionWithType) {
-            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
+            ifExpression.getCondition() -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH))
 
             ifExpression.getThen() -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
@@ -492,14 +492,14 @@ class ExpectedInfos(
             return listOf(ExpectedInfo(subjectType, null, null))
         }
         else {
-            return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, null))
+            return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null))
         }
     }
 
     private fun calculateForExclOperand(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val prefixExpression = expressionWithType.getParent() as? JetPrefixExpression ?: return null
         if (prefixExpression.getOperationToken() != JetTokens.EXCL) return null
-        return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, null))
+        return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null))
     }
 
     private fun calculateForInitializer(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -574,7 +574,7 @@ class ExpectedInfos(
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
-        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade.ideService<HeuristicSignatures>())
+        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade)
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {

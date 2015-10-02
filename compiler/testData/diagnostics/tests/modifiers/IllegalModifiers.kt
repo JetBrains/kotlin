@@ -40,7 +40,7 @@ class IllegalModifiers1(
         <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
-class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
+class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
 
 
 //Check annotations with illegal modifiers in constructor
@@ -131,7 +131,7 @@ class IllegalModifiers8 {
     <!INCOMPATIBLE_MODIFIERS!>const<!>
     constructor() {}
 
-    constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
+    constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
 }
 
 class IllegalModifiers9 {

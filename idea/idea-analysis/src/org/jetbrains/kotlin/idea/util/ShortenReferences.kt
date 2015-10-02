@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.getFileScope
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
@@ -271,9 +273,11 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
 
             val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
-            val scope = bindingContext[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference] ?: return
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, typeReference] ?: return
             val name = target.getName()
-            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, NoLookupLocation.FROM_IDE) else scope.getPackage(name)
+            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, NoLookupLocation.FROM_IDE) else {
+                scope.getFileScope().getPackage(name)
+            }
             val canShortenNow = targetByName?.asString() == target.asString()
 
             processQualifiedElement(type, target, canShortenNow)

@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 //FILE:a.kt
 package test_visibility
 
@@ -26,7 +28,7 @@ class Y {
 class A {
     private val i = 23
     private val v: B = B()
-    private fun f(<!UNUSED_PARAMETER!>i<!>: Int): B = B()
+    private fun f(i: Int): B = B()
 
     fun test() {
         doSmth(i)
@@ -38,8 +40,8 @@ class B {
 }
 
 fun test3(a: A) {
-    a.<!INVISIBLE_MEMBER!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_MEMBER!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
+    a.<!INVISIBLE_MEMBER(v; private; 'A')!>v<!> //todo .bMethod()
+    a.<!INVISIBLE_MEMBER(f; private; 'A')!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 interface T
@@ -52,7 +54,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!INVISIBLE_MEMBER!>i<!>++
+    c.<!INVISIBLE_MEMBER(i; protected; 'C')!>i<!>++
 }
 
 class D : C() {
@@ -76,7 +78,7 @@ class F : C() {
 
 class G : T {
     fun test8(c: C) {
-        doSmth(c.<!INVISIBLE_MEMBER!>i<!>)
+        doSmth(c.<!INVISIBLE_MEMBER(i; protected; 'C')!>i<!>)
     }
 }
 
@@ -89,5 +91,5 @@ import test_visibility.*
 
 fun test() {
     internal_fun()
-    <!INVISIBLE_MEMBER!>private_fun<!>()
+    <!INVISIBLE_MEMBER(private_fun; private; file)!>private_fun<!>()
 }

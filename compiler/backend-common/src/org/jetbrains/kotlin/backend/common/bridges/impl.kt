@@ -56,7 +56,7 @@ private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescrip
 
     override val isAbstract: Boolean =
             descriptor.getModality() == Modality.ABSTRACT ||
-            DescriptorUtils.isTrait(descriptor.getContainingDeclaration())
+            DescriptorUtils.isInterface(descriptor.getContainingDeclaration())
 
     override fun getOverridden() = overridden
 }
@@ -74,7 +74,7 @@ public fun findTraitImplementation(descriptor: CallableMemberDescriptor): Callab
     val implementation = findImplementationFromInterface(descriptor) ?: return null
     val immediateConcreteSuper = firstSuperMethodFromKotlin(descriptor, implementation) ?: return null
 
-    if (!DescriptorUtils.isTrait(immediateConcreteSuper.getContainingDeclaration())) {
+    if (!DescriptorUtils.isInterface(immediateConcreteSuper.getContainingDeclaration())) {
         // If this implementation is already generated into the superclass, we need not generate it again, it'll be inherited
         return null
     }

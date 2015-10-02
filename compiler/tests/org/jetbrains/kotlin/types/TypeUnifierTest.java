@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetTypeProjection;
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.DiPackage;
 
 import java.util.Map;
@@ -63,17 +63,18 @@ public class TypeUnifierTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
 
-        builtIns = KotlinBuiltIns.getInstance();
 
-        typeResolver = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule()).getTypeResolver();
+        ModuleDescriptorImpl module = JetTestUtils.createEmptyModule();
+        builtIns = module.getBuiltIns();
+        typeResolver = DiPackage.createContainerForTests(getProject(), module).getTypeResolver();
         x = createTypeVariable("X");
         y = createTypeVariable("Y");
         variables = Sets.newHashSet(x.getTypeConstructor(), y.getTypeConstructor());
     }
 
-    private static TypeParameterDescriptor createTypeVariable(String name) {
+    private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
+                builtIns.getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifier(name), 0);
     }
 

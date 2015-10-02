@@ -112,7 +112,7 @@ class LexicalWritableScope(
         override fun getDeclaredFunctions(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getDeclaredFunctions(name, descriptorLimit)
 
-        override fun toString(): String = "Snapshot for $debugName"
+        override fun toString(): String = "Snapshot($descriptorLimit) for $debugName"
 
         override fun printStructure(p: Printer) {
             p.println("Snapshot with descriptorLimit = $descriptorLimit for scope:")

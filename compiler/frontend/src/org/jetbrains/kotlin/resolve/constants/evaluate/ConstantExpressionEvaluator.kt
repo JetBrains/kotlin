@@ -36,8 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.math.BigInteger
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 public class ConstantExpressionEvaluator(
         internal val builtIns: KotlinBuiltIns
@@ -656,6 +655,24 @@ private class ConstantExpressionEvaluatorVisitor(
         return createOperationArgument(argumentExpression, parameter.getType(), argumentCompileTimeType)
     }
 
+
+    private fun getCompileTimeType(c: JetType): CompileTimeType<out Any>? {
+        val builtIns = constantExpressionEvaluator.builtIns
+        return when (TypeUtils.makeNotNullable(c)) {
+            builtIns.intType -> INT
+            builtIns.byteType -> BYTE
+            builtIns.shortType -> SHORT
+            builtIns.longType -> LONG
+            builtIns.doubleType -> DOUBLE
+            builtIns.floatType -> FLOAT
+            builtIns.charType -> CHAR
+            builtIns.booleanType -> BOOLEAN
+            builtIns.stringType -> STRING
+            builtIns.anyType -> ANY
+            else -> null
+        }
+    }
+
     private fun createOperationArgument(expression: JetExpression, expressionType: JetType, compileTimeType: CompileTimeType<*>): OperationArgument? {
         val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, expressionType) ?: return null
         val evaluationResult = compileTimeConstant.getValue(expressionType) ?: return null
@@ -816,23 +833,6 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): JetType? {
         ExplicitReceiverKind.EXTENSION_RECEIVER -> resolvedCall.getExtensionReceiver().getType()
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> null
         ExplicitReceiverKind.BOTH_RECEIVERS -> null
-        else -> null
-    }
-}
-
-private fun getCompileTimeType(c: JetType): CompileTimeType<out Any>? {
-    val builtIns = KotlinBuiltIns.getInstance()
-    return when (TypeUtils.makeNotNullable(c)) {
-        builtIns.getIntType() -> INT
-        builtIns.getByteType() -> BYTE
-        builtIns.getShortType() -> SHORT
-        builtIns.getLongType() -> LONG
-        builtIns.getDoubleType() -> DOUBLE
-        builtIns.getFloatType() -> FLOAT
-        builtIns.getCharType() -> CHAR
-        builtIns.getBooleanType() -> BOOLEAN
-        builtIns.getStringType() -> STRING
-        builtIns.getAnyType() -> ANY
         else -> null
     }
 }

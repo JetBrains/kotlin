@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -110,7 +113,7 @@ public class BodyResolver {
         // SCRIPT: resolve script bodies
         scriptBodyResolverResolver.resolveScriptBodies(c);
 
-        if (!c.getTopDownAnalysisMode().getIsLocalDeclarations()) {
+        if (!c.getTopDownAnalysisMode().isLocalDeclarations()) {
             computeDeferredTypes();
         }
     }
@@ -732,7 +735,7 @@ public class BodyResolver {
             LexicalScope scope = c.getDeclaringScope(declaration);
             assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
 
-            if (!c.getTopDownAnalysisMode().getIsLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
+            if (!c.getTopDownAnalysisMode().isLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
                 expressionTypingServices.getStatementFilter() != StatementFilter.NONE) {
                 bodyResolveCache.resolveFunctionBody(declaration).addOwnDataTo(trace, true);
             }
@@ -776,11 +779,11 @@ public class BodyResolver {
         );
 
         // Synthetic "field" creation
-        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+        if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             JetProperty property = (JetProperty) function.getParent();
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
-            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, functionDescriptor.getExtensionReceiverParameter(),
+            innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               "Accessor inner scope with synthetic field",
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override

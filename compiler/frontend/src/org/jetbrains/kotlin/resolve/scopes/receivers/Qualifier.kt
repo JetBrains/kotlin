@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
-import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.ArrayList
+import java.util.*
 import kotlin.properties.Delegates
 
 public interface Qualifier: ReceiverValue {
@@ -126,7 +126,7 @@ fun createQualifier(
 
     if (packageViewDescriptor == null && classifierDescriptor == null) return null
 
-    context.recordScopeAndDataFlowInfo(expression)
+    context.trace.recordScope(context.scope, expression)
 
     val qualifier = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)
     context.trace.record(QUALIFIER, qualifier.expression, qualifier)

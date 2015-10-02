@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -43,7 +44,7 @@ import static kotlin.KotlinPackage.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
-public class KotlinBuiltIns {
+public abstract class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
@@ -54,56 +55,7 @@ public class KotlinBuiltIns {
             BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
     );
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static volatile KotlinBuiltIns instance = null;
-
-    private static volatile boolean initializing;
-    private static Throwable initializationFailed;
-
-    private static synchronized void initialize() {
-        if (instance == null) {
-            if (initializationFailed != null) {
-                throw new IllegalStateException(
-                        "Built-in library initialization failed previously: " + initializationFailed, initializationFailed
-                );
-            }
-            if (initializing) {
-                throw new IllegalStateException("Built-in library initialization loop");
-            }
-            initializing = true;
-            try {
-                instance = new KotlinBuiltIns();
-                instance.doInitialize();
-            }
-            catch (Throwable e) {
-                initializationFailed = e;
-                throw new IllegalStateException("Built-in library initialization failed. " +
-                                                "Please ensure you have kotlin-runtime.jar in the classpath: " + e, e);
-            }
-            finally {
-                initializing = false;
-            }
-        }
-    }
-
-    @NotNull
-    public static KotlinBuiltIns getInstance() {
-        if (initializing) {
-            synchronized (KotlinBuiltIns.class) {
-                assert instance != null : "Built-ins are not initialized (note: We are under the same lock as initializing and instance)";
-                return instance;
-            }
-        }
-        if (instance == null) {
-            initialize();
-        }
-        return instance;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final ModuleDescriptorImpl builtInsModule;
+    protected final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
@@ -113,7 +65,7 @@ public class KotlinBuiltIns {
 
     public static final FqNames FQ_NAMES = new FqNames();
 
-    private KotlinBuiltIns() {
+    protected KotlinBuiltIns() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this
@@ -122,6 +74,7 @@ public class KotlinBuiltIns {
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                getAdditionalSupertypesProvider(),
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
@@ -139,12 +92,14 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
-    }
-
-    private void doInitialize() {
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
+    }
+
+    @NotNull
+    protected AdditionalSupertypes getAdditionalSupertypesProvider() {
+        return AdditionalSupertypes.None.INSTANCE$;
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
@@ -178,6 +133,8 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe _list = fqNameUnsafe("List");
         public final FqNameUnsafe _set = fqNameUnsafe("Set");
         public final FqNameUnsafe _iterable = fqNameUnsafe("Iterable");
+
+        public final FqName throwable = fqName("Throwable");
 
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("Deprecated");
@@ -377,8 +334,18 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public static String getFunctionName(int parameterCount) {
+        return "Function" + parameterCount;
+    }
+
+    @NotNull
+    public static String getExtensionFunctionName(int parameterCount) {
+        return getFunctionName(parameterCount + 1);
+    }
+
+    @NotNull
     public ClassDescriptor getFunction(int parameterCount) {
-        return getBuiltInClassByName("Function" + parameterCount);
+        return getBuiltInClassByName(getFunctionName(parameterCount));
     }
 
     /**
@@ -388,7 +355,7 @@ public class KotlinBuiltIns {
     @Deprecated
     @NotNull
     public ClassDescriptor getExtensionFunction(int parameterCount) {
-        return getBuiltInClassByName("Function" + (parameterCount + 1));
+        return getBuiltInClassByName(getExtensionFunctionName((parameterCount)));
     }
 
     @NotNull
@@ -686,6 +653,10 @@ public class KotlinBuiltIns {
         return primitiveJetTypeToJetArrayType.get(jetType);
     }
 
+    public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
+        return getPrimitiveTypeByArrayClassFqName(arrayFqName) != null;
+    }
+
     @Nullable
     public static PrimitiveType getPrimitiveTypeByFqName(@NotNull FqNameUnsafe primitiveClassFqName) {
         return FQ_NAMES.fqNameToPrimitiveType.get(primitiveClassFqName);
@@ -934,7 +905,12 @@ public class KotlinBuiltIns {
         return isAny(getFqName(descriptor));
     }
 
+    public static boolean isAny(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.any);
+    }
+
     public static boolean isBoolean(@NotNull JetType type) {
+
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
     }
 

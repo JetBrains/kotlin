@@ -71,7 +71,6 @@ public interface Errors {
     DiagnosticFactory3<JetSimpleNameExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
-    DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, JetFile> ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
 
     DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
@@ -327,7 +326,8 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
+    DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
+    DiagnosticFactory0<JetProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
     DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_SYNTAX_DEPRECATED = DiagnosticFactory0.create(WARNING);
@@ -355,6 +355,7 @@ public interface Errors {
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> FINAL_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, FINAL_MODIFIER);
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> PRIVATE_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, PRIVATE_MODIFIER);
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
@@ -527,7 +528,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> UNDESCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> UNDERSCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
 

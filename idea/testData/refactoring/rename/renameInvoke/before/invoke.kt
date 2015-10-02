@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun invoke(i: Int): A = A(i)
+    operator fun invoke(i: Int): A = A(i)
 }
 
 fun test() {

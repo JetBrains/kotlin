@@ -4,6 +4,6 @@ interface  T1 {
 
 }
 
-class `T1$$TImpl` {
+class `T1$DefaultImpls` {
 
 }

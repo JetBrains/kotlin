@@ -90,9 +90,10 @@ class ParameterNameAndTypeCompletion(
 
     public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
         for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
-            AllClassesCompletion(parameters, indicesHelper, prefixMatcher.toClassifierNamePrefixMatcher(), { !it.isSingleton() })
-                    .collect(
-                            { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher, notImported = true) },
+            AllClassesCompletion(
+                    parameters, indicesHelper, prefixMatcher.toClassifierNamePrefixMatcher(), resolutionFacade, { !it.isSingleton() }
+            ).collect(
+                    { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher, notImported = true) },
                             { addSuggestionsForJavaClass(it, userPrefixes[i], prefixMatcher, notImported = true) }
                     )
 

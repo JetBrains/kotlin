@@ -24,6 +24,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.util.TypeIndexUtilKt;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class IdeStubIndexService extends StubIndexService {
@@ -93,6 +93,10 @@ public class IdeStubIndexService extends StubIndexService {
             if (stub.isTopLevel()) {
                 sink.occurrence(JetTopLevelClassByPackageIndex.getInstance().getKey(), fqName.parent().asString());
             }
+        }
+
+        if (stub.isInterface()) {
+            sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
         }
 
         indexSuperNames(stub, sink);

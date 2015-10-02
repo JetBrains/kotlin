@@ -54,6 +54,8 @@ public class Flags {
 
     public static final FlagField<Boolean> IS_OPERATOR = FlagField.booleanAfter(LATE_INIT);
 
+    public static final FlagField<Boolean> IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
+
     // Parameters
 
     public static final FlagField<Boolean> DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
@@ -121,7 +123,8 @@ public class Flags {
             boolean hasConstant,
             boolean lateInit,
             boolean isConst,
-            boolean isOperator
+            boolean isOperator,
+            boolean isInfix
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -134,6 +137,7 @@ public class Flags {
                | LATE_INIT.toFlags(lateInit)
                | IS_CONST.toFlags(isConst)
                | IS_OPERATOR.toFlags(isOperator)
+               | IS_INFIX.toFlags(isInfix)
                ;
     }
 

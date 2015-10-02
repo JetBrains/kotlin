@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -30,13 +31,25 @@ import org.jetbrains.kotlin.psi.*
 
 public object ModifierCheckerCore {
     private enum class Compatibility {
+        // modifier pair is compatible: ok (default)
         COMPATIBLE,
+        // second is redundant to first: warning
         REDUNDANT,
+        // first is redundant to second: warning
         REVERSE_REDUNDANT,
+        // error
         REPEATED,
+        // pair is deprecated, will become incompatible: warning
         DEPRECATED,
-        INCOMPATIBLE
+        // pair is incompatible: error
+        INCOMPATIBLE,
+        // same but only for functions / properties: error
+        COMPATIBLE_FOR_CLASSES_ONLY
     }
+
+    private val defaultVisibilityTargets = EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+                                                      MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
+                                                      MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR)
 
     private val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
@@ -44,15 +57,14 @@ public object ModifierCheckerCore {
             OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
             SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS),
-            INNER_KEYWORD     to EnumSet.of(INNER_CLASS),
+            // We should have also CLASS_ONLY here because INNER_CLASS is not always perfectly identified
+            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
-            PRIVATE_KEYWORD   to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            PUBLIC_KEYWORD    to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            INTERNAL_KEYWORD  to EnumSet.of(CLASS, MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-                                            MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS, MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR),
+            PRIVATE_KEYWORD   to defaultVisibilityTargets,
+            PUBLIC_KEYWORD    to defaultVisibilityTargets,
+            INTERNAL_KEYWORD  to defaultVisibilityTargets,
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+                                            MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR),
             IN_KEYWORD        to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             OUT_KEYWORD       to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
@@ -67,7 +79,8 @@ public object ModifierCheckerCore {
             ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
             CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
-            OPERATOR_KEYWORD  to EnumSet.of(FUNCTION)
+            OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
+            INFIX_KEYWORD     to EnumSet.of(FUNCTION)
     )
 
     // NOTE: redundant targets must be possible!
@@ -85,8 +98,11 @@ public object ModifierCheckerCore {
     )
 
     private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+            // Deprecated in M14, forbidden in M15
             INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
-            PROTECTED_KEYWORD to EnumSet.of(INTERFACE)
+            PROTECTED_KEYWORD to EnumSet.of(INTERFACE),
+            // Deprecated in M15
+            FINAL_KEYWORD     to EnumSet.of(INTERFACE)
     )
 
     // First modifier in pair should be also first in declaration
@@ -118,6 +134,9 @@ public object ModifierCheckerCore {
 
         // private is incompatible with override
         result += incompatibilityRegister(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
+        // private is compatible with open / abstract only for classes
+        result += compatibilityForClassesRegister(PRIVATE_KEYWORD, OPEN_KEYWORD)
+        result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
         return result
     }
 
@@ -143,6 +162,9 @@ public object ModifierCheckerCore {
         return result
     }
 
+    private fun compatibilityForClassesRegister(vararg list: JetModifierKeywordToken) =
+            compatibilityRegister(Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, *list)
+
     private fun incompatibilityRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
 
     private fun deprecationRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
@@ -156,7 +178,11 @@ public object ModifierCheckerCore {
         }
     }
 
-    private fun checkCompatibility(trace: BindingTrace, firstNode: ASTNode, secondNode: ASTNode, incorrectNodes: MutableSet<ASTNode>) {
+    private fun checkCompatibility(trace: BindingTrace,
+                                   firstNode: ASTNode,
+                                   secondNode: ASTNode,
+                                   owner: PsiElement,
+                                   incorrectNodes: MutableSet<ASTNode>) {
         val first = firstNode.elementType as JetModifierKeywordToken
         val second = secondNode.elementType as JetModifierKeywordToken
         val compatibility = compatibility(first, second)
@@ -173,7 +199,10 @@ public object ModifierCheckerCore {
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))
             }
-            Compatibility.INCOMPATIBLE -> {
+            Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INCOMPATIBLE -> {
+                if (compatibility == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY) {
+                    if (owner is JetClassOrObject) return
+                }
                 if (incorrectNodes.add(firstNode)) {
                     trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(firstNode.psi, first, second))
                 }
@@ -231,7 +260,7 @@ public object ModifierCheckerCore {
                 if (first == second) {
                     break;
                 }
-                checkCompatibility(trace, first, second, incorrectNodes)
+                checkCompatibility(trace, first, second, list.owner, incorrectNodes)
             }
             if (second !in incorrectNodes) {
                 if (!checkTarget(trace, second, actualTargets)) {

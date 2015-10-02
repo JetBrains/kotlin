@@ -16,10 +16,20 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
+import java.io.Serializable
+
+data class JvmPackagePartProto(val data: ByteArray, val strings: Array<String>) : Serializable
+
 public interface IncrementalCache {
     public fun getObsoletePackageParts(): Collection<String>
 
-    public fun getPackagePartData(fqName: String): ByteArray?
+    public fun getObsoleteMultifileClasses(): Collection<String>
+
+    public fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
+
+    public fun getMultifileFacade(partInternalName: String): String?
+
+    public fun getPackagePartData(fqName: String): JvmPackagePartProto?
 
     public fun getModuleMappingData(): ByteArray?
 

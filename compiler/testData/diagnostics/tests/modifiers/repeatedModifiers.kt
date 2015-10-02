@@ -31,7 +31,7 @@ public <!REPEATED_MODIFIER!>public<!> val bar: Int = 1
 public <!REPEATED_MODIFIER!>public<!> fun foo(): Int = 1
 
 fun test() {
-    public <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
+    <!WRONG_MODIFIER_TARGET!>public<!> <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
         public <!REPEATED_MODIFIER!>public<!> val y: Int = 2
 
         public val x: Int

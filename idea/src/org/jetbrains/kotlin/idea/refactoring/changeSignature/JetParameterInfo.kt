@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.JetType
-import java.util.LinkedHashMap
+import java.util.*
 
 public class JetParameterInfo(
         val callableDescriptor: CallableDescriptor,

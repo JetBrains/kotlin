@@ -1,4 +1,4 @@
-// PARAM_TYPES: kotlin.String?, kotlin.Comparable<String>?, kotlin.CharSequence?, kotlin.Any?
+// PARAM_TYPES: kotlin.String?, kotlin.Comparable<String>?, kotlin.CharSequence?, java.io.Serializable?, kotlin.Any?
 // PARAM_DESCRIPTOR: val s: kotlin.String? defined in foo
 
 // SIBLING:

@@ -1,0 +1,4 @@
+package test
+
+val isFoo: Boolean
+    get() = true

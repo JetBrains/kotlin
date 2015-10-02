@@ -17,14 +17,11 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-val AbstractInsnNode.isMeaningful : Boolean get() =
+val AbstractInsnNode.isMeaningful: Boolean get() =
     when (this.getType()) {
         AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
         else -> true

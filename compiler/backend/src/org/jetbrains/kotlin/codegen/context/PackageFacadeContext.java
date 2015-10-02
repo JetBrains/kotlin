@@ -22,18 +22,34 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class PackageFacadeContext extends PackageContext implements DelegatingFacadeContext {
+    private final Type publicFacadeType;
 
     public PackageFacadeContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
             @NotNull CodegenContext parent,
             @NotNull Type packagePartType
     ) {
+        this(contextDescriptor, parent, packagePartType, packagePartType);
+    }
+
+    public PackageFacadeContext(
+            @NotNull PackageFragmentDescriptor contextDescriptor,
+            @NotNull CodegenContext parent,
+            @NotNull Type packagePartType,
+            @NotNull Type publicFacadeType
+    ) {
         super(contextDescriptor, parent, packagePartType);
+
+        this.publicFacadeType = publicFacadeType;
     }
 
     @Override
     @Nullable
     public Type getDelegateToClassType() {
         return getPackagePartType();
+    }
+
+    public Type getPublicFacadeType() {
+        return publicFacadeType;
     }
 }

@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE
+
 //FILE:a.kt
 package a
 
@@ -15,28 +17,28 @@ private object PO {}
 //+JDK
 package b
 
-import a.<!INVISIBLE_REFERENCE!>A<!>
-import a.<!INVISIBLE_REFERENCE!>foo<!>
+import a.<!INVISIBLE_REFERENCE(A; private; file)!>A<!>
+import a.<!INVISIBLE_REFERENCE(foo; private; file)!>foo<!>
 import a.makeA
-import a.<!INVISIBLE_REFERENCE!>PO<!>
+import a.<!INVISIBLE_REFERENCE(PO; private; file)!>PO<!>
 
 fun test() {
     val y = makeA()
-    y.<!INVISIBLE_MEMBER!>bar<!>()
-    <!INVISIBLE_MEMBER!>foo<!>()
+    y.<!INVISIBLE_MEMBER(A; private; file)!>bar<!>()
+    <!INVISIBLE_MEMBER(foo; private; file)!>foo<!>()
 
-    val <!UNUSED_VARIABLE!>u<!> : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_MEMBER!>A<!>()
-    val <!UNUSED_VARIABLE!>a<!> : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
+    val u : <!INVISIBLE_REFERENCE(A; private; file)!>A<!> = <!INVISIBLE_MEMBER(A; private; file)!>A<!>()
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE(ArrayList; private; 'Arrays')!>ArrayList<!><Int>;
 
-    val <!UNUSED_VARIABLE!>po<!> = <!INVISIBLE_MEMBER!>PO<!>
+    val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
 }
 
-class B : <!INVISIBLE_REFERENCE, INVISIBLE_MEMBER!>A<!>() {}
+class B : <!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>() {}
 
 class Q {
     class W {
         fun foo() {
-            val <!UNUSED_VARIABLE!>y<!> = makeA() //assure that 'makeA' is visible
+            val y = makeA() //assure that 'makeA' is visible
         }
     }
 }

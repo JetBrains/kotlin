@@ -48,6 +48,7 @@ public final class JvmAnnotationNames {
     public static final String FILE_PART_CLASS_NAMES_FIELD_NAME = "filePartClassNames";
     public static final String MULTIFILE_CLASS_NAME_FIELD_NAME = "multifileClassName";
     public static final String DATA_FIELD_NAME = "data";
+    public static final String STRINGS_FIELD_NAME = "strings";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
 

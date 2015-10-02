@@ -72,7 +72,11 @@ class DataFlowValue(val id: Any?, val type: JetType, val kind: DataFlowValue.Kin
 
     companion object {
 
-        val NULL  = DataFlowValue(Object(), KotlinBuiltIns.getInstance().nullableNothingType, Kind.OTHER, Nullability.NULL)
+        @JvmStatic
+        fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(
+                Object(), builtIns.nullableNothingType, Kind.OTHER, Nullability.NULL
+        )
+
         val ERROR = DataFlowValue(Object(), ErrorUtils.createErrorType("Error type for data flow"), Kind.OTHER, Nullability.IMPOSSIBLE)
     }
 }

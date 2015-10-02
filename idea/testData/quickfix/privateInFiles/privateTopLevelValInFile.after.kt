@@ -1,5 +1,5 @@
 // "Make prop internal" "true"
-// ERROR: Cannot access 'prop': it is 'private' in 'privateTopLevelValInFile.before.Dependency.kt'
+// ERROR: Cannot access 'prop': it is 'private' in file
 
 package test
 

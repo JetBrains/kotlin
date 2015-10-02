@@ -22,39 +22,57 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JvmProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
-message JvmType {
-  // Either a primitive type, or a class FQ name should be present
+message StringTableTypes {
+  message Record {
+    // The number of times this record should be repeated; this is used to collapse identical subsequent records in the list
+    optional int32 range = 1 [default = 1];
 
-  enum PrimitiveType {
-    // These values correspond to ASM Type sorts
-    VOID = 0;
-    BOOLEAN = 1;
-    CHAR = 2;
-    BYTE = 3;
-    SHORT = 4;
-    INT = 5;
-    FLOAT = 6;
-    LONG = 7;
-    DOUBLE = 8;
+    // Index of the predefined constant. If this field is present, the associated string is ignored
+    optional int32 predefined_index = 2;
+
+    enum Operation {
+      NONE = 0;
+
+      // replaceAll('$', '.')
+      // java/util/Map$Entry -> java/util/Map.Entry;
+      INTERNAL_TO_CLASS_ID = 1;
+
+      // substring(1, length - 1) and then replaceAll('$', '.')
+      // Ljava/util/Map$Entry; -> java/util/Map.Entry
+      DESC_TO_CLASS_ID = 2;
+    }
+
+    // Perform a described operation on the string
+    optional Operation operation = 3 [default = NONE];
+
+    // If this field is present, the "substring" operation must be performed with the first element of this list as the start index,
+    // and the second element as the end index.
+    // If an operation is not NONE, it's applied _after_ this substring operation
+    repeated int32 substring_index = 4 [packed = true];
+
+    // If this field is present, the "replaceAll" operation must be performed with the first element of this list as the code point
+    // of the character to replace, and the second element as the code point of the replacement character
+    repeated int32 replace_char = 5 [packed = true];
   }
 
-  optional PrimitiveType primitive_type = 1;
+  repeated Record record = 1;
 
-  // id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-  optional int32 class_fq_name = 2 [(fq_name_id_in_table) = true];
-
-  optional int32 array_dimension = 3 [default = 0];
+  // Indices of strings which are names of local classes or anonymous objects
+  repeated int32 local_name = 5 [packed = true];
 }
 
 message JvmMethodSignature {
   required int32 name = 1 [(string_id_in_table) = true];
-  required JvmType return_type = 2;
-  repeated JvmType parameter_type = 3;
+
+  // JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
+  required int32 desc = 2 [(string_id_in_table) = true];
 }
 
 message JvmFieldSignature {
   required int32 name = 1 [(string_id_in_table) = true];
-  required JvmType type = 2;
+
+  // JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
+  required int32 desc = 2 [(string_id_in_table) = true];
 
   // True iff this field is a backing field for a companion object and is really present as a static
   // field in the outer class, not as an instance field here
@@ -62,11 +80,9 @@ message JvmFieldSignature {
 }
 
 message JvmPropertySignature {
-  // A property itself is identified either by the field, or by the synthetic method.
-  // If the property is annotated, then either field or synthetic_method should be present
   optional JvmFieldSignature field = 1;
 
-  // Annotations on properties without backing fields are written on a synthetic method with this signature
+  // Annotations on properties are written on a synthetic method with this signature
   optional JvmMethodSignature synthetic_method = 2;
 
   optional JvmMethodSignature getter = 3;

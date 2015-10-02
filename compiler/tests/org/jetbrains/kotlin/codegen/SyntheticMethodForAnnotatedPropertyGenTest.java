@@ -66,7 +66,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
         loadFile();
         GeneratedClassLoader loader = generateAndCreateClassLoader();
         assertAnnotatedSyntheticMethodExistence(false, loader.loadClass("T"));
-        assertAnnotatedSyntheticMethodExistence(true, loader.loadClass("T" + JvmAbi.TRAIT_IMPL_SUFFIX));
+        assertAnnotatedSyntheticMethodExistence(true, loader.loadClass("T" + JvmAbi.DEFAULT_IMPLS_SUFFIX));
     }
 
     private static void assertAnnotatedSyntheticMethodExistence(boolean expected, @NotNull Class<?> clazz) {

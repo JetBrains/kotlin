@@ -23,32 +23,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.LinkedHashMap
-
-public enum class TypeConstructorKind {
-    CLASS,
-    TYPE_PARAMETER
-}
-
-public data class TypeConstructorData(val kind: TypeConstructorKind, val id: Int)
-
-public fun ProtoBuf.Type.getTypeConstructorData(): TypeConstructorData {
-    if (hasConstructorClassName()) {
-        assert(!hasConstructorTypeParameter(), "constructor_class_name already presents, so constructor_type_parameter should not be here")
-        return TypeConstructorData(TypeConstructorKind.CLASS, constructorClassName)
-    }
-    else if (hasConstructorTypeParameter()) {
-        assert(!hasConstructorClassName(), "constructor_type_parameter already presents, so constructor_class_name should not be here")
-        return TypeConstructorData(TypeConstructorKind.TYPE_PARAMETER, constructorTypeParameter)
-    }
-    else {
-        return when (constructor.kind) {
-            ProtoBuf.Type.Constructor.Kind.CLASS -> TypeConstructorData(TypeConstructorKind.CLASS, constructor.id)
-            ProtoBuf.Type.Constructor.Kind.TYPE_PARAMETER -> TypeConstructorData(TypeConstructorKind.TYPE_PARAMETER, constructor.id)
-            else -> throw IllegalStateException("Unknown kind ${constructor.kind}")
-        }
-    }
-}
+import java.util.*
 
 public class TypeDeserializer(
         private val c: DeserializationContext,
@@ -95,20 +70,23 @@ public class TypeDeserializer(
         return DeserializedType(c, proto, additionalAnnotations)
     }
 
-    fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {
-        val typeConstructorData = proto.getTypeConstructorData()
-        val id = typeConstructorData.id
-        return typeConstructor(typeConstructorData) ?: ErrorUtils.createErrorType(
-                if (typeConstructorData.kind == TypeConstructorKind.CLASS)
-                    c.nameResolver.getClassId(id).asSingleFqName().asString()
-                else
-                    "Unknown type parameter $id"
-        ).constructor
-    }
+    fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
+            when {
+                proto.hasClassName() ->
+                    classDescriptors(proto.className)?.typeConstructor
+                proto.hasTypeParameter() ->
+                    typeParameterTypeConstructor(proto.typeParameter)
+                else ->
+                    null
+            } ?: ErrorUtils.createErrorType(presentableTextForErrorType(proto)).constructor
 
-    private fun typeConstructor(data: TypeConstructorData): TypeConstructor? = when (data.kind) {
-        TypeConstructorKind.CLASS -> classDescriptors(data.id)?.typeConstructor
-        TypeConstructorKind.TYPE_PARAMETER -> typeParameterTypeConstructor(data.id)
+    internal fun presentableTextForErrorType(proto: ProtoBuf.Type): String = when {
+        proto.hasClassName() ->
+            c.nameResolver.getClassId(proto.className).asSingleFqName().asString()
+        proto.hasTypeParameter() ->
+            "Unknown type parameter ${proto.typeParameter}"
+        else ->
+            "Unknown type"
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =

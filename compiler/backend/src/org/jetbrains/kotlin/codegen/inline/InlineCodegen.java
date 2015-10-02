@@ -33,12 +33,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.TargetId;
-import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -69,7 +69,6 @@ import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
 import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getClassFilePath;
 import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getSourceFilePath;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
 public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
@@ -193,18 +192,14 @@ public class InlineCodegen extends CallGenerator {
 
         SMAPAndMethodNode nodeAndSMAP;
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
-            ClassId containerClassId = InlineCodegenUtil.getContainerClassIdForInlineCallable(
+            JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
-            VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containerClassId, state);
-            //if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-            //    /*use facade class*/
-            //    containerClassId = PackageClassUtils.getPackageClassId(containerClassId.getPackageFqName());
-            //}
+            VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containingClasses.getImplClassId(), state);
             nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(),
                                                           asmMethod.getName(),
                                                           asmMethod.getDescriptor(),
-                                                          containerClassId);
+                                                          containingClasses.getFacadeClassId());
 
             if (nodeAndSMAP == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -231,10 +226,10 @@ public class InlineCodegen extends CallGenerator {
 
             SMAP smap;
             if (callDefault) {
-                Type ownerType = typeMapper.mapOwner(functionDescriptor);
+                Type implementationOwner = typeMapper.mapOwner(functionDescriptor);
                 FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
                                                                         (FieldOwnerContext) methodContext.getParentContext(),
-                                                                        ownerType.getInternalName());
+                                                                        implementationOwner.getInternalName());
                 FunctionCodegen.generateDefaultImplBody(
                         methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
                         inliningFunction, parentCodegen
@@ -350,8 +345,8 @@ public class InlineCodegen extends CallGenerator {
                 new FunctionReferenceGenerationStrategy(
                         state,
                         descriptor,
-                        getResolvedCallWithAssert(((JetCallableReferenceExpression) expression).getCallableReference(),
-                                                  codegen.getBindingContext()
+                        CallUtilKt.getResolvedCallWithAssert(((JetCallableReferenceExpression) expression).getCallableReference(),
+                                                             codegen.getBindingContext()
                         )) :
                 new FunctionGenerationStrategy.FunctionDefault(state, descriptor, (JetDeclarationWithBody) expression);
 
@@ -595,7 +590,7 @@ public class InlineCodegen extends CallGenerator {
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);
 
         if (descriptor instanceof ClassDescriptor) {
-            OwnerKind kind = DescriptorUtils.isTrait(descriptor) ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
+            OwnerKind kind = DescriptorUtils.isInterface(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;
             return parent.intoClass((ClassDescriptor) descriptor, kind, state);
         }
         else if (descriptor instanceof ScriptDescriptor) {

@@ -22,16 +22,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 
@@ -61,9 +61,18 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
         }
     }
 
+    private fun getDeclaration(descriptor: ClassifierDescriptor, project: Project): PsiElement? {
+        if (descriptor is FunctionClassDescriptor) {
+            val psiFactory = JetPsiFactory(project)
+            val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(descriptor))
+            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element).add(syntheticClass)
+        }
+        return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+    }
+
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
         val descriptor = candidate.theType.constructor.declarationDescriptor ?: return null
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
+        val declaration = getDeclaration(descriptor, project) ?: return null
         if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
     }

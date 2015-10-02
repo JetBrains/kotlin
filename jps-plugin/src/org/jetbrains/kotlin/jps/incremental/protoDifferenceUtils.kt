@@ -31,7 +31,7 @@ public sealed class DifferenceKind() {
     public class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray)
+data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray, val strings: Array<String>)
 
 public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE
@@ -112,6 +112,9 @@ private abstract class DifferenceCalculator() {
         val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
         return HashSetUtil.symmetricDifference(oldNames, newNames)
     }
+
+    protected val ProtoBuf.Callable.isPrivate: Boolean
+        get() = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
 }
 
 private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
@@ -127,8 +130,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         )
     }
 
-    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes)
-    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes)
+    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes, oldData.strings)
+    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes, newData.strings)
 
     val oldProto = oldClassData.classProto
     val newProto = newClassData.classProto
@@ -211,14 +214,11 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
 
             return if (primaryConstructor?.data?.isPrivate ?: false) null else primaryConstructor
         }
-
-    private val ProtoBuf.Callable.isPrivate: Boolean
-        get() = Visibilities.isPrivate(Deserialization.visibility(Flags.VISIBILITY.get(flags)))
 }
 
 private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
-    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData.bytes)
-    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData.bytes)
+    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData.bytes, oldData.strings)
+    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData.bytes, newData.strings)
 
     val oldProto = oldPackageData.packageProto
     val newProto = newPackageData.packageProto
@@ -240,7 +240,7 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
         for (kind in diff) {
             when (kind!!) {
                 ProtoCompareGenerated.ProtoBufPackageKind.MEMBER_LIST ->
-                    names.addAll(calcDifferenceForMembers(oldProto.memberList, newProto.memberList))
+                    names.addAll(calcDifferenceForMembers(oldProto.memberList.filter { !it.isPrivate }, newProto.memberList.filter { !it.isPrivate }))
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
             }

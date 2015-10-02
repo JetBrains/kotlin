@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.*
 import java.util.regex.Pattern
@@ -134,7 +135,7 @@ public object KotlinNameSuggester {
 
     private fun MutableCollection<String>.addNamesByType(type: JetType, validator: (String) -> Boolean) {
         var type = TypeUtils.makeNotNullable(type) // wipe out '?'
-        val builtIns = KotlinBuiltIns.getInstance()
+        val builtIns = type.builtIns
         val typeChecker = JetTypeChecker.DEFAULT
         if (ErrorUtils.containsErrorType(type)) return
 
@@ -166,7 +167,7 @@ public object KotlinNameSuggester {
             addName("s", validator)
         }
         else if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
-            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
+            val elementType = builtIns.getArrayElementType(type)
             if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
                 addName("booleans", validator)
             }

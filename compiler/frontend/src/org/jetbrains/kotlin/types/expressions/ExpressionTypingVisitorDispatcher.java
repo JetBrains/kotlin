@@ -37,7 +37,8 @@ import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.utils.KotlinFrontEndException;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
-import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
+import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordDataFlowInfo;
+import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScope;
 
 public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
@@ -185,7 +186,10 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
                     }
 
                     context.trace.record(BindingContext.PROCESSED, expression);
-                    recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
+
+                    // todo save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
+                    recordScope(context.trace, context.scope, expression);
+                    recordDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
                     return result;
                 }
                 catch (ProcessCanceledException e) {

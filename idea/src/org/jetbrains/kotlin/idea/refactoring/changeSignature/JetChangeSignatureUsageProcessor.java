@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.*;
@@ -617,7 +618,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetScope callableScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
         JetMethodDescriptor.Kind kind = ChangeSignaturePackage.getKind(changeInfo);
-        if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
+        if (!kind.isConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
                                                                  ? ScopeUtils.getAllAccessibleFunctions(callableScope, newName)
@@ -669,7 +670,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (function instanceof JetCallableDeclaration && newReceiverInfo != originalReceiverInfo) {
             findReceiverIntroducingConflicts(result, function, newReceiverInfo);
             findInternalExplicitReceiverConflicts(refUsages.get(), result, originalReceiverInfo);
-            findThisLabelConflicts((JetChangeInfo) info, refUsages, result, changeInfo, function);
+            findThisLabelConflicts(refUsages, result, changeInfo, (JetCallableDeclaration) function);
         }
 
         for (UsageInfo usageInfo : usageInfos) {
@@ -701,7 +702,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 }
         );
         for (JetParameterInfo parameterInfo : changeInfo.getNonReceiverParameters()) {
-            if (!(parameterInfo.getIsNewParameter())) continue;
+            if (!(parameterInfo.isNewParameter())) continue;
 
             String name = parameterInfo.getName();
             JetParameter parameter = existingParameters.get(name);
@@ -714,18 +715,17 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findThisLabelConflicts(
-            JetChangeInfo info,
             Ref<UsageInfo[]> refUsages,
             MultiMap<PsiElement, String> result,
             JetChangeInfo changeInfo,
-            PsiElement function
+            JetCallableDeclaration callable
     ) {
-        JetPsiFactory psiFactory = new JetPsiFactory(function.getProject());
+        JetPsiFactory psiFactory = new JetPsiFactory(callable.getProject());
         for (UsageInfo usageInfo : refUsages.get()) {
             if (!(usageInfo instanceof JetParameterUsage)) continue;
 
             String newExprText = ((JetParameterUsage) usageInfo).getReplacementText(changeInfo);
-            if (!newExprText.startsWith("this@")) continue;
+            if (!newExprText.startsWith("this")) continue;
 
             if (usageInfo.getElement() instanceof KDocName) continue; // TODO support converting parameter to receiver in KDoc
 
@@ -735,12 +735,11 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (scope == null) continue;
 
             JetThisExpression newExpr = (JetThisExpression) psiFactory.createExpression(newExprText);
-            JetSimpleNameExpression labelExpr = newExpr.getTargetLabel();
-            if (labelExpr == null) continue;
 
             BindingContext newContext = AnalysisPackage.analyzeInContext(newExpr, scope, originalExpr);
 
-            if (newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
+            JetSimpleNameExpression labelExpr = newExpr.getTargetLabel();
+            if (labelExpr != null && newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                         originalExpr,
                         "Parameter reference can't be safely replaced with " +
@@ -748,6 +747,20 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                         " since " +
                         labelExpr.getText() +
                         " is ambiguous in this context"
+                );
+                continue;
+            }
+
+            DeclarationDescriptor thisTarget = newContext.get(BindingContext.REFERENCE_TARGET, newExpr.getInstanceReference());
+            PsiElement thisTargetPsi = thisTarget instanceof DeclarationDescriptorWithSource
+                                 ? KotlinSourceElementKt.getPsi(((DeclarationDescriptorWithSource) thisTarget).getSource())
+                                 : null;
+            if (thisTargetPsi != null && PsiTreeUtil.isAncestor(callable, thisTargetPsi, true)) {
+                result.putValue(
+                        originalExpr,
+                        "Parameter reference can't be safely replaced with " +
+                        newExprText +
+                        " since target function can't be referenced in this context"
                 );
             }
         }

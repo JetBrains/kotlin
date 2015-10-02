@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun plus(m: Int): A = A(n + m)
+    operator fun plus(m: Int): A = A(n + m)
 }
 
 fun test() {

@@ -1,3 +1,5 @@
+package test
+
 // CLASS_NAME_SUFFIX: Deepest
 
 fun main() {

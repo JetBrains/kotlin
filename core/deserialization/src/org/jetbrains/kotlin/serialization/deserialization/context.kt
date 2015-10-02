@@ -25,16 +25,17 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 
 public class DeserializationComponents(
-        public val storageManager: StorageManager,
-        public val moduleDescriptor: ModuleDescriptor,
-        public val classDataFinder: ClassDataFinder,
-        public val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
-        public val packageFragmentProvider: PackageFragmentProvider,
-        public val localClassResolver: LocalClassResolver,
-        public val errorReporter: ErrorReporter,
-        public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        public val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
-        public val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE
+        val storageManager: StorageManager,
+        val moduleDescriptor: ModuleDescriptor,
+        val classDataFinder: ClassDataFinder,
+        val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
+        val packageFragmentProvider: PackageFragmentProvider,
+        val localClassResolver: LocalClassResolver,
+        val errorReporter: ErrorReporter,
+        val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
+        val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
+        val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
+        val additionalSupertypes: AdditionalSupertypes = AdditionalSupertypes.None
 ) {
     public val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 

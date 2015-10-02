@@ -64,6 +64,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String multifileClassName = null;
     private String[] filePartClassNames = null;
     private String[] annotationData = null;
+    private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinClass.Kind classKind = null;
     private KotlinSyntheticClass.Kind syntheticClassKind = null;
@@ -80,7 +81,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind, null, null);
+            return new KotlinClassHeader(headerKind, version, null, strings, classKind, syntheticClassKind, null, null);
         }
 
         if (shouldHaveData() && annotationData == null) {
@@ -89,7 +90,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        return new KotlinClassHeader(headerKind, version, annotationData, classKind, syntheticClassKind, filePartClassNames, multifileClassName);
+        return new KotlinClassHeader(
+                headerKind, version, annotationData, strings, classKind, syntheticClassKind, filePartClassNames, multifileClassName
+        );
     }
 
     private boolean shouldHaveData() {
@@ -171,10 +174,14 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            if (name.asString().equals(DATA_FIELD_NAME)) {
+            String string = name.asString();
+            if (DATA_FIELD_NAME.equals(string)) {
                 return dataArrayVisitor();
             }
-            else if (name.asString().equals(FILE_PART_CLASS_NAMES_FIELD_NAME)) {
+            else if (STRINGS_FIELD_NAME.equals(string)) {
+                return stringsArrayVisitor();
+            }
+            else if (FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
                 return filePartClassNamesVisitor();
             }
             else {
@@ -186,8 +193,28 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         private AnnotationArrayArgumentVisitor filePartClassNamesVisitor() {
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
-                protected void visitEnd(String[] data) {
+                protected void visitEnd(@NotNull String[] data) {
                     filePartClassNames = data;
+                }
+            };
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor dataArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] data) {
+                    annotationData = data;
+                }
+            };
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor stringsArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] data) {
+                    strings = data;
                 }
             };
         }
@@ -200,16 +227,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
             return null;
-        }
-
-        @NotNull
-        private AnnotationArrayArgumentVisitor dataArrayVisitor() {
-            return new CollectStringArrayAnnotationVisitor() {
-                @Override
-                protected void visitEnd(String[] data) {
-                    annotationData = data;
-                }
-            };
         }
 
         @Override
@@ -240,7 +257,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 visitEnd(strings.toArray(new String[strings.size()]));
             }
 
-            protected abstract void visitEnd(String[] data);
+            protected abstract void visitEnd(@NotNull String[] data);
         }
     }
 

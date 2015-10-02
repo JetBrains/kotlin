@@ -20,22 +20,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.types.JetType;
 
 public class JetTypeCodeFragment extends JetCodeFragment {
     public JetTypeCodeFragment(Project project, String name, CharSequence text, PsiElement context) {
         super(project, name, text, null, JetNodeTypes.TYPE_CODE_FRAGMENT, context);
     }
 
-    @Nullable
-    public JetType getType() {
-        JetElement typeReference = getContentElement();
-        if (typeReference instanceof JetTypeReference) {
-            //TODO return the actual type
-            return KotlinBuiltIns.getInstance().getAnyType();
-        }
-        return null;
+    public boolean hasTypeReference() {
+        return getContentElement() instanceof JetTypeReference;
     }
 
     @Nullable

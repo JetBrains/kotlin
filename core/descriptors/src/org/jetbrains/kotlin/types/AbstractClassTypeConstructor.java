@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 public abstract class AbstractClassTypeConstructor implements TypeConstructor {
     private boolean hashCodeComputed;
@@ -33,6 +36,16 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
             hashCode = hashCode(this);
         }
         return hashCode;
+    }
+
+    @NotNull
+    @Override
+    public abstract ClassifierDescriptor getDeclarationDescriptor();
+
+    @NotNull
+    @Override
+    public KotlinBuiltIns getBuiltIns() {
+        return DescriptorUtilsKt.getBuiltIns(getDeclarationDescriptor());
     }
 
     @Override

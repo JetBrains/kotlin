@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
@@ -42,6 +43,8 @@ public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<Jet
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
                 return originalDescriptor.modify { it.receiver = originalDescriptor.getParameters()[parameterIndex] }
             }
+
+            override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
         }
     }
 

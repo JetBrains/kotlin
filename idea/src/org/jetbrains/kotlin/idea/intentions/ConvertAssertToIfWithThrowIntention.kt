@@ -88,7 +88,7 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
     private fun messageIsFunction(callExpr: JetCallExpression): Boolean {
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze()) ?: return false
         val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
-        return valParameters.size() > 1 && valParameters[1].getType() != KotlinBuiltIns.getInstance().getAnyType()
+        return valParameters.size() > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
     }
 
     private fun simplifyConditionIfPossible(ifExpression: JetIfExpression) {

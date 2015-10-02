@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -331,7 +332,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         //TODO: IMO it's not good that Any is to be added manually
         if (superClasses.all { it.kind == ClassKind.INTERFACE }) {
-            superClasses += KotlinBuiltIns.getInstance().any
+            superClasses += classDescriptor.builtIns.any
         }
 
         if (!isNoQualifierContext()) {

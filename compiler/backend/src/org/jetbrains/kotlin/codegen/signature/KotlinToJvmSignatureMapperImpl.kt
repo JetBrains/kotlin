@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper
 
 public class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
     // We use empty BindingContext, because it is only used by JetTypeMapper for purposes irrelevant to the needs of this class
-    private val typeMapper: JetTypeMapper = JetTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider)
+    private val typeMapper: JetTypeMapper = JetTypeMapper(
+            BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null)
 
     override fun mapToJvmMethodSignature(function: FunctionDescriptor) = typeMapper.mapSignature(function)
 }

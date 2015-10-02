@@ -20,15 +20,16 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
+import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotated;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -54,10 +54,10 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
-import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -97,7 +97,7 @@ public class PropertyCodegen {
     }
 
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
-        assert context instanceof PackageFacadeContext : "should be called only for generating package facade: " + context;
+        assert context instanceof DelegatingFacadeContext : "should be called only for generating facade: " + context;
         gen(null, deserializedProperty, null, null);
     }
 
@@ -107,7 +107,7 @@ public class PropertyCodegen {
             @Nullable JetPropertyAccessor getter,
             @Nullable JetPropertyAccessor setter
     ) {
-        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
         String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
@@ -154,7 +154,7 @@ public class PropertyCodegen {
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 
         // Don't generate accessors for trait properties with default accessors in TRAIT_IMPL
-        if (kind == OwnerKind.TRAIT_IMPL && isDefaultAccessor) return false;
+        if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
 
         if (declaration == null) return true;
 
@@ -215,8 +215,8 @@ public class PropertyCodegen {
     }
 
     private boolean hasBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
-        return !isInterface(descriptor.getContainingDeclaration()) &&
-               kind != OwnerKind.TRAIT_IMPL &&
+        return !isJvmInterface(descriptor.getContainingDeclaration()) &&
+               kind != OwnerKind.DEFAULT_IMPLS &&
                !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
     }
 
@@ -225,7 +225,7 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor descriptor,
             @NotNull Annotations annotations
     ) {
-        if (isInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.TRAIT_IMPL) {
+        if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) {
             return false;
         }
 
@@ -250,7 +250,7 @@ public class PropertyCodegen {
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
         String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
 
-        if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
+        if (!isInterface(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
             AnnotationCodegen.forMethod(mv, typeMapper)
@@ -260,11 +260,11 @@ public class PropertyCodegen {
             mv.visitEnd();
         }
         else {
-            Type tImplType = typeMapper.mapTraitImpl((ClassDescriptor) context.getContextDescriptor());
+            Type tImplType = typeMapper.mapDefaultImpls((ClassDescriptor) context.getContextDescriptor());
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
         }
 
-        if (kind != OwnerKind.TRAIT_IMPL) {
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
             v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, new Method(name, desc));
         }
     }

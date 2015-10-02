@@ -29,6 +29,7 @@ public fun createBuiltInPackageFragmentProvider(
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
         classDescriptorFactory: ClassDescriptorFactory,
+        additionalSupertypes: AdditionalSupertypes = AdditionalSupertypes.None,
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
     val packageFragments = packageFqNames.map { fqName ->
@@ -47,7 +48,8 @@ public fun createBuiltInPackageFragmentProvider(
             localClassResolver,
             ErrorReporter.DO_NOTHING,
             FlexibleTypeCapabilitiesDeserializer.ThrowException,
-            classDescriptorFactory
+            classDescriptorFactory,
+            additionalSupertypes = additionalSupertypes
     )
 
     localClassResolver.setDeserializationComponents(components)

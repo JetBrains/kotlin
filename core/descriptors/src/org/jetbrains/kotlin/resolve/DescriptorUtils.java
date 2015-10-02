@@ -329,7 +329,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
     }
 
-    public static boolean isTrait(@Nullable DeclarationDescriptor descriptor) {
+    public static boolean isInterface(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.INTERFACE);
     }
 
@@ -538,7 +538,7 @@ public class DescriptorUtils {
     }
 
     public static boolean canHaveDeclaredConstructors(@NotNull ClassDescriptor classDescriptor) {
-        return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
+        return !isSingletonOrAnonymousObject(classDescriptor) && !isInterface(classDescriptor);
     }
 
     public static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {
@@ -587,6 +587,19 @@ public class DescriptorUtils {
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
         return getJvmNameAnnotation(annotated.getAnnotations());
+    }
+
+    @NotNull
+    public static SourceFile getContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PropertySetterDescriptor) {
+            descriptor = ((PropertySetterDescriptor) descriptor).getCorrespondingProperty();
+        }
+
+        if (descriptor instanceof DeclarationDescriptorWithSource) {
+            return ((DeclarationDescriptorWithSource) descriptor).getSource().getContainingFile();
+        }
+
+        return SourceFile.NO_SOURCE_FILE;
     }
 
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {

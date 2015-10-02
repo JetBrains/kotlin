@@ -38,6 +38,7 @@ var a : Int
 /*why?*/
 // EXIST:  companion object
 // EXIST:  operator
+// EXIST:  infix
 // EXIST:  sealed
 // EXIST:  lateinit
 // EXIST:  data

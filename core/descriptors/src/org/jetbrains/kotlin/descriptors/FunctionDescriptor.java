@@ -42,4 +42,6 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
 
     boolean isOperator();
+
+    boolean isInfix();
 }

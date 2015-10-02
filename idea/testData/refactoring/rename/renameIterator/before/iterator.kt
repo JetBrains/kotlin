@@ -1,5 +1,5 @@
 class A {
-    public fun iterator(): Iterator<String> = throw IllegalStateException("")
+    public operator fun iterator(): Iterator<String> = throw IllegalStateException("")
 }
 
 fun test() {

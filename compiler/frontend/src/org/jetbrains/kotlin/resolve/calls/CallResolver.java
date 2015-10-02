@@ -49,10 +49,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
@@ -66,7 +64,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
+import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordDataFlowInfo;
+import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScope;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.CandidateResolveMode.EXIT_ON_FIRST_ERROR;
@@ -469,7 +468,9 @@ public class CallResolver {
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);
         BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
 
-        recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+        recordScope(newContext.trace, newContext.scope, newContext.call.getCalleeExpression());
+        recordDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+
         OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
         DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
         if (deltasTraceForTypeInference != null) {

@@ -34,7 +34,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
 import org.jetbrains.kotlin.descriptors.*
@@ -184,7 +184,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (newTypes.isEmpty()) {
-                newTypes.add(EqWrapper(KotlinBuiltIns.getInstance().getAnyType()))
+                newTypes.add(EqWrapper(currentFileModule.builtIns.anyType))
             }
 
             newTypes.map { TypeCandidate(it._type, scope) }.reverse()
@@ -415,7 +415,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 )
             }
 
-            return fakeFunction.initialize(null, null, typeParameters, Collections.emptyList(), null, null, Visibilities.INTERNAL, false)
+            return fakeFunction.initialize(null, null, typeParameters, Collections.emptyList(), null,
+                                           null, Visibilities.INTERNAL, false, false)
         }
 
         private fun renderTypeCandidates(
@@ -434,7 +435,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                         else null
 
-                val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
+                val ownerTypeString = if (isExtension) {
+                    val renderedType = receiverTypeCandidate!!.renderedType!!
+                    val isFunctionType = receiverTypeCandidate.theType.constructor.declarationDescriptor is FunctionClassDescriptor
+                    if (isFunctionType) "($renderedType)." else "$renderedType."
+                } else ""
 
                 val classKind = (callableInfo as? PrimaryConstructorInfo)?.classInfo?.kind
 
@@ -953,8 +958,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 is JetProperty -> {
                     if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
                         val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
-                                               ?: KotlinBuiltIns.getInstance().getAnyType()
-                        val defaultValue = CodeInsightUtils.defaultInitializer(defaultValueType) ?: "null"
+                        val defaultValue = defaultValueType?.let {CodeInsightUtils.defaultInitializer(it) } ?: "null"
                         val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
                         val range = initializer.getTextRange()
                         selectionModel.setSelection(range.getStartOffset(), range.getEndOffset())

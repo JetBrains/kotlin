@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
@@ -73,14 +74,12 @@ public class MemberMatching {
 
             @Override
             public String visitFunctionType(@NotNull JetFunctionType type, Void data) {
-                KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
                 int parameterCount = type.getParameters().size();
-
-                if (type.getReceiverTypeReference() == null) {
-                    return builtIns.getFunction(parameterCount).getName().asString();
+                if (type.getReceiverTypeReference() != null) {
+                    return KotlinBuiltIns.getExtensionFunctionName(parameterCount);
                 }
                 else {
-                    return builtIns.getExtensionFunction(parameterCount).getName().asString();
+                    return KotlinBuiltIns.getFunctionName(parameterCount);
                 }
             }
 
@@ -229,8 +228,9 @@ public class MemberMatching {
                 }
             }));
 
+            KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
             Set<String> decompiledUpperBounds = decompiledParameterToBounds.get(descriptor.getName()).isEmpty()
-                    ? Sets.newHashSet(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(KotlinBuiltIns.getInstance().getDefaultBound()))
+                    ? Sets.newHashSet(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(builtIns.getDefaultBound()))
                     : Sets.newHashSet(decompiledParameterToBounds.get(descriptor.getName()));
             if (!descriptorUpperBounds.equals(decompiledUpperBounds)) {
                 return false;

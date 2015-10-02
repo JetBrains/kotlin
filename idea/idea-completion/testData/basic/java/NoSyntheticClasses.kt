@@ -4,5 +4,5 @@ val x: ReadOnlyPr<caret>
 
 // INVOCATION_COUNT: 2
 // EXIST: "ReadOnlyProperty"
-// ABSENT: "ReadOnlyProperty$$TImpl"
+// ABSENT: "ReadOnlyProperty$DefaultImpls"
 // NOTHING_ELSE

@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 
@@ -71,12 +69,12 @@ public class KotlinCodegenFacade {
 
             JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
-            if (fileClassInfo.getIsMultifileClass()) {
+            if (fileClassInfo.getWithJvmMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
             }
 
             if (state.getPackageFacadesAsMultifileClasses()) {
-                if (!fileClassInfo.getIsMultifileClass()) {
+                if (!fileClassInfo.getWithJvmMultifileClass()) {
                     filesInMultifileClasses.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
                 }
             }
@@ -85,15 +83,16 @@ public class KotlinCodegenFacade {
             }
         }
 
+        Set<FqName> obsoleteMultifileClasses = new HashSet<FqName>(state.getObsoleteMultifileClasses());
+        for (FqName multifileClassFqName : Sets.union(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
+        }
+
         Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
         for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackageClasses.keySet())) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             generatePackage(state, packageFqName, filesInPackageClasses.get(packageFqName), errorHandler);
-        }
-
-        for (FqName multifileClassFqName : filesInMultifileClasses.keySet()) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

@@ -70,7 +70,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
@@ -106,7 +106,7 @@ public class FunctionCodegen {
         assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
                                             "in " + function.getContainingFile().getVirtualFile();
 
-        if (owner.getContextKind() != OwnerKind.TRAIT_IMPL || function.hasBody()) {
+        if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             generateMethod(OtherOrigin(function, functionDescriptor), functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
@@ -142,9 +142,9 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (isTrait(functionDescriptor.getContainingDeclaration()) &&
+        if (isInterface(functionDescriptor.getContainingDeclaration()) &&
             functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
-            contextKind != OwnerKind.TRAIT_IMPL) {
+            contextKind != OwnerKind.DEFAULT_IMPLS) {
             return;
         }
 
@@ -239,7 +239,7 @@ public class FunctionCodegen {
     private void writePackageFacadeMethodAnnotationsIfNeeded(MethodVisitor mv) {
         if (owner instanceof PackageFacadeContext) {
             PackageFacadeContext packageFacadeContext = (PackageFacadeContext) owner;
-            Type delegateToClassType = packageFacadeContext.getDelegateToClassType();
+            Type delegateToClassType = packageFacadeContext.getPublicFacadeType();
             if (delegateToClassType != null) {
                 String className = delegateToClassType.getClassName();
                 AnnotationVisitor
@@ -268,7 +268,9 @@ public class FunctionCodegen {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
+                if (parameter.getIndex() != i) {
+                    v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
+                }
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
 
                 if (functionDescriptor instanceof PropertySetterDescriptor) {
@@ -502,8 +504,8 @@ public class FunctionCodegen {
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
-        if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
-        if (isTrait(descriptor.getContainingDeclaration())) return;
+        if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
+        if (isInterface(descriptor.getContainingDeclaration())) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -583,7 +585,7 @@ public class FunctionCodegen {
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
-        if (kind != OwnerKind.TRAIT_IMPL && isTrait(contextClass)) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && isInterface(contextClass)) {
             return;
         }
 

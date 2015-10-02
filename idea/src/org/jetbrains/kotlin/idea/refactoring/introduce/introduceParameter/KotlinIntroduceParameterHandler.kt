@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -268,7 +269,10 @@ public open class KotlinIntroduceParameterHandler(
                 null,
                 fun() {
                     val isTestMode = ApplicationManager.getApplication().isUnitTestMode()
-                    val inplaceIsAvailable = editor.getSettings().isVariableInplaceRenameEnabled() && !isTestMode
+                    val haveLambdaArgumentsToReplace = occurrencesToReplace.any {
+                        it.elements.any { it is JetFunctionLiteralExpression && it.parent is JetFunctionLiteralArgument }
+                    }
+                    val inplaceIsAvailable = editor.settings.isVariableInplaceRenameEnabled && !isTestMode && !haveLambdaArgumentsToReplace
 
                     val originalExpression = JetPsiUtil.safeDeparenthesize(expression)
                     val psiFactory = JetPsiFactory(project)
@@ -285,7 +289,16 @@ public open class KotlinIntroduceParameterHandler(
                                             parametersUsages = parametersUsages,
                                             occurrencesToReplace = occurrencesToReplace,
                                             occurrenceReplacer = {
-                                                it.elements.single().replace(psiFactory.createExpression(newParameterName))
+                                                val expressionToReplace = it.elements.single() as JetExpression
+                                                val replacingExpression = psiFactory.createExpression(newParameterName)
+                                                if (expressionToReplace.isFunctionLiteralOutsideParentheses()) {
+                                                    expressionToReplace
+                                                            .getStrictParentOfType<JetFunctionLiteralArgument>()!!
+                                                            .moveInsideParenthesesAndReplaceWith(replacingExpression, context)
+                                                }
+                                                else {
+                                                    expressionToReplace.replace(replacingExpression)
+                                                }
                                             }
                                     )
                             )

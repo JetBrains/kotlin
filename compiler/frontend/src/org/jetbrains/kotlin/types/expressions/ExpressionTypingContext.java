@@ -83,8 +83,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 statementFilter, isAnnotationContext, false, false);
     }
 
-    private CompileTimeConstantChecker compileTimeConstantChecker;
-
     private ExpressionTypingContext(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
@@ -119,14 +117,5 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                                            expectedType, contextDependency, resolutionResultsCache,
                                            callChecker,
                                            statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
-    }
-
-///////////// LAZY ACCESSORS
-
-    public CompileTimeConstantChecker getCompileTimeConstantChecker() {
-        if (compileTimeConstantChecker == null) {
-            compileTimeConstantChecker = new CompileTimeConstantChecker(trace, false);
-        }
-        return compileTimeConstantChecker;
     }
 }

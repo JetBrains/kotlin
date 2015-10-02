@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.checkers;
 
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -27,9 +26,12 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
     @NotNull
     @Override
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS);
+        return TargetPlatformKt.createModule(JsPlatform.INSTANCE$, Name.special(moduleName), storageManager);
     }
 
     @NotNull
@@ -89,7 +91,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
             dependencies.add(moduleDescriptor);
         }
 
-        dependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        dependencies.add(getPlatform().getBuiltIns().getBuiltInsModule());
         module.setDependencies(dependencies);
 
         return module;
@@ -97,5 +99,11 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
 
     protected Config getConfig() {
         return config;
+    }
+
+    @NotNull
+    @Override
+    protected TargetPlatform getPlatform() {
+        return JsPlatform.INSTANCE$;
     }
 }

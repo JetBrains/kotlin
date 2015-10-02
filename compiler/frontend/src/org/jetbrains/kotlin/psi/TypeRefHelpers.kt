@@ -65,7 +65,7 @@ fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?):
                     oldTypeRef.replace(typeRef) as JetTypeReference
                 }
                 else {
-                    val anchor = getNameIdentifier()
+                    val anchor = getNameIdentifier() ?: valueParameterList
                     val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
                     addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
                     newTypeRef

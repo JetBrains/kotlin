@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -38,12 +37,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import java.util.Collections
+import java.util.*
 
 sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         extensionsEnabled: Boolean = true
@@ -180,7 +180,7 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
             if ((klass !is JetClass && klass !is PsiClass) || !klass.canRefactor()) return null
 
             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, expression.getQualifiedExpressionForSelectorOrThis()]
-                               ?: KotlinBuiltIns.getInstance().nullableAnyType
+                               ?: classDescriptor!!.builtIns.nullableAnyType
             if (!classDescriptor!!.defaultType.isSubtypeOf(expectedType)) return null
 
             val parameters = expression.getParameterInfos()

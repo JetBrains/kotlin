@@ -335,6 +335,12 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         final ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         JetExpression leftOperand = expression.getLeft();
+        if (leftOperand instanceof JetAnnotatedExpression) {
+            // We will lose all annotations during deparenthesizing, so we have to resolve them right now
+            components.annotationResolver.resolveAnnotationsWithArguments(
+                    scope, ((JetAnnotatedExpression) leftOperand).getAnnotationEntries(), context.trace
+            );
+        }
         JetExpression left = deparenthesizeWithResolutionStrategy(leftOperand, new Function<JetTypeReference, Void>() {
             @Override
             public Void apply(JetTypeReference reference) {

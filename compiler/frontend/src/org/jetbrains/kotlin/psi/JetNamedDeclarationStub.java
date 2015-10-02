@@ -26,12 +26,13 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.JetPsiFactoryKt.JetPsiFactory;
 
 abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
@@ -79,7 +80,16 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extend
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         PsiElement identifier = getNameIdentifier();
-        return identifier != null ? identifier.replace(JetPsiFactory(this).createNameIdentifier(name)) : null;
+        if (identifier == null) return null;
+
+        JetModifierList modifierList = getModifierList();
+        if (modifierList != null &&
+            modifierList.hasModifier(JetTokens.OPERATOR_KEYWORD) &&
+            !OperatorConventions.isConventionName(Name.identifierNoValidate(name))) {
+            removeModifier(JetTokens.OPERATOR_KEYWORD);
+        }
+
+        return identifier.replace(JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

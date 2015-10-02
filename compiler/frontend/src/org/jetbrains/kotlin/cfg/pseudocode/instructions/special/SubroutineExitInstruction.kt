@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.psi.JetElement
-import java.util.Collections
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import java.util.*
 
 public class SubroutineExitInstruction(
         public val subroutine: JetElement,

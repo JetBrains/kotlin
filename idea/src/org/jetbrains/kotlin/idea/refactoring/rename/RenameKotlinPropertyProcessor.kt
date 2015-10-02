@@ -32,17 +32,16 @@ import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
@@ -113,7 +112,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
             return
         }
 
-        val name = (element as PsiNamedElement).getName()!!
+        val name = (element as JetNamedDeclaration).getName()!!
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
 
@@ -142,6 +141,8 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         super.renameElement(element, newName,
                             refKindUsages[UsageKind.SIMPLE_PROPERTY_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
+
+        dropOverrideKeywordIfNecessary(element)
 
         listener?.elementRenamed(element)
     }

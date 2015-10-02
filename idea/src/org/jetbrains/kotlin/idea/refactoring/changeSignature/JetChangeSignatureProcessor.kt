@@ -32,9 +32,7 @@ import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.LinkedHashSet
+import java.util.*
 
 public class JetChangeSignatureProcessor(project: Project,
                                          changeInfo: JetChangeInfo,

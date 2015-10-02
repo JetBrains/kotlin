@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.*;
 
@@ -84,9 +85,10 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
     @Override
     public JetType visitFunctionType(@NotNull JetFunctionType type, Void data) {
+        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
         return visitCommonType(type.getReceiverTypeReference() == null
-                ? KotlinBuiltIns.getInstance().getFunction(type.getParameters().size())
-                : KotlinBuiltIns.getInstance().getExtensionFunction(type.getParameters().size()), type);
+                ? builtIns.getFunction(type.getParameters().size())
+                : builtIns.getExtensionFunction(type.getParameters().size()), type);
     }
 
     @Override

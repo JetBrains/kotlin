@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
 import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
-
 
 public class RemoteIncrementalCacheServer(val cache: IncrementalCache, port: Int = SOCKET_ANY_FREE_PORT) : CompileService.RemoteIncrementalCache {
 
@@ -31,7 +31,13 @@ public class RemoteIncrementalCacheServer(val cache: IncrementalCache, port: Int
 
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
-    override fun getPackagePartData(fqName: String): ByteArray? = cache.getPackagePartData(fqName)
+    override fun getObsoleteMultifileClassFacades(): Collection<String> = cache.getObsoleteMultifileClasses()
+
+    override fun getMultifileFacadeParts(internalName: String): Collection<String>? = cache.getStableMultifileFacadeParts(internalName)
+
+    override fun getMultifileFacade(partInternalName: String): String? = cache.getMultifileFacade(partInternalName)
+
+    override fun getPackagePartData(fqName: String): JvmPackagePartProto? = cache.getPackagePartData(fqName)
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
 

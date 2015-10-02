@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.Collections
 
 public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsagesProcessor {
@@ -70,7 +71,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }
         changeInfo.addParameter(JetParameterInfo(callableDescriptor = psiMethodDescriptor,
                                                  name = data.getParameterName(),
-                                                 type = KotlinBuiltIns.getInstance().getAnyType(),
+                                                 type = psiMethodDescriptor.builtIns.anyType,
                                                  defaultValueForCall = defaultValueForCall))
         return changeInfo
     }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.rmi
 
 import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.Serializable
 import java.rmi.Remote
@@ -34,7 +35,13 @@ public interface CompileService : Remote {
         public fun getObsoletePackageParts(): Collection<String>
 
         @Throws(RemoteException::class)
-        public fun getPackagePartData(fqName: String): ByteArray?
+        public fun getObsoleteMultifileClassFacades(): Collection<String>
+
+        @Throws(RemoteException::class)
+        public fun getMultifileFacade(partInternalName: String): String?
+
+        @Throws(RemoteException::class)
+        public fun getPackagePartData(fqName: String): JvmPackagePartProto?
 
         @Throws(RemoteException::class)
         public fun getModuleMappingData(): ByteArray?
@@ -47,6 +54,9 @@ public interface CompileService : Remote {
 
         @Throws(RemoteException::class)
         public fun close()
+
+        @Throws(RemoteException::class)
+        public fun getMultifileFacadeParts(internalName: String): Collection<String>?
     }
 
     public interface RemoteLookupTracker : Remote {

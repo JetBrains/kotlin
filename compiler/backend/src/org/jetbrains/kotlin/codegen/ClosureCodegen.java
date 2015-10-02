@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -109,7 +109,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             JetType superClassType = null;
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 ClassifierDescriptor classifier = supertype.getConstructor().getDeclarationDescriptor();
-                if (DescriptorUtils.isTrait(classifier)) {
+                if (DescriptorUtils.isInterface(classifier)) {
                     superInterfaceTypes.add(supertype);
                 }
                 else {
@@ -198,7 +198,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             descriptorForBridges
                     .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
                                 erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
-                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false);
+                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false, false);
 
             descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
@@ -231,12 +231,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
-        JvmCodegenUtil.writeAbiVersion(av);
-        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(serializer.serialize(callableProto))) {
-            array.visit(null, string);
-        }
-        array.visitEnd();
+        writeAnnotationData(av, serializer, callableProto);
         av.visitEnd();
     }
 

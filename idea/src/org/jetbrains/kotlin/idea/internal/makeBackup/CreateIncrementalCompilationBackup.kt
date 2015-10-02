@@ -16,29 +16,28 @@
 
 package org.jetbrains.kotlin.idea.internal.makeBackup
 
+import com.intellij.compiler.server.BuildManager
+import com.intellij.history.core.RevisionsCollector
+import com.intellij.history.integration.LocalHistoryImpl
+import com.intellij.history.integration.patches.PatchCreator
+import com.intellij.ide.actions.ShowFilePathAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.history.core.RevisionsCollector
-import java.io.File
-import com.intellij.history.integration.patches.PatchCreator
-import com.intellij.history.integration.LocalHistoryImpl
-import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.project.Project
-import java.util.ArrayList
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.progress.ProgressIndicator
-import java.util.zip.ZipOutputStream
-import java.io.FileOutputStream
-import com.intellij.util.io.ZipUtil
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vcs.changes.Change
 import com.intellij.util.WaitForProgressToShow
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.zip.ZipOutputStream
 
 public class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
     companion object {
@@ -47,7 +46,8 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
 
         val PATCHES_FRACTION = .25
         val LOGS_FRACTION = .05
-        val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION
+        val PROJECT_SYSTEM_FRACTION = .05
+        val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
     }
 
     override fun update(e: AnActionEvent) {
@@ -64,6 +64,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
                     override fun run(indicator: ProgressIndicator) {
                         createPatches(backupDir, project, indicator)
                         copyLogs(backupDir, indicator)
+                        copyProjectSystemDir(backupDir, project, indicator)
 
                         zipProjectDir(backupDir, project, projectBaseDir, indicator)
                     }
@@ -117,6 +118,16 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
         FileUtil.copyDir(File(PathManager.getLogPath()), logsDir)
 
         indicator.setFraction(PATCHES_FRACTION + LOGS_FRACTION)
+    }
+
+    private fun copyProjectSystemDir(backupDir: File, project: Project, indicator: ProgressIndicator) {
+        indicator.text = "Copying project's system dir "
+        indicator.fraction = PATCHES_FRACTION
+
+        val projectSystemDir = File(backupDir, "project-system")
+        FileUtil.copyDir(BuildManager.getInstance().getProjectSystemDirectory(project)!!, projectSystemDir)
+
+        indicator.fraction = PATCHES_FRACTION + LOGS_FRACTION + PROJECT_SYSTEM_FRACTION
     }
 
     private fun zipProjectDir(backupDir: File, project: Project, projectDir: File, indicator: ProgressIndicator) {

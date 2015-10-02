@@ -24,12 +24,12 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
@@ -148,12 +148,12 @@ public abstract class Config {
     }
 
     private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        assert metadata.getIsAbiVersionCompatible() :
-                "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION + ", but metadata.abiVersion = " + metadata.getAbiVersion();
+        assert metadata.isAbiVersionCompatible() :
+                "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION +
+                ", but metadata.abiVersion = " + metadata.getAbiVersion();
 
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                Name.special("<" + metadata.getModuleName() + ">"), storageManager,
-                TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS
+        ModuleDescriptorImpl moduleDescriptor = TargetPlatformKt.createModule(
+                JsPlatform.INSTANCE$, Name.special("<" + metadata.getModuleName() + ">"), storageManager
         );
 
         PackageFragmentProvider provider =
@@ -165,7 +165,7 @@ public abstract class Config {
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
-        module.setDependencies(KotlinPackage.plus(modules, KotlinBuiltIns.getInstance().getBuiltInsModule()));
+        module.setDependencies(KotlinPackage.plus(modules, JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule()));
     }
 
     @NotNull

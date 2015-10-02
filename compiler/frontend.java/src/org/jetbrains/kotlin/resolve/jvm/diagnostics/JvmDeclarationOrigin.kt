@@ -36,8 +36,8 @@ public enum class JvmDeclarationOriginKind {
     OTHER,
     PACKAGE_FACADE,
     PACKAGE_PART,
-    TRAIT_IMPL,
-    DELEGATION_TO_TRAIT_IMPL,
+    INTERFACE_DEFAULT_IMPL,
+    DELEGATION_TO_DEFAULT_IMPLS,
     DELEGATION,
     BRIDGE,
     MULTIFILE_CLASS,
@@ -78,9 +78,9 @@ public fun MultifileClass(representativeFile: JetFile?, descriptor: PackageFragm
 public fun MultifileClassPart(file: JetFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
-public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
+public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
 public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(DELEGATION_TO_TRAIT_IMPL, element, descriptor)
+        JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
 
 public fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
 

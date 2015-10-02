@@ -7,13 +7,13 @@ fun testVisibility() {
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'InternalClassInM1': it is 'internal' in 'm1'">InternalClassInM1</error>()
 
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'PrivateClassInM1': it is 'private' in 'm1'">PrivateClassInM1</error>()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'PrivateClassInM1': it is 'private' in file">PrivateClassInM1</error>()
 
     publicFunInM1()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'internalFunInM1': it is 'internal' in 'm1'">internalFunInM1</error>()
 
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'privateFunInM1': it is 'private' in 'm1'">privateFunInM1</error>()
+    <error descr="[INVISIBLE_MEMBER] Cannot access 'privateFunInM1': it is 'private' in file">privateFunInM1</error>()
 }
 
 public class ClassInM2

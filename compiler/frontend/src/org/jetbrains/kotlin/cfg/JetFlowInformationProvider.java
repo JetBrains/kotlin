@@ -336,7 +336,7 @@ public class JetFlowInformationProvider {
                         }
                         if (!(instruction instanceof WriteValueInstruction)) return;
                         WriteValueInstruction writeValueInstruction = (WriteValueInstruction) instruction;
-                        JetElement element = writeValueInstruction.getlValue();
+                        JetElement element = writeValueInstruction.getLValue();
                         boolean error = checkBackingField(ctxt, element);
                         if (!(element instanceof JetExpression)) return;
                         if (!error) {
@@ -432,7 +432,7 @@ public class JetFlowInformationProvider {
             if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
                     && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
                 report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),
-                                                  variableDescriptor.getContainingDeclaration()), ctxt);
+                                                  setterDescriptor), ctxt);
                 return true;
             }
         }

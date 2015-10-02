@@ -26,11 +26,13 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.JavaElementFinder
+import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetFileFacadeShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
@@ -68,10 +70,14 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         for (fqName in allFqNames) {
             if (fqName == null) continue
 
-            assert(fqName.shortName().asString() == name) {
+            val isInterfaceDefaultImpl = name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && fqName.shortName().asString() != name
+            assert(fqName.shortName().asString() == name || isInterfaceDefaultImpl) {
                 "A declaration obtained from index has non-matching name:\nin index: $name\ndeclared: ${fqName.shortName()}($fqName)"
             }
-            val psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
+
+            val fqNameToSearch = if (isInterfaceDefaultImpl) fqName.defaultImplsChild() else fqName
+
+            val psiClass = JavaElementFinder.getInstance(project).findClass(fqNameToSearch.asString(), scope)
             if (psiClass != null) {
                 result.add(psiClass)
             }

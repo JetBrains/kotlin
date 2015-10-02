@@ -36,11 +36,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
-import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.ArrayList
+import java.util.*
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
@@ -56,14 +54,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 if (type.getNullable()) KotlinPlaceHolderStubImpl<JetNullableType>(typeReference, JetStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
-        val typeConstructorData = type.getTypeConstructorData()
-        when (typeConstructorData.kind) {
-            TypeConstructorKind.CLASS -> {
+        when {
+            type.hasClassName() ->
                 createClassReferenceTypeStub(effectiveParent, type, annotations)
-            }
-            TypeConstructorKind.TYPE_PARAMETER -> {
+            type.hasTypeParameter() -> {
                 createTypeAnnotationStubs(effectiveParent, annotations)
-                val typeParameterName = c.typeParameters[typeConstructorData.id]
+                val typeParameterName = c.typeParameters[type.typeParameter]
                 createStubForTypeName(ClassId.topLevel(FqName.topLevel(typeParameterName)), effectiveParent)
             }
         }
@@ -79,7 +75,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
         }
 
-        val classId = c.nameResolver.getClassId(type.getConstructor().getId())
+        val classId = c.nameResolver.getClassId(type.className)
         val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.getArgumentList().none { it.getProjection() == Projection.STAR }
         if (shouldBuildAsFunctionType) {
@@ -143,13 +139,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     fun createValueParameterListStub(parent: StubElement<out PsiElement>, callableProto: ProtoBuf.Callable, container: ProtoContainer) {
-        val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
+        val callableKind = Flags.CALLABLE_KIND[callableProto.flags]
         if (callableKind == CallableKind.VAL || callableKind == CallableKind.VAR) {
             return
         }
         val parameterListStub = KotlinPlaceHolderStubImpl<JetParameterList>(parent, JetStubElementTypes.VALUE_PARAMETER_LIST)
-        for (valueParameterProto in callableProto.getValueParameterList()) {
-            val name = c.nameResolver.getName(valueParameterProto.getName())
+        for ((index, valueParameterProto) in callableProto.valueParameterList.withIndex()) {
+            val name = c.nameResolver.getName(valueParameterProto.name)
             val parameterStub = KotlinParameterStubImpl(
                     parameterListStub,
                     name = name.ref(),
@@ -161,13 +157,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val isVararg = valueParameterProto.hasVarargElementType()
             val modifierList = if (isVararg) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                    container, callableProto, c.nameResolver, callableProto.annotatedCallableKind, valueParameterProto
+                    container, callableProto, c.nameResolver, callableProto.annotatedCallableKind, index, valueParameterProto
             )
             if (parameterAnnotations.isNotEmpty()) {
                 createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierList(parameterStub))
             }
 
-            val typeProto = if (isVararg) valueParameterProto.getVarargElementType() else valueParameterProto.getType()
+            val typeProto = if (isVararg) valueParameterProto.varargElementType else valueParameterProto.type
             createTypeReferenceStub(parameterStub, typeProto)
         }
     }
@@ -240,11 +236,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun Type.isDefaultUpperBound(): Boolean {
-        val typeConstructorData = getTypeConstructorData()
-        if (typeConstructorData.kind != TypeConstructorKind.CLASS) {
-            return false
-        }
-        val classId = c.nameResolver.getClassId(typeConstructorData.id)
-        return KotlinBuiltIns.isAny(classId.asSingleFqName().toUnsafe()) && this.nullable
+        return this.hasClassName() &&
+               c.nameResolver.getClassId(className).let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } &&
+               this.nullable
     }
 }

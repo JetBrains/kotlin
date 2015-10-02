@@ -70,10 +70,10 @@ public class JvmClassName {
     public FqName getFqNameForClassNameWithoutDollars() {
         if (fqName == null) {
             String fqName = internalName
-                    .replace(JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD)
+                    .replace(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD)
                     .replace('$', '.')
                     .replace('/', '.')
-                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
+                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
             this.fqName = new FqName(fqName);
         }
         return fqName;

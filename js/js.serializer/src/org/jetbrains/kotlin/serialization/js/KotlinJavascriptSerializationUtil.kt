@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.StringTable
+import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
@@ -49,9 +49,9 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private val STRING_TABLE_DEFAULT_BYTES = run {
-        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension)
+        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension())
         val stream = ByteArrayOutputStream()
-        serializer.serializeStringTable(stream)
+        serializer.stringTable.serializeTo(stream)
         stream.toByteArray()
     }
 
@@ -103,7 +103,8 @@ public object KotlinJavascriptSerializationUtil {
 
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
 
-        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension)
+        val serializerExtension = KotlinJavascriptSerializerExtension()
+        val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
         val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
@@ -123,11 +124,11 @@ public object KotlinJavascriptSerializationUtil {
             writeFun(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName), packageStream.toByteArray())
         }
 
-        val strings = serializer.stringTable
+        val strings = serializerExtension.stringTable
         serializeClassNamesInPackage(fqName, fragments, strings, skip, writeFun)
 
         val nameStream = ByteArrayOutputStream()
-        serializer.serializeStringTable(nameStream)
+        strings.serializeTo(nameStream)
         val stringBytes = nameStream.toByteArray()
 
         if (!stringBytes.isEmpty()) {
@@ -138,7 +139,7 @@ public object KotlinJavascriptSerializationUtil {
     private fun serializeClassNamesInPackage(
             fqName: FqName,
             packageFragments: Collection<PackageFragmentDescriptor>,
-            stringTable: StringTable,
+            stringTable: StringTableImpl,
             skip: (DeclarationDescriptor) -> Boolean,
             writeFun: (String, ByteArray) -> Unit
     ) {

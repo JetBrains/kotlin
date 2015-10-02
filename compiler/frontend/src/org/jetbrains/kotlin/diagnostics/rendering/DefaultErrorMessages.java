@@ -109,8 +109,8 @@ public class DefaultErrorMessages {
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
-        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
-        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
+        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
+        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
@@ -216,7 +216,8 @@ public class DefaultErrorMessages {
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
         MAP.put(PROPERTY_INITIALIZER_IN_TRAIT, "Property initializers are not allowed in interfaces");
-        MAP.put(FINAL_PROPERTY_IN_TRAIT, "Abstract property in an interface cannot be final");
+        MAP.put(FINAL_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be final");
+        MAP.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private");
         MAP.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field");
         MAP.put(PROPERTY_INITIALIZER_NO_BACKING_FIELD, "Initializer is not allowed here because this property has no backing field");
         MAP.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, "Abstract property ''{0}'' in non-abstract class ''{1}''", STRING, NAME);
@@ -224,6 +225,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", NAME);
         MAP.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", NAME);
         MAP.put(FINAL_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be final", NAME);
+        MAP.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", NAME);
 
         MAP.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", NAME);
         MAP.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name");
@@ -259,7 +261,7 @@ public class DefaultErrorMessages {
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
-        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
+        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", NAME);
         MAP.put(VARIABLE_EXPECTED, "Variable expected");
 
@@ -357,7 +359,7 @@ public class DefaultErrorMessages {
 
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
 
-        MAP.put(UNDESCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
+        MAP.put(UNDERSCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
 
         MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function");
 
@@ -656,7 +658,6 @@ public class DefaultErrorMessages {
         MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);
         MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");
-        MAP.put(ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, RENDER_FILE);
 
         MAP.setImmutable();
 

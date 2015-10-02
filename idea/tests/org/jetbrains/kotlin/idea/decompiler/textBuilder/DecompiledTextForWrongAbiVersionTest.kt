@@ -38,8 +38,6 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
 
     fun testPackagePartIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(PACKAGE_PART)
 
-    fun testTraitImplClassIsVisibleAsJavaClassWrongAbiVersion() = doTestTraitImplClassIsVisibleAsJavaClass()
-
     fun testAnonymousFunctionIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
 
     fun testClassWithWrongAbiVersion() = doTest("ClassWithWrongAbiVersion")

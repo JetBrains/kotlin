@@ -279,7 +279,7 @@ public open class LazyClassMemberScope(
         val classOrObject = ownerInfo.getCorrespondingClassOrObject() ?: return null
 
         val hasPrimaryConstructor = classOrObject.hasExplicitPrimaryConstructor()
-        if (DescriptorUtils.isTrait(thisDescriptor) && !hasPrimaryConstructor) return null
+        if (DescriptorUtils.isInterface(thisDescriptor) && !hasPrimaryConstructor) return null
 
         if (DescriptorUtils.canHaveDeclaredConstructors(thisDescriptor) || hasPrimaryConstructor) {
             val constructor = c.functionDescriptorResolver.resolvePrimaryConstructorDescriptor(

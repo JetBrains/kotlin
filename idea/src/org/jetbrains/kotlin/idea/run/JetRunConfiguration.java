@@ -297,7 +297,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     @Override
     public String suggestedName() {
-        if (MAIN_CLASS_NAME == null) {
+        if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
             return null;
         }
         return StringUtil.trimEnd(MAIN_CLASS_NAME,

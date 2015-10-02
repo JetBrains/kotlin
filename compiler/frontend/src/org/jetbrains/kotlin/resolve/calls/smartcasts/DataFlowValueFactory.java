@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -66,11 +67,13 @@ public class DataFlowValueFactory {
     ) {
         if (expression instanceof JetConstantExpression) {
             JetConstantExpression constantExpression = (JetConstantExpression) expression;
-            if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
+            if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) {
+                return DataFlowValue.nullValue(DescriptorUtilsKt.getBuiltIns(containingDeclarationOrModule));
+            }
         }
         if (type.isError()) return DataFlowValue.ERROR;
         if (isNullableNothing(type)) {
-            return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
+            return DataFlowValue.nullValue(DescriptorUtilsKt.getBuiltIns(containingDeclarationOrModule)); // 'null' is the only inhabitant of 'Nothing?'
         }
 
         if (ExpressionTypingUtils.isExclExclExpression(JetPsiUtil.deparenthesize(expression))) {

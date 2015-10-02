@@ -49,3 +49,7 @@ class F() {
         }
     }
 }
+
+interface MyInterface {
+    fun foo() = 1
+}

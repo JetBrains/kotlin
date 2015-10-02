@@ -5,4 +5,6 @@ public class AAA {
     public int getX() {
         return other.x;
     }
+
+    public boolean issue() { return true; }
 }

@@ -127,6 +127,7 @@ public abstract class LazyJavaScope(
                 effectiveSignature.getReturnType(),
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility(),
+                false,
                 false
         )
 

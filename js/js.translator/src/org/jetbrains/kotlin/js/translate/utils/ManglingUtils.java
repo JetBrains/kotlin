@@ -82,7 +82,7 @@ public class ManglingUtils {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return descriptor.getVisibility().getIsPublicAPI();
+            return descriptor.getVisibility().isPublicAPI();
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -98,7 +98,7 @@ public class ManglingUtils {
             }
 
             // Don't use stable mangling when it inside a non-public API declaration.
-            if (!classDescriptor.getVisibility().getIsPublicAPI()) {
+            if (!classDescriptor.getVisibility().isPublicAPI()) {
                 return false;
             }
 
@@ -144,9 +144,7 @@ public class ManglingUtils {
     @NotNull
     private static String getSuggestedName(@NotNull CallableDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor && !((ConstructorDescriptor) descriptor).isPrimary()) {
-            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
-            assert classDescriptor != null;
-            return classDescriptor.getName().asString();
+            return descriptor.getContainingDeclaration().getName().asString();
         }
         else {
             return descriptor.getName().asString();
@@ -161,7 +159,7 @@ public class ManglingUtils {
 
         String nameToCompare = descriptor.getName().asString();
 
-        if (containingDeclaration != null && descriptor instanceof ConstructorDescriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
             nameToCompare = containingDeclaration.getName().asString();
             containingDeclaration = containingDeclaration.getContainingDeclaration();
         }

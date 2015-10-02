@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -68,7 +69,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.org.objectweb.asm.*;
@@ -100,6 +100,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Nullable // null means java/lang/Object
     private JetType superClassType;
     private final Type classAsmType;
+    private final boolean isLocal;
 
     private List<PropertyAndDefaultValue> companionObjectPropertiesToCopy;
 
@@ -111,10 +112,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen<?> parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen,
+            boolean isLocal
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
+        this.isLocal = isLocal;
     }
 
     @Override
@@ -232,6 +235,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
+    protected void generateBody() {
+        super.generateBody();
+        if (isInterface(descriptor) && !isLocal) {
+            Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
+            ClassBuilder defaultImplsBuilder =
+                    state.getFactory().newVisitor(TraitImpl(myClass, descriptor), defaultImplsType, myClass.getContainingFile());
+
+            CodegenContext parentContext = context.getParentContext();
+            assert parentContext != null : "Parent context of interface declaration should not be null";
+
+            ClassContext defaultImplsContext = parentContext.intoClass(descriptor, OwnerKind.DEFAULT_IMPLS, state);
+            new InterfaceImplBodyCodegen(myClass, defaultImplsContext, defaultImplsBuilder, state, this).generate();
+        }
+    }
+
+    @Override
     protected void generateKotlinAnnotation() {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
@@ -254,7 +273,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        JvmCodegenUtil.writeAbiVersion(av);
+        writeAnnotationData(av, serializer, classProto);
         if (kind != null) {
             av.visitEnum(
                     JvmAnnotationNames.KIND_FIELD_NAME,
@@ -262,11 +281,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     kind.toString()
             );
         }
-        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(serializer.serialize(classProto))) {
-            array.visit(null, string);
-        }
-        array.visitEnd();
         av.visitEnd();
     }
 
@@ -301,7 +315,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            if (isInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
                 sw.writeInterface();
                 Type jvmName = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();
@@ -323,7 +337,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
-            if (superClass != null && !isInterface(superClass)) {
+            if (superClass != null && !isJvmInterface(superClass)) {
                 superClassAsmType = typeMapper.mapClass(superClass);
                 superClassType = supertype;
                 return;
@@ -1040,7 +1054,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
-        if (isTrait(descriptor) || isAnnotationClass(descriptor)) return;
+        if (isInterface(descriptor) || isAnnotationClass(descriptor)) return;
 
         ConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
@@ -1398,7 +1412,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (isTrait(descriptor)) return;
+        if (isInterface(descriptor)) return;
 
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor traitFun = entry.getKey();
@@ -1417,7 +1431,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @Override
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
-                        if (!DescriptorUtils.isTrait(containingDeclaration)) return;
+                        if (!DescriptorUtils.isInterface(containingDeclaration)) return;
 
                         DeclarationDescriptor declarationInheritedFun = inheritedFun.getContainingDeclaration();
                         PsiElement classForInheritedFun = descriptorToDeclaration(declarationInheritedFun);
@@ -1426,9 +1440,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
 
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
-                        Type traitImplType = typeMapper.mapTraitImpl(containingTrait);
+                        Type traitImplType = typeMapper.mapDefaultImpls(containingTrait);
 
-                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.TRAIT_IMPL).getAsmMethod();
+                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.DEFAULT_IMPLS).getAsmMethod();
 
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] originalArgTypes = traitMethod.getArgumentTypes();
@@ -1444,7 +1458,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
 
                         if (KotlinBuiltIns.isCloneable(containingTrait) && traitMethod.getName().equals("clone")) {
-                            // A special hack for Cloneable: there's no kotlin/Cloneable$$TImpl class at runtime,
+                            // A special hack for Cloneable: there's no kotlin/Cloneable$DefaultImpls class at runtime,
                             // and its 'clone' method is actually located in java/lang/Object
                             iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
                         }

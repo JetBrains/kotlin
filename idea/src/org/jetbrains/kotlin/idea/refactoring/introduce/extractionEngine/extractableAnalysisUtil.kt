@@ -89,8 +89,8 @@ import org.jetbrains.kotlin.utils.DFS.Neighbors
 import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 
-internal val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
-private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
+internal val KotlinBuiltIns.defaultReturnType: JetType get() = unitType
+internal val KotlinBuiltIns.defaultParameterType: JetType get() = nullableAnyType
 
 private fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
@@ -147,7 +147,8 @@ private fun List<Instruction>.getExitPoints(): List<Instruction> =
 private fun List<Instruction>.getResultTypeAndExpressions(
         bindingContext: BindingContext,
         targetScope: LexicalScope?,
-        options: ExtractionOptions
+        options: ExtractionOptions,
+        module: ModuleDescriptor
 ): Pair<JetType, List<JetExpression>> {
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): JetExpression? {
         return when (instruction) {
@@ -172,7 +173,7 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
-    var commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else DEFAULT_RETURN_TYPE
+    var commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else module.builtIns.defaultReturnType
     val resultType = if (options.allowSpecialClassNames) commonSupertype else commonSupertype.approximateWithResolvableType(targetScope, false)
 
     val expressions = map { instructionToExpression(it, false) }.filterNotNull()
@@ -296,8 +297,8 @@ private fun ExtractionData.analyzeControlFlow(
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
     val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is JetProperty && it.isLocal() }
 
-    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, targetScope, options)
-    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, targetScope, options)
+    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
+    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
 
     val emptyControlFlow =
             ControlFlow(Collections.emptyList(), { OutputValueBoxer.AsTuple(it, module) }, declarationsToCopy)
@@ -341,7 +342,7 @@ private fun ExtractionData.analyzeControlFlow(
             if (valuedReturnExits.size() != 1) return multipleExitsError
 
             val element = valuedReturnExits.first().element as JetExpression
-            return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
+            return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true, module.builtIns))) to null
         }
 
         if (getCommonNonTrivialSuccessorIfAny(valuedReturnExits) == null) return multipleExitsError
@@ -350,7 +351,7 @@ private fun ExtractionData.analyzeControlFlow(
 
     outDeclarations.mapTo(outputValues) {
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
-        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE)
+        Initializer(it as JetProperty, descriptor?.getReturnType() ?: module.builtIns.defaultParameterType)
     }
     outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors[it.originalDescriptor]!!) }
 
@@ -382,7 +383,7 @@ private fun ExtractionData.analyzeControlFlow(
         val conditional = !singleExit && defaultExits.isNotEmpty()
         val elements = jumpExits.map { it.element as JetExpression }
         val elementToInsertAfterCall = if (singleExit) null else elements.first()
-        return controlFlow.copy(outputValues = Collections.singletonList(Jump(elements, elementToInsertAfterCall, conditional))) to null
+        return controlFlow.copy(outputValues = Collections.singletonList(Jump(elements, elementToInsertAfterCall, conditional, module.builtIns))) to null
     }
 
     return controlFlow to null
@@ -531,7 +532,7 @@ private class MutableParameter(
     private val defaultType: JetType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, defaultTypes)!!
         }
         else originalType
     }
@@ -600,7 +601,7 @@ private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
-        targetScope: LexicalScope?,
+        targetScope: LexicalScope,
         modifiedVarDescriptors: Set<VariableDescriptor>
 ): ParametersInfo {
     val info = ParametersInfo()
@@ -615,13 +616,14 @@ private fun ExtractionData.inferParametersInfo(
             resolvedCall: ResolvedCall<*>?,
             useSmartCastsIfPossible: Boolean
     ): JetType {
+        val builtIns = originalDescriptor.builtIns
         return when {
                    extractFunctionRef -> {
                        originalDescriptor as FunctionDescriptor
-                       KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
-                                                                    originalDescriptor.getExtensionReceiverParameter()?.getType(),
-                                                                    originalDescriptor.getValueParameters().map { it.getType() },
-                                                                    originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
+                       builtIns.getFunctionType(Annotations.EMPTY,
+                                                originalDescriptor.getExtensionReceiverParameter()?.getType(),
+                                                originalDescriptor.getValueParameters().map { it.getType() },
+                                                originalDescriptor.getReturnType() ?: builtIns.defaultReturnType)
                    }
                    parameterExpression != null ->
                        (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression] else null)
@@ -642,7 +644,7 @@ private fun ExtractionData.inferParametersInfo(
                    }
                    receiverToExtract.exists() -> receiverToExtract.getType()
                    else -> null
-               } ?: DEFAULT_PARAMETER_TYPE
+               } ?: builtIns.defaultParameterType
     }
 
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
@@ -672,14 +674,16 @@ private fun ExtractionData.inferParametersInfo(
             continue
         }
 
-        val referencedClassDescriptor: ClassDescriptor? = (thisDescriptor ?: originalDescriptor).let {
+        val referencedClassifierDescriptor: ClassifierDescriptor? = (thisDescriptor ?: originalDescriptor).let {
             when (it) {
                 is ClassDescriptor ->
                     when(it.getKind()) {
-                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
+                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassifierDescriptor
                         ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
-                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it : ClassDescriptor else null
+                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it as ClassifierDescriptor else null
                     }
+
+                is TypeParameterDescriptor -> it as ClassifierDescriptor
 
                 is ConstructorDescriptor -> it.getContainingDeclaration()
 
@@ -687,12 +691,14 @@ private fun ExtractionData.inferParametersInfo(
             }
         }
 
-        if (referencedClassDescriptor != null) {
-            if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
-                    info.typeParameters, info.nonDenotableTypes, options, targetScope, false
+        if (referencedClassifierDescriptor != null) {
+            if (!referencedClassifierDescriptor.getDefaultType().processTypeIfExtractable(
+                    info.typeParameters, info.nonDenotableTypes, options, targetScope, referencedClassifierDescriptor is TypeParameterDescriptor
             )) continue
 
-            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
+            if (referencedClassifierDescriptor is ClassDescriptor) {
+                info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
+            }
         }
         else {
             val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
@@ -765,7 +771,7 @@ private fun ExtractionData.inferParametersInfo(
                     val instruction = pseudocode.getElementValue(callElement)?.createdAt as? InstructionWithReceivers
                     val receiverValue = instruction?.receiverValues?.entrySet()?.singleOrNull { it.getValue() == receiverToExtract }?.getKey()
                     if (receiverValue != null) {
-                        parameter.addTypePredicate(getExpectedTypePredicate(receiverValue, bindingContext))
+                        parameter.addTypePredicate(getExpectedTypePredicate(receiverValue, bindingContext, targetScope.ownerDescriptor.builtIns))
                     }
                 }
                 else if (extractFunctionRef) {
@@ -773,7 +779,7 @@ private fun ExtractionData.inferParametersInfo(
                 }
                 else {
                     pseudocode.getElementValuesRecursively(originalRef).forEach {
-                        parameter.addTypePredicate(getExpectedTypePredicate(it, bindingContext))
+                        parameter.addTypePredicate(getExpectedTypePredicate(it, bindingContext, targetScope.ownerDescriptor.builtIns))
                     }
                 }
 
@@ -998,6 +1004,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     ).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
+    val typeParameterList = (result.declaration as? JetNamedFunction)?.getTypeParameterList()
     val body = result.declaration.getGeneratedBody()
     val bindingContext = body.analyzeFully()
 
@@ -1017,6 +1024,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             val currentTarget =
                     currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
             if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
+            if (currentTarget is JetTypeParameter && currentTarget.getParent() == typeParameterList) continue
             if (currentDescriptor is LocalVariableDescriptor
                 && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 

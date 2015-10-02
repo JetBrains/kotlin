@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
@@ -57,12 +59,8 @@ public fun JetExpression.isUsedAsExpression(context: BindingContext): Boolean = 
 public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
 
-public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlowInfo(expression: JetExpression?) {
+public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expression: JetExpression?) {
     if (expression == null) return
-
-    val scopeToRecord = scope.takeSnapshot()
-    trace.record(BindingContext.RESOLUTION_SCOPE, expression, scopeToRecord.asJetScope())
-    trace.record(BindingContext.LEXICAL_SCOPE, expression, scopeToRecord)
 
     val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
     if (typeInfo != null) {
@@ -71,6 +69,18 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlo
     else if (dataFlowInfo != DataFlowInfo.EMPTY) {
         // Don't store anything in BindingTrace if it's simply an empty DataFlowInfo
         trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, noTypeInfo(dataFlowInfo))
+    }
+}
+
+public fun BindingTrace.recordScope(scope: LexicalScope, element: JetElement?) {
+    if (element == null) return
+
+    val scopeToRecord = scope.takeSnapshot()
+    record(BindingContext.LEXICAL_SCOPE, element, scopeToRecord)
+
+    // todo: remove it later
+    if (element is JetExpression) {
+        record(BindingContext.RESOLUTION_SCOPE, element, scopeToRecord.asJetScope())
     }
 }
 

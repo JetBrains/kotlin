@@ -36,10 +36,14 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
 import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
@@ -59,7 +63,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
@@ -75,7 +78,10 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
@@ -363,7 +369,7 @@ public class ReplInterpreter {
 
     private void setReplScriptExecuting(boolean isExecuting) {
         if (replReader != null) {
-            replReader.setIsReplScriptExecuting(isExecuting);
+            replReader.setReplScriptExecuting(isExecuting);
         }
     }
 

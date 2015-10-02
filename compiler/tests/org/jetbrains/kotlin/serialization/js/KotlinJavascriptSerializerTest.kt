@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -78,7 +78,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     }
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
-        val module = JetTestUtils.createEmptyModule("<$MODULE_NAME>")
+        val module = JetTestUtils.createEmptyModule("<$MODULE_NAME>", JsPlatform)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size() == 1)
 
@@ -86,7 +86,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
+        module.setDependencies(module, module.builtIns.builtInsModule)
 
         return module
     }

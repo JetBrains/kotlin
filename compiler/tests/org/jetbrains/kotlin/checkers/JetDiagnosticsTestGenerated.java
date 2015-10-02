@@ -493,6 +493,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Serializable.kt")
+        public void testSerializable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Serializable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShiftFunctionTypes.kt")
         public void testShiftFunctionTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ShiftFunctionTypes.kt");
@@ -1040,6 +1046,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("assignment.kt")
+                public void testAssignment() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/assignment.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("documented.kt")
                 public void testDocumented() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/documented.kt");
@@ -1049,6 +1061,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("forParam.kt")
                 public void testForParam() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/forParam.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionExpression.kt")
+                public void testFunctionExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/functionExpression.kt");
                     doTest(fileName);
                 }
 
@@ -1359,6 +1377,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("CyclicReferenceInitializer.kt")
             public void testCyclicReferenceInitializer() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/CyclicReferenceInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExtensionProperty.kt")
+            public void testExtensionProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ExtensionProperty.kt");
                 doTest(fileName);
             }
 
@@ -8880,6 +8904,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("serializable.kt")
+            public void testSerializable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/serializable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/Simple.kt");
@@ -9138,9 +9168,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NoLocalVisibility.kt")
+            public void testNoLocalVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("primaryConstructorMissingKeyword.kt")
             public void testPrimaryConstructorMissingKeyword() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingKeyword.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateInInterface.kt")
+            public void testPrivateInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/privateInInterface.kt");
                 doTest(fileName);
             }
 
@@ -15038,6 +15080,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("KotlinOverridesJava5.kt")
                 public void testKotlinOverridesJava5() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/KotlinOverridesJava5.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("OnlyAscii.kt")
+                public void testOnlyAscii() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OnlyAscii.kt");
                     doTest(fileName);
                 }
 

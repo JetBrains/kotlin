@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import com.google.protobuf.MessageLite;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Unit;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypesPackage;
@@ -60,7 +64,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -164,7 +168,7 @@ public class AsmUtil {
 
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT
-                || isInterface(functionDescriptor.getContainingDeclaration()))
+                || isJvmInterface(functionDescriptor.getContainingDeclaration()))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -175,7 +179,7 @@ public class AsmUtil {
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
-        return kind == OwnerKind.PACKAGE || kind == OwnerKind.TRAIT_IMPL;
+        return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
@@ -314,7 +318,7 @@ public class AsmUtil {
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
-        if (isInterface(containingDeclaration)) {
+        if (isJvmInterface(containingDeclaration)) {
             return memberVisibility == Visibilities.PRIVATE ? NO_FLAG_PACKAGE_PRIVATE : ACC_PUBLIC;
         }
 
@@ -346,7 +350,7 @@ public class AsmUtil {
 
         if (memberDescriptor instanceof CallableDescriptor && memberVisibility == Visibilities.PROTECTED) {
             for (CallableDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors((CallableDescriptor) memberDescriptor)) {
-                if (isInterface(overridden.getContainingDeclaration())) {
+                if (isJvmInterface(overridden.getContainingDeclaration())) {
                     return ACC_PUBLIC;
                 }
             }
@@ -774,7 +778,7 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return !propertyDescriptor.isVar()
                && !isExtensionProperty
-               && isCompanionObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
+               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
@@ -841,6 +845,26 @@ public class AsmUtil {
         av.visitEnd();
     }
 
+    public static void writeAnnotationData(
+            @NotNull AnnotationVisitor av,
+            @NotNull DescriptorSerializer serializer,
+            @NotNull MessageLite message
+    ) {
+        byte[] bytes = serializer.serialize(message);
+
+        JvmCodegenUtil.writeAbiVersion(av);
+        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
+        for (String string : BitEncoding.encodeBytes(bytes)) {
+            data.visit(null, string);
+        }
+        data.visitEnd();
+        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.STRINGS_FIELD_NAME);
+        for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
+            strings.visit(null, string);
+        }
+        strings.visitEnd();
+    }
+
     @NotNull
     public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return asmTypeByFqNameWithoutInnerClasses(fqName).getDescriptor();
@@ -861,6 +885,17 @@ public class AsmUtil {
     @NotNull
     public static String internalNameByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
+    }
+
+    @NotNull
+    public static String getSimpleInternalName(@NotNull String internalName) {
+        int lastSlash = internalName.lastIndexOf('/');
+        if (lastSlash >= 0) {
+            return internalName.substring(lastSlash + 1);
+        }
+        else {
+            return internalName;
+        }
     }
 
     public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {
@@ -884,6 +919,6 @@ public class AsmUtil {
     public static int getReceiverIndex(@NotNull CodegenContext context, @NotNull CallableMemberDescriptor descriptor) {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor
-        return kind != OwnerKind.TRAIT_IMPL && isStaticMethod(kind, descriptor) ? 0 : 1;
+        return kind != OwnerKind.DEFAULT_IMPLS && isStaticMethod(kind, descriptor) ? 0 : 1;
     }
 }

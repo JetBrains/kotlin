@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
@@ -63,13 +64,13 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
 
         val file = element.containingFile as? JetFile ?: return null
 
-        val context = element.analyze()
+        val (context, module) = element.analyzeAndGetResult()
         val qualifier = element.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
         val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
 
-        val anyType = KotlinBuiltIns.getInstance().anyType
+        val anyType = module.builtIns.anyType
 
         return ClassInfo(
                 name = name,

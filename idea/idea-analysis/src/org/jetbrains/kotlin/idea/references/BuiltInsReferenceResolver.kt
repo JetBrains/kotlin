@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -64,7 +64,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         val jetBuiltInsFiles = getJetBuiltInsFiles()
 
         runReadAction {
-            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), ModuleParameters.Empty)
+            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), TargetPlatform.Default)
             newModuleContext.setDependencies(newModuleContext.module)
 
             val declarationFactory = FileBasedDeclarationProviderFactory(newModuleContext.storageManager, jetBuiltInsFiles)
@@ -140,7 +140,8 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         private fun isFromBuiltinModule(originalDescriptor: DeclarationDescriptor): Boolean {
             // TODO This is optimization only
             // It should be rewritten by checking declarationDescriptor.getSource(), when the latter returns something non-trivial for builtins.
-            return KotlinBuiltIns.getInstance().getBuiltInsModule() == DescriptorUtils.getContainingModule(originalDescriptor)
+            val containingModule = originalDescriptor.module
+            return containingModule.builtIns.builtInsModule == containingModule
         }
 
         public fun resolveBuiltInSymbol(project: Project, declarationDescriptor: DeclarationDescriptor): PsiElement? {

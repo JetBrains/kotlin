@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.js.translate.intrinsic.objects
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.FqName
@@ -36,8 +38,10 @@ class DefaultClassObjectIntrinsic(val fqName: FqName, val moduleName: String): O
 }
 
 public class ObjectIntrinsics {
+    private val companionObjectMapping = CompanionObjectMapping(JsPlatform.builtIns)
+
     public fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
-        if (!CompanionObjectMapping.hasMappingToObject(classDescriptor)) return NO_OBJECT_INTRINSIC
+        if (!companionObjectMapping.hasMappingToObject(classDescriptor)) return NO_OBJECT_INTRINSIC
 
         val containingDeclaration = classDescriptor.getContainingDeclaration()
         val name = Name.identifier(containingDeclaration.getName().asString() + "CompanionObject")

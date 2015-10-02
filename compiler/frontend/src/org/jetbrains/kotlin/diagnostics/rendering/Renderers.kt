@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTa
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
@@ -73,6 +72,15 @@ public object Renderers {
 
     public val NAME: Renderer<Named> = Renderer { it.getName().asString() }
 
+    public val NAME_OF_PARENT_OR_FILE: Renderer<DeclarationDescriptor> = Renderer {
+        if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == Visibilities.PRIVATE) {
+            "file"
+        }
+        else {
+            "'" + it.containingDeclaration!!.name + "'"
+        }
+    }
+
     public val ELEMENT_TEXT: Renderer<PsiElement> = Renderer { it.getText() }
 
     public val DECLARATION_NAME: Renderer<JetNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
@@ -86,8 +94,6 @@ public object Renderers {
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
     public val RENDER_TYPE: Renderer<JetType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
-
-    public val RENDER_FILE: Renderer<JetFile> = Renderer { it.name }
 
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
         variance: Variance ->

@@ -38,11 +38,15 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
@@ -51,6 +55,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
             descriptor: CallableDescriptor,
             context: BindingContext
     ): CallableRefactoring<CallableDescriptor>(project, descriptor, context, getText()) {
+        private val newName: String = JvmAbi.getterName(callableDescriptor.name.asString())
 
         private fun convertProperty(originalProperty: JetProperty, psiFactory: JetPsiFactory) {
             val property = originalProperty.copy() as JetProperty;
@@ -74,16 +79,19 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                     property.deleteChildRange(dropPropertyFrom, getter.getPrevSibling())
                 }
             }
+            property.setName(newName)
+
             originalProperty.replace(psiFactory.createFunction(property.getText()))
         }
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val propertyName = callableDescriptor.getName().asString()
+            val nameChanged = propertyName != newName
             val getterName = JvmAbi.getterName(callableDescriptor.getName().asString())
             val conflicts = MultiMap<PsiElement, String>()
             val callables = getAffectedCallables(project, descriptorsForChange)
-            val kotlinRefs = ArrayList<JetSimpleNameExpression>()
-            val foreignRefsToRename = ArrayList<PsiReference>()
+            val kotlinRefsToReplaceWithCall = ArrayList<JetSimpleNameExpression>()
+            val refsToRename = ArrayList<PsiReference>()
             val javaRefsToReplaceWithCall = ArrayList<PsiReferenceExpression>()
             for (callable in callables) {
                 if (callable !is PsiNamedElement) continue
@@ -112,9 +120,12 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                     if (usage is JetReference) {
                         if (usage is JetSimpleNameReference) {
                             val expression = usage.expression
-                            if (expression.getCall(expression.analyze()) != null
+                            if (expression.getCall(expression.analyze(BodyResolveMode.PARTIAL)) != null
                                 && expression.getStrictParentOfType<JetCallableReferenceExpression>() == null) {
-                                kotlinRefs.add(expression)
+                                kotlinRefsToReplaceWithCall.add(expression)
+                            }
+                            else if (nameChanged) {
+                                refsToRename.add(usage)
                             }
                         }
                         else {
@@ -129,10 +140,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
 
                     val refElement = usage.getElement()
 
-                    if (refElement.getText().endsWith(getterName)) {
-                        foreignRefsToRename.add(usage)
-                        continue
-                    }
+                    if (refElement.getText().endsWith(getterName)) continue
 
                     if (usage is PsiJavaReference) {
                         if (usage.resolve() is PsiField && usage is PsiReferenceExpression) {
@@ -152,14 +160,18 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                 project.executeWriteCommand(getText()) {
                     val kotlinPsiFactory = JetPsiFactory(project)
                     val javaPsiFactory = PsiElementFactory.SERVICE.getInstance(project)
+                    val newKotlinCallExpr = kotlinPsiFactory.createExpression("$newName()")
 
-                    kotlinRefs.forEach { it.replace(kotlinPsiFactory.createExpressionByPattern("$0()", it)) }
-                    foreignRefsToRename.forEach { it.handleElementRename(propertyName) }
-                    javaRefsToReplaceWithCall.forEach { it.replace(javaPsiFactory.createExpressionFromText(it.getText() + "()", null)) }
+                    kotlinRefsToReplaceWithCall.forEach { it.replace(newKotlinCallExpr) }
+                    refsToRename.forEach { it.handleElementRename(newName) }
+                    javaRefsToReplaceWithCall.forEach {
+                        val getterRef = it.handleElementRename(newName)
+                        getterRef.replace(javaPsiFactory.createExpressionFromText("${getterRef.text}()", null))
+                    }
                     callables.forEach {
                         when (it) {
                             is JetProperty -> convertProperty(it, kotlinPsiFactory)
-                            is PsiMethod -> it.setName(propertyName)
+                            is PsiMethod -> it.setName(newName)
                         }
                     }
                 }

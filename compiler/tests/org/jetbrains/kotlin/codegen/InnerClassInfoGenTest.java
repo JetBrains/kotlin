@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
@@ -86,6 +88,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         checkAccess("A", "Annotation", ACC_PUBLIC | ACC_STATIC | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
         checkAccess("A", "Enum", ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM);
         checkAccess("A", "Trait", ACC_PUBLIC | ACC_STATIC | ACC_INTERFACE | ACC_ABSTRACT);
+        checkAccess("A$Trait", "DefaultImpls", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
 
         checkAccess("A", "OpenStaticClass", ACC_PUBLIC | ACC_STATIC);
         checkAccess("A", "FinalStaticClass", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
@@ -102,10 +105,20 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
 
 
-    private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
+    private void checkAccess(@NotNull String outerName, @NotNull final String innerName, int accessFlags) {
         String name = outerName + "$" + innerName;
-        InnerClassAttribute attribute = new InnerClassAttribute(name, outerName, innerName, accessFlags);
-        extractAndCompareInnerClasses(name, attribute);
+        InnerClassAttribute attribute = CollectionsKt.single(extractInnerClasses(name),
+             new Function1<InnerClassAttribute, Boolean>() {
+                @Override
+                public Boolean invoke(InnerClassAttribute attribute) {
+                    return innerName.equals(attribute.innerName);
+                }
+            }
+        );
+
+        InnerClassAttribute expectedAttribute = new InnerClassAttribute(name, outerName, innerName, accessFlags);
+
+        assertEquals(expectedAttribute, attribute);
     }
 
     private void extractAndCompareInnerClasses(@NotNull String className, @NotNull InnerClassAttribute... expectedInnerClasses) {

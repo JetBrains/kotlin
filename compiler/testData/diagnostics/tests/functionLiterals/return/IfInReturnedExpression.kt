@@ -1,5 +1,9 @@
 val flag = true
 
-val a/*: () -> Comparable<out Any?>*/ = l@ {
-    return@l if (flag) "OK" else 4
+interface I
+class A(): I
+class B(): I
+
+val a = l@ {
+    return@l if (flag) A() else B()
 }

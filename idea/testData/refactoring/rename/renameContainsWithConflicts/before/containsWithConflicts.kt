@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    fun contains(k: Int): Boolean = k <= n
+    operator fun contains(k: Int): Boolean = k <= n
 }
 
 fun test() {

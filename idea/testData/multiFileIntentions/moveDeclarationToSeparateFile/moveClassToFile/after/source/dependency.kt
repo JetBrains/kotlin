@@ -1,0 +1,5 @@
+package q
+
+fun bar() {
+
+}

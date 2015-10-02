@@ -61,7 +61,7 @@ import java.util.ListIterator;
 
 import static kotlin.KotlinPackage.substringAfterLast;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
@@ -154,25 +154,6 @@ public class InlineCodegenUtil {
         return file;
     }
 
-    public static ClassId getContainerClassIdForInlineCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor) {
-        DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
-        ClassId containerClassId;
-        if (parentDeclaration instanceof PackageFragmentDescriptor) {
-            ProtoBuf.Callable proto = deserializedDescriptor.getProto();
-            if (!proto.hasExtension(JvmProtoBuf.implClassName)) {
-                throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
-            }
-            Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JvmProtoBuf.implClassName));
-            containerClassId = new ClassId(((PackageFragmentDescriptor) parentDeclaration).getFqName(), name);
-        } else {
-            containerClassId = getContainerClassId(deserializedDescriptor);
-        }
-        if (containerClassId == null) {
-            throw new IllegalStateException("Couldn't find container FQName for " + deserializedDescriptor.getName());
-        }
-        return containerClassId;
-    }
-
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
@@ -193,10 +174,10 @@ public class InlineCodegenUtil {
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
-            if (isTrait(containerDescriptor)) {
+            if (isInterface(containerDescriptor)) {
                 FqName relativeClassName = classId.getRelativeClassName();
                 //TODO test nested trait fun inlining
-                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.TRAIT_IMPL_SUFFIX));
+                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
             }
             return classId;
         }

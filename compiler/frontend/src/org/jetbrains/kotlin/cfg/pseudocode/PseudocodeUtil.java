@@ -20,11 +20,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.JetControlFlowProcessor;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessValueInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -89,7 +94,7 @@ public class PseudocodeUtil {
             element = ((ReadValueInstruction) instruction).getElement();
         }
         else if (instruction instanceof WriteValueInstruction) {
-            element = ((WriteValueInstruction) instruction).getlValue();
+            element = ((WriteValueInstruction) instruction).getLValue();
         }
         else if (instruction instanceof VariableDeclarationInstruction) {
             element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();

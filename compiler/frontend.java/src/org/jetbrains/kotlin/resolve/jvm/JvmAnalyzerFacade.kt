@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import java.util.ArrayList
@@ -80,9 +82,6 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
 
-    override val moduleParameters: ModuleParameters
-        get() = TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS
-
     @JvmStatic
     public fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
         val allFiles = ArrayList(baseFiles)
@@ -92,4 +91,6 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         return allFiles
     }
 
+    override val targetPlatform: TargetPlatform
+        get() = JvmPlatform
 }

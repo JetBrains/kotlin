@@ -34,7 +34,11 @@ import org.jetbrains.kotlin.types.JetType
 
 fun JetCallableDeclaration.setType(type: JetType, shortenReferences: Boolean = true) {
     if (type.isError()) return
-    val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
+}
+
+fun JetCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
+    val typeReference = JetPsiFactory(project).createType(typeString)
     setTypeReference(typeReference)
     if (shortenReferences) {
         ShortenReferences.DEFAULT.process(getTypeReference()!!)

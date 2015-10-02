@@ -1,5 +1,5 @@
 package test
 
 object O {
-    fun foo(): Int = 1
+    fun getFoo(): Int = 1
 }

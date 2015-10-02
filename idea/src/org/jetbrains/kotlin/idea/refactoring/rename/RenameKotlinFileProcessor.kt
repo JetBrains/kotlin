@@ -40,7 +40,7 @@ class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
         }
 
         val fileInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile)
-        if (!fileInfo.isWithJvmName) {
+        if (!fileInfo.withJvmName) {
             val facadeFqName = fileInfo.facadeClassFqName
             val project = jetFile.project
             val facadeClass = JavaPsiFacade.getInstance(project).findClass(facadeFqName.asString(), project.allScope())

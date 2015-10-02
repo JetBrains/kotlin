@@ -1,0 +1,9 @@
+// "Create function 'bar'" "true"
+
+fun foo(block: (Int) -> String) {
+    bar(block)
+}
+
+fun bar(block: (Int) -> String) {
+    throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+}
