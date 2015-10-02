@@ -120,9 +120,18 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     public fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint(SuspendContextRunnable {
-            initContexts(it)
-            it.printContext()
-            it.action()
+            try {
+                initContexts(it)
+                it.printContext()
+                it.action()
+            }
+            catch(e: AssertionError) {
+                throw e
+            }
+            catch(e: Throwable) {
+                e.printStackTrace()
+                resume(it)
+            }
         })
     }
 
