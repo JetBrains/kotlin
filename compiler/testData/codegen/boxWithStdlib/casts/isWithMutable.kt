@@ -102,5 +102,8 @@ fun box(): String {
     assert(mentry is MutableMap.MutableEntry<*, *>) { "MME should satisfy 'is MutableMap.MutableEntry'"}
     assert(hashMapEntry is MutableMap.MutableEntry<*, *>) { "HashMap.Entry should satisfy 'is MutableMap.MutableEntry'"}
 
+    assert((mlist as Any) !is MutableSet<*>) { "ML !is MutableSet" }
+    assert((mlist as Any) !is MutableIterator<*>) { "ML !is MutableIterator" }
+
     return "OK"
 }

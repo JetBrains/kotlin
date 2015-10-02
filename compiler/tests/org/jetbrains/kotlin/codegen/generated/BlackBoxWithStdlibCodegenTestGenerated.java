@@ -963,6 +963,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/unitAsInt.kt");
             doTestWithStdlib(fileName);
         }
+
+        @TestMetadata("weirdMutableCasts.kt")
+        public void testWeirdMutableCasts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/weirdMutableCasts.kt");
+            doTestWithStdlib(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/classes")

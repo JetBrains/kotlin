@@ -28,23 +28,23 @@ class MME : MutableMap.MutableEntry<String, String> {
     override fun setValue(value: String): String = throw UnsupportedOperationException()
 }
 
-inline fun safeAsReturnsNull(operation: String, block: () -> Any?) {
+inline fun safeAsReturnsNull(operation: String, cast: () -> Any?) {
     try {
-        val x = block()
+        val x = cast()
         assert(x == null) { "$operation: should return null, got $x" }
     }
     catch (e: Throwable) {
-        assert(false) { "$operation: should not throw exceptions, got $e" }
+        throw AssertionError("$operation: should not throw exceptions, got $e")
     }
 }
 
-inline fun safeAsReturnsNonNull(operation: String, block: () -> Any?) {
+inline fun safeAsReturnsNonNull(operation: String, cast: () -> Any?) {
     try {
-        val x = block()
+        val x = cast()
         assert(x != null) { "$operation: should return non-null" }
     }
     catch (e: Throwable) {
-        assert(false) { "$operation: should not throw exceptions, got $e" }
+        throw AssertionError("$operation: should not throw exceptions, got $e")
     }
 }
 
@@ -108,6 +108,7 @@ fun box(): String {
 
     safeAsReturnsNull("map as? MutableMap") { map as? MutableMap<*, *> }
     safeAsReturnsNonNull("mmap as? MutableMap") { mmap as? MutableMap<*, *> }
+    safeAsReturnsNonNull("hashMap as? MutableMap") { hashMap as? MutableMap<*, *> }
 
     val entry = ME() as Any
     val mentry = MME()
@@ -128,6 +129,9 @@ fun box(): String {
     safeAsReturnsNull("null as? MutableSet") { null as? MutableSet<*> }
     safeAsReturnsNull("null as? MutableMap") { null as? MutableMap<*, *> }
     safeAsReturnsNull("null as? MutableMap.MutableEntry") { null as? MutableMap.MutableEntry<*, *> }
+
+    safeAsReturnsNull("mlist as? MutableSet") { mlist as? MutableSet<*> }
+    safeAsReturnsNull("mlist as? MutableIterator") { mlist as? MutableIterator<*> }
 
     return "OK"
 }
