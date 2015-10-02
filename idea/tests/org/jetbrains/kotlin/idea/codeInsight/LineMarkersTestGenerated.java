@@ -286,4 +286,25 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/lineMarker/runMarkers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RunMarkers extends AbstractLineMarkersTest {
+        public void testAllFilesPresentInRunMarkers() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker/runMarkers"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("jUnitTestClassWithSubclasses.kt")
+        public void testJUnitTestClassWithSubclasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/runMarkers/jUnitTestClassWithSubclasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("testNGTestClassWithSubclasses.kt")
+        public void testTestNGTestClassWithSubclasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/runMarkers/testNGTestClassWithSubclasses.kt");
+            doTest(fileName);
+        }
+    }
 }

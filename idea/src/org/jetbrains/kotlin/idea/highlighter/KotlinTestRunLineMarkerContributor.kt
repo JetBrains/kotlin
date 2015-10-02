@@ -1,0 +1,79 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.idea.highlighter
+
+import com.intellij.codeInsight.TestFrameworks
+import com.intellij.execution.TestStateStorage
+import com.intellij.execution.lineMarker.ExecutorAction
+import com.intellij.execution.lineMarker.RunLineMarkerContributor
+import com.intellij.execution.testframework.TestIconMapper
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import javax.swing.Icon
+
+class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
+    private fun getTestStateIcon(url: String, project: Project): Icon? {
+        val state = TestStateStorage.getInstance(project).getState(url) ?: return null
+        val magnitude = TestIconMapper.getMagnitude(state.magnitude)
+        return TestIconMapper.getIcon(magnitude)
+    }
+
+    override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
+        val declaration = element.getStrictParentOfType<JetNamedDeclaration>() ?: return null
+        if (declaration.nameIdentifier != element) return null
+
+        // To prevent IDEA failing on red code
+        if (declaration.analyze(BodyResolveMode.PARTIAL)
+                .get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) == null) return null
+
+        val project = element.project
+
+        val (url, framework) = when (declaration) {
+            is JetClassOrObject -> {
+                val lightClass = declaration.toLightClass() ?: return null
+                val framework = TestFrameworks.detectFramework(lightClass) ?: return null
+                if (!framework.isTestClass(lightClass)) return null
+
+                "java:suite://${lightClass.qualifiedName!!}" to framework
+            }
+
+            is JetNamedFunction -> {
+                val lightMethod = declaration.toLightMethods().firstOrNull() ?: return null
+                val lightClass = lightMethod.containingClass as? KotlinLightClass ?: return null
+                val framework = TestFrameworks.detectFramework(lightClass) ?: return null
+                if (!framework.isTestMethod(lightMethod)) return null
+
+                "java:test://${lightClass.qualifiedName}.${lightMethod.name}" to framework
+            }
+
+            else -> return null
+        }
+
+        val icon = getTestStateIcon(url, project) ?: framework.icon
+        return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions(1))
+    }
+}

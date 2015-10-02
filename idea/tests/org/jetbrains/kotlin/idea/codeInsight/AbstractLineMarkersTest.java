@@ -29,8 +29,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -65,6 +67,9 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
 
     public void doTest(String path) {
         try {
+            String fileText = FileUtil.loadFile(new File(path));
+            ConfigLibraryUtil.configureLibrariesByDirective(myFixture.getModule(), PlatformTestUtil.getCommunityPath(), fileText);
+
             myFixture.configureByFile(path);
             Project project = myFixture.getProject();
             Document document = myFixture.getEditor().getDocument();

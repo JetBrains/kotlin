@@ -29,9 +29,13 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Helper for configuring kotlin runtime in tested project.
@@ -167,5 +171,40 @@ public class ConfigLibraryUtil {
                     }
                 }
         );
+    }
+
+    public static void configureLibrariesByDirective(@NotNull Module module, String rootPath, String fileText) {
+        for (String libraryInfo : InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
+            int i = libraryInfo.indexOf('@');
+            String libraryName = libraryInfo.substring(0, i);
+            String[] jarPaths = libraryInfo.substring(i + 1).split(";");
+
+            NewLibraryEditor editor = new NewLibraryEditor();
+            editor.setName(libraryName);
+            for (String jarPath : jarPaths) {
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(new File(rootPath, jarPath)), OrderRootType.CLASSES);
+            }
+
+            addLibrary(editor, module);
+        }
+    }
+
+    public static void unconfigureLibrariesByDirective(@NotNull Module module, String fileText) {
+        List<String> libraryNames = new ArrayList<String>();
+        for (String libInfo : InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
+            libraryNames.add(libInfo.substring(0, libInfo.indexOf('@')));
+        }
+        for (String libraryName : InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")) {
+            libraryNames.add(libraryName);
+        }
+
+        for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext(); ) {
+            String libraryName = iterator.next();
+            if (removeLibrary(module, libraryName)) {
+                iterator.remove();
+            }
+        }
+
+        if (!libraryNames.isEmpty()) throw new AssertionError("Couldn't find the following libraries: " + libraryNames);
     }
 }
