@@ -5,7 +5,7 @@ package foo
 internal fun test(a: Int, b: Int): Int {
     var c = 0
 
-    b.times {
+    repeat(b) {
         c += a
     }
 

@@ -5,7 +5,7 @@ package foo
 internal var counter = 0
 
 internal fun test(a: Int) {
-    a.times {
+    repeat(a) {
         counter += 1
     }
 }
