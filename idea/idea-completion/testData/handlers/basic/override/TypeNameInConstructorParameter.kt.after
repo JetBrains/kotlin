@@ -1,0 +1,10 @@
+import java.io.File
+
+interface I {
+    var someVar: java.io.File?
+}
+
+class A(override var someVar: File?<caret>) : I {
+}
+
+// ELEMENT_TEXT: "override var someVar: File?"
