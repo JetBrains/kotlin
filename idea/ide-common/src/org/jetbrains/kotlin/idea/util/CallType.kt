@@ -121,30 +121,48 @@ public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : Cal
                 return CallTypeAndReceiver.TYPE(receiverExpression)
             }
 
-            if (receiverExpression == null) {
-                return CallTypeAndReceiver.DEFAULT
-            }
+            when (expression) {
+                is JetOperationReferenceExpression -> {
+                    if (receiverExpression == null) {
+                        return UNKNOWN // incomplete code
+                    }
+                    return when (parent) {
+                        is JetBinaryExpression -> {
+                            //TODO: operator vs infix
+                            CallTypeAndReceiver.INFIX(receiverExpression)
+                        }
 
-            return when (parent) {
-                is JetBinaryExpression -> CallTypeAndReceiver.INFIX(receiverExpression)
+                        is JetUnaryExpression -> CallTypeAndReceiver.UNARY(receiverExpression)
 
-                is JetCallExpression -> {
-                    if ((parent.parent as JetQualifiedExpression).operationSign == JetTokens.SAFE_ACCESS)
-                        CallTypeAndReceiver.SAFE(receiverExpression)
-                    else
-                        CallTypeAndReceiver.DOT(receiverExpression)
+                        else -> error("Unknown parent for JetOperationReferenceExpression: $parent")
+                    }
                 }
 
-                is JetQualifiedExpression -> {
-                    if (parent.operationSign == JetTokens.SAFE_ACCESS)
-                        CallTypeAndReceiver.SAFE(receiverExpression)
-                    else
-                        CallTypeAndReceiver.DOT(receiverExpression)
+                is JetNameReferenceExpression -> {
+                    if (receiverExpression == null) {
+                        return CallTypeAndReceiver.DEFAULT
+                    }
+
+                    return when (parent) {
+                        is JetCallExpression -> {
+                            if ((parent.parent as JetQualifiedExpression).operationSign == JetTokens.SAFE_ACCESS)
+                                CallTypeAndReceiver.SAFE(receiverExpression)
+                            else
+                                CallTypeAndReceiver.DOT(receiverExpression)
+                        }
+
+                        is JetQualifiedExpression -> {
+                            if (parent.operationSign == JetTokens.SAFE_ACCESS)
+                                CallTypeAndReceiver.SAFE(receiverExpression)
+                            else
+                                CallTypeAndReceiver.DOT(receiverExpression)
+                        }
+
+                        else -> error("Unknown parent for JetNameReferenceExpression with receiver: $parent")
+                    }
                 }
 
-                is JetUnaryExpression -> CallTypeAndReceiver.UNARY(receiverExpression)
-
-                else -> error("Unknown parent for expression with receiver: $parent")
+                else -> return UNKNOWN
             }
         }
     }

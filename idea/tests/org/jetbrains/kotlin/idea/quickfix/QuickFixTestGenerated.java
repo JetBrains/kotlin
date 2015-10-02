@@ -478,6 +478,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notForThisLabel.kt")
+        public void testNotForThisLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notForThisLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("sAMConstructorFromLambda.kt")
         public void testSAMConstructorFromLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/sAMConstructorFromLambda.kt");

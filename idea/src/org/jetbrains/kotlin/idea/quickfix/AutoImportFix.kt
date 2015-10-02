@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
@@ -116,9 +117,12 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
 
         public fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
-            if (!element.isValid()) return listOf()
+            if (!element.isValid()) return emptyList()
 
-            val file = element.getContainingFile() as? JetFile ?: return listOf()
+            val file = element.getContainingFile() as? JetFile ?: return emptyList()
+
+            val callType = CallTypeAndReceiver.detect(element).callType
+            if (callType is CallType.UNKNOWN) return emptyList()
 
             var referenceName = element.getReferencedName()
             if (element.getIdentifier() == null) {
@@ -127,19 +131,17 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
                     referenceName = conventionName.asString()
                 }
             }
-            if (referenceName.isEmpty()) return listOf()
+            if (referenceName.isEmpty()) return emptyList()
 
             val searchScope = getResolveScope(file)
 
             val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
             val diagnostics = bindingContext.getDiagnostics().forElement(element)
-            if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
+            if (!diagnostics.any { it.getFactory() in ERRORS }) return emptyList()
 
             val resolutionScope = element.getResolutionScope(bindingContext, file.getResolutionFacade())
             val containingDescriptor = resolutionScope.ownerDescriptor
-
-            val callType = CallTypeAndReceiver.detect(element).callType
 
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
                 if (!callType.descriptorKindFilter.accepts(descriptor)) return false
