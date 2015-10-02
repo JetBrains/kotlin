@@ -184,7 +184,7 @@ class SmartCompletionInBasicWeigher(
 ) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
 
     companion object {
-        val KEYWORD_VALUE_MATCHED_KEY = Key<Boolean>("SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY")
+        val KEYWORD_VALUE_MATCHED_KEY = Key<Unit>("SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY")
     }
 
     private val descriptorsToSkip = smartCompletion.descriptorsToSkip
@@ -201,14 +201,11 @@ class SmartCompletionInBasicWeigher(
     private val DESCRIPTOR_TO_SKIP_WEIGHT = -1L // if descriptor is skipped from smart completion then it's probably irrelevant
 
     override fun weigh(element: LookupElement): Long {
-        val keywordValueMatched = element.getUserData(KEYWORD_VALUE_MATCHED_KEY)
-        val smartCompletionPriority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
-
-        if (keywordValueMatched != null) {
-            return if (keywordValueMatched) fullMatchWeight(0) else NO_MATCH_WEIGHT
+        if (element.getUserData(KEYWORD_VALUE_MATCHED_KEY) != null) {
+            return fullMatchWeight(0)
         }
 
-        if (smartCompletionPriority != null) { // it's an "additional item" came from smart completion, don't match it against expected type
+        if (element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) != null) { // it's an "additional item" came from smart completion, don't match it against expected type
             return smartCompletionItemWeight(element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
         }
 

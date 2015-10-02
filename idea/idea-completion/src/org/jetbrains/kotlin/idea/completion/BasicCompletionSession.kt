@@ -287,7 +287,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     match.isMatch()
                 }
                 if (matched) {
-                    lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, matched)
+                    lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, Unit)
                     lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
                 }
                 collector.addElement(lookupElement)
