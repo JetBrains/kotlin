@@ -432,10 +432,11 @@ class ExpectedInfos(
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
-                if (thenType != null && !thenType.isError())
+                val filteredInfo = if (thenType != null && !thenType.isError())
                     ifExpectedInfo.filter { it.matchingSubstitutor(thenType) != null }
                 else
                     ifExpectedInfo
+                return filteredInfo.copyWithNoAdditionalData()
             }
 
             else -> return null
@@ -452,10 +453,11 @@ class ExpectedInfos(
                 val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos.isNotEmpty()) {
-                    return if (leftTypeNotNullable != null)
+                    val filteredInfo = if (leftTypeNotNullable != null)
                         expectedInfos.filter { it.matchingSubstitutor(leftTypeNotNullable) != null }
                     else
                         expectedInfos
+                    return filteredInfo.copyWithNoAdditionalData()
                 }
                 else if (leftTypeNotNullable != null) {
                     return listOf(ExpectedInfo(leftTypeNotNullable, null, null))
@@ -605,6 +607,8 @@ class ExpectedInfos(
 
     private fun String.unpluralize()
             = StringUtil.unpluralize(this)
+
+    private fun Collection<ExpectedInfo>.copyWithNoAdditionalData() = map { it.copy(additionalData = null, itemOptions = ItemOptions.DEFAULT) }
 }
 
 val COMPARISON_TOKENS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ)

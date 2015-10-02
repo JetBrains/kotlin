@@ -1497,6 +1497,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NotInElse.kt")
+            public void testNotInElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotInElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotOnlyNamedArguments.kt")
             public void testNotOnlyNamedArguments() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotOnlyNamedArguments.kt");
