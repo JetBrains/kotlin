@@ -88,12 +88,12 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
                 return PlatformIcons.PROTECTED_ICON;
             }
-            if (list.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-                return PlatformIcons.PUBLIC_ICON;
+            if (list.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
+                return PlatformIcons.PACKAGE_LOCAL_ICON;
             }
         }
 
-        return PlatformIcons.PACKAGE_LOCAL_ICON;
+        return PlatformIcons.PUBLIC_ICON;
     }
 
     public static Icon getBaseIcon(PsiElement psiElement) {
