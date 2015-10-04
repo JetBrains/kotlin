@@ -102,16 +102,15 @@ public class DeserializedClassDescriptor(
     override fun isCompanionObject(): Boolean = isCompanion
 
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
-        if (!classProto.hasPrimaryConstructor()) return null
-
-        val constructorProto = classProto.getPrimaryConstructor()
-        if (!constructorProto.hasData()) {
-            val descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE)
-            descriptor.setReturnType(getDefaultType())
-            return descriptor
+        if (kind.isSingleton) {
+            return DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE).apply {
+                returnType = getDefaultType()
+            }
         }
 
-        return c.memberDeserializer.loadConstructor(constructorProto.getData(), true)
+        return classProto.constructorList.firstOrNull { !Flags.IS_SECONDARY.get(it.flags) }?.let { constructorProto ->
+            c.memberDeserializer.loadConstructor(constructorProto, true)
+        }
     }
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
@@ -120,7 +119,7 @@ public class DeserializedClassDescriptor(
             computeSecondaryConstructors() + getUnsubstitutedPrimaryConstructor().singletonOrEmptyList()
 
     private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
-            classProto.getSecondaryConstructorList().map {
+            classProto.constructorList.filter { Flags.IS_SECONDARY.get(it.flags) }.map {
                 c.memberDeserializer.loadConstructor(it, false)
             }
 
