@@ -580,6 +580,13 @@ public class DescriptorSerializer {
             if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
                 builder.addMember(callableProto((CallableMemberDescriptor) declaration));
             }
+
+            if (declaration instanceof PropertyDescriptor) {
+                builder.addProperty(propertyProto((PropertyDescriptor) declaration));
+            }
+            else if (declaration instanceof FunctionDescriptor) {
+                builder.addFunction(functionProto((FunctionDescriptor) declaration));
+            }
         }
 
         extension.serializePackage(fragments, builder);
@@ -594,6 +601,13 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor declaration : sort(members)) {
             if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
                 builder.addMember(callableProto((CallableMemberDescriptor) declaration));
+            }
+
+            if (declaration instanceof PropertyDescriptor) {
+                builder.addProperty(propertyProto((PropertyDescriptor) declaration));
+            }
+            else if (declaration instanceof FunctionDescriptor) {
+                builder.addFunction(functionProto((FunctionDescriptor) declaration));
             }
         }
 
