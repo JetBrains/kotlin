@@ -73,10 +73,10 @@ class BuiltInsAnnotationAndConstantLoader(
 
     override fun loadPropertyConstant(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: ProtoBuf.Property,
             expectedType: JetType
     ): ConstantValue<*>? {
-        val value = proto.getExtension(BuiltInsProtoBuf.oldCompileTimeValue)
+        val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

@@ -46,7 +46,16 @@ internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
     class KotlinFunction(
-            val proto: ProtoBuf.Callable,
+            val proto: ProtoBuf.Function,
+            val signature: JvmProtoBuf.JvmMethodSignature,
+            val nameResolver: NameResolver
+    ) : JvmFunctionSignature() {
+        override fun asString(): String =
+                nameResolver.getString(signature.name) + nameResolver.getString(signature.desc)
+    }
+
+    class KotlinConstructor(
+            val proto: ProtoBuf.Constructor,
             val signature: JvmProtoBuf.JvmMethodSignature,
             val nameResolver: NameResolver
     ) : JvmFunctionSignature() {
@@ -87,7 +96,7 @@ internal sealed class JvmPropertySignature {
     abstract fun asString(): String
 
     class KotlinProperty(
-            val proto: ProtoBuf.Callable,
+            val proto: ProtoBuf.Property,
             val signature: JvmProtoBuf.JvmPropertySignature,
             val nameResolver: NameResolver
     ) : JvmPropertySignature() {
@@ -124,9 +133,13 @@ internal object RuntimeTypeMapper {
         when (function) {
             is DeserializedCallableMemberDescriptor -> {
                 val proto = function.proto
-                if (proto.hasExtension(JvmProtoBuf.oldMethodSignature)) {
-                    val signature = proto.getExtension(JvmProtoBuf.oldMethodSignature)
+                if (proto is ProtoBuf.Function && proto.hasExtension(JvmProtoBuf.methodSignature)) {
+                    val signature = proto.getExtension(JvmProtoBuf.methodSignature)
                     return JvmFunctionSignature.KotlinFunction(proto, signature, function.nameResolver)
+                }
+                if (proto is ProtoBuf.Constructor && proto.hasExtension(JvmProtoBuf.constructorSignature)) {
+                    val signature = proto.getExtension(JvmProtoBuf.constructorSignature)
+                    return JvmFunctionSignature.KotlinConstructor(proto, signature, function.nameResolver)
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
                 return mapIntrinsicFunctionSignature(function) ?:
@@ -153,10 +166,10 @@ internal object RuntimeTypeMapper {
         val property = DescriptorUtils.unwrapFakeOverride(possiblyOverriddenProperty)
         if (property is DeserializedPropertyDescriptor) {
             val proto = property.proto
-            if (!proto.hasExtension(JvmProtoBuf.oldPropertySignature)) {
+            if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
                 throw KotlinReflectionInternalError("No metadata found for $property")
             }
-            return JvmPropertySignature.KotlinProperty(proto, proto.getExtension(JvmProtoBuf.oldPropertySignature), property.nameResolver)
+            return JvmPropertySignature.KotlinProperty(proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver)
         }
         else if (property is JavaPropertyDescriptor) {
             val field = ((property.source as? JavaSourceElement)?.javaElement as? ReflectJavaField)?.member ?:

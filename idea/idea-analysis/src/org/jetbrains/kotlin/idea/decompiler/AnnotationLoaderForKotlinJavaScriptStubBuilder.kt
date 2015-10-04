@@ -39,9 +39,13 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<ClassIdWithTarget> {
-        proto as ProtoBuf.Callable // TODO
-
-        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map {
+        val annotations = when (proto) {
+            is ProtoBuf.Constructor -> proto.getExtension(JsProtoBuf.constructorAnnotation)
+            is ProtoBuf.Function -> proto.getExtension(JsProtoBuf.functionAnnotation)
+            is ProtoBuf.Property -> proto.getExtension(JsProtoBuf.propertyAnnotation)
+            else -> error("Unknown message: $proto")
+        }.orEmpty()
+        return annotations.map {
             ClassIdWithTarget(container.nameResolver.getClassId(it.id), null)
         }
     }
@@ -71,7 +75,7 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
 
     override fun loadPropertyConstant(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: ProtoBuf.Property,
             expectedType: JetType
     ) {}
 }

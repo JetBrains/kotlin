@@ -29,12 +29,11 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.Flags;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 
 public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescriptorImpl implements DeserializedCallableMemberDescriptor {
 
-    private final ProtoBuf.Callable proto;
+    private final ProtoBuf.Function proto;
     private final NameResolver nameResolver;
 
     private DeserializedSimpleFunctionDescriptor(
@@ -43,7 +42,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
-            @NotNull ProtoBuf.Callable proto,
+            @NotNull ProtoBuf.Function proto,
             @NotNull NameResolver nameResolver
     ) {
         super(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE);
@@ -77,7 +76,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
 
     @NotNull
     @Override
-    public ProtoBuf.Callable getProto() {
+    public ProtoBuf.Function getProto() {
         return proto;
     }
 
@@ -90,7 +89,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
     @NotNull
     public static DeserializedSimpleFunctionDescriptor create(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull ProtoBuf.Callable proto,
+            @NotNull ProtoBuf.Function proto,
             @NotNull NameResolver nameResolver,
             @NotNull Annotations annotations
     ) {

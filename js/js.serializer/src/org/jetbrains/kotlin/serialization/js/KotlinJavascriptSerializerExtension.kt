@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -39,13 +36,24 @@ public class KotlinJavascriptSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeCallable(callable: CallableMemberDescriptor, proto: ProtoBuf.Callable.Builder) {
-        for (annotation in callable.annotations) {
-            proto.addExtension(JsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation))
+    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(JsProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
-        val propertyDescriptor = callable as? PropertyDescriptor ?: return
-        val constantInitializer = propertyDescriptor.compileTimeInitializer
-        if (constantInitializer != null && constantInitializer !is NullValue) {
+    }
+
+    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(JsProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
+
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(JsProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+        val constantInitializer = descriptor.compileTimeInitializer ?: return
+        if (constantInitializer !is NullValue) {
             proto.setExtension(JsProtoBuf.compileTimeValue, annotationSerializer.valueProto(constantInitializer).build())
         }
     }

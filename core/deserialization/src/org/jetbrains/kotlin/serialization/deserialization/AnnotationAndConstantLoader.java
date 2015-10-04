@@ -65,7 +65,7 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     @Nullable
     C loadPropertyConstant(
             @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable proto,
+            @NotNull ProtoBuf.Property proto,
             @NotNull JetType expectedType
     );
 }

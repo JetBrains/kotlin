@@ -66,8 +66,6 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
-        saveSignature(callable, proto);
-        saveImplClassName(callable, proto);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (descriptor instanceof DeserializedSimpleFunctionDescriptor) {
             DeserializedSimpleFunctionDescriptor deserialized = (DeserializedSimpleFunctionDescriptor) descriptor;
             signature = signatureSerializer.copyMethodSignature(
-                    deserialized.getProto().getExtension(JvmProtoBuf.oldMethodSignature), deserialized.getNameResolver()
+                    deserialized.getProto().getExtension(JvmProtoBuf.methodSignature), deserialized.getNameResolver()
             );
         }
         else {
@@ -154,7 +152,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (descriptor instanceof DeserializedPropertyDescriptor) {
             DeserializedPropertyDescriptor deserializedCallable = (DeserializedPropertyDescriptor) descriptor;
             signature = signatureSerializer.copyPropertySignature(
-                    deserializedCallable.getProto().getExtension(JvmProtoBuf.oldPropertySignature),
+                    deserializedCallable.getProto().getExtension(JvmProtoBuf.propertySignature),
                     deserializedCallable.getNameResolver()
             );
         }
@@ -170,70 +168,6 @@ public class JvmSerializerExtension extends SerializerExtension {
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
 
         saveImplClassName(descriptor, proto);
-    }
-
-    // TODO: delete
-    private void saveSignature(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
-        SignatureSerializer signatureSerializer = new SignatureSerializer();
-        if (callable instanceof FunctionDescriptor) {
-            JvmProtoBuf.JvmMethodSignature signature;
-            if (callable instanceof DeserializedSimpleFunctionDescriptor) {
-                DeserializedSimpleFunctionDescriptor deserialized = (DeserializedSimpleFunctionDescriptor) callable;
-                signature = signatureSerializer.copyMethodSignature(
-                        deserialized.getProto().getExtension(JvmProtoBuf.oldMethodSignature), deserialized.getNameResolver()
-                );
-            }
-            else {
-                Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
-                signature = method != null ? signatureSerializer.methodSignature(method) : null;
-            }
-            if (signature != null) {
-                proto.setExtension(JvmProtoBuf.oldMethodSignature, signature);
-            }
-        }
-        else if (callable instanceof PropertyDescriptor) {
-            PropertyDescriptor property = (PropertyDescriptor) callable;
-
-            PropertyGetterDescriptor getter = property.getGetter();
-            PropertySetterDescriptor setter = property.getSetter();
-            Method getterMethod = getter == null ? null : bindings.get(METHOD_FOR_FUNCTION, getter);
-            Method setterMethod = setter == null ? null : bindings.get(METHOD_FOR_FUNCTION, setter);
-
-            Pair<Type, String> field = bindings.get(FIELD_FOR_PROPERTY, property);
-            String fieldName;
-            String fieldDesc;
-            boolean isStaticInOuter;
-            if (field != null) {
-                fieldName = field.second;
-                fieldDesc = field.first.getDescriptor();
-                isStaticInOuter = bindings.get(STATIC_FIELD_IN_OUTER_CLASS, property);
-            }
-            else {
-                fieldName = null;
-                fieldDesc = null;
-                isStaticInOuter = false;
-            }
-
-            Method syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, property);
-
-            JvmProtoBuf.JvmPropertySignature signature;
-            if (callable instanceof DeserializedPropertyDescriptor) {
-                DeserializedPropertyDescriptor deserializedCallable = (DeserializedPropertyDescriptor) callable;
-                signature = signatureSerializer.copyPropertySignature(
-                        deserializedCallable.getProto().getExtension(JvmProtoBuf.oldPropertySignature),
-                        deserializedCallable.getNameResolver()
-                );
-            }
-            else {
-                signature = signatureSerializer.propertySignature(
-                        fieldName, fieldDesc, isStaticInOuter,
-                        syntheticMethod != null ? signatureSerializer.methodSignature(syntheticMethod) : null,
-                        getterMethod != null ? signatureSerializer.methodSignature(getterMethod) : null,
-                        setterMethod != null ? signatureSerializer.methodSignature(setterMethod) : null
-                );
-            }
-            proto.setExtension(JvmProtoBuf.oldPropertySignature, signature);
-        }
     }
 
     private void saveImplClassName(@NotNull CallableMemberDescriptor callable, @NotNull MessageLite.Builder proto) {

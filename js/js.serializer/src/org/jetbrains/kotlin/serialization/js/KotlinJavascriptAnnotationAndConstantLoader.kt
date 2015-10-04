@@ -43,9 +43,12 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
-        proto as ProtoBuf.Callable // TODO
-
-        val annotations = proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty()
+        val annotations = when (proto) {
+            is ProtoBuf.Constructor -> proto.getExtension(JsProtoBuf.constructorAnnotation)
+            is ProtoBuf.Function -> proto.getExtension(JsProtoBuf.functionAnnotation)
+            is ProtoBuf.Property -> proto.getExtension(JsProtoBuf.propertyAnnotation)
+            else -> error("Unknown message: $proto")
+        }.orEmpty()
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
@@ -73,7 +76,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
 
     override fun loadPropertyConstant(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
+            proto: ProtoBuf.Property,
             expectedType: JetType
     ): ConstantValue<*>? {
         val value = proto.getExtension(JsProtoBuf.compileTimeValue)

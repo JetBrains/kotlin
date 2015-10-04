@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -31,59 +30,49 @@ import java.util.*
 
 public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
-        membersList: Collection<ProtoBuf.Callable>
+        functionList: Collection<ProtoBuf.Function>,
+        propertyList: Collection<ProtoBuf.Property>
 ) : JetScopeImpl() {
 
-    private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
-    private enum class Kind { FUNCTION, PROPERTY }
+    private data class ProtoKey(val name: Name, val isExtension: Boolean)
 
-    private fun CallableKind.toKind(): Kind {
-        return when (this) {
-            CallableKind.FUN -> Kind.FUNCTION
-            CallableKind.VAL, CallableKind.VAR -> Kind.PROPERTY
-            else -> throw IllegalStateException("Unexpected CallableKind $this")
-        }
-    }
+    private val functionProtos =
+            c.storageManager.createLazyValue {
+                groupByKey(filteredFunctionProtos(functionList), { it.name }) { it.hasReceiverType() }
+            }
+    private val propertyProtos =
+            c.storageManager.createLazyValue {
+                groupByKey(filteredPropertyProtos(propertyList), { it.name }) { it.hasReceiverType() }
+            }
 
-    private val membersProtos =
-            c.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
 
-    protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
+    protected open fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> = protos
 
-    private fun groupByKey(membersList: Collection<ProtoBuf.Callable>): Map<ProtoKey, List<ProtoBuf.Callable>> {
-        val map = LinkedHashMap<ProtoKey, MutableList<ProtoBuf.Callable>>()
-        for (memberProto in membersList) {
-            val key = ProtoKey(
-                    c.nameResolver.getName(memberProto.getName()),
-                    Flags.CALLABLE_KIND[memberProto.getFlags()].toKind(),
-                    memberProto.hasReceiverType()
-            )
-            var protos = map[key]
-            if (protos == null) {
-                protos = ArrayList(1)
-                map.put(key, protos)
-            }
-            protos.add(memberProto)
+    protected open fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> = protos
+
+    private fun <M : MessageLite> groupByKey(
+            protos: Collection<M>, getNameIndex: (M) -> Int, isExtension: (M) -> Boolean
+    ): Map<ProtoKey, List<M>> {
+        val map = LinkedHashMap<ProtoKey, MutableList<M>>()
+        for (proto in protos) {
+            val key = ProtoKey(c.nameResolver.getName(getNameIndex(proto)), isExtension(proto))
+            map.getOrPut(key) { ArrayList(1) }.add(proto)
         }
         return map
     }
 
-    private fun <D : CallableMemberDescriptor> computeMembers(name: Name, kind: Kind): LinkedHashSet<D> {
-        val memberProtos = membersProtos()[ProtoKey(name, kind, isExtension = false)].orEmpty() +
-                           membersProtos()[ProtoKey(name, kind, isExtension = true)].orEmpty()
-
-        @Suppress("UNCHECKED_CAST")
-        return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
-            c.memberDeserializer.loadCallable(memberProto) as D
-        }
-    }
-
     private fun computeFunctions(name: Name): Collection<FunctionDescriptor> {
-        val descriptors = computeMembers<FunctionDescriptor>(name, Kind.FUNCTION)
+        val protos = functionProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
+                     functionProtos()[ProtoKey(name, isExtension = true)].orEmpty()
+
+        val descriptors = protos.mapTo(linkedSetOf()) {
+            c.memberDeserializer.loadFunction(it)
+        }
+
         computeNonDeclaredFunctions(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -94,7 +83,13 @@ public abstract class DeserializedMemberScope protected constructor(
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<VariableDescriptor> {
-        val descriptors = computeMembers<PropertyDescriptor>(name, Kind.PROPERTY)
+        val protos = propertyProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
+                     propertyProtos()[ProtoKey(name, isExtension = true)].orEmpty()
+
+        val descriptors = protos.mapTo(linkedSetOf()) {
+            c.memberDeserializer.loadProperty(it)
+        }
+
         computeNonDeclaredProperties(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -142,32 +137,26 @@ public abstract class DeserializedMemberScope protected constructor(
             nameFilter: (Name) -> Boolean,
             location: LookupLocation
     ) {
-        val acceptsProperties = kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)
-        val acceptsFunctions = kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)
-        if (!(acceptsFunctions || acceptsProperties)) {
-            return
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+            val keys = propertyProtos().keySet().filter { nameFilter(it.name) }
+            addMembers(result, keys) { getProperties(it, location) }
         }
 
-        val keys = membersProtos().keySet().filter { nameFilter(it.name) }
-        if (acceptsProperties) {
-            addMembers(result, keys, Kind.PROPERTY) { getProperties(it, location) }
-        }
-        if (acceptsFunctions) {
-            addMembers(result, keys, Kind.FUNCTION) { getFunctions(it, location) }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            val keys = functionProtos().keySet().filter { nameFilter(it.name) }
+            addMembers(result, keys) { getFunctions(it, location) }
         }
     }
 
     private fun addMembers(
             result: MutableCollection<DeclarationDescriptor>,
             keys: Collection<ProtoKey>,
-            kind: Kind,
             getMembers: (Name) -> Collection<CallableDescriptor>
     ) {
-        val filteredByKind = keys.filter { it.kind == kind }
         listOf(false, true).forEach { isExtension ->
-            filteredByKind.filter { it.isExtension == isExtension }
+            keys.filter { it.isExtension == isExtension }
                     .flatMap { getMembers(it.name) }
-                    .filterTo(result) { (it.getExtensionReceiverParameter() != null) == isExtension }
+                    .filterTo(result) { (it.extensionReceiverParameter != null) == isExtension }
         }
     }
 
@@ -185,7 +174,7 @@ public abstract class DeserializedMemberScope protected constructor(
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration = " + getContainingDeclaration())

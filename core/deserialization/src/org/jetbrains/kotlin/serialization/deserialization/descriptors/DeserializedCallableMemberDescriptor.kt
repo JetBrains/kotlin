@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
-public interface DeserializedCallableMemberDescriptor: CallableMemberDescriptor {
-    public val proto: ProtoBuf.Callable
-    public val nameResolver: NameResolver
+interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
+    val proto: MessageLite
+
+    val nameResolver: NameResolver
 }

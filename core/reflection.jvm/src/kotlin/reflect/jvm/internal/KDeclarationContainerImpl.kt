@@ -157,7 +157,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     // TODO: check resulting method's return type
     fun findMethodBySignature(
-            @Suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
             signature: JvmProtoBuf.JvmMethodSignature,
             nameResolver: NameResolver,
             declared: Boolean
@@ -270,7 +269,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     // TODO: check resulting field's type
     fun findFieldBySignature(
-            proto: ProtoBuf.Callable,
+            proto: ProtoBuf.Property,
             signature: JvmProtoBuf.JvmFieldSignature,
             nameResolver: NameResolver
     ): Field? {
@@ -293,12 +292,12 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     // Returns the JVM class which contains this callable. This class may be different from the one represented by descriptors
     // in case of top level functions (their bodies are in package parts), methods with implementations in interfaces, etc.
-    private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Callable): Class<*>? {
-        if (!proto.hasExtension(JvmProtoBuf.oldImplClassName)) return null
+    private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Property): Class<*>? {
+        if (!proto.hasExtension(JvmProtoBuf.propertyImplClassName)) return null
 
-        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.oldImplClassName))
+        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.propertyImplClassName))
         // TODO: store fq name of impl class name in jvm_descriptors.proto
-        val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
+        val classId = ClassId(jClass.classId.packageFqName, implClassName)
         return jClass.safeClassLoader.loadClass(classId.asSingleFqName().asString())
     }
 
