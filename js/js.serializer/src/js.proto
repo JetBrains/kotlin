@@ -26,7 +26,20 @@ extend Class {
 }
 
 extend Callable {
-  repeated Annotation callable_annotation = 130;
+  repeated Annotation old_callable_annotation = 130;
+  optional Annotation.Argument.Value old_compile_time_value = 131;
+}
+
+extend Constructor {
+  repeated Annotation constructor_annotation = 130;
+}
+
+extend Function {
+  repeated Annotation function_annotation = 130;
+}
+
+extend Property {
+  repeated Annotation property_annotation = 130;
   optional Annotation.Argument.Value compile_time_value = 131;
 }
 

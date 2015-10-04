@@ -16,7 +16,6 @@
 
 package kotlin.reflect.jvm
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
@@ -42,11 +41,11 @@ public fun <R> Function<R>.reflect(): KFunction<R>? {
             JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY),
             callable.strings
     )
-    val proto = ProtoBuf.Callable.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
+    val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(moduleData.deserialization, nameResolver, moduleData.module,
                                          parentTypeDeserializer = null, typeParameters = listOf())
-    val descriptor = MemberDeserializer(context).loadCallable(proto) as FunctionDescriptor
+    val descriptor = MemberDeserializer(context).loadFunction(proto)
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
 }

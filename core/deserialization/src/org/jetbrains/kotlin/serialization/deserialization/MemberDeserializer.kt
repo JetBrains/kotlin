@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -27,23 +28,11 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.FUN
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAL
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAR
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 public class MemberDeserializer(private val c: DeserializationContext) {
-    public fun loadCallable(proto: Callable): CallableMemberDescriptor {
-        val callableKind = Flags.CALLABLE_KIND.get(proto.getFlags())
-        return when (callableKind) {
-            FUN -> loadFunction(proto)
-            VAL, VAR -> loadProperty(proto)
-            else -> throw IllegalArgumentException("Unsupported callable kind: $callableKind")
-        }
-    }
-
-    private fun loadProperty(proto: Callable): PropertyDescriptor {
+    public fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = proto.getFlags()
 
         val property = DeserializedPropertyDescriptor(
@@ -63,7 +52,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(property, proto.getTypeParameterList())
 
         val hasGetter = Flags.OLD_HAS_GETTER.get(flags)
-        val receiverAnnotations = if (hasGetter)
+        val receiverAnnotations = if (hasGetter && proto.hasReceiverType())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
             Annotations.EMPTY
@@ -113,7 +102,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                         property.getKind(), null, SourceElement.NO_SOURCE
                 )
                 val setterLocal = local.childContext(setter, listOf())
-                val valueParameters = setterLocal.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER)
+                val valueParameters = setterLocal.memberDeserializer.valueParameters(
+                        listOf(proto.setterValueParameter), proto, AnnotatedCallableKind.PROPERTY_SETTER
+                )
                 setter.initialize(valueParameters.single())
                 setter
             }
@@ -139,16 +130,18 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return property
     }
 
-    private fun loadFunction(proto: Callable): CallableMemberDescriptor {
+    public fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
         val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
-        val receiverAnnotations = getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
+        val receiverAnnotations = if (proto.hasReceiverType())
+            getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
+        else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, proto, c.nameResolver, annotations)
         val local = c.childContext(function, proto.getTypeParameterList())
         function.initialize(
                 if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType(), receiverAnnotations) else null,
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.ownTypeParameters,
-                local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.returnType),
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
@@ -166,19 +159,19 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, TODO("proto"), c.nameResolver
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.getFlags()))
         )
         descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()))
         return descriptor
     }
 
-    private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {
+    private fun getAnnotations(proto: MessageLite, flags: Int, kind: AnnotatedCallableKind): Annotations {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
         }
@@ -190,27 +183,28 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun getReceiverParameterAnnotations(
-            proto: Callable,
+            proto: MessageLite,
             kind: AnnotatedCallableKind,
             receiverTargetedKind: AnnotatedCallableKind = kind
     ): Annotations {
         return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
-            if (proto.hasReceiverType()) {
-                c.containingDeclaration.asProtoContainer()?.let {
-                    c.components.annotationAndConstantLoader
-                            .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
-                            .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
-                }.orEmpty()
-            }
-            else emptyList()
+            c.containingDeclaration.asProtoContainer()?.let {
+                c.components.annotationAndConstantLoader
+                        .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
+                        .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+            }.orEmpty()
         }
     }
 
-    private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
+    private fun valueParameters(
+            valueParameters: List<ProtoBuf.ValueParameter>,
+            callable: MessageLite,
+            kind: AnnotatedCallableKind
+    ): List<ValueParameterDescriptor> {
         val callableDescriptor = c.containingDeclaration as CallableDescriptor
         val containerOfCallable = callableDescriptor.containingDeclaration.asProtoContainer()
 
-        return callable.valueParameterList.mapIndexed { i, proto ->
+        return valueParameters.mapIndexed { i, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
             ValueParameterDescriptorImpl(
                     callableDescriptor, null, i,
@@ -226,7 +220,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
     private fun getParameterAnnotations(
             container: ProtoContainer,
-            callable: Callable,
+            callable: MessageLite,
             kind: AnnotatedCallableKind,
             index: Int,
             valueParameter: ProtoBuf.ValueParameter

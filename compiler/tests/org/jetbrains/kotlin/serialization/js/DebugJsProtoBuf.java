@@ -8,7 +8,11 @@ public final class DebugJsProtoBuf {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.classAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.callableAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.oldCallableAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.oldCompileTimeValue);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.constructorAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.functionAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.typeAnnotation);
@@ -1812,24 +1816,68 @@ public final class DebugJsProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
-  public static final int CALLABLE_ANNOTATION_FIELD_NUMBER = 130;
+  public static final int OLD_CALLABLE_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
-      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> callableAnnotation = com.google.protobuf.GeneratedMessage
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> oldCallableAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int OLD_COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value> oldCompileTimeValue = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance());
+  public static final int CONSTRUCTOR_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> constructorAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int FUNCTION_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Function,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> functionAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> propertyAnnotation = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
   public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Property,
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value> compileTimeValue = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.class,
@@ -1890,20 +1938,33 @@ public final class DebugJsProtoBuf {
       "ent\030\002 \002(\014:t\n\020class_annotation\022).org.jetb" +
       "rains.kotlin.serialization.Class\030\202\001 \003(\0132" +
       "..org.jetbrains.kotlin.serialization.Ann",
-      "otation:z\n\023callable_annotation\022,.org.jet" +
-      "brains.kotlin.serialization.Callable\030\202\001 " +
-      "\003(\0132..org.jetbrains.kotlin.serialization" +
-      ".Annotation:\210\001\n\022compile_time_value\022,.org" +
+      "otation:~\n\027old_callable_annotation\022,.org" +
       ".jetbrains.kotlin.serialization.Callable" +
-      "\030\203\001 \001(\0132=.org.jetbrains.kotlin.serializa" +
-      "tion.Annotation.Argument.Value:\201\001\n\024param" +
-      "eter_annotation\0222.org.jetbrains.kotlin.s" +
-      "erialization.ValueParameter\030\202\001 \003(\0132..org" +
-      ".jetbrains.kotlin.serialization.Annotati",
-      "on:r\n\017type_annotation\022(.org.jetbrains.ko" +
-      "tlin.serialization.Type\030\202\001 \003(\0132..org.jet" +
-      "brains.kotlin.serialization.AnnotationB\021" +
-      "B\017DebugJsProtoBuf"
+      "\030\202\001 \003(\0132..org.jetbrains.kotlin.serializa" +
+      "tion.Annotation:\214\001\n\026old_compile_time_val" +
+      "ue\022,.org.jetbrains.kotlin.serialization." +
+      "Callable\030\203\001 \001(\0132=.org.jetbrains.kotlin.s" +
+      "erialization.Annotation.Argument.Value:\200" +
+      "\001\n\026constructor_annotation\022/.org.jetbrain" +
+      "s.kotlin.serialization.Constructor\030\202\001 \003(" +
+      "\0132..org.jetbrains.kotlin.serialization.A",
+      "nnotation:z\n\023function_annotation\022,.org.j" +
+      "etbrains.kotlin.serialization.Function\030\202" +
+      "\001 \003(\0132..org.jetbrains.kotlin.serializati" +
+      "on.Annotation:z\n\023property_annotation\022,.o" +
+      "rg.jetbrains.kotlin.serialization.Proper" +
+      "ty\030\202\001 \003(\0132..org.jetbrains.kotlin.seriali" +
+      "zation.Annotation:\210\001\n\022compile_time_value" +
+      "\022,.org.jetbrains.kotlin.serialization.Pr" +
+      "operty\030\203\001 \001(\0132=.org.jetbrains.kotlin.ser" +
+      "ialization.Annotation.Argument.Value:\201\001\n",
+      "\024parameter_annotation\0222.org.jetbrains.ko" +
+      "tlin.serialization.ValueParameter\030\202\001 \003(\013" +
+      "2..org.jetbrains.kotlin.serialization.An" +
+      "notation:r\n\017type_annotation\022(.org.jetbra" +
+      "ins.kotlin.serialization.Type\030\202\001 \003(\0132..o" +
+      "rg.jetbrains.kotlin.serialization.Annota" +
+      "tionB\021B\017DebugJsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1929,10 +1990,14 @@ public final class DebugJsProtoBuf {
               internal_static_org_jetbrains_kotlin_serialization_js_Library_FileEntry_descriptor,
               new java.lang.String[] { "Path", "Content", });
           classAnnotation.internalInit(descriptor.getExtensions().get(0));
-          callableAnnotation.internalInit(descriptor.getExtensions().get(1));
-          compileTimeValue.internalInit(descriptor.getExtensions().get(2));
-          parameterAnnotation.internalInit(descriptor.getExtensions().get(3));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(4));
+          oldCallableAnnotation.internalInit(descriptor.getExtensions().get(1));
+          oldCompileTimeValue.internalInit(descriptor.getExtensions().get(2));
+          constructorAnnotation.internalInit(descriptor.getExtensions().get(3));
+          functionAnnotation.internalInit(descriptor.getExtensions().get(4));
+          propertyAnnotation.internalInit(descriptor.getExtensions().get(5));
+          compileTimeValue.internalInit(descriptor.getExtensions().get(6));
+          parameterAnnotation.internalInit(descriptor.getExtensions().get(7));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(8));
           return null;
         }
       };

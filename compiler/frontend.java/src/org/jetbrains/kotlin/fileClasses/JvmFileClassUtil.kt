@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
@@ -68,9 +69,13 @@ public object JvmFileClassUtil {
     @JvmStatic
     public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
             with(callable) {
-                if (proto.hasExtension(JvmProtoBuf.oldImplClassName))
-                    nameResolver.getName(proto.getExtension(JvmProtoBuf.oldImplClassName))
-                else null
+                val proto = proto
+                when (proto) {
+                    is ProtoBuf.Constructor -> null
+                    is ProtoBuf.Function -> proto.getExtension(JvmProtoBuf.methodImplClassName)
+                    is ProtoBuf.Property -> proto.getExtension(JvmProtoBuf.propertyImplClassName)
+                    else -> error("Unknown message: $proto")
+                }?.let { nameResolver.getName(it) }
             }
 
     @JvmStatic

@@ -186,7 +186,7 @@ public class DeserializedClassDescriptor(
         override fun toString() = getName().toString()
     }
 
-    private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.getMemberList()) {
+    private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)

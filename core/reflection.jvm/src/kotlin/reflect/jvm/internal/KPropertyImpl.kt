@@ -116,9 +116,7 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
             }
 
             val accessor = accessorSignature?.let { signature ->
-                property.container.findMethodBySignature(
-                        jvmSignature.proto, signature, jvmSignature.nameResolver, Visibilities.isPrivate(descriptor.visibility)
-                )
+                property.container.findMethodBySignature(signature, jvmSignature.nameResolver, Visibilities.isPrivate(descriptor.visibility))
             }
 
             when {
