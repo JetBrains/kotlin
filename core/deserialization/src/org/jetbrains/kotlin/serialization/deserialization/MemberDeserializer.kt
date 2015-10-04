@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
@@ -155,19 +154,19 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return (c.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
     }
 
-    public fun loadConstructor(proto: Callable, isPrimary: Boolean): ConstructorDescriptor {
+    public fun loadConstructor(proto: ProtoBuf.Constructor, isPrimary: Boolean): ConstructorDescriptor {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
-                classDescriptor, null, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, TODO("proto"), c.nameResolver
+                classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
-                classDescriptor.getTypeConstructor().getParameters(),
+                classDescriptor.typeConstructor.parameters,
                 local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
-                Deserialization.visibility(Flags.VISIBILITY.get(proto.getFlags()))
+                Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         )
-        descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()))
+        descriptor.returnType = classDescriptor.defaultType
         return descriptor
     }
 
