@@ -84,28 +84,26 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<T> {
-        return when (proto) {
-            is ProtoBuf.Constructor, is ProtoBuf.Function -> {
-                val signature = getCallableSignature(proto, container.nameResolver, kind) ?: return emptyList()
-                transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
-            }
-            is ProtoBuf.Property -> {
-                val nameResolver = container.nameResolver
-                val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
-                val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
+        if (kind == AnnotatedCallableKind.PROPERTY) {
+            proto as ProtoBuf.Property
 
-                val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                    findClassAndLoadMemberAnnotations(container, proto, sig)
-                } ?: listOf()
+            val nameResolver = container.nameResolver
+            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
+            val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
 
-                val fieldAnnotations = fieldSignature?.let { sig ->
-                    findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
-                } ?: listOf()
+            val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
+                findClassAndLoadMemberAnnotations(container, proto, sig)
+            }.orEmpty()
 
-                loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
-            }
-            else -> emptyList()
+            val fieldAnnotations = fieldSignature?.let { sig ->
+                findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
+            }.orEmpty()
+
+            return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
         }
+
+        val signature = getCallableSignature(proto, container.nameResolver, kind) ?: return emptyList()
+        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
     }
 
     protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>
@@ -299,6 +297,9 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     private fun getCallableSignature(proto: MessageLite, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
         return when {
+            proto is ProtoBuf.Constructor && proto.hasExtension(constructorSignature) -> {
+                MemberSignature.fromMethod(nameResolver, proto.getExtension(constructorSignature))
+            }
             proto is ProtoBuf.Function && proto.hasExtension(methodSignature) -> {
                 MemberSignature.fromMethod(nameResolver, proto.getExtension(methodSignature))
             }
