@@ -54,7 +54,7 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
         String resultText = "Text: (" + highlightedText + "), " +
                             "Disabled: " + isDisabled + ", " +
                             "Strikeout: " + strikeout + ", " +
-                            "Green: " + background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND);
+                            "Green: " + background.equals(KotlinFunctionParameterInfoHandler.GREEN_BACKGROUND);
         result.add(resultText);
 
         // return value not used, just return something

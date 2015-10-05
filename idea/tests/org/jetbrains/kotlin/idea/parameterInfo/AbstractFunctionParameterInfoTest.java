@@ -47,7 +47,7 @@ public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsight
             expectedResultText = lastChild.getText().substring(2).trim();
         }
         assert expectedResultText != null;
-        JetFunctionParameterInfoHandler parameterInfoHandler = new JetFunctionParameterInfoHandler();
+        KotlinFunctionParameterInfoHandler parameterInfoHandler = new KotlinFunctionParameterInfoHandler();
         MockCreateParameterInfoContext mockCreateParameterInfoContext = new MockCreateParameterInfoContext(file, myFixture);
         JetValueArgumentList parameterOwner = parameterInfoHandler.findElementForParameterInfo(mockCreateParameterInfoContext);
 

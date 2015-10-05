@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.awt.Color
 import java.util.*
 
-class JetFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Pair<out FunctionDescriptor, ResolutionFacade>, JetValueArgument> {
+class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Pair<out FunctionDescriptor, ResolutionFacade>, JetValueArgument> {
 
     override fun getActualParameters(arguments: JetValueArgumentList) = arguments.arguments.toTypedArray()
 
