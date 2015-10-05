@@ -11,5 +11,5 @@ fun main(args: Array<String>) {
 }
 
 /*
-Text: (<highlight>i: Int</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>i: Int</highlight>), Disabled: false, Strikeout: false, Green: true
 */

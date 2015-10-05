@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -198,7 +199,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }.toString()
 
 
-        val color = if (isResolvedToDescriptor(argumentList, itemToShow, bindingContext))
+        val color = if (isResolvedToDescriptor(call, itemToShow, bindingContext))
             GREEN_BACKGROUND
         else
             context.defaultParameterColor
@@ -221,7 +222,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 }
                 append(parameter.name)
                 append(": ")
-                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)))
+                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
                 if (parameter.hasDefaultValue()) {
                     val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
                     append(" = ")
@@ -253,7 +254,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             return "..."
         }
 
-        private fun getActualParameterType(descriptor: ValueParameterDescriptor): JetType {
+        private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): JetType {
             var type = descriptor.varargElementType ?: descriptor.type
             if (type.containsError()) {
                 val original = descriptor.original
@@ -263,17 +264,12 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }
 
         private fun isResolvedToDescriptor(
-                argumentList: JetValueArgumentList,
+                call: Call,
                 functionDescriptor: FunctionDescriptor,
                 bindingContext: BindingContext
         ): Boolean {
-            val callNameExpression = getCallNameExpression(argumentList) ?: return false
-            val target = bindingContext[BindingContext.REFERENCE_TARGET, callNameExpression] as? FunctionDescriptor
+            val target = call.getResolvedCall(bindingContext)?.resultingDescriptor as? FunctionDescriptor
             return target != null && descriptorsEqual(target, functionDescriptor)
-        }
-
-        private fun getCallNameExpression(argumentList: JetValueArgumentList): JetSimpleNameExpression? {
-            return (argumentList.parent as? JetCallElement)?.getCallNameExpression()
         }
 
         private data class SignatureInfo(
