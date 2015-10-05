@@ -32,7 +32,7 @@ public class Flags {
     // Class
 
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
-    public static final FlagField<Boolean> INNER = FlagField.booleanAfter(CLASS_KIND);
+    public static final FlagField<Boolean> IS_INNER = FlagField.booleanAfter(CLASS_KIND);
 
     // Callables
 
@@ -57,8 +57,8 @@ public class Flags {
     public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(IS_VAR);
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_SETTER);
-    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
-    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(LATE_INIT);
+    public static final FlagField<Boolean> IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
+    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
 
     // Parameters
 
@@ -92,7 +92,7 @@ public class Flags {
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
-               | INNER.toFlags(inner)
+               | IS_INNER.toFlags(inner)
                ;
     }
 
@@ -164,7 +164,7 @@ public class Flags {
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
                | IS_CONST.toFlags(isConst)
-               | LATE_INIT.toFlags(lateInit)
+               | IS_LATEINIT.toFlags(lateInit)
                | HAS_CONSTANT.toFlags(hasConstant)
                 ;
     }

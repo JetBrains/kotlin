@@ -44,7 +44,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
                 c.nameResolver,
-                Flags.LATE_INIT.get(flags),
+                Flags.IS_LATEINIT.get(flags),
                 Flags.IS_CONST.get(flags)
         )
 
