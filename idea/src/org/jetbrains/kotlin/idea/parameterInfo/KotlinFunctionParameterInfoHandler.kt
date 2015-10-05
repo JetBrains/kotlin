@@ -92,8 +92,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         val candidates = detectCandidates(call, bindingContext, file.getResolutionFacade())
 
-        context.itemsToShow = candidates.map { it.resultingDescriptor }.toTypedArray()
-        //TODO: will we update it on typing?
+        context.itemsToShow = candidates.map { it.resultingDescriptor.original }.toTypedArray()
         return argumentList
     }
 
@@ -141,8 +140,9 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val currentParameterIndex = context.currentParameterIndex
         if (currentParameterIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
 
-        val (argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
-                call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
+        val (substitutedDescriptor, argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
+                call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade()
+        ) ?: return false
 
         var boldStartOffset = -1
         var boldEndOffset = -1
@@ -178,7 +178,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 appendParameter(parameter)
             }
 
-            for (parameter in itemToShow.valueParameters) {
+            for (parameter in substitutedDescriptor.valueParameters) {
                 if (parameter.index !in usedParameterIndices) {
                     appendParameter(parameter)
                 }
@@ -291,6 +291,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }
 
         private data class SignatureInfo(
+                val substitutedDescriptor: FunctionDescriptor,
                 val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
                 val highlightParameterIndex: Int?,
                 val isGrey: Boolean
@@ -302,9 +303,9 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 currentArgumentIndex: Int,
                 bindingContext: BindingContext,
                 resolutionFacade: ResolutionFacade
-        ): SignatureInfo {
+        ): SignatureInfo? {
             if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
-                return SignatureInfo({ null }, null, isGrey = false)
+                return SignatureInfo(overload, { null }, null, isGrey = false)
             }
 
             assert(call.valueArguments.size() >= currentArgumentIndex)
@@ -337,8 +338,8 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             }
 
             val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
-            val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original }
-                               ?: return SignatureInfo({ null }, null, isGrey = true)
+            val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original } ?: return null
+            val resultingDescriptor = resolvedCall.resultingDescriptor
 
             val argumentToParameter = { argument: ValueArgument -> (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter }
 
@@ -346,19 +347,19 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             val highlightParameterIndex = currentParameter?.index
 
             if (!(argumentsBeforeCurrent + currentArgument).all { argument -> resolvedCall.getArgumentMapping(argument) is ArgumentMatch }) { // some of arguments before the current one are not mapped to any of the parameters
-                return SignatureInfo(argumentToParameter, highlightParameterIndex, isGrey = true)
+                return SignatureInfo(resultingDescriptor, argumentToParameter, highlightParameterIndex, isGrey = true)
             }
 
             // grey out if not all arguments before the current are matched
             val isGrey = argumentsBeforeCurrent
                     .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
-            return SignatureInfo(argumentToParameter, highlightParameterIndex, isGrey)
+            return SignatureInfo(resultingDescriptor, argumentToParameter, highlightParameterIndex, isGrey)
         }
 
         private fun ValueArgument.hasError(bindingContext: BindingContext)
                 = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
 
-        private fun detectCandidates(call: Call, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): List<ResolvedCall<*>> {
+        private fun detectCandidates(call: Call, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): List<ResolvedCall<FunctionDescriptor>> {
             val callElement = call.callElement
             val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
             val inDescriptor = resolutionScope.ownerDescriptor
