@@ -98,7 +98,6 @@
 
         <module>kunit</module>
         <module>kotlin-jdbc</module>
-        <module>kotlin-swing</module>
 
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
