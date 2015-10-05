@@ -97,7 +97,6 @@
         <module>tools/kotlin-js-tests-junit</module>
 
         <module>kunit</module>
-        <module>kotlin-jdbc</module>
 
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
