@@ -17,5 +17,5 @@ enum class Our(protected val x: Int) {
 }
 
 interface Their {
-    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() = 7
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() = 7
 }

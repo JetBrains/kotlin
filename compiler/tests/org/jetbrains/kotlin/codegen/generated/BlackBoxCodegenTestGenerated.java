@@ -7552,12 +7552,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inheritProtectedInterfaceMembers.kt")
-        public void testInheritProtectedInterfaceMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/inheritProtectedInterfaceMembers.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("inheritedFun.kt")
         public void testInheritedFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/inheritedFun.kt");
@@ -7651,18 +7645,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("protectedClassInInterface.kt")
-        public void testProtectedClassInInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/protectedClassInInterface.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("protectedFunDiamond.kt")
-        public void testProtectedFunDiamond() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/protectedFunDiamond.kt");
             doTest(fileName);
         }
 

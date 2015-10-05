@@ -7,12 +7,12 @@ package test
 
 internal interface InlineTrait {
 
-    internal inline final fun finalInline(s: () -> String): String {
+    public inline final fun finalInline(s: () -> String): String {
         return s()
     }
 
     companion object {
-        internal inline final fun finalInline(s: () -> String): String {
+        public inline final fun finalInline(s: () -> String): String {
             return s()
         }
     }

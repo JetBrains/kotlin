@@ -9174,6 +9174,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("internalInInterface.kt")
+            public void testInternalInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/internalInInterface.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoLocalVisibility.kt")
             public void testNoLocalVisibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");
@@ -10233,18 +10239,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("AllPrivateFromSuperTypes.kt")
             public void testAllPrivateFromSuperTypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/AllPrivateFromSuperTypes.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("CannotInferVisibilityForProperty.kt")
-            public void testCannotInferVisibilityForProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("CannotInferVisibilityForPropertySetter.kt")
-            public void testCannotInferVisibilityForPropertySetter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForPropertySetter.kt");
                 doTest(fileName);
             }
 

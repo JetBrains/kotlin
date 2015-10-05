@@ -6,11 +6,12 @@ interface A {
 }
 
 interface B {
-    protected val c: String
+    private val c: String
+        get() = "FAIL"
 }
 
-open class C {
-    private val c: String = "FAIL"
+abstract class C {
+    abstract protected val c: String
 }
 
 open class D: C(), A, B {
