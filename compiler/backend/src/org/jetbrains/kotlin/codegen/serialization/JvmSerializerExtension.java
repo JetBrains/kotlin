@@ -65,10 +65,6 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
-    }
-
-    @Override
     public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
@@ -175,10 +171,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (name == null) return;
 
         int index = stringTable.getStringIndex(name);
-        if (proto instanceof ProtoBuf.Callable.Builder) {
-            ((ProtoBuf.Callable.Builder) proto).setExtension(JvmProtoBuf.oldImplClassName, index);
-        }
-        else if (proto instanceof ProtoBuf.Function.Builder) {
+        if (proto instanceof ProtoBuf.Function.Builder) {
             ((ProtoBuf.Function.Builder) proto).setExtension(JvmProtoBuf.methodImplClassName, index);
         }
         else if (proto instanceof ProtoBuf.Property.Builder) {

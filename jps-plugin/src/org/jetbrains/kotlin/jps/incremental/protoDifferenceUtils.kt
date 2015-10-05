@@ -118,7 +118,6 @@ private abstract class DifferenceCalculator() {
     protected val MessageLite.isPrivate: Boolean
         get() = Visibilities.isPrivate(Deserialization.visibility(
                 when (this) {
-                    is ProtoBuf.Callable -> Flags.VISIBILITY.get(flags)
                     is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                     is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
                     is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
@@ -127,7 +126,6 @@ private abstract class DifferenceCalculator() {
 
     private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
         return when (this) {
-            is ProtoBuf.Callable -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes)
@@ -137,7 +135,6 @@ private abstract class DifferenceCalculator() {
 
     private fun MessageLite.name(nameResolver: NameResolver): String {
         return when (this) {
-            is ProtoBuf.Callable -> nameResolver.getString(name)
             is ProtoBuf.Constructor -> "<init>"
             is ProtoBuf.Function -> nameResolver.getString(name)
             is ProtoBuf.Property -> nameResolver.getString(name)
@@ -147,7 +144,6 @@ private abstract class DifferenceCalculator() {
 
     private fun ProtoCompareGenerated.checkEquals(old: MessageLite, new: MessageLite): Boolean {
         return when {
-            old is ProtoBuf.Callable && new is ProtoBuf.Callable -> checkEquals(old, new)
             old is ProtoBuf.Constructor && new is ProtoBuf.Constructor -> checkEquals(old, new)
             old is ProtoBuf.Function && new is ProtoBuf.Function -> checkEquals(old, new)
             old is ProtoBuf.Property && new is ProtoBuf.Property -> checkEquals(old, new)
@@ -158,8 +154,6 @@ private abstract class DifferenceCalculator() {
 
 private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
     companion object {
-        private val CONSTRUCTOR = "<init>"
-
         private val CLASS_SIGNATURE_ENUMS = EnumSet.of(
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
@@ -214,18 +208,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
                 ProtoBufClassKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
-                ProtoBufClassKind.MEMBER_LIST ->
-                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getMemberList))
                 ProtoBufClassKind.ENUM_ENTRY_LIST ->
                     names.addAll(calcDifferenceForNames(oldProto.enumEntryList, newProto.enumEntryList))
-                ProtoBufClassKind.PRIMARY_CONSTRUCTOR ->
-                    if (areNonPrivatePrimaryConstructorsDifferent()) {
-                        names.add(CONSTRUCTOR)
-                    }
-                ProtoBufClassKind.SECONDARY_CONSTRUCTOR_LIST ->
-                    if (areNonPrivateSecondaryConstructorsDifferent()) {
-                        names.add(CONSTRUCTOR)
-                    }
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
@@ -238,30 +222,6 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         }
         return names
     }
-
-    private fun areNonPrivatePrimaryConstructorsDifferent(): Boolean {
-        val oldPrimaryConstructor = oldProto.getNonPrivatePrimaryConstructor
-        val newPrimaryConstructor = newProto.getNonPrivatePrimaryConstructor
-        if (oldPrimaryConstructor == null && newPrimaryConstructor == null) return false
-
-        if (oldPrimaryConstructor == null || newPrimaryConstructor == null) return true
-
-        return !compareObject.checkEquals(oldPrimaryConstructor, newPrimaryConstructor)
-    }
-
-    private fun areNonPrivateSecondaryConstructorsDifferent(): Boolean {
-        val oldSecondaryConstructors = oldProto.secondaryConstructorList.filter { !it.isPrivate }
-        val newSecondaryConstructors = newProto.secondaryConstructorList.filter { !it.isPrivate }
-        return (oldSecondaryConstructors.size() != newSecondaryConstructors.size() ||
-            oldSecondaryConstructors.indices.any { !compareObject.checkEquals(oldSecondaryConstructors[it], newSecondaryConstructors[it]) })
-    }
-
-    private val ProtoBuf.Class.getNonPrivatePrimaryConstructor: ProtoBuf.Class.PrimaryConstructor?
-        get() {
-            if (!hasPrimaryConstructor()) return null
-
-            return if (primaryConstructor?.data?.isPrivate ?: false) null else primaryConstructor
-        }
 }
 
 private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
@@ -293,14 +253,10 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
 
         for (kind in diff) {
             when (kind!!) {
-                ProtoBufPackageKind.CONSTRUCTOR_LIST ->
-                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getConstructorList))
                 ProtoBufPackageKind.FUNCTION_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
-                ProtoBufPackageKind.MEMBER_LIST ->
-                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getMemberList))
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
             }

@@ -111,13 +111,6 @@ extend Property {
   optional int32 property_impl_class_name = 101 [(string_id_in_table) = true];
 }
 
-// TODO: drop
-extend Callable {
-  optional JvmMethodSignature old_method_signature = 100;
-  optional JvmPropertySignature old_property_signature = 101;
-  optional int32 old_impl_class_name = 102 [(name_id_in_table) = true];
-}
-
 extend Type {
   repeated Annotation type_annotation = 100;
   optional bool is_raw = 101;

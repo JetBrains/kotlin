@@ -8,8 +8,6 @@ public final class JsProtoBuf {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.classAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.oldCallableAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.oldCompileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.constructorAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.propertyAnnotation);
@@ -1481,36 +1479,6 @@ public final class JsProtoBuf {
         130,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
-  public static final int OLD_CALLABLE_ANNOTATION_FIELD_NUMBER = 130;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> oldCallableAnnotation = com.google.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
-        false);
-  public static final int OLD_COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> oldCompileTimeValue = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
-        null,
-        131,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int CONSTRUCTOR_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
