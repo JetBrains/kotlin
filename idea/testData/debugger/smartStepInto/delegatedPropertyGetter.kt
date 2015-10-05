@@ -5,7 +5,7 @@ fun foo() {
 val a by Delegate()
 
 class Delegate {
-    fun get(t: Any?, p: PropertyMetadata) = 1
+    fun getValue(t: Any?, p: PropertyMetadata) = 1
 }
 
-// EXISTS: a.get(Any?\, PropertyMetadata)
+// EXISTS: a.getValue(Any?\, PropertyMetadata)

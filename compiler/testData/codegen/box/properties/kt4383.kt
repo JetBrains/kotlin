@@ -1,5 +1,5 @@
 class D {
-    fun get(a: Any, p: PropertyMetadata) { }
+    fun getValue(a: Any, p: PropertyMetadata) { }
 }
 
 object P {

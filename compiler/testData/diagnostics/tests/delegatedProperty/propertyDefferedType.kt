@@ -5,5 +5,5 @@ class B {
 }
 
 class Delegate<T: Any>(val init: T) {
-  fun get(t: Any?, p: PropertyMetadata): Int = null!!
+  fun getValue(t: Any?, p: PropertyMetadata): Int = null!!
 }

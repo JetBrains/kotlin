@@ -1,8 +1,8 @@
 package
 
 package foo {
-    public fun foo.MyProperty1.get(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): kotlin.String
-    public fun </*0*/ T> foo.MyProperty2<T>.get(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): T
+    public fun foo.MyProperty1.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): kotlin.String
+    public fun </*0*/ T> foo.MyProperty2<T>.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): T
 
     public final class A1 {
         public constructor A1()
@@ -26,7 +26,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final fun </*0*/ T> foo.A3.MyProperty3<T>.get(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): T
+        public final fun </*0*/ T> foo.A3.MyProperty3<T>.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ desc: kotlin.PropertyMetadata): T
 
         public final class MyProperty3</*0*/ T> {
             public constructor MyProperty3</*0*/ T>()

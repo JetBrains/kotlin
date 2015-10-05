@@ -1,11 +1,11 @@
 == Delegate ==
 class Delegate {
-    fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
+    fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
 }
 ---------------------
 =====================
-== get ==
-fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
+== getValue ==
+fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
 ---------------------
     <v0>: {<: Nothing?}           NEW: magic[FAKE_INITIALIZER](_this: Nothing?) -> <v0>
     <v1>: {<: PropertyMetadata}   NEW: magic[FAKE_INITIALIZER](p: PropertyMetadata) -> <v1>

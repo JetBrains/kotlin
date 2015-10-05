@@ -1,5 +1,5 @@
 class TestDelegate() {
-    fun get(thisRef: Any?, desc: PropertyMetadata): Int {
+    fun getValue(thisRef: Any?, desc: PropertyMetadata): Int {
         return 10
     }
 }

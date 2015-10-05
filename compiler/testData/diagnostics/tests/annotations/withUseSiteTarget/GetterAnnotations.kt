@@ -1,7 +1,7 @@
 annotation class Ann
 
 class CustomDelegate {
-    public fun get(thisRef: Any?, prop: PropertyMetadata): String = prop.name
+    public fun getValue(thisRef: Any?, prop: PropertyMetadata): String = prop.name
 }
 
 <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>

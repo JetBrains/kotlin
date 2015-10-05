@@ -8,16 +8,16 @@ val cObj = C()
 var c: String by cObj
 
 class A {
-  fun <T> get(t: Any?, p: PropertyMetadata): T = null!!
-  fun <T> set(t: Any?, p: PropertyMetadata, x: T) = Unit
+  fun <T> getValue(t: Any?, p: PropertyMetadata): T = null!!
+  fun <T> setValue(t: Any?, p: PropertyMetadata, x: T) = Unit
 }
 
 class B
 
-fun <T> B.get(t: Any?, p: PropertyMetadata): T = null!!
-fun <T> B.set(t: Any?, p: PropertyMetadata, x: T) = Unit
+fun <T> B.getValue(t: Any?, p: PropertyMetadata): T = null!!
+fun <T> B.setValue(t: Any?, p: PropertyMetadata, x: T) = Unit
 
 class C
 
-inline fun <reified T> C.get(t: Any?, p: PropertyMetadata): T = null!!
-inline fun <reified T> C.set(t: Any?, p: PropertyMetadata, x: T) = Unit
+inline fun <reified T> C.getValue(t: Any?, p: PropertyMetadata): T = null!!
+inline fun <reified T> C.setValue(t: Any?, p: PropertyMetadata, x: T) = Unit

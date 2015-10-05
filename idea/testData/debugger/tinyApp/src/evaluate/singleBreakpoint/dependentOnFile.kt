@@ -25,7 +25,7 @@ val Int.testExtVal: Int get() = 1
 val testDelVal by Delegate()
 
 class Delegate {
-    fun get(a: Any?, b: PropertyMetadata) = 1
+    fun getValue(a: Any?, b: PropertyMetadata) = 1
 }
 
 // EXPRESSION: TestClass().testFun()

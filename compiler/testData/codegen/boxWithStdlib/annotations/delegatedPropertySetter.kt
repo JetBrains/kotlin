@@ -7,11 +7,11 @@ class MyClass() {
 }
 
 class Delegate {
-    fun get(t: Any?, p: PropertyMetadata): String {
+    fun getValue(t: Any?, p: PropertyMetadata): String {
         return "OK"
     }
 
-    fun set(t: Any?, p: PropertyMetadata, i: String) {}
+    fun setValue(t: Any?, p: PropertyMetadata, i: String) {}
 }
 
 fun box(): String {

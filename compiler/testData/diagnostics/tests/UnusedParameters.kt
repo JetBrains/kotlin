@@ -14,17 +14,17 @@ fun f(a: Int, b: Int, <!UNUSED_PARAMETER!>c<!>: Int = b) {
     a + a
 }
 
-fun Any.get(thisRef: Any?, prop: PropertyMetadata): String = ":)"
-fun Any.set(thisRef: Any?, prop: PropertyMetadata, value: String) {
+fun Any.getValue(thisRef: Any?, prop: PropertyMetadata): String = ":)"
+fun Any.setValue(thisRef: Any?, prop: PropertyMetadata, value: String) {
 }
 
 fun Any.propertyDelegated(prop: PropertyMetadata) {
 }
 
-fun get(p: Any) {
+fun get(<!UNUSED_PARAMETER!>p<!>: Any) {
 }
 
-fun set(p: Any) {
+fun set(<!UNUSED_PARAMETER!>p<!>: Any) {
 }
 
 fun foo(s: String) {

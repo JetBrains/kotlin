@@ -1,7 +1,7 @@
 package foo
 
 class Delegate {
-    fun get(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
 }
 
 val prop: Int by Delegate()

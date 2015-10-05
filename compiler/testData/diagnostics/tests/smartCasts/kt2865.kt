@@ -1,4 +1,4 @@
-operator fun <K, V> MutableMap<K, V>.set(k: K, v: V) {}
+operator fun <K, V> MutableMap<K, V>.set(<!UNUSED_PARAMETER!>k<!>: K, <!UNUSED_PARAMETER!>v<!>: V) {}
 
 fun foo(a: MutableMap<String, String>, x: String?) {
     a[x!!] = <!DEBUG_INFO_SMARTCAST!>x<!>

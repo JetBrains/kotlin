@@ -1,6 +1,6 @@
 class Delegate {
     var inner = "OK"
-    fun get(t: Any?, p: PropertyMetadata): String = inner
+    fun getValue(t: Any?, p: PropertyMetadata): String = inner
 
     private fun propertyDelegated(p: PropertyMetadata) { inner = "fail" }
     fun propertyDelegated() { inner = "fail" }

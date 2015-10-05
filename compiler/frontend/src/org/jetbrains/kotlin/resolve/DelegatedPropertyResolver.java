@@ -58,8 +58,11 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.creat
 public class DelegatedPropertyResolver {
 
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
-    public static final Name GETTER_NAME = Name.identifier("get");
-    public static final Name SETTER_NAME = Name.identifier("set");
+    public static final Name GETTER_NAME = Name.identifier("getValue");
+    public static final Name SETTER_NAME = Name.identifier("setValue");
+
+    public static final Name OLD_GETTER_NAME = Name.identifier("get");
+    public static final Name OLD_SETTER_NAME = Name.identifier("set");
 
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final FakeCallResolver fakeCallResolver;
@@ -223,7 +226,7 @@ public class DelegatedPropertyResolver {
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
     }
 
-    /* Resolve get() or set() methods from delegate */
+    /* Resolve getValue() or setValue() methods from delegate */
     public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
@@ -252,8 +255,8 @@ public class DelegatedPropertyResolver {
 
         if (!isGet) {
             JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,
-                                                                             "fakeArgument" + arguments.size(),
-                                                                             propertyDescriptor.getType());
+                                                                                                      "fakeArgument" + arguments.size(),
+                                                                                                      propertyDescriptor.getType());
             arguments.add(fakeArgument);
             List<ValueParameterDescriptor> valueParameters = accessor.getValueParameters();
             trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
@@ -265,8 +268,24 @@ public class DelegatedPropertyResolver {
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);
 
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolutionResult.getSecond();
+
+        // Resolve get/set is getValue/setValue was not found. Temporary, for code migration
+        if (!resolutionResults.isSuccess() && !resolutionResults.isAmbiguity()) {
+            Name oldFunctionName = isGet ? OLD_GETTER_NAME : OLD_SETTER_NAME;
+            Pair<Call, OverloadResolutionResults<FunctionDescriptor>> additionalResolutionResult =
+                    fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, oldFunctionName, delegateExpression);
+            if (additionalResolutionResult.getSecond().isSuccess()) {
+                FunctionDescriptor resultingDescriptor = additionalResolutionResult.getSecond().getResultingDescriptor();
+                trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
+                        delegateExpression, resultingDescriptor, delegateType, functionName.asString()));
+                trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, additionalResolutionResult.getFirst());
+                return additionalResolutionResult.getSecond();
+            }
+        }
+
         trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.getFirst());
-        return resolutionResult.getSecond();
+        return resolutionResults;
     }
 
     private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {

@@ -684,7 +684,8 @@ public class JetFlowInformationProvider {
                                         if (isMain
                                             || functionDescriptor.getModality().isOverridable()
                                             || !functionDescriptor.getOverriddenDescriptors().isEmpty()
-                                            || "get".equals(functionName) || "set".equals(functionName) || "propertyDelegated".equals(functionName)
+                                            || "getValue".equals(functionName) || "setValue".equals(functionName)
+                                            || "propertyDelegated".equals(functionName)
                                                 ) {
                                             return;
                                         }

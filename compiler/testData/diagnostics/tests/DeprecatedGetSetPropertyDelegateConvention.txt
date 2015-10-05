@@ -1,0 +1,59 @@
+package
+
+public fun OkDelegate.get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.Int
+public fun CustomDelegate3.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.Int
+public fun OkDelegate.set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+public fun CustomDelegate3.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+
+public final class CustomDelegate {
+    public constructor CustomDelegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CustomDelegate2 {
+    public constructor CustomDelegate2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public final fun getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+    public final fun setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CustomDelegate3 {
+    public constructor CustomDelegate3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Example {
+    public constructor Example()
+    public final var a: kotlin.String
+    public final val aval: kotlin.String
+    public final var b: kotlin.String
+    public final var c: kotlin.Int
+    public final var d: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun requireInt(/*0*/ n: kotlin.Int): kotlin.Unit
+    public final fun requireString(/*0*/ s: kotlin.String): kotlin.Unit
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OkDelegate {
+    public constructor OkDelegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

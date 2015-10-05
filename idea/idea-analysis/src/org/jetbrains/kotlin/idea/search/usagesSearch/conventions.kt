@@ -40,6 +40,8 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
 
 public val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
 
+public val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
+
 public val IN_OPERATIONS_TO_SEARCH = setOf(JetTokens.IN_KEYWORD)
 
 public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(JetTokens.LT, JetTokens.GT)
@@ -51,7 +53,8 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         OperatorNameConventions.IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         OperatorNameConventions.CONTAINS -> return IN_OPERATIONS_TO_SEARCH
         OperatorNameConventions.ITERATOR -> return IN_OPERATIONS_TO_SEARCH
-        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
+        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET)
+        in DELEGATE_ACCESSOR_NAMES -> return setOf(JetTokens.BY_KEYWORD)
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(JetTokens.BY_KEYWORD)
     }
 

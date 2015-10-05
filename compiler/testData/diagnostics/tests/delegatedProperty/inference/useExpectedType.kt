@@ -12,12 +12,12 @@ fun <A, B> getMyProperty1() = MyProperty1<A, B>()
 
 class MyProperty1<R, T> {
 
-    public fun get(thisRef: R, desc: PropertyMetadata): T {
+    public fun getValue(thisRef: R, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
         throw Exception()
     }
 
-    public fun set(thisRef: R, desc: PropertyMetadata, value: T) {
+    public fun setValue(thisRef: R, desc: PropertyMetadata, value: T) {
         println("set $thisRef ${desc.name} $value")
     }
 }
@@ -36,12 +36,12 @@ fun <A> getMyProperty2() = MyProperty2<A>()
 
 class MyProperty2<T> {
 
-    public fun get(thisRef: Any?, desc: PropertyMetadata): T {
+    public fun getValue(thisRef: Any?, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
         throw Exception()
     }
 
-    public fun set(thisRef: Any?, desc: PropertyMetadata, value: T) {
+    public fun setValue(thisRef: Any?, desc: PropertyMetadata, value: T) {
         println("set $thisRef ${desc.name} $value")
     }
 }
@@ -60,12 +60,12 @@ fun <A> getMyProperty3() = MyProperty3<A>()
 
 class MyProperty3<T> {
 
-    public fun get(thisRef: T, desc: PropertyMetadata): String {
+    public fun getValue(thisRef: T, desc: PropertyMetadata): String {
         println("get $thisRef ${desc.name}")
         return ""
     }
 
-    public fun set(thisRef: Any?, desc: PropertyMetadata, value: T) {
+    public fun setValue(thisRef: Any?, desc: PropertyMetadata, value: T) {
         println("set $thisRef ${desc.name} $value")
     }
 }

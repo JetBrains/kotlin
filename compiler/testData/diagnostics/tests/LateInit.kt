@@ -1,5 +1,5 @@
 class CustomDelegate {
-    public fun get(thisRef: Any?, prop: PropertyMetadata): String = prop.name
+    public fun getValue(thisRef: Any?, prop: PropertyMetadata): String = prop.name
 }
 
 public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER!>lateinit<!> var p2: String) {

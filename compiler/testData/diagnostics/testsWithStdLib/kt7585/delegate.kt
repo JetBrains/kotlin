@@ -33,7 +33,7 @@ class Val<T> {
         this.initializer = initializer;
     }
 
-    T get(Object instance, Object metadata) {
+    T getValue(Object instance, Object metadata) {
         return initializer.invoke();
     }
 }

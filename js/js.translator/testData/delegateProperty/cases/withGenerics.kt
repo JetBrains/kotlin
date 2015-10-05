@@ -6,13 +6,13 @@ interface Getter<T> {
 
 class Delegate<T>(val getter: Getter<T>) {
     var t: T? = null
-    fun get(obj: Any, property: PropertyMetadata): T {
+    fun getValue(obj: Any, property: PropertyMetadata): T {
         if (t != null) {
             return t!!
         }
         return getter.get()
     }
-    fun set(obj: Any, property: PropertyMetadata, value: T) {
+    fun setValue(obj: Any, property: PropertyMetadata, value: T) {
         t = value
     }
 }

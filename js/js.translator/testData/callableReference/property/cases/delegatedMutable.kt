@@ -4,11 +4,11 @@ package foo
 object Delegate {
     var value = "lol"
 
-    fun get(instance: Any?, data: PropertyMetadata): String {
+    fun getValue(instance: Any?, data: PropertyMetadata): String {
         return value
     }
 
-    fun set(instance: Any?, data: PropertyMetadata, newValue: String) {
+    fun setValue(instance: Any?, data: PropertyMetadata, newValue: String) {
         value = newValue
     }
 }

@@ -6,10 +6,10 @@ class Derived: Base()
 var a: Derived by A()
 
 class A {
-  fun get(t: Any?, p: PropertyMetadata): Derived {
+  fun getValue(t: Any?, p: PropertyMetadata): Derived {
     return Derived()
   }
 
-  fun set(t: Any?, p: PropertyMetadata, i: Base) {}
+  fun setValue(t: Any?, p: PropertyMetadata, i: Base) {}
 }
 

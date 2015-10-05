@@ -2,7 +2,7 @@
 // OPTIONS: usages
 
 class Delegate() {
-    fun <caret>get(thisRef: Any?, propertyMetadata: PropertyMetadata): String = ":)"
+    fun <caret>getValue(thisRef: Any?, propertyMetadata: PropertyMetadata): String = ":)"
 }
 
 val p: String by Delegate()

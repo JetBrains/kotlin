@@ -13,7 +13,7 @@ class A {
 }
 
 class MyDelegate {
-    fun get(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
 }
 
 // RENDER_DELEGATED_PROPERTIES: false

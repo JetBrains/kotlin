@@ -1,5 +1,5 @@
 class Delegate {
-    fun get(thisRef: Any?, prop: PropertyMetadata): String? {
+    fun getValue(thisRef: Any?, prop: PropertyMetadata): String? {
         return null
     }
 }

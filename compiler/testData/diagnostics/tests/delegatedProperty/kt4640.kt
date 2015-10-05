@@ -2,10 +2,10 @@
 
 class ValueWrapper()
 {
-    var value: Int = 0
+    var backingValue: Int = 0
 
-    fun get() = value
-    fun set(v: Int) { value = v }
+    fun getValue() = backingValue
+    fun setValue(v: Int) { backingValue = v }
 }
 
 val foo by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>ValueWrapper()<!>

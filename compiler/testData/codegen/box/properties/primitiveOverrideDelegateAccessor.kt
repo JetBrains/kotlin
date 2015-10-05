@@ -1,6 +1,6 @@
 class Holder(var value: Int) {
-    fun get(that: Any?, desc: PropertyMetadata) = value
-    fun set(that: Any?, desc: PropertyMetadata, newValue: Int) { value = newValue }
+    fun getValue(that: Any?, desc: PropertyMetadata) = value
+    fun setValue(that: Any?, desc: PropertyMetadata, newValue: Int) { value = newValue }
 }
 
 interface R<T: Comparable<T>> {

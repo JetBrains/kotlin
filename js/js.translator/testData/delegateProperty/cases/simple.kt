@@ -5,10 +5,10 @@ interface WithNumber {
 }
 
 class IncNumber(val inc: Int) {
-    fun get(withNumber: WithNumber, property: PropertyMetadata): Int {
+    fun getValue(withNumber: WithNumber, property: PropertyMetadata): Int {
         return withNumber.number + inc;
     }
-    fun set(withNumber: WithNumber, property: PropertyMetadata, value: Int) {
+    fun setValue(withNumber: WithNumber, property: PropertyMetadata, value: Int) {
         withNumber.number = value;
     }
 }

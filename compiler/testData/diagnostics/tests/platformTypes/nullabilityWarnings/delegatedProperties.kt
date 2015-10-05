@@ -5,8 +5,8 @@ import org.jetbrains.annotations.*;
 public class J {
 
     public interface DP {
-        String get(Object a, Object b);
-        String set(Object a, Object b, Object c);
+        String getValue(Object a, Object b);
+        String setValue(Object a, Object b, Object c);
     }
 
     @NotNull

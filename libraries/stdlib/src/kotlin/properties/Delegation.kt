@@ -115,11 +115,11 @@ public object Delegates {
 private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
-    public override fun get(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
         return value ?: throw IllegalStateException("Property ${property.name} should be initialized before get.")
     }
 
-    public override fun set(thisRef: Any?, property: PropertyMetadata, value: T) {
+    public override fun setValue(thisRef: Any?, property: PropertyMetadata, value: T) {
         this.value = value
     }
 }
@@ -152,11 +152,11 @@ public abstract class ObservableProperty<T>(initialValue: T) : ReadWriteProperty
      */
     protected open fun afterChange (property: PropertyMetadata, oldValue: T, newValue: T): Unit {}
 
-    public override fun get(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
         return value
     }
 
-    public override fun set(thisRef: Any?, property: PropertyMetadata, value: T) {
+    public override fun setValue(thisRef: Any?, property: PropertyMetadata, value: T) {
         val oldValue = this.value
         if (!beforeChange(property, oldValue, value)) {
             return
@@ -179,7 +179,7 @@ private fun unescape(value: Any?): Any? {
 private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
     private var value: Any? = null
 
-    public override fun get(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
         if (value == null) {
             value = escape(initializer())
         }
@@ -191,7 +191,7 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
     private val lock = lock ?: this
     @Volatile private var value: Any? = null
 
-    public override fun get(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
         val _v1 = value
         if (_v1 != null) {
             return unescape(_v1) as T
@@ -239,7 +239,7 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
         throw NoSuchElementException("The value for property ${property.name} is missing in $ref.")
     }
 
-    public override fun get(thisRef: T, property: PropertyMetadata) : V {
+    public override fun getValue(thisRef: T, property: PropertyMetadata) : V {
         val map = map(thisRef)
         val key = key(property)
         return map.getOrElse(key, { default(thisRef, property) }) as V
@@ -255,9 +255,15 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
 public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T, V> {
     protected abstract override fun map(ref: T): MutableMap<in K, Any?>
 
-    public override fun set(thisRef: T, property: PropertyMetadata, value: V) {
+    public override fun setValue(thisRef: T, property: PropertyMetadata, value: V) {
         val map = map(thisRef)
         map.put(key(property), value)
+    }
+
+    override fun get(thisRef: T, property: PropertyMetadata) = getValue(thisRef, property)
+
+    override fun getValue(thisRef: T, property: PropertyMetadata): V {
+        return super<MapVal>.getValue(thisRef, property)
     }
 }
 

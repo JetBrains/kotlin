@@ -60,7 +60,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
 
         if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
-                    name = "get",
+                    name = "getValue",
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam)
@@ -71,7 +71,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         if (propertyDescriptor.isVar && isApplicableForAccessor(propertyDescriptor.setter)) {
             val newValueParam = ParameterInfo(TypeInfo(propertyType, Variance.IN_VARIANCE))
             val setterInfo = FunctionInfo(
-                    name = "set",
+                    name = "setValue",
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam, newValueParam)

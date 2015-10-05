@@ -9,5 +9,5 @@ class A {
 }
 
 class MyProperty<R> {
-    public fun get(thisRef: R, desc: PropertyMetadata): Int = throw Exception("$thisRef $desc")
+    public fun getValue(thisRef: R, desc: PropertyMetadata): Int = throw Exception("$thisRef $desc")
 }

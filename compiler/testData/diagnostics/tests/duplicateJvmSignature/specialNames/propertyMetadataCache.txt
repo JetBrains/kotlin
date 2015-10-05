@@ -2,7 +2,7 @@ package
 
 public val `$propertyMetadata`: kotlin.Array<kotlin.PropertyMetadata>
 public val x: kotlin.Any
-public fun kotlin.Any.get(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any): kotlin.Any
+public fun kotlin.Any.getValue(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any): kotlin.Any
 
 public final class C {
     public constructor C()

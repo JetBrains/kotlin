@@ -13,7 +13,7 @@ fun foo() {
 }
 
 class Delegate {
-    fun get(t: Any?, p: PropertyMetadata): String {
+    fun getValue(t: Any?, p: PropertyMetadata): String {
         return ""
     }
 }

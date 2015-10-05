@@ -5,10 +5,10 @@ interface WithName {
 }
 
 class GetPropertyName() {
-    fun get(withName: WithName, property: PropertyMetadata): String {
+    fun getValue(withName: WithName, property: PropertyMetadata): String {
         return withName.name + ":" + property.name;
     }
-    fun set(withName: WithName, property: PropertyMetadata, value: String) {
+    fun setValue(withName: WithName, property: PropertyMetadata, value: String) {
         withName.name = value + ":" + property.name
     }
 }

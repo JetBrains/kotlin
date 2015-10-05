@@ -18,11 +18,11 @@ class A {
 }
 
 class MyDelegate {
-    fun get(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
 }
 
 class MyDelegateThrowsException {
-    fun get(t: Any?, p: PropertyMetadata): Int = throw IllegalStateException()
+    fun getValue(t: Any?, p: PropertyMetadata): Int = throw IllegalStateException()
 }
 
 // PRINT_FRAME

@@ -1,9 +1,9 @@
 class TestDelegate() {
-    fun get(thisRef: Any?, desc: PropertyMetadata): Int {
+    fun getValue(thisRef: Any?, desc: PropertyMetadata): Int {
         return 10
     }
 
-    public open fun set(thisRef: Any?, desc: PropertyMetadata, svalue : Int) {
+    public open fun setValue(thisRef: Any?, desc: PropertyMetadata, svalue : Int) {
 
     }
 }

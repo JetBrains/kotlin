@@ -25,7 +25,7 @@ class C {
 
 
 object Delegate {
-    fun get(x: C, p: PropertyMetadata) = throw AssertionError()
+    fun getValue(x: C, p: PropertyMetadata) = throw AssertionError()
 
-    fun set(x: C, p: PropertyMetadata, value: Int) = throw AssertionError()
+    fun setValue(x: C, p: PropertyMetadata, value: Int) = throw AssertionError()
 }

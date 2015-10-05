@@ -26,18 +26,18 @@ package foo {
     public final class MyProperty1</*0*/ T, /*1*/ R> {
         public constructor MyProperty1</*0*/ T, /*1*/ R>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun get(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
+        public final fun getValue(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun set(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int, /*2*/ k: kotlin.Int): kotlin.Unit
+        public final fun setValue(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int, /*2*/ k: kotlin.Int): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     public final class MyProperty2</*0*/ T, /*1*/ R> {
         public constructor MyProperty2</*0*/ T, /*1*/ R>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun get(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
+        public final fun getValue(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun set(/*0*/ i: kotlin.Int): kotlin.Unit
+        public final fun setValue(/*0*/ i: kotlin.Int): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

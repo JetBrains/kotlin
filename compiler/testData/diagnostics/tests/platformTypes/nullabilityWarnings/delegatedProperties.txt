@@ -12,9 +12,9 @@ public open class J {
 
     public interface DP {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public abstract operator fun get(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!): kotlin.String!
+        public abstract fun getValue(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public abstract operator fun set(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!, /*2*/ c: kotlin.Any!): kotlin.String!
+        public abstract fun setValue(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!, /*2*/ c: kotlin.Any!): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 

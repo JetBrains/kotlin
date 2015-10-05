@@ -2,7 +2,7 @@
 package foo
 
 object NumberDecrypter {
-    fun get(instance: Any?, data: PropertyMetadata) = when (data.name) {
+    fun getValue(instance: Any?, data: PropertyMetadata) = when (data.name) {
         "four" -> 4
         "two" -> 2
         else -> throw Exception()

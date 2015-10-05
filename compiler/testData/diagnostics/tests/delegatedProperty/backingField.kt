@@ -7,7 +7,7 @@ class B {
 }
 
 class Delegate {
-  fun get(t: Any?, p: PropertyMetadata): Int {
+  fun getValue(t: Any?, p: PropertyMetadata): Int {
     return 1
   }
 }
