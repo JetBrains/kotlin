@@ -1,0 +1,28 @@
+package
+
+public fun </*0*/ T> a(): kotlin.Unit
+public fun ex1(/*0*/ a: Foo.Bar<kotlin.String>): Foo.Bar<kotlin.String>
+public fun test(): kotlin.Unit
+public fun </*0*/ T : Foo<[ERROR : String.Bar]>> x(): kotlin.Unit
+public fun [ERROR : Bar].ext(): kotlin.Unit
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Bar</*0*/ X> {
+        public constructor Bar</*0*/ X>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class Baz {
+            public constructor Baz()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

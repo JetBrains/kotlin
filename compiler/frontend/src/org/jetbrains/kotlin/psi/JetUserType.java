@@ -82,6 +82,15 @@ public class JetUserType extends JetElementImplStub<KotlinUserTypeStub> implemen
         return getStubOrPsiChild(JetStubElementTypes.USER_TYPE);
     }
 
+    public boolean hasTypesWithTypeArgsInside() {
+        for (JetUserType type : getStubOrPsiChildrenAsList(JetStubElementTypes.USER_TYPE)) {
+            if (!type.getTypeArguments().isEmpty() || type.hasTypesWithTypeArgsInside()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void deleteQualifier() {
         JetUserType qualifier = getQualifier();
         assert qualifier != null;

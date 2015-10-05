@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
@@ -136,6 +137,10 @@ public class TypeResolver(
                 if (referenceExpression == null || referencedName == null) return
 
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor)
+
+                if (type.hasTypesWithTypeArgsInside()) {
+                    c.trace.report(Errors.GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED.on(type))
+                }
 
                 when (classifierDescriptor) {
                     is TypeParameterDescriptor -> {

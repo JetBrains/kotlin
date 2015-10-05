@@ -176,6 +176,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<JetDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>
