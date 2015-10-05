@@ -1,0 +1,21 @@
+<project name="Ant Task Test" default="build">
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+    <target name="build">
+        <kotlinc src="${test.data}/module1.kt" output="${temp}/module1.jar" modulename="module1"/>
+
+        <kotlinc src="${test.data}/module2.kt" output="${temp}/module2.jar" modulename="module2">
+            <classpath>
+                <pathelement path="${temp}/module1.jar"/>
+            </classpath>
+        </kotlinc>
+
+        <java classname="hello.Module2Kt" fork="true">
+            <classpath>
+                <pathelement path="${temp}/module1.jar"/>
+                <pathelement path="${temp}/module2.jar"/>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+        </java>
+    </target>
+</project>

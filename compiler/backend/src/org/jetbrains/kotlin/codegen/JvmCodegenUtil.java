@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
@@ -232,5 +233,10 @@ public class JvmCodegenUtil {
 
         // TODO: drop after some time
         av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
+    }
+
+    @NotNull
+    public static String sanitizeAsJavaIdentifier(@NotNull String str) {
+        return PackagePartClassUtils.sanitizeAsJavaIdentifier(str);
     }
 }

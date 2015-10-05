@@ -5018,6 +5018,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/mangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Mangling extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInMangling() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("internalOverride.kt")
+        public void testInternalOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/mangling/internalOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internalOverrideSuperCall.kt")
+        public void testInternalOverrideSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/mangling/internalOverrideSuperCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("publicOverride.kt")
+        public void testPublicOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/mangling/publicOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("publicOverrideSuperCall.kt")
+        public void testPublicOverrideSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/mangling/publicOverrideSuperCall.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

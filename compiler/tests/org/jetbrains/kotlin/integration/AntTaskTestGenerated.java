@@ -59,6 +59,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("internalMembers")
+    public void testInternalMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/internalMembers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmClasspath")
     public void testJvmClasspath() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/jvmClasspath/");

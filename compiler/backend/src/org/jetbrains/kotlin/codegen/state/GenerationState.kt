@@ -92,11 +92,11 @@ public class GenerationState @JvmOverloads constructor(
                 incrementalCompilationComponents.getIncrementalCache(targetId)
             else null
 
+    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     public val bindingContext: BindingContext = bindingTrace.getBindingContext()
-    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider,
-                                                         getIncrementalCacheForThisTarget())
+    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(), this.moduleName)
     public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
@@ -117,7 +117,6 @@ public class GenerationState @JvmOverloads constructor(
     public val isInlineEnabled: Boolean = !disableInline
         @JvmName("isInlineEnabled") get
 
-    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
 
     public val rootContext: CodegenContext<*> = RootContext(this)
 
@@ -125,7 +124,8 @@ public class GenerationState @JvmOverloads constructor(
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
         var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
                 optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesProvider,
-                getIncrementalCacheForThisTarget())
+                getIncrementalCacheForThisTarget(),
+                this.moduleName)
 
         interceptedBuilderFactory = BuilderFactoryForDuplicateClassNameDiagnostics(interceptedBuilderFactory, diagnostics);
 
