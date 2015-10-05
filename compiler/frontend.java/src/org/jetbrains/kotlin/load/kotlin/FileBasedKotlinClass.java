@@ -21,7 +21,6 @@ import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.kotlin.name.ClassId;
@@ -264,11 +263,6 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private static ClassId resolveNameByInternalName(@NotNull String name, @NotNull InnerClassesInfo innerClasses) {
         if (!name.contains("$")) {
             return ClassId.topLevel(new FqName(name.replace('/', '.')));
-        }
-
-        // TODO: this is a hack which can be dropped once JVM back-end begins to write InnerClasses attribute for all referenced classes
-        if (name.equals(JvmAnnotationNames.KotlinSyntheticClass.KIND_INTERNAL_NAME)) {
-            return JvmAnnotationNames.KotlinSyntheticClass.KIND_CLASS_ID;
         }
 
         List<String> classes = new ArrayList<String>(1);

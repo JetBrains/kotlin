@@ -286,7 +286,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if (KotlinSyntheticClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
+            if ("Kind".equals(enumClassId.getShortClassName().asString()) &&
+                enumClassId.isNestedClass() &&
+                enumClassId.getOuterClassId().equals(ClassId.topLevel(annotationClassName.getFqNameForClassNameWithoutDollars())) &&
+                "kind".equals(name.asString())) {
                 syntheticClassKind = enumEntryName.asString();
             }
         }

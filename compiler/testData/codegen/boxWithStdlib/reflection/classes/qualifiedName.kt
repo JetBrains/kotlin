@@ -23,7 +23,7 @@ fun box(): String {
     assertEquals("kotlin.Array", Array<Array<String>>::class.qualifiedName)
 
     assertEquals("java.util.Date", java.util.Date::class.qualifiedName)
-    assertEquals("kotlin.jvm.internal.KotlinSyntheticClass.Kind", kotlin.jvm.internal.KotlinSyntheticClass.Kind::class.qualifiedName)
+    assertEquals("kotlin.jvm.internal.Ref.ObjectRef", kotlin.jvm.internal.Ref.ObjectRef::class.qualifiedName)
     assertEquals("java.lang.Void", java.lang.Void::class.qualifiedName)
 
     class Local
