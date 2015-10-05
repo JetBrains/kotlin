@@ -29,7 +29,11 @@ class FunctionImportedFromObject(val functionFromObject: FunctionDescriptor) :
 
     override fun substitute(substitutor: TypeSubstitutor) = functionFromObject.substitute(substitutor).wrap()
 
-    override fun getOriginal() = functionFromObject.original.wrap()
+    private val _original by lazy {
+        functionFromObject.original.wrap()
+    }
+
+    override fun getOriginal() = _original
 
     override fun copy(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
@@ -46,7 +50,11 @@ class PropertyImportedFromObject(val propertyFromObject: PropertyDescriptor) :
 
     override fun substitute(substitutor: TypeSubstitutor) = propertyFromObject.substitute(substitutor)?.wrap()
 
-    override fun getOriginal() = propertyFromObject.original.wrap()
+    private val _original by lazy {
+        propertyFromObject.original.wrap()
+    }
+
+    override fun getOriginal() = _original
 
     override fun copy(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
