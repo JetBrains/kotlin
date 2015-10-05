@@ -4321,6 +4321,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("idea/testData/quickfix/migration/typeParameterList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeParameterList extends AbstractQuickFixTest {
+            public void testAllFilesPresentInTypeParameterList() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/typeParameterList"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/typeParameterList/basic.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")
