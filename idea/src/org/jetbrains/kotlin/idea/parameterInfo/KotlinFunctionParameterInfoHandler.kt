@@ -66,7 +66,51 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
     override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
 
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): JetValueArgumentList? {
-        return findCall(context)
+        //todo: calls to this constructors, when we will have auxiliary constructors
+        val file = context.file as? JetFile ?: return null
+
+        val argumentList = file.findElementAt(context.offset)?.getStrictParentOfType<JetValueArgumentList>() ?: return null
+
+        val callNameExpression = getCallNameExpression(argumentList) ?: return null
+
+        val references = callNameExpression.references
+        if (references.isEmpty()) return null
+
+        val resolutionFacade = file.getResolutionFacade()
+        val bindingContext = callNameExpression.analyze(BodyResolveMode.FULL)
+
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression)
+        val placeDescriptor = scope?.getContainingDeclaration()
+
+        val visibilityFilter = { descriptor: DeclarationDescriptor ->
+            placeDescriptor == null
+            || descriptor !is DeclarationDescriptorWithVisibility
+            || descriptor.isVisible(placeDescriptor, bindingContext, callNameExpression)
+        }
+
+        val refName = callNameExpression.getReferencedNameAsName()
+
+        val descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.CLASSIFIERS_MASK, emptyList<DescriptorKindExclude>())
+
+        val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter)
+                .getReferenceVariants(callNameExpression, descriptorKindFilter, { it == refName })
+
+        val itemsToShow = ArrayList<DeclarationDescriptor>()
+        for (variant in variants) {
+            if (variant is FunctionDescriptor) {
+                //todo: renamed functions?
+                itemsToShow.add(variant)
+            }
+            else if (variant is ClassDescriptor) {
+                //todo: renamed classes?
+                for (constructorDescriptor in variant.constructors) {
+                    itemsToShow.add(constructorDescriptor)
+                }
+            }
+        }
+
+        context.itemsToShow = itemsToShow.toArray()
+        return argumentList
     }
 
     override fun showParameterInfo(element: JetValueArgumentList, context: CreateParameterInfoContext) {
@@ -288,54 +332,6 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             }
 
             return false
-        }
-
-        private fun findCall(context: CreateParameterInfoContext): JetValueArgumentList? {
-            //todo: calls to this constructors, when we will have auxiliary constructors
-            val file = context.file as? JetFile ?: return null
-
-            val argumentList = file.findElementAt(context.offset)?.getStrictParentOfType<JetValueArgumentList>() ?: return null
-
-            val callNameExpression = getCallNameExpression(argumentList) ?: return null
-
-            val references = callNameExpression.references
-            if (references.isEmpty()) return null
-
-            val resolutionFacade = file.getResolutionFacade()
-            val bindingContext = callNameExpression.analyze(BodyResolveMode.FULL)
-
-            val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression)
-            val placeDescriptor = scope?.getContainingDeclaration()
-
-            val visibilityFilter = { descriptor: DeclarationDescriptor ->
-                placeDescriptor == null
-                || descriptor !is DeclarationDescriptorWithVisibility
-                || descriptor.isVisible(placeDescriptor, bindingContext, callNameExpression)
-            }
-
-            val refName = callNameExpression.getReferencedNameAsName()
-
-            val descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.CLASSIFIERS_MASK, emptyList<DescriptorKindExclude>())
-
-            val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter)
-                    .getReferenceVariants(callNameExpression, descriptorKindFilter, { it == refName })
-
-            val itemsToShow = ArrayList<DeclarationDescriptor>()
-            for (variant in variants) {
-                if (variant is FunctionDescriptor) {
-                    //todo: renamed functions?
-                    itemsToShow.add(variant)
-                }
-                else if (variant is ClassDescriptor) {
-                    //todo: renamed classes?
-                    for (constructorDescriptor in variant.constructors) {
-                        itemsToShow.add(constructorDescriptor)
-                    }
-                }
-            }
-
-            context.itemsToShow = itemsToShow.toArray()
-            return argumentList
         }
 
         private fun getCallNameExpression(argumentList: JetValueArgumentList): JetSimpleNameExpression? {
