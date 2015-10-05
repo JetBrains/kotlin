@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -29,9 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
@@ -138,13 +137,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         createTypeReferenceStub(functionType, returnType)
     }
 
-    fun createValueParameterListStub(parent: StubElement<out PsiElement>, callableProto: ProtoBuf.Callable, container: ProtoContainer) {
-        val callableKind = Flags.CALLABLE_KIND[callableProto.flags]
-        if (callableKind == CallableKind.VAL || callableKind == CallableKind.VAR) {
-            return
-        }
+    fun createValueParameterListStub(
+            parent: StubElement<out PsiElement>,
+            callableProto: MessageLite,
+            parameters: List<ProtoBuf.ValueParameter>,
+            container: ProtoContainer
+    ) {
         val parameterListStub = KotlinPlaceHolderStubImpl<JetParameterList>(parent, JetStubElementTypes.VALUE_PARAMETER_LIST)
-        for ((index, valueParameterProto) in callableProto.valueParameterList.withIndex()) {
+        for ((index, valueParameterProto) in parameters.withIndex()) {
             val name = c.nameResolver.getName(valueParameterProto.name)
             val parameterStub = KotlinParameterStubImpl(
                     parameterListStub,
