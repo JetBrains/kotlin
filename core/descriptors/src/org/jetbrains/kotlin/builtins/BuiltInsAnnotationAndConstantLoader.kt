@@ -44,9 +44,12 @@ class BuiltInsAnnotationAndConstantLoader(
             proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
-        proto as ProtoBuf.Callable // TODO
-
-        val annotations = proto.getExtension(BuiltInsProtoBuf.oldCallableAnnotation).orEmpty()
+        val annotations = when (proto) {
+            is ProtoBuf.Constructor -> proto.getExtension(BuiltInsProtoBuf.constructorAnnotation)
+            is ProtoBuf.Function -> proto.getExtension(BuiltInsProtoBuf.functionAnnotation)
+            is ProtoBuf.Property -> proto.getExtension(BuiltInsProtoBuf.propertyAnnotation)
+            else -> error("Unknown message: $proto")
+        }.orEmpty()
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 

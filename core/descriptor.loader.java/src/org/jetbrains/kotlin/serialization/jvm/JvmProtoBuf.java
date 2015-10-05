@@ -12,9 +12,6 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldMethodSignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldPropertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
@@ -3787,51 +3784,6 @@ public final class JvmProtoBuf {
         null,
         null,
         101,
-        com.google.protobuf.WireFormat.FieldType.INT32);
-  public static final int OLD_METHOD_SIGNATURE_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> oldMethodSignature = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
-        null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int OLD_PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> oldPropertySignature = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
-        null,
-        101,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int OLD_IMPL_CLASS_NAME_FIELD_NUMBER = 102;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      java.lang.Integer> oldImplClassName = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        0,
-        null,
-        null,
-        102,
         com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
   /**

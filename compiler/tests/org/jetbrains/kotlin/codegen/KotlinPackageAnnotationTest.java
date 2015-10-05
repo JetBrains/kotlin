@@ -64,7 +64,11 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
         assertNotNull(strings);
         PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
 
-        Set<String> callableNames = collectCallableNames(packageData.getPackageProto().getMemberList(), packageData.getNameResolver());
+        Set<String> callableNames = collectCallableNames(
+                packageData.getPackageProto().getFunctionList(),
+                packageData.getPackageProto().getPropertyList(),
+                packageData.getNameResolver()
+        );
         assertEmpty(callableNames);
     }
 
@@ -90,15 +94,26 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
         assertNotNull(strings);
         PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
 
-        Set<String> callableNames = collectCallableNames(packageData.getPackageProto().getMemberList(), packageData.getNameResolver());
+        Set<String> callableNames = collectCallableNames(
+                packageData.getPackageProto().getFunctionList(),
+                packageData.getPackageProto().getPropertyList(),
+                packageData.getNameResolver()
+        );
         assertSameElements(callableNames, Arrays.asList("foo", "bar"));
     }
 
     @NotNull
-    public static Set<String> collectCallableNames(@NotNull List<ProtoBuf.Callable> members, @NotNull NameResolver nameResolver) {
+    public static Set<String> collectCallableNames(
+            @NotNull List<ProtoBuf.Function> functions,
+            @NotNull List<ProtoBuf.Property> properties,
+            @NotNull NameResolver nameResolver
+    ) {
         Set<String> callableNames = new HashSet<String>();
-        for (ProtoBuf.Callable callable : members) {
-            callableNames.add(nameResolver.getName(callable.getName()).asString());
+        for (ProtoBuf.Function function : functions) {
+            callableNames.add(nameResolver.getName(function.getName()).asString());
+        }
+        for (ProtoBuf.Property property : properties) {
+            callableNames.add(nameResolver.getName(property.getName()).asString());
         }
         return callableNames;
     }

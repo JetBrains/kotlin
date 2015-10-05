@@ -224,10 +224,10 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         DescriptorSerializer serializer =
                 DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
-        ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
+        ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
-        writeAnnotationData(av, serializer, callableProto);
+        writeAnnotationData(av, serializer, functionProto);
         av.visitEnd();
     }
 

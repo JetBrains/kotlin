@@ -36,8 +36,11 @@ public class Flags {
 
     // Callables
 
-    public static final FlagField<ProtoBuf.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY, ProtoBuf.CallableKind.values());
-    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND, ProtoBuf.MemberKind.values());
+    // TODO: use these flags
+    public static final FlagField<Boolean> RESERVED_1 = FlagField.booleanAfter(MODALITY);
+    public static final FlagField<Boolean> RESERVED_2 = FlagField.booleanAfter(RESERVED_1);
+
+    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(RESERVED_2, ProtoBuf.MemberKind.values());
 
     // Constructors
 
@@ -56,16 +59,6 @@ public class Flags {
     public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_SETTER);
     public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
     public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(LATE_INIT);
-
-    // Old callables. TODO: delete
-
-    public static final FlagField<Boolean> OLD_HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> OLD_HAS_SETTER = FlagField.booleanAfter(OLD_HAS_GETTER);
-    public static final FlagField<Boolean> OLD_HAS_CONSTANT = FlagField.booleanAfter(OLD_HAS_SETTER);
-    public static final FlagField<Boolean> OLD_IS_CONST = FlagField.booleanAfter(OLD_HAS_CONSTANT);
-    public static final FlagField<Boolean> OLD_LATE_INIT = FlagField.booleanAfter(OLD_IS_CONST);
-    public static final FlagField<Boolean> OLD_IS_OPERATOR = FlagField.booleanAfter(OLD_LATE_INIT);
-    public static final FlagField<Boolean> OLD_IS_INFIX = FlagField.booleanAfter(OLD_IS_OPERATOR);
 
     // Parameters
 
@@ -121,35 +114,6 @@ public class Flags {
                 return ProtoBuf.Class.Kind.OBJECT;
         }
         throw new IllegalArgumentException("Unknown class kind: " + kind);
-    }
-
-    public static int getCallableFlags(
-            boolean hasAnnotations,
-            @NotNull Visibility visibility,
-            @NotNull Modality modality,
-            @NotNull CallableMemberDescriptor.Kind memberKind,
-            @NotNull ProtoBuf.CallableKind callableKind,
-            boolean hasGetter,
-            boolean hasSetter,
-            boolean hasConstant,
-            boolean lateInit,
-            boolean isConst,
-            boolean isOperator,
-            boolean isInfix
-    ) {
-        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | MODALITY.toFlags(modality(modality))
-               | VISIBILITY.toFlags(visibility(visibility))
-               | MEMBER_KIND.toFlags(memberKind(memberKind))
-               | CALLABLE_KIND.toFlags(callableKind)
-               | OLD_HAS_GETTER.toFlags(hasGetter)
-               | OLD_HAS_SETTER.toFlags(hasSetter)
-               | OLD_HAS_CONSTANT.toFlags(hasConstant)
-               | OLD_LATE_INIT.toFlags(lateInit)
-               | OLD_IS_CONST.toFlags(isConst)
-               | OLD_IS_OPERATOR.toFlags(isOperator)
-               | OLD_IS_INFIX.toFlags(isInfix)
-               ;
     }
 
     public static int getConstructorFlags(

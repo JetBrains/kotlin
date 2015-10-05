@@ -322,7 +322,8 @@ public class DeserializedClassDescriptor(
             }
 
             val nameResolver = c.nameResolver
-            return classProto.getMemberList().mapTo(result) { nameResolver.getName(it.getName()) }
+            return classProto.functionList.mapTo(result) { nameResolver.getName(it.name) } +
+                   classProto.propertyList.mapTo(result) { nameResolver.getName(it.name) }
         }
 
         fun all(): Collection<ClassDescriptor> {

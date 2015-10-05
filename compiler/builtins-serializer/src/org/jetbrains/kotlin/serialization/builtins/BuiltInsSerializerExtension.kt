@@ -44,18 +44,6 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeCallable(callable: CallableMemberDescriptor, proto: ProtoBuf.Callable.Builder) {
-        for (annotation in callable.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.oldCallableAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-        val propertyDescriptor = callable as? PropertyDescriptor ?: return
-        val compileTimeConstant = propertyDescriptor.compileTimeInitializer
-        if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
-            val valueProto = annotationSerializer.valueProto(compileTimeConstant)
-            proto.setExtension(BuiltInsProtoBuf.oldCompileTimeValue, valueProto.build())
-        }
-    }
-
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))

@@ -104,25 +104,6 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
                 loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
             }
-            is ProtoBuf.Callable -> {
-                val nameResolver = container.nameResolver
-                if (kind == AnnotatedCallableKind.PROPERTY) {
-                    val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
-                    val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
-
-                    val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                        findClassAndLoadMemberAnnotations(container, proto, sig)
-                    } ?: listOf()
-
-                    val fieldAnnotations = fieldSignature?.let { sig ->
-                        findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
-                    } ?: listOf()
-
-                    return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
-                }
-                val signature = getCallableSignature(proto, nameResolver, kind) ?: return emptyList()
-                transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
-            }
             else -> emptyList()
         }
     }
@@ -231,19 +212,13 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                     nameResolver.getName(proto.getExtension(methodImplClassName))
                 proto is ProtoBuf.Property && proto.hasExtension(propertyImplClassName) ->
                     nameResolver.getName(proto.getExtension(propertyImplClassName))
-                proto is ProtoBuf.Callable && proto.hasExtension(oldImplClassName) ->
-                    nameResolver.getName(proto.getExtension(oldImplClassName))
                 else -> null
             }
 
     private fun isStaticFieldInOuter(proto: MessageLite): Boolean =
-            when {
-                proto is ProtoBuf.Property && proto.hasExtension(propertySignature) ->
-                    proto.getExtension(propertySignature).let { it.hasField() && it.field.isStaticInOuter }
-                proto is ProtoBuf.Callable && proto.hasExtension(oldPropertySignature) ->
-                    proto.getExtension(oldPropertySignature).let { it.hasField() && it.field.isStaticInOuter }
-                else -> false
-            }
+            if (proto is ProtoBuf.Property && proto.hasExtension(propertySignature))
+                proto.getExtension(propertySignature).let { it.hasField() && it.field.isStaticInOuter }
+            else false
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()
@@ -300,16 +275,13 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private fun getPropertySignature(
-            proto: MessageLite,
+            proto: ProtoBuf.Property,
             nameResolver: NameResolver,
             field: Boolean = false,
             synthetic: Boolean = false
     ): MemberSignature? {
         val signature =
-                if (proto is ProtoBuf.Property && proto.hasExtension(propertySignature))
-                    proto.getExtension(propertySignature)
-                else if (proto is ProtoBuf.Callable && proto.hasExtension(oldPropertySignature))
-                    proto.getExtension(oldPropertySignature)
+                if (proto.hasExtension(propertySignature)) proto.getExtension(propertySignature)
                 else return null
 
         if (field && signature.hasField()) {
@@ -337,24 +309,6 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                     AnnotatedCallableKind.PROPERTY_SETTER -> MemberSignature.fromMethod(nameResolver, signature.setter)
                     AnnotatedCallableKind.PROPERTY -> getPropertySignature(proto, nameResolver, true, true)
                     else -> null
-                }
-            }
-            proto is ProtoBuf.Callable -> {
-                when (kind) {
-                    AnnotatedCallableKind.FUNCTION ->
-                        if (proto.hasExtension(oldMethodSignature))
-                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldMethodSignature))
-                        else null
-                    AnnotatedCallableKind.PROPERTY_GETTER ->
-                        if (proto.hasExtension(oldPropertySignature))
-                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldPropertySignature).getter)
-                        else null
-                    AnnotatedCallableKind.PROPERTY_SETTER ->
-                        if (proto.hasExtension(oldPropertySignature))
-                            MemberSignature.fromMethod(nameResolver, proto.getExtension(oldPropertySignature).setter)
-                        else null
-                    AnnotatedCallableKind.PROPERTY ->
-                        getPropertySignature(proto, nameResolver, true, true)
                 }
             }
             else -> null

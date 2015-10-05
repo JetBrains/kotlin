@@ -58,7 +58,11 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
         assertNotNull(strings);
         ClassData classData = JvmProtoBufUtil.readClassDataFrom(data, strings);
 
-        Set<String> callableNames = collectCallableNames(classData.getClassProto().getMemberList(), classData.getNameResolver());
+        Set<String> callableNames = collectCallableNames(
+                classData.getClassProto().getFunctionList(),
+                classData.getClassProto().getPropertyList(),
+                classData.getNameResolver()
+        );
         assertSameElements(Arrays.asList("foo", "bar"), callableNames);
     }
 }

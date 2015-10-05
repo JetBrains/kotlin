@@ -39,18 +39,18 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 Deserialization.modality(Flags.MODALITY.get(flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(flags)),
-                Flags.CALLABLE_KIND.get(flags) == ProtoBuf.CallableKind.VAR,
+                Flags.IS_VAR.get(flags),
                 c.nameResolver.getName(proto.getName()),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
                 c.nameResolver,
-                Flags.OLD_LATE_INIT.get(flags),
-                Flags.OLD_IS_CONST.get(flags)
+                Flags.LATE_INIT.get(flags),
+                Flags.IS_CONST.get(flags)
         )
 
         val local = c.childContext(property, proto.getTypeParameterList())
 
-        val hasGetter = Flags.OLD_HAS_GETTER.get(flags)
+        val hasGetter = Flags.HAS_GETTER.get(flags)
         val receiverAnnotations = if (hasGetter && proto.hasReceiverType())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
@@ -87,7 +87,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             null
         }
 
-        val setter = if (Flags.OLD_HAS_SETTER.get(flags)) {
+        val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = proto.getSetterFlags()
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             if (isNotDefault) {
@@ -115,7 +115,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             null
         }
 
-        if (Flags.OLD_HAS_CONSTANT.get(flags)) {
+        if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
                         val container = c.containingDeclaration.asProtoContainer()!!
@@ -145,8 +145,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         )
-        function.isOperator = Flags.OLD_IS_OPERATOR.get(proto.flags)
-        function.isInfix = Flags.OLD_IS_INFIX.get(proto.flags)
+        function.isOperator = Flags.IS_OPERATOR.get(proto.flags)
+        function.isInfix = Flags.IS_INFIX.get(proto.flags)
         return function
     }
 

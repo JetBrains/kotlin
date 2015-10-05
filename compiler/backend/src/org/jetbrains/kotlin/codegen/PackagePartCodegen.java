@@ -123,8 +123,6 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings, state.getTypeMapper()));
         ProtoBuf.Package packageProto = serializer.packagePartProto(members).build();
 
-        if (packageProto.getMemberCount() == 0) return;
-
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
         writeAnnotationData(av, serializer, packageProto);
         av.visitEnd();
