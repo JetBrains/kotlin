@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -131,11 +133,10 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context.parameterOwner == null || !context.parameterOwner.isValid) return false
 
-        val parameterOwner = context.parameterOwner
-        if (parameterOwner !is JetValueArgumentList) return false
+        val argumentList = context.parameterOwner as? JetValueArgumentList ?: return false
 
         val valueParameters = itemToShow.valueParameters
-        val valueArguments = parameterOwner.arguments
+        val valueArguments = argumentList.arguments
 
         val currentParameterIndex = context.currentParameterIndex
         var boldStartOffset = -1
@@ -146,12 +147,11 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         var namedMode = false
 
-        val argumentList = context.parameterOwner as JetValueArgumentList
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val callElement = argumentList.parent as? JetCallElement ?: return false
         val call = callElement.getCall(bindingContext) ?: return false
 
-        val isGrey = shouldGreyOut(call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
+        val (highlightParameterIndex, isGrey) = detectSignatureHighlighting(call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
 
         val text = StringBuilder {
             for (i in valueParameters.indices) {
@@ -159,7 +159,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                     append(", ")
                 }
 
-                val highlightParameter = i == currentParameterIndex || (!namedMode && i < currentParameterIndex && valueParameters.last().varargElementType != null)
+                val highlightParameter = i == highlightParameterIndex
 
                 if (highlightParameter) {
                     boldStartOffset = length()
@@ -224,7 +224,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         assert(!text.isEmpty()) { "A message about 'no parameters' or some parameters should be present: $itemToShow" }
 
-        val color = if (isResolvedToDescriptor(parameterOwner, itemToShow, bindingContext))
+        val color = if (isResolvedToDescriptor(argumentList, itemToShow, bindingContext))
             GREEN_BACKGROUND
         else
             context.defaultParameterColor
@@ -324,31 +324,58 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             return argumentList
         }
 
-        private fun shouldGreyOut(call: Call, overload: FunctionDescriptor, currentArgumentIndex: Int, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): Boolean {
-            if (currentArgumentIndex == 0) return false
+        private data class SignatureHighlighting(
+                val highlightParameterIndex: Int?,
+                val isGrey: Boolean
+        )
+
+        private fun detectSignatureHighlighting(call: Call, overload: FunctionDescriptor, currentArgumentIndex: Int, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): SignatureHighlighting {
+            if (currentArgumentIndex == 0) {
+                val highlightParameterIndex = if (overload.valueParameters.isEmpty()) null else 0
+                return SignatureHighlighting(highlightParameterIndex, isGrey = false)
+            }
+
             assert(call.valueArguments.size() >= currentArgumentIndex)
+
+            val truncatedArguments = if (call.valueArguments.size() > currentArgumentIndex) {
+                call.valueArguments.subList(0, currentArgumentIndex + 1)
+            }
+            else {
+                val dummyArgument = object : ValueArgument {
+                    override fun getArgumentExpression(): JetExpression? = null
+                    override fun getArgumentName(): ValueArgumentName? = null
+                    override fun isNamed(): Boolean = false
+                    override fun asElement(): JetElement = throw UnsupportedOperationException()
+                    override fun getSpreadElement(): LeafPsiElement? = null
+                    override fun isExternal() = false
+                }
+                call.valueArguments + dummyArgument
+            }
 
             //TODO: do we really need truncated call?
             // leave only arguments before the current one
             val truncatedCall = object : DelegatingCall(call) {
-                val arguments = if (call.valueArguments.size() == currentArgumentIndex)
-                    call.valueArguments
-                else
-                    call.valueArguments.subList(0, currentArgumentIndex + 1)
-
-                override fun getValueArguments() = arguments
+                override fun getValueArguments() = truncatedArguments
                 override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
                 override fun getValueArgumentList() = null
             }
 
             val candidates = detectCandidates(truncatedCall, bindingContext, resolutionFacade)
-            val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original } ?: return true
-            if (!resolvedCall.allArgumentsMapped()) return true // some of arguments before the current one are not mapped to any of the parameters
+            val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original }
+                               ?: return SignatureHighlighting(null, isGrey = true)
+
+            val currentParameter = (resolvedCall.getArgumentMapping(truncatedArguments.last()) as? ArgumentMatch)?.valueParameter
+            val highlightParameterIndex = currentParameter?.index
+
+            if (!resolvedCall.allArgumentsMapped()) { // some of arguments before the current one are not mapped to any of the parameters
+                return SignatureHighlighting(highlightParameterIndex, isGrey = true)
+            }
 
             // grey out if not all arguments before the current are matched
-            return truncatedCall.valueArguments
+            val isGrey = truncatedCall.valueArguments
                     .take(currentArgumentIndex)
                     .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
+            return SignatureHighlighting(highlightParameterIndex, isGrey)
         }
 
         private fun ValueArgument.hasError(bindingContext: BindingContext)
