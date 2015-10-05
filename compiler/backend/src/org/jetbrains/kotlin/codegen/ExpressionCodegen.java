@@ -2683,14 +2683,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (hasSpread) {
+            boolean arrayOfReferences = KotlinBuiltIns.isArray(outType);
             if (size == 1) {
-                gen(arguments.get(0).getArgumentExpression(), type);
+                // Arrays.copyOf(array, newLength)
+                ValueArgument argument = arguments.get(0);
+                Type arrayType = arrayOfReferences ? Type.getType("[Ljava/lang/Object;")
+                                                   : Type.getType("[" + elementType.getDescriptor());
+                gen(argument.getArgumentExpression(), type);
+                v.dup();
+                v.arraylength();
+                v.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false);
+                if (arrayOfReferences) {
+                    v.checkcast(type);
+                }
             }
             else {
                 String owner;
                 String addDescriptor;
                 String toArrayDescriptor;
-                boolean arrayOfReferences = KotlinBuiltIns.isArray(outType);
                 if (arrayOfReferences) {
                     owner = "kotlin/jvm/internal/SpreadBuilder";
                     addDescriptor = "(Ljava/lang/Object;)V";

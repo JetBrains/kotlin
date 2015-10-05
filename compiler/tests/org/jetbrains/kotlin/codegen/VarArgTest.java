@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class VarArgTest extends CodegenTestCase {
     @Override
@@ -89,7 +90,9 @@ public class VarArgTest extends CodegenTestCase {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
         Method main = generateFunction("test");
         String[] args = {"mama", "papa"};
-        assertTrue(args == main.invoke(null, new Object[]{ args } ));
+        String[] result = (String []) main.invoke(null, new Object[] {args});
+        assertTrue(args != result);
+        assertTrue(Arrays.equals(args, result));
     }
 
     public void testArrayAsVararg2() throws InvocationTargetException, IllegalAccessException {
