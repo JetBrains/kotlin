@@ -176,7 +176,7 @@ enum class FlagsToModifiers {
 
     INNER {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.INNER.get(flags)) JetTokens.INNER_KEYWORD else null
+            return if (Flags.IS_INNER.get(flags)) JetTokens.INNER_KEYWORD else null
         }
     },
 
@@ -188,7 +188,7 @@ enum class FlagsToModifiers {
 
     LATEINIT {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.LATE_INIT.get(flags)) JetTokens.LATE_INIT_KEYWORD else null
+            return if (Flags.IS_LATEINIT.get(flags)) JetTokens.LATEINIT_KEYWORD else null
         }
     },
 

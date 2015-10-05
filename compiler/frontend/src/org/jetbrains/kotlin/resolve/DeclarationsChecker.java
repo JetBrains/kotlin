@@ -413,7 +413,7 @@ public class DeclarationsChecker {
     private void checkPropertyLateInit(@NotNull JetCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetModifierList modifierList = property.getModifierList();
         if (modifierList == null) return;
-        PsiElement modifier = modifierList.getModifier(JetTokens.LATE_INIT_KEYWORD);
+        PsiElement modifier = modifierList.getModifier(JetTokens.LATEINIT_KEYWORD);
         if (modifier == null) return;
 
         if (!propertyDescriptor.isVar()) {

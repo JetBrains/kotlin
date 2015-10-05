@@ -168,7 +168,7 @@ public interface JetTokens {
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
 
-    JetModifierKeywordToken LATE_INIT_KEYWORD = JetModifierKeywordToken.softKeywordModifier("lateinit");
+    JetModifierKeywordToken LATEINIT_KEYWORD = JetModifierKeywordToken.softKeywordModifier("lateinit");
 
     JetModifierKeywordToken DATA_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("data");
     JetModifierKeywordToken INLINE_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("inline");
@@ -197,7 +197,7 @@ public interface JetTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD,
-                                             LATE_INIT_KEYWORD,
+                                             LATEINIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD
     );
@@ -211,7 +211,7 @@ public interface JetTokens {
             new JetModifierKeywordToken[] {
                     ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                     PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
-                    REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATE_INIT_KEYWORD,
+                    REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATEINIT_KEYWORD,
                     DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
                     CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD
             };

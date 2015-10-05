@@ -747,7 +747,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(property),
-                modifierList != null && modifierList.hasModifier(JetTokens.LATE_INIT_KEYWORD),
+                modifierList != null && modifierList.hasModifier(JetTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(JetTokens.CONST_KEYWORD)
         );
         wrapper.setProperty(propertyDescriptor);
