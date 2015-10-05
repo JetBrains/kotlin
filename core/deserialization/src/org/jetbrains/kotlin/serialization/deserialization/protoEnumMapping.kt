@@ -26,39 +26,43 @@ import org.jetbrains.kotlin.types.Variance
 
 object Deserialization {
     @JvmStatic
-    fun memberKind(memberKind: ProtoBuf.MemberKind) = when (memberKind) {
+    fun memberKind(memberKind: ProtoBuf.MemberKind?) = when (memberKind) {
         ProtoBuf.MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
         ProtoBuf.MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         ProtoBuf.MemberKind.DELEGATION -> CallableMemberDescriptor.Kind.DELEGATION
         ProtoBuf.MemberKind.SYNTHESIZED -> CallableMemberDescriptor.Kind.SYNTHESIZED
+        else -> CallableMemberDescriptor.Kind.DECLARATION
     }
 
     @JvmStatic
-    fun modality(modality: ProtoBuf.Modality) = when (modality) {
+    fun modality(modality: ProtoBuf.Modality?) = when (modality) {
         ProtoBuf.Modality.FINAL -> Modality.FINAL
         ProtoBuf.Modality.OPEN -> Modality.OPEN
         ProtoBuf.Modality.ABSTRACT -> Modality.ABSTRACT
         ProtoBuf.Modality.SEALED -> Modality.SEALED
+        else -> Modality.FINAL
     }
 
     @JvmStatic
-    fun visibility(visibility: ProtoBuf.Visibility) = when (visibility) {
+    fun visibility(visibility: ProtoBuf.Visibility?) = when (visibility) {
         ProtoBuf.Visibility.INTERNAL -> Visibilities.INTERNAL
         ProtoBuf.Visibility.PRIVATE -> Visibilities.PRIVATE
         ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
         ProtoBuf.Visibility.PROTECTED -> Visibilities.PROTECTED
         ProtoBuf.Visibility.PUBLIC -> Visibilities.PUBLIC
         ProtoBuf.Visibility.LOCAL -> Visibilities.LOCAL
+        else -> Visibilities.PRIVATE
     }
 
     @JvmStatic
-    fun classKind(kind: ProtoBuf.Class.Kind): ClassKind = when (kind) {
+    fun classKind(kind: ProtoBuf.Class.Kind?): ClassKind = when (kind) {
         ProtoBuf.Class.Kind.CLASS -> ClassKind.CLASS
         ProtoBuf.Class.Kind.INTERFACE -> ClassKind.INTERFACE
         ProtoBuf.Class.Kind.ENUM_CLASS -> ClassKind.ENUM_CLASS
         ProtoBuf.Class.Kind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
         ProtoBuf.Class.Kind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
         ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> ClassKind.OBJECT
+        else -> ClassKind.CLASS
     }
 
     @JvmStatic
@@ -66,6 +70,7 @@ object Deserialization {
         ProtoBuf.TypeParameter.Variance.IN -> Variance.IN_VARIANCE
         ProtoBuf.TypeParameter.Variance.OUT -> Variance.OUT_VARIANCE
         ProtoBuf.TypeParameter.Variance.INV -> Variance.INVARIANT
+        else -> Variance.INVARIANT
     }
 
     @JvmStatic
@@ -73,6 +78,8 @@ object Deserialization {
         ProtoBuf.Type.Argument.Projection.IN -> Variance.IN_VARIANCE
         ProtoBuf.Type.Argument.Projection.OUT -> Variance.OUT_VARIANCE
         ProtoBuf.Type.Argument.Projection.INV -> Variance.INVARIANT
-        else -> throw IllegalArgumentException("Only IN, OUT and INV are supported. Actual argument: $variance")
+        ProtoBuf.Type.Argument.Projection.STAR ->
+            throw IllegalArgumentException("Only IN, OUT and INV are supported. Actual argument: $variance")
+        else -> Variance.INVARIANT
     }
 }
