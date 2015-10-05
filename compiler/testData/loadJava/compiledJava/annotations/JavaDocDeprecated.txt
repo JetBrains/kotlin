@@ -1,6 +1,6 @@
 package test
 
-@kotlin.Deprecated(value = "Deprecated in Java") public open class JavaDocDeprecated {
+@kotlin.Deprecated(message = "Deprecated in Java") public open class JavaDocDeprecated {
     public constructor JavaDocDeprecated()
-    @kotlin.Deprecated(value = "Deprecated in Java") public open fun getFoo(/*0*/ p0: kotlin.String!): kotlin.String!
+    @kotlin.Deprecated(message = "Deprecated in Java") public open fun getFoo(/*0*/ p0: kotlin.String!): kotlin.String!
 }

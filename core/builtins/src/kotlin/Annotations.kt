@@ -32,13 +32,17 @@ private annotation class data
 
 /**
  * Marks the annotated class, function, property, variable or parameter as deprecated.
- * @property value the message explaining the deprecation and recommending an alternative API to use.
+ * @property message the message explaining the deprecation and recommending an alternative API to use.
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER)
 @MustBeDocumented
-public annotation class Deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
+public annotation class Deprecated(
+        val message: String,
+        val replaceWith: ReplaceWith = ReplaceWith(""),
+        val level: DeprecationLevel = DeprecationLevel.WARNING
+)
 
 /**
  * Specifies a code fragment that can be used to replace a deprecated function, property or class. Tools such
@@ -57,6 +61,18 @@ public annotation class Deprecated(val value: String, val replaceWith: ReplaceWi
 @Retention(BINARY)
 @MustBeDocumented
 public annotation class ReplaceWith(val expression: String, vararg val imports: String)
+
+/**
+ * Contains levels for deprecation levels.
+ */
+public enum class DeprecationLevel {
+    /** Usage of the deprecated element will be marked as a warning. */
+    WARNING,
+    /** Usage of the deprecated element will be marked as an error. */
+    ERROR,
+    /** Deprecated element will not be accessible from code. */
+    HIDDEN
+}
 
 /**
  * Signifies that the annotated functional type represents an extension function.

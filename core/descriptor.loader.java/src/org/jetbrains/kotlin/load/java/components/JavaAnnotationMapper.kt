@@ -113,7 +113,7 @@ class JavaDeprecatedAnnotationDescriptor(
 
     private val valueArguments = c.storageManager.createLazyValue {
         val parameterDescriptor = valueParameters.firstOrNull {
-            it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
+            it.name == JvmAnnotationNames.DEPRECATED_ANNOTATION_MESSAGE
         }
         parameterDescriptor?.let { mapOf(it to ConstantValueFactory(c.module.builtIns).createConstantValue("Deprecated in Java")) } ?: emptyMap()
     }

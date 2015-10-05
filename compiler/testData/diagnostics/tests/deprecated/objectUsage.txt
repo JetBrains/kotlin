@@ -10,7 +10,7 @@ public final class Another {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @kotlin.Deprecated(value = "Object") public companion object Companion {
+    @kotlin.Deprecated(message = "Object") public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -19,7 +19,7 @@ public final class Another {
     }
 }
 
-@kotlin.Deprecated(value = "Object") public object Obsolete {
+@kotlin.Deprecated(message = "Object") public object Obsolete {
     private constructor Obsolete()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

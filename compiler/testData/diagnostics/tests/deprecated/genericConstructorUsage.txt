@@ -2,7 +2,7 @@ package
 
 public open class C</*0*/ T> {
     public constructor C</*0*/ T>()
-    @kotlin.Deprecated(value = "") public constructor C</*0*/ T>(/*0*/ p: kotlin.Int)
+    @kotlin.Deprecated(message = "") public constructor C</*0*/ T>(/*0*/ p: kotlin.Int)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

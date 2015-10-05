@@ -4,7 +4,7 @@ public fun use(): kotlin.Unit
 
 public final class Data {
     public constructor Data()
-    @kotlin.Deprecated(value = "text") public final operator fun component1(): kotlin.String
+    @kotlin.Deprecated(message = "text") public final operator fun component1(): kotlin.String
     public final operator fun component2(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,17 +1,17 @@
 package test
 
-@kotlin.Deprecated(value = "Class") public final class Class {
+@kotlin.Deprecated(message = "Class") public final class Class {
     /*primary*/ public constructor Class()
 
-    @kotlin.Deprecated(value = "companion object") public companion object Companion {
+    @kotlin.Deprecated(message = "companion object") public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 
-    @kotlin.Deprecated(value = "Inner") public final inner class Inner {
+    @kotlin.Deprecated(message = "Inner") public final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    @kotlin.Deprecated(value = "Nested") public final class Nested {
+    @kotlin.Deprecated(message = "Nested") public final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

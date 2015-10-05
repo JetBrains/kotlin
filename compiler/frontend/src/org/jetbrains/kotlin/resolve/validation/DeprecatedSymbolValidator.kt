@@ -116,7 +116,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     }
 
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
-        val message = deprecated.argumentValue("value") as? String
+        val message = deprecated.argumentValue("message") as? String
         return if (message == null)
             Errors.DEPRECATED_SYMBOL.on(element, descriptor.original)
         else

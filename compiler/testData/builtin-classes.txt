@@ -1,7 +1,7 @@
 package-fragment kotlin
 
 public fun </*0*/ reified T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
-@kotlin.Deprecated(replaceWith = kotlin.ReplaceWith(expression = "this === other", imports = {}), value = "This function is deprecated, use === instead") public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+@kotlin.Deprecated(message = "This function is deprecated, use === instead", replaceWith = kotlin.ReplaceWith(expression = "this === other", imports = {})) public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
 public operator fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
 public fun kotlin.Any?.toString(): kotlin.String
 
@@ -285,11 +285,31 @@ public interface Comparable</*0*/ in T> {
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
-    /*primary*/ public constructor Deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
+    /*primary*/ public constructor Deprecated(/*0*/ message: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ..., /*2*/ level: kotlin.DeprecationLevel = ...)
+    public final val level: kotlin.DeprecationLevel
+        public final fun <get-level>(): kotlin.DeprecationLevel
+    public final val message: kotlin.String
+        public final fun <get-message>(): kotlin.String
     public final val replaceWith: kotlin.ReplaceWith
         public final fun <get-replaceWith>(): kotlin.ReplaceWith
-    public final val value: kotlin.String
-        public final fun <get-value>(): kotlin.String
+}
+
+public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> {
+    enum entry WARNING
+
+    enum entry ERROR
+
+    enum entry HIDDEN
+
+    /*primary*/ private constructor DeprecationLevel()
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
 }
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
