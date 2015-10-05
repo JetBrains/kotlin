@@ -34,7 +34,8 @@ public interface WritableScopeStorage {
     var functionsByName: MutableMap<Name, IntList>? // = null
     var variablesAndClassifiersByName: MutableMap<Name, IntList>? // = null
 
-    protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
+    // Effectively protected: not to be used outside subclasses
+    fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
         val name = descriptor.getName()
 
         val originalDescriptor = variableOrClassDescriptorByName(name)
@@ -52,7 +53,8 @@ public interface WritableScopeStorage {
 
     }
 
-    protected fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
+    // Effectively protected: not to be used outside subclasses
+    fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
         val descriptorIndex = addDescriptor(functionDescriptor)
 
         if (functionsByName == null) {
@@ -63,7 +65,8 @@ public interface WritableScopeStorage {
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
+    // Effectively protected: not to be used outside subclasses
+    fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
         if (descriptorLimit == 0) return null
 
         var list = variablesAndClassifiersByName?.get(name)
@@ -77,7 +80,8 @@ public interface WritableScopeStorage {
         return null
     }
 
-    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
+    // Effectively protected: not to be used outside subclasses
+    fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
         if (descriptorLimit == 0) return null
 
         var list = functionsByName?.get(name)
@@ -95,7 +99,8 @@ public interface WritableScopeStorage {
         return addedDescriptors.size() - 1
     }
 
-    protected class IntList(val last: Int, val prev: IntList?)
+    // Effectively protected: not to be used outside subclasses
+    class IntList(val last: Int, val prev: IntList?)
 
     private fun Int.descriptorByIndex() = addedDescriptors[this]
 

@@ -44,7 +44,7 @@ public fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExp
 }
 
 // call may be native and|or with spreadOperator
-object DefaultFunctionCallCase : FunctionCallCase {
+object DefaultFunctionCallCase : FunctionCallCase() {
     // TODO: refactor after fix ArgumentsInfo - duplicate code
     private fun nativeSpreadFunWithDispatchOrExtensionReceiver(argumentsInfo: CallArgumentTranslator.ArgumentsInfo, functionName: JsName): JsExpression {
         val cachedReceiver = argumentsInfo.cachedReceiver!!
@@ -134,7 +134,7 @@ object DelegateFunctionIntrinsic : DelegateIntrinsic<FunctionCallInfo> {
     }
 }
 
-abstract class AnnotatedAsNativeXCallCase(val annotation: PredefinedAnnotation) : FunctionCallCase {
+abstract class AnnotatedAsNativeXCallCase(val annotation: PredefinedAnnotation) : FunctionCallCase() {
     abstract fun translateCall(receiver: JsExpression, argumentsInfo: CallArgumentTranslator.ArgumentsInfo): JsExpression
 
     fun canApply(callInfo: FunctionCallInfo): Boolean = AnnotationsUtils.hasAnnotation(callInfo.callableDescriptor, annotation)
@@ -160,7 +160,7 @@ object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NA
     }
 }
 
-object InvokeIntrinsic : FunctionCallCase {
+object InvokeIntrinsic : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         val callableDescriptor = callInfo.callableDescriptor
         if (callableDescriptor.getName() != OperatorConventions.INVOKE)
@@ -198,7 +198,7 @@ object InvokeIntrinsic : FunctionCallCase {
     }
 }
 
-object ConstructorCallCase : FunctionCallCase {
+object ConstructorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         return callInfo.callableDescriptor is ConstructorDescriptor
     }
@@ -218,7 +218,7 @@ object ConstructorCallCase : FunctionCallCase {
     }
 }
 
-object SuperCallCase : FunctionCallCase {
+object SuperCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         return callInfo.isSuperInvocation()
     }
@@ -231,7 +231,7 @@ object SuperCallCase : FunctionCallCase {
     }
 }
 
-object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase {
+object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
             callInfo.resolvedCall.getCall().getCallType() != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
 
@@ -252,7 +252,7 @@ object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase {
     }
 }
 
-object DynamicOperatorCallCase : FunctionCallCase {
+object DynamicOperatorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
             callInfo.callableDescriptor.isDynamic() &&
             callInfo.resolvedCall.getCall().getCallElement() let {
