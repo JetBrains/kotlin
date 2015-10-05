@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import java.io.File
@@ -61,8 +62,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldDisableKotlinInternalClasses = false
     private var oldRenderDelegatedProperties = false
 
-    protected var evaluationContext: EvaluationContextImpl? = null
-    protected var debuggerContext: DebuggerContextImpl? = null
+    protected lateinit var evaluationContext: EvaluationContextImpl
+    protected lateinit var debuggerContext: DebuggerContextImpl
 
     override fun initApplication() {
         super.initApplication()
@@ -72,9 +73,6 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     override fun tearDown() {
         super.tearDown()
         restoreDefaultSettings()
-
-        evaluationContext = null
-        debuggerContext = null
     }
 
     protected fun configureSettings(fileText: String) {
@@ -194,7 +192,13 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
         }
         else {
-            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
+            try {
+                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
+            }
+            catch(e: IndexOutOfBoundsException) {
+                throw AssertionError("Couldn't find smart step into command at: \n" +
+                                     runReadAction { debuggerContext.sourcePosition.elementAt.getElementTextWithContext() })
+            }
         }
     }
 
