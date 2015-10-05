@@ -134,9 +134,6 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         val argumentList = context.parameterOwner as? JetValueArgumentList ?: return false
 
-        val valueParameters = itemToShow.valueParameters
-        val valueArguments = argumentList.arguments
-
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val callElement = argumentList.parent as? JetCallElement ?: return false
         val call = callElement.getCall(bindingContext) ?: return false
@@ -147,11 +144,12 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val (argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
                 call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
 
-        val usedParameterIndices = HashSet<Int>()
-        var namedMode = false
         var boldStartOffset = -1
         var boldEndOffset = -1
         val text = StringBuilder {
+            val usedParameterIndices = HashSet<Int>()
+            var namedMode = false
+
             fun appendParameter(parameter: ValueParameterDescriptor) {
                 if (length() > 0) {
                     append(", ")
@@ -169,7 +167,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 }
             }
 
-            for (argument in valueArguments) {
+            for (argument in argumentList.arguments) {
                 val parameter = argumentToParameter(argument) ?: continue
                 if (!usedParameterIndices.add(parameter.index)) continue
 
@@ -180,19 +178,17 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 appendParameter(parameter)
             }
 
-            for (parameter in valueParameters) {
+            for (parameter in itemToShow.valueParameters) {
                 if (parameter.index !in usedParameterIndices) {
                     appendParameter(parameter)
                 }
             }
 
-            if (valueParameters.size() == 0) {
+            if (length() == 0) {
                 append(CodeInsightBundle.message("parameter.info.no.parameters"))
             }
         }.toString()
 
-
-        assert(!text.isEmpty()) { "A message about 'no parameters' or some parameters should be present: $itemToShow" }
 
         val color = if (isResolvedToDescriptor(argumentList, itemToShow, bindingContext))
             GREEN_BACKGROUND
