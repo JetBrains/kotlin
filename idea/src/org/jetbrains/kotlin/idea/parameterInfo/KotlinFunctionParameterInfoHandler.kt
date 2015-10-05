@@ -178,7 +178,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }
 
         val owner = context.parameterOwner
-        val bindingContext = (owner as JetElement).analyze(BodyResolveMode.FULL)
+        val bindingContext = (owner as JetElement).analyze(BodyResolveMode.PARTIAL)
 
         val text = StringBuilder {
             for (i in valueParameters.indices) {
@@ -194,12 +194,12 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
                 if (!namedMode) {
                     if (valueArguments.size() > i) {
-                        val argument = valueArguments.get(i)
+                        val argument = valueArguments[i]
                         if (argument.isNamed()) {
                             namedMode = true
                         }
                         else {
-                            val param = valueParameters.get(i)
+                            val param = valueParameters[i]
                             append(renderParameter(param, false))
                             if (i <= currentParameterIndex && !isArgumentTypeValid(bindingContext, argument, param)) {
                                 isGrey = true
@@ -208,7 +208,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                         }
                     }
                     else {
-                        val param = valueParameters.get(i)
+                        val param = valueParameters[i]
                         append(renderParameter(param, false))
                     }
                 }
@@ -216,11 +216,10 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 if (namedMode) {
                     var takeAnyArgument = true
                     if (valueArguments.size() > i) {
-                        val argument = valueArguments.get(i)
+                        val argument = valueArguments[i]
                         if (argument.isNamed()) {
-                            for (j in valueParameters.indices) {
+                            for ((j, param) in valueParameters.withIndex()) {
                                 val referenceExpression = argument.getArgumentName()!!.getReferenceExpression()
-                                val param = valueParameters[j]
                                 if (!usedIndexes[j] && param.name == referenceExpression.getReferencedNameAsName()) {
                                     takeAnyArgument = false
                                     usedIndexes[j] = true
@@ -239,8 +238,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                             isGrey = true
                         }
 
-                        for (j in valueParameters.indices) {
-                            val param = valueParameters.get(j)
+                        for ((j, param) in valueParameters.withIndex()) {
                             if (!usedIndexes[j]) {
                                 usedIndexes[j] = true
                                 append(renderParameter(param, true))
