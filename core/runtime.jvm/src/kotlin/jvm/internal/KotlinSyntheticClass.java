@@ -28,20 +28,4 @@ public @interface KotlinSyntheticClass {
     int abiVersion();
 
     int[] version() default {};
-
-    @Deprecated
-    Kind kind() default Kind.LOCAL_FUNCTION;
-
-    @Deprecated
-    enum Kind {
-        PACKAGE_PART,
-        TRAIT_IMPL,
-        LOCAL_TRAIT_IMPL,
-        SAM_WRAPPER,
-        SAM_LAMBDA,
-        CALLABLE_REFERENCE_WRAPPER,
-        LOCAL_FUNCTION,
-        ANONYMOUS_FUNCTION,
-        WHEN_ON_ENUM_MAPPINGS,
-    }
 }

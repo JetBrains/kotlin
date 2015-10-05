@@ -32,19 +32,4 @@ public @interface KotlinClass {
     String[] data();
 
     String[] strings();
-
-    @Deprecated
-    Kind kind() default Kind.CLASS;
-
-    @Deprecated
-    enum Kind {
-        CLASS,
-
-        /**
-         * A class has kind LOCAL_CLASS if and only if it's not an anonymous object and its first non-class container is not a package.
-         */
-        LOCAL_CLASS,
-
-        ANONYMOUS_OBJECT,
-    }
 }

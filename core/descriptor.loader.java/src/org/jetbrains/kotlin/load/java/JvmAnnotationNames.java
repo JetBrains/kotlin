@@ -46,7 +46,6 @@ public final class JvmAnnotationNames {
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
 
     public static final String VERSION_FIELD_NAME = "version";
-    public static final String KIND_FIELD_NAME = "kind";
     public static final String FILE_PART_CLASS_NAMES_FIELD_NAME = "filePartClassNames";
     public static final String MULTIFILE_CLASS_NAME_FIELD_NAME = "multifileClassName";
     public static final String DATA_FIELD_NAME = "data";
@@ -72,9 +71,6 @@ public final class JvmAnnotationNames {
 
     public static class KotlinSyntheticClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
-        public static final ClassId KIND_CLASS_ID =
-                ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
-        public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
     }
 
     public static final String OLD_ABI_VERSION_FIELD_NAME = "abiVersion";
