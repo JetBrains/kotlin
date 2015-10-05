@@ -260,7 +260,7 @@ class GenericCandidateResolver(
                 return
             }
         }
-        val expectedTypeWithoutReturnType = if (hasExpectedReturnType) replaceReturnTypeByUnknown(expectedType) else expectedType
+        val expectedTypeWithoutReturnType = replaceReturnTypeByUnknown(expectedType)
         val newContext = context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
