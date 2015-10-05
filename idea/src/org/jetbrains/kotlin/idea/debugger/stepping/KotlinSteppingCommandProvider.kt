@@ -51,13 +51,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null || suspendContext.isResumed) return null
 
-        val location = computeInManagerThread(suspendContext) {
-            it.safeFrameProxy?.location()
-        } ?: return null
-
-        val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
-        val computedReferenceType = location.declaringType() ?: return null
-
+        val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition ?: return null
         val file = sourcePosition.file as? JetFile ?: return null
 
         val inlineFunctionCalls = getInlineFunctionCallsIfAny(sourcePosition)
@@ -68,6 +62,12 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         if (inlinedArguments.any { it.shouldNotUseStepOver(sourcePosition.elementAt) }) {
             return null
         }
+
+        val location = computeInManagerThread(suspendContext) {
+            it.safeFrameProxy?.location()
+        } ?: return null
+
+        val computedReferenceType = location.declaringType() ?: return null
 
         val additionalElementsToSkip = sourcePosition.elementAt.getAdditionalElementsToSkip()
 
@@ -184,26 +184,30 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     override fun getStepOutCommand(suspendContext: SuspendContextImpl?, stepSize: Int): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null || suspendContext.isResumed) return null
 
+        val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition ?: return null
+        val file = sourcePosition.file as? JetFile ?: return null
+
+        val lineStartOffset = file.getLineStartOffset(sourcePosition.line) ?: return null
+
+        val inlineFunctions = getInlineFunctionsIfAny(file, lineStartOffset)
+        val inlinedArgument = getInlineArgumentIfAny(file, lineStartOffset)
+
+        if (inlineFunctions.isEmpty() && inlinedArgument == null) return null
+
         val location = computeInManagerThread(suspendContext) {
             it.safeFrameProxy?.location()
         } ?: return null
 
-        val sourcePosition = suspendContext.debugProcess.positionManager.getSourcePosition(location) ?: return null
         val computedReferenceType = location.declaringType() ?: return null
 
         val locations = computedReferenceType.allLineLocations()
-
-        val file = sourcePosition.file as? JetFile ?: return null
-        val lineStartOffset = file.getLineStartOffset(sourcePosition.line) ?: return null
         val nextLineLocations = locations.dropWhile { it.lineNumber() != location.lineNumber() }.filter { it.method() == location.method() }
 
-        val inlineFunction = getInlineFunctionsIfAny(file, lineStartOffset)
-        if (inlineFunction.isNotEmpty()) {
-            val xPosition = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunction) ?: return null
+        if (inlineFunctions.isNotEmpty()) {
+            val xPosition = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunctions) ?: return null
             return suspendContext.debugProcess.createRunToCursorCommand(suspendContext, xPosition, true)
         }
 
-        val inlinedArgument = getInlineArgumentIfAny(file, lineStartOffset)
         if (inlinedArgument != null) {
             val xPosition = suspendContext.getXPositionForStepOutFromInlinedArgument(nextLineLocations, inlinedArgument) ?: return null
             return suspendContext.debugProcess.createRunToCursorCommand(suspendContext, xPosition, true)
