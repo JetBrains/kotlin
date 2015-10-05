@@ -10165,7 +10165,7 @@ public fun ShortArray.asSequence(): Sequence<Short> {
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.asList(): List<T> {
-    return Arrays.asList(*this)
+    return ArraysUtilJVM.asList(this)
 }
 
 /**
