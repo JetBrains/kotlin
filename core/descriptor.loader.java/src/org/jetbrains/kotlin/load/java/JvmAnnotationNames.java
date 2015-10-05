@@ -77,19 +77,6 @@ public final class JvmAnnotationNames {
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
     }
 
-    @Deprecated
-    public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");
-    @Deprecated
-    public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
-    @Deprecated
-    public static final FqName OLD_KOTLIN_CLASS = new FqName("jet.KotlinClass");
-    @Deprecated
-    public static final FqName OLD_KOTLIN_PACKAGE = new FqName("jet.KotlinPackage");
-    @Deprecated
-    public static final FqName OLD_KOTLIN_PACKAGE_FRAGMENT = new FqName("jet.KotlinPackageFragment");
-    @Deprecated
-    public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
-
     public static final String OLD_ABI_VERSION_FIELD_NAME = "abiVersion";
 
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations

@@ -37,7 +37,6 @@ import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
     private static final Map<JvmClassName, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
-    private static final Map<JvmClassName, KotlinClassHeader.Kind> OLD_DEPRECATED_ANNOTATIONS_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
 
     static {
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
@@ -46,19 +45,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS), MULTIFILE_CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_MULTIFILE_CLASS_PART), MULTIFILE_CLASS_PART);
         HEADER_KINDS.put(KotlinSyntheticClass.CLASS_NAME, SYNTHETIC_CLASS);
-
-        initOldAnnotations();
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void initOldAnnotations() {
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION), CLASS);
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION),
-                                             KotlinClassHeader.Kind.PACKAGE_FACADE);
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_CLASS), CLASS);
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE), PACKAGE_FACADE);
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE_FRAGMENT), SYNTHETIC_CLASS);
-        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_TRAIT_IMPL), SYNTHETIC_CLASS);
     }
 
     private BinaryVersion version = AbiVersionUtil.INVALID_VERSION;
@@ -139,11 +125,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 default:
                     return null;
             }
-        }
-
-        KotlinClassHeader.Kind oldAnnotationKind = OLD_DEPRECATED_ANNOTATIONS_KINDS.get(annotation);
-        if (oldAnnotationKind != null) {
-            headerKind = oldAnnotationKind;
         }
 
         return null;
