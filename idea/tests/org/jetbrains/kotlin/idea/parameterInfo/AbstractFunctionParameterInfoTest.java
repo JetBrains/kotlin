@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.idea.parameterInfo;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import kotlin.Pair;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -64,7 +62,7 @@ public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsight
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolutionFacade>)item, parameterInfoUIContext);
+            parameterInfoHandler.updateUI((FunctionDescriptor)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

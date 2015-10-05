@@ -22,14 +22,12 @@ import com.intellij.lang.parameterInfo.*
 import com.intellij.psi.PsiElement
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.isVisible
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -47,7 +45,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.awt.Color
 import java.util.*
 
-class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Pair<FunctionDescriptor, ResolutionFacade>, JetValueArgument> {
+class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, FunctionDescriptor, JetValueArgument> {
 
     override fun getActualParameters(arguments: JetValueArgumentList) = arguments.arguments.toTypedArray()
 
@@ -65,7 +63,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
     override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
 
-    override fun getParametersForDocumentation(p: Pair<FunctionDescriptor, ResolutionFacade>, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
+    override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
 
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): JetValueArgumentList? {
         return findCall(context)
@@ -95,7 +93,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
     override fun tracksParameterIndex() = true
 
-    override fun updateUI(itemToShow: Pair<FunctionDescriptor, ResolutionFacade>, context: ParameterInfoUIContext) {
+    override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context.parameterOwner == null || !context.parameterOwner.isValid) {
             context.isUIComponentEnabled = false
@@ -108,17 +106,14 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             return
         }
 
-        val functionDescriptor = itemToShow.first
-        val resolutionFacade = itemToShow.second
-
-        val valueParameters = functionDescriptor.valueParameters
+        val valueParameters = itemToShow.valueParameters
         val valueArguments = parameterOwner.arguments
 
         val currentParameterIndex = context.currentParameterIndex
         var boldStartOffset = -1
         var boldEndOffset = -1
         var isGrey = false
-        val isDeprecated = KotlinBuiltIns.isDeprecated(functionDescriptor)
+        val isDeprecated = KotlinBuiltIns.isDeprecated(itemToShow)
 
         val usedIndexes = BooleanArray(valueParameters.size())
         Arrays.fill(usedIndexes, false)
@@ -130,7 +125,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }
 
         val owner = context.parameterOwner
-        val bindingContext = resolutionFacade.analyze(owner as JetElement, BodyResolveMode.FULL)
+        val bindingContext = (owner as JetElement).analyze(BodyResolveMode.FULL)
 
         val text = StringBuilder {
             for (i in valueParameters.indices) {
@@ -213,9 +208,9 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         }.toString()
 
 
-        assert(!text.isEmpty()) { "A message about 'no parameters' or some parameters should be present: $functionDescriptor" }
+        assert(!text.isEmpty()) { "A message about 'no parameters' or some parameters should be present: $itemToShow" }
 
-        val color = if (isResolvedToDescriptor(parameterOwner, functionDescriptor, bindingContext))
+        val color = if (isResolvedToDescriptor(parameterOwner, itemToShow, bindingContext))
             GREEN_BACKGROUND
         else
             context.defaultParameterColor
@@ -325,21 +320,21 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter)
                     .getReferenceVariants(callNameExpression, descriptorKindFilter, { it == refName })
 
-            val itemsToShow = ArrayList<Pair<DeclarationDescriptor, ResolutionFacade>>()
+            val itemsToShow = ArrayList<DeclarationDescriptor>()
             for (variant in variants) {
                 if (variant is FunctionDescriptor) {
                     //todo: renamed functions?
-                    itemsToShow.add(Pair(variant, resolutionFacade))
+                    itemsToShow.add(variant)
                 }
                 else if (variant is ClassDescriptor) {
                     //todo: renamed classes?
                     for (constructorDescriptor in variant.constructors) {
-                        itemsToShow.add(Pair(constructorDescriptor, resolutionFacade))
+                        itemsToShow.add(constructorDescriptor)
                     }
                 }
             }
 
-            context.itemsToShow = ArrayUtil.toObjectArray(itemsToShow)
+            context.itemsToShow = itemsToShow.toArray()
             return argumentList
         }
 
