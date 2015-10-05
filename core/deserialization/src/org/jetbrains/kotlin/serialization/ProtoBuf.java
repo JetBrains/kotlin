@@ -6729,28 +6729,28 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Class> {
 
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -7177,17 +7177,17 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -7196,13 +7196,13 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -7472,7 +7472,7 @@ public final class ProtoBuf {
     private int enumEntryMemoizedSerializedSize = -1;
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       fqName_ = 0;
       companionObjectName_ = 0;
       typeParameter_ = java.util.Collections.emptyList();
@@ -7734,7 +7734,7 @@ public final class ProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         fqName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -7974,16 +7974,16 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 0];
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -7992,13 +7992,13 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -8007,13 +8007,13 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -8025,20 +8025,20 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         
         return this;
       }
@@ -9592,9 +9592,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Constructor> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -9605,7 +9605,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -9717,11 +9717,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -9734,7 +9734,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -9784,7 +9784,7 @@ public final class ProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       valueParameter_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -9926,7 +9926,7 @@ public final class ProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         valueParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -10018,10 +10018,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10034,7 +10034,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10047,7 +10047,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10063,7 +10063,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10074,7 +10074,7 @@ public final class ProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         
         return this;
       }
@@ -10219,9 +10219,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -10235,7 +10235,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -10437,11 +10437,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -10457,7 +10457,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -10594,7 +10594,7 @@ public final class ProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -10792,7 +10792,7 @@ public final class ProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -10952,10 +10952,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10971,7 +10971,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -10987,7 +10987,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -11006,7 +11006,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -11020,7 +11020,7 @@ public final class ProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         
         return this;
       }
@@ -11445,9 +11445,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -11465,7 +11465,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -11714,11 +11714,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -11738,7 +11738,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -11907,7 +11907,7 @@ public final class ProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 262;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -12121,7 +12121,7 @@ public final class ProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 262;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -12291,10 +12291,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 262];
+      private int flags_ = 262;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -12314,7 +12314,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -12334,7 +12334,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -12357,7 +12357,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -12375,7 +12375,7 @@ public final class ProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 262;
         
         return this;
       }
@@ -12834,9 +12834,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<ValueParameter> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -12846,7 +12846,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -12992,11 +12992,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -13008,7 +13008,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -13353,10 +13353,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
+      // optional int32 flags = 1 [default = 0];
       private int flags_ ;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -13368,7 +13368,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -13380,7 +13380,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -13395,7 +13395,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *

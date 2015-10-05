@@ -156,13 +156,13 @@ message Class {
   }
 
   /*
+    hasAnnotations
     Visibility
     Modality
-    hasAnnotations
     ClassKind
     isInner
   */
-  optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
+  optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
   required int32 fq_name = 3 [(fq_name_id_in_table) = true];
 
@@ -195,7 +195,7 @@ message Constructor {
     Visibility
     isSecondary
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 6];
 
   repeated ValueParameter value_parameter = 2;
 
@@ -211,7 +211,7 @@ message Function {
     isOperator
     isInfix
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 6];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -239,7 +239,7 @@ message Property {
     lateinit
     hasConstant
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 262 /* public (6) final property with getter (256) */];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -268,7 +268,7 @@ message ValueParameter {
     declaresDefault
     hasAnnotations
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 0];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -281,20 +281,20 @@ message ValueParameter {
 
 enum Modality {
   // 2 bits
-  FINAL = 0x00;
-  OPEN = 0x01;
-  ABSTRACT = 0x02;
-  SEALED = 0x03;
+  FINAL = 0;
+  OPEN = 1;
+  ABSTRACT = 2;
+  SEALED = 3;
 }
 
 enum Visibility {
   // 3 bits
-  INTERNAL = 0x00;
-  PRIVATE = 0x01;
-  PROTECTED = 0x02;
-  PUBLIC = 0x03;
-  PRIVATE_TO_THIS = 0x04;
-  LOCAL = 0x05;
+  INTERNAL = 0;
+  PRIVATE = 1;
+  PROTECTED = 2;
+  PUBLIC = 3;
+  PRIVATE_TO_THIS = 4;
+  LOCAL = 5;
 }
 
 enum MemberKind {

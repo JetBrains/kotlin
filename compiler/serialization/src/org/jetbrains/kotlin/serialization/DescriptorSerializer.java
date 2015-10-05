@@ -100,7 +100,9 @@ public class DescriptorSerializer {
 
         int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
                                         classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject());
-        builder.setFlags(flags);
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setFqName(getClassId(classDescriptor));
 
@@ -200,18 +202,13 @@ public class DescriptorSerializer {
             }
         }
 
-        builder.setFlags(Flags.getPropertyFlags(
-                hasAnnotations,
-                descriptor.getVisibility(),
-                descriptor.getModality(),
-                descriptor.getKind(),
-                descriptor.isVar(),
-                hasGetter,
-                hasSetter,
-                hasConstant,
-                isConst,
-                lateInit
-        ));
+        int flags = Flags.getPropertyFlags(
+                hasAnnotations, descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(), descriptor.isVar(),
+                hasGetter, hasSetter, hasConstant, isConst, lateInit
+        );
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
@@ -237,14 +234,13 @@ public class DescriptorSerializer {
 
         DescriptorSerializer local = createChildSerializer();
 
-        builder.setFlags(Flags.getFunctionFlags(
-                hasAnnotations(descriptor),
-                descriptor.getVisibility(),
-                descriptor.getModality(),
-                descriptor.getKind(),
-                descriptor.isOperator(),
-                descriptor.isInfix()
-        ));
+        int flags = Flags.getFunctionFlags(
+                hasAnnotations(descriptor), descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(),
+                descriptor.isOperator(), descriptor.isInfix()
+        );
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
@@ -275,11 +271,10 @@ public class DescriptorSerializer {
 
         DescriptorSerializer local = createChildSerializer();
 
-        builder.setFlags(Flags.getConstructorFlags(
-                hasAnnotations(descriptor),
-                descriptor.getVisibility(),
-                !descriptor.isPrimary()
-        ));
+        int flags = Flags.getConstructorFlags(hasAnnotations(descriptor), descriptor.getVisibility(), !descriptor.isPrimary());
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
@@ -304,7 +299,7 @@ public class DescriptorSerializer {
         ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
 
         int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue());
-        if (flags != 0) {
+        if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }
 
