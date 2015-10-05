@@ -149,27 +149,33 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         doTest(fileName);
     }
 
-    @TestMetadata("SubstituteFromParameters1.kt")
-    public void testSubstituteFromParameters1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters1.kt");
+    @TestMetadata("SubstituteFromArguments1.kt")
+    public void testSubstituteFromArguments1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromArguments1.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("SubstituteFromParameters2.kt")
-    public void testSubstituteFromParameters2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters2.kt");
+    @TestMetadata("SubstituteFromArguments2.kt")
+    public void testSubstituteFromArguments2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromArguments2.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("SubstituteFromParameters3.kt")
-    public void testSubstituteFromParameters3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters3.kt");
+    @TestMetadata("SubstituteFromArguments3.kt")
+    public void testSubstituteFromArguments3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromArguments3.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("SubstituteFromParameters4.kt")
-    public void testSubstituteFromParameters4() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters4.kt");
+    @TestMetadata("SubstituteFromArguments4.kt")
+    public void testSubstituteFromArguments4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromArguments4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteFromArgumentsOnTyping.kt")
+    public void testSubstituteFromArgumentsOnTyping() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromArgumentsOnTyping.kt");
         doTest(fileName);
     }
 
@@ -188,6 +194,12 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
     @TestMetadata("TwoFunctionsGrey.kt")
     public void testTwoFunctionsGrey() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/TwoFunctionsGrey.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UpdateOnTyping.kt")
+    public void testUpdateOnTyping() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/UpdateOnTyping.kt");
         doTest(fileName);
     }
 }

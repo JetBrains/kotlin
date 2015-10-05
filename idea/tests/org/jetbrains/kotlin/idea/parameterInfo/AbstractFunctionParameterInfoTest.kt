@@ -16,14 +16,17 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
 abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCase() {
@@ -50,9 +53,19 @@ abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCa
         val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
         val parameterOwner = parameterInfoHandler.findElementForParameterInfo(mockCreateParameterInfoContext)
 
-        val updateContext = MockUpdateParameterInfoContext(file, myFixture)
+        val textToType = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TYPE:")
+        if (textToType != null) {
+            project.executeWriteCommand("") {
+                val caretModel = myFixture.editor.caretModel
+                val offset = caretModel.offset
+                myFixture.getDocument(file).insertString(offset, textToType)
+                caretModel.moveToOffset(offset + textToType.length())
+            }
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+        }
 
         //to update current parameter index
+        val updateContext = MockUpdateParameterInfoContext(file, myFixture)
         val elementForUpdating = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext)
         if (elementForUpdating != null) {
             parameterInfoHandler.updateParameterInfo(elementForUpdating, updateContext)
