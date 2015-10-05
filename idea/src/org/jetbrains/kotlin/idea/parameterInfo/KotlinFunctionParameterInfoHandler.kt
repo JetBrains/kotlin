@@ -101,7 +101,21 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
     }
 
     override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): JetValueArgumentList? {
-        return findCallAndUpdateContext(context)
+        var element = context.file.findElementAt(context.offset) ?: return null
+        var parent = element.parent
+        while (parent != null && parent !is JetValueArgumentList) {
+            element = element!!.parent
+            parent = parent.parent
+        }
+        if (parent == null) return null
+
+        val argumentList = parent as JetValueArgumentList
+        if (element is JetValueArgument) {
+            val i = argumentList.arguments.indexOf(element)
+            context.setCurrentParameter(i)
+            context.setHighlightedParameter(element)
+        }
+        return argumentList
     }
 
     override fun updateParameterInfo(argumentList: JetValueArgumentList, context: UpdateParameterInfoContext) {
@@ -266,24 +280,6 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         private fun getCallNameExpression(argumentList: JetValueArgumentList): JetSimpleNameExpression? {
             return (argumentList.parent as? JetCallElement)?.getCallNameExpression()
-        }
-
-        private fun findCallAndUpdateContext(context: UpdateParameterInfoContext): JetValueArgumentList? {
-            var element = context.file.findElementAt(context.offset) ?: return null
-            var parent = element.parent
-            while (parent != null && parent !is JetValueArgumentList) {
-                element = element!!.parent
-                parent = parent.parent
-            }
-            if (parent == null) return null
-
-            val argumentList = parent as JetValueArgumentList
-            if (element is JetValueArgument) {
-                val i = argumentList.arguments.indexOf(element)
-                context.setCurrentParameter(i)
-                context.setHighlightedParameter(element)
-            }
-            return argumentList
         }
 
         private data class SignatureInfo(
