@@ -27,7 +27,7 @@ import java.io.PrintStream
 public abstract class KotlinCompilerBaseTask : Task() {
     protected abstract val compilerFqName: String
 
-    protected val args: MutableList<String> = arrayListOf()
+    public val args: MutableList<String> = arrayListOf()
 
     public var src: Path? = null
     public var output: File? = null
@@ -40,7 +40,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
 
     public val additionalArguments: MutableList<Commandline.Argument> = arrayListOf()
 
-    internal var exitCode: Int? = null
+    public var exitCode: Int? = null
 
     public fun createSrc(): Path {
         val srcPath = src
