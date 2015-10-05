@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -105,20 +104,16 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val itemsToShow = ArrayList<DeclarationDescriptor>()
-        for (candidate in results.allCandidates!!) {
-            val status = candidate.status
-            if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
+        val descriptors = results.allCandidates!!
+                .filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
+                .filter {
+                    val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
+                    Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
 
-            var descriptor = candidate.resultingDescriptor
+                }
+                .map { it.resultingDescriptor }
 
-            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.dispatchReceiver, bindingContext)
-            if (!Visibilities.isVisible(thisReceiver, descriptor, inDescriptor)) continue
-
-            itemsToShow.add(descriptor)
-        }
-
-        context.itemsToShow = itemsToShow.toArray()
+        context.itemsToShow = descriptors.toTypedArray()
         return argumentList
     }
 
