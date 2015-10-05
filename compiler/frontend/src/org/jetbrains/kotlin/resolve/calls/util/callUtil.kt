@@ -47,6 +47,9 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boo
     return !parameterToArgumentMap.keySet().containsAll(getResultingDescriptor().getValueParameters())
 }
 
+public fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped()
+        = call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
+
 public fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
     val resolvedValueArgument = getValueArguments()[parameter]
     if (resolvedValueArgument == null) return true

@@ -7,5 +7,5 @@ fun f(c: C) {
     c.foo(<caret>1)
 }
 /*
-Text: (<no parameters>), Disabled: true, Strikeout: false, Green: true
+Text: (<no parameters>), Disabled: false, Strikeout: false, Green: true
 */
