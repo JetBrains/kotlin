@@ -1080,6 +1080,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(d
 /**
  * Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection.
  */
+@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", ReplaceWith("filterNotNull().map(transform)"))
 public inline fun <T : Any, R> Iterable<T?>.mapNotNull(transform: (T) -> R): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
 }
@@ -1088,6 +1089,7 @@ public inline fun <T : Any, R> Iterable<T?>.mapNotNull(transform: (T) -> R): Lis
  * Appends transformed non-null elements of original collection using the given [transform] function
  * to the given [destination].
  */
+@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().mapTo(destination) {} instead.", ReplaceWith("filterNotNull().mapTo(destination, transform)"))
 public inline fun <T : Any, R, C : MutableCollection<in R>> Iterable<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
