@@ -8557,28 +8557,28 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Class> {
 
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -9102,17 +9102,17 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -9121,13 +9121,13 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -9397,7 +9397,7 @@ public final class DebugProtoBuf {
     private int enumEntryMemoizedSerializedSize = -1;
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       fqName_ = 0;
       companionObjectName_ = 0;
       typeParameter_ = java.util.Collections.emptyList();
@@ -9691,7 +9691,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         fqName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -10067,16 +10067,16 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 0];
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -10085,13 +10085,13 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -10100,13 +10100,13 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -10118,20 +10118,20 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -12624,9 +12624,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Constructor> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -12637,7 +12637,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -12780,11 +12780,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -12797,7 +12797,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -12847,7 +12847,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       valueParameter_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -13017,7 +13017,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (valueParameterBuilder_ == null) {
           valueParameter_ = java.util.Collections.emptyList();
@@ -13149,10 +13149,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -13165,7 +13165,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -13178,7 +13178,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -13194,7 +13194,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -13205,7 +13205,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -13465,9 +13465,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -13481,7 +13481,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -13732,11 +13732,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -13752,7 +13752,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -13901,7 +13901,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -14130,7 +14130,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -14370,10 +14370,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -14389,7 +14389,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -14405,7 +14405,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -14424,7 +14424,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -14438,7 +14438,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -15205,9 +15205,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -15225,7 +15225,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -15517,11 +15517,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -15541,7 +15541,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -15728,7 +15728,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 262;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -15973,7 +15973,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 262;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -16207,10 +16207,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 262];
+      private int flags_ = 262;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -16230,7 +16230,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -16250,7 +16250,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -16273,7 +16273,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -16291,7 +16291,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 262;
         onChanged();
         return this;
       }
@@ -17033,9 +17033,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<ValueParameter> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -17045,7 +17045,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -17220,11 +17220,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -17236,7 +17236,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -17654,10 +17654,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
+      // optional int32 flags = 1 [default = 0];
       private int flags_ ;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -17669,7 +17669,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -17681,7 +17681,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -17696,7 +17696,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -18123,7 +18123,7 @@ public final class DebugProtoBuf {
       "eParameter.Variance:\003INV\022=\n\013upper_bound\030" +
       "\005 \003(\0132(.org.jetbrains.kotlin.serializati" +
       "on.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003",
-      "INV\020\002\"\343\004\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\025\n\007fq_" +
+      "INV\020\002\"\343\004\n\005Class\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_" +
       "name\030\003 \002(\005B\004\220\265\030\001\022#\n\025companion_object_nam" +
       "e\030\004 \001(\005B\004\210\265\030\001\022I\n\016type_parameter\030\005 \003(\01321." +
       "org.jetbrains.kotlin.serialization.TypeP" +
@@ -18142,39 +18142,39 @@ public final class DebugProtoBuf {
       "ion\030\003 \003(\0132,.org.jetbrains.kotlin.seriali" +
       "zation.Function\022>\n\010property\030\004 \003(\0132,.org." +
       "jetbrains.kotlin.serialization.Property*" +
-      "\005\010d\020\310\001\"p\n\013Constructor\022\r\n\005flags\030\001 \001(\005\022K\n\017",
-      "value_parameter\030\002 \003(\01322.org.jetbrains.ko" +
-      "tlin.serialization.ValueParameter*\005\010d\020\310\001" +
-      "\"\314\002\n\010Function\022\r\n\005flags\030\001 \001(\005\022\022\n\004name\030\002 \002" +
-      "(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \002(\0132(.org.jetb" +
-      "rains.kotlin.serialization.Type\022I\n\016type_" +
-      "parameter\030\004 \003(\01321.org.jetbrains.kotlin.s" +
-      "erialization.TypeParameter\022?\n\rreceiver_t" +
-      "ype\030\005 \001(\0132(.org.jetbrains.kotlin.seriali" +
-      "zation.Type\022K\n\017value_parameter\030\006 \003(\01322.o" +
-      "rg.jetbrains.kotlin.serialization.ValueP",
-      "arameter*\005\010d\020\310\001\"\377\002\n\010Property\022\r\n\005flags\030\001 " +
-      "\001(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003" +
-      " \002(\0132(.org.jetbrains.kotlin.serializatio" +
-      "n.Type\022I\n\016type_parameter\030\004 \003(\01321.org.jet" +
-      "brains.kotlin.serialization.TypeParamete" +
-      "r\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbrains" +
-      ".kotlin.serialization.Type\022R\n\026setter_val" +
-      "ue_parameter\030\006 \001(\01322.org.jetbrains.kotli" +
-      "n.serialization.ValueParameter\022\024\n\014getter" +
-      "_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005*\005\010d\020\310",
-      "\001\"\271\001\n\016ValueParameter\022\r\n\005flags\030\001 \001(\005\022\022\n\004n" +
-      "ame\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 \002(\0132(.org.jetb" +
-      "rains.kotlin.serialization.Type\022E\n\023varar" +
-      "g_element_type\030\004 \001(\0132(.org.jetbrains.kot" +
-      "lin.serialization.Type*\005\010d\020\310\001*9\n\010Modalit" +
-      "y\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006" +
-      "SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007" +
-      "PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017" +
-      "PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKi" +
-      "nd\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016",
-      "\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDebug" +
-      "ProtoBuf\210\001\000"
+      "\005\010d\020\310\001\"s\n\013Constructor\022\020\n\005flags\030\001 \001(\005:\0016\022",
+      "K\n\017value_parameter\030\002 \003(\01322.org.jetbrains" +
+      ".kotlin.serialization.ValueParameter*\005\010d" +
+      "\020\310\001\"\317\002\n\010Function\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004na" +
+      "me\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \002(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type\022I\n" +
+      "\016type_parameter\030\004 \003(\01321.org.jetbrains.ko" +
+      "tlin.serialization.TypeParameter\022?\n\rrece" +
+      "iver_type\030\005 \001(\0132(.org.jetbrains.kotlin.s" +
+      "erialization.Type\022K\n\017value_parameter\030\006 \003" +
+      "(\01322.org.jetbrains.kotlin.serialization.",
+      "ValueParameter*\005\010d\020\310\001\"\204\003\n\010Property\022\022\n\005fl" +
+      "ags\030\001 \001(\005:\003262\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013re" +
+      "turn_type\030\003 \002(\0132(.org.jetbrains.kotlin.s" +
+      "erialization.Type\022I\n\016type_parameter\030\004 \003(" +
+      "\01321.org.jetbrains.kotlin.serialization.T" +
+      "ypeParameter\022?\n\rreceiver_type\030\005 \001(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type\022R\n" +
+      "\026setter_value_parameter\030\006 \001(\01322.org.jetb" +
+      "rains.kotlin.serialization.ValueParamete" +
+      "r\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014setter_flags\030",
+      "\010 \001(\005*\005\010d\020\310\001\"\274\001\n\016ValueParameter\022\020\n\005flags" +
+      "\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 " +
+      "\002(\0132(.org.jetbrains.kotlin.serialization" +
+      ".Type\022E\n\023vararg_element_type\030\004 \001(\0132(.org" +
+      ".jetbrains.kotlin.serialization.Type*\005\010d" +
+      "\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010" +
+      "ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010" +
+      "INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n" +
+      "\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL" +
+      "\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAK",
+      "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
+      "ZED\020\003B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
