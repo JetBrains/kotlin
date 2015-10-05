@@ -101,18 +101,12 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
     }
 
     override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): JetValueArgumentList? {
-        var element = context.file.findElementAt(context.offset) ?: return null
-        var parent = element.parent
-        while (parent != null && parent !is JetValueArgumentList) {
-            element = element!!.parent
-            parent = parent.parent
-        }
-        if (parent == null) return null
-
-        val argumentList = parent as JetValueArgumentList
-        if (element is JetValueArgument) {
-            val i = argumentList.arguments.indexOf(element)
-            context.setCurrentParameter(i)
+        val element = context.file.findElementAt(context.offset) ?: return null
+        val argumentList = element.getStrictParentOfType<JetValueArgumentList>() ?: return null
+        val argument = element.parents.takeWhile { it != argumentList }.lastOrNull() as? JetValueArgument
+        if (argument != null) {
+            val index = argumentList.arguments.indexOf(element)
+            context.setCurrentParameter(index)
             context.setHighlightedParameter(element)
         }
         return argumentList
