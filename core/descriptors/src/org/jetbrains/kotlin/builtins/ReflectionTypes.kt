@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -60,7 +61,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public fun getKClassType(annotations: Annotations, type: JetType): JetType {
         val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
-            return descriptor.getDefaultType()
+            return descriptor.defaultType
         }
 
         val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
@@ -78,7 +79,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
 
         if (ErrorUtils.isError(classDescriptor)) {
-            return classDescriptor.getDefaultType()
+            return classDescriptor.defaultType
         }
 
         return JetTypeImpl.create(annotations, classDescriptor, false, arguments)
@@ -98,7 +99,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
                 }
 
         if (ErrorUtils.isError(classDescriptor)) {
-            return classDescriptor.getDefaultType()
+            return classDescriptor.defaultType
         }
 
         val arguments = ArrayList<TypeProjection>(2)
@@ -111,31 +112,22 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
 
     companion object {
         public fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
-            val containingPackage = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>())
+            val containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java)
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        private val KCALLABLE_CLASS_NAME = "KCallable"
+        private val K_CALLABLE_FQ_NAME = FqNameUnsafe("kotlin.reflect.KCallable")
 
         public fun isCallableType(type: JetType): Boolean =
-                KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) ||
-                isCallableReflectionType(type)
+                KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) || isKCallableType(type)
 
-        public fun isCallableReflectionType(type: JetType): Boolean =
-                isExactCallableReflectionType(type) ||
-                type.constructor.getSupertypes().any { isCallableReflectionType(it) }
+        private fun isKCallableType(type: JetType): Boolean =
+                isExactKCallableType(type) ||
+                type.constructor.supertypes.any { isKCallableType(it) }
 
-        public fun isExactCallableReflectionType(type: JetType): Boolean {
-            val descriptor = type.getConstructor().getDeclarationDescriptor()
-            if (descriptor is ClassDescriptor) {
-                val fqName = DescriptorUtils.getFqName(descriptor)
-                val parentName = fqName.parent().asString()
-                if (parentName != KOTLIN_REFLECT_FQ_NAME.asString())
-                    return false
-                val shortName = fqName.shortName().asString()
-                return KCALLABLE_CLASS_NAME == shortName
-            }
-            return false
+        private fun isExactKCallableType(type: JetType): Boolean {
+            val descriptor = type.constructor.declarationDescriptor
+            return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == K_CALLABLE_FQ_NAME
         }
     }
 }
