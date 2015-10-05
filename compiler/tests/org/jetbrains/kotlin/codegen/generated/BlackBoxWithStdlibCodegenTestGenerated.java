@@ -1165,12 +1165,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("overriddenProperty.kt")
-        public void testOverriddenProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/overriddenProperty.kt");
-            doTestWithStdlib(fileName);
-        }
-
         @TestMetadata("privateValParams.kt")
         public void testPrivateValParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/privateValParams.kt");
@@ -1206,12 +1200,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("constructorWithDefaultParam.kt")
             public void testConstructorWithDefaultParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/copy/constructorWithDefaultParam.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("copyInNestedDataClass.kt")
-            public void testCopyInNestedDataClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/copy/copyInNestedDataClass.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -1275,12 +1263,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("genericarray.kt")
             public void testGenericarray() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/equals/genericarray.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("instanceof.kt")
-            public void testInstanceof() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/equals/instanceof.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -1437,12 +1419,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("mixedParams.kt")
             public void testMixedParams() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/mixedParams.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("overriddenProperty.kt")
-            public void testOverriddenProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/overriddenProperty.kt");
                 doTestWithStdlib(fileName);
             }
 

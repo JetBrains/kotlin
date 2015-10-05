@@ -3324,12 +3324,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClasses"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
-            @TestMetadata("componentFunctionInSubClass.kt")
-            public void testComponentFunctionInSubClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentFunctionInSubClass.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("componentNamedComponent1.kt")
             public void testComponentNamedComponent1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");

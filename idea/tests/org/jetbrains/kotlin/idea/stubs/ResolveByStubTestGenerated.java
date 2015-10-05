@@ -1033,18 +1033,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
-        @TestMetadata("OpenDataClass.kt")
-        public void testOpenDataClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenDataClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("OpenPropertyFinalComponent.kt")
-        public void testOpenPropertyFinalComponent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenPropertyFinalComponent.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ParamNameSameToField.kt")
         public void testParamNameSameToField() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/ParamNameSameToField.kt");

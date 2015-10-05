@@ -2,7 +2,7 @@ interface Id<T> {
     val id: T
 }
 
-open data class Actor (
+data class Actor (
         id: Int,
         val firstName: String,
         val lastName: String
