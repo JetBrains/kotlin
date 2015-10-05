@@ -141,8 +141,11 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val callElement = argumentList.parent as? JetCallElement ?: return false
         val call = callElement.getCall(bindingContext) ?: return false
 
+        val currentParameterIndex = context.currentParameterIndex
+        if (currentParameterIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
+
         val (argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
-                call, itemToShow, context.currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
+                call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
 
         val usedParameterIndices = HashSet<Int>()
         var namedMode = false
