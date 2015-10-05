@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -42,7 +42,7 @@ open public class KotlinLightMethodForDeclaration(
     private val paramsList: CachedValue<PsiParameterList> by Delegates.blockingLazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiParameterList>({
-            val parameterBuilder = LightParameterListBuilder(getManager(), JetLanguage.INSTANCE, this)
+            val parameterBuilder = LightParameterListBuilder(getManager(), KotlinLanguage.INSTANCE, this)
 
             for ((index, parameter) in delegate.getParameterList().getParameters().withIndex()) {
                 parameterBuilder.addParameter(KotlinLightParameter(parameter, index, this))
@@ -113,7 +113,7 @@ open public class KotlinLightMethodForDeclaration(
 
     override fun getUseScope(): SearchScope = origin.getUseScope()
 
-    override fun getLanguage(): Language = JetLanguage.INSTANCE
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
     override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
         return getTypeParameters().all { processor.execute(it, state) }

@@ -32,7 +32,7 @@ import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -145,7 +145,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
 
         Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
         if (rightMargin != null) {
-            codeStyleSettings.setRightMargin(JetLanguage.INSTANCE, rightMargin);
+            codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
         }
 
         SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);

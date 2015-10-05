@@ -25,19 +25,19 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 
 public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
     @Override
     public String getConfigurableDisplayName() {
-        return JetLanguage.NAME;
+        return KotlinLanguage.NAME;
     }
 
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @Override
@@ -48,10 +48,10 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @NotNull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, JetLanguage.NAME) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, KotlinLanguage.NAME) {
             @Override
             protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
-                return new TabbedLanguageCodeStylePanel(JetLanguage.INSTANCE, getCurrentSettings(), settings) {
+                return new TabbedLanguageCodeStylePanel(KotlinLanguage.INSTANCE, getCurrentSettings(), settings) {
                     @Override
                     protected void initTabs(CodeStyleSettings settings) {
                         // TODO: activate all parent tabs

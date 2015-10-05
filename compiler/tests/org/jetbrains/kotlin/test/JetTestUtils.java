@@ -52,13 +52,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRoot;
 import org.jetbrains.kotlin.config.KotlinSourceRoot;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -406,7 +405,7 @@ public class JetTestUtils {
     public static JetFile createFile(@NotNull @NonNls final String name, @NotNull String text, @NotNull Project project) {
         String shortName = name.substring(name.lastIndexOf('/') + 1);
         shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
-        LightVirtualFile virtualFile = new LightVirtualFile(shortName, JetLanguage.INSTANCE, text) {
+        LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
             @NotNull
             @Override
             public String getPath() {
@@ -418,7 +417,7 @@ public class JetTestUtils {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         //noinspection ConstantConditions
-        return (JetFile) factory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        return (JetFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
     }
 
     public static String doLoadFile(String myFullDataPath, String name) throws IOException {

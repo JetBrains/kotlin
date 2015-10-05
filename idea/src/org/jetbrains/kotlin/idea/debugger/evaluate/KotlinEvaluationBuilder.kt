@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
@@ -508,10 +508,10 @@ private fun PsiElement.createFlexibleTypesFile(): JetFile {
 
 private fun PsiElement.createJetFile(fileName: String, fileText: String): JetFile {
     // Not using JetPsiFactory because we need a virtual file attached to the JetFile
-    val virtualFile = LightVirtualFile(fileName, JetLanguage.INSTANCE, fileText)
+    val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
     virtualFile.charset = CharsetToolkit.UTF8_CHARSET
     val jetFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl)
-            .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+            .trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as JetFile
     jetFile.analysisContext = this
     return jetFile
 }

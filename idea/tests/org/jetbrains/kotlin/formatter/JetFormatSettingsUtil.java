@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.formatter;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightPlatformTestCase;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 
@@ -34,7 +34,7 @@ public class JetFormatSettingsUtil {
     public static SettingsConfigurator createConfigurator(String fileText, CodeStyleSettings settings) {
         return new SettingsConfigurator(fileText,
                                         settings.getCustomSettings(JetCodeStyleSettings.class),
-                                        settings.getCommonSettings(JetLanguage.INSTANCE));
+                                        settings.getCommonSettings(KotlinLanguage.INSTANCE));
     }
 
     public static SettingsConfigurator createConfigurator(String fileText) {

@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetElementImpl;
 
@@ -34,7 +34,7 @@ public class JetNodeType extends IElementType {
     }
 
     public JetNodeType(@NotNull @NonNls String debugName, Class<? extends JetElement> psiClass) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName, KotlinLanguage.INSTANCE);
         try {
             myPsiFactory = psiClass != null ? psiClass.getConstructor(ASTNode.class) : null;
         } catch (NoSuchMethodException e) {

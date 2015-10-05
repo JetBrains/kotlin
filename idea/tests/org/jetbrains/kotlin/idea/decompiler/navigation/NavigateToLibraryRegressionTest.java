@@ -25,7 +25,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
@@ -34,7 +34,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
      */
     public void testRefToStdlib() {
         PsiElement navigationElement = configureAndResolve("fun foo() { <caret>println() }");
-        assertSame(JetLanguage.INSTANCE, navigationElement.getLanguage());
+        assertSame(KotlinLanguage.INSTANCE, navigationElement.getLanguage());
     }
 
     /**
@@ -57,7 +57,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
 
     public void testRefToFunctionWithVararg() {
         PsiElement navigationElement = configureAndResolve("val x = <caret>arrayListOf(\"\", \"\")");
-        assertSame(JetLanguage.INSTANCE, navigationElement.getLanguage());
+        assertSame(KotlinLanguage.INSTANCE, navigationElement.getLanguage());
     }
 
     @NotNull

@@ -25,7 +25,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 
@@ -43,7 +43,7 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
     private final KotlinLightMethod method;
 
     public KotlinLightParameter(final PsiParameter delegate, int index, KotlinLightMethod method) {
-        super(getName(delegate, index), delegate.getType(), method, JetLanguage.INSTANCE);
+        super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
 
         this.delegate = delegate;
         this.index = index;
@@ -122,7 +122,7 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @NotNull

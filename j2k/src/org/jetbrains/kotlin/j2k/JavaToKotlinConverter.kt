@@ -23,7 +23,7 @@ import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.ExternalCodeProcessor
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
@@ -192,7 +192,7 @@ public class JavaToKotlinConverter(
             for ((reference, target, file, processings) in fileRefs.sortBy(ReferenceComparator)) {
                 val processors = when (reference.getElement().getLanguage()) {
                     JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()
-                    JetLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()
+                    KotlinLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()
                     else -> continue@ReferenceLoop
                 }
 

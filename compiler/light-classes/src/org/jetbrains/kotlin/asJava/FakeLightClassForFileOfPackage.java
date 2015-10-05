@@ -24,7 +24,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -93,7 +93,7 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @Override

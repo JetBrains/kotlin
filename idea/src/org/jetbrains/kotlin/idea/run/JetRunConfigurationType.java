@@ -20,7 +20,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetIcons;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public class JetRunConfigurationType extends ConfigurationTypeBase {
     public static JetRunConfigurationType getInstance() {
@@ -28,7 +28,7 @@ public class JetRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public JetRunConfigurationType() {
-        super("JetRunConfigurationType", JetLanguage.NAME, JetLanguage.NAME, JetIcons.LAUNCH);
+        super("JetRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, JetIcons.LAUNCH);
         addFactory(new JetRunConfigurationFactory(this));
     }
 

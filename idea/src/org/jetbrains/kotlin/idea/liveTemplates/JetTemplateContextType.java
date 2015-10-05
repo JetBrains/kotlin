@@ -30,7 +30,7 @@ import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 
@@ -41,7 +41,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
     @Override
     public boolean isInContext(@NotNull PsiFile file, int offset) {
-        if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
+        if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(KotlinLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
             if (element == null) {
                 element = file.findElementAt(offset - 1);
@@ -85,7 +85,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
     public static class Generic extends JetTemplateContextType {
         public Generic() {
-            super("KOTLIN", JetLanguage.NAME, EverywhereContextType.class);
+            super("KOTLIN", KotlinLanguage.NAME, EverywhereContextType.class);
         }
 
         @Override

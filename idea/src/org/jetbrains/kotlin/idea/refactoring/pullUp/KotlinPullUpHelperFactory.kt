@@ -25,7 +25,7 @@ import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.memberPullUp.PullUpHelperFactory
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaClass
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -48,7 +48,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
         if (!data.sourceClass.isInheritor(data.targetClass, true)) return EmptyPullUpHelper
         data.toKotlinPullUpData()?.let { return KotlinPullUpHelper(data, it) }
 
-        if (data.targetClass.language.`is`(JetLanguage.INSTANCE) && data.sourceClass.language.`is`(StdLanguages.JAVA)) {
+        if (data.targetClass.language.`is`(KotlinLanguage.INSTANCE) && data.sourceClass.language.`is`(StdLanguages.JAVA)) {
             return JavaToKotlinPostconversionPullUpHelper(data)
         }
 

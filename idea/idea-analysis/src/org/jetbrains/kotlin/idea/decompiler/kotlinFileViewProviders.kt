@@ -26,13 +26,13 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
 abstract class KotlinClassFileViewProvider(
         manager: PsiManager,
         file: VirtualFile,
-        physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
+        physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
     val content : LockedClearableLazyValue<String> = LockedClearableLazyValue(Any()) {
         val psiFile = createFile(manager.getProject(), file, JetFileType.INSTANCE)
         val text = psiFile?.getText() ?: ""

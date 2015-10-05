@@ -32,7 +32,7 @@ import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -43,7 +43,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     private final ClassInnerStuffCache myInnersCache = new ClassInnerStuffCache(this);
 
     protected KotlinWrappingLightClass(PsiManager manager) {
-        super(manager, JetLanguage.INSTANCE);
+        super(manager, KotlinLanguage.INSTANCE);
     }
 
     @Nullable
@@ -184,7 +184,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     private boolean isTraitFakeOverride(@NotNull JetDeclaration originMethodDeclaration) {

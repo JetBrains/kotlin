@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetParserDefinition;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -272,9 +272,9 @@ public class ReplInterpreter {
         }
         fullText.append(line);
 
-        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + JetParserDefinition.STD_SCRIPT_EXT, JetLanguage.INSTANCE, fullText.toString());
+        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + JetParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString());
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        JetFile psiFile = (JetFile) psiFileFactory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        JetFile psiFile = (JetFile) psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
         assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
 
         DiagnosticMessageHolder errorHolder = createDiagnosticHolder();

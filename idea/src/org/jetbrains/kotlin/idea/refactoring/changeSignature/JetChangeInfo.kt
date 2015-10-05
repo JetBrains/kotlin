@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -148,7 +148,7 @@ public open class JetChangeInfo(
 
     fun isReceiverTypeChanged(): Boolean = receiverParameterInfo?.getTypeText() != methodDescriptor.renderOriginalReceiverType()
 
-    override fun getLanguage(): Language = JetLanguage.INSTANCE
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
     public var propagationTargetUsageInfos: List<UsageInfo> = ArrayList()
         private set
