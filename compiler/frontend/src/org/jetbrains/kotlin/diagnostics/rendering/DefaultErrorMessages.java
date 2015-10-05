@@ -483,6 +483,9 @@ public class DefaultErrorMessages {
         MAP.put(MISSING_CONSTRUCTOR_KEYWORD, "Use 'constructor' keyword after modifiers of primary constructor");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and interfaces");
+
+        MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Placing function type parameters after the function name is deprecated");
+
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 new MultiRenderer<VarianceConflictDiagnosticData>() {
                     @NotNull

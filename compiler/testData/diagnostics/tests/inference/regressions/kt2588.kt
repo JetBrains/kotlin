@@ -10,7 +10,7 @@ interface D
 class B : A, D
 class C : A, D
 
-fun hashSetOf<T>(vararg values: T): HashSet<T> = throw Exception("$values")
+fun <T> hashSetOf(vararg values: T): HashSet<T> = throw Exception("$values")
 
 fun foo(b: MyClass<B>, c: MyClass<C>) {
     val set1 : Set<MyClass<out D>> = hashSetOf(b, c) //type inference expected type mismatch

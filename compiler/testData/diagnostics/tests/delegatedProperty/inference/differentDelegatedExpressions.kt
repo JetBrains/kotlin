@@ -13,9 +13,9 @@ class A(outer: Outer) {
     var f: String by  <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getMyProperty<!>()) <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>-<!> 1
 }
 
-fun foo<A, B>(<!UNUSED_PARAMETER!>a<!>: Any?) = MyProperty<A, B>()
+fun <A, B> foo(<!UNUSED_PARAMETER!>a<!>: Any?) = MyProperty<A, B>()
 
-fun getMyProperty<A, B>() = MyProperty<A, B>()
+fun <A, B> getMyProperty() = MyProperty<A, B>()
 
 fun getMyConcreteProperty() = MyProperty<Any?, String>()
 
@@ -35,7 +35,7 @@ operator fun <R, T> MyProperty<R, T>.plus() = MyProperty<R, T>()
 operator fun <R, T> MyProperty<R, T>.minus(<!UNUSED_PARAMETER!>i<!>: Int) = MyProperty<R, T>()
 
 object O {
-    fun getMyProperty<A, B>() = MyProperty<A, B>()
+    fun <A, B> getMyProperty() = MyProperty<A, B>()
 }
 
 interface MyPropertyContainer {

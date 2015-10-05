@@ -1,4 +1,4 @@
-fun castToString<T>(t: T) {
+fun <T> castToString(t: T) {
     t as String
 }
 

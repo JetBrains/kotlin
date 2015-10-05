@@ -20,7 +20,7 @@ fun test(expectedSum : Int, vararg data : Int) {
     assertEquals(actualSum, expectedSum, "\ndata = ${Arrays.toString(data)}\n" +
     "sum(data) = ${actualSum}, but must be $expectedSum ")
 }
-fun assertEquals<T: Any>(actual : T?, expected : T?, message : Any? = null) {
+fun <T: Any> assertEquals(actual : T?, expected : T?, message : Any? = null) {
     if (actual != expected) {
         if (message == null)
             throw AssertionError()

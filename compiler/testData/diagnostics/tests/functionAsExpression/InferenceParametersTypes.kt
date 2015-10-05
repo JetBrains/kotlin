@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-fun listOf<T>(): List<T> = null!!
+fun <T> listOf(): List<T> = null!!
 
 fun test(a: (Int) -> Int) {
     test(fun (x) = 4)

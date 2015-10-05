@@ -1,5 +1,5 @@
-fun listOf<T>(): List<T> = null!!
-fun listOf<T>(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
+fun <T> listOf(): List<T> = null!!
+fun <T> listOf(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
 
 val flag = true
 

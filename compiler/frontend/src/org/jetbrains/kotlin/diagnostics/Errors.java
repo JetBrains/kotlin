@@ -249,6 +249,8 @@ public interface Errors {
     DiagnosticFactory0<JetTypeParameter>
             VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
 
+    DiagnosticFactory0<JetTypeParameterList> DEPRECATED_TYPE_PARAMETER_SYNTAX = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetDeclaration> TYPE_PARAMETERS_NOT_ALLOWED

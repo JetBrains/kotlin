@@ -8,7 +8,7 @@ interface MyType {}
 class MyClass<T> : MyType {}
 
 public open class HttpResponse() {
-    public open fun parseAs<T>(dataClass : MyClass<T>) : T {
+    public open fun <T> parseAs(dataClass : MyClass<T>) : T {
         throw Exception()
     }
     public open fun parseAs(dataType : MyType) : Any? {
@@ -16,7 +16,7 @@ public open class HttpResponse() {
     }
 }
 
-fun test<R> (httpResponse: HttpResponse, rtype: MyClass<R>) {
+fun <R> test (httpResponse: HttpResponse, rtype: MyClass<R>) {
     val res = httpResponse.parseAs( rtype )
     checkSubtype<R>(res) //type mismatch: required R, found T
 }

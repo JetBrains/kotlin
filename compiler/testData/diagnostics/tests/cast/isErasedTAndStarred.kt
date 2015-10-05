@@ -1,3 +1,3 @@
 class G<T>
 
-fun f<Q>(q: Q) = q is G<*>
+fun <Q> f(q: Q) = q is G<*>

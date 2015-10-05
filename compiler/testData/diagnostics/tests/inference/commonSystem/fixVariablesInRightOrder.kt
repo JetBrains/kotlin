@@ -4,7 +4,7 @@ class GenericClass<out T>
 
 public fun <K, V> GenericClass<Map<K, V>>.foo() {}
 
-public fun bar<T>(t: T, ext: GenericClass<T>.() -> Unit) {}
+public fun <T> bar(t: T, ext: GenericClass<T>.() -> Unit) {}
 
 fun test() {
     bar(mapOf(2 to 3)) { foo() }

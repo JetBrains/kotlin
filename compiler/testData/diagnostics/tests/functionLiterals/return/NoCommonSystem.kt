@@ -1,6 +1,6 @@
 fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!>: (T) -> R): List<R> = null!!
-fun listOf<T>(): List<T> = null!!
-fun listOf<T>(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
+fun <T> listOf(): List<T> = null!!
+fun <T> listOf(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
 
 fun commonSystemFailed(a: List<Int>) {
     a.map {

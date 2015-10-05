@@ -1,6 +1,6 @@
 var entered = 0
 
-fun foo<T>(t: T): T {
+fun <T> foo(t: T): T {
     entered++
     return t
 }

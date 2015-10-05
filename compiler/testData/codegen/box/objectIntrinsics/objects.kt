@@ -102,7 +102,7 @@ var Int.Companion.TopField : Int
 
 fun Int.Companion.TopFun() : String = "TopFun"
 
-fun myAssertEquals<T>(a: T, b: T) {
+fun <T> myAssertEquals(a: T, b: T) {
     if (a != b) throw Exception("$a != $b")
 }
 

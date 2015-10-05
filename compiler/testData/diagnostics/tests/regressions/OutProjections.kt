@@ -3,7 +3,7 @@ class Point() {
 
 class G<T>() {}
 
-fun f<T>(<!UNUSED_PARAMETER!>expression<!> : T) : G<out T> = G<T>()
+fun <T> f(<!UNUSED_PARAMETER!>expression<!> : T) : G<out T> = G<T>()
 
 
 fun foo() : G<Point> {
@@ -13,7 +13,7 @@ fun foo() : G<Point> {
 
 class Out<out T>() {}
 
-fun fout<T>(<!UNUSED_PARAMETER!>expression<!> : T) : Out<<!REDUNDANT_PROJECTION!>out<!> T> = Out<T>()
+fun <T> fout(<!UNUSED_PARAMETER!>expression<!> : T) : Out<<!REDUNDANT_PROJECTION!>out<!> T> = Out<T>()
 
 fun fooout() : Out<Point> {
   val p = Point();

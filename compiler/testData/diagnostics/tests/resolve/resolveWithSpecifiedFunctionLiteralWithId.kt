@@ -18,7 +18,7 @@ fun foo(a: Any, f: (Any) -> Int) = f(a)
 //appropriate function
 fun foo(i: Int, f: (Int) -> Int) = f(i)
 
-fun id<T>(t: T) = t
+fun <T> id(t: T) = t
 
 fun test() {
     foo(1, id(fun(x1: Int) =

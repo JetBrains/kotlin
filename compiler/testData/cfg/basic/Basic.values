@@ -60,7 +60,7 @@ fun foo(a : Boolean, b : Int) : Unit {}
     <v1>: Int       NEW: magic[FAKE_INITIALIZER](b : Int) -> <v1>    
 =====================
 == genfun ==
-fun genfun<T>() : Unit {}
+fun <T> genfun() : Unit {}
 ---------------------
 =====================
 == flfun ==

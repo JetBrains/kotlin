@@ -4,10 +4,10 @@ package a
 
 class A {}
 
-fun A.foo<T>(<!UNUSED_PARAMETER!>f<!> : T) {}
+fun <T> A.foo(<!UNUSED_PARAMETER!>f<!> : T) {}
 
 val o = object {
-    fun foo<T>(f: T) {
+    fun <T> foo(f: T) {
         A().foo(f) // Ambiguity here!
     }
 }

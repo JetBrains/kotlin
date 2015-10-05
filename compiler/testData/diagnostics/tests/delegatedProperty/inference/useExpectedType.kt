@@ -8,7 +8,7 @@ class A1 {
 var c1: String by getMyProperty1()
 var d1: String by MyProperty1()
 
-fun getMyProperty1<A, B>() = MyProperty1<A, B>()
+fun <A, B> getMyProperty1() = MyProperty1<A, B>()
 
 class MyProperty1<R, T> {
 
@@ -32,7 +32,7 @@ class A2 {
 var c2: String by getMyProperty2()
 var d2: String by MyProperty2()
 
-fun getMyProperty2<A>() = MyProperty2<A>()
+fun <A> getMyProperty2() = MyProperty2<A>()
 
 class MyProperty2<T> {
 
@@ -56,7 +56,7 @@ class A3 {
 var c3: String by getMyProperty3()
 var d3: String by MyProperty3()
 
-fun getMyProperty3<A>() = MyProperty3<A>()
+fun <A> getMyProperty3() = MyProperty3<A>()
 
 class MyProperty3<T> {
 

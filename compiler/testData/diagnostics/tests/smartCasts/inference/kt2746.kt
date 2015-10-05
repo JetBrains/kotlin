@@ -9,7 +9,7 @@ fun test1(a: Any) {
 }
 
 
-fun f<T>(t :T): C<T> = C(t)
+fun <T> f(t :T): C<T> = C(t)
 
 fun test2(a: Any) {
     if (a is String) {

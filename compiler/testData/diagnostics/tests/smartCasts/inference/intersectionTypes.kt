@@ -55,6 +55,6 @@ fun rr(s: String?) {
 }
 
 //from library
-fun arrayListOf<T>(vararg <!UNUSED_PARAMETER!>values<!>: T): MutableList<T> = throw Exception()
+fun <T> arrayListOf(vararg <!UNUSED_PARAMETER!>values<!>: T): MutableList<T> = throw Exception()
 
 fun use(vararg a: Any) = a

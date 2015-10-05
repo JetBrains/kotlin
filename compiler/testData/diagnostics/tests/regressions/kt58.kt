@@ -4,7 +4,7 @@ package kt58
 
 import java.util.concurrent.locks.Lock
 
-fun lock<T>(lock : Lock, body :  () -> T) : T {
+fun <T> lock(lock : Lock, body :  () -> T) : T {
     lock.lock()
     try {
         return body()

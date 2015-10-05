@@ -15405,6 +15405,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("deprecatedSyntax.kt")
+            public void testDeprecatedSyntax() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/deprecatedSyntax.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("upperBoundCannotBeArray.kt")
             public void testUpperBoundCannotBeArray() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/upperBoundCannotBeArray.kt");

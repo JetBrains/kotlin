@@ -1,6 +1,6 @@
 // KT-422 Tune literal typing rules so that varargs overloaded by primitive types work
 
-fun foo<T>(vararg t : T) = t
+fun <T> foo(vararg t : T) = t
 fun foo(vararg a: Int) = a
 fun foo(vararg a: Long) = a
 

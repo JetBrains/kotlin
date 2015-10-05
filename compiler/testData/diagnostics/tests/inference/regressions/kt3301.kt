@@ -17,4 +17,4 @@ fun test122() {
 }
 
 //from library
-fun array<T>(vararg <!UNUSED_PARAMETER!>t<!>: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> array(vararg <!UNUSED_PARAMETER!>t<!>: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

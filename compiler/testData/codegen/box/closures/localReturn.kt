@@ -16,4 +16,4 @@ fun box(): String {
     return "OK"
 }
 
-fun run1<T>(f: () -> T): T { return f() }
+fun <T> run1(f: () -> T): T { return f() }

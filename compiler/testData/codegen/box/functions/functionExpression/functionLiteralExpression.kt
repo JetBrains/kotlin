@@ -6,9 +6,9 @@ fun Int.foo2() : (i : Int) -> Int {
   return { x -> x + this }
 }
 
-fun fooT1<T>(t : T) = { t.toString() }
+fun <T> fooT1(t : T) = { t.toString() }
 
-fun fooT2<T>(t: T) = { x:T -> t.toString() + x.toString() }
+fun <T> fooT2(t: T) = { x:T -> t.toString() + x.toString() }
 
 object t
 

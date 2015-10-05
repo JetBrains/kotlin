@@ -1,4 +1,4 @@
-fun fooT22<T: Any>() : T? {
+fun <T: Any> fooT22() : T? {
   return null
 }
 

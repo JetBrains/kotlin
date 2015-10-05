@@ -2,11 +2,11 @@
 package a
 //+JDK
 
-fun getJavaClass<T>() : java.lang.Class<T> { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> getJavaClass() : java.lang.Class<T> { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 public class Throwables() {
     companion object {
-        public fun propagateIfInstanceOf<X : Throwable?>(throwable : Throwable?, declaredType : Class<X<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!>>?) : Unit {
+        public fun <X : Throwable?> propagateIfInstanceOf(throwable : Throwable?, declaredType : Class<X<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!>>?) : Unit {
             if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
                 throw declaredType?.cast(throwable)!!

@@ -5,7 +5,7 @@ class UpdateableThing {
     private val lock = ReentrantReadWriteLock()
     private var updateCount = 0
 
-    fun performUpdates<T>(block: () -> T): T {
+    fun <T> performUpdates(block: () -> T): T {
         lock.write {
             ++updateCount
             val result = block()

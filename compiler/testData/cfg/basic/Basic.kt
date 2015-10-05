@@ -18,6 +18,6 @@ fun f(a : Boolean) : Unit {
 
 fun foo(a : Boolean, b : Int) : Unit {}
 
-fun genfun<T>() : Unit {}
+fun <T> genfun() : Unit {}
 
 fun flfun(f : () -> Any) : Unit {}

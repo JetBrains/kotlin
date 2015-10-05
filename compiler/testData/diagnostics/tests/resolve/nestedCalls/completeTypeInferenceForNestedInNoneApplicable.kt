@@ -7,4 +7,4 @@ fun test() {
     <!NONE_APPLICABLE!>foo<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>())
 }
 
-fun emptyList<T>(): List<T> {throw Exception()}
+fun <T> emptyList(): List<T> {throw Exception()}

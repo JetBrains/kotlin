@@ -14,11 +14,11 @@ fun foo2() : (i : () -> Unit) -> Unit {
   return {}
 }
 
-fun fooT1<T>(t : T) : () -> T {
+fun <T> fooT1(t : T) : () -> T {
   return {t}
 }
 
-fun fooT2<T>() : (t : T) -> T {
+fun <T> fooT2() : (t : T) -> T {
   return {it}
 }
 

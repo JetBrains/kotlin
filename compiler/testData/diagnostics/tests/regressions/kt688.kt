@@ -6,7 +6,7 @@ open class B() : A() {
 
 
 class C() {
-  fun a<T>(x: (T)->T, y: T): T {
+  fun <T> a(x: (T)->T, y: T): T {
     return x(x(y))
   }
 
