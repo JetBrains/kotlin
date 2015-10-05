@@ -93,7 +93,7 @@ public object ModifierCheckerCore {
     private val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, ENUM_ENTRY),
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS, ENUM_ENTRY),
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, INTERFACE, OBJECT),
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
@@ -102,7 +102,8 @@ public object ModifierCheckerCore {
             INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(INTERFACE),
             // Deprecated in M15
-            FINAL_KEYWORD     to EnumSet.of(INTERFACE)
+            FINAL_KEYWORD     to EnumSet.of(INTERFACE),
+            PROTECTED_KEYWORD to EnumSet.of(OBJECT)
     )
 
     // First modifier in pair should be also first in declaration

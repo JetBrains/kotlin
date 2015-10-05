@@ -9192,6 +9192,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("protected.kt")
+            public void testProtected() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/protected.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("redundantTargets.kt")
             public void testRedundantTargets() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/redundantTargets.kt");
