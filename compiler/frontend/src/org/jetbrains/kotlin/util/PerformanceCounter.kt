@@ -63,7 +63,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
 
         public fun create(name: String, vararg excluded: PerformanceCounter): PerformanceCounter = CounterWithExclude(name, *excluded)
 
-        protected inline fun <T> getOrPut(threadLocal: ThreadLocal<T>, default: () -> T) : T {
+        internal inline fun <T> getOrPut(threadLocal: ThreadLocal<T>, default: () -> T) : T {
             var value = threadLocal.get()
             if (value == null) {
                 value = default()
