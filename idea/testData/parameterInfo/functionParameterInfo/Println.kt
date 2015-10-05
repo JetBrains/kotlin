@@ -1,10 +1,10 @@
 open class A(x: Int) {
-    fun println(x: String) {}
-    fun println() {}
-    fun println(x: Boolean) {}
+    fun xprintln(x: String) {}
+    fun xprintln() {}
+    fun xprintln(x: Boolean) {}
     
     fun d(x: Int) {
-        println(<caret>)
+        xprintln(<caret>)
     }
 }
 /*

@@ -23,25 +23,37 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.typeUtil.containsError
 import java.awt.Color
 import java.util.*
 
@@ -71,42 +83,39 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
         val argumentList = file.findElementAt(context.offset)?.getStrictParentOfType<JetValueArgumentList>() ?: return null
 
-        val callNameExpression = getCallNameExpression(argumentList) ?: return null
-
-        val references = callNameExpression.references
-        if (references.isEmpty()) return null
+        val callElement = argumentList.parent as? JetCallElement ?: return null
+        val bindingContext = callElement.analyze(BodyResolveMode.PARTIAL)
+        val call = callElement.getCall(bindingContext) ?: return null
 
         val resolutionFacade = file.getResolutionFacade()
-        val bindingContext = callNameExpression.analyze(BodyResolveMode.FULL)
+        val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
+        val inDescriptor = resolutionScope.ownerDescriptor
 
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression)
-        val placeDescriptor = scope?.getContainingDeclaration()
+        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+        val expectedType = (callElement as? JetExpression)?.let {
+            bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
+        } ?: TypeUtils.NO_EXPECTED_TYPE
+        val callResolutionContext = BasicCallResolutionContext.create(
+                bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
+                ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                CallChecker.DoNothing, false/*TODO?*/
+        ).replaceCollectAllCandidates(true)
+        val callResolver = resolutionFacade.frontendService<CallResolver>()
 
-        val visibilityFilter = { descriptor: DeclarationDescriptor ->
-            placeDescriptor == null
-            || descriptor !is DeclarationDescriptorWithVisibility
-            || descriptor.isVisible(placeDescriptor, bindingContext, callNameExpression)
-        }
-
-        val refName = callNameExpression.getReferencedNameAsName()
-
-        val descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.CLASSIFIERS_MASK, emptyList<DescriptorKindExclude>())
-
-        val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter)
-                .getReferenceVariants(callNameExpression, descriptorKindFilter, { it == refName })
+        val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val itemsToShow = ArrayList<DeclarationDescriptor>()
-        for (variant in variants) {
-            if (variant is FunctionDescriptor) {
-                //todo: renamed functions?
-                itemsToShow.add(variant)
-            }
-            else if (variant is ClassDescriptor) {
-                //todo: renamed classes?
-                for (constructorDescriptor in variant.constructors) {
-                    itemsToShow.add(constructorDescriptor)
-                }
-            }
+        for (candidate in results.allCandidates!!) {
+            val status = candidate.status
+            if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
+
+            var descriptor = candidate.resultingDescriptor
+
+            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.dispatchReceiver, bindingContext)
+            if (!Visibilities.isVisible(thisReceiver, descriptor, inDescriptor)) continue
+
+            itemsToShow.add(descriptor)
         }
 
         context.itemsToShow = itemsToShow.toArray()
@@ -305,8 +314,14 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             return "..."
         }
 
-        private fun getActualParameterType(descriptor: ValueParameterDescriptor)
-                = descriptor.varargElementType ?: descriptor.type
+        private fun getActualParameterType(descriptor: ValueParameterDescriptor): JetType {
+            var type = descriptor.varargElementType ?: descriptor.type
+            if (type.containsError()) {
+                val original = descriptor.original
+                type = original.varargElementType ?: original.type
+            }
+            return type
+        }
 
         private fun isArgumentTypeValid(bindingContext: BindingContext, argument: JetValueArgument, param: ValueParameterDescriptor): Boolean {
             val expression = argument.getArgumentExpression() ?: return false
@@ -327,8 +342,8 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         ): Boolean {
             val callNameExpression = getCallNameExpression(argumentList)
             if (callNameExpression != null) {
-                val declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, callNameExpression)
-                if (declarationDescriptor === functionDescriptor) return true
+                val declarationDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callNameExpression]
+                if (declarationDescriptor?.original === functionDescriptor.original) return true
             }
 
             return false

@@ -596,14 +596,15 @@ public class CallResolver {
             @NotNull ResolutionTask<D, F> task,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
-        List<CallCandidateResolutionContext<D>> contexts = collectCallCandidateContext(task, callTransformer, EXIT_ON_FIRST_ERROR);
+        CandidateResolveMode mode = task.collectAllCandidates ? FULLY : EXIT_ON_FIRST_ERROR;
+        List<CallCandidateResolutionContext<D>> contexts = collectCallCandidateContext(task, callTransformer, mode);
         boolean isSuccess = ContainerUtil.exists(contexts, new Condition<CallCandidateResolutionContext<D>>() {
             @Override
             public boolean value(CallCandidateResolutionContext<D> context) {
                 return context.candidateCall.getStatus().possibleTransformToSuccess();
             }
         });
-        if (!isSuccess) {
+        if (!isSuccess && mode == EXIT_ON_FIRST_ERROR) {
             contexts = collectCallCandidateContext(task, callTransformer, FULLY);
         }
 

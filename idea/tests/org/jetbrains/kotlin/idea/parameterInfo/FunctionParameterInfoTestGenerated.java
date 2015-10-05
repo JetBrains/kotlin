@@ -47,6 +47,18 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionalValue1.kt")
+    public void testFunctionalValue1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/FunctionalValue1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunctionalValue2.kt")
+    public void testFunctionalValue2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/FunctionalValue2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InheritedFunctions.kt")
     public void testInheritedFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/InheritedFunctions.kt");
@@ -56,6 +68,12 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
     @TestMetadata("InheritedWithCurrentFunctions.kt")
     public void testInheritedWithCurrentFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/InheritedWithCurrentFunctions.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Invoke.kt")
+    public void testInvoke() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/Invoke.kt");
         doTest(fileName);
     }
 
@@ -116,6 +134,42 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
     @TestMetadata("SimpleConstructor.kt")
     public void testSimpleConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SimpleConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteExpectedType.kt")
+    public void testSubstituteExpectedType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteExpectedType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteExplicitTypeArgs.kt")
+    public void testSubstituteExplicitTypeArgs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteExplicitTypeArgs.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteFromParameters1.kt")
+    public void testSubstituteFromParameters1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteFromParameters2.kt")
+    public void testSubstituteFromParameters2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteFromParameters3.kt")
+    public void testSubstituteFromParameters3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SubstituteFromParameters4.kt")
+    public void testSubstituteFromParameters4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SubstituteFromParameters4.kt");
         doTest(fileName);
     }
 

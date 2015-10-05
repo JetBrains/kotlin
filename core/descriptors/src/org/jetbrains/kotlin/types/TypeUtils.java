@@ -104,6 +104,7 @@ public class TypeUtils {
         }
     }
 
+    @NotNull
     public static final JetType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
 
     public static final JetType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
