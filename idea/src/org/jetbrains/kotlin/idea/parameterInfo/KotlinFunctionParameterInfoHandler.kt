@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.allArgumentsMapped
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -138,81 +137,49 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val valueParameters = itemToShow.valueParameters
         val valueArguments = argumentList.arguments
 
-        val currentParameterIndex = context.currentParameterIndex
-        var boldStartOffset = -1
-        var boldEndOffset = -1
-
-        val usedIndexes = BooleanArray(valueParameters.size())
-        Arrays.fill(usedIndexes, false)
-
-        var namedMode = false
-
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val callElement = argumentList.parent as? JetCallElement ?: return false
         val call = callElement.getCall(bindingContext) ?: return false
 
-        val (highlightParameterIndex, isGrey) = detectSignatureHighlighting(call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
+        val (argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
+                call, itemToShow, context.currentParameterIndex, bindingContext, argumentList.getResolutionFacade())
 
+        val usedParameterIndices = HashSet<Int>()
+        var namedMode = false
+        var boldStartOffset = -1
+        var boldEndOffset = -1
         val text = StringBuilder {
-            for (i in valueParameters.indices) {
-                if (i != 0) {
+            fun appendParameter(parameter: ValueParameterDescriptor) {
+                if (length() > 0) {
                     append(", ")
                 }
 
-                val highlightParameter = i == highlightParameterIndex
-
+                val highlightParameter = parameter.index == highlightParameterIndex
                 if (highlightParameter) {
                     boldStartOffset = length()
                 }
 
-                if (!namedMode) {
-                    if (valueArguments.size() > i) {
-                        val argument = valueArguments[i]
-                        if (argument.isNamed()) {
-                            namedMode = true
-                        }
-                        else {
-                            val param = valueParameters[i]
-                            append(renderParameter(param, false))
-                            usedIndexes[i] = true
-                        }
-                    }
-                    else {
-                        val param = valueParameters[i]
-                        append(renderParameter(param, false))
-                    }
-                }
-
-                if (namedMode) {
-                    var takeAnyArgument = true
-                    if (valueArguments.size() > i) {
-                        val argument = valueArguments[i]
-                        if (argument.isNamed()) {
-                            for ((j, param) in valueParameters.withIndex()) {
-                                val referenceExpression = argument.getArgumentName()!!.getReferenceExpression()
-                                if (!usedIndexes[j] && param.name == referenceExpression.getReferencedNameAsName()) {
-                                    takeAnyArgument = false
-                                    usedIndexes[j] = true
-                                    append(renderParameter(param, true))
-                                    break
-                                }
-                            }
-                        }
-                    }
-
-                    if (takeAnyArgument) {
-                        for ((j, param) in valueParameters.withIndex()) {
-                            if (!usedIndexes[j]) {
-                                usedIndexes[j] = true
-                                append(renderParameter(param, true))
-                                break
-                            }
-                        }
-                    }
-                }
+                append(renderParameter(parameter, namedMode))
 
                 if (highlightParameter) {
                     boldEndOffset = length()
+                }
+            }
+
+            for (argument in valueArguments) {
+                val parameter = argumentToParameter(argument) ?: continue
+                if (!usedParameterIndices.add(parameter.index)) continue
+
+                if (argument.isNamed()) {
+                    namedMode = true
+                }
+
+                appendParameter(parameter)
+            }
+
+            for (parameter in valueParameters) {
+                if (parameter.index !in usedParameterIndices) {
+                    appendParameter(parameter)
                 }
             }
 
@@ -324,58 +291,69 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             return argumentList
         }
 
-        private data class SignatureHighlighting(
+        private data class SignatureInfo(
+                val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
                 val highlightParameterIndex: Int?,
                 val isGrey: Boolean
         )
 
-        private fun detectSignatureHighlighting(call: Call, overload: FunctionDescriptor, currentArgumentIndex: Int, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): SignatureHighlighting {
-            if (currentArgumentIndex == 0) {
-                val highlightParameterIndex = if (overload.valueParameters.isEmpty()) null else 0
-                return SignatureHighlighting(highlightParameterIndex, isGrey = false)
+        private fun matchCallWithSignature(
+                call: Call,
+                overload: FunctionDescriptor,
+                currentArgumentIndex: Int,
+                bindingContext: BindingContext,
+                resolutionFacade: ResolutionFacade
+        ): SignatureInfo {
+            if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
+                return SignatureInfo({ null }, null, isGrey = false)
             }
 
             assert(call.valueArguments.size() >= currentArgumentIndex)
 
-            val truncatedArguments = if (call.valueArguments.size() > currentArgumentIndex) {
-                call.valueArguments.subList(0, currentArgumentIndex + 1)
+            val argumentsBeforeCurrent = call.valueArguments.subList(0, currentArgumentIndex)
+
+            val callToUse: Call
+            val currentArgument: ValueArgument
+            if (call.valueArguments.size() > currentArgumentIndex) {
+                currentArgument = call.valueArguments[currentArgumentIndex]
+                callToUse = call
             }
             else {
-                val dummyArgument = object : ValueArgument {
+                // add dummy current argument if we don't have one
+                currentArgument = object : ValueArgument {
                     override fun getArgumentExpression(): JetExpression? = null
                     override fun getArgumentName(): ValueArgumentName? = null
                     override fun isNamed(): Boolean = false
-                    override fun asElement(): JetElement = throw UnsupportedOperationException()
+                    override fun asElement(): JetElement = call.callElement // is a hack but what to do?
                     override fun getSpreadElement(): LeafPsiElement? = null
                     override fun isExternal() = false
                 }
-                call.valueArguments + dummyArgument
+                callToUse = object : DelegatingCall(call) {
+                    val arguments = call.valueArguments + currentArgument
+
+                    override fun getValueArguments() = arguments
+                    override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+                    override fun getValueArgumentList() = null
+                }
             }
 
-            //TODO: do we really need truncated call?
-            // leave only arguments before the current one
-            val truncatedCall = object : DelegatingCall(call) {
-                override fun getValueArguments() = truncatedArguments
-                override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
-                override fun getValueArgumentList() = null
-            }
-
-            val candidates = detectCandidates(truncatedCall, bindingContext, resolutionFacade)
+            val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
             val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original }
-                               ?: return SignatureHighlighting(null, isGrey = true)
+                               ?: return SignatureInfo({ null }, null, isGrey = true)
 
-            val currentParameter = (resolvedCall.getArgumentMapping(truncatedArguments.last()) as? ArgumentMatch)?.valueParameter
+            val argumentToParameter = { argument: ValueArgument -> (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter }
+
+            val currentParameter = (resolvedCall.getArgumentMapping(currentArgument) as? ArgumentMatch)?.valueParameter
             val highlightParameterIndex = currentParameter?.index
 
-            if (!resolvedCall.allArgumentsMapped()) { // some of arguments before the current one are not mapped to any of the parameters
-                return SignatureHighlighting(highlightParameterIndex, isGrey = true)
+            if (!(argumentsBeforeCurrent + currentArgument).all { argument -> resolvedCall.getArgumentMapping(argument) is ArgumentMatch }) { // some of arguments before the current one are not mapped to any of the parameters
+                return SignatureInfo(argumentToParameter, highlightParameterIndex, isGrey = true)
             }
 
             // grey out if not all arguments before the current are matched
-            val isGrey = truncatedCall.valueArguments
-                    .take(currentArgumentIndex)
+            val isGrey = argumentsBeforeCurrent
                     .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
-            return SignatureHighlighting(highlightParameterIndex, isGrey)
+            return SignatureInfo(argumentToParameter, highlightParameterIndex, isGrey)
         }
 
         private fun ValueArgument.hasError(bindingContext: BindingContext)
