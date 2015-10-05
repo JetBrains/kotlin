@@ -26,9 +26,9 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
 internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
-    internal val javaField: Field?
+    val javaField: Field?
 
-    internal val container: KDeclarationContainerImpl
+    val container: KDeclarationContainerImpl
 
     override val getter: Getter<R>
 

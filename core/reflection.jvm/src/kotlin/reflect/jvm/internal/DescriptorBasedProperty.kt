@@ -22,7 +22,7 @@ import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
 import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
 internal abstract class DescriptorBasedProperty<out R> protected constructor(
-        internal val container: KDeclarationContainerImpl,
+        val container: KDeclarationContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: PropertyDescriptor?
@@ -42,7 +42,7 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
         container.findPropertyDescriptor(name, signature)
     }
 
-    internal val javaField: Field? by ReflectProperties.lazySoft {
+    val javaField: Field? by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
         when (jvmSignature) {
             is KotlinProperty -> {
