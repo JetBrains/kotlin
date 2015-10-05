@@ -35,6 +35,12 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/functionParameterInfo"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("DefaultValuesFromLib.kt")
+    public void testDefaultValuesFromLib() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/DefaultValuesFromLib.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Deprecated.kt")
     public void testDeprecated() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/Deprecated.kt");

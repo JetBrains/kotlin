@@ -20,8 +20,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
 abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCase() {
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     override fun setUp() {
         super.setUp()

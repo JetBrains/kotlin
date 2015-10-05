@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -146,6 +147,8 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val callElement = argumentList.parent as? JetCallElement ?: return false
         val call = callElement.getCall(bindingContext) ?: return false
 
+        val project = callElement.project
+
         val currentParameterIndex = context.currentParameterIndex
         if (currentParameterIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
 
@@ -169,7 +172,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                     boldStartOffset = length()
                 }
 
-                append(renderParameter(parameter, namedMode))
+                append(renderParameter(parameter, namedMode, project))
 
                 if (highlightParameter) {
                     boldEndOffset = length()
@@ -214,40 +217,40 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
     companion object {
         val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
 
-        private fun renderParameter(parameter: ValueParameterDescriptor, named: Boolean): String {
+        private fun renderParameter(parameter: ValueParameterDescriptor, named: Boolean, project: Project): String {
             return StringBuilder {
                 if (named) append("[")
+
                 if (parameter.varargElementType != null) {
                     append("vararg ")
                 }
                 append(parameter.name)
                 append(": ")
                 append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
+
                 if (parameter.hasDefaultValue()) {
-                    val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
                     append(" = ")
-                    append(getDefaultExpressionString(parameterDeclaration))
+                    append(parameter.renderDefaultValue(project))
                 }
+
                 if (named) append("]")
             }.toString()
         }
 
-        private fun getDefaultExpressionString(parameterDeclaration: PsiElement?): String {
-            if (parameterDeclaration is JetParameter) {
-                val defaultValue = parameterDeclaration.defaultValue
-                if (defaultValue != null) {
-                    val defaultExpression = defaultValue.text
-                    if (defaultExpression.length() <= 32) {
-                        return defaultExpression
-                    }
+        private fun ValueParameterDescriptor.renderDefaultValue(project: Project): String {
+            val expression = OptionalParametersHelper.defaultParameterValueExpression(this, project)
+            if (expression != null) {
+                val text = expression.text
+                if (text.length() <= 32) {
+                    return text
+                }
 
-                    if (defaultValue is JetConstantExpression || defaultValue is JetStringTemplateExpression) {
-                        if (defaultExpression.startsWith("\"")) {
-                            return "\"...\""
-                        }
-                        else if (defaultExpression.startsWith("\'")) {
-                            return "\'...\'"
-                        }
+                if (expression is JetConstantExpression || expression is JetStringTemplateExpression) {
+                    if (text.startsWith("\"")) {
+                        return "\"...\""
+                    }
+                    else if (text.startsWith("\'")) {
+                        return "\'...\'"
                     }
                 }
             }

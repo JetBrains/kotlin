@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 public object OptionalParametersHelper {
@@ -114,26 +115,30 @@ public object OptionalParametersHelper {
             public val parameterUsages: Map<ValueParameterDescriptor, Collection<JetExpression>>
     )
 
-    //TODO: handle imports
-    //TODO: handle implicit receivers
-    public fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
+    public fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): JetExpression? {
         if (!parameter.hasDefaultValue()) return null
 
         if (!parameter.declaresDefaultValue()) {
             val overridden = parameter.getOverriddenDescriptors().firstOrNull { it.hasDefaultValue() } ?: return null
-            return defaultParameterValue(overridden, project)
+            return defaultParameterValueExpression(overridden, project)
         }
 
         //TODO: parameter in overriding method!
         //TODO: it's a temporary code while we don't have default values accessible from descriptors
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.getNavigationElement() as? JetParameter
-        val expression = declaration?.getDefaultValue() ?: return null
+        return declaration?.defaultValue
+    }
+
+    //TODO: handle imports
+    //TODO: handle implicit receivers
+    public fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
+        val expression = defaultParameterValueExpression(parameter, project) ?: return null
 
         val allParameters = parameter.getContainingDeclaration().getValueParameters().toSet()
 
         val parameterUsages = HashMap<ValueParameterDescriptor, MutableCollection<JetExpression>>()
 
-        val bindingContext = expression.analyze()
+        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
         expression.forEachDescendantOfType<JetSimpleNameExpression> {
             val target = bindingContext[BindingContext.REFERENCE_TARGET, it]
             if (target is ValueParameterDescriptor && target in allParameters) {
