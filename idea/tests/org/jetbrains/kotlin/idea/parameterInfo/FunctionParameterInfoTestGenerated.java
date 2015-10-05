@@ -77,6 +77,12 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         doTest(fileName);
     }
 
+    @TestMetadata("LocalFunctionBug.kt")
+    public void testLocalFunctionBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/LocalFunctionBug.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NamedAndDefaultParameter.kt")
     public void testNamedAndDefaultParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NamedAndDefaultParameter.kt");

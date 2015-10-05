@@ -259,13 +259,9 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 functionDescriptor: FunctionDescriptor,
                 bindingContext: BindingContext
         ): Boolean {
-            val callNameExpression = getCallNameExpression(argumentList)
-            if (callNameExpression != null) {
-                val declarationDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callNameExpression]
-                if (declarationDescriptor?.original === functionDescriptor.original) return true
-            }
-
-            return false
+            val callNameExpression = getCallNameExpression(argumentList) ?: return false
+            val target = bindingContext[BindingContext.REFERENCE_TARGET, callNameExpression] as? FunctionDescriptor
+            return target != null && descriptorsEqual(target, functionDescriptor)
         }
 
         private fun getCallNameExpression(argumentList: JetValueArgumentList): JetSimpleNameExpression? {
@@ -338,7 +334,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
             }
 
             val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
-            val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original } ?: return null
+            val resolvedCall = candidates.singleOrNull { descriptorsEqual(it.resultingDescriptor, overload) } ?: return null
             val resultingDescriptor = resolvedCall.resultingDescriptor
 
             val argumentToParameter = { argument: ValueArgument -> (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter }
@@ -384,6 +380,14 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                         val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
                         Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
                     }
+        }
+
+        // we should not compare descriptors directly because partial resolve is involved
+        private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {
+            if (descriptor1.original == descriptor2.original) return true
+            val declaration1 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor1) ?: return false
+            val declaration2 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)
+            return declaration1 == declaration2
         }
     }
 }
