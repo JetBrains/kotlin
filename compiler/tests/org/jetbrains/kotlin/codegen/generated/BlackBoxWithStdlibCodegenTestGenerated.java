@@ -558,6 +558,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("memberImportedFromObject.kt")
+            public void testMemberImportedFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/memberImportedFromObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("nestedConstructorFromClass.kt")
             public void testNestedConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/nestedConstructorFromClass.kt");
@@ -849,6 +855,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("localClassVar.kt")
             public void testLocalClassVar() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/localClassVar.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("memberImportedFromObject.kt")
+            public void testMemberImportedFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/memberImportedFromObject.kt");
                 doTestWithStdlib(fileName);
             }
 

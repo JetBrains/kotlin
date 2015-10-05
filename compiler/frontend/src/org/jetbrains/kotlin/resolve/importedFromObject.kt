@@ -39,7 +39,7 @@ class FunctionImportedFromObject(val functionFromObject: FunctionDescriptor) :
     }
 }
 
-class PropertyImportedFromObject(private val propertyFromObject: PropertyDescriptor) :
+class PropertyImportedFromObject(val propertyFromObject: PropertyDescriptor) :
         PropertyDescriptor by propertyFromObject,
         ImportedFromObjectCallableDescriptor(propertyFromObject.containingDeclaration as ClassDescriptor) {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
