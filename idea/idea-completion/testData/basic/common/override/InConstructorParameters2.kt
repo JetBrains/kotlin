@@ -1,11 +1,11 @@
 interface I {
-    fun foo()
+    fun someFoo()
     val someVal: Int
     var someVar: Int
 }
 
 class Base1 {
-    protected open fun bar(){}
+    protected open fun someBar(){}
     open val fromBase: String = ""
 }
 

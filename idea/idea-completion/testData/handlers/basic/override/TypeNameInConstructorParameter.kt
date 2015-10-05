@@ -1,8 +1,8 @@
 interface I {
-    var someVar: java.io.File?
+    protected var someVar: java.io.File?
 }
 
-class A(som<caret>) : I {
+class A(public som<caret>) : I {
 }
 
 // ELEMENT_TEXT: "override var someVar: File?"
