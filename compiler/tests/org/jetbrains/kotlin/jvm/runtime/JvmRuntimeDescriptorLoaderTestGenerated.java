@@ -4203,9 +4203,27 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("StaticMembersFromParentClass.java")
+            public void testStaticMembersFromParentClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClass.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StaticMembersFromParentInterface.java")
+            public void testStaticMembersFromParentInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentInterface.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("StaticMembersInEnum.java")
             public void testStaticMembersInEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnum.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StaticMembersInEnumFromParents.java")
+            public void testStaticMembersInEnumFromParents() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnumFromParents.java");
                 doTest(fileName);
             }
         }

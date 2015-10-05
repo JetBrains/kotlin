@@ -67,4 +67,19 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava8/statics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Statics extends AbstractJetDiagnosticsWithFullJdkTest {
+        public void testAllFilesPresentInStatics() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inheritanceStaticMethodFromInterface.kt")
+        public void testInheritanceStaticMethodFromInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/statics/inheritanceStaticMethodFromInterface.kt");
+            doTest(fileName);
+        }
+    }
 }

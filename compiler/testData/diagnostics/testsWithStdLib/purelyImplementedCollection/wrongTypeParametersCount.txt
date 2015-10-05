@@ -35,4 +35,9 @@ public fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
     public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    invisible_fake const final override /*1*/ /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int
+    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+    invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
 }
