@@ -42,8 +42,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
     private Visibility visibility = Visibilities.UNKNOWN;
-    private boolean isOperator;
-    private boolean isInfix;
+    private boolean isOperator = false;
+    private boolean isInfix = false;
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
@@ -69,17 +69,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
-            boolean isOperator,
-            boolean isInfix
+            @NotNull Visibility visibility
     ) {
         this.typeParameters = UtilsPackage.toReadOnlyList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.isOperator = isOperator;
-        this.isInfix = isInfix;
         this.extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverParameterType);
         this.dispatchReceiverParameter = dispatchReceiverParameter;
         
@@ -104,6 +100,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setVisibility(@NotNull Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public void setOperator(boolean isOperator) {
+        this.isOperator = isOperator;
+    }
+
+    public void setInfix(boolean isInfix) {
+        this.isInfix = isInfix;
     }
 
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
@@ -309,10 +313,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 substitutedValueParameters,
                 substitutedReturnType,
                 newModality,
-                newVisibility,
-                isOperator,
-                isInfix
+                newVisibility
         );
+        substitutedDescriptor.setOperator(isOperator);
+        substitutedDescriptor.setInfix(isInfix);
 
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {

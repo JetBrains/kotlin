@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
 public fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExpression): List<JsExpression> {
@@ -163,7 +163,7 @@ object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NA
 object InvokeIntrinsic : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         val callableDescriptor = callInfo.callableDescriptor
-        if (callableDescriptor.getName() != OperatorConventions.INVOKE)
+        if (callableDescriptor.getName() != OperatorNameConventions.INVOKE)
             return false
         val parameterCount = callableDescriptor.getValueParameters().size()
         val funDeclaration = callableDescriptor.getContainingDeclaration()

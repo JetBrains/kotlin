@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
@@ -80,16 +80,16 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
             },
             original.getReturnType(),
             original.getModality(),
-            original.getVisibility(),
-            original.isOperator,
-            original.isInfix
+            original.getVisibility()
     )
+    result.isOperator = original.isOperator
+    result.isInfix = original.isInfix
 
     return result
 }
 
 fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
-    if (descriptor.getName() != OperatorConventions.INVOKE || descriptor !is FunctionDescriptor) return false
+    if (descriptor.getName() != OperatorNameConventions.INVOKE || descriptor !is FunctionDescriptor) return false
 
     var real: FunctionDescriptor = descriptor
     while (!real.getKind().isReal()) {

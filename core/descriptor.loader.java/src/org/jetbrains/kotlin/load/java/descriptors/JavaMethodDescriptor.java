@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.List;
 
@@ -71,6 +72,24 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull SourceElement source
     ) {
         return new JavaMethodDescriptor(containingDeclaration, null, annotations, name, Kind.DECLARATION, source);
+    }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptorImpl initialize(
+            @Nullable JetType receiverParameterType,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @Nullable JetType unsubstitutedReturnType,
+            @Nullable Modality modality,
+            @NotNull Visibility visibility
+    ) {
+        SimpleFunctionDescriptorImpl descriptor = super.initialize(
+                receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
+                unsubstitutedReturnType, modality, visibility);
+        setOperator(OperatorNameConventions.INSTANCE$.canBeOperator(descriptor));
+        return descriptor;
     }
 
     @Override
@@ -122,7 +141,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         // 1. creates full copy of descriptor
         // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
         JavaMethodDescriptor enhancedMethod = (JavaMethodDescriptor) doSubstitute(
-                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), false, false, getOriginal(),
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), isOperator(), isInfix(), getOriginal(),
                 /* copyOverrides = */ true, getKind(),
                 enhancedValueParameters, enhancedReceiverType, enhancedReturnType
         );

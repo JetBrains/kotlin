@@ -151,10 +151,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.returnType),
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
-                Deserialization.visibility(Flags.VISIBILITY.get(proto.flags)),
-                Flags.OLD_IS_OPERATOR.get(proto.flags),
-                Flags.OLD_IS_INFIX.get(proto.flags)
+                Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         )
+        function.isOperator = Flags.OLD_IS_OPERATOR.get(proto.flags)
+        function.isInfix = Flags.OLD_IS_INFIX.get(proto.flags)
         return function
     }
 

@@ -172,10 +172,10 @@ class FunctionDescriptorResolver(
                 valueParameterDescriptors,
                 returnType,
                 modality,
-                visibility,
-                function.hasModifier(JetTokens.OPERATOR_KEYWORD),
-                function.hasModifier(JetTokens.INFIX_KEYWORD)
+                visibility
         )
+        functionDescriptor.isOperator = function.hasModifier(JetTokens.OPERATOR_KEYWORD)
+        functionDescriptor.isInfix = function.hasModifier(JetTokens.INFIX_KEYWORD)
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
             ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.getType().getAnnotations())

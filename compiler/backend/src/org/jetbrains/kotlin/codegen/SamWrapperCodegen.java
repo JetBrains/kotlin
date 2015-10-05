@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -147,7 +147,7 @@ public class SamWrapperCodegen {
                 (ClassDescriptor) erasedInterfaceFunction.getContainingDeclaration(), OwnerKind.IMPLEMENTATION, state), cv, state, parentCodegen);
 
         FunctionDescriptor invokeFunction =
-                functionJetType.getMemberScope().getFunctions(OperatorConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next().getOriginal();
+                functionJetType.getMemberScope().getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false, StackValue.none());
         codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
 
@@ -161,7 +161,7 @@ public class SamWrapperCodegen {
         descriptorForBridges
                 .initialize(null, originalInterfaceErased.getDispatchReceiverParameter(), originalInterfaceErased.getTypeParameters(),
                             originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(),
-                            Modality.OPEN, originalInterfaceErased.getVisibility(), false, false);
+                            Modality.OPEN, originalInterfaceErased.getVisibility());
 
         descriptorForBridges.addOverriddenDescriptor(originalInterfaceErased);
         codegen.generateBridges(descriptorForBridges);

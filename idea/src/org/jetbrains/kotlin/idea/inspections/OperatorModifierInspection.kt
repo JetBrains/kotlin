@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class OperatorModifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -67,25 +68,25 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
         val arity = valueParameters.size()
         if (arity == 0 &&
             (name in OperatorConventions.UNARY_OPERATION_NAMES.values() ||
-             name == OperatorConventions.ITERATOR ||
+             name == OperatorNameConventions.ITERATOR ||
              isComponentLike(name) ||
-             name == OperatorConventions.NEXT ||
-             (name == OperatorConventions.HAS_NEXT && isBooleanReturnType()))) {
+             name == OperatorNameConventions.NEXT ||
+             (name == OperatorNameConventions.HAS_NEXT && isBooleanReturnType()))) {
             return true
         }
         if (arity == 1 && (name in OperatorConventions.BINARY_OPERATION_NAMES.values() ||
                            name in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
-                           (name == OperatorConventions.CONTAINS && isBooleanReturnType()) ||
-                           (name == OperatorConventions.COMPARE_TO && isIntReturnType()))) {
+                           (name == OperatorNameConventions.CONTAINS && isBooleanReturnType()) ||
+                           (name == OperatorNameConventions.COMPARE_TO && isIntReturnType()))) {
             return true
         }
-        if (name == OperatorConventions.INVOKE) {
+        if (name == OperatorNameConventions.INVOKE) {
             return true
         }
-        if (arity >= 1 && name == OperatorConventions.GET) {
+        if (arity >= 1 && name == OperatorNameConventions.GET) {
             return true
         }
-        if (arity >= 2 && name == OperatorConventions.SET) {
+        if (arity >= 2 && name == OperatorNameConventions.SET) {
             return true
         }
         return false

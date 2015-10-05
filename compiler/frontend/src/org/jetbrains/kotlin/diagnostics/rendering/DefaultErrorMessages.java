@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConf
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -560,7 +561,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
-                                   "The function '" + OperatorConventions.INVOKE.asString() + "()' is not found",
+                                   "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
                 ELEMENT_TEXT, new Renderer<JetType>() {
                     @NotNull
                     @Override

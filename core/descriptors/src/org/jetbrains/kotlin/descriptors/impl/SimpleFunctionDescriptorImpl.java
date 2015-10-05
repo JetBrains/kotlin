@@ -58,12 +58,10 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
-            boolean isOperator,
-            boolean isInfix
+            @NotNull Visibility visibility
     ) {
         super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
-                         unsubstitutedReturnType, modality, visibility, isOperator, isInfix);
+                         unsubstitutedReturnType, modality, visibility);
         return this;
     }
 

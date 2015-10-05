@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class OperatorModifierChecker : DeclarationChecker {
     override fun check(
@@ -51,23 +51,8 @@ public class OperatorModifierChecker : DeclarationChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(JetTokens.OPERATOR_KEYWORD) ?: return
 
-        val name = functionDescriptor.name
-
-        when {
-            GET == name -> {}
-            SET == name -> {}
-            INVOKE == name -> {}
-            CONTAINS == name -> {}
-            ITERATOR == name -> {}
-            NEXT == name -> {}
-            HAS_NEXT == name -> {}
-            EQUALS == name -> {}
-            COMPARE_TO == name -> {}
-            UNARY_OPERATION_NAMES.any { it.value == name } && functionDescriptor.valueParameters.isEmpty() -> {}
-            BINARY_OPERATION_NAMES.any { it.value == name } && functionDescriptor.valueParameters.size() == 1 -> {}
-            ASSIGNMENT_OPERATIONS.any { it.value == name } -> {}
-            name.asString().matches(COMPONENT_REGEX) -> {}
-            else -> diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier))
+        if (!OperatorNameConventions.canBeOperator(functionDescriptor)) {
+            diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier))
         }
     }
 }

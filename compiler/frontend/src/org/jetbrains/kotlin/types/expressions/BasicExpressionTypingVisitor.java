@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperPackage;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
@@ -1066,7 +1067,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 Collections.singletonList(right)
         );
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorConventions.EQUALS);
+                components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorNameConventions.EQUALS);
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
@@ -1085,7 +1086,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (resolutionResults.isSuccess()) {
             FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-            if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(),
+            if (ensureBooleanResult(operationSign, OperatorNameConventions.EQUALS, equals.getReturnType(),
                                                                      context)) {
                 ensureNonemptyIntersectionOfOperandTypes(expression, context);
             }
@@ -1107,7 +1108,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull JetSimpleNameExpression operationSign
     ) {
-        JetTypeInfo typeInfo = getTypeInfoForBinaryCall(OperatorConventions.COMPARE_TO, context, expression);
+        JetTypeInfo typeInfo = getTypeInfoForBinaryCall(OperatorNameConventions.COMPARE_TO, context, expression);
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
         if (compareToReturnType != null && !compareToReturnType.isError()) {
@@ -1237,9 +1238,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 contextWithDataFlow,
                 CallMaker.makeCall(callElement, receiver, null, operationSign, Collections.singletonList(leftArgument)),
                 operationSign,
-                OperatorConventions.CONTAINS);
+                OperatorNameConventions.CONTAINS);
         JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
-        ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
+        ensureBooleanResult(operationSign, OperatorNameConventions.CONTAINS, containsType, context);
 
         if (left != null) {
             dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);

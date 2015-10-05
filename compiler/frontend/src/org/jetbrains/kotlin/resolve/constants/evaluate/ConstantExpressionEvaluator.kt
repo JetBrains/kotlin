@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
 import java.util.*
 
@@ -425,8 +426,8 @@ private class ConstantExpressionEvaluatorVisitor(
             val usesNonConstValAsConstant = usesNonConstValAsConstant(argumentForReceiver.expression) || usesNonConstValAsConstant(argumentForParameter.expression)
             val parameters = CompileTimeConstant.Parameters(canBeUsedInAnnotation, areArgumentsPure, usesVariableAsConstant, usesNonConstValAsConstant)
             return when (resultingDescriptorName) {
-                OperatorConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression, factory)?.wrap(parameters)
-                OperatorConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression, factory)?.wrap(parameters)
+                OperatorNameConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression, factory)?.wrap(parameters)
+                OperatorNameConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression, factory)?.wrap(parameters)
                 else -> {
                     createConstant(result, expectedType, parameters)
                 }
@@ -796,7 +797,7 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
             JetTokens.EQEQ -> result
             JetTokens.EXCLEQ -> !result
             JetTokens.IDENTIFIER -> {
-                assert(operationReference.getReferencedNameAsName() == OperatorConventions.EQUALS) { "This method should be called only for equals operations" }
+                assert(operationReference.getReferencedNameAsName() == OperatorNameConventions.EQUALS) { "This method should be called only for equals operations" }
                 result
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.getText()}")
@@ -816,7 +817,7 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
             JetTokens.GT -> factory.createBooleanValue(result > 0)
             JetTokens.GTEQ -> factory.createBooleanValue(result >= 0)
             JetTokens.IDENTIFIER -> {
-                assert(operationReference.getReferencedNameAsName() == OperatorConventions.COMPARE_TO) { "This method should be called only for compareTo operations" }
+                assert(operationReference.getReferencedNameAsName() == OperatorNameConventions.COMPARE_TO) { "This method should be called only for compareTo operations" }
                 return factory.createIntValue(result)
             }
             else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")

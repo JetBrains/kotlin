@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -160,7 +161,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return invokeKotlinFunction(OperatorConventions.COMPARE_TO.getIdentifier(), left, right);
+        return invokeKotlinFunction(OperatorNameConventions.COMPARE_TO.getIdentifier(), left, right);
     }
 
     @NotNull

@@ -129,7 +129,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 val visibility = syntheticExtensionVisibility(sourceFunction)
 
                 descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType,
-                                      Modality.FINAL, visibility, false, false)
+                                      Modality.FINAL, visibility)
 
                 return descriptor
             }

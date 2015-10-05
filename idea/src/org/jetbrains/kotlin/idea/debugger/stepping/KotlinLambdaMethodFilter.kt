@@ -27,7 +27,7 @@ import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class KotlinLambdaMethodFilter(
         lambda: JetFunctionLiteralExpression,
@@ -71,7 +71,7 @@ public class KotlinLambdaMethodFilter(
 
     companion object {
         public fun isLambdaName(name: String?): Boolean {
-            return name == OperatorConventions.INVOKE.asString()
+            return name == OperatorNameConventions.INVOKE.asString()
         }
     }
 }

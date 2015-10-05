@@ -332,7 +332,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(),
                               DescriptorUtilPackage.getModule(descriptor).getBuiltIns().getUnitType(),
-                              null, Visibilities.PRIVATE, false, false);
+                              null, Visibilities.PRIVATE);
 
             this.clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
         }

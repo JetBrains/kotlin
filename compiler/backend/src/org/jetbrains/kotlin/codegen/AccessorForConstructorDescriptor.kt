@@ -47,9 +47,7 @@ public class AccessorForConstructorDescriptor(
                 copyValueParameters(calleeDescriptor),
                 calleeDescriptor.returnType,
                 Modality.FINAL,
-                Visibilities.LOCAL,
-                false,
-                false
+                Visibilities.LOCAL
         )
     }
 }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeIn
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
@@ -39,6 +39,6 @@ object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<Je
 
         val variableExpr = element.loopParameter ?: element.multiParameter ?: return null
         val returnType = TypeInfo(variableExpr as JetExpression, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorConventions.NEXT.asString(), ownerType, returnType, isOperator = true)
+        return FunctionInfo(OperatorNameConventions.NEXT.asString(), ownerType, returnType, isOperator = true)
     }
 }

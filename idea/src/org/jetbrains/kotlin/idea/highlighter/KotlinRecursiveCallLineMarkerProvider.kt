@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.HashSet
 
 public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
@@ -155,7 +156,7 @@ private fun getCallNameFromPsi(element: JetElement): Name? {
             return Name.identifier("get")
         is JetThisExpression ->
             if (element.getParent() is JetCallExpression) {
-                return OperatorConventions.INVOKE
+                return OperatorNameConventions.INVOKE
             }
     }
 

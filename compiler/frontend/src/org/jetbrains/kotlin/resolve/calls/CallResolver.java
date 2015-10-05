@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 
 import javax.inject.Inject;
@@ -183,7 +183,7 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         return computeTasksAndResolveCall(
-                context, OperatorConventions.INVOKE, tracing,
+                context, OperatorNameConventions.INVOKE, tracing,
                 CallableDescriptorCollectors.FUNCTIONS, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
