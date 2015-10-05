@@ -95,7 +95,9 @@ public object ModifierCheckerCore {
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS, ENUM_ENTRY),
             PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, OBJECT),
             INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ANNOTATION_CLASS, ENUM_CLASS, ENUM_ENTRY, FILE),
+                                            ENUM_CLASS, ENUM_ENTRY, FILE),
+            PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
