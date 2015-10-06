@@ -89,7 +89,7 @@ class OverridesCompletion(
 
             lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = "override"
-                override fun getAllLookupStrings() = setOf(lookupString)
+                override fun getAllLookupStrings() = setOf(lookupString, delegate.lookupString)
 
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
@@ -125,6 +125,8 @@ class OverridesCompletion(
                     }
                 }
             }
+
+            lookupElement.assignPriority(ItemPriority.OVERRIDE)
 
             collector.addElement(lookupElement)
         }

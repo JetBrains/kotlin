@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.types.ErrorUtils
 
 public interface ArgumentMapping {
     public fun isError(): Boolean
@@ -61,3 +62,7 @@ class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): 
         return newArgumentMatch
     }
 }
+
+//TODO: temporary hack until status.isSuccess is not always correct
+fun ResolvedCall<*>.isReallySuccess(): Boolean
+        = status.isSuccess && !ErrorUtils.isError(resultingDescriptor)

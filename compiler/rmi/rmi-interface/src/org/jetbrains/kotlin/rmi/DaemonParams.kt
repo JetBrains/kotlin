@@ -191,13 +191,13 @@ public data class DaemonJVMOptions(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(StringPropMapper(this, ::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
-                       StringPropMapper(this, ::maxPermSize, listOf("XX:MaxPermSize"), mergeDelimiter = "="),
-                       StringPropMapper(this, ::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
+        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
+                       StringPropMapper(this, DaemonJVMOptions::maxPermSize, listOf("XX:MaxPermSize"), mergeDelimiter = "="),
+                       StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
                        restMapper)
 
     val restMapper: RestPropMapper<*, *>
-        get() = RestPropMapper(this, ::jvmParams)
+        get() = RestPropMapper(this, DaemonJVMOptions::jvmParams)
 }
 
 
@@ -209,10 +209,10 @@ public data class DaemonOptions(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, ::runFilesPath, fromString = { it.trimQuotes() }),
-                       PropMapper(this, ::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }, mergeDelimiter = "="),
-                       PropMapper(this, ::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }, mergeDelimiter = "="),
-                       NullablePropMapper(this, ::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="))
+        get() = listOf(PropMapper(this, DaemonOptions::runFilesPath, fromString = { it.trimQuotes() }),
+                       PropMapper(this, DaemonOptions::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }, mergeDelimiter = "="),
+                       PropMapper(this, DaemonOptions::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }, mergeDelimiter = "="),
+                       NullablePropMapper(this, DaemonOptions::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="))
 }
 
 
@@ -263,9 +263,9 @@ public data class CompilerId(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, ::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
-                       StringPropMapper(this, ::compilerDigest),
-                       StringPropMapper(this, ::compilerVersion))
+        get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
+                       StringPropMapper(this, CompilerId::compilerDigest),
+                       StringPropMapper(this, CompilerId::compilerVersion))
 
     public fun updateDigest() {
         compilerDigest = compilerClasspath.getFilesClasspathDigest()

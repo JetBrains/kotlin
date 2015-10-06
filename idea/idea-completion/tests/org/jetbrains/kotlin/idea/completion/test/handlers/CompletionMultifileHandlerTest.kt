@@ -85,6 +85,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest('\t', "TestBundle.properties")
     }
 
+    fun testNotImportedExtension() {
+        doTest()
+    }
+
     fun doTest(completionChar: Char = '\n', vararg extraFileNames: String) {
         val fileName = getTestName(false)
 

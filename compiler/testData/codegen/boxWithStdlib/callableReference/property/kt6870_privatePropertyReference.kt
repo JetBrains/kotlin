@@ -4,8 +4,8 @@ class Test {
     public fun exec() {
         val t = object : Thread() {
             override fun run() {
-                ::iv.get(this@Test)
-                ::iv.set(this@Test, 2)
+                Test::iv.get(this@Test)
+                Test::iv.set(this@Test, 2)
             }
         }
         t.start()

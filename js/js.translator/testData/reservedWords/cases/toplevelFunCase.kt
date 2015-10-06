@@ -5,7 +5,7 @@ package foo
 fun case() { case() }
 
 fun box(): String {
-    testNotRenamed("case", { ::case })
+    testNotRenamed("case", { case() })
 
     return "OK"
 }

@@ -43,8 +43,9 @@ public class JetClassShortNameIndex extends StringStubIndexExtension<JetClassOrO
         return KEY;
     }
 
+    @NotNull
     @Override
-    public Collection<JetClassOrObject> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetClassOrObject> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

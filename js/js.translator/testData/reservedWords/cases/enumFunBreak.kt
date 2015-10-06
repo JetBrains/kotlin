@@ -7,7 +7,7 @@ enum class Foo {
     fun `break`() { `break`() }
 
     fun test() {
-        testNotRenamed("break", { ::`break` })
+        testNotRenamed("break", { `break`() })
     }
 }
 

@@ -1,4 +1,4 @@
-// "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
 // ACTION: Create local variable 'PrivateClass'
 // ACTION: Create object 'PrivateClass'
 // ACTION: Create parameter 'PrivateClass'

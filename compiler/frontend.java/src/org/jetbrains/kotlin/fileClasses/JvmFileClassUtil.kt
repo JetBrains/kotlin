@@ -60,14 +60,18 @@ public object JvmFileClassUtil {
 
     @JvmStatic
     public fun getPartFqNameForDeserializedCallable(callable: DeserializedCallableMemberDescriptor): FqName {
-        val implClassName = getImplClassName(callable)
+        val implClassName = getImplClassName(callable) ?: error("No implClassName for $callable")
         val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
         return packageFqName.child(implClassName)
     }
 
     @JvmStatic
-    public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name =
-            callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
+    public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
+            with(callable) {
+                if (proto.hasExtension(JvmProtoBuf.oldImplClassName))
+                    nameResolver.getName(proto.getExtension(JvmProtoBuf.oldImplClassName))
+                else null
+            }
 
     @JvmStatic
     public fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =

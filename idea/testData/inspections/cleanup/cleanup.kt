@@ -58,3 +58,9 @@ fun foo() {
     B() + B()
     B() + B()
 }
+
+class C {
+    fun foo() {}
+
+    fun bar() = ::foo
+}

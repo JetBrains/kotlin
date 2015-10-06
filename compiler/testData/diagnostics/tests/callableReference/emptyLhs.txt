@@ -1,0 +1,23 @@
+package
+
+public val ok1: kotlin.reflect.KProperty0<kotlin.Int>
+public val ok2: kotlin.reflect.KFunction0<kotlin.Int>
+public val topLevelVal: kotlin.Int = 1
+public val A.extensionVal: kotlin.Int
+public fun topLevelFun(): kotlin.Int
+public fun A.extensionFun(): kotlin.Int
+public fun A.fail1(): kotlin.Unit
+public fun A.fail2(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final val memberVal: kotlin.Int = 5
+    public final val ok1: kotlin.reflect.KProperty0<kotlin.Int>
+    public final val ok2: kotlin.reflect.KFunction0<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun fail1(): kotlin.Unit
+    public final fun fail2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun memberFun(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

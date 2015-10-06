@@ -406,6 +406,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCallAndObject.kt")
+        public void testInfixCallAndObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCallAndObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("libraryPropertyJsRuntime.kt")
         public void testLibraryPropertyJsRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/libraryPropertyJsRuntime.kt");
@@ -469,6 +475,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("noImportForIndex.kt")
         public void testNoImportForIndex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notForThisLabel.kt")
+        public void testNotForThisLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notForThisLabel.kt");
             doTest(fileName);
         }
 
@@ -3130,6 +3142,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mailformedExpression.kt")
+        public void testMailformedExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/mailformedExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("memberFunction.kt")
         public void testMemberFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunction.kt");
@@ -4071,6 +4089,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/migration/addTypeToLHSOfCallableReference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AddTypeToLHSOfCallableReference extends AbstractQuickFixTest {
+            public void testAllFilesPresentInAddTypeToLHSOfCallableReference() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/addTypeToLHSOfCallableReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("member.kt")
+            public void testMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/addTypeToLHSOfCallableReference/member.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/migration/backingFieldSyntax")

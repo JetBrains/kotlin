@@ -1,4 +1,4 @@
-// "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
 // ERROR: Unresolved reference: PrivateClass
 
 fun test() {

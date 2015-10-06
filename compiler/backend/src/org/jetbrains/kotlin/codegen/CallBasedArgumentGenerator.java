@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
@@ -51,13 +48,17 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
                 "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
     }
 
+
     @NotNull
     @Override
-    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
-        boolean shouldMarkLineNumbers = codegen.isShouldMarkLineNumbers();
-        codegen.setShouldMarkLineNumbers(false);
-        List<Integer> masks = super.generate(valueArguments);
-        codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
+    public DefaultCallMask generate(
+            @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
+            @NotNull List<? extends ResolvedValueArgument> valueArgs
+    ) {
+        boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
+        this.codegen.setShouldMarkLineNumbers(false);
+        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs);
+        this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
         return masks;
     }
 
@@ -69,7 +70,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         assert valueArgument != null;
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
-        callGenerator.genValueAndPut(parameter, argumentExpression, type);
+        callGenerator.genValueAndPut(parameter, argumentExpression, type, i);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
-        callGenerator.afterParameterPut(type, null, parameter);
+        callGenerator.afterParameterPut(type, null, parameter, i);
     }
 
     @Override
@@ -85,6 +86,11 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
-        callGenerator.afterParameterPut(type, null, parameter);
+        callGenerator.afterParameterPut(type, null, parameter, i);
+    }
+
+    @Override
+    protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> actualArgsWithDeclIndex) {
+        callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex, valueParameterTypes);
     }
 }

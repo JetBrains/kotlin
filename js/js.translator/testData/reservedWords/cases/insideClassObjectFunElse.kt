@@ -7,7 +7,7 @@ class TestClass {
         fun `else`() { `else`() }
 
         fun test() {
-            testNotRenamed("else", { ::`else` })
+            testNotRenamed("else", { `else`() })
         }
     }
 }

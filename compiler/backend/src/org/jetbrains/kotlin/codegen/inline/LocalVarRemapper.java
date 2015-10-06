@@ -29,31 +29,28 @@ import static org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 
 public class LocalVarRemapper {
 
-    private final int allParamsSize;
     private final Parameters params;
     private final int actualParamsSize;
 
     private final StackValue[] remapValues;
-
     private final int additionalShift;
 
     public LocalVarRemapper(Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
-        this.allParamsSize = params.totalSize();
         this.params = params;
 
-        int realSize = 0;
-        remapValues = new StackValue [params.totalSize()];
+        remapValues = new StackValue [params.getArgsSizeOnStack()];
 
-        int index = 0;
+        int realSize = 0;
         for (ParameterInfo info : params) {
+            Integer shift = params.getDeclarationSlot(info);
             if (!info.isSkippedOrRemapped()) {
-                remapValues[index] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
+                remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
                 realSize += info.getType().getSize();
-            } else {
-                remapValues[index] = info.isRemapped() ? info.getRemapValue() : null;
             }
-            index++;
+            else {
+                remapValues[shift] = info.isRemapped() ? info.getRemapValue() : null;
+            }
         }
 
         actualParamsSize = realSize;
@@ -62,8 +59,8 @@ public class LocalVarRemapper {
     public RemapInfo doRemap(int index) {
         int remappedIndex;
 
-        if (index < allParamsSize) {
-            ParameterInfo info = params.get(index);
+        if (index < params.getArgsSizeOnStack()) {
+            ParameterInfo info = params.getParameterByDeclarationSlot(index);
             StackValue remapped = remapValues[index];
             if (info.isSkipped || remapped == null) {
                 return new RemapInfo(info);
@@ -74,7 +71,7 @@ public class LocalVarRemapper {
                 remappedIndex = ((StackValue.Local)remapped).index;
             }
         } else {
-            remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
+            remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index; //captured params not used directly in this inlined method, they used in closure
         }
 
         return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);

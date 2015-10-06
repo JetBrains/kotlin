@@ -38,13 +38,13 @@ public class CapturedParamInfo extends ParameterInfo {
     }
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
-        super(desc.getType(), skipped, index, remapIndex);
+        super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
     }
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, StackValue remapIndex) {
-        super(desc.getType(), skipped, index, remapIndex);
+        super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
     }

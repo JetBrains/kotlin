@@ -470,6 +470,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetExpression> CLASS_LITERAL_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT = DiagnosticFactory0.create(ERROR);
@@ -582,6 +583,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<JetExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 

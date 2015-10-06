@@ -155,6 +155,45 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ClassConstructor.kt")
+        public void testClassConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/ClassConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyQualifier.kt")
+        public void testEmptyQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/EmptyQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonEmptyQualifier.kt")
+        public void testNonEmptyQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/NonEmptyQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotImportedTopLevel.kt")
+        public void testNotImportedTopLevel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/NotImportedTopLevel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Property.kt")
+        public void testProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/callableReference/Property.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/exclChar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -367,6 +406,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("TypeFunctionName.kt")
+        public void testTypeFunctionName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeFunctionName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeNameInConstructorParameter.kt")
+        public void testTypeNameInConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeNameInConstructorParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ValInConstructorParameter.kt")
         public void testValInConstructorParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter.kt");
@@ -473,12 +524,6 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("BackingField.kt")
-        public void testBackingField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/BackingField.kt");
-            doTest(fileName);
         }
 
         @TestMetadata("NotEmptyPrefix.kt")

@@ -150,11 +150,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 val packageView = module.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
                 packageScopes.add(packageView.memberScope)
             }
-            else if (header == null ||
-                     (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS)) {
+            else if (header == null || (header.kind == KotlinClassHeader.Kind.CLASS && !header.isLocalClass)) {
                 // Either a normal Kotlin class or a Java class
                 val classId = klass.classId
-                if (!classId.isLocal()) {
+                if (!classId.isLocal) {
                     val classDescriptor = module.findClassAcrossModuleDependencies(classId).sure { "Couldn't resolve class $className" }
                     if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
                         classes.add(classDescriptor)

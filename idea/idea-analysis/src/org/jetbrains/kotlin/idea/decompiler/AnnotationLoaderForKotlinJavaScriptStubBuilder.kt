@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -35,27 +36,30 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<ClassIdWithTarget> {
-        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map { ClassIdWithTarget(nameResolver.getClassId(it.id), null) }
+        proto as ProtoBuf.Callable // TODO
+
+        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map {
+            ClassIdWithTarget(container.nameResolver.getClassId(it.id), null)
+        }
     }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            message: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
-            proto: ProtoBuf.Callable.ValueParameter
+            proto: ProtoBuf.ValueParameter
     ): List<ClassId> =
-        proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+            proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty().map {
+                container.nameResolver.getClassId(it.id)
+            }
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<ClassId> = emptyList()
 
@@ -68,7 +72,6 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             expectedType: JetType
-    ): Unit {}
+    ) {}
 }

@@ -1,4 +1,4 @@
-// "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
 
 // KT-3165 Weird stack overflow in IDE
 // ERROR: Unresolved reference: Bar

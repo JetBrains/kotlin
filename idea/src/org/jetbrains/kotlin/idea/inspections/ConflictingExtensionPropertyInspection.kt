@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.FileScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -131,7 +132,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
         when (this) {
             is JetCallExpression -> {
                 val resolvedCall = getResolvedCall(analyze())
-                return resolvedCall != null && resolvedCall.status.isSuccess && resolvedCall.resultingDescriptor.original == getMethod.original
+                return resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == getMethod.original
             }
 
             is JetQualifiedExpression -> {
@@ -148,7 +149,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
             is JetCallExpression -> {
                 if ((valueArguments.singleOrNull()?.getArgumentExpression() as? JetSimpleNameExpression)?.getReferencedNameAsName() != valueParameterName) return false
                 val resolvedCall = getResolvedCall(analyze())
-                return resolvedCall != null && resolvedCall.status.isSuccess && resolvedCall.resultingDescriptor.original == setMethod.original
+                return resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == setMethod.original
             }
 
             is JetQualifiedExpression -> {

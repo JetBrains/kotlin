@@ -40,6 +40,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -119,6 +120,10 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             case '@':
                 autoPopupLabelLookup(project, editor);
                 return Result.CONTINUE;
+
+            case ':':
+                autoPopupCallableReferenceLookup(project, editor);
+                return Result.CONTINUE;
         }
 
         return Result.CONTINUE;
@@ -133,8 +138,8 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 PsiElement lastElement = file.findElementAt(offset - 1);
                 if (lastElement == null) return false;
 
-                String text = lastElement.getText();
-                return ".".equals(text) || "?.".equals(text);
+                IElementType elementType = lastElement.getNode().getElementType();
+                return elementType == JetTokens.DOT || elementType == JetTokens.SAFE_ACCESS;
             }
         });
     }
@@ -155,6 +160,20 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 if (lastElement == null) return false;
 
                 return lastElement.getNode().getElementType() == JetTokens.AT;
+            }
+        });
+    }
+
+    private static void autoPopupCallableReferenceLookup(Project project, final Editor editor) {
+        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, new Condition<PsiFile>() {
+            @Override
+            public boolean value(PsiFile file) {
+                int offset = editor.getCaretModel().getOffset();
+
+                PsiElement lastElement = file.findElementAt(offset - 1);
+                if (lastElement == null) return false;
+
+                return lastElement.getNode().getElementType() == JetTokens.COLONCOLON;
             }
         });
     }

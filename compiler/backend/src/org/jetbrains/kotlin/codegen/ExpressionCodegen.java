@@ -41,8 +41,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.kotlin.codegen.intrinsics.CheckCast;
-import org.jetbrains.kotlin.codegen.intrinsics.InstanceOf;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
@@ -94,7 +92,6 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
@@ -1380,7 +1377,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
 
-        StackValue closure = genClosure(function, null, KotlinSyntheticClass.Kind.LOCAL_FUNCTION);
+        StackValue closure = genClosure(function, null);
         if (isStatement) {
             DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
             int index = lookupLocalIndex(descriptor);
@@ -1399,21 +1396,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return gen(expression.getFunctionLiteral().getBodyExpression());
         }
         else {
-            return genClosure(expression.getFunctionLiteral(), null, KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION);
+            return genClosure(expression.getFunctionLiteral(), null);
         }
     }
 
     @NotNull
-    private StackValue genClosure(
-            JetDeclarationWithBody declaration,
-            @Nullable SamType samType,
-            @NotNull KotlinSyntheticClass.Kind kind
-    ) {
+    private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable SamType samType) {
         FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
-                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, kind, null
+                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, null
         );
     }
 
@@ -1423,7 +1416,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
-            @NotNull KotlinSyntheticClass.Kind kind,
             @Nullable FunctionDescriptor functionReferenceTarget
     ) {
         ClassBuilder cv = state.getFactory().newVisitor(
@@ -1433,7 +1425,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper), kind,
+                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper),
                 functionReferenceTarget, strategy, parentCodegen, cv
         );
 
@@ -1492,7 +1484,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     ArgumentGenerator argumentGenerator =
                             new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
 
-                    argumentGenerator.generate(valueArguments);
+                    argumentGenerator.generate(valueArguments, valueArguments);
                 }
 
                 Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
@@ -2298,12 +2290,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (samType == null || expression == null) return null;
 
         if (expression instanceof JetFunctionLiteralExpression) {
-            return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samType,
-                              KotlinSyntheticClass.Kind.SAM_LAMBDA);
+            return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samType);
         }
 
         if (expression instanceof JetNamedFunction) {
-            return genClosure((JetNamedFunction) expression, samType, KotlinSyntheticClass.Kind.SAM_LAMBDA);
+            return genClosure((JetNamedFunction) expression, samType);
         }
 
         final Type asmType =
@@ -2461,7 +2452,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
-        List<Integer> masks = argumentGenerator.generate(valueArguments);
+        List<Integer> masks =
+                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()))
+                        .toInts();
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
@@ -2773,8 +2766,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
             FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-            return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
-                              (FunctionDescriptor) resolvedCall.getResultingDescriptor());
+            return genClosure(expression, functionDescriptor, strategy, null, (FunctionDescriptor) resolvedCall.getResultingDescriptor());
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
@@ -3826,7 +3818,7 @@ The "returned" value of try expression with no finally is either the last expres
     private void generateInstanceOfInstruction(@NotNull JetType jetType) {
         Type type = boxType(asmType(jetType));
         putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.INSTANCEOF_MARKER_METHOD_NAME);
-        InstanceOf.instanceOf(v, jetType, type);
+        TypeIntrinsics.instanceOf(v, jetType, type);
     }
 
     @NotNull
@@ -3835,7 +3827,7 @@ The "returned" value of try expression with no finally is either the last expres
         putReifierMarkerIfTypeIsReifiedParameter(jetType,
                                                  safeAs ? ReifiedTypeInliner.SAFE_CHECKCAST_MARKER_METHOD_NAME
                                                         : ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
-        CheckCast.checkcast(v, jetType, type, safeAs);
+        TypeIntrinsics.checkcast(v, jetType, type, safeAs);
         return StackValue.onStack(type);
     }
 

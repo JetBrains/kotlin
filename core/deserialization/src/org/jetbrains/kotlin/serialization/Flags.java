@@ -26,35 +26,46 @@ public class Flags {
     // Common
 
     public static final FlagField<Boolean> HAS_ANNOTATIONS = FlagField.booleanFirst();
-
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
-
     public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
 
     // Class
 
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
-
     public static final FlagField<Boolean> INNER = FlagField.booleanAfter(CLASS_KIND);
 
     // Callables
 
-    public static final FlagField<ProtoBuf.Callable.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY,
-                                                                                                  ProtoBuf.Callable.CallableKind.values());
+    public static final FlagField<ProtoBuf.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY, ProtoBuf.CallableKind.values());
+    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND, ProtoBuf.MemberKind.values());
 
-    public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
-                                                                                              ProtoBuf.Callable.MemberKind.values());
-    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
-    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
+    // Constructors
 
-    public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_CONSTANT);
+    public static final FlagField<Boolean> IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
 
-    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
+    // Functions
 
-    public static final FlagField<Boolean> IS_OPERATOR = FlagField.booleanAfter(LATE_INIT);
-
+    public static final FlagField<Boolean> IS_OPERATOR = FlagField.booleanAfter(MEMBER_KIND);
     public static final FlagField<Boolean> IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
+
+    // Properties
+
+    public static final FlagField<Boolean> IS_VAR = FlagField.booleanAfter(MEMBER_KIND);
+    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(IS_VAR);
+    public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
+    public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_SETTER);
+    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
+    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(LATE_INIT);
+
+    // Old callables. TODO: delete
+
+    public static final FlagField<Boolean> OLD_HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
+    public static final FlagField<Boolean> OLD_HAS_SETTER = FlagField.booleanAfter(OLD_HAS_GETTER);
+    public static final FlagField<Boolean> OLD_HAS_CONSTANT = FlagField.booleanAfter(OLD_HAS_SETTER);
+    public static final FlagField<Boolean> OLD_IS_CONST = FlagField.booleanAfter(OLD_HAS_CONSTANT);
+    public static final FlagField<Boolean> OLD_LATE_INIT = FlagField.booleanAfter(OLD_IS_CONST);
+    public static final FlagField<Boolean> OLD_IS_OPERATOR = FlagField.booleanAfter(OLD_LATE_INIT);
+    public static final FlagField<Boolean> OLD_IS_INFIX = FlagField.booleanAfter(OLD_IS_OPERATOR);
 
     // Parameters
 
@@ -117,7 +128,7 @@ public class Flags {
             @NotNull Visibility visibility,
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
-            @NotNull ProtoBuf.Callable.CallableKind callableKind,
+            @NotNull ProtoBuf.CallableKind callableKind,
             boolean hasGetter,
             boolean hasSetter,
             boolean hasConstant,
@@ -131,14 +142,67 @@ public class Flags {
                | VISIBILITY.toFlags(visibility(visibility))
                | MEMBER_KIND.toFlags(memberKind(memberKind))
                | CALLABLE_KIND.toFlags(callableKind)
-               | HAS_GETTER.toFlags(hasGetter)
-               | HAS_SETTER.toFlags(hasSetter)
-               | HAS_CONSTANT.toFlags(hasConstant)
-               | LATE_INIT.toFlags(lateInit)
-               | IS_CONST.toFlags(isConst)
+               | OLD_HAS_GETTER.toFlags(hasGetter)
+               | OLD_HAS_SETTER.toFlags(hasSetter)
+               | OLD_HAS_CONSTANT.toFlags(hasConstant)
+               | OLD_LATE_INIT.toFlags(lateInit)
+               | OLD_IS_CONST.toFlags(isConst)
+               | OLD_IS_OPERATOR.toFlags(isOperator)
+               | OLD_IS_INFIX.toFlags(isInfix)
+               ;
+    }
+
+    public static int getConstructorFlags(
+            boolean hasAnnotations,
+            @NotNull Visibility visibility,
+            boolean isSecondary
+    ) {
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | VISIBILITY.toFlags(visibility(visibility))
+               | IS_SECONDARY.toFlags(isSecondary)
+                ;
+    }
+
+    public static int getFunctionFlags(
+            boolean hasAnnotations,
+            @NotNull Visibility visibility,
+            @NotNull Modality modality,
+            @NotNull CallableMemberDescriptor.Kind memberKind,
+            boolean isOperator,
+            boolean isInfix
+    ) {
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | VISIBILITY.toFlags(visibility(visibility))
+               | MODALITY.toFlags(modality(modality))
+               | MEMBER_KIND.toFlags(memberKind(memberKind))
                | IS_OPERATOR.toFlags(isOperator)
                | IS_INFIX.toFlags(isInfix)
-               ;
+                ;
+    }
+
+    public static int getPropertyFlags(
+            boolean hasAnnotations,
+            @NotNull Visibility visibility,
+            @NotNull Modality modality,
+            @NotNull CallableMemberDescriptor.Kind memberKind,
+            boolean isVar,
+            boolean hasGetter,
+            boolean hasSetter,
+            boolean hasConstant,
+            boolean isConst,
+            boolean lateInit
+    ) {
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | VISIBILITY.toFlags(visibility(visibility))
+               | MODALITY.toFlags(modality(modality))
+               | MEMBER_KIND.toFlags(memberKind(memberKind))
+               | IS_VAR.toFlags(isVar)
+               | HAS_GETTER.toFlags(hasGetter)
+               | HAS_SETTER.toFlags(hasSetter)
+               | IS_CONST.toFlags(isConst)
+               | LATE_INIT.toFlags(lateInit)
+               | HAS_CONSTANT.toFlags(hasConstant)
+                ;
     }
 
     public static int getAccessorFlags(
@@ -193,16 +257,16 @@ public class Flags {
     }
 
     @NotNull
-    private static ProtoBuf.Callable.MemberKind memberKind(@NotNull CallableMemberDescriptor.Kind kind) {
+    private static ProtoBuf.MemberKind memberKind(@NotNull CallableMemberDescriptor.Kind kind) {
         switch (kind) {
             case DECLARATION:
-                return ProtoBuf.Callable.MemberKind.DECLARATION;
+                return ProtoBuf.MemberKind.DECLARATION;
             case FAKE_OVERRIDE:
-                return ProtoBuf.Callable.MemberKind.FAKE_OVERRIDE;
+                return ProtoBuf.MemberKind.FAKE_OVERRIDE;
             case DELEGATION:
-                return ProtoBuf.Callable.MemberKind.DELEGATION;
+                return ProtoBuf.MemberKind.DELEGATION;
             case SYNTHESIZED:
-                return ProtoBuf.Callable.MemberKind.SYNTHESIZED;
+                return ProtoBuf.MemberKind.SYNTHESIZED;
         }
         throw new IllegalArgumentException("Unknown member kind: " + kind);
     }

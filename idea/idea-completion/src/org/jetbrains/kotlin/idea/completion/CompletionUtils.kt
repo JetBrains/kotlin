@@ -68,7 +68,7 @@ tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
 
 enum class ItemPriority {
     DEFAULT,
-    BACKING_FIELD,
+    OVERRIDE,
     NAMED_PARAMETER
 }
 

@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     fun protected() { protected() }
 
-    testRenamed("protected", { ::protected })
+    testRenamed("protected", { protected() })
 
     return "OK"
 }

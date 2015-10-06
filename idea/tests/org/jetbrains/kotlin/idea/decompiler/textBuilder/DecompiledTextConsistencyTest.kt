@@ -20,18 +20,17 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
 public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
@@ -61,6 +60,6 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean =
             descriptor is DeserializedCallableMemberDescriptor &&
-            descriptor.proto.hasExtension(JvmProtoBuf.implClassName) &&
-            facadeFqName == PackagePartClassUtils.getPackagePartFqName(descriptor)
+            JvmFileClassUtil.getImplClassName(descriptor) != null &&
+            facadeFqName == JvmFileClassUtil.getPartFqNameForDeserializedCallable(descriptor)
 }

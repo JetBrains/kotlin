@@ -60,7 +60,6 @@ import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLitera
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -78,7 +77,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     private final CalculatedClosure closure;
     private final Type asmType;
     private final int visibilityFlag;
-    private final KotlinSyntheticClass.Kind syntheticClassKind;
 
     private Method constructor;
     private Type superClassAsmType;
@@ -88,7 +86,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             @NotNull JetElement element,
             @Nullable SamType samType,
             @NotNull ClosureContext context,
-            @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @Nullable FunctionDescriptor functionReferenceTarget,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
@@ -99,7 +96,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.funDescriptor = context.getFunctionDescriptor();
         this.classDescriptor = context.getContextDescriptor();
         this.samType = samType;
-        this.syntheticClassKind = syntheticClassKind;
         this.functionReferenceTarget = functionReferenceTarget;
         this.strategy = strategy;
 
@@ -223,7 +219,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @Override
     protected void generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v, syntheticClassKind);
+        writeKotlinSyntheticClassAnnotation(v);
 
         DescriptorSerializer serializer =
                 DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));

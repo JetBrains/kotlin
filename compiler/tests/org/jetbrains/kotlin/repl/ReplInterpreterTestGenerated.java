@@ -257,21 +257,6 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
     }
 
-    @TestMetadata("compiler/testData/repl/reflection")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reflection extends AbstractReplInterpreterTest {
-        public void testAllFilesPresentInReflection() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/reflection"), Pattern.compile("^(.+)\\.repl$"), true);
-        }
-
-        @TestMetadata("propertyReference.repl")
-        public void testPropertyReference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/reflection/propertyReference.repl");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/repl/regressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,6 +1,10 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <property name="ideaVersion" value="141.2735.5"/>
+    <!--
+    <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
+    <property name="ideaVersion" value="142.5239.7"/>
 
+    -->
     <property name="kotlin.bootstrap.branch" value=""/>
     <property name="kotlin.bootstrap.branch.locator" value=""/>
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
@@ -62,10 +66,16 @@
             idea.maven.version="141-SNAPSHOT"/>
     </target>
 
-    <target name="update_continuous_142" depends="fetch-third-party,fetch-annotations">
+    <target name="update_continuous_143" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="142-SNAPSHOT"/>
+            idea.maven.version="143-SNAPSHOT"/>
+    </target>
+
+    <target name="update_continuous_144" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="144-SNAPSHOT"/>
     </target>
 
     <macrodef name="get-maven-library">

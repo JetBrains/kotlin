@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -122,7 +119,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private boolean shouldSkipUsage(JetCallElement element) {
         // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
         if (resolvedCall == null && !(element instanceof JetDelegatorToSuperCall)) return true;
-        if (resolvedCall != null && !resolvedCall.getStatus().isSuccess()) {
+        if (resolvedCall != null && !ArgumentMappingKt.isReallySuccess(resolvedCall)) {
             // TODO: investigate why arguments are not recorded for enum constructor call
             if (element instanceof JetDelegatorToSuperCall && element.getParent().getParent() instanceof JetEnumEntry) return false;
             for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {

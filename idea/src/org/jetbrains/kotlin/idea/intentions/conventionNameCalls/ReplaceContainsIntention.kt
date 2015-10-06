@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -31,7 +32,7 @@ public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQua
         if (element.calleeName != OperatorConventions.CONTAINS.asString()) return null
 
         val resolvedCall = element.toResolvedCall() ?: return null
-        if (!resolvedCall.getStatus().isSuccess()) return null
+        if (!resolvedCall.isReallySuccess()) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 interface UsageReplacementStrategy {
@@ -47,7 +48,7 @@ interface UsageReplacementStrategy {
             when (target) {
                 is CallableDescriptor -> {
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
-                    if (!resolvedCall.status.isSuccess) return null
+                    if (!resolvedCall.isReallySuccess()) return null
                     val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, target, resolutionFacade) ?: return null
                     return CallableUsageReplacementStrategy(replacement)
                 }

@@ -179,6 +179,9 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinPluginUpdater"
+                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
 

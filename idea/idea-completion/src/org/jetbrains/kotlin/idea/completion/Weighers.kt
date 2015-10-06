@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
+import com.intellij.openapi.util.Key
 import com.intellij.psi.util.proximity.PsiProximityComparator
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -30,10 +31,9 @@ import org.jetbrains.kotlin.idea.completion.smart.*
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
-import org.jetbrains.kotlin.types.typeUtil.nullability
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -177,28 +177,35 @@ object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching",
     }
 }
 
-class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
+class SmartCompletionInBasicWeigher(
+        private val smartCompletion: SmartCompletion,
+        private val callType: CallType<*>,
+        private val resolutionFacade: ResolutionFacade
+) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
+
+    companion object {
+        val KEYWORD_VALUE_MATCHED_KEY = Key<Unit>("SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY")
+    }
+
     private val descriptorsToSkip = smartCompletion.descriptorsToSkip
     private val expectedInfos = smartCompletion.expectedInfos
 
-    private fun fullMatchWeight(nameSimilarity: Int) = (3L shl 32) + nameSimilarity * 3 // true and false should be in between zero-nameSimilarity and 1-nameSimilarity
-
-    private val MATCHED_TRUE_WEIGHT = (3L shl 32) + 2
-    private val MATCHED_FALSE_WEIGHT = (3L shl 32) + 1
+    private fun fullMatchWeight(nameSimilarity: Int) = (3L shl 32) + nameSimilarity
 
     private fun ifNotNullMatchWeight(nameSimilarity: Int) = (2L shl 32) + nameSimilarity
 
     private fun smartCompletionItemWeight(nameSimilarity: Int) = (1L shl 32) + nameSimilarity
-
-    private val MATCHED_NULL_WEIGHT = 1L
 
     private val NO_MATCH_WEIGHT = 0L
 
     private val DESCRIPTOR_TO_SKIP_WEIGHT = -1L // if descriptor is skipped from smart completion then it's probably irrelevant
 
     override fun weigh(element: LookupElement): Long {
-        val smartCompletionPriority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
-        if (smartCompletionPriority != null) { // it's an "additional item" came from smart completion, don't match it against expected type
+        if (element.getUserData(KEYWORD_VALUE_MATCHED_KEY) != null) {
+            return fullMatchWeight(0)
+        }
+
+        if (element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) != null) { // it's an "additional item" came from smart completion, don't match it against expected type
             return smartCompletionItemWeight(element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
         }
 
@@ -208,34 +215,12 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
 
         if (expectedInfos.isEmpty()) return NO_MATCH_WEIGHT
 
-        if (o is KeywordLookupObject) {
-            when (element.lookupString) {
-                "true", "false" -> {
-                    if (expectedInfos.any { it.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false }) {
-                        return if (element.lookupString == "true") MATCHED_TRUE_WEIGHT else MATCHED_FALSE_WEIGHT
-                    }
-                    else {
-                        return NO_MATCH_WEIGHT
-                    }
-                }
-
-                "null" -> {
-                    if (expectedInfos.any { it.fuzzyType?.type?.nullability()?.let { it != TypeNullability.NOT_NULL } ?: false }) {
-                        return MATCHED_NULL_WEIGHT
-                    }
-                    else {
-                        return NO_MATCH_WEIGHT
-                    }
-                }
-            }
-        }
-
         val smartCastCalculator = smartCompletion.smartCastCalculator
 
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
-                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
+                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade) to descriptor.name
             }
 
             is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) } to null
@@ -245,18 +230,18 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
 
         if (fuzzyTypes.isEmpty()) return NO_MATCH_WEIGHT
 
-        val classified: Collection<Pair<ExpectedInfo, ExpectedInfoClassification>> = expectedInfos.map { it to fuzzyTypes.classifyExpectedInfo(it) }
-        if (classified.all { it.second == ExpectedInfoClassification.noMatch }) return NO_MATCH_WEIGHT
+        val matched: Collection<Pair<ExpectedInfo, ExpectedInfoMatch>> = expectedInfos.map { it to fuzzyTypes.matchExpectedInfo(it) }
+        if (matched.all { it.second == ExpectedInfoMatch.noMatch }) return NO_MATCH_WEIGHT
 
         val nameSimilarity = if (name != null) {
-            val matchingInfos = classified.filter { it.second != ExpectedInfoClassification.noMatch }.map { it.first }
+            val matchingInfos = matched.filter { it.second != ExpectedInfoMatch.noMatch }.map { it.first }
             calcNameSimilarity(name.asString(), matchingInfos)
         }
         else {
             0
         }
 
-        return if (classified.any { it.second.isMatch() })
+        return if (matched.any { it.second.isMatch() })
             fullMatchWeight(nameSimilarity)
         else
             ifNotNullMatchWeight(nameSimilarity)

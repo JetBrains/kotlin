@@ -29,12 +29,14 @@ public @interface KotlinClass {
 
     int[] version() default {};
 
-    Kind kind() default Kind.CLASS;
-
     String[] data();
 
     String[] strings();
 
+    @Deprecated
+    Kind kind() default Kind.CLASS;
+
+    @Deprecated
     enum Kind {
         CLASS,
 

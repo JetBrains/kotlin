@@ -6,7 +6,7 @@ object TestObject {
     fun protected() { protected() }
 
     fun test() {
-        testNotRenamed("protected", { ::protected })
+        testNotRenamed("protected", { protected() })
     }
 }
 

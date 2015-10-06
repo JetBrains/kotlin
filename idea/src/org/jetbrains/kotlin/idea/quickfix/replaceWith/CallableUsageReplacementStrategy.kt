@@ -57,7 +57,7 @@ class CallableUsageReplacementStrategy(
     override fun createReplacer(usage: JetSimpleNameExpression): (() -> JetElement)? {
         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
-        if (!resolvedCall.status.isSuccess) return null
+        if (!resolvedCall.isReallySuccess()) return null
         return {
             // copy replacement expression because it is modified by performCallReplacement
             performCallReplacement(usage, bindingContext, resolvedCall, replacement.copy())
@@ -430,7 +430,7 @@ private fun introduceNamedArguments(result: JetExpression) {
     for (callExpression in callsToProcess) {
         val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return
-        if (!resolvedCall.status.isSuccess) return
+        if (!resolvedCall.isReallySuccess()) return
 
         val argumentsToMakeNamed = callExpression.valueArguments.dropWhile { !it[MAKE_ARGUMENT_NAMED_KEY] }
         for (argument in argumentsToMakeNamed) {
@@ -549,7 +549,7 @@ private fun restoreFunctionLiteralArguments(expression: JetExpression) {
         if (callExpression.functionLiteralArguments.isNotEmpty()) return
 
         val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
-        if (!resolvedCall.status.isSuccess) return
+        if (!resolvedCall.isReallySuccess()) return
         val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
         if (argumentMatch.valueParameter != resolvedCall.resultingDescriptor.valueParameters.last()) return
 

@@ -28,12 +28,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class JvmAnnotationNames {
-    public static final FqName KOTLIN_CLASS = KotlinClass.CLASS_NAME.getFqNameForClassNameWithoutDollars();
+    public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
     public static final FqName KOTLIN_FILE_FACADE = new FqName("kotlin.jvm.internal.KotlinFileFacade");
     public static final FqName KOTLIN_MULTIFILE_CLASS = new FqName("kotlin.jvm.internal.KotlinMultifileClass");
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
+    public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
+    public static final FqName KOTLIN_LOCAL_CLASS = new FqName("kotlin.jvm.internal.KotlinLocalClass");
 
     public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
@@ -67,44 +69,11 @@ public final class JvmAnnotationNames {
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
 
-    public static class KotlinClass {
-        public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinClass");
-        public static final ClassId KIND_CLASS_ID =
-                ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
-        public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
-
-        /**
-         * This enum duplicates {@link kotlin.jvm.internal.KotlinClass.Kind}. Both places should be updated simultaneously.
-         */
-        public enum Kind {
-            CLASS,
-            LOCAL_CLASS,
-            ANONYMOUS_OBJECT,
-            ;
-        }
-    }
-
     public static class KotlinSyntheticClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
         public static final ClassId KIND_CLASS_ID =
                 ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
-
-        /**
-         * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}. Both places should be updated simultaneously.
-         */
-        public enum Kind {
-            PACKAGE_PART,
-            TRAIT_IMPL,
-            LOCAL_TRAIT_IMPL,
-            SAM_WRAPPER,
-            SAM_LAMBDA,
-            CALLABLE_REFERENCE_WRAPPER,
-            LOCAL_FUNCTION,
-            ANONYMOUS_FUNCTION,
-            WHEN_ON_ENUM_MAPPINGS,
-            ;
-        }
     }
 
     @Deprecated
@@ -139,6 +108,8 @@ public final class JvmAnnotationNames {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
         SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
+        SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS));
+        SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_LOCAL_CLASS));
 
         for (FqName fqName : Arrays.asList(JETBRAINS_NOT_NULL_ANNOTATION, JETBRAINS_NULLABLE_ANNOTATION)) {
             NULLABILITY_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));

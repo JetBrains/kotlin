@@ -116,6 +116,63 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ArgumentOrder extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInArgumentOrder() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("captured.1.kt")
+        public void testCaptured() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/captured.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("capturedInExtension.1.kt")
+        public void testCapturedInExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/capturedInExtension.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("extension.1.kt")
+        public void testExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extension.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("extensionInClass.1.kt")
+        public void testExtensionInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extensionInClass.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("lambdaMigration.1.kt")
+        public void testLambdaMigration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigration.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("lambdaMigrationInClass.1.kt")
+        public void testLambdaMigrationInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigrationInClass.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simple.1.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simple.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleInClass.1.kt")
+        public void testSimpleInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simpleInClass.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

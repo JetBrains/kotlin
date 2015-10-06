@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,28 +34,11 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-public enum class CallType {
-    NORMAL,
-    SAFE,
-
-    INFIX {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
-    },
-
-    UNARY {
-        override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
-    };
-
-    public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
-}
-
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
-        callType: CallType,
+        callType: CallType<*>,
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
@@ -74,12 +56,12 @@ public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
     val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
-    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, scope.getContainingDeclaration())
+    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.getContainingDeclaration())
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,
-        callType: CallType,
+        callType: CallType<*>,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
@@ -92,9 +74,9 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiverTypes: Collection<JetType>,
-        callType: CallType
+        callType: CallType<*>
 ): Collection<CallableDescriptor> {
-    if (!callType.canCall(this)) return listOf()
+    if (!callType.descriptorKindFilter.accepts(this)) return listOf()
 
     var types = receiverTypes.asSequence()
     if (callType == CallType.SAFE) {

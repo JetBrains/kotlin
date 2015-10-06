@@ -50,7 +50,7 @@ public class KotlinJavascriptSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.Callable.ValueParameter.Builder) {
+    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(JsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }

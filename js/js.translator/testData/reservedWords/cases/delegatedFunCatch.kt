@@ -12,7 +12,7 @@ class TraitImpl : Trait {
 
 class TestDelegate : Trait by TraitImpl() {
     fun test() {
-        testNotRenamed("catch", { ::catch })
+        testNotRenamed("catch", { catch() })
     }
 }
 

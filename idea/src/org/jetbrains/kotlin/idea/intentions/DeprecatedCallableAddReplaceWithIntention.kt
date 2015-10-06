@@ -26,21 +26,21 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import java.util.ArrayList
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import java.util.*
 
 public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<JetCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
@@ -108,7 +108,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         for (entry in getAnnotationEntries()) {
             entry.analyze()
             val resolvedCall = entry.getCalleeExpression().getResolvedCall(bindingContext) ?: continue
-            if (!resolvedCall.getStatus().isSuccess()) continue
+            if (!resolvedCall.isReallySuccess()) continue
 //            if (resolvedCall.getResultingDescriptor() != deprecatedConstructor) continue
 
             //TODO
