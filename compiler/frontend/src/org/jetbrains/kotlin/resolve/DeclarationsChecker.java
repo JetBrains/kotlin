@@ -279,6 +279,7 @@ public class DeclarationsChecker {
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         checkTypeParameters(aClass);
+        checkTypeParameterConstraints(aClass);
 
         if (aClass.isInterface()) {
             checkConstructorInTrait(aClass);
@@ -336,6 +337,27 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkTypeParameterConstraints(JetTypeParameterListOwner typeParameterListOwner) {
+        List<JetTypeConstraint> constraints = typeParameterListOwner.getTypeConstraints();
+        if (!constraints.isEmpty()) {
+            for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
+                if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
+                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAITS.on(typeParameter));
+                }
+            }
+        }
+    }
+
+    private static boolean hasConstraints(JetTypeParameter typeParameter, List<JetTypeConstraint> constraints) {
+        for (JetTypeConstraint constraint : constraints) {
+            JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
+            if (parameterName != null && parameterName.getText().equals(typeParameter.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void checkConstructorInTrait(JetClass klass) {
         JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
@@ -377,6 +399,7 @@ public class DeclarationsChecker {
         checkPropertyLateInit(property, propertyDescriptor);
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
+        checkTypeParameterConstraints(property);
         checkPropertyExposedType(property, propertyDescriptor);
     }
 
@@ -572,6 +595,7 @@ public class DeclarationsChecker {
             typeParameterList.getTextRange().getStartOffset() > nameIdentifier.getTextRange().getStartOffset()) {
             trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList));
         }
+        checkTypeParameterConstraints(function);
 
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
