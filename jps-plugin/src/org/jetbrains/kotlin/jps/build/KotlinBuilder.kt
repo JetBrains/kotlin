@@ -30,15 +30,11 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ABORT
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.ADDITIONAL_PASS_REQUIRED
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.NOTHING_DONE
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.OK
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
@@ -141,10 +137,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         if (chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }) {
             LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
-            val incrementalCaches = getIncrementalCaches(chunk, context)
-            incrementalCaches.values().forEach(StorageOwner::clean)
-            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
-            return ADDITIONAL_PASS_REQUIRED
+            chunk.targets.forEach { dataManager.getKotlinCache(it).clean() }
+            return CHUNK_REBUILD_REQUIRED
         }
 
         if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()
@@ -238,13 +232,22 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         private fun ChangesInfo.doProcessChanges() {
+            fun isKotlin(file: File) = KotlinSourceFileCollector.isKotlinSourceFile(file)
+            fun isNotCompiled(file: File) = file !in allCompiledFiles
+
             when {
                 inlineAdded -> {
-                    recompileEverything()
+                    allCompiledFiles.clear()
+                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, ::isKotlin)
                     return
                 }
-                constantsChanged -> recompileOtherAndDependents()
-                protoChanged -> recompileOtherKotlinInChunk()
+                constantsChanged -> {
+                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, ::isNotCompiled)
+                    return
+                }
+                protoChanged -> {
+                    FSOperations.markDirty(context, CompilationRound.NEXT, chunk, { isKotlin(it) && isNotCompiled(it) })
+                }
             }
 
             if (inlineChanged) {
@@ -260,28 +263,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     FSOperations.markDirty(context, CompilationRound.NEXT, it)
                 }
             }
-        }
-
-        private fun recompileEverything() {
-            allCompiledFiles.clear()
-            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk)
-        }
-
-        private fun recompileOtherAndDependents() {
-            // Workaround for IDEA 14.0-14.0.2: extended version of markDirtyRecursively is not available
-            try {
-                Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
-
-                FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, { file -> file !in allCompiledFiles })
-            } catch (e: ClassNotFoundException) {
-                recompileEverything()
-            }
-        }
-
-        private fun recompileOtherKotlinInChunk() {
-            FSOperations.markDirty(context, chunk, { file ->
-                KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
-            })
         }
     }
 
