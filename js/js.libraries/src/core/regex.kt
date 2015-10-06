@@ -177,7 +177,7 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             get() = match[0]!!
 
         override val groups: MatchGroupCollection = object : MatchGroupCollection {
-            override fun size(): Int = match.size()
+            override val size: Int get() = match.size()
             override fun isEmpty(): Boolean = size() == 0
 
             override fun contains(o: Any?): Boolean = this.any { it == o }

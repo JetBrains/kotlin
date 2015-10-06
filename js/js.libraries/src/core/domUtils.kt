@@ -19,7 +19,7 @@ package org.w3c.dom
 import java.util.AbstractList
 
 private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractList<HTMLElement>() {
-    override fun size(): Int = collection.length
+    override val size: Int get() = collection.length
 
     override fun get(index: Int): HTMLElement =
             when {
@@ -32,7 +32,7 @@ public fun HTMLCollection.asList(): List<HTMLElement> = HTMLCollectionListView(t
 public fun HTMLCollection?.toElementList(): List<Element> = this?.asList() ?: emptyList()
 
 private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String>() {
-    override fun size(): Int = delegate.length
+    override val size: Int get() = delegate.length
 
     override fun get(index: Int) =
             when {

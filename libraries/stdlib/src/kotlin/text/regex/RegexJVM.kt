@@ -230,7 +230,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
         get() = matchResult.group()
 
     override val groups: MatchGroupCollection = object : MatchGroupCollection {
-        override fun size(): Int = matchResult.groupCount() + 1
+        override val size: Int get() = matchResult.groupCount() + 1
         override fun isEmpty(): Boolean = false
         override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
         override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
