@@ -169,6 +169,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DefaultValueFunctionTypeParameter.kt")
+        public void testDefaultValueFunctionTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DefaultValueFunctionTypeParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DefaultValuesTypechecking.kt")
         public void testDefaultValuesTypechecking() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DefaultValuesTypechecking.kt");
@@ -876,6 +882,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("onFunctionParameter.kt")
             public void testOnFunctionParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/onFunctionParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onFunctionTypeParameter.kt")
+            public void testOnFunctionTypeParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/onFunctionTypeParameter.kt");
                 doTest(fileName);
             }
 
@@ -9129,6 +9141,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("defaultModifier.kt")
             public void testDefaultModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/defaultModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionTypeParameterModifier.kt")
+            public void testFunctionTypeParameterModifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/functionTypeParameterModifier.kt");
                 doTest(fileName);
             }
 
