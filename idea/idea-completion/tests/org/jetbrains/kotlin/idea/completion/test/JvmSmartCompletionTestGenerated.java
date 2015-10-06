@@ -1356,6 +1356,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         public void testAllFilesPresentInMultipleArgsItem() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/multipleArgsItem"), Pattern.compile("^(.+)\\.kt$"), true);
         }
+
+        @TestMetadata("CallWithBrackets.kt")
+        public void testCallWithBrackets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/smart/smartCasts")

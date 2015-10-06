@@ -133,15 +133,16 @@ class ExpectedInfo(
 val ExpectedInfo.fuzzyType: FuzzyType?
     get() = (this.filter as? ByExpectedTypeFilter)?.fuzzyType
 
-sealed class ArgumentPositionData(val function: FunctionDescriptor) : ExpectedInfo.AdditionalData {
+sealed class ArgumentPositionData(val function: FunctionDescriptor, val callType: Call.CallType) : ExpectedInfo.AdditionalData {
     class Positional(
             function: FunctionDescriptor,
+            callType: Call.CallType,
             val argumentIndex: Int,
             val isFunctionLiteralArgument: Boolean,
             val namedArgumentCandidates: Collection<ParameterDescriptor>
-    ) : ArgumentPositionData(function)
+    ) : ArgumentPositionData(function, callType)
 
-    class Named(function: FunctionDescriptor, val argumentName: Name) : ArgumentPositionData(function)
+    class Named(function: FunctionDescriptor, callType: Call.CallType, val argumentName: Name) : ArgumentPositionData(function, callType)
 }
 
 class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData
@@ -309,8 +310,10 @@ class ExpectedInfos(
         val argumentName = argument.getArgumentName()?.asName
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
 
+        val callType = call.callType
+
         val argumentPositionData = if (argumentName != null) {
-            ArgumentPositionData.Named(descriptor, argumentName)
+            ArgumentPositionData.Named(descriptor, callType, argumentName)
         }
         else {
             val namedArgumentCandidates = if (!isFunctionLiteralArgument && descriptor.hasStableParameterNames()) {
@@ -320,10 +323,9 @@ class ExpectedInfos(
             else {
                 emptyList()
             }
-            ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
+            ArgumentPositionData.Positional(descriptor, callType, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
         }
 
-        val callType = call.callType
         val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
         val rparenthTail = if (isArrayAccess) Tail.RBRACKET else Tail.RPARENTH
 

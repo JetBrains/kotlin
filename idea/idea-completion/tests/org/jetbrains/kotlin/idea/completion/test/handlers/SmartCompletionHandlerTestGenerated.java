@@ -569,6 +569,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("MultipleArgsIntoBrackets.kt")
+    public void testMultipleArgsIntoBrackets() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/MultipleArgsIntoBrackets.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultipleArgsItem.kt")
     public void testMultipleArgsItem() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/MultipleArgsItem.kt");
