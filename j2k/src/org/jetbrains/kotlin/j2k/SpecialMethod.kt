@@ -134,6 +134,36 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         }
     },
 
+    STRING_JOIN(JAVA_LANG_STRING, "join", 2) {
+        override fun matches(method: PsiMethod)
+                = super.matches(method) && method.parameterList.parameters.last().type.canonicalText == "java.lang.Iterable<? extends java.lang.CharSequence>"
+
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?
+                = MethodCallExpression.buildNotNull(codeConverter.convertExpression(arguments[1]), "joinToString", codeConverter.convertExpressions(arguments.take(1)), emptyList())
+    },
+
+    STRING_JOIN_VARARG(JAVA_LANG_STRING, "join", null) {
+        override fun matches(method: PsiMethod): Boolean = super.matches(method) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
+
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+            if (arguments.size() == 2 && arguments.last().isAssignableToCharSequenceArray()) {
+                return STRING_JOIN.convertCall(qualifier, arguments, typeArgumentsConverted, codeConverter)
+            }
+            else {
+                return MethodCallExpression.buildNotNull(
+                        MethodCallExpression.buildNotNull(null, "arrayOf", codeConverter.convertExpressions(arguments.drop(1))).assignNoPrototype(),
+                        "joinToString",
+                        codeConverter.convertExpressions(arguments.take(1))
+                )
+            }
+        }
+
+        private fun PsiExpression.isAssignableToCharSequenceArray(): Boolean {
+            val charSequenceType = PsiType.getTypeByName("java.lang.CharSequence", project, resolveScope)
+            return (type as? PsiArrayType)?.componentType?.let { charSequenceType.isAssignableFrom(it) } ?: false
+        }
+    },
+
 
     STRING_COMPARE_TO_IGNORE_CASE(JAVA_LANG_STRING, "compareToIgnoreCase", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
