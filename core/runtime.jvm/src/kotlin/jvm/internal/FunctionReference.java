@@ -24,14 +24,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
-public class FunctionReference
-        extends FunctionImpl
-        implements KFunction,
-                   KTopLevelFunction,
-                   KMemberFunction,
-                   KTopLevelExtensionFunction,
-                   KLocalFunction {
+public class FunctionReference extends FunctionImpl implements KFunction {
     private final int arity;
 
     public FunctionReference(int arity) {
