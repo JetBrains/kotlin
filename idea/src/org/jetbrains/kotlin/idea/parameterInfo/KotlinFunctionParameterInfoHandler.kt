@@ -21,6 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -35,7 +36,10 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -61,36 +65,69 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import java.awt.Color
 import java.util.*
+import kotlin.reflect.KClass
 
-class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, FunctionDescriptor, JetValueArgument> {
-
+class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<JetValueArgumentList, JetValueArgument>(JetValueArgumentList::class, JetValueArgument::class) {
     override fun getActualParameters(arguments: JetValueArgumentList) = arguments.arguments.toTypedArray()
-
-    override fun getActualParameterDelimiterType() = JetTokens.COMMA
 
     override fun getActualParametersRBraceType() = JetTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(JetCallElement::class.java)
+}
+
+class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<JetContainerNode, JetExpression>(JetContainerNode::class, JetExpression::class) {
+    override fun getArgumentListAllowedParentClasses() = setOf(JetArrayAccessExpression::class.java)
+
+    override fun getActualParameters(containerNode: JetContainerNode): Array<out JetExpression> = containerNode.allChildren.filterIsInstance<JetExpression>().toList().toTypedArray()
+
+    override fun getActualParametersRBraceType() = JetTokens.RBRACKET
+}
+
+abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement, TArgument : JetElement>(
+        private val argumentListClass: KClass<TArgumentList>,
+        private val argumentClass: KClass<TArgument>
+) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, FunctionDescriptor, TArgument> {
+
+    companion object {
+        val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
+    }
+
+    private fun findCall(argumentList: TArgumentList, bindingContext: BindingContext): Call? {
+        return (argumentList.parent as JetElement).getCall(bindingContext)
+    }
+
+    override fun getActualParameterDelimiterType() = JetTokens.COMMA
 
     override fun getArgListStopSearchClasses() = setOf(JetNamedFunction::class.java, JetVariableDeclaration::class.java)
 
-    override fun getArgumentListClass() = JetValueArgumentList::class.java
+    override fun getArgumentListClass() = argumentListClass.java
 
-    override fun couldShowInLookup() = true
+    override fun showParameterInfo(element: TArgumentList, context: CreateParameterInfoContext) {
+        context.showHint(element, element.textRange.startOffset, this)
+    }
 
-    override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
+    override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): TArgumentList? {
+        val element = context.file.findElementAt(context.offset) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(element, argumentListClass.java) ?: return null
+        val argument = element.parents.takeWhile { it != argumentList }.lastOrNull()
+        if (argument != null && !argumentClass.java.isInstance(argument)) {
+            val arguments = getActualParameters(argumentList)
+            val index = arguments.indexOf(element)
+            context.setCurrentParameter(index)
+            context.setHighlightedParameter(element)
+        }
+        return argumentList
+    }
 
-    override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>() //todo: ?
-
-    override fun findElementForParameterInfo(context: CreateParameterInfoContext): JetValueArgumentList? {
+    override fun findElementForParameterInfo(context: CreateParameterInfoContext): TArgumentList? {
         //todo: calls to this constructors, when we will have auxiliary constructors
         val file = context.file as? JetFile ?: return null
 
-        val argumentList = file.findElementAt(context.offset)?.getStrictParentOfType<JetValueArgumentList>() ?: return null
+        val token = file.findElementAt(context.offset) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
 
-        val callElement = argumentList.parent as? JetCallElement ?: return null
-        val bindingContext = callElement.analyze(BodyResolveMode.PARTIAL)
-        val call = callElement.getCall(bindingContext) ?: return null
+        val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
+        val call = findCall(argumentList, bindingContext) ?: return null
 
         val candidates = detectCandidates(call, bindingContext, file.getResolutionFacade())
 
@@ -98,23 +135,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         return argumentList
     }
 
-    override fun showParameterInfo(element: JetValueArgumentList, context: CreateParameterInfoContext) {
-        context.showHint(element, element.textRange.startOffset, this)
-    }
-
-    override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): JetValueArgumentList? {
-        val element = context.file.findElementAt(context.offset) ?: return null
-        val argumentList = element.getStrictParentOfType<JetValueArgumentList>() ?: return null
-        val argument = element.parents.takeWhile { it != argumentList }.lastOrNull() as? JetValueArgument
-        if (argument != null) {
-            val index = argumentList.arguments.indexOf(element)
-            context.setCurrentParameter(index)
-            context.setHighlightedParameter(element)
-        }
-        return argumentList
-    }
-
-    override fun updateParameterInfo(argumentList: JetValueArgumentList, context: UpdateParameterInfoContext) {
+    override fun updateParameterInfo(argumentList: TArgumentList, context: UpdateParameterInfoContext) {
         if (context.parameterOwner !== argumentList) {
             context.removeHint()
         }
@@ -126,10 +147,6 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         context.setCurrentParameter(parameterIndex)
     }
 
-    override fun getParameterCloseChars() = ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS
-
-    override fun tracksParameterIndex() = true
-
     override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
         if (!updateUIOrFail(itemToShow, context)) {
             context.isUIComponentEnabled = false
@@ -138,22 +155,21 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
     }
 
     private fun updateUIOrFail(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext): Boolean {
-        //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context.parameterOwner == null || !context.parameterOwner.isValid) return false
+        if (!argumentListClass.java.isInstance(context.parameterOwner)) return false
+        @Suppress("UNCHECKED_CAST")
+        val argumentList = context.parameterOwner as TArgumentList
 
-        val argumentList = context.parameterOwner as? JetValueArgumentList ?: return false
+        val currentArgumentIndex = context.currentParameterIndex
+        if (currentArgumentIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
-        val callElement = argumentList.parent as? JetCallElement ?: return false
-        val call = callElement.getCall(bindingContext) ?: return false
+        val call = findCall(argumentList, bindingContext) ?: return false
 
-        val project = callElement.project
-
-        val currentParameterIndex = context.currentParameterIndex
-        if (currentParameterIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
+        val project = argumentList.project
 
         val (substitutedDescriptor, argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
-                call, itemToShow, currentParameterIndex, bindingContext, argumentList.getResolutionFacade()
+                call, itemToShow, currentArgumentIndex, bindingContext, argumentList.getResolutionFacade()
         ) ?: return false
 
         var boldStartOffset = -1
@@ -161,6 +177,11 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         val text = StringBuilder {
             val usedParameterIndices = HashSet<Int>()
             var namedMode = false
+
+            if (call.callType == Call.CallType.ARRAY_SET_METHOD) {
+                // for set-operator the last parameter is used for the value assigned
+                usedParameterIndices.add(substitutedDescriptor.valueParameters.lastIndex)
+            }
 
             fun appendParameter(parameter: ValueParameterDescriptor) {
                 if (length() > 0) {
@@ -179,7 +200,8 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
                 }
             }
 
-            for (argument in argumentList.arguments) {
+            for (argument in call.valueArguments) {
+                if (argument is FunctionLiteralArgument) continue
                 val parameter = argumentToParameter(argument) ?: continue
                 if (!usedParameterIndices.add(parameter.index)) continue
 
@@ -203,7 +225,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
 
         val color = if (isResolvedToDescriptor(call, itemToShow, bindingContext))
-            GREEN_BACKGROUND
+            KotlinParameterInfoWithCallHandlerBase.GREEN_BACKGROUND
         else
             context.defaultParameterColor
 
@@ -214,169 +236,178 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
         return true
     }
 
-    companion object {
-        val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
+    override fun getParameterCloseChars() = ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS
 
-        private fun renderParameter(parameter: ValueParameterDescriptor, named: Boolean, project: Project): String {
-            return StringBuilder {
-                if (named) append("[")
+    override fun tracksParameterIndex() = true
 
-                if (parameter.varargElementType != null) {
-                    append("vararg ")
-                }
-                append(parameter.name)
-                append(": ")
-                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
+    //TODO
+    override fun couldShowInLookup() = false
+    override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
+    override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
-                if (parameter.hasDefaultValue()) {
-                    append(" = ")
-                    append(parameter.renderDefaultValue(project))
-                }
+    protected fun renderParameter(parameter: ValueParameterDescriptor, named: Boolean, project: Project): String {
+        return StringBuilder {
+            if (named) append("[")
 
-                if (named) append("]")
-            }.toString()
-        }
-
-        private fun ValueParameterDescriptor.renderDefaultValue(project: Project): String {
-            val expression = OptionalParametersHelper.defaultParameterValueExpression(this, project)
-            if (expression != null) {
-                val text = expression.text
-                if (text.length() <= 32) {
-                    return text
-                }
-
-                if (expression is JetConstantExpression || expression is JetStringTemplateExpression) {
-                    if (text.startsWith("\"")) {
-                        return "\"...\""
-                    }
-                    else if (text.startsWith("\'")) {
-                        return "\'...\'"
-                    }
-                }
+            if (parameter.varargElementType != null) {
+                append("vararg ")
             }
-            return "..."
-        }
+            append(parameter.name)
+            append(": ")
+            append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
 
-        private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): JetType {
-            var type = descriptor.varargElementType ?: descriptor.type
-            if (type.containsError()) {
-                val original = descriptor.original
-                type = original.varargElementType ?: original.type
-            }
-            return type
-        }
-
-        private fun isResolvedToDescriptor(
-                call: Call,
-                functionDescriptor: FunctionDescriptor,
-                bindingContext: BindingContext
-        ): Boolean {
-            val target = call.getResolvedCall(bindingContext)?.resultingDescriptor as? FunctionDescriptor
-            return target != null && descriptorsEqual(target, functionDescriptor)
-        }
-
-        private data class SignatureInfo(
-                val substitutedDescriptor: FunctionDescriptor,
-                val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
-                val highlightParameterIndex: Int?,
-                val isGrey: Boolean
-        )
-
-        private fun matchCallWithSignature(
-                call: Call,
-                overload: FunctionDescriptor,
-                currentArgumentIndex: Int,
-                bindingContext: BindingContext,
-                resolutionFacade: ResolutionFacade
-        ): SignatureInfo? {
-            if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
-                return SignatureInfo(overload, { null }, null, isGrey = false)
+            if (parameter.hasDefaultValue()) {
+                append(" = ")
+                append(parameter.renderDefaultValue(project))
             }
 
-            assert(call.valueArguments.size() >= currentArgumentIndex)
+            if (named) append("]")
+        }.toString()
+    }
 
-            val argumentsBeforeCurrent = call.valueArguments.subList(0, currentArgumentIndex)
-
-            val callToUse: Call
-            val currentArgument: ValueArgument
-            if (call.valueArguments.size() > currentArgumentIndex) {
-                currentArgument = call.valueArguments[currentArgumentIndex]
-                callToUse = call
+    private fun ValueParameterDescriptor.renderDefaultValue(project: Project): String {
+        val expression = OptionalParametersHelper.defaultParameterValueExpression(this, project)
+        if (expression != null) {
+            val text = expression.text
+            if (text.length() <= 32) {
+                return text
             }
-            else {
-                // add dummy current argument if we don't have one
-                currentArgument = object : ValueArgument {
-                    override fun getArgumentExpression(): JetExpression? = null
-                    override fun getArgumentName(): ValueArgumentName? = null
-                    override fun isNamed(): Boolean = false
-                    override fun asElement(): JetElement = call.callElement // is a hack but what to do?
-                    override fun getSpreadElement(): LeafPsiElement? = null
-                    override fun isExternal() = false
-                }
-                callToUse = object : DelegatingCall(call) {
-                    val arguments = call.valueArguments + currentArgument
 
-                    override fun getValueArguments() = arguments
-                    override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
-                    override fun getValueArgumentList() = null
+            if (expression is JetConstantExpression || expression is JetStringTemplateExpression) {
+                if (text.startsWith("\"")) {
+                    return "\"...\""
+                }
+                else if (text.startsWith("\'")) {
+                    return "\'...\'"
                 }
             }
+        }
+        return "..."
+    }
 
-            val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
-            val resolvedCall = candidates.singleOrNull { descriptorsEqual(it.resultingDescriptor, overload) } ?: return null
-            val resultingDescriptor = resolvedCall.resultingDescriptor
+    private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): JetType {
+        var type = descriptor.varargElementType ?: descriptor.type
+        if (type.containsError()) {
+            val original = descriptor.original
+            type = original.varargElementType ?: original.type
+        }
+        return type
+    }
 
-            val argumentToParameter = { argument: ValueArgument -> (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter }
+    protected fun isResolvedToDescriptor(
+            call: Call,
+            functionDescriptor: FunctionDescriptor,
+            bindingContext: BindingContext
+    ): Boolean {
+        val target = call.getResolvedCall(bindingContext)?.resultingDescriptor as? FunctionDescriptor
+        return target != null && descriptorsEqual(target, functionDescriptor)
+    }
 
-            val currentParameter = (resolvedCall.getArgumentMapping(currentArgument) as? ArgumentMatch)?.valueParameter
-            val highlightParameterIndex = currentParameter?.index
+    protected data class SignatureInfo(
+            val substitutedDescriptor: FunctionDescriptor,
+            val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
+            val highlightParameterIndex: Int?,
+            val isGrey: Boolean
+    )
 
-            if (!(argumentsBeforeCurrent + currentArgument).all { argument -> resolvedCall.getArgumentMapping(argument) is ArgumentMatch }) { // some of arguments before the current one are not mapped to any of the parameters
-                return SignatureInfo(resultingDescriptor, argumentToParameter, highlightParameterIndex, isGrey = true)
+    private fun matchCallWithSignature(
+            call: Call,
+            overload: FunctionDescriptor,
+            currentArgumentIndex: Int,
+            bindingContext: BindingContext,
+            resolutionFacade: ResolutionFacade
+    ): SignatureInfo? {
+        if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
+            return SignatureInfo(overload, { null }, null, isGrey = false)
+        }
+
+        assert(call.valueArguments.size() >= currentArgumentIndex)
+
+        val argumentsBeforeCurrent = call.valueArguments.subList(0, currentArgumentIndex)
+
+        val callToUse: Call
+        val currentArgument: ValueArgument
+        if (call.valueArguments.size() > currentArgumentIndex) {
+            currentArgument = call.valueArguments[currentArgumentIndex]
+            callToUse = call
+        }
+        else {
+            // add dummy current argument if we don't have one
+            currentArgument = object : ValueArgument {
+                override fun getArgumentExpression(): JetExpression? = null
+                override fun getArgumentName(): ValueArgumentName? = null
+                override fun isNamed(): Boolean = false
+                override fun asElement(): JetElement = call.callElement // is a hack but what to do?
+                override fun getSpreadElement(): LeafPsiElement? = null
+                override fun isExternal() = false
             }
+            callToUse = object : DelegatingCall(call) {
+                val arguments = call.valueArguments + currentArgument
 
-            // grey out if not all arguments before the current are matched
-            val isGrey = argumentsBeforeCurrent
-                    .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
-            return SignatureInfo(resultingDescriptor, argumentToParameter, highlightParameterIndex, isGrey)
+                override fun getValueArguments() = arguments
+                override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+                override fun getValueArgumentList() = null
+            }
         }
 
-        private fun ValueArgument.hasError(bindingContext: BindingContext)
-                = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
+        val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
+        val resolvedCall = candidates.singleOrNull { descriptorsEqual(it.resultingDescriptor, overload) } ?: return null
+        val resultingDescriptor = resolvedCall.resultingDescriptor
 
-        private fun detectCandidates(call: Call, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): List<ResolvedCall<FunctionDescriptor>> {
-            val callElement = call.callElement
-            val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
-            val inDescriptor = resolutionScope.ownerDescriptor
-
-            val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
-            val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
-            val expectedType = (callElement as? JetExpression)?.let {
-                bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
-            } ?: TypeUtils.NO_EXPECTED_TYPE
-            val callResolutionContext = BasicCallResolutionContext.create(
-                    bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
-                    ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                    CallChecker.DoNothing, false/*TODO?*/
-            ).replaceCollectAllCandidates(true)
-            val callResolver = resolutionFacade.frontendService<CallResolver>()
-
-            val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
-
-            return results.allCandidates!!
-                    .filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
-                    .filter {
-                        val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
-                        Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
-                    }
+        fun argumentToParameter(argument: ValueArgument): ValueParameterDescriptor? {
+            val parameter = (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter ?: return null
+            if (call.callType == Call.CallType.ARRAY_SET_METHOD && parameter.index == resultingDescriptor.valueParameters.lastIndex) return null
+            return parameter
         }
 
-        // we should not compare descriptors directly because partial resolve is involved
-        private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {
-            if (descriptor1.original == descriptor2.original) return true
-            val declaration1 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor1) ?: return false
-            val declaration2 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)
-            return declaration1 == declaration2
+        val highlightParameterIndex = argumentToParameter(currentArgument)?.index
+
+        if (!(argumentsBeforeCurrent + currentArgument).all { argumentToParameter(it) != null }) { // some of arguments before the current one are not mapped to any of the parameters
+            return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
         }
+
+        // grey out if not all arguments before the current are matched
+        val isGrey = argumentsBeforeCurrent
+                .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
+        return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey)
+    }
+
+    private fun ValueArgument.hasError(bindingContext: BindingContext)
+            = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
+
+    private fun detectCandidates(call: Call, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): List<ResolvedCall<FunctionDescriptor>> {
+        val callElement = call.callElement
+        val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
+        val inDescriptor = resolutionScope.ownerDescriptor
+
+        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+        val expectedType = (callElement as? JetExpression)?.let {
+            bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
+        } ?: TypeUtils.NO_EXPECTED_TYPE
+        val callResolutionContext = BasicCallResolutionContext.create(
+                bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
+                ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                CallChecker.DoNothing, false/*TODO?*/
+        ).replaceCollectAllCandidates(true)
+        val callResolver = resolutionFacade.frontendService<CallResolver>()
+
+        val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
+
+        return results.allCandidates!!
+                .filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
+                .filter {
+                    val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
+                    Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
+                }
+                .distinctBy { it.resultingDescriptor.original }
+    }
+
+    // we should not compare descriptors directly because partial resolve is involved
+    private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {
+        if (descriptor1.original == descriptor2.original) return true
+        val declaration1 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor1) ?: return false
+        val declaration2 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)
+        return declaration1 == declaration2
     }
 }

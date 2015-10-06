@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+import com.intellij.codeInsight.hint.ShowParameterInfoContext
+import com.intellij.codeInsight.hint.ShowParameterInfoHandler
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -29,12 +33,12 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
-abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     override fun setUp() {
         super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/parameterInfo/functionParameterInfo"
+        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/parameterInfo"
     }
 
     protected fun doTest(fileName: String) {
@@ -49,9 +53,14 @@ abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCa
             else -> error("Unexpected last file child")
         }
 
-        val parameterInfoHandler = KotlinFunctionParameterInfoHandler()
+        val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1)
+
+        val handlers = ShowParameterInfoHandler.getHandlers(project, JetLanguage.INSTANCE)!!
+        val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
+            ?: error("Could not find parameter info handler")
+
         val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
-        val parameterOwner = parameterInfoHandler.findElementForParameterInfo(mockCreateParameterInfoContext)
+        val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement
 
         val textToType = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TYPE:")
         if (textToType != null) {
@@ -66,16 +75,16 @@ abstract class AbstractFunctionParameterInfoTest : LightCodeInsightFixtureTestCa
 
         //to update current parameter index
         val updateContext = MockUpdateParameterInfoContext(file, myFixture)
-        val elementForUpdating = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext)
+        val elementForUpdating = handler.findElementForUpdatingParameterInfo(updateContext)
         if (elementForUpdating != null) {
-            parameterInfoHandler.updateParameterInfo(elementForUpdating, updateContext)
+            handler.updateParameterInfo(elementForUpdating, updateContext)
         }
 
         val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
 
         for (item in mockCreateParameterInfoContext.itemsToShow) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI(item as FunctionDescriptor, parameterInfoUIContext)
+            handler.updateUI(item as FunctionDescriptor, parameterInfoUIContext)
         }
         Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
     }

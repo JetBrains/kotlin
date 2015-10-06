@@ -341,6 +341,7 @@
     <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
 
     <codeInsight.gotoSuper language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler"/>
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.JetTypeDeclarationProvider"/>

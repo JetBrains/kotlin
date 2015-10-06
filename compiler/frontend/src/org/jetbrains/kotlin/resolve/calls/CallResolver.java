@@ -280,6 +280,15 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
+        Call.CallType callType = context.call.getCallType();
+        if (callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD) {
+            Name name = Name.identifier(callType == Call.CallType.ARRAY_GET_METHOD ? "get" : "set");
+            JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) context.call.getCallElement();
+            return computeTasksAndResolveCall(
+                    context, name, arrayAccessExpression,
+                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+        }
+
         JetExpression calleeExpression = context.call.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
