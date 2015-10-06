@@ -68,10 +68,22 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
 
         if (!DescriptorUtils.isInterface(descriptor)) {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-                if (memberDescriptor instanceof FunctionDescriptor) {
-                    FunctionDescriptor member = (FunctionDescriptor) memberDescriptor;
+                if (memberDescriptor instanceof CallableMemberDescriptor) {
+                    CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
                     if (!member.getKind().isReal() && BridgesPackage.findTraitImplementation(member) == null) {
-                        functionCodegen.generateBridges(member);
+                        if (member instanceof FunctionDescriptor) {
+                            functionCodegen.generateBridges((FunctionDescriptor) member);
+                        }
+                        else if (member instanceof PropertyDescriptor) {
+                            PropertyGetterDescriptor getter = ((PropertyDescriptor) member).getGetter();
+                            if (getter != null) {
+                                functionCodegen.generateBridges(getter);
+                            }
+                            PropertySetterDescriptor setter = ((PropertyDescriptor) member).getSetter();
+                            if (setter != null) {
+                                functionCodegen.generateBridges(setter);
+                            }
+                        }
                     }
                 }
             }
