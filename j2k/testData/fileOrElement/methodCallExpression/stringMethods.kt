@@ -1,10 +1,3 @@
-// ERROR: Overload resolution ambiguity:  public fun kotlin.String.split(regex: [ERROR : java.util.regex.Pattern], limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin public fun kotlin.String.split(pattern: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin
-// ERROR: Unresolved reference: it
-// ERROR: Overload resolution ambiguity:  public fun kotlin.String.split(regex: [ERROR : java.util.regex.Pattern], limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin public fun kotlin.String.split(pattern: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin
-// ERROR: Unresolved reference: it
-// ERROR: Overload resolution ambiguity:  public fun kotlin.String.split(regex: [ERROR : java.util.regex.Pattern], limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin public fun kotlin.String.split(pattern: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin
-// ERROR: Overload resolution ambiguity:  public fun kotlin.String.split(regex: [ERROR : java.util.regex.Pattern], limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin public fun kotlin.String.split(pattern: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin
-// ERROR: Overload resolution ambiguity:  public fun kotlin.String.split(regex: [ERROR : java.util.regex.Pattern], limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin public fun kotlin.String.split(pattern: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.List<kotlin.String> defined in kotlin
 import java.nio.charset.Charset
 import java.util.*
 
@@ -84,8 +77,8 @@ internal class A {
         s.matches("\\w+".toRegex())
         s.replace("\\w+".toRegex(), "---")
         s.replaceFirst("([s-t])".toRegex(), "A$1")
-        useSplit(s.split("\\s+".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
-        useSplit(s.split("\\s+".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
+        useSplit(s.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        useSplit(s.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
         useSplit(s.split("\\s+".toRegex()).toTypedArray())
         useSplit(s.split("\\s+".toRegex(), 2).toTypedArray())
         val limit = 5
