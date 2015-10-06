@@ -69,7 +69,7 @@ public fun <Function : FunctionHandle, Signature> generateBridges(
     return bridgesToGenerate.map { Bridge(it, method) }.toSet()
 }
 
-private fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {
+public fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {
     val collector = object : DFS.NodeHandlerWithListResult<Function, Function>() {
         override fun afterChildren(current: Function) {
             if (current.isDeclaration) {
@@ -86,7 +86,7 @@ private fun <Function : FunctionHandle> findAllReachableDeclarations(function: F
  * Given a concrete function, finds an implementation (a concrete declaration) of this function in the supertypes.
  * The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract
  */
-private fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
+public fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
     require(!function.isAbstract, { "Only concrete functions have implementations: $function" })
 
     if (function.isDeclaration) return function

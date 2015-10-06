@@ -47,7 +47,7 @@ public fun <Signature> generateBridgesForFunctionDescriptor(
  * can generate a bridge near an implementation (of course, in case it has a super-declaration with a different signature). Ultimately this
  * eases the process of determining what bridges are already generated in our supertypes and need to be inherited, not regenerated.
  */
-private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescriptor) : FunctionHandle {
+public data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescriptor) : FunctionHandle {
     private val overridden = descriptor.getOverriddenDescriptors().map { DescriptorBasedFunctionHandle(it.getOriginal()) }
 
     override val isDeclaration: Boolean =

@@ -96,7 +96,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
         return !(declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
     }
 
-
     protected void generateDeclaration(JetDeclaration declaration) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
             genFunctionOrProperty(declaration);

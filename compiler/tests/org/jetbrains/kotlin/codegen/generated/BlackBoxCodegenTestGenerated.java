@@ -920,6 +920,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/builtinsProperties")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BuiltinsProperties extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInBuiltinsProperties() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/builtinsProperties"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("bridges.kt")
+        public void testBridges() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/bridges.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("collectionImpl.kt")
+        public void testCollectionImpl() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/collectionImpl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitSuperCall.kt")
+        public void testExplicitSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/explicitSuperCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("maps.kt")
+        public void testMaps() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/maps.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/casts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

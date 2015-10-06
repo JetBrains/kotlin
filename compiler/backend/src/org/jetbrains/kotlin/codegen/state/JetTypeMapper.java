@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -725,7 +726,13 @@ public class JetTypeMapper {
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
 
-                signature = mapSignature(functionDescriptor.getOriginal());
+                FunctionDescriptor overriddenSpecialBuiltinFunction =
+                        BuiltinsPropertiesUtilKt.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
+                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
+                                                    ? overriddenSpecialBuiltinFunction.getOriginal()
+                                                    : functionDescriptor.getOriginal();
+
+                signature = mapSignature(functionToCall);
 
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
@@ -802,6 +809,9 @@ public class JetTypeMapper {
             String platformName = getJvmName(descriptor);
             if (platformName != null) return platformName;
         }
+
+        String nameForSpecialFunction = BuiltinsPropertiesUtilKt.getJvmMethodNameIfSpecial(descriptor);
+        if (nameForSpecialFunction != null) return nameForSpecialFunction;
 
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
