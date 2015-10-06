@@ -18,23 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
 
-public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
-    fun testCacheVersionChanged() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChanged/")
-    }
-
-    fun testCacheVersionChangedAndFileModified() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedAndFileModified/")
-    }
-
-    fun testCacheVersionChangedMultiModule1() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule1/")
-    }
-
-    fun testCacheVersionChangedMultiModule2() {
-        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedModule2/")
-    }
-
+abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
         val targets = projectDescriptor.allModuleTargets
         val paths = projectDescriptor.dataManager.dataPaths
