@@ -157,15 +157,20 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_FORMAT_WITH_LOCALE(JAVA_LANG_STRING, "format", null) {
         override fun matches(method: PsiMethod)
-                = super.matches(method) && method.parameterList.parametersCount >= 2 && method.parameterList.parameters.first().type.canonicalText == "java.util.Locale"
+                = super.matches(method) &&
+                  method.parameterList.parametersCount == 3 &&
+                  method.parameterList.parameters.let { it.first().type.canonicalText == "java.util.Locale" && it.last().isVarArgs }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(codeConverter.convertExpression(arguments[1]), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
     },
 
     STRING_FORMAT(JAVA_LANG_STRING, "format", null) {
-        override fun matches(method: PsiMethod)
-                = super.matches(method) && method.parameterList.parametersCount >= 1
+        override fun matches(method: PsiMethod): Boolean {
+            return super.matches(method) &&
+                   method.parameterList.parametersCount == 2 &&
+                   method.parameterList.parameters.last().isVarArgs
+        }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(codeConverter.convertExpression(arguments.first()), "format", codeConverter.convertExpressions(arguments.drop(1)), emptyList(), false)
