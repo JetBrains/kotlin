@@ -86,7 +86,8 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getSecondaryConstructors;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
@@ -226,8 +227,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         writeEnclosingMethod();
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
-
-        generateReflectionObjectFieldIfNeeded();
 
         generateEnumEntries();
     }
@@ -411,18 +410,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
             extension.generateClassSyntheticParts(v, state, myClass, descriptor);
         }
-    }
-
-    private void generateReflectionObjectFieldIfNeeded() {
-        if (isAnnotationClass(descriptor)) {
-            // There's a bug in JDK 6 and 7 that prevents us from generating a static field in an annotation class:
-            // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6857918
-            // TODO: make reflection work on annotation classes somehow
-            return;
-        }
-
-        generateReflectionObjectField(state, classAsmType, v, method("createKotlinClass", K_CLASS_TYPE, getType(Class.class)),
-                                      JvmAbi.KOTLIN_CLASS_FIELD_NAME, createOrGetClInitCodegen().v);
     }
 
     private boolean isGenericToArrayPresent() {

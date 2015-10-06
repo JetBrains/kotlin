@@ -314,7 +314,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                generateCallableReferenceDeclarationContainer(iv, descriptor, typeMapper);
+                generateCallableReferenceDeclarationContainer(iv, descriptor, state);
                 iv.areturn(K_DECLARATION_CONTAINER_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getOwner", element);
             }
@@ -348,24 +348,28 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     public static void generateCallableReferenceDeclarationContainer(
             @NotNull InstructionAdapter iv,
             @NotNull CallableDescriptor descriptor,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull GenerationState state
     ) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof ClassDescriptor) {
             // TODO: getDefaultType() here is wrong and won't work for arrays
-            StackValue value = generateClassLiteralReference(typeMapper, ((ClassDescriptor) container).getDefaultType());
+            StackValue value = generateClassLiteralReference(state.getTypeMapper(), ((ClassDescriptor) container).getDefaultType());
             value.put(K_CLASS_TYPE, iv);
         }
         else if (container instanceof PackageFragmentDescriptor) {
             String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(
                     ((PackageFragmentDescriptor) container).getFqName()
             );
-            iv.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
+            iv.aconst(Type.getObjectType(packageClassInternalName));
+            iv.aconst(state.getModuleName());
+            // TODO: create KPackage with a useful class, not the old package facade
+            iv.invokestatic(REFLECTION, "createKotlinPackage",
+                            Type.getMethodDescriptor(K_PACKAGE_TYPE, getType(Class.class), getType(String.class)), false);
         }
         else if (container instanceof ScriptDescriptor) {
             // TODO: correct container for scripts (KScript?)
             StackValue value = generateClassLiteralReference(
-                    typeMapper, ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
+                    state.getTypeMapper(), ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
             );
             value.put(K_CLASS_TYPE, iv);
         }

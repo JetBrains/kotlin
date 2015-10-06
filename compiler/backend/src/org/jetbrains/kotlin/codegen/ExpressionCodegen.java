@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.*;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
+import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -90,7 +93,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.couldUseDirectAccessToProperty;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -2806,29 +2810,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
                 if (descriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-                    if (typeParameterDescriptor.isReified()) {
-                        // Emit reified type parameters as Kotlin classes.
-                        // ReifiedTypeInliner will rewrite the following GETSTATIC to proper bytecode instructions
-                        // if the class literal for actual type should be emitted with wrapped Java class.
-                        v.visitLdcInsn(typeParameterDescriptor.getName().asString());
-                        v.invokestatic(
-                                IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.CLASS_LITERAL_MARKER_METHOD_NAME,
-                                Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
-                        );
-                        v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
-                    }
-                    else {
-                        throw new AssertionError("Non-reified type parameter under ::class should be rejected by type checker: " +
-                                                 typeParameterDescriptor.getName().asString());
-                    }
+                    assert typeParameterDescriptor.isReified() :
+                            "Non-reified type parameter under ::class should be rejected by type checker: " + typeParameterDescriptor;
+                    v.visitLdcInsn(typeParameterDescriptor.getName().asString());
+                    v.invokestatic(
+                            IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME,
+                            Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
+                    );
                 }
-                else if (shouldUseJavaClassForClassLiteral(descriptor)) {
-                    putJavaLangClassInstance(v, classAsmType);
-                    wrapJavaClassIntoKClass(v);
-                }
-                else {
-                    v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
-                }
+
+                putJavaLangClassInstance(v, classAsmType);
+                wrapJavaClassIntoKClass(v);
 
                 return Unit.INSTANCE$;
             }

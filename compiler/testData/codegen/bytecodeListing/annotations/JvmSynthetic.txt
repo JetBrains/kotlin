@@ -1,10 +1,8 @@
 @kotlin.jvm.internal.KotlinClass Example {
-    public synthetic field $kotlinClass: kotlin.reflect.KClass
     private synthetic @org.jetbrains.annotations.NotNull field prop: java.lang.String
     private field prop2: int
     private synthetic field useSite: int
     private field useSite2: int
-    method <clinit>(): void
     public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public synthetic method getProp2(): int
     public synthetic method setProp2(p0: int): void

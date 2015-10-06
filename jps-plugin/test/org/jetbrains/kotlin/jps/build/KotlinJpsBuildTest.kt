@@ -468,8 +468,8 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         // Check that outputs are located properly
         val facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class")
         val facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "a", "getA")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "b", "getB", "setB")
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
