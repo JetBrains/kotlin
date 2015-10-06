@@ -35,6 +35,12 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("exportedModule")
+    public void testExportedModule() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/");
+        doTest(fileName);
+    }
+
     @TestMetadata("module1Modified")
     public void testModule1Modified() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified/");
@@ -44,6 +50,18 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     @TestMetadata("module2Modified")
     public void testModule2Modified() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moduleWithConstantModified")
+    public void testModuleWithConstantModified() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moduleWithInlineModified")
+    public void testModuleWithInlineModified() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified/");
         doTest(fileName);
     }
 

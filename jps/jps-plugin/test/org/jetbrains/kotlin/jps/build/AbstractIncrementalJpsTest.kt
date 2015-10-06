@@ -40,6 +40,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsElementFactory
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
+import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -249,18 +250,17 @@ public abstract class AbstractIncrementalJpsTest(
         rebuildAndCheckOutput(makeOverallResult)
     }
 
-    private fun readModuleDependencies(): Map<String, List<String>>? {
+    private fun readModuleDependencies(): Map<String, List<DependencyDescriptor>>? {
         val dependenciesTxt = File(testDataDir, "dependencies.txt")
         if (!dependenciesTxt.exists()) return null
 
-        val result = HashMap<String, List<String>>()
+        val result = HashMap<String, List<DependencyDescriptor>>()
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
             val dependencies = if (split.size() > 1) split[1] else ""
             val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
-
-            result[module] = dependencyList
+            result[module] = dependencyList.map(::parseDependency)
         }
 
         return result
@@ -377,8 +377,10 @@ public abstract class AbstractIncrementalJpsTest(
 
             for ((moduleName, dependencies) in moduleDependencies) {
                 val module = nameToModule[moduleName]!!
+
                 for (dependency in dependencies) {
-                    JpsModuleRootModificationUtil.addDependency(module, nameToModule[dependency])
+                    JpsModuleRootModificationUtil.addDependency(module, nameToModule[dependency.name],
+                                                                JpsJavaDependencyScope.COMPILE, dependency.exported)
                 }
             }
 
@@ -449,3 +451,10 @@ public abstract class AbstractIncrementalJpsTest(
 
 internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
     get() = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>()
+
+private class DependencyDescriptor(val name: String, val exported: Boolean)
+
+private fun parseDependency(dependency: String): DependencyDescriptor =
+        DependencyDescriptor(dependency.removeSuffix(EXPORTED_SUFFIX), dependency.endsWith(EXPORTED_SUFFIX))
+
+private val EXPORTED_SUFFIX = "[exported]"
