@@ -61,6 +61,7 @@ import java.util.*
 enum class Tail {
     COMMA,
     RPARENTH,
+    RBRACKET,
     ELSE,
     RBRACE
 }
@@ -158,6 +159,7 @@ class ExpectedInfos(
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)
                             ?: calculateForFunctionLiteralArgument(expressionWithType)
+                            ?: calculateForIndexingArgument(expressionWithType)
                             ?: calculateForEqAndAssignment(expressionWithType)
                             ?: calculateForIf(expressionWithType)
                             ?: calculateForElvis(expressionWithType)
@@ -187,6 +189,15 @@ class ExpectedInfos(
         val literalArgument = callExpression.getFunctionLiteralArguments().firstOrNull() ?: return null
         if (literalArgument.getArgumentExpression() != expressionWithType) return null
         return calculateForArgument(callExpression, literalArgument)
+    }
+
+    private fun calculateForIndexingArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val containerNode = expressionWithType.parent as? JetContainerNode ?: return null
+        val arrayAccessExpression = containerNode.parent as? JetArrayAccessExpression ?: return null
+        if (containerNode != arrayAccessExpression.indicesNode) return null
+        val call = arrayAccessExpression.getCall(bindingContext) ?: return null
+        val argument = call.valueArguments.firstOrNull { it.getArgumentExpression() == expressionWithType } ?: return null
+        return calculateForArgument(call, argument)
     }
 
     private fun calculateForArgument(callElement: JetCallElement, argument: ValueArgument): Collection<ExpectedInfo>? {
@@ -312,6 +323,18 @@ class ExpectedInfos(
             ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
         }
 
+        val callType = call.callType
+        val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
+        val rparenthTail = if (isArrayAccess) Tail.RBRACKET else Tail.RPARENTH
+
+        var parameters = descriptor.valueParameters
+        if (callType == Call.CallType.ARRAY_SET_METHOD) { // last parameter in set is used for value assigned
+            if (parameter == parameters.last()) {
+                parameter = null
+            }
+            parameters = parameters.dropLast(1)
+        }
+
         if (parameter == null) {
             if (argumentPositionData is ArgumentPositionData.Positional && argumentPositionData.namedArgumentCandidates.isNotEmpty()) {
                 add(ExpectedInfo.createForNamedArgumentExpected(argumentPositionData))
@@ -321,19 +344,17 @@ class ExpectedInfos(
 
         val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
 
-        val parameters = descriptor.valueParameters
-
         fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
             if (parameter.hasDefaultValue()) return false // parameter is optional
             if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
-            if (parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
+            if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
             return true
         }
 
         val tail = if (argumentName == null) {
             if (parameter == parameters.last())
-                Tail.RPARENTH //TODO: support square brackets
+                rparenthTail
             else if (parameters.dropWhile { it != parameter }.drop(1).any(::needCommaForParameter))
                 Tail.COMMA
             else
@@ -349,7 +370,7 @@ class ExpectedInfos(
         if (varargElementType != null) {
             if (isFunctionLiteralArgument) return
 
-            val varargTail = if (argumentName == null && tail == Tail.RPARENTH)
+            val varargTail = if (argumentName == null && tail == rparenthTail)
                 null /* even if it's the last parameter, there can be more arguments for the same parameter */
             else
                 tail
@@ -391,7 +412,7 @@ class ExpectedInfos(
         val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
         val notUsedParameters = descriptor.getValueParameters().filter { it.getName() !in usedParameterNames }
         return if (notUsedParameters.isEmpty())
-            Tail.RPARENTH
+            Tail.RPARENTH // named arguments no supported for []
         else if (notUsedParameters.all { it.hasDefaultValue() })
             null
         else

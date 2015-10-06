@@ -1012,6 +1012,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("GetWithBrackets.kt")
+        public void testGetWithBrackets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/GetWithBrackets.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InOperator.kt")
         public void testInOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/InOperator.kt");
