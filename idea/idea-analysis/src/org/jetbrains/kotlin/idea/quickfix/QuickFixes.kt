@@ -48,6 +48,10 @@ public class QuickFixes {
         return actions.get(diagnosticFactory)
     }
 
+    public fun getDiagnostics(factory: JetIntentionActionsFactory): Collection<DiagnosticFactory<*>> {
+        return factories.keySet().filter { factory in factories.get(it) }
+    }
+
     companion object {
         public fun getInstance(): QuickFixes = ServiceManager.getService(javaClass<QuickFixes>())
     }
