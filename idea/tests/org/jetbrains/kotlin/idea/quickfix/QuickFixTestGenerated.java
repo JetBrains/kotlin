@@ -6544,6 +6544,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeParameters extends AbstractQuickFixTest {
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("misplacedClassTypeParameter.kt")
+        public void testMisplacedClassTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeParameters/misplacedClassTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("misplacedFunctionTypeParameter.kt")
+        public void testMisplacedFunctionTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeParameters/misplacedFunctionTypeParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/typeProjection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
