@@ -9,26 +9,26 @@ public fun viaRealOverride(): kotlin.Unit
 public/*package*/ open class JavaSuperClass {
     public/*package*/ constructor JavaSuperClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
+    public open fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
+    public open fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public open class KotlinSubClass : JavaSuperClass {
     public constructor KotlinSubClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open override /*1*/ /*fake_override*/ fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class KotlinSubSubClass : KotlinSubClass {
     public constructor KotlinSubSubClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal open override /*1*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open override /*1*/ /*fake_override*/ fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun multipleParameters(/*0*/ first: kotlin.Int, /*1*/ second: kotlin.Long, /*2*/ third: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
