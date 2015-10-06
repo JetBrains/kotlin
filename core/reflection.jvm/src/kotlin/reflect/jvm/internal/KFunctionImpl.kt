@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -24,7 +23,8 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.FunctionImpl
-import kotlin.reflect.*
+import kotlin.reflect.KFunction
+import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 
 internal open class KFunctionImpl protected constructor(
@@ -32,8 +32,7 @@ internal open class KFunctionImpl protected constructor(
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl(),
-        KLocalFunction<Any?>, KMemberFunction<Any, Any?>, KTopLevelExtensionFunction<Any?, Any?>, KTopLevelFunction<Any?> {
+) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl() {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
