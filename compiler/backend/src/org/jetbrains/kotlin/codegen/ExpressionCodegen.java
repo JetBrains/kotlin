@@ -2220,7 +2220,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
+        if (!isStaticBackingField) {
+            propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
+        }
+
         Type backingFieldOwner =
                 typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor);
 
