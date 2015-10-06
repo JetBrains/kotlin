@@ -27,41 +27,26 @@ import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
-import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import java.awt.Color
 import java.util.*
@@ -129,9 +114,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
 
-        val candidates = detectCandidates(call, bindingContext, file.getResolutionFacade())
+        val candidates = call.resolveCandidates(bindingContext, file.getResolutionFacade())
 
-        context.itemsToShow = candidates.map { it.resultingDescriptor.original }.toTypedArray()
+        context.itemsToShow = candidates.map { it.resultingDescriptor.original }.distinct().toTypedArray()
         return argumentList
     }
 
@@ -350,8 +335,8 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
             }
         }
 
-        val candidates = detectCandidates(callToUse, bindingContext, resolutionFacade)
-        val resolvedCall = candidates.singleOrNull { descriptorsEqual(it.resultingDescriptor, overload) } ?: return null
+        val candidates = callToUse.resolveCandidates(bindingContext, resolutionFacade)
+        val resolvedCall = candidates.firstOrNull { descriptorsEqual(it.resultingDescriptor, overload) } ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
 
         fun argumentToParameter(argument: ValueArgument): ValueParameterDescriptor? {
@@ -374,34 +359,6 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
 
     private fun ValueArgument.hasError(bindingContext: BindingContext)
             = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
-
-    private fun detectCandidates(call: Call, bindingContext: BindingContext, resolutionFacade: ResolutionFacade): List<ResolvedCall<FunctionDescriptor>> {
-        val callElement = call.callElement
-        val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
-        val inDescriptor = resolutionScope.ownerDescriptor
-
-        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
-        val expectedType = (callElement as? JetExpression)?.let {
-            bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
-        } ?: TypeUtils.NO_EXPECTED_TYPE
-        val callResolutionContext = BasicCallResolutionContext.create(
-                bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
-                ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                CallChecker.DoNothing, false/*TODO?*/
-        ).replaceCollectAllCandidates(true)
-        val callResolver = resolutionFacade.frontendService<CallResolver>()
-
-        val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
-
-        return results.allCandidates!!
-                .filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
-                .filter {
-                    val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
-                    Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
-                }
-                .distinctBy { it.resultingDescriptor.original }
-    }
 
     // we should not compare descriptors directly because partial resolve is involved
     private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {

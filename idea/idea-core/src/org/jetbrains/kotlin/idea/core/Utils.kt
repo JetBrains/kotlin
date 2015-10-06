@@ -17,23 +17,33 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.*
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
@@ -110,3 +120,44 @@ public fun JetImportDirective.targetDescriptors(): Collection<DeclarationDescrip
     val nameExpression = importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return emptyList()
     return nameExpression.mainReference.resolveToDescriptors(nameExpression.analyze())
 }
+
+public fun Call.resolveCandidates(
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        expectedType: JetType = expectedType(this, bindingContext),
+        filterOutWrongReceiver: Boolean = true,
+        filterOutByVisibility: Boolean = true
+): Collection<ResolvedCall<FunctionDescriptor>> {
+    val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
+    val inDescriptor = resolutionScope.ownerDescriptor
+
+    val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
+    val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+    val callResolutionContext = BasicCallResolutionContext.create(
+            bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
+            ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            CallChecker.DoNothing, false
+    ).replaceCollectAllCandidates(true)
+    val callResolver = resolutionFacade.frontendService<CallResolver>()
+
+    val results = callResolver.resolveFunctionCall(callResolutionContext)
+
+    var candidates = results.allCandidates!!
+    if (filterOutWrongReceiver) {
+        candidates = candidates.filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
+    }
+    if (filterOutByVisibility) {
+        candidates = candidates.filter {
+            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
+            Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
+        }
+    }
+    return candidates
+}
+
+private fun expectedType(call: Call, bindingContext: BindingContext): JetType {
+    return (call.callElement as? JetExpression)?.let {
+        bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
+    } ?: TypeUtils.NO_EXPECTED_TYPE
+}
+

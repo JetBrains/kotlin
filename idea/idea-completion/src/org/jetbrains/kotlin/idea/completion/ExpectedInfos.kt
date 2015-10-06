@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
+import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
@@ -32,25 +32,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.allArgumentsMapped
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -247,27 +237,18 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, call.calleeExpression] ?: return emptyList() //TODO: discuss it
-        val inDescriptor = resolutionScope.ownerDescriptor
 
-        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
-                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        CallChecker.DoNothing, false)
-        val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = resolutionFacade.frontendService<CallResolver>()
-        val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
+        val candidates = truncatedCall.resolveCandidates(bindingContext, resolutionFacade, callExpectedType)
 
         val expectedInfos = ArrayList<ExpectedInfo>()
 
-        for (candidate in results.allCandidates!!) {
-            expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, inDescriptor, checkPrevArgumentsMatched = true)
+        for (candidate in candidates) {
+            expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, checkPrevArgumentsMatched = true)
         }
 
         if (expectedInfos.isEmpty()) { // if no candidates have previous arguments matched, try with no type checking for them
-            for (candidate in results.allCandidates!!) {
-                expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, inDescriptor, checkPrevArgumentsMatched = false)
+            for (candidate in candidates) {
+                expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, checkPrevArgumentsMatched = false)
             }
         }
 
@@ -279,12 +260,8 @@ class ExpectedInfos(
             call: Call,
             argument: ValueArgument,
             argumentIndex: Int,
-            inDescriptor: DeclarationDescriptor,
             checkPrevArgumentsMatched: Boolean
     ) {
-        val status = candidate.getStatus()
-        if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) return
-
         // check that all arguments before the current has mappings to parameters
         if (!candidate.allArgumentsMapped()) return
 
@@ -293,9 +270,6 @@ class ExpectedInfos(
 
         var descriptor = candidate.getResultingDescriptor()
         if (descriptor.valueParameters.isEmpty()) return
-
-        val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
-        if (!Visibilities.isVisible(thisReceiver, descriptor, inDescriptor)) return
 
         var argumentToParameter = call.mapArgumentsToParameters(descriptor)
         var parameter = argumentToParameter[argument]
