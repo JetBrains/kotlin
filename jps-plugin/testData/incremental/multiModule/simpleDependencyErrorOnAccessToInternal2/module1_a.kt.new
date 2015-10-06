@@ -1,6 +1,4 @@
-package test
-
-internal open class InternalClass1
+package a
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
@@ -10,10 +8,12 @@ internal annotation class InternalFileAnnotation()
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class InternalClassAnnotation()
 
-abstract class ClassA1(internal val member: Int)
+class A
 
-abstract class ClassB1 {
-    internal abstract val member: Int
+internal class AA
+
+fun a() {
 }
 
-class ClassD: InternalClass2()
+internal fun aa() {
+}

@@ -494,20 +494,14 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         initProject()
         val result = makeAll()
         result.assertFailed()
-
-        val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
-                .map { it as CompilerMessage }
-                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
-        val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
-        val expectedFile = File(projectRoot, "errors.txt")
-        JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
+        result.checkErrors()
     }
 
-    // TODO See KT-9299 In a project with circular dependencies between modules, IDE reports error on use of internal class from another module, but the corresponding code still compiles and runs.
     public fun testCircularDependenciesInternalFromAnotherModule() {
         initProject()
         val result = makeAll()
-        result.assertSuccessful()
+        result.assertFailed()
+        result.checkErrors()
     }
 
     public fun testCircularDependencyWithReferenceToOldVersionLib() {
@@ -677,6 +671,15 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
         assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
+    }
+
+    private fun BuildResult.checkErrors() {
+        val actualErrors = getMessages(BuildMessage.Kind.ERROR)
+                .map { it as CompilerMessage }
+                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
+        val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+        val expectedFile = File(projectRoot, "errors.txt")
+        JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
