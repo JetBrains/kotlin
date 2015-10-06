@@ -93,7 +93,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.BACKING_FIELD_SYNTAX_DEPRECATED,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
-            Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX
+            Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
+            Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

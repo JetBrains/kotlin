@@ -342,7 +342,7 @@ public class DeclarationsChecker {
         if (!constraints.isEmpty()) {
             for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
                 if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
-                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAITS.on(typeParameter));
+                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter));
                 }
             }
         }
