@@ -79,6 +79,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("simpleDependencyErrorOnAccessToInternal1")
+        public void testSimpleDependencyErrorOnAccessToInternal1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal1/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleDependencyErrorOnAccessToInternal2")
+        public void testSimpleDependencyErrorOnAccessToInternal2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal2/");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleDependencyUnchanged")
         public void testSimpleDependencyUnchanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyUnchanged/");
