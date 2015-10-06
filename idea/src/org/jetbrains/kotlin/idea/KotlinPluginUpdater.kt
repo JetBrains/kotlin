@@ -77,7 +77,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
             for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
                 val plugins = try {
-                    RepositoryHelper.loadPlugins(host, null)
+                    RepositoryHelper.loadPlugins(host, null, null)
                 }
                 catch(e: Exception) {
                     LOG.info("Checking custom plugin reposityory $host failed", e)
