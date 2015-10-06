@@ -19,4 +19,4 @@ inline fun foo(f: () -> Int): Int {
 
 fun test(i: Int) = 1
 
-// STEP_OVER: 4
+// STEP_OVER: 3
