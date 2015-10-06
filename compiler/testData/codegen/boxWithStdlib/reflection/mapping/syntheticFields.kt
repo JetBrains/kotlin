@@ -1,7 +1,7 @@
 import kotlin.reflect.jvm.kotlin
 
-class A {
-    // There's a synthetic "$kotlinClass" field here
+enum class A {
+    // There's a synthetic field "$VALUES" here
 }
 
 fun box(): String {

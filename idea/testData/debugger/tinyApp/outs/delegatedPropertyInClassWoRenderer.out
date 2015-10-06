@@ -26,7 +26,7 @@ class MyDelegate {
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 5)
    local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 6)
      field    = prop: int = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 12)
-                - No fields to display
+                - Class has no fields
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

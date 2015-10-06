@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -40,14 +37,12 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         public val SAFE_CHECKCAST_MARKER_METHOD_NAME: String = "reifySafeCheckcast"
         public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
         public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
-        public val CLASS_LITERAL_MARKER_METHOD_NAME: String = "reifyClassLiteral"
         public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
 
         private val PARAMETRISED_MARKERS = ImmutableSet.of(
                 NEW_ARRAY_MARKER_METHOD_NAME,
                 CHECKCAST_MARKER_METHOD_NAME, SAFE_CHECKCAST_MARKER_METHOD_NAME,
-                INSTANCEOF_MARKER_METHOD_NAME, JAVA_CLASS_MARKER_METHOD_NAME,
-                CLASS_LITERAL_MARKER_METHOD_NAME
+                INSTANCEOF_MARKER_METHOD_NAME, JAVA_CLASS_MARKER_METHOD_NAME
         )
 
         private fun isParametrisedReifiedMarker(insn: AbstractInsnNode) =
@@ -148,7 +143,6 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                 SAFE_CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, jetType, asmType, safe = true)
                 INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, instructions, jetType, asmType)
                 JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
-                CLASS_LITERAL_MARKER_METHOD_NAME -> processClassLiteral(insn, instructions, jetType, asmType)
                 else -> false
             }) {
                 instructions.remove(insn.getPrevious()!!)
@@ -199,30 +193,6 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         val next = insn.getNext()
         if (next !is LdcInsnNode) return false
         next.cst = parameter
-        return true
-    }
-
-    private fun processClassLiteral(insn: MethodInsnNode, instructions: InsnList, type: JetType, parameter: Type): Boolean {
-        val next = insn.next
-        if (next !is FieldInsnNode || next.opcode != Opcodes.GETSTATIC) return false
-        val descriptor = type.constructor.declarationDescriptor!!
-        if (JvmCodegenUtil.shouldUseJavaClassForClassLiteral(descriptor)) {
-            instructions.insertBefore(
-                    next,
-                    if (AsmUtil.isPrimitive(parameter))
-                        FieldInsnNode(Opcodes.GETSTATIC, AsmUtil.boxType(parameter).internalName, "TYPE", "Ljava/lang/Class;")
-                    else
-                        LdcInsnNode(parameter)
-            )
-            val foreignKotlinClassDesc = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
-            instructions.insertBefore(
-                    next, MethodInsnNode(Opcodes.INVOKESTATIC, AsmTypes.REFLECTION, "foreignKotlinClass", foreignKotlinClassDesc, false)
-            )
-            instructions.remove(next)
-        }
-        else {
-            next.owner = AsmUtil.boxType(parameter).internalName
-        }
         return true
     }
 

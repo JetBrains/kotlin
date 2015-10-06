@@ -30,10 +30,10 @@ class MyDelegateThrowsException {
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 5)
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 12)
-                - No fields to display
+                - Class has no fields
      field    = prop: int = 1 (sp = delegatedPropertyInClass.kt, 12)
      field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
-                - No fields to display
+                - Class has no fields
      field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 13)
        field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
        field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
