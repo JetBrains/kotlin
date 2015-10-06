@@ -160,6 +160,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NoSynthesizedParameterNames.kt")
+        public void testNoSynthesizedParameterNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NoSynthesizedParameterNames.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NotAccessible.kt")
         public void testNotAccessible() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NotAccessible.kt");

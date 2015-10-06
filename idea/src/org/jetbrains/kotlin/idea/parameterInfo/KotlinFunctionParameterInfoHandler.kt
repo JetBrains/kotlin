@@ -168,6 +168,8 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
                 usedParameterIndices.add(substitutedDescriptor.valueParameters.lastIndex)
             }
 
+            val includeParameterNames = !substitutedDescriptor.hasSynthesizedParameterNames()
+
             fun appendParameter(parameter: ValueParameterDescriptor) {
                 if (length() > 0) {
                     append(", ")
@@ -178,7 +180,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
                     boldStartOffset = length()
                 }
 
-                append(renderParameter(parameter, namedMode, project))
+                append(renderParameter(parameter, includeParameterNames, namedMode, project))
 
                 if (highlightParameter) {
                     boldEndOffset = length()
@@ -230,15 +232,19 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
     override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
     override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
-    protected fun renderParameter(parameter: ValueParameterDescriptor, named: Boolean, project: Project): String {
+    private fun renderParameter(parameter: ValueParameterDescriptor, includeName: Boolean, named: Boolean, project: Project): String {
         return StringBuilder {
             if (named) append("[")
 
             if (parameter.varargElementType != null) {
                 append("vararg ")
             }
-            append(parameter.name)
-            append(": ")
+
+            if (includeName) {
+                append(parameter.name)
+                append(": ")
+            }
+
             append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
 
             if (parameter.hasDefaultValue()) {
@@ -279,7 +285,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         return type
     }
 
-    protected fun isResolvedToDescriptor(
+    private fun isResolvedToDescriptor(
             call: Call,
             functionDescriptor: FunctionDescriptor,
             bindingContext: BindingContext
@@ -288,7 +294,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         return target != null && descriptorsEqual(target, functionDescriptor)
     }
 
-    protected data class SignatureInfo(
+    private data class SignatureInfo(
             val substitutedDescriptor: FunctionDescriptor,
             val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
             val highlightParameterIndex: Int?,
