@@ -311,12 +311,14 @@ class ExpectedInfos(
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
 
         val callType = call.callType
+        val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
+        val rparenthTail = if (isArrayAccess) Tail.RBRACKET else Tail.RPARENTH
 
         val argumentPositionData = if (argumentName != null) {
             ArgumentPositionData.Named(descriptor, callType, argumentName)
         }
         else {
-            val namedArgumentCandidates = if (!isFunctionLiteralArgument && descriptor.hasStableParameterNames()) {
+            val namedArgumentCandidates = if (!isFunctionLiteralArgument && !isArrayAccess && descriptor.hasStableParameterNames()) {
                 val usedParameters = argumentToParameter.filter { it.key != argument }.map { it.value }.toSet()
                 descriptor.valueParameters.filter { it !in usedParameters }
             }
@@ -325,9 +327,6 @@ class ExpectedInfos(
             }
             ArgumentPositionData.Positional(descriptor, callType, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
         }
-
-        val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
-        val rparenthTail = if (isArrayAccess) Tail.RBRACKET else Tail.RPARENTH
 
         var parameters = descriptor.valueParameters
         if (callType == Call.CallType.ARRAY_SET_METHOD) { // last parameter in set is used for value assigned
