@@ -15534,6 +15534,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("misplacedConstraints.kt")
+            public void testMisplacedConstraints() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/misplacedConstraints.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("upperBoundCannotBeArray.kt")
             public void testUpperBoundCannotBeArray() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/upperBoundCannotBeArray.kt");

@@ -9,9 +9,9 @@ interface B {
 }
 
 interface G<X> {
-    val <X : A> boo: Double  where X : B
+    val <X> boo: Double  where X : A, X : B
     val <A> bal: Double  where A : B
-    val <Y : B> bas: Double where <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
+    val <Y> bas: Double where Y : B, <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
 }
 
 class C() : A(), B
@@ -20,8 +20,9 @@ class D() {
   companion object : A(), B {}
 }
 
-class Test1<T : A>()
+class Test1<T>()
   where
+    T : A,
     T : B,
     <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T // error
   {
@@ -47,10 +48,11 @@ class Bar<T : <!FINAL_UPPER_BOUND!>Foo<!>>
 class Buzz<T> where T : <!FINAL_UPPER_BOUND!>Bar<<!UPPER_BOUND_VIOLATED!>Int<!>><!>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
 
 class X<T : <!FINAL_UPPER_BOUND!>Foo<!>>
-class Y<<!CONFLICTING_UPPER_BOUNDS!>T<!> : <!FINAL_UPPER_BOUND!>Foo<!>> where T : <!FINAL_UPPER_BOUND!>Bar<Foo><!>
+class Y<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>Foo<!>, T : <!FINAL_UPPER_BOUND!>Bar<Foo><!>
 
-fun <T : A> test2(t : T)
+fun <T> test2(t : T)
   where
+    T : A,
     T : B,
     <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T
 {
