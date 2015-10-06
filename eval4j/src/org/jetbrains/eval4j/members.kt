@@ -21,12 +21,33 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
-open data class MemberDescription(
+open class MemberDescription protected constructor(
         val ownerInternalName: String,
         val name: String,
         val desc: String,
         val isStatic: Boolean
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return (other is MemberDescription
+                && ownerInternalName == other.ownerInternalName
+                && name == other.name
+                && desc == other.desc
+                && isStatic == other.isStatic
+               )
+    }
+
+    override fun hashCode(): Int {
+        var result = 13;
+        result = result * 23 + ownerInternalName.hashCode()
+        result = result * 23 + name.hashCode()
+        result = result * 23 + desc.hashCode()
+        result = result * 23 + isStatic.hashCode()
+        return result
+    }
+
+    override fun toString() = "MemberDescription(ownerInternalName = $ownerInternalName, name = $name, desc = $desc, isStatic = $isStatic)"
+}
 
 val MemberDescription.ownerType: Type
     get() = Type.getObjectType(ownerInternalName)
