@@ -1,8 +1,8 @@
 package i
 
-val <T> List<T>.length = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>size()<!>
+val <T> List<T>.length = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>size<!>
 
-val <T> List<T>.length1 : Int get() = size()
+val <T> List<T>.length1 : Int get() = size
 
 val String.bd = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>this + "!"<!>
 

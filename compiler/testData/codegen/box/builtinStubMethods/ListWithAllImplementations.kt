@@ -1,5 +1,5 @@
 class MyList<T>(val v: T): List<T> {
-    override fun size(): Int = 0
+    override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun iterator(): Iterator<T> = throw Error()
