@@ -68,7 +68,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
     override fun getActualParameterDelimiterType() = JetTokens.COMMA
 
-    override fun getActualParametersRBraceType() = JetTokens.RBRACE
+    override fun getActualParametersRBraceType() = JetTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(JetCallElement::class.java)
 
