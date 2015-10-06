@@ -72,7 +72,7 @@ class KotlinFunctionParameterInfoHandler : ParameterInfoHandlerWithTabActionSupp
 
     override fun getArgumentListAllowedParentClasses() = setOf(JetCallElement::class.java)
 
-    override fun getArgListStopSearchClasses() = setOf(JetFunction::class.java)
+    override fun getArgListStopSearchClasses() = setOf(JetNamedFunction::class.java, JetVariableDeclaration::class.java)
 
     override fun getArgumentListClass() = JetValueArgumentList::class.java
 
