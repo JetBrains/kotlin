@@ -99,6 +99,7 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
+import org.jetbrains.kotlin.jps.build.AbstractIncrementalCacheVersionChangedTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalLazyCachesTest
 import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
@@ -849,6 +850,10 @@ fun main(args: Array<String>) {
 
         testClass(AbstractIncrementalLazyCachesTest::class.java) {
             model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
+        }
+
+        testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
+            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
     }
 
