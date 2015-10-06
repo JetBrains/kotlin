@@ -61,7 +61,7 @@
     }
 
     function hashSetEquals(o) {
-        if (o == null || this.size() !== o.size()) return false;
+        if (o == null || this.size !== o.size) return false;
 
         return this.containsAll_4fm7v2$(o);
     }
@@ -399,13 +399,15 @@
             return oldValue;
         };
 
-        this.size = function () {
-            var total = 0, i = buckets.length;
-            while (i--) {
-                total += buckets[i].entries.length;
+        Object.defineProperty(this, "size", {
+            get: function () {
+                var total = 0, i = buckets.length;
+                while (i--) {
+                    total += buckets[i].entries.length;
+                }
+                return total;
             }
-            return total;
-        };
+        });
 
         this.each = function (callback) {
             var entries = that._entries(), i = entries.length, entry;
@@ -460,7 +462,7 @@
         };
 
         this.equals_za3rmp$ = function(o) {
-            if (o == null || this.size() !== o.size()) return false;
+            if (o == null || this.size !== o.size) return false;
 
             var entries = this._entries();
             var i = entries.length;
@@ -563,8 +565,10 @@
             isEmpty: function () {
                 return this.map.isEmpty();
             },
-            size: function () {
-                return this.map.size();
+            size: {
+                get: function () {
+                    return this.map.size;
+                }
             },
             contains_za3rmp$: function (o) {
                 return this.map.containsValue_za3rmp$(o);
@@ -585,8 +589,10 @@
             this.$size = 0;
             this.map = Object.create(null);
         }, {
-            size: function () {
-                return this.$size;
+            size: {
+                get: function () {
+                    return this.$size;
+                }
             },
             isEmpty: function () {
                 return this.$size === 0;
@@ -679,7 +685,7 @@
                 return builder + "}";
             },
             equals_za3rmp$: function(o) {
-                if (o == null || this.size() !== o.size()) return false;
+                if (o == null || this.size !== o.size) return false;
                 var map = this.map;
                 for (var key in map) {
                     var key_ = this.convertKeyToKeyType(key);
@@ -822,8 +828,10 @@
         {
             equals_za3rmp$: hashSetEquals,
             hashCode: hashSetHashCode,
-            size: function () {
-                return this.map.size()
+            size: {
+                get: function () {
+                    return this.map.size;
+                }
             },
             contains_za3rmp$: function (element) {
                 return this.map.containsKey_za3rmp$(element);
@@ -897,8 +905,10 @@
         {
             equals_za3rmp$: hashSetEquals,
             hashCode: hashSetHashCode,
-            size: function () {
-                return this.$size;
+            size: {
+                get: function () {
+                    return this.$size;
+                }
             },
             contains_za3rmp$: function (key) {
                 return this.map[key] === true;
@@ -1025,9 +1035,9 @@
             hashTable.clear();
         };
 
-        this.size = function () {
-            return hashTable.size();
-        };
+        Object.defineProperty(this, "size", { get: function () {
+            return hashTable.size;
+        }});
 
         this.isEmpty = function () {
             return hashTable.isEmpty();

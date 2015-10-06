@@ -290,7 +290,7 @@
         /** @constructs */
         function (list, index) {
             this.list = list;
-            this.size = list.size();
+            this.size = list.size;
             this.index = (index === undefined) ? 0 : index;
         }, {
             hasNext: function () {
@@ -399,18 +399,18 @@
             return true;
         },
         isEmpty: function () {
-            return this.size() === 0;
+            return this.size === 0;
         },
         iterator: function () {
             // TODO: Do not implement mutable iterator() this way, make abstract
             return new Kotlin.ArrayIterator(this.toArray());
         },
         equals_za3rmp$: function (o) {
-            if (this.size() !== o.size()) return false;
+            if (this.size !== o.size) return false;
 
             var iterator1 = this.iterator();
             var iterator2 = o.iterator();
-            var i = this.size();
+            var i = this.size;
             while (i-- > 0) {
                 if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
                     return false;
@@ -423,7 +423,7 @@
             var builder = "[";
             var iterator = this.iterator();
             var first = true;
-            var i = this.size();
+            var i = this.size;
             while (i-- > 0) {
                 if (first) {
                     first = false;
@@ -456,13 +456,13 @@
             return new Kotlin.ListIterator(this);
         },
         listIterator_za3lpa$: function(index) {
-            if (index < 0 || index > this.size()) {
-                throw new Kotlin.IndexOutOfBoundsException("Index: " + index + ", size: " + this.size());
+            if (index < 0 || index > this.size) {
+                throw new Kotlin.IndexOutOfBoundsException("Index: " + index + ", size: " + this.size);
             }
             return new Kotlin.ListIterator(this, index);
         },
         add_za3rmp$: function (element) {
-            this.add_vux3hl$(this.size(), element);
+            this.add_vux3hl$(this.size, element);
             return true;
         },
         addAll_9cca64$: function (index, collection) {
@@ -492,14 +492,14 @@
             return -1;
         },
         lastIndexOf_za3rmp$: function (o) {
-            var i = this.listIterator_za3lpa$(this.size());
+            var i = this.listIterator_za3lpa$(this.size);
             while (i.hasPrevious())
                 if (Kotlin.equals(i.previous(), o))
                     return i.nextIndex();
             return -1;
         },
         subList_vux9f0$: function(fromIndex, toIndex) {
-            if (fromIndex < 0 || toIndex > this.size())
+            if (fromIndex < 0 || toIndex > this.size)
                 throw new Kotlin.IndexOutOfBoundsException();
             if (fromIndex > toIndex)
                 throw new Kotlin.IllegalArgumentException();
@@ -533,11 +533,13 @@
                 this.checkRange(index);
                 this.list.set_vux3hl$(index + this.offset, value);
             },
-            size: function () {
-                return this._size;
+            size: {
+               get: function () {
+                   return this._size;
+               }
             },
             add_vux3hl$: function (index, element) {
-                if (index < 0 || index > this.size()) {
+                if (index < 0 || index > this.size) {
                     throw new Kotlin.IndexOutOfBoundsException();
                 }
                 this.list.add_vux3hl$(index + this.offset, element);
@@ -572,8 +574,10 @@
                 this.checkRange(index);
                 this.array[index] = value;
             },
-            size: function () {
-                return this.array.length;
+            size: {
+               get: function () {
+                   return this.array.length;
+               }
             },
             iterator: function () {
                 return Kotlin.arrayIterator(this.array);
@@ -587,7 +591,7 @@
             },
             addAll_4fm7v2$: function (collection) {
                 var it = collection.iterator();
-                for (var i = this.array.length, n = collection.size(); n-- > 0;) {
+                for (var i = this.array.length, n = collection.size; n-- > 0;) {
                     this.array[i++] = it.next();
                 }
             },
