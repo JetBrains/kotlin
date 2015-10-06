@@ -54,12 +54,6 @@
     </component>
   </application-components>
 
-  <module-components>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.project.K2JSModuleComponent</implementation-class>
-    </component>
-  </module-components>
-
   <actions>
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
